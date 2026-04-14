@@ -6,8 +6,8 @@ const STATUS_COLORS: Record<string, { bg: string; color: string; dot: string; la
   Present: { bg: "#F0FDF4", color: "#16A34A", dot: "#22C55E", label: "Present" },
   Absent: { bg: "#FEF2F2", color: "#DC2626", dot: "#EF4444", label: "Absent" },
   Leave: { bg: "#FFFBEB", color: "#D97706", dot: "#F59E0B", label: "Leave" },
-  Holiday: { bg: "#F5F3FF", color: "#7C3AED", dot: "#8B5CF6", label: "Holiday" },
-  Weekend: { bg: "#F8FAFC", color: "#CBD5E1", dot: "#CBD5E1", label: "Weekend" },
+  Holiday: { bg: "#F0FDFA", color: "#0D9488", dot: "#14B8A6", label: "Holiday" },
+  Weekend: { bg: "#F0FDF4", color: "#CBD5E1", dot: "#CBD5E1", label: "Weekend" },
 };
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -32,7 +32,7 @@ export function Attendance() {
     Present: { bg: "#F0FDF4", color: "#16A34A" },
     Absent: { bg: "#FEF2F2", color: "#DC2626" },
     Leave: { bg: "#FFFBEB", color: "#D97706" },
-    Holiday: { bg: "#F5F3FF", color: "#7C3AED" },
+    Holiday: { bg: "#F0FDFA", color: "#0D9488" },
   };
 
   const summary = {
@@ -51,26 +51,26 @@ export function Attendance() {
           className="flex items-center gap-3 rounded-xl px-4 py-2.5"
           style={{
             backgroundColor: "white",
-            border: "1px solid #E2E8F0",
+            border: "1px solid #D1FAE5",
             boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
           }}
         >
           <button
             className="p-1.5 rounded-lg transition-colors"
-            style={{ color: "#94A3B8" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F1F5F9"; }}
+            style={{ color: "#6B7280" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5"; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
           >
             <ChevronLeft size={16} />
           </button>
           <div className="flex items-center gap-2">
-            <CalendarDays size={16} color="#3B82F6" />
-            <span style={{ color: "#0F172A", fontSize: "14px", fontWeight: 700 }}>April 2026</span>
+            <CalendarDays size={16} color="#059669" />
+            <span style={{ color: "#022C22", fontSize: "14px", fontWeight: 700 }}>April 2026</span>
           </div>
           <button
             className="p-1.5 rounded-lg transition-colors"
-            style={{ color: "#94A3B8" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F1F5F9"; }}
+            style={{ color: "#6B7280" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5"; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
           >
             <ChevronRight size={16} />
@@ -79,15 +79,15 @@ export function Attendance() {
 
         <div
           className="flex items-center gap-2 px-3 py-2 rounded-xl"
-          style={{ backgroundColor: "white", border: "1px solid #E2E8F0" }}
+          style={{ backgroundColor: "white", border: "1px solid #D1FAE5" }}
         >
           <img
             src="https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
             alt={selectedEmployee}
             className="w-7 h-7 rounded-full object-cover"
           />
-          <span style={{ color: "#0F172A", fontSize: "13px", fontWeight: 600 }}>{selectedEmployee}</span>
-          <ChevronRight size={14} color="#94A3B8" />
+          <span style={{ color: "#022C22", fontSize: "13px", fontWeight: 600 }}>{selectedEmployee}</span>
+          <ChevronRight size={14} color="#6B7280" />
         </div>
       </div>
 
@@ -97,7 +97,7 @@ export function Attendance() {
           {/* Summary Row */}
           <div className="grid grid-cols-4 gap-3">
             {[
-              { label: "Working Days", value: summary.totalWorkingDays, color: "#3B82F6", bg: "#EFF6FF" },
+              { label: "Working Days", value: summary.totalWorkingDays, color: "#059669", bg: "#ECFDF5" },
               { label: "Present", value: summary.present, color: "#22C55E", bg: "#F0FDF4" },
               { label: "Absent", value: summary.absent, color: "#EF4444", bg: "#FEF2F2" },
               { label: "Leaves Taken", value: summary.leaves, color: "#F59E0B", bg: "#FFFBEB" },
@@ -117,7 +117,7 @@ export function Attendance() {
                 >
                   <span style={{ color: s.color, fontSize: "16px", fontWeight: 800 }}>{s.value}</span>
                 </div>
-                <p style={{ color: "#64748B", fontSize: "12px", fontWeight: 500 }}>{s.label}</p>
+                <p style={{ color: "#6B7280", fontSize: "12px", fontWeight: 500 }}>{s.label}</p>
               </div>
             ))}
           </div>
@@ -127,12 +127,12 @@ export function Attendance() {
             className="rounded-2xl p-5"
             style={{
               backgroundColor: "white",
-              border: "1px solid #E2E8F0",
+              border: "1px solid #D1FAE5",
               boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
             }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 style={{ color: "#0F172A", fontSize: "15px", fontWeight: 700 }}>
+              <h3 style={{ color: "#022C22", fontSize: "15px", fontWeight: 700 }}>
                 Monthly Attendance Calendar
               </h3>
               {/* Legend */}
@@ -142,12 +142,12 @@ export function Attendance() {
                   .map(([key, val]) => (
                     <div key={key} className="flex items-center gap-1.5">
                       <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: val.dot }} />
-                      <span style={{ color: "#64748B", fontSize: "11px" }}>{val.label}</span>
+                      <span style={{ color: "#6B7280", fontSize: "11px" }}>{val.label}</span>
                     </div>
                   ))}
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#CBD5E1" }} />
-                  <span style={{ color: "#64748B", fontSize: "11px" }}>Weekend</span>
+                  <span style={{ color: "#6B7280", fontSize: "11px" }}>Weekend</span>
                 </div>
               </div>
             </div>
@@ -159,7 +159,7 @@ export function Attendance() {
                   key={d}
                   className="text-center py-2"
                   style={{
-                    color: d === "Sun" || d === "Sat" ? "#CBD5E1" : "#94A3B8",
+                    color: d === "Sun" || d === "Sat" ? "#CBD5E1" : "#6B7280",
                     fontSize: "11px",
                     fontWeight: 700,
                     letterSpacing: "0.5px",
@@ -190,14 +190,14 @@ export function Attendance() {
                     style={{
                       height: "56px",
                       backgroundColor: isToday
-                        ? "#3B82F6"
+                        ? "#059669"
                         : isHovered
                         ? config.bg
                         : status === "Weekend"
                         ? "transparent"
                         : config.bg,
                       border: isToday
-                        ? "2px solid #2563EB"
+                        ? "2px solid #047857"
                         : isHovered
                         ? `1px solid ${config.dot}50`
                         : "1px solid transparent",
@@ -231,14 +231,14 @@ export function Attendance() {
           className="rounded-2xl overflow-hidden"
           style={{
             backgroundColor: "white",
-            border: "1px solid #E2E8F0",
+            border: "1px solid #D1FAE5",
             boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
             alignSelf: "flex-start",
           }}
         >
-          <div className="px-5 py-4" style={{ borderBottom: "1px solid #E2E8F0" }}>
-            <h3 style={{ color: "#0F172A", fontSize: "14px", fontWeight: 700 }}>Daily Log</h3>
-            <p style={{ color: "#94A3B8", fontSize: "11px", marginTop: "2px" }}>April 2026</p>
+          <div className="px-5 py-4" style={{ borderBottom: "1px solid #D1FAE5" }}>
+            <h3 style={{ color: "#022C22", fontSize: "14px", fontWeight: 700 }}>Daily Log</h3>
+            <p style={{ color: "#6B7280", fontSize: "11px", marginTop: "2px" }}>April 2026</p>
           </div>
 
           {/* Table header */}
@@ -246,12 +246,12 @@ export function Attendance() {
             className="grid px-5 py-2.5"
             style={{
               gridTemplateColumns: "1fr 1fr 1fr 80px",
-              backgroundColor: "#F8FAFC",
-              borderBottom: "1px solid #E2E8F0",
+              backgroundColor: "#ECFDF5",
+              borderBottom: "1px solid #D1FAE5",
             }}
           >
             {["Date", "In", "Out", "Status"].map((col) => (
-              <span key={col} style={{ color: "#94A3B8", fontSize: "10px", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase" }}>
+              <span key={col} style={{ color: "#166534", fontSize: "10px", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase" }}>
                 {col}
               </span>
             ))}
@@ -264,18 +264,18 @@ export function Attendance() {
                 className="grid px-5 py-3 items-center"
                 style={{
                   gridTemplateColumns: "1fr 1fr 1fr 80px",
-                  borderBottom: i < dailyLogs.length - 1 ? "1px solid #F1F5F9" : "none",
-                  backgroundColor: i % 2 === 0 ? "white" : "#FAFBFD",
+                  borderBottom: i < dailyLogs.length - 1 ? "1px solid #D1FAE5" : "none",
+                  backgroundColor: i % 2 === 0 ? "white" : "#F0FDF4",
                 }}
               >
-                <span style={{ color: "#1E293B", fontSize: "11px", fontWeight: 600 }}>{log.date.split(",")[0].replace("Apr ", "Apr ")}</span>
-                <span style={{ color: "#475569", fontSize: "11px" }}>{log.checkIn}</span>
-                <span style={{ color: "#475569", fontSize: "11px" }}>{log.checkOut}</span>
+                <span style={{ color: "#022C22", fontSize: "11px", fontWeight: 600 }}>{log.date.split(",")[0].replace("Apr ", "Apr ")}</span>
+                <span style={{ color: "#166534", fontSize: "11px" }}>{log.checkIn}</span>
+                <span style={{ color: "#166534", fontSize: "11px" }}>{log.checkOut}</span>
                 <span
                   className="px-2 py-0.5 rounded-full text-center"
                   style={{
-                    backgroundColor: logStatusConfig[log.status]?.bg || "#F1F5F9",
-                    color: logStatusConfig[log.status]?.color || "#475569",
+                    backgroundColor: logStatusConfig[log.status]?.bg || "#ECFDF5",
+                    color: logStatusConfig[log.status]?.color || "#166534",
                     fontSize: "10px",
                     fontWeight: 700,
                     width: "fit-content",
@@ -290,19 +290,19 @@ export function Attendance() {
           {/* Bottom summary */}
           <div
             className="px-5 py-4"
-            style={{ borderTop: "1px solid #E2E8F0", backgroundColor: "#F8FAFC" }}
+            style={{ borderTop: "1px solid #D1FAE5", backgroundColor: "#ECFDF5" }}
           >
             <div className="flex items-center justify-between">
-              <span style={{ color: "#64748B", fontSize: "12px" }}>Avg. Hours/Day</span>
-              <span style={{ color: "#0F172A", fontSize: "13px", fontWeight: 700 }}>9h 06m</span>
+              <span style={{ color: "#6B7280", fontSize: "12px" }}>Avg. Hours/Day</span>
+              <span style={{ color: "#022C22", fontSize: "13px", fontWeight: 700 }}>9h 06m</span>
             </div>
             <div
               className="rounded-full overflow-hidden mt-2"
-              style={{ height: "4px", backgroundColor: "#E2E8F0" }}
+              style={{ height: "4px", backgroundColor: "#D1FAE5" }}
             >
               <div
                 className="rounded-full"
-                style={{ width: "88%", height: "100%", backgroundColor: "#3B82F6" }}
+                style={{ width: "88%", height: "100%", backgroundColor: "#059669" }}
               />
             </div>
           </div>

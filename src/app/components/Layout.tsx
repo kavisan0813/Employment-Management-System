@@ -25,7 +25,7 @@ export function Layout() {
   const sidebarWidth = collapsed ? 72 : 240;
 
   return (
-    <div style={{ backgroundColor: "#F8FAFC", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "#F0FDF4", minHeight: "100vh" }}>
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
       <Topbar title={title} sidebarWidth={sidebarWidth} />
       <main

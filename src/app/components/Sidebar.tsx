@@ -42,21 +42,21 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       className="fixed top-0 left-0 h-screen flex flex-col transition-all duration-300 ease-in-out z-50"
       style={{
         width: collapsed ? "72px" : "240px",
-        backgroundColor: "#0F172A",
-        borderRight: "1px solid rgba(255,255,255,0.06)",
+        backgroundColor: "#064E3B",
+        borderRight: "1px solid rgba(255,255,255,0.08)",
       }}
     >
       {/* Logo */}
       <div
         className="flex items-center h-16 px-4 shrink-0"
-        style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
       >
         <div
           className="flex items-center justify-center rounded-lg shrink-0"
           style={{
             width: "36px",
             height: "36px",
-            background: "linear-gradient(135deg, #3B82F6, #1D4ED8)",
+            background: "linear-gradient(135deg, #10B981, #059669)",
           }}
         >
           <Zap size={18} color="white" fill="white" />
@@ -76,7 +76,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </span>
             <span
               className="block"
-              style={{ color: "#64748B", fontSize: "10px", fontWeight: 500, letterSpacing: "0.5px" }}
+              style={{ color: "#6EE7B7", fontSize: "10px", fontWeight: 500, letterSpacing: "0.5px" }}
             >
               EMS PLATFORM
             </span>
@@ -89,7 +89,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         {!collapsed && (
           <p
             className="px-4 mb-2"
-            style={{ color: "#334155", fontSize: "10px", fontWeight: 600, letterSpacing: "1px" }}
+            style={{ color: "#6EE7B7", fontSize: "10px", fontWeight: 600, letterSpacing: "1px" }}
           >
             MAIN MENU
           </p>
@@ -110,9 +110,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     borderRadius: "10px",
                     textDecoration: "none",
                     transition: "all 0.15s ease",
-                    backgroundColor: active ? "rgba(59, 130, 246, 0.15)" : "transparent",
-                    color: active ? "#3B82F6" : "#94A3B8",
-                    borderLeft: active ? "2px solid #3B82F6" : "2px solid transparent",
+                    backgroundColor: active ? "rgba(16, 185, 129, 0.15)" : "transparent",
+                    color: active ? "#10B981" : "#A7F3D0",
+                    borderLeft: active ? "2px solid #10B981" : "2px solid transparent",
                     justifyContent: collapsed ? "center" : "flex-start",
                   }}
                   className="hover:bg-[rgba(255,255,255,0.05)] hover:text-white group"
@@ -120,7 +120,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   <item.icon
                     size={18}
                     style={{
-                      color: active ? "#3B82F6" : "inherit",
+                      color: active ? "#10B981" : "inherit",
                       flexShrink: 0,
                     }}
                   />
@@ -139,7 +139,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   {active && !collapsed && (
                     <span
                       className="ml-auto w-1.5 h-1.5 rounded-full"
-                      style={{ backgroundColor: "#3B82F6", flexShrink: 0 }}
+                      style={{ backgroundColor: "#10B981", flexShrink: 0 }}
                     />
                   )}
                 </NavLink>
@@ -152,17 +152,17 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Bottom section */}
       <div
         className="shrink-0 px-2 pb-4"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "12px" }}
+        style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "12px" }}
       >
         {/* User avatar section */}
         {!collapsed && (
           <div
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-2"
-            style={{ backgroundColor: "rgba(255,255,255,0.04)" }}
+            style={{ backgroundColor: "rgba(255,255,255,0.06)" }}
           >
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-              style={{ background: "linear-gradient(135deg, #3B82F6, #8B5CF6)" }}
+              style={{ background: "linear-gradient(135deg, #059669, #14B8A6)" }}
             >
               <span style={{ color: "white", fontSize: "12px", fontWeight: 700 }}>RP</span>
             </div>
@@ -170,7 +170,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               <p style={{ color: "white", fontSize: "13px", fontWeight: 600, whiteSpace: "nowrap" }}>
                 Ryan Park
               </p>
-              <p style={{ color: "#64748B", fontSize: "11px", whiteSpace: "nowrap" }}>HR Administrator</p>
+              <p style={{ color: "#6EE7B7", fontSize: "11px", whiteSpace: "nowrap" }}>HR Administrator</p>
             </div>
           </div>
         )}
@@ -181,16 +181,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           className="w-full flex items-center justify-center rounded-xl transition-colors"
           style={{
             padding: "8px",
-            color: "#64748B",
+            color: "#6EE7B7",
             backgroundColor: "transparent",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(255,255,255,0.06)";
-            (e.currentTarget as HTMLButtonElement).style.color = "#94A3B8";
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(255,255,255,0.08)";
+            (e.currentTarget as HTMLButtonElement).style.color = "#A7F3D0";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-            (e.currentTarget as HTMLButtonElement).style.color = "#64748B";
+            (e.currentTarget as HTMLButtonElement).style.color = "#6EE7B7";
           }}
         >
           {collapsed ? <ChevronRight size={16} /> : (

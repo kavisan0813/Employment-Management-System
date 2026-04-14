@@ -42,17 +42,17 @@ export function Performance() {
       {/* KPI Cards */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Avg. Score", value: "88.4%", sub: "+4.2% vs last quarter", color: "#3B82F6", bg: "#EFF6FF", icon: TrendingUp },
+          { label: "Avg. Score", value: "88.4%", sub: "+4.2% vs last quarter", color: "#059669", bg: "#ECFDF5", icon: TrendingUp },
           { label: "Top Performers", value: "52", sub: "Score ≥ 90%", color: "#22C55E", bg: "#F0FDF4", icon: Star },
           { label: "Need Improvement", value: "18", sub: "Score < 70%", color: "#EF4444", bg: "#FEF2F2", icon: Target },
-          { label: "Reviews Done", value: "248/248", sub: "Q1 2026 complete", color: "#8B5CF6", bg: "#F5F3FF", icon: Award },
+          { label: "Reviews Done", value: "248/248", sub: "Q1 2026 complete", color: "#14B8A6", bg: "#F0FDFA", icon: Award },
         ].map((card, i) => (
           <div
             key={i}
             className="rounded-2xl p-5"
             style={{
               backgroundColor: "white",
-              border: "1px solid #E2E8F0",
+              border: "1px solid #D1FAE5",
               boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
             }}
           >
@@ -64,11 +64,11 @@ export function Performance() {
                 <card.icon size={18} color={card.color} />
               </div>
             </div>
-            <p style={{ color: "#94A3B8", fontSize: "12px", fontWeight: 500 }}>{card.label}</p>
+            <p style={{ color: "#6B7280", fontSize: "12px", fontWeight: 500 }}>{card.label}</p>
             <p style={{ color: card.color, fontSize: "24px", fontWeight: 800, letterSpacing: "-0.5px" }}>
               {card.value}
             </p>
-            <p style={{ color: "#64748B", fontSize: "11px", marginTop: "2px" }}>{card.sub}</p>
+            <p style={{ color: "#6B7280", fontSize: "11px", marginTop: "2px" }}>{card.sub}</p>
           </div>
         ))}
       </div>
@@ -79,32 +79,32 @@ export function Performance() {
           className="col-span-2 rounded-2xl p-6"
           style={{
             backgroundColor: "white",
-            border: "1px solid #E2E8F0",
+            border: "1px solid #D1FAE5",
             boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
           }}
         >
-          <h3 style={{ color: "#0F172A", fontSize: "15px", fontWeight: 700, marginBottom: "4px" }}>
+          <h3 style={{ color: "#022C22", fontSize: "15px", fontWeight: 700, marginBottom: "4px" }}>
             Q1 vs Q2 2026 — Department Comparison
           </h3>
-          <p style={{ color: "#94A3B8", fontSize: "12px", marginBottom: "20px" }}>
+          <p style={{ color: "#6B7280", fontSize: "12px", marginBottom: "20px" }}>
             Average performance scores by department
           </p>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={quarterlyData} barCategoryGap="25%" barGap={2}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-              <XAxis dataKey="name" tick={{ fill: "#94A3B8", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis domain={[70, 100]} tick={{ fill: "#94A3B8", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#D1FAE5" vertical={false} />
+              <XAxis dataKey="name" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis domain={[70, 100]} tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#0F172A",
+                  backgroundColor: "#064E3B",
                   border: "none",
                   borderRadius: "10px",
                   color: "white",
                   fontSize: "12px",
                 }}
               />
-              <Bar key="bar-q1" dataKey="Q1" name="Q1 2026" fill="#BFDBFE" radius={[4, 4, 0, 0]} maxBarSize={20} />
-              <Bar key="bar-q2" dataKey="Q2" name="Q2 2026" fill="#3B82F6" radius={[4, 4, 0, 0]} maxBarSize={20} />
+              <Bar key="bar-q1" dataKey="Q1" name="Q1 2026" fill="#A7F3D0" radius={[4, 4, 0, 0]} maxBarSize={20} />
+              <Bar key="bar-q2" dataKey="Q2" name="Q2 2026" fill="#059669" radius={[4, 4, 0, 0]} maxBarSize={20} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -114,24 +114,24 @@ export function Performance() {
           className="rounded-2xl p-6"
           style={{
             backgroundColor: "white",
-            border: "1px solid #E2E8F0",
+            border: "1px solid #D1FAE5",
             boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
           }}
         >
-          <h3 style={{ color: "#0F172A", fontSize: "15px", fontWeight: 700, marginBottom: "4px" }}>
+          <h3 style={{ color: "#022C22", fontSize: "15px", fontWeight: 700, marginBottom: "4px" }}>
             Company Competency
           </h3>
-          <p style={{ color: "#94A3B8", fontSize: "12px", marginBottom: "8px" }}>Overall team assessment</p>
+          <p style={{ color: "#6B7280", fontSize: "12px", marginBottom: "8px" }}>Overall team assessment</p>
           <ResponsiveContainer width="100%" height={220}>
             <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-              <PolarGrid stroke="#E2E8F0" />
-              <PolarAngleAxis dataKey="subject" tick={{ fill: "#94A3B8", fontSize: 11 }} />
+              <PolarGrid stroke="#D1FAE5" />
+              <PolarAngleAxis dataKey="subject" tick={{ fill: "#6B7280", fontSize: 11 }} />
               <Radar
                 key="radar-score"
                 name="Score"
                 dataKey="A"
-                stroke="#3B82F6"
-                fill="#3B82F6"
+                stroke="#059669"
+                fill="#059669"
                 fillOpacity={0.2}
               />
             </RadarChart>
@@ -144,15 +144,15 @@ export function Performance() {
         className="rounded-2xl p-6"
         style={{
           backgroundColor: "white",
-          border: "1px solid #E2E8F0",
+          border: "1px solid #D1FAE5",
           boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
         }}
       >
         <div className="flex items-center justify-between mb-5">
-          <h3 style={{ color: "#0F172A", fontSize: "15px", fontWeight: 700 }}>Top Performers — Q1 2026</h3>
+          <h3 style={{ color: "#022C22", fontSize: "15px", fontWeight: 700 }}>Top Performers — Q1 2026</h3>
           <button
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
-            style={{ color: "#3B82F6", backgroundColor: "#EFF6FF", fontSize: "12px", fontWeight: 600 }}
+            style={{ color: "#059669", backgroundColor: "#ECFDF5", fontSize: "12px", fontWeight: 600 }}
           >
             View All <ArrowUpRight size={12} />
           </button>
@@ -163,8 +163,8 @@ export function Performance() {
               <span
                 className="flex items-center justify-center rounded-full w-7 h-7 shrink-0"
                 style={{
-                  backgroundColor: i === 0 ? "#FEF3C7" : i === 1 ? "#F1F5F9" : "#FEF2F2",
-                  color: i === 0 ? "#D97706" : i === 1 ? "#64748B" : "#B91C1C",
+                  backgroundColor: i === 0 ? "#FEF3C7" : i === 1 ? "#ECFDF5" : "#FEF2F2",
+                  color: i === 0 ? "#D97706" : i === 1 ? "#059669" : "#B91C1C",
                   fontSize: "12px",
                   fontWeight: 800,
                 }}
@@ -175,17 +175,17 @@ export function Performance() {
                 src={emp.avatar}
                 alt={emp.name}
                 className="w-9 h-9 rounded-full object-cover shrink-0"
-                style={{ border: "2px solid #E2E8F0" }}
+                style={{ border: "2px solid #D1FAE5" }}
               />
               <div className="flex-1">
-                <p style={{ color: "#1E293B", fontSize: "13px", fontWeight: 600 }}>{emp.name}</p>
-                <p style={{ color: "#94A3B8", fontSize: "11px" }}>{emp.designation}</p>
+                <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 600 }}>{emp.name}</p>
+                <p style={{ color: "#6B7280", fontSize: "11px" }}>{emp.designation}</p>
               </div>
               <div className="flex items-center gap-3">
                 <div style={{ width: "120px" }}>
                   <div
                     className="rounded-full overflow-hidden"
-                    style={{ height: "6px", backgroundColor: "#E2E8F0" }}
+                    style={{ height: "6px", backgroundColor: "#D1FAE5" }}
                   >
                     <div
                       className="rounded-full"
@@ -196,7 +196,7 @@ export function Performance() {
                           emp.performance >= 95
                             ? "linear-gradient(90deg, #22C55E, #16A34A)"
                             : emp.performance >= 90
-                            ? "linear-gradient(90deg, #3B82F6, #1D4ED8)"
+                            ? "linear-gradient(90deg, #059669, #047857)"
                             : "linear-gradient(90deg, #F59E0B, #D97706)",
                       }}
                     />
@@ -206,8 +206,8 @@ export function Performance() {
                   className="px-2.5 py-1 rounded-full"
                   style={{
                     backgroundColor:
-                      emp.performance >= 95 ? "#F0FDF4" : emp.performance >= 90 ? "#EFF6FF" : "#FFFBEB",
-                    color: emp.performance >= 95 ? "#16A34A" : emp.performance >= 90 ? "#1D4ED8" : "#D97706",
+                      emp.performance >= 95 ? "#F0FDF4" : emp.performance >= 90 ? "#ECFDF5" : "#FFFBEB",
+                    color: emp.performance >= 95 ? "#16A34A" : emp.performance >= 90 ? "#047857" : "#D97706",
                     fontSize: "12px",
                     fontWeight: 800,
                   }}

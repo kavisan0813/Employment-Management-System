@@ -242,14 +242,14 @@ export const employees = [
 ];
 
 export const departments = [
-  { id: "D001", name: "Engineering", head: "Robert Chen", employees: 68, budget: 2800000, color: "#3B82F6" },
-  { id: "D002", name: "Marketing", head: "Marcus Williams", employees: 42, budget: 950000, color: "#8B5CF6" },
-  { id: "D003", name: "Design", head: "Yuki Tanaka", employees: 28, budget: 720000, color: "#EC4899" },
+  { id: "D001", name: "Engineering", head: "Robert Chen", employees: 68, budget: 2800000, color: "#059669" },
+  { id: "D002", name: "Marketing", head: "Marcus Williams", employees: 42, budget: 950000, color: "#14B8A6" },
+  { id: "D003", name: "Design", head: "Yuki Tanaka", employees: 28, budget: 720000, color: "#10B981" },
   { id: "D004", name: "Finance", head: "James Carter", employees: 31, budget: 1100000, color: "#F59E0B" },
   { id: "D005", name: "HR", head: "Emily Rodriguez", employees: 23, budget: 600000, color: "#22C55E" },
-  { id: "D006", name: "Product", head: "Priya Sharma", employees: 36, budget: 1500000, color: "#06B6D4" },
+  { id: "D006", name: "Product", head: "Priya Sharma", employees: 36, budget: 1500000, color: "#047857" },
   { id: "D007", name: "Sales", head: "Leo Martinez", employees: 55, budget: 1800000, color: "#EF4444" },
-  { id: "D008", name: "Operations", head: "Aisha Patel", employees: 29, budget: 1300000, color: "#10B981" },
+  { id: "D008", name: "Operations", head: "Aisha Patel", employees: 29, budget: 1300000, color: "#0EA5E9" },
 ];
 
 export const departmentHeadcount = [
@@ -295,7 +295,7 @@ export const recentActivities = [
     subtext: "$412,800 total disbursed",
     time: "3 hours ago",
     icon: "DollarSign",
-    color: "#3B82F6",
+    color: "#059669",
   },
   {
     id: 4,
@@ -304,7 +304,7 @@ export const recentActivities = [
     subtext: "Design Department • Remote",
     time: "5 hours ago",
     icon: "Briefcase",
-    color: "#8B5CF6",
+    color: "#14B8A6",
   },
   {
     id: 5,
@@ -322,7 +322,7 @@ export const recentActivities = [
     subtext: "April 15 – April 16, 2026",
     time: "2 days ago",
     icon: "BookOpen",
-    color: "#06B6D4",
+    color: "#0EA5E9",
   },
 ];
 
@@ -581,4 +581,67 @@ export const performanceData = [
   { name: "Q3 2025", score: 85 },
   { name: "Q4 2025", score: 88 },
   { name: "Q1 2026", score: 92 },
+];
+
+export const leaveRequests = [
+  {
+    id: "LR001",
+    employee: "Sarah Johnson",
+    avatar: "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    type: "Annual Leave",
+    from: "Apr 10",
+    to: "Apr 14",
+    days: 5,
+    status: "Pending",
+  },
+  {
+    id: "LR002",
+    employee: "Marcus Williams",
+    avatar: "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    type: "Sick Leave",
+    from: "Apr 7",
+    to: "Apr 8",
+    days: 2,
+    status: "Approved",
+  },
+  {
+    id: "LR003",
+    employee: "Yuki Tanaka",
+    avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    type: "Personal Leave",
+    from: "Apr 20",
+    to: "Apr 21",
+    days: 2,
+    status: "Pending",
+  },
+  {
+    id: "LR004",
+    employee: "James Carter",
+    avatar: "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    type: "Annual Leave",
+    from: "Apr 1",
+    to: "Apr 7",
+    days: 5,
+    status: "Approved",
+  },
+  {
+    id: "LR005",
+    employee: "Emily Rodriguez",
+    avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    type: "Sick Leave",
+    from: "Mar 28",
+    to: "Mar 29",
+    days: 2,
+    status: "Rejected",
+  },
+  {
+    id: "LR006",
+    employee: "Priya Sharma",
+    avatar: "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    type: "Annual Leave",
+    from: "Apr 15",
+    to: "Apr 16",
+    days: 2,
+    status: "Pending",
+  },
 ];

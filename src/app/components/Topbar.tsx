@@ -16,7 +16,7 @@ export function Topbar({ title, sidebarWidth }: TopbarProps) {
       style={{
         left: `${sidebarWidth}px`,
         backgroundColor: "white",
-        borderBottom: "1px solid #E2E8F0",
+        borderBottom: "1px solid #D1FAE5",
         paddingLeft: "24px",
         paddingRight: "24px",
         gap: "16px",
@@ -26,7 +26,7 @@ export function Topbar({ title, sidebarWidth }: TopbarProps) {
       <div className="flex-1 min-w-0">
         <h1
           style={{
-            color: "#0F172A",
+            color: "#022C22",
             fontSize: "18px",
             fontWeight: 700,
             lineHeight: 1,
@@ -35,7 +35,7 @@ export function Topbar({ title, sidebarWidth }: TopbarProps) {
         >
           {title}
         </h1>
-        <p style={{ color: "#94A3B8", fontSize: "12px", marginTop: "2px" }}>
+        <p style={{ color: "#6B7280", fontSize: "12px", marginTop: "2px" }}>
           Monday, April 6, 2026
         </p>
       </div>
@@ -44,13 +44,13 @@ export function Topbar({ title, sidebarWidth }: TopbarProps) {
       <div
         className="flex items-center gap-2 rounded-xl px-3"
         style={{
-          backgroundColor: "#F8FAFC",
-          border: "1px solid #E2E8F0",
+          backgroundColor: "#F0FDF4",
+          border: "1px solid #D1FAE5",
           height: "38px",
           width: "260px",
         }}
       >
-        <Search size={15} color="#94A3B8" />
+        <Search size={15} color="#6B7280" />
         <input
           type="text"
           placeholder="Search employees, reports..."
@@ -59,7 +59,7 @@ export function Topbar({ title, sidebarWidth }: TopbarProps) {
             outline: "none",
             background: "transparent",
             fontSize: "13px",
-            color: "#475569",
+            color: "#166534",
             width: "100%",
           }}
         />
@@ -71,20 +71,20 @@ export function Topbar({ title, sidebarWidth }: TopbarProps) {
         style={{
           width: "38px",
           height: "38px",
-          backgroundColor: "#F8FAFC",
-          border: "1px solid #E2E8F0",
+          backgroundColor: "#F0FDF4",
+          border: "1px solid #D1FAE5",
           cursor: "pointer",
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#EFF6FF";
-          (e.currentTarget as HTMLButtonElement).style.borderColor = "#BFDBFE";
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5";
+          (e.currentTarget as HTMLButtonElement).style.borderColor = "#A7F3D0";
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F8FAFC";
-          (e.currentTarget as HTMLButtonElement).style.borderColor = "#E2E8F0";
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0FDF4";
+          (e.currentTarget as HTMLButtonElement).style.borderColor = "#D1FAE5";
         }}
       >
-        <Bell size={16} color="#475569" />
+        <Bell size={16} color="#166534" />
         {notifications > 0 && (
           <span
             className="absolute top-0.5 right-0.5 flex items-center justify-center rounded-full"
@@ -108,32 +108,32 @@ export function Topbar({ title, sidebarWidth }: TopbarProps) {
           onClick={() => setShowDropdown(!showDropdown)}
           className="flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 transition-colors"
           style={{
-            border: "1px solid #E2E8F0",
-            backgroundColor: showDropdown ? "#F0F9FF" : "#F8FAFC",
+            border: "1px solid #D1FAE5",
+            backgroundColor: showDropdown ? "#ECFDF5" : "#F0FDF4",
             cursor: "pointer",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0F9FF";
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5";
           }}
           onMouseLeave={(e) => {
-            if (!showDropdown) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F8FAFC";
+            if (!showDropdown) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0FDF4";
           }}
         >
           <div
             className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-            style={{ background: "linear-gradient(135deg, #3B82F6, #8B5CF6)" }}
+            style={{ background: "linear-gradient(135deg, #059669, #14B8A6)" }}
           >
             <span style={{ color: "white", fontSize: "11px", fontWeight: 700 }}>RP</span>
           </div>
           <div className="text-left">
-            <p style={{ color: "#0F172A", fontSize: "13px", fontWeight: 600, lineHeight: 1.2 }}>
+            <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 600, lineHeight: 1.2 }}>
               Ryan Park
             </p>
-            <p style={{ color: "#94A3B8", fontSize: "11px", lineHeight: 1.2 }}>Admin</p>
+            <p style={{ color: "#6B7280", fontSize: "11px", lineHeight: 1.2 }}>Admin</p>
           </div>
           <ChevronDown
             size={14}
-            color="#94A3B8"
+            color="#6B7280"
             style={{ transition: "transform 0.2s", transform: showDropdown ? "rotate(180deg)" : "rotate(0deg)" }}
           />
         </button>
@@ -146,7 +146,7 @@ export function Topbar({ title, sidebarWidth }: TopbarProps) {
               style={{
                 width: "180px",
                 backgroundColor: "white",
-                border: "1px solid #E2E8F0",
+                border: "1px solid #D1FAE5",
                 boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
               }}
             >
@@ -157,21 +157,21 @@ export function Topbar({ title, sidebarWidth }: TopbarProps) {
                 <button
                   key={item.label}
                   className="w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left"
-                  style={{ color: "#475569", fontSize: "13px" }}
+                  style={{ color: "#166534", fontSize: "13px" }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F8FAFC";
-                    (e.currentTarget as HTMLButtonElement).style.color = "#0F172A";
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0FDF4";
+                    (e.currentTarget as HTMLButtonElement).style.color = "#022C22";
                   }}
                   onMouseLeave={(e) => {
                     (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-                    (e.currentTarget as HTMLButtonElement).style.color = "#475569";
+                    (e.currentTarget as HTMLButtonElement).style.color = "#166534";
                   }}
                 >
                   <item.icon size={14} />
                   {item.label}
                 </button>
               ))}
-              <div style={{ height: "1px", backgroundColor: "#E2E8F0", margin: "4px 0" }} />
+              <div style={{ height: "1px", backgroundColor: "#D1FAE5", margin: "4px 0" }} />
               <button
                 className="w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left"
                 style={{ color: "#EF4444", fontSize: "13px" }}

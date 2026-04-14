@@ -32,8 +32,8 @@ export function Payroll() {
             className="flex items-center gap-3 rounded-xl px-4 py-2.5 transition-colors"
             style={{
               backgroundColor: "white",
-              border: "1px solid #E2E8F0",
-              color: "#0F172A",
+              border: "1px solid #D1FAE5",
+              color: "#022C22",
               fontSize: "14px",
               fontWeight: 700,
               boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
@@ -41,12 +41,12 @@ export function Payroll() {
           >
             <div
               className="w-2 h-2 rounded-full"
-              style={{ backgroundColor: "#3B82F6" }}
+              style={{ backgroundColor: "#059669" }}
             />
             {selectedMonth}
             <ChevronDown
               size={14}
-              color="#94A3B8"
+              color="#6B7280"
               style={{ transform: showMonthDropdown ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}
             />
           </button>
@@ -58,7 +58,7 @@ export function Payroll() {
                 style={{
                   minWidth: "180px",
                   backgroundColor: "white",
-                  border: "1px solid #E2E8F0",
+                  border: "1px solid #D1FAE5",
                   boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
                 }}
               >
@@ -69,13 +69,13 @@ export function Payroll() {
                     className="w-full px-4 py-2.5 text-left transition-colors"
                     style={{
                       fontSize: "13px",
-                      color: selectedMonth === m ? "#3B82F6" : "#475569",
-                      backgroundColor: selectedMonth === m ? "#EFF6FF" : "transparent",
+                      color: selectedMonth === m ? "#059669" : "#166534",
+                      backgroundColor: selectedMonth === m ? "#ECFDF5" : "transparent",
                       fontWeight: selectedMonth === m ? 700 : 400,
                     }}
                     onMouseEnter={(e) => {
                       if (selectedMonth !== m)
-                        (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F8FAFC";
+                        (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0FDF4";
                     }}
                     onMouseLeave={(e) => {
                       if (selectedMonth !== m)
@@ -97,11 +97,11 @@ export function Payroll() {
           style={{
             background: runningPayroll
               ? "linear-gradient(135deg, #22C55E, #16A34A)"
-              : "linear-gradient(135deg, #3B82F6, #1D4ED8)",
+              : "linear-gradient(135deg, #059669, #047857)",
             color: "white",
             fontSize: "14px",
             fontWeight: 700,
-            boxShadow: "0 4px 14px rgba(59, 130, 246, 0.4)",
+            boxShadow: "0 4px 14px rgba(5, 150, 105, 0.4)",
             transition: "all 0.3s",
           }}
         >
@@ -117,9 +117,9 @@ export function Payroll() {
             label: "Total Gross Salary",
             value: `$${totalGross.toLocaleString()}`,
             sub: `${payrollEmployees.length} employees`,
-            color: "#3B82F6",
-            bg: "linear-gradient(135deg, #EFF6FF, #DBEAFE)",
-            border: "#BFDBFE",
+            color: "#059669",
+            bg: "linear-gradient(135deg, #ECFDF5, #D1FAE5)",
+            border: "#A7F3D0",
             icon: "💰",
           },
           {
@@ -152,13 +152,13 @@ export function Payroll() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p style={{ color: "#64748B", fontSize: "12px", fontWeight: 500, marginBottom: "6px" }}>
+                <p style={{ color: "#6B7280", fontSize: "12px", fontWeight: 500, marginBottom: "6px" }}>
                   {card.label}
                 </p>
                 <p style={{ color: card.color, fontSize: "28px", fontWeight: 800, letterSpacing: "-0.5px" }}>
                   {card.value}
                 </p>
-                <p style={{ color: "#94A3B8", fontSize: "12px", marginTop: "4px" }}>{card.sub}</p>
+                <p style={{ color: "#6B7280", fontSize: "12px", marginTop: "4px" }}>{card.sub}</p>
               </div>
               <span style={{ fontSize: "28px" }}>{card.icon}</span>
             </div>
@@ -171,19 +171,19 @@ export function Payroll() {
         className="rounded-2xl overflow-hidden"
         style={{
           backgroundColor: "white",
-          border: "1px solid #E2E8F0",
+          border: "1px solid #D1FAE5",
           boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
         }}
       >
         <div
           className="px-6 py-4 flex items-center justify-between"
-          style={{ borderBottom: "1px solid #E2E8F0" }}
+          style={{ borderBottom: "1px solid #D1FAE5" }}
         >
           <div>
-            <h3 style={{ color: "#0F172A", fontSize: "15px", fontWeight: 700 }}>
+            <h3 style={{ color: "#022C22", fontSize: "15px", fontWeight: 700 }}>
               Payroll Details — {selectedMonth}
             </h3>
-            <p style={{ color: "#94A3B8", fontSize: "12px", marginTop: "2px" }}>
+            <p style={{ color: "#6B7280", fontSize: "12px", marginTop: "2px" }}>
               {payrollEmployees.filter((e) => e.status === "Paid").length} paid ·{" "}
               {payrollEmployees.filter((e) => e.status === "Pending").length} pending
             </p>
@@ -191,19 +191,19 @@ export function Payroll() {
           <button
             className="flex items-center gap-2 px-4 py-2 rounded-xl transition-colors"
             style={{
-              border: "1px solid #E2E8F0",
-              color: "#475569",
+              border: "1px solid #D1FAE5",
+              color: "#166534",
               fontSize: "13px",
               fontWeight: 600,
-              backgroundColor: "#F8FAFC",
+              backgroundColor: "#F0FDF4",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#EFF6FF";
-              (e.currentTarget as HTMLButtonElement).style.color = "#3B82F6";
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5";
+              (e.currentTarget as HTMLButtonElement).style.color = "#059669";
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F8FAFC";
-              (e.currentTarget as HTMLButtonElement).style.color = "#475569";
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0FDF4";
+              (e.currentTarget as HTMLButtonElement).style.color = "#166534";
             }}
           >
             <Download size={14} />
@@ -215,8 +215,8 @@ export function Payroll() {
         <div
           className="grid px-6 py-3"
           style={{
-            backgroundColor: "#F8FAFC",
-            borderBottom: "1px solid #E2E8F0",
+            backgroundColor: "#ECFDF5",
+            borderBottom: "1px solid #D1FAE5",
             gridTemplateColumns: "2.5fr 1.2fr 1fr 1fr 1fr 1fr 1fr",
           }}
         >
@@ -224,7 +224,7 @@ export function Payroll() {
             <span
               key={col}
               style={{
-                color: "#64748B",
+                color: "#166534",
                 fontSize: "11px",
                 fontWeight: 700,
                 letterSpacing: "0.5px",
@@ -243,9 +243,9 @@ export function Payroll() {
             className="grid px-6 py-4 items-center transition-colors"
             style={{
               gridTemplateColumns: "2.5fr 1.2fr 1fr 1fr 1fr 1fr 1fr",
-              borderBottom: i < payrollEmployees.length - 1 ? "1px solid #F1F5F9" : "none",
+              borderBottom: i < payrollEmployees.length - 1 ? "1px solid #D1FAE5" : "none",
               backgroundColor:
-                hoveredRow === emp.id ? "#EFF6FF" : i % 2 === 0 ? "white" : "#FAFBFD",
+                hoveredRow === emp.id ? "#ECFDF5" : i % 2 === 0 ? "white" : "#F0FDF4",
             }}
             onMouseEnter={() => setHoveredRow(emp.id)}
             onMouseLeave={() => setHoveredRow(null)}
@@ -256,19 +256,19 @@ export function Payroll() {
                 src={emp.avatar}
                 alt={emp.name}
                 className="rounded-full object-cover shrink-0"
-                style={{ width: "36px", height: "36px", border: "2px solid #E2E8F0" }}
+                style={{ width: "36px", height: "36px", border: "2px solid #D1FAE5" }}
               />
               <div>
-                <p style={{ color: "#0F172A", fontSize: "13px", fontWeight: 600 }}>{emp.name}</p>
-                <p style={{ color: "#94A3B8", fontSize: "11px" }}>{emp.designation}</p>
+                <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 600 }}>{emp.name}</p>
+                <p style={{ color: "#6B7280", fontSize: "11px" }}>{emp.designation}</p>
               </div>
             </div>
 
             {/* Department */}
-            <span style={{ color: "#475569", fontSize: "13px" }}>{emp.department}</span>
+            <span style={{ color: "#166534", fontSize: "13px" }}>{emp.department}</span>
 
             {/* Gross */}
-            <span style={{ color: "#0F172A", fontSize: "13px", fontWeight: 600 }}>
+            <span style={{ color: "#022C22", fontSize: "13px", fontWeight: 600 }}>
               ${emp.gross.toLocaleString()}
             </span>
 
@@ -300,22 +300,22 @@ export function Payroll() {
             <button
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors"
               style={{
-                border: "1px solid #E2E8F0",
-                color: "#475569",
+                border: "1px solid #D1FAE5",
+                color: "#166534",
                 fontSize: "11px",
                 fontWeight: 600,
                 backgroundColor: "white",
                 width: "fit-content",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#EFF6FF";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#BFDBFE";
-                (e.currentTarget as HTMLButtonElement).style.color = "#3B82F6";
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5";
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "#A7F3D0";
+                (e.currentTarget as HTMLButtonElement).style.color = "#059669";
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLButtonElement).style.backgroundColor = "white";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#E2E8F0";
-                (e.currentTarget as HTMLButtonElement).style.color = "#475569";
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "#D1FAE5";
+                (e.currentTarget as HTMLButtonElement).style.color = "#166534";
               }}
             >
               <Download size={12} />
@@ -329,15 +329,15 @@ export function Payroll() {
           className="grid px-6 py-4"
           style={{
             gridTemplateColumns: "2.5fr 1.2fr 1fr 1fr 1fr 1fr 1fr",
-            borderTop: "2px solid #E2E8F0",
-            backgroundColor: "#F8FAFC",
+            borderTop: "2px solid #D1FAE5",
+            backgroundColor: "#ECFDF5",
           }}
         >
-          <span style={{ color: "#0F172A", fontSize: "13px", fontWeight: 700 }}>
+          <span style={{ color: "#022C22", fontSize: "13px", fontWeight: 700 }}>
             Total ({payrollEmployees.length} employees)
           </span>
           <span />
-          <span style={{ color: "#0F172A", fontSize: "13px", fontWeight: 800 }}>
+          <span style={{ color: "#022C22", fontSize: "13px", fontWeight: 800 }}>
             ${totalGross.toLocaleString()}
           </span>
           <span style={{ color: "#EF4444", fontSize: "13px", fontWeight: 700 }}>

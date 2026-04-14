@@ -24,8 +24,8 @@ const reports = [
     title: "Headcount Report",
     desc: "Full employee roster with details",
     icon: Users,
-    color: "#3B82F6",
-    bg: "#EFF6FF",
+    color: "#059669",
+    bg: "#ECFDF5",
     generated: "Today",
     size: "248 records",
   },
@@ -51,8 +51,8 @@ const reports = [
     title: "Performance Review",
     desc: "Q1 2026 performance scores",
     icon: TrendingUp,
-    color: "#8B5CF6",
-    bg: "#F5F3FF",
+    color: "#14B8A6",
+    bg: "#F0FDFA",
     generated: "Mar 31, 2026",
     size: "248 reviews",
   },
@@ -60,8 +60,8 @@ const reports = [
     title: "Recruitment Pipeline",
     desc: "Hiring funnel & candidate stats",
     icon: FileText,
-    color: "#EC4899",
-    bg: "#FDF2F8",
+    color: "#0EA5E9",
+    bg: "#F0F9FF",
     generated: "Apr 5, 2026",
     size: "12 candidates",
   },
@@ -82,7 +82,7 @@ export function Reports() {
       {/* KPI */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total Employees", value: "248", color: "#3B82F6" },
+          { label: "Total Employees", value: "248", color: "#059669" },
           { label: "Monthly Payroll", value: "$86,584", color: "#22C55E" },
           { label: "Attendance Rate", value: "88.3%", color: "#F59E0B" },
           { label: "Turnover Rate", value: "3.2%", color: "#EF4444" },
@@ -90,9 +90,9 @@ export function Reports() {
           <div
             key={i}
             className="rounded-xl px-5 py-4"
-            style={{ backgroundColor: "white", border: "1px solid #E2E8F0" }}
+            style={{ backgroundColor: "white", border: "1px solid #D1FAE5" }}
           >
-            <p style={{ color: "#94A3B8", fontSize: "12px" }}>{s.label}</p>
+            <p style={{ color: "#6B7280", fontSize: "12px" }}>{s.label}</p>
             <p style={{ color: s.color, fontSize: "24px", fontWeight: 800 }}>{s.value}</p>
           </div>
         ))}
@@ -102,28 +102,28 @@ export function Reports() {
         {/* Headcount Trend Chart */}
         <div
           className="col-span-2 rounded-2xl p-6"
-          style={{ backgroundColor: "white", border: "1px solid #E2E8F0" }}
+          style={{ backgroundColor: "white", border: "1px solid #D1FAE5" }}
         >
-          <h3 style={{ color: "#0F172A", fontSize: "15px", fontWeight: 700, marginBottom: "4px" }}>
+          <h3 style={{ color: "#022C22", fontSize: "15px", fontWeight: 700, marginBottom: "4px" }}>
             Headcount Growth Trend
           </h3>
-          <p style={{ color: "#94A3B8", fontSize: "12px", marginBottom: "20px" }}>
+          <p style={{ color: "#6B7280", fontSize: "12px", marginBottom: "20px" }}>
             Oct 2025 — Apr 2026
           </p>
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={headcountTrend}>
               <defs>
                 <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#059669" stopOpacity={0.15} />
+                  <stop offset="95%" stopColor="#059669" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-              <XAxis dataKey="month" tick={{ fill: "#94A3B8", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis domain={[220, 255]} tick={{ fill: "#94A3B8", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#D1FAE5" vertical={false} />
+              <XAxis dataKey="month" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis domain={[220, 255]} tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#0F172A",
+                  backgroundColor: "#064E3B",
                   border: "none",
                   borderRadius: "10px",
                   color: "white",
@@ -133,10 +133,10 @@ export function Reports() {
               <Area
                 type="monotone"
                 dataKey="count"
-                stroke="#3B82F6"
+                stroke="#059669"
                 strokeWidth={3}
                 fill="url(#areaGrad)"
-                dot={{ fill: "#3B82F6", r: 4 }}
+                dot={{ fill: "#059669", r: 4 }}
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -145,26 +145,26 @@ export function Reports() {
         {/* Quick Stats */}
         <div
           className="rounded-2xl p-6"
-          style={{ backgroundColor: "white", border: "1px solid #E2E8F0" }}
+          style={{ backgroundColor: "white", border: "1px solid #D1FAE5" }}
         >
-          <h3 style={{ color: "#0F172A", fontSize: "15px", fontWeight: 700, marginBottom: "16px" }}>
+          <h3 style={{ color: "#022C22", fontSize: "15px", fontWeight: 700, marginBottom: "16px" }}>
             Key Metrics
           </h3>
           <div className="space-y-4">
             {[
-              { label: "Avg. Tenure", value: "3.2 years", bar: 64, color: "#3B82F6" },
+              { label: "Avg. Tenure", value: "3.2 years", bar: 64, color: "#059669" },
               { label: "Avg. Salary", value: "$94,200", bar: 72, color: "#22C55E" },
-              { label: "Training Hours", value: "48 hrs/yr", bar: 48, color: "#8B5CF6" },
+              { label: "Training Hours", value: "48 hrs/yr", bar: 48, color: "#14B8A6" },
               { label: "Retention Rate", value: "96.8%", bar: 97, color: "#F59E0B" },
             ].map((m, i) => (
               <div key={i}>
                 <div className="flex items-center justify-between mb-1">
-                  <span style={{ color: "#64748B", fontSize: "12px" }}>{m.label}</span>
-                  <span style={{ color: "#0F172A", fontSize: "13px", fontWeight: 700 }}>{m.value}</span>
+                  <span style={{ color: "#6B7280", fontSize: "12px" }}>{m.label}</span>
+                  <span style={{ color: "#022C22", fontSize: "13px", fontWeight: 700 }}>{m.value}</span>
                 </div>
                 <div
                   className="rounded-full overflow-hidden"
-                  style={{ height: "5px", backgroundColor: "#E2E8F0" }}
+                  style={{ height: "5px", backgroundColor: "#D1FAE5" }}
                 >
                   <div
                     className="rounded-full"
@@ -180,9 +180,9 @@ export function Reports() {
       {/* Reports Grid */}
       <div
         className="rounded-2xl p-6"
-        style={{ backgroundColor: "white", border: "1px solid #E2E8F0" }}
+        style={{ backgroundColor: "white", border: "1px solid #D1FAE5" }}
       >
-        <h3 style={{ color: "#0F172A", fontSize: "15px", fontWeight: 700, marginBottom: "16px" }}>
+        <h3 style={{ color: "#022C22", fontSize: "15px", fontWeight: 700, marginBottom: "16px" }}>
           Available Reports
         </h3>
         <div className="grid grid-cols-3 gap-4">
@@ -191,17 +191,17 @@ export function Reports() {
               key={i}
               className="rounded-xl p-4 flex items-start justify-between transition-all cursor-pointer"
               style={{
-                border: "1px solid #E2E8F0",
-                backgroundColor: "#F8FAFC",
+                border: "1px solid #D1FAE5",
+                backgroundColor: "#F0FDF4",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = "#BFDBFE";
+                (e.currentTarget as HTMLDivElement).style.borderColor = "#A7F3D0";
                 (e.currentTarget as HTMLDivElement).style.backgroundColor = "white";
                 (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 12px rgba(0,0,0,0.06)";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = "#E2E8F0";
-                (e.currentTarget as HTMLDivElement).style.backgroundColor = "#F8FAFC";
+                (e.currentTarget as HTMLDivElement).style.borderColor = "#D1FAE5";
+                (e.currentTarget as HTMLDivElement).style.backgroundColor = "#F0FDF4";
                 (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
               }}
             >
@@ -213,8 +213,8 @@ export function Reports() {
                   <report.icon size={16} color={report.color} />
                 </div>
                 <div>
-                  <p style={{ color: "#0F172A", fontSize: "13px", fontWeight: 700 }}>{report.title}</p>
-                  <p style={{ color: "#94A3B8", fontSize: "11px", marginTop: "1px" }}>{report.desc}</p>
+                  <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 700 }}>{report.title}</p>
+                  <p style={{ color: "#6B7280", fontSize: "11px", marginTop: "1px" }}>{report.desc}</p>
                   <p style={{ color: "#CBD5E1", fontSize: "10px", marginTop: "4px" }}>
                     {report.size} · {report.generated}
                   </p>
@@ -222,14 +222,14 @@ export function Reports() {
               </div>
               <button
                 className="p-2 rounded-lg transition-colors shrink-0"
-                style={{ color: "#94A3B8" }}
+                style={{ color: "#6B7280" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#EFF6FF";
-                  (e.currentTarget as HTMLButtonElement).style.color = "#3B82F6";
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5";
+                  (e.currentTarget as HTMLButtonElement).style.color = "#059669";
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-                  (e.currentTarget as HTMLButtonElement).style.color = "#94A3B8";
+                  (e.currentTarget as HTMLButtonElement).style.color = "#6B7280";
                 }}
               >
                 <Download size={15} />

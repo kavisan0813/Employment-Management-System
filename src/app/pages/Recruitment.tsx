@@ -9,11 +9,11 @@ const STAGE_CONFIG: Record<
   { color: string; bg: string; border: string; badge: string; badgeText: string }
 > = {
   Applied: {
-    color: "#3B82F6",
-    bg: "#EFF6FF",
-    border: "#BFDBFE",
-    badge: "#DBEAFE",
-    badgeText: "#1D4ED8",
+    color: "#059669",
+    bg: "#ECFDF5",
+    border: "#A7F3D0",
+    badge: "#D1FAE5",
+    badgeText: "#047857",
   },
   Screening: {
     color: "#F59E0B",
@@ -23,18 +23,18 @@ const STAGE_CONFIG: Record<
     badgeText: "#B45309",
   },
   Interview: {
-    color: "#8B5CF6",
-    bg: "#F5F3FF",
-    border: "#DDD6FE",
-    badge: "#EDE9FE",
-    badgeText: "#6D28D9",
+    color: "#14B8A6",
+    bg: "#F0FDFA",
+    border: "#99F6E4",
+    badge: "#CCFBF1",
+    badgeText: "#0D9488",
   },
   "Offer Sent": {
-    color: "#06B6D4",
-    bg: "#ECFEFF",
-    border: "#A5F3FC",
-    badge: "#CFFAFE",
-    badgeText: "#0E7490",
+    color: "#0EA5E9",
+    bg: "#F0F9FF",
+    border: "#BAE6FD",
+    badge: "#E0F2FE",
+    badgeText: "#0369A1",
   },
   Hired: {
     color: "#22C55E",
@@ -46,12 +46,12 @@ const STAGE_CONFIG: Record<
 };
 
 const AVATAR_COLORS = [
-  "linear-gradient(135deg, #3B82F6, #1D4ED8)",
-  "linear-gradient(135deg, #8B5CF6, #7C3AED)",
+  "linear-gradient(135deg, #059669, #047857)",
+  "linear-gradient(135deg, #14B8A6, #0D9488)",
   "linear-gradient(135deg, #EC4899, #DB2777)",
   "linear-gradient(135deg, #F59E0B, #D97706)",
   "linear-gradient(135deg, #22C55E, #16A34A)",
-  "linear-gradient(135deg, #06B6D4, #0E7490)",
+  "linear-gradient(135deg, #0EA5E9, #0369A1)",
 ];
 
 interface Candidate {
@@ -82,7 +82,7 @@ function CandidateCard({
       className="rounded-xl p-4 transition-all cursor-pointer"
       style={{
         backgroundColor: hovered ? "white" : "white",
-        border: hovered ? `1px solid ${config.color}40` : "1px solid #E2E8F0",
+        border: hovered ? `1px solid ${config.color}40` : "1px solid #D1FAE5",
         boxShadow: hovered
           ? `0 4px 16px rgba(0,0,0,0.08), 0 0 0 2px ${config.color}20`
           : "0 1px 3px rgba(0,0,0,0.04)",
@@ -96,7 +96,7 @@ function CandidateCard({
               src={candidate.avatar}
               alt={candidate.name}
               className="rounded-full object-cover shrink-0"
-              style={{ width: "36px", height: "36px", border: "2px solid #E2E8F0" }}
+              style={{ width: "36px", height: "36px", border: "2px solid #D1FAE5" }}
               onError={(e) => {
                 e.currentTarget.style.display = "none";
               }}
@@ -116,16 +116,16 @@ function CandidateCard({
             </div>
           )}
           <div>
-            <p style={{ color: "#0F172A", fontSize: "13px", fontWeight: 700 }}>{candidate.name}</p>
-            <p style={{ color: "#64748B", fontSize: "11px" }}>{candidate.role}</p>
+            <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 700 }}>{candidate.name}</p>
+            <p style={{ color: "#6B7280", fontSize: "11px" }}>{candidate.role}</p>
           </div>
         </div>
         <button
           className="p-1.5 rounded-lg transition-colors"
           style={{ color: "#CBD5E1" }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F1F5F9";
-            (e.currentTarget as HTMLButtonElement).style.color = "#64748B";
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5";
+            (e.currentTarget as HTMLButtonElement).style.color = "#6B7280";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
@@ -137,28 +137,28 @@ function CandidateCard({
       </div>
 
       <div className="flex items-center gap-1.5 mb-3">
-        <Calendar size={11} color="#94A3B8" />
-        <span style={{ color: "#94A3B8", fontSize: "11px" }}>Applied {candidate.date}</span>
+        <Calendar size={11} color="#6B7280" />
+        <span style={{ color: "#6B7280", fontSize: "11px" }}>Applied {candidate.date}</span>
       </div>
 
       {/* Action icons */}
       <div
         className="flex items-center gap-2 pt-3"
-        style={{ borderTop: "1px solid #F1F5F9" }}
+        style={{ borderTop: "1px solid #D1FAE5" }}
       >
         <button
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg flex-1 justify-center transition-colors"
           style={{
             fontSize: "11px",
             fontWeight: 600,
-            color: "#3B82F6",
-            backgroundColor: "#EFF6FF",
+            color: "#059669",
+            backgroundColor: "#ECFDF5",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#DBEAFE";
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#D1FAE5";
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#EFF6FF";
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5";
           }}
         >
           <Eye size={11} />
@@ -169,14 +169,14 @@ function CandidateCard({
           style={{
             fontSize: "11px",
             fontWeight: 600,
-            color: "#8B5CF6",
-            backgroundColor: "#F5F3FF",
+            color: "#14B8A6",
+            backgroundColor: "#F0FDFA",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#EDE9FE";
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#CCFBF1";
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F5F3FF";
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0FDFA";
           }}
         >
           <MessageSquare size={11} />
@@ -245,11 +245,11 @@ export function Recruitment() {
         <button
           className="flex items-center gap-2 rounded-xl px-5 py-2.5 transition-all hover:opacity-90"
           style={{
-            background: "linear-gradient(135deg, #3B82F6, #1D4ED8)",
+            background: "linear-gradient(135deg, #059669, #047857)",
             color: "white",
             fontSize: "13px",
             fontWeight: 700,
-            boxShadow: "0 4px 12px rgba(59, 130, 246, 0.35)",
+            boxShadow: "0 4px 12px rgba(5, 150, 105, 0.35)",
           }}
         >
           <Plus size={15} />
@@ -262,15 +262,15 @@ export function Recruitment() {
         className="rounded-xl p-4 mb-5 flex items-center gap-6"
         style={{
           backgroundColor: "white",
-          border: "1px solid #E2E8F0",
+          border: "1px solid #D1FAE5",
           boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
         }}
       >
         <div>
-          <p style={{ color: "#94A3B8", fontSize: "11px" }}>Total Candidates</p>
-          <p style={{ color: "#0F172A", fontSize: "18px", fontWeight: 800 }}>{totalCandidates}</p>
+          <p style={{ color: "#6B7280", fontSize: "11px" }}>Total Candidates</p>
+          <p style={{ color: "#022C22", fontSize: "18px", fontWeight: 800 }}>{totalCandidates}</p>
         </div>
-        <div style={{ height: "36px", width: "1px", backgroundColor: "#E2E8F0" }} />
+        <div style={{ height: "36px", width: "1px", backgroundColor: "#D1FAE5" }} />
         {/* Progress bar */}
         <div className="flex-1">
           <div className="flex items-center gap-1 mb-1.5">
@@ -297,7 +297,7 @@ export function Recruitment() {
               return (
                 <div key={stage} className="flex items-center gap-1">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: config.color }} />
-                  <span style={{ color: "#94A3B8", fontSize: "11px" }}>
+                  <span style={{ color: "#6B7280", fontSize: "11px" }}>
                     {stage} ({pipeline[stage].length})
                   </span>
                 </div>
@@ -305,9 +305,9 @@ export function Recruitment() {
             })}
           </div>
         </div>
-        <div style={{ height: "36px", width: "1px", backgroundColor: "#E2E8F0" }} />
+        <div style={{ height: "36px", width: "1px", backgroundColor: "#D1FAE5" }} />
         <div>
-          <p style={{ color: "#94A3B8", fontSize: "11px" }}>Hired This Month</p>
+          <p style={{ color: "#6B7280", fontSize: "11px" }}>Hired This Month</p>
           <p style={{ color: "#22C55E", fontSize: "18px", fontWeight: 800 }}>
             {pipeline["Hired"].length}
           </p>
@@ -326,8 +326,8 @@ export function Recruitment() {
               className="flex-shrink-0 rounded-2xl flex flex-col"
               style={{
                 width: "240px",
-                backgroundColor: "#F8FAFC",
-                border: "1px solid #E2E8F0",
+                backgroundColor: "#F0FDF4",
+                border: "1px solid #D1FAE5",
               }}
             >
               {/* Column Header */}
