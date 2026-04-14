@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
-import { attendanceCalendar, dailyLogs } from "../data/mockData";
+import { useState, useRef, useEffect } from "react";
+import { ChevronLeft, ChevronRight, CalendarDays, ChevronDown } from "lucide-react";
+import { attendanceCalendar, dailyLogs, employees } from "../data/mockData";
 
 const STATUS_COLORS: Record<string, { bg: string; color: string; dot: string; label: string }> = {
   Present: { bg: "var(--secondary)", color: "var(--primary)", dot: "var(--primary)", label: "Present" },
@@ -12,21 +12,50 @@ const STATUS_COLORS: Record<string, { bg: string; color: string; dot: string; la
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-// April 2026 starts on Wednesday (day index = 3)
-const APRIL_START_DAY = 3;
-const APRIL_DAYS = 30;
+const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"];
 
 export function Attendance() {
-  const [selectedEmployee, setSelectedEmployee] = useState("Sarah Johnson");
+  // Start at April 2026
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 3, 1));
+  const [selectedEmployee, setSelectedEmployee] = useState(employees[0].name);
+  const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowEmployeeDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const monthLabel = `${MONTH_NAMES[month]} ${year}`;
+
+  // Compute calendar grid dynamically
+  const startDay = new Date(year, month, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const calendarDays: (number | null)[] = [
-    ...Array(APRIL_START_DAY).fill(null),
-    ...Array.from({ length: APRIL_DAYS }, (_, i) => i + 1),
+    ...Array(startDay).fill(null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
-
-  // Pad to complete weeks
   while (calendarDays.length % 7 !== 0) calendarDays.push(null);
+
+  function prevMonth() {
+    setCurrentDate(new Date(year, month - 1, 1));
+  }
+  function nextMonth() {
+    setCurrentDate(new Date(year, month + 1, 1));
+  }
+
+  const selectedEmp = employees.find((e) => e.name === selectedEmployee) || employees[0];
 
   const logStatusConfig: Record<string, { bg: string; color: string }> = {
     Present: { bg: "var(--secondary)", color: "var(--primary)" },
@@ -47,47 +76,199 @@ export function Attendance() {
     <div style={{ maxWidth: "1360px" }}>
       {/* Top bar */}
       <div className="flex items-center justify-between mb-6">
+
+        {/* ── Calendar month navigator ── */}
         <div
-          className="flex items-center gap-3 rounded-xl px-4 py-2.5 shadow-sm"
+          className="flex items-center gap-1 rounded-2xl px-2 py-2"
           style={{
             backgroundColor: "var(--card)",
             border: "1px solid var(--border)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
           }}
         >
+          {/* Prev arrow */}
           <button
-            className="p-1.5 rounded-lg transition-colors"
-            style={{ color: "#6B7280" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <div className="flex items-center gap-2">
-            <CalendarDays size={16} color="var(--primary)" />
-            <span style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>April 2026</span>
-          </div>
-          <button
-            className="p-1.5 rounded-lg transition-colors"
+            onClick={prevMonth}
+            className="w-7 h-7 flex items-center justify-center rounded-xl transition-all"
             style={{ color: "var(--muted-foreground)" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)";
+              (e.currentTarget as HTMLButtonElement).style.color = "var(--primary)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+              (e.currentTarget as HTMLButtonElement).style.color = "var(--muted-foreground)";
+            }}
           >
-            <ChevronRight size={16} />
+            <ChevronLeft size={15} />
+          </button>
+
+          {/* Month label */}
+          <div
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl"
+            style={{ backgroundColor: "var(--secondary)", minWidth: "130px", justifyContent: "center" }}
+          >
+            <CalendarDays size={15} color="var(--primary)" />
+            <span style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 700, whiteSpace: "nowrap" }}>
+              {monthLabel}
+            </span>
+          </div>
+
+          {/* Next arrow */}
+          <button
+            onClick={nextMonth}
+            className="w-7 h-7 flex items-center justify-center rounded-xl transition-all"
+            style={{ color: "var(--muted-foreground)" }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)";
+              (e.currentTarget as HTMLButtonElement).style.color = "var(--primary)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+              (e.currentTarget as HTMLButtonElement).style.color = "var(--muted-foreground)";
+            }}
+          >
+            <ChevronRight size={15} />
           </button>
         </div>
 
-        <div
-          className="flex items-center gap-2 px-3 py-2 rounded-xl"
-          style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
-        >
-          <img
-            src="https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
-            alt={selectedEmployee}
-            className="w-7 h-7 rounded-full object-cover"
-          />
-          <span style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{selectedEmployee}</span>
-          <ChevronRight size={14} color="var(--muted-foreground)" />
+        {/* ── Employee selector pill with dropdown ── */}
+        <div ref={dropdownRef} style={{ position: "relative" }}>
+          <button
+            onClick={() => setShowEmployeeDropdown((v) => !v)}
+            className="flex items-center gap-2.5 rounded-2xl transition-all"
+            style={{
+              backgroundColor: "var(--card)",
+              border: `1px solid ${showEmployeeDropdown ? "var(--primary)" : "var(--border)"}`,
+              boxShadow: showEmployeeDropdown
+                ? "0 0 0 3px rgba(16,185,129,0.12), 0 2px 8px rgba(0,0,0,0.06)"
+                : "0 2px 8px rgba(0,0,0,0.06)",
+              padding: "6px 12px 6px 8px",
+              cursor: "pointer",
+            }}
+          >
+            {/* Avatar with green ring */}
+            <div
+              style={{
+                padding: "2px",
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #10B981, #059669)",
+                flexShrink: 0,
+              }}
+            >
+              <div style={{ borderRadius: "50%", overflow: "hidden", width: "28px", height: "28px", border: "2px solid var(--card)" }}>
+                <img
+                  src={selectedEmp.avatar}
+                  alt={selectedEmployee}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                />
+              </div>
+            </div>
+            <span style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600, whiteSpace: "nowrap" }}>
+              {selectedEmployee}
+            </span>
+            <ChevronDown
+              size={14}
+              color="var(--primary)"
+              style={{
+                flexShrink: 0,
+                transition: "transform 200ms ease",
+                transform: showEmployeeDropdown ? "rotate(180deg)" : "rotate(0deg)",
+              }}
+            />
+          </button>
+
+          {/* Dropdown list */}
+          {showEmployeeDropdown && (
+            <div
+              style={{
+                position: "absolute",
+                top: "calc(100% + 8px)",
+                right: 0,
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+                borderRadius: "16px",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+                minWidth: "220px",
+                zIndex: 100,
+                overflow: "hidden",
+              }}
+            >
+              {/* Header */}
+              <div
+                style={{
+                  padding: "10px 14px 8px",
+                  borderBottom: "1px solid var(--border)",
+                }}
+              >
+                <p style={{ color: "var(--muted-foreground)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.6px", textTransform: "uppercase" }}>
+                  Select Employee
+                </p>
+              </div>
+              {/* List */}
+              <div style={{ maxHeight: "260px", overflowY: "auto" }}>
+                {employees.map((emp) => {
+                  const isSelected = emp.name === selectedEmployee;
+                  return (
+                    <button
+                      key={emp.id}
+                      onClick={() => { setSelectedEmployee(emp.name); setShowEmployeeDropdown(false); }}
+                      className="w-full flex items-center gap-3 text-left transition-colors"
+                      style={{
+                        padding: "9px 14px",
+                        backgroundColor: isSelected ? "var(--secondary)" : "transparent",
+                        borderBottom: "1px solid var(--border)",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSelected) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+                      }}
+                    >
+                      {/* Avatar */}
+                      <div
+                        style={{
+                          padding: isSelected ? "1.5px" : "0",
+                          borderRadius: "50%",
+                          background: isSelected ? "linear-gradient(135deg,#10B981,#059669)" : "transparent",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <div style={{ borderRadius: "50%", overflow: "hidden", width: "30px", height: "30px", border: isSelected ? "1.5px solid var(--card)" : "none" }}>
+                          <img
+                            src={emp.avatar}
+                            alt={emp.name}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                          />
+                        </div>
+                      </div>
+                      {/* Name + role */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ color: isSelected ? "var(--primary)" : "var(--foreground)", fontSize: "13px", fontWeight: isSelected ? 700 : 600, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {emp.name}
+                        </p>
+                        <p style={{ color: "var(--muted-foreground)", fontSize: "11px", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {emp.role}
+                        </p>
+                      </div>
+                      {/* Check mark for selected */}
+                      {isSelected && (
+                        <div style={{ width: "18px", height: "18px", borderRadius: "50%", backgroundColor: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                            <polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
+
       </div>
 
       <div className="grid grid-cols-3 gap-5">
@@ -175,38 +356,60 @@ export function Attendance() {
                 }
                 const status = attendanceCalendar[day] || "Weekend";
                 const config = STATUS_COLORS[status];
-                const isToday = day === 6; // April 6 is today
-                const isHovered = hoveredDay === day;
+                // Mark today only when viewing April 2026
+                const isToday = month === 3 && year === 2026 && day === 6;
+                const isHov = hoveredDay === day;
+
+                // Clearly stronger hover colours per status
+                const hoverBgMap: Record<string, string> = {
+                  Present: "rgba(16, 185, 129, 0.25)",
+                  Absent:  "rgba(220, 38,  38,  0.22)",
+                  Leave:   "rgba(245, 158, 11,  0.22)",
+                  Holiday: "rgba(20,  184, 166, 0.22)",
+                  Weekend: "rgba(107, 114, 128, 0.10)",
+                };
+                const activeBg = hoverBgMap[status] ?? "rgba(16,185,129,0.2)";
 
                 return (
                   <div
                     key={day}
                     onMouseEnter={() => setHoveredDay(day)}
                     onMouseLeave={() => setHoveredDay(null)}
-                    className="rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all"
+                    className="rounded-xl flex flex-col items-center justify-center cursor-pointer"
                     style={{
                       height: "56px",
+                      transition: "background-color 150ms ease, border 150ms ease, box-shadow 150ms ease, transform 150ms ease",
                       backgroundColor: isToday
                         ? "var(--primary)"
-                        : isHovered
-                        ? config.bg
+                        : isHov
+                        ? activeBg
                         : status === "Weekend"
                         ? "transparent"
                         : config.bg,
                       border: isToday
                         ? "2px solid var(--primary)"
-                        : isHovered
-                        ? `1px solid ${config.dot}50`
-                        : "1px solid transparent",
-                      transform: isHovered ? "scale(1.05)" : "scale(1)",
+                        : isHov
+                        ? `2px solid ${config.dot}`
+                        : "2px solid transparent",
+                      boxShadow: isHov && !isToday
+                        ? `0 4px 16px ${config.dot}66`
+                        : "none",
+                      transform: isHov && !isToday ? "scale(1.08)" : "scale(1)",
                     }}
                   >
                     <span
                       style={{
                         fontSize: "14px",
-                        fontWeight: isToday ? 800 : 600,
-                        color: isToday ? "white" : status === "Weekend" ? "var(--muted-foreground)" : config.color,
-                        opacity: status === "Weekend" ? 0.4 : 1
+                        fontWeight: isToday || isHov ? 800 : 600,
+                        color: isToday
+                          ? "white"
+                          : isHov
+                          ? config.dot
+                          : status === "Weekend"
+                          ? "var(--muted-foreground)"
+                          : config.color,
+                        opacity: status === "Weekend" && !isHov ? 0.4 : 1,
+                        transition: "color 150ms ease",
                       }}
                     >
                       {day}
@@ -214,7 +417,11 @@ export function Attendance() {
                     {status !== "Weekend" && (
                       <div
                         className="w-1.5 h-1.5 rounded-full mt-1"
-                        style={{ backgroundColor: isToday ? "rgba(255,255,255,0.7)" : config.dot }}
+                        style={{
+                          backgroundColor: isToday ? "rgba(255,255,255,0.8)" : config.dot,
+                          transform: isHov ? "scale(1.3)" : "scale(1)",
+                          transition: "transform 150ms ease",
+                        }}
                       />
                     )}
                   </div>

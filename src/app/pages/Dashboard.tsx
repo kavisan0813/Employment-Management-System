@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import {
   Users,
@@ -42,6 +42,12 @@ const kpiCards = [
     iconBg: "linear-gradient(135deg, #059669, #047857)",
     accent: "#059669",
     lightBg: "#ECFDF5",
+    route: "/employees",
+    menuItems: [
+      { label: "View All Employees", route: "/employees" },
+      { label: "Add Employee",        route: "/employees" },
+      { label: "Export Report",       route: "/reports"   },
+    ],
   },
   {
     title: "Present Today",
@@ -52,6 +58,12 @@ const kpiCards = [
     iconBg: "linear-gradient(135deg, #22C55E, #16A34A)",
     accent: "#22C55E",
     lightBg: "#F0FDF4",
+    route: "/attendance",
+    menuItems: [
+      { label: "View Attendance",     route: "/attendance" },
+      { label: "Mark Attendance",     route: "/attendance" },
+      { label: "Attendance Reports",  route: "/reports"    },
+    ],
   },
   {
     title: "On Leave",
@@ -62,6 +74,12 @@ const kpiCards = [
     iconBg: "linear-gradient(135deg, #F59E0B, #D97706)",
     accent: "#F59E0B",
     lightBg: "#FFFBEB",
+    route: "/leave",
+    menuItems: [
+      { label: "View Leave Requests", route: "/leave" },
+      { label: "Approve Leaves",      route: "/leave" },
+      { label: "Leave Reports",       route: "/reports" },
+    ],
   },
   {
     title: "New This Month",
@@ -72,6 +90,12 @@ const kpiCards = [
     iconBg: "linear-gradient(135deg, #14B8A6, #0D9488)",
     accent: "#14B8A6",
     lightBg: "#F0FDFA",
+    route: "/employees",
+    menuItems: [
+      { label: "View New Hires",      route: "/employees"  },
+      { label: "Open Positions",      route: "/recruitment" },
+      { label: "Recruitment Report",  route: "/reports"    },
+    ],
   },
 ];
 
@@ -129,11 +153,23 @@ const CustomPieTooltip = ({ active, payload }: any) => {
 export function Dashboard() {
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [openMenu, setOpenMenu] = useState<number | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleOutsideClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenu(null);
+      }
+    }
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   return (
     <div style={{ maxWidth: "1360px" }}>
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+      <div ref={menuRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
         {kpiCards.map((card, i) => (
           <div
             key={i}
@@ -142,6 +178,7 @@ export function Dashboard() {
               backgroundColor: "var(--card)",
               border: "1px solid var(--border)",
             }}
+            onClick={() => navigate(card.route)}
           >
             {/* Background accent */}
             <div
@@ -160,18 +197,68 @@ export function Dashboard() {
               >
                 <card.icon size={20} color="white" />
               </div>
-              <button
-                className="rounded-lg p-1.5 transition-colors"
-                style={{ color: "var(--muted-foreground)" }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-                }}
-              >
-                <MoreHorizontal size={16} />
-              </button>
+
+              {/* ··· Menu button */}
+              <div style={{ position: "relative" }}>
+                <button
+                  className="rounded-lg p-1.5 transition-colors"
+                  style={{
+                    color: openMenu === i ? "var(--primary)" : "var(--muted-foreground)",
+                    backgroundColor: openMenu === i ? "var(--secondary)" : "transparent",
+                  }}
+                  onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === i ? null : i); }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)"; }}
+                  onMouseLeave={(e) => { if (openMenu !== i) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
+                >
+                  <MoreHorizontal size={16} />
+                </button>
+
+                {/* Dropdown */}
+                {openMenu === i && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "calc(100% + 6px)",
+                      right: 0,
+                      backgroundColor: "var(--card)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "14px",
+                      boxShadow: "0 8px 28px rgba(0,0,0,0.13)",
+                      minWidth: "180px",
+                      zIndex: 50,
+                      overflow: "hidden",
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {/* Header chip */}
+                    <div style={{ padding: "10px 14px 8px", borderBottom: "1px solid var(--border)" }}>
+                      <p style={{ color: "var(--muted-foreground)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.6px", textTransform: "uppercase" }}>
+                        {card.title}
+                      </p>
+                    </div>
+                    {card.menuItems.map((item, idx) => (
+                      <button
+                        key={idx}
+                        className="w-full text-left px-4 py-2.5 transition-colors"
+                        style={{
+                          color: "var(--foreground)",
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          backgroundColor: "transparent",
+                          border: "none",
+                          cursor: "pointer",
+                          borderBottom: idx < card.menuItems.length - 1 ? "1px solid var(--border)" : "none",
+                        }}
+                        onClick={() => { setOpenMenu(null); navigate(item.route); }}
+                        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--primary)"; }}
+                        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "var(--foreground)"; }}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <p style={{ color: "var(--muted-foreground)", fontSize: "12px", fontWeight: 500, marginBottom: "4px" }}>
               {card.title}
@@ -423,13 +510,18 @@ export function Dashboard() {
               </p>
             </div>
             <button
-              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5"
+              className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-colors"
               style={{
                 color: "var(--primary)",
                 backgroundColor: "var(--secondary)",
                 fontSize: "12px",
                 fontWeight: 600,
+                border: "none",
+                cursor: "pointer",
               }}
+              onClick={() => navigate("/employees")}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "0.8"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
             >
               View All
               <ArrowUpRight size={13} />

@@ -1,4 +1,5 @@
-import { TrendingUp, Star, Award, Target, Users, ArrowUpRight } from "lucide-react";
+import { useNavigate } from "react-router";
+import { TrendingUp, Star, Award, Target, ArrowUpRight } from "lucide-react";
 import {
   RadarChart,
   PolarGrid,
@@ -33,6 +34,7 @@ const quarterlyData = [
 ];
 
 export function Performance() {
+  const navigate = useNavigate();
   const topPerformers = [...employees]
     .sort((a, b) => b.performance - a.performance)
     .slice(0, 5);
@@ -147,8 +149,9 @@ export function Performance() {
         <div className="flex items-center justify-between mb-5">
           <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>Top Performers — Q1 2026</h3>
           <button
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
-            style={{ color: "var(--primary)", backgroundColor: "var(--secondary)", fontSize: "12px", fontWeight: 600 }}
+            onClick={() => navigate("/employees")}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-opacity hover:opacity-75"
+            style={{ color: "var(--primary)", backgroundColor: "var(--secondary)", fontSize: "12px", fontWeight: 600, border: "none", cursor: "pointer" }}
           >
             View All <ArrowUpRight size={12} />
           </button>
