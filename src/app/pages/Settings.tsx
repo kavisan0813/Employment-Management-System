@@ -1,16 +1,21 @@
 import { useState } from "react";
-import type { ReactNode } from "react";
 import {
+  Building2,
   User,
   Bell,
   Shield,
-  Palette,
-  Building2,
-  Globe,
   Mail,
   Phone,
   MapPin,
+  Globe,
+  Briefcase,
   Save,
+  Camera,
+  Lock,
+  Key,
+  Eye,
+  EyeOff,
+  AlertCircle,
 } from "lucide-react";
 
 const settingsTabs = [
@@ -18,45 +23,100 @@ const settingsTabs = [
   { id: "account", label: "Account", icon: User },
   { id: "notifications", label: "Notifications", icon: Bell },
   { id: "security", label: "Security", icon: Shield },
-  { id: "appearance", label: "Appearance", icon: Palette },
 ];
 
-export function Settings() {
-  const [activeTab, setActiveTab] = useState("company");
-  const [saved, setSaved] = useState(false);
+/* ── reusable sub-components ── */
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+function Toggle({
+  label,
+  desc,
+  defaultOn = false,
+}: {
+  label: string;
+  desc: string;
+  defaultOn?: boolean;
+}) {
+  const [on, setOn] = useState(defaultOn);
+  return (
+    <div
+      className="flex items-center justify-between py-4"
+      style={{ borderBottom: "1px solid var(--border)" }}
+    >
+      <div>
+        <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{label}</p>
+        <p style={{ color: "var(--muted-foreground)", fontSize: "12px", marginTop: "2px" }}>{desc}</p>
+      </div>
+      <button
+        onClick={() => setOn(!on)}
+        className="rounded-full transition-all"
+        style={{
+          width: "44px",
+          height: "24px",
+          backgroundColor: on ? "var(--primary)" : "var(--border)",
+          position: "relative",
+          flexShrink: 0,
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        <div
+          className="absolute top-1 rounded-full bg-white transition-all"
+          style={{
+            width: "16px",
+            height: "16px",
+            left: on ? "24px" : "4px",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+          }}
+        />
+      </button>
+    </div>
+  );
+}
 
-  const Field = ({
-    label,
-    value,
-    icon,
-    type = "text",
-  }: {
-    label: string;
-    value: string;
-    icon?: ReactNode;
-    type?: string;
-  }) => (
+function InputField({
+  label,
+  value,
+  icon,
+  type = "text",
+  disabled = false,
+}: {
+  label: string;
+  value: string;
+  icon?: React.ReactNode;
+  type?: string;
+  disabled?: boolean;
+}) {
+  return (
     <div>
-      <label style={{ color: "var(--primary)", fontSize: "12px", fontWeight: 600, display: "block", marginBottom: "6px" }}>
+      <label
+        style={{
+          color: "var(--primary)",
+          fontSize: "11px",
+          fontWeight: 700,
+          display: "block",
+          marginBottom: "6px",
+          textTransform: "uppercase",
+          letterSpacing: "0.5px",
+        }}
+      >
         {label}
       </label>
       <div
         className="flex items-center gap-2.5 rounded-xl px-4"
         style={{
           border: "1px solid var(--border)",
-          height: "42px",
+          height: "44px",
           backgroundColor: "var(--background)",
+          opacity: disabled ? 0.6 : 1,
         }}
       >
-        {icon && <span style={{ color: "var(--muted-foreground)", display: "flex" }}>{icon}</span>}
+        {icon && (
+          <span style={{ color: "var(--muted-foreground)", display: "flex" }}>{icon}</span>
+        )}
         <input
           type={type}
           defaultValue={value}
+          disabled={disabled}
           style={{
             border: "none",
             outline: "none",
@@ -69,48 +129,27 @@ export function Settings() {
       </div>
     </div>
   );
+}
 
-  const Toggle = ({ label, desc, defaultOn = false }: { label: string; desc: string; defaultOn?: boolean }) => {
-    const [on, setOn] = useState(defaultOn);
-    return (
-      <div className="flex items-center justify-between py-4" style={{ borderBottom: "1px solid var(--border)" }}>
-        <div>
-          <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{label}</p>
-          <p style={{ color: "var(--muted-foreground)", fontSize: "12px", marginTop: "2px" }}>{desc}</p>
-        </div>
-        <button
-          onClick={() => setOn(!on)}
-          className="rounded-full transition-all"
-          style={{
-            width: "44px",
-            height: "24px",
-            backgroundColor: on ? "var(--primary)" : "var(--border)",
-            position: "relative",
-            flexShrink: 0,
-            border: "none",
-            cursor: "pointer"
-          }}
-        >
-          <div
-            className="absolute top-1 rounded-full bg-white transition-all"
-            style={{
-              width: "16px",
-              height: "16px",
-              left: on ? "24px" : "4px",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-            }}
-          />
-        </button>
-      </div>
-    );
+/* ── main component ── */
+
+export function Settings() {
+  const [activeTab, setActiveTab] = useState("company");
+  const [saved, setSaved] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+
+  const handleSave = () => {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
   };
 
   return (
-    <div style={{ maxWidth: "1000px" }}>
+    <div style={{ width: "100%" }}>
       <div className="flex gap-5">
-        {/* Tab List */}
+        {/* ── Sidebar tabs ── */}
         <div
-          className="rounded-2xl p-3 shrink-0 shadow-sm"
+          className="rounded-2xl p-3 shrink-0"
           style={{
             width: "200px",
             backgroundColor: "var(--card)",
@@ -130,52 +169,91 @@ export function Settings() {
                 fontWeight: activeTab === tab.id ? 700 : 500,
                 marginBottom: "2px",
                 border: "none",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
               onMouseEnter={(e) => {
                 if (activeTab !== tab.id)
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--background)";
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                    "var(--background)";
               }}
               onMouseLeave={(e) => {
                 if (activeTab !== tab.id)
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
               }}
             >
-              <tab.icon size={15} />
+              <tab.icon size={14} />
               {tab.label}
             </button>
           ))}
         </div>
 
-        {/* Tab Content */}
+        {/* ── Content panel ── */}
         <div className="flex-1">
           <div
-            className="rounded-2xl p-6 shadow-sm"
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-            }}
+            className="rounded-2xl p-6"
+            style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
           >
+            {/* ── COMPANY ── */}
             {activeTab === "company" && (
               <div>
-                <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 700, marginBottom: "4px" }}>
+                <h3
+                  style={{
+                    color: "var(--foreground)",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    marginBottom: "4px",
+                  }}
+                >
                   Company Information
                 </h3>
-                <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "24px" }}>
+                <p
+                  style={{
+                    color: "var(--muted-foreground)",
+                    fontSize: "13px",
+                    marginBottom: "24px",
+                  }}
+                >
                   Update your organization details and preferences.
                 </p>
+
                 <div className="grid grid-cols-2 gap-4">
-                  <Field label="Company Name" value="NexusHR Technologies" />
-                  <Field label="Industry" value="Software & Technology" />
-                  <Field label="Email" value="hr@nexushr.com" icon={<Mail size={14} />} />
-                  <Field label="Phone" value="+1 (800) 123-4567" icon={<Phone size={14} />} />
+                  <InputField label="Company Name" value="NexusHR Technologies" />
+                  <InputField label="Industry" value="Software & Technology" />
+                  <InputField
+                    label="Email"
+                    value="hr@nexushr.com"
+                    icon={<Mail size={14} />}
+                  />
+                  <InputField
+                    label="Phone"
+                    value="+1 (800) 123-4567"
+                    icon={<Phone size={14} />}
+                  />
                   <div className="col-span-2">
-                    <Field label="Headquarters" value="1000 Innovation Drive, San Francisco, CA 94105" icon={<MapPin size={14} />} />
+                    <InputField
+                      label="Headquarters"
+                      value="1000 Innovation Drive, San Francisco, CA 94105"
+                      icon={<MapPin size={14} />}
+                    />
                   </div>
-                  <Field label="Website" value="www.nexushr.com" icon={<Globe size={14} />} />
-                  <Field label="Founded Year" value="2018" />
+                  <InputField
+                    label="Website"
+                    value="www.nexushr.com"
+                    icon={<Globe size={14} />}
+                  />
+                  <InputField label="Founded Year" value="2018" />
                   <div className="col-span-2">
-                    <label style={{ color: "var(--primary)", fontSize: "12px", fontWeight: 600, display: "block", marginBottom: "6px" }}>
+                    <label
+                      style={{
+                        color: "var(--primary)",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        display: "block",
+                        marginBottom: "6px",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                      }}
+                    >
                       Company Description
                     </label>
                     <textarea
@@ -196,125 +274,496 @@ export function Settings() {
                     />
                   </div>
                 </div>
+
+                <div className="flex justify-end mt-6">
+                  <button
+                    onClick={handleSave}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all hover:opacity-90"
+                    style={{
+                      background: saved
+                        ? "linear-gradient(135deg, #22C55E, #16A34A)"
+                        : "linear-gradient(135deg, #059669, #047857)",
+                      color: "white",
+                      fontSize: "13px",
+                      fontWeight: 700,
+                      border: "none",
+                      cursor: "pointer",
+                      boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
+                    }}
+                  >
+                    <Save size={14} />
+                    {saved ? "Saved!" : "Save Changes"}
+                  </button>
+                </div>
               </div>
             )}
 
-            {activeTab === "notifications" && (
-              <div>
-                <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 700, marginBottom: "4px" }}>
-                  Notification Preferences
-                </h3>
-                <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "24px" }}>
-                  Choose what events you want to be notified about.
-                </p>
-                <Toggle label="New Employee Onboarding" desc="Get notified when a new employee joins" defaultOn={true} />
-                <Toggle label="Leave Requests" desc="Alerts for pending leave approvals" defaultOn={true} />
-                <Toggle label="Payroll Processed" desc="Confirmation when payroll is run" defaultOn={true} />
-                <Toggle label="Performance Reviews" desc="Reminders for upcoming review cycles" defaultOn={false} />
-                <Toggle label="Recruitment Updates" desc="Candidate stage changes and new applications" defaultOn={true} />
-                <Toggle label="System Alerts" desc="Critical system notifications and errors" defaultOn={true} />
-              </div>
-            )}
-
-            {activeTab === "security" && (
-              <div>
-                <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 700, marginBottom: "4px" }}>
-                  Security Settings
-                </h3>
-                <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "24px" }}>
-                  Manage authentication and access control.
-                </p>
-                <Toggle label="Two-Factor Authentication" desc="Require 2FA for all admin accounts" defaultOn={true} />
-                <Toggle label="Single Sign-On (SSO)" desc="Enable SSO via Google Workspace" defaultOn={false} />
-                <Toggle label="Session Timeout" desc="Auto-logout after 30 minutes of inactivity" defaultOn={true} />
-                <Toggle label="IP Restriction" desc="Only allow access from approved IPs" defaultOn={false} />
-                <Toggle label="Audit Logging" desc="Track all admin actions for compliance" defaultOn={true} />
-              </div>
-            )}
-
+            {/* ── ACCOUNT ── */}
             {activeTab === "account" && (
               <div>
-                <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 700, marginBottom: "4px" }}>
+                <h3
+                  style={{
+                    color: "var(--foreground)",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    marginBottom: "4px",
+                  }}
+                >
                   Account Settings
                 </h3>
-                <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "24px" }}>
-                  Manage your personal profile and preferences.
+                <p
+                  style={{
+                    color: "var(--muted-foreground)",
+                    fontSize: "13px",
+                    marginBottom: "24px",
+                  }}
+                >
+                  Manage your personal profile information and preferences.
                 </p>
-                <div className="flex items-center gap-4 mb-6 p-4 rounded-xl" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)" }}>
+
+                {/* Avatar row */}
+                <div
+                  className="flex items-center gap-4 mb-6 p-4 rounded-xl"
+                  style={{
+                    backgroundColor: "var(--background)",
+                    border: "1px solid var(--border)",
+                  }}
+                >
                   <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center"
-                    style={{ background: "linear-gradient(135deg, #059669, #14B8A6)" }}
+                    className="w-16 h-16 rounded-full flex items-center justify-center relative"
+                    style={{
+                      background: "linear-gradient(135deg, #059669, #14B8A6)",
+                      boxShadow: "0 4px 16px rgba(5,150,105,0.3)",
+                    }}
                   >
-                    <span style={{ color: "white", fontSize: "20px", fontWeight: 800 }}>RP</span>
+                    <span style={{ color: "white", fontSize: "20px", fontWeight: 800 }}>
+                      RP
+                    </span>
+                    <div
+                      className="absolute bottom-0 right-0 w-5 h-5 rounded-full flex items-center justify-center"
+                      style={{ background: "var(--primary)", border: "2px solid var(--card)" }}
+                    >
+                      <Camera size={9} color="white" />
+                    </div>
                   </div>
                   <div>
-                    <p style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>Ryan Park</p>
-                    <p style={{ color: "var(--muted-foreground)", fontSize: "13px" }}>HR Administrator</p>
+                    <p
+                      style={{
+                        color: "var(--foreground)",
+                        fontSize: "15px",
+                        fontWeight: 700,
+                      }}
+                    >
+                      Ryan Park
+                    </p>
+                    <p style={{ color: "var(--muted-foreground)", fontSize: "13px" }}>
+                      HR Administrator
+                    </p>
                   </div>
                   <button
                     className="ml-auto px-4 py-2 rounded-xl"
-                    style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", fontSize: "13px", fontWeight: 600, border: "none", cursor: "pointer" }}
+                    style={{
+                      backgroundColor: "rgba(5, 150, 105, 0.1)",
+                      color: "var(--primary)",
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      border: "1px solid rgba(5, 150, 105, 0.2)",
+                      cursor: "pointer",
+                    }}
                   >
                     Change Photo
                   </button>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Field label="First Name" value="Ryan" />
-                  <Field label="Last Name" value="Park" />
-                  <Field label="Email Address" value="ryan.park@nexushr.com" />
-                  <Field label="Role" value="HR Administrator" />
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <InputField label="First Name" value="Ryan" />
+                  <InputField label="Last Name" value="Park" />
+                  <InputField
+                    label="Email Address"
+                    value="ryan.park@nexushr.com"
+                    icon={<Mail size={14} />}
+                  />
+                  <InputField
+                    label="Phone Number"
+                    value="+1 (415) 823-9100"
+                    icon={<Phone size={14} />}
+                  />
+                  <InputField
+                    label="Job Title"
+                    value="HR Administrator"
+                    icon={<Briefcase size={14} />}
+                  />
+                  <InputField
+                    label="Location"
+                    value="San Francisco, CA"
+                    icon={<MapPin size={14} />}
+                  />
+                </div>
+
+                <div className="flex justify-end mt-6">
+                  <button
+                    onClick={handleSave}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all hover:opacity-90"
+                    style={{
+                      background: saved
+                        ? "linear-gradient(135deg, #22C55E, #16A34A)"
+                        : "linear-gradient(135deg, #059669, #047857)",
+                      color: "white",
+                      fontSize: "13px",
+                      fontWeight: 700,
+                      border: "none",
+                      cursor: "pointer",
+                      boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
+                    }}
+                  >
+                    <Save size={14} />
+                    {saved ? "Saved!" : "Save Changes"}
+                  </button>
                 </div>
               </div>
             )}
 
-            {activeTab === "appearance" && (
+            {/* ── NOTIFICATIONS ── */}
+            {activeTab === "notifications" && (
               <div>
-                <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 700, marginBottom: "4px" }}>
-                  Appearance
+                <h3
+                  style={{
+                    color: "var(--foreground)",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    marginBottom: "4px",
+                  }}
+                >
+                  Notification Preferences
                 </h3>
-                <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "24px" }}>
-                  Customize the look and feel of your dashboard.
+                <p
+                  style={{
+                    color: "var(--muted-foreground)",
+                    fontSize: "13px",
+                    marginBottom: "24px",
+                  }}
+                >
+                  Control which alerts and updates you receive.
                 </p>
-                <div>
-                  <p style={{ color: "var(--primary)", fontSize: "13px", fontWeight: 600, marginBottom: "12px" }}>
-                    Accent Color
-                  </p>
-                  <div className="flex items-center gap-3">
-                    {["#059669", "#14B8A6", "#22C55E", "#F59E0B", "#EF4444", "#0EA5E9"].map((color) => (
-                      <button
-                        key={color}
-                        className="w-9 h-9 rounded-full transition-transform hover:scale-110"
-                        style={{
-                          backgroundColor: color,
-                          border: color === "#059669" ? "3px solid var(--card)" : "none",
-                          boxShadow: color === "#059669" ? `0 0 0 2px ${color}` : "none",
-                        }}
-                      />
-                    ))}
-                  </div>
+                <Toggle
+                  label="New Employee Onboarding"
+                  desc="Get notified when a new employee joins"
+                  defaultOn={true}
+                />
+                <Toggle
+                  label="Leave Requests"
+                  desc="Alerts for pending leave approvals"
+                  defaultOn={true}
+                />
+                <Toggle
+                  label="Payroll Processed"
+                  desc="Confirmation when payroll is run"
+                  defaultOn={true}
+                />
+                <Toggle
+                  label="Performance Reviews"
+                  desc="Reminders for upcoming review cycles"
+                  defaultOn={false}
+                />
+                <Toggle
+                  label="Recruitment Updates"
+                  desc="Candidate stage changes and new applications"
+                  defaultOn={true}
+                />
+                <Toggle
+                  label="System Alerts"
+                  desc="Critical system notifications and errors"
+                  defaultOn={true}
+                />
+                <Toggle
+                  label="Email Digest"
+                  desc="Weekly summary sent to your email"
+                  defaultOn={false}
+                />
+                <div className="flex justify-end mt-6">
+                  <button
+                    onClick={handleSave}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl"
+                    style={{
+                      background: saved
+                        ? "linear-gradient(135deg, #22C55E, #16A34A)"
+                        : "linear-gradient(135deg, #059669, #047857)",
+                      color: "white",
+                      fontSize: "13px",
+                      fontWeight: 700,
+                      border: "none",
+                      cursor: "pointer",
+                      boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
+                    }}
+                  >
+                    <Save size={14} />
+                    {saved ? "Saved!" : "Save Preferences"}
+                  </button>
                 </div>
               </div>
             )}
 
-            {/* Save Button */}
-            <div className="flex justify-end mt-6">
-              <button
-                onClick={handleSave}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all hover:opacity-90"
-                style={{
-                  background: saved
-                    ? "linear-gradient(135deg, #22C55E, #16A34A)"
-                    : "linear-gradient(135deg, #059669, #047857)",
-                  color: "white",
-                  fontSize: "13px",
-                  fontWeight: 700,
-                  boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
-                }}
-              >
-                <Save size={14} />
-                {saved ? "Saved!" : "Save Changes"}
-              </button>
-            </div>
+            {/* ── SECURITY ── */}
+            {activeTab === "security" && (
+              <div>
+                <h3
+                  style={{
+                    color: "var(--foreground)",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    marginBottom: "4px",
+                  }}
+                >
+                  Security &amp; Privacy
+                </h3>
+                <p
+                  style={{
+                    color: "var(--muted-foreground)",
+                    fontSize: "13px",
+                    marginBottom: "24px",
+                  }}
+                >
+                  Manage your password, 2FA, and active sessions.
+                </p>
+
+                {/* Change Password */}
+                <div
+                  className="rounded-xl p-5 mb-5"
+                  style={{
+                    border: "1px solid var(--border)",
+                    backgroundColor: "var(--background)",
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-4">
+                    <Key size={15} color="var(--primary)" />
+                    <h4
+                      style={{
+                        color: "var(--foreground)",
+                        fontSize: "14px",
+                        fontWeight: 700,
+                      }}
+                    >
+                      Change Password
+                    </h4>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {/* Current password */}
+                    <div>
+                      <label
+                        style={{
+                          color: "var(--primary)",
+                          fontSize: "11px",
+                          fontWeight: 700,
+                          display: "block",
+                          marginBottom: "6px",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.5px",
+                        }}
+                      >
+                        Current Password
+                      </label>
+                      <div
+                        className="flex items-center gap-2.5 rounded-xl px-4"
+                        style={{
+                          border: "1px solid var(--border)",
+                          height: "44px",
+                          backgroundColor: "var(--card)",
+                        }}
+                      >
+                        <Lock size={14} color="var(--muted-foreground)" />
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter current password"
+                          style={{
+                            border: "none",
+                            outline: "none",
+                            background: "transparent",
+                            fontSize: "13px",
+                            color: "var(--foreground)",
+                            width: "100%",
+                          }}
+                        />
+                        <button
+                          onClick={() => setShowPassword(!showPassword)}
+                          style={{
+                            border: "none",
+                            background: "none",
+                            cursor: "pointer",
+                            display: "flex",
+                          }}
+                        >
+                          {showPassword ? (
+                            <EyeOff size={14} color="var(--muted-foreground)" />
+                          ) : (
+                            <Eye size={14} color="var(--muted-foreground)" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* New password */}
+                    <div>
+                      <label
+                        style={{
+                          color: "var(--primary)",
+                          fontSize: "11px",
+                          fontWeight: 700,
+                          display: "block",
+                          marginBottom: "6px",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.5px",
+                        }}
+                      >
+                        New Password
+                      </label>
+                      <div
+                        className="flex items-center gap-2.5 rounded-xl px-4"
+                        style={{
+                          border: "1px solid var(--border)",
+                          height: "44px",
+                          backgroundColor: "var(--card)",
+                        }}
+                      >
+                        <Lock size={14} color="var(--muted-foreground)" />
+                        <input
+                          type={showNewPassword ? "text" : "password"}
+                          placeholder="Enter new password"
+                          style={{
+                            border: "none",
+                            outline: "none",
+                            background: "transparent",
+                            fontSize: "13px",
+                            color: "var(--foreground)",
+                            width: "100%",
+                          }}
+                        />
+                        <button
+                          onClick={() => setShowNewPassword(!showNewPassword)}
+                          style={{
+                            border: "none",
+                            background: "none",
+                            cursor: "pointer",
+                            display: "flex",
+                          }}
+                        >
+                          {showNewPassword ? (
+                            <EyeOff size={14} color="var(--muted-foreground)" />
+                          ) : (
+                            <Eye size={14} color="var(--muted-foreground)" />
+                          )}
+                        </button>
+                      </div>
+                      {/* Strength bar */}
+                      <div className="flex gap-1 mt-2 items-center">
+                        {[1, 2, 3, 4].map((n) => (
+                          <div
+                            key={n}
+                            className="flex-1 rounded-full"
+                            style={{
+                              height: "3px",
+                              backgroundColor: n <= 2 ? "#F59E0B" : "var(--border)",
+                            }}
+                          />
+                        ))}
+                        <span
+                          style={{
+                            color: "#F59E0B",
+                            fontSize: "10px",
+                            fontWeight: 600,
+                            whiteSpace: "nowrap",
+                            marginLeft: "4px",
+                          }}
+                        >
+                          Medium
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    className="mt-4 px-4 py-2 rounded-xl flex items-center gap-2"
+                    style={{
+                      background: "linear-gradient(135deg, #059669, #047857)",
+                      color: "white",
+                      fontSize: "13px",
+                      fontWeight: 700,
+                      border: "none",
+                      cursor: "pointer",
+                      boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
+                    }}
+                  >
+                    <Save size={13} /> Update Password
+                  </button>
+                </div>
+
+                {/* Toggles */}
+                <Toggle
+                  label="Two-Factor Authentication"
+                  desc="Require 2FA for all admin accounts"
+                  defaultOn={true}
+                />
+                <Toggle
+                  label="Single Sign-On (SSO)"
+                  desc="Enable SSO via Google Workspace"
+                  defaultOn={false}
+                />
+                <Toggle
+                  label="Session Timeout"
+                  desc="Auto-logout after 30 minutes of inactivity"
+                  defaultOn={true}
+                />
+                <Toggle
+                  label="IP Restriction"
+                  desc="Only allow access from approved IPs"
+                  defaultOn={false}
+                />
+                <Toggle
+                  label="Audit Logging"
+                  desc="Track all admin actions for compliance"
+                  defaultOn={true}
+                />
+
+                {/* Danger Zone */}
+                <div
+                  className="rounded-xl p-4 mt-5"
+                  style={{
+                    border: "1px solid rgba(239, 68, 68, 0.3)",
+                    backgroundColor: "rgba(239, 68, 68, 0.04)",
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertCircle size={15} color="#EF4444" />
+                    <p
+                      style={{ color: "#EF4444", fontSize: "13px", fontWeight: 700 }}
+                    >
+                      Danger Zone
+                    </p>
+                  </div>
+                  <p
+                    style={{
+                      color: "var(--muted-foreground)",
+                      fontSize: "12px",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    Once you delete your account, there is no going back. Please be certain.
+                  </p>
+                  <button
+                    className="px-4 py-2 rounded-xl"
+                    style={{
+                      backgroundColor: "rgba(239, 68, 68, 0.1)",
+                      color: "#EF4444",
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      border: "1px solid rgba(239, 68, 68, 0.3)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Delete Account
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

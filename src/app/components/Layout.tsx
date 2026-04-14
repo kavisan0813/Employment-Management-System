@@ -13,6 +13,7 @@ const pageTitles: Record<string, string> = {
   "/performance": "Performance Reviews",
   "/reports": "Reports & Analytics",
   "/settings": "System Settings",
+  "/profile": "My Profile",
 };
 
 export function Layout() {

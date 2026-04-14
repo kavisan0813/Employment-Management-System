@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { Bell, Search, ChevronDown, Settings, LogOut, User, Sun, Moon } from "lucide-react";
 
 interface TopbarProps {
@@ -11,6 +12,7 @@ interface TopbarProps {
 export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [notifications] = useState(3);
+  const navigate = useNavigate();
 
   return (
     <div
@@ -165,11 +167,12 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
               }}
             >
               {[
-                { icon: User, label: "My Profile" },
-                { icon: Settings, label: "Settings" },
+                { icon: User, label: "My Profile", path: "/profile" },
+                { icon: Settings, label: "Settings", path: "/settings" },
               ].map((item) => (
                 <button
                   key={item.label}
+                  onClick={() => { setShowDropdown(false); navigate(item.path); }}
                   className="w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left"
                   style={{ color: "var(--foreground)", fontSize: "13px" }}
                   onMouseEnter={(e) => {

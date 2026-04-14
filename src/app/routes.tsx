@@ -11,6 +11,7 @@ import { Reports } from "./pages/Reports";
 import { Settings } from "./pages/Settings";
 import { LeaveManagement } from "./pages/LeaveManagement";
 import { Departments } from "./pages/Departments";
+import { UserProfile } from "./pages/UserProfile";
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
       { path: "settings", Component: Settings },
       { path: "leave", Component: LeaveManagement },
       { path: "departments", Component: Departments },
+      { path: "profile", Component: UserProfile },
     ],
   },
 ]);

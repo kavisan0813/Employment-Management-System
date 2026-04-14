@@ -320,6 +320,18 @@ export function Payroll() {
             </p>
           </div>
           <button
+            onClick={() => {
+              const headers = ["Name", "Designation", "Department", "Gross", "Deductions", "Net Pay", "Status"];
+              const rows = payrollEmployees.map(e => [e.name, e.designation, e.department, e.gross, e.deductions, e.net, e.status]);
+              const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+              const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `payroll_${selectedMonth.replace(" ", "_").toLowerCase()}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
             className="flex items-center gap-2 px-4 py-2 rounded-xl transition-colors"
             style={{
               border: "1px solid var(--border)",
@@ -431,6 +443,49 @@ export function Payroll() {
 
             {/* Download Payslip */}
             <button
+              onClick={() => {
+                const w = window.open("", "_blank");
+                if (!w) return;
+                w.document.write(`
+                  <html><head><title>Payslip - ${emp.name}</title>
+                  <style>
+                    body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a;max-width:600px;margin:0 auto}
+                    .header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #059669;padding-bottom:16px;margin-bottom:24px}
+                    .logo{color:#059669;font-size:22px;font-weight:900}
+                    .month{color:#6b7280;font-size:13px}
+                    .emp{margin-bottom:24px}
+                    .emp h2{margin:0;font-size:18px}
+                    .emp p{color:#6b7280;margin:2px 0;font-size:13px}
+                    table{width:100%;border-collapse:collapse;margin-bottom:24px}
+                    th{text-align:left;padding:10px;background:#f0fdf4;color:#059669;font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
+                    td{padding:10px;border-bottom:1px solid #e5e7eb;font-size:13px}
+                    .total td{font-weight:800;border-top:2px solid #059669;border-bottom:none}
+                    .net{color:#059669;font-size:18px;font-weight:900}
+                    .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700}
+                    .paid{background:#ecfdf5;color:#059669}
+                    .pending{background:#fffbeb;color:#f59e0b}
+                    .footer{margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;color:#9ca3af;font-size:11px;text-align:center}
+                  </style></head><body>
+                  <div class="header"><span class="logo">EMS</span><span class="month">${selectedMonth}</span></div>
+                  <div class="emp"><h2>${emp.name}</h2><p>${emp.designation}</p><p>${emp.department}</p></div>
+                  <table>
+                    <tr><th>Component</th><th style="text-align:right">Amount</th></tr>
+                    <tr><td>Basic Salary</td><td style="text-align:right">$${Math.round(emp.gross * 0.6).toLocaleString()}</td></tr>
+                    <tr><td>HRA</td><td style="text-align:right">$${Math.round(emp.gross * 0.2).toLocaleString()}</td></tr>
+                    <tr><td>Other Allowances</td><td style="text-align:right">$${Math.round(emp.gross * 0.2).toLocaleString()}</td></tr>
+                    <tr><td><strong>Gross Salary</strong></td><td style="text-align:right"><strong>$${emp.gross.toLocaleString()}</strong></td></tr>
+                    <tr><td style="color:#ef4444">Tax Deduction</td><td style="text-align:right;color:#ef4444">-$${Math.round(emp.deductions * 0.5).toLocaleString()}</td></tr>
+                    <tr><td style="color:#ef4444">PF Contribution</td><td style="text-align:right;color:#ef4444">-$${Math.round(emp.deductions * 0.3).toLocaleString()}</td></tr>
+                    <tr><td style="color:#ef4444">Insurance</td><td style="text-align:right;color:#ef4444">-$${Math.round(emp.deductions * 0.2).toLocaleString()}</td></tr>
+                    <tr class="total"><td>Net Pay</td><td style="text-align:right" class="net">$${emp.net.toLocaleString()}</td></tr>
+                  </table>
+                  <p>Status: <span class="badge ${emp.status === "Paid" ? "paid" : "pending"}">${emp.status === "Paid" ? "✓ Paid" : "⏳ Pending"}</span></p>
+                  <div class="footer">This is a system-generated payslip. For queries, contact HR.</div>
+                  </body></html>
+                `);
+                w.document.close();
+                w.print();
+              }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors"
               style={{
                 border: "1px solid var(--border)",
