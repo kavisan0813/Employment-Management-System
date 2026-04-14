@@ -6,6 +6,7 @@ import { Topbar } from "./Topbar";
 const pageTitles: Record<string, string> = {
   "/": "Dashboard",
   "/employees": "Employee Directory",
+  "/departments": "Departments",
   "/attendance": "Attendance Tracker",
   "/payroll": "Payroll Management",
   "/recruitment": "Recruitment Pipeline",

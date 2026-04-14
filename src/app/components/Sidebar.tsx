@@ -11,6 +11,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Zap,
+  CalendarDays,
+  Store,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -21,7 +23,9 @@ interface SidebarProps {
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Users, label: "Employees", path: "/employees" },
+  { icon: Store, label: "Departments", path: "/departments" },
   { icon: CalendarCheck, label: "Attendance", path: "/attendance" },
+  { icon: CalendarDays, label: "Leave Management", path: "/leave" },
   { icon: DollarSign, label: "Payroll", path: "/payroll" },
   { icon: Briefcase, label: "Recruitment", path: "/recruitment" },
   { icon: TrendingUp, label: "Performance", path: "/performance" },

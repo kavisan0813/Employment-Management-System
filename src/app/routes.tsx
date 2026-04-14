@@ -9,6 +9,8 @@ import { Recruitment } from "./pages/Recruitment";
 import { Performance } from "./pages/Performance";
 import { Reports } from "./pages/Reports";
 import { Settings } from "./pages/Settings";
+import { LeaveManagement } from "./pages/LeaveManagement";
+import { Departments } from "./pages/Departments";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +26,8 @@ export const router = createBrowserRouter([
       { path: "performance", Component: Performance },
       { path: "reports", Component: Reports },
       { path: "settings", Component: Settings },
+      { path: "leave", Component: LeaveManagement },
+      { path: "departments", Component: Departments },
     ],
   },
 ]);
