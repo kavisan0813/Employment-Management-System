@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
@@ -17,7 +17,21 @@ const pageTitles: Record<string, string> = {
 
 export function Layout() {
   const [collapsed, setCollapsed] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem("theme");
+    return saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  });
   const location = useLocation();
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
 
   const basePath = "/" + location.pathname.split("/")[1];
   const isEmployeeProfile = location.pathname.startsWith("/employees/") && location.pathname !== "/employees";
@@ -26,9 +40,14 @@ export function Layout() {
   const sidebarWidth = collapsed ? 72 : 240;
 
   return (
-    <div style={{ backgroundColor: "#F0FDF4", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "var(--background)", minHeight: "100vh", color: "var(--foreground)" }}>
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
-      <Topbar title={title} sidebarWidth={sidebarWidth} />
+      <Topbar 
+        title={title} 
+        sidebarWidth={sidebarWidth} 
+        isDark={isDark} 
+        onToggleTheme={() => setIsDark(!isDark)} 
+      />
       <main
         className="transition-all duration-300"
         style={{

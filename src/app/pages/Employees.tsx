@@ -10,6 +10,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Filter,
+  X,
+  User,
+  Mail,
+  Briefcase,
+  Calendar as CalendarIcon,
+  DollarSign,
 } from "lucide-react";
 import { employees } from "../data/mockData";
 
@@ -17,6 +23,212 @@ const ROWS_PER_PAGE = 8;
 
 const departments = ["All Departments", "Engineering", "Marketing", "Design", "Finance", "HR", "Product", "Sales", "Operations"];
 const statuses = ["All Status", "Active", "Inactive", "On Leave"];
+
+/* ─── Add Employee Modal ─────────────────── */
+function AddEmployeeModal({ onClose }: { onClose: () => void }) {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    department: "Engineering",
+    designation: "",
+    salary: "",
+    joinDate: new Date().toISOString().split("T")[0],
+  });
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
+        style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Modal Header */}
+        <div
+          className="flex items-center justify-between px-8 py-7"
+          style={{ borderBottom: "1px solid #F3F4F6", background: "white" }}
+        >
+          <div>
+            <h3 style={{ color: "#111827", fontSize: "22px", fontWeight: 800, letterSpacing: "-0.5px" }}>
+              Add New Employee
+            </h3>
+            <p style={{ color: "#6B7280", fontSize: "14px", marginTop: "2px" }}>
+              Create a new employee profile in the system
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl transition-colors hover:bg-[rgba(0,0,0,0.05)]"
+            style={{ color: "var(--muted-foreground)" }}
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Modal Body */}
+        <div className="px-8 py-8 overflow-y-auto" style={{ maxHeight: "70vh" }}>
+          <div className="grid grid-cols-2 gap-6">
+            {/* Name */}
+            <div className="col-span-2">
+              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+                Full Name
+              </label>
+              <div className="relative">
+                <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all"
+                  style={{
+                    border: "1px solid #E5E7EB",
+                    backgroundColor: "#F9FAFB",
+                    color: "#111827",
+                  }}
+                  placeholder="e.g. John Doe"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="col-span-2">
+              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="email"
+                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all"
+                  style={{
+                    border: "1px solid #E5E7EB",
+                    backgroundColor: "#F9FAFB",
+                    color: "#111827",
+                  }}
+                  placeholder="john.doe@company.com"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+              </div>
+            </div>
+
+            {/* Department */}
+            <div>
+              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+                Department
+              </label>
+              <div className="relative">
+                <Briefcase size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <select
+                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none appearance-none"
+                  style={{
+                    border: "1px solid #E5E7EB",
+                    backgroundColor: "#F9FAFB",
+                    color: "#111827",
+                  }}
+                  value={form.department}
+                  onChange={(e) => setForm({ ...form, department: e.target.value })}
+                >
+                  {departments.slice(1).map((d) => (
+                    <option key={d}>{d}</option>
+                  ))}
+                </select>
+                <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Designation */}
+            <div>
+              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+                Designation
+              </label>
+              <input
+                className="w-full rounded-2xl px-4 py-3.5 text-sm outline-none"
+                style={{
+                  border: "1px solid #E5E7EB",
+                  backgroundColor: "#F9FAFB",
+                  color: "#111827",
+                }}
+                placeholder="e.g. Senior Developer"
+                value={form.designation}
+                onChange={(e) => setForm({ ...form, designation: e.target.value })}
+              />
+            </div>
+
+            {/* Salary */}
+            <div>
+              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+                Annual Salary ($)
+              </label>
+              <div className="relative">
+                <DollarSign size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="number"
+                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none"
+                  style={{
+                    border: "1px solid #E5E7EB",
+                    backgroundColor: "#F9FAFB",
+                    color: "#111827",
+                  }}
+                  placeholder="75000"
+                  value={form.salary}
+                  onChange={(e) => setForm({ ...form, salary: e.target.value })}
+                />
+              </div>
+            </div>
+
+            {/* Join Date */}
+            <div>
+              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+                Joining Date
+              </label>
+              <div className="relative">
+                <CalendarIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="date"
+                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none"
+                  style={{
+                    border: "1px solid #E5E7EB",
+                    backgroundColor: "#F9FAFB",
+                    color: "#111827",
+                  }}
+                  value={form.joinDate}
+                  onChange={(e) => setForm({ ...form, joinDate: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal Footer */}
+        <div
+          className="px-6 py-5 flex gap-3"
+          style={{ borderTop: "1px solid var(--border)" }}
+        >
+          <button
+            onClick={onClose}
+            className="flex-1 py-3.5 rounded-2xl text-sm font-bold transition-all hover:bg-[#ECFDF5]"
+            style={{ backgroundColor: "#F0FDF4", color: "#059669", border: "none" }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onClose}
+            className="flex-1 py-3.5 rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95"
+            style={{
+              background: "#10B981",
+              border: "none"
+            }}
+          >
+            Add Employee
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Employees() {
   const navigate = useNavigate();
@@ -27,6 +239,7 @@ export function Employees() {
   const [showDeptDropdown, setShowDeptDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const filtered = employees.filter((emp) => {
     const matchSearch =
@@ -42,9 +255,9 @@ export function Employees() {
   const paginated = filtered.slice((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE);
 
   const statusConfig: Record<string, { bg: string; color: string }> = {
-    Active: { bg: "#F0FDF4", color: "#16A34A" },
-    Inactive: { bg: "#FEF2F2", color: "#DC2626" },
-    "On Leave": { bg: "#FFFBEB", color: "#D97706" },
+    Active: { bg: "var(--secondary)", color: "var(--primary)" },
+    Inactive: { bg: "rgba(239, 68, 68, 0.1)", color: "#EF4444" },
+    "On Leave": { bg: "rgba(245, 158, 11, 0.1)", color: "#F59E0B" },
   };
 
   return (
@@ -52,21 +265,20 @@ export function Employees() {
       {/* Header Stats */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total Employees", value: employees.length, color: "#059669" },
-          { label: "Active", value: employees.filter((e) => e.status === "Active").length, color: "#22C55E" },
+          { label: "Total Employees", value: employees.length, color: "var(--primary)" },
+          { label: "Active", value: employees.filter((e) => e.status === "Active").length, color: "#10B981" },
           { label: "On Leave", value: employees.filter((e) => e.status === "On Leave").length, color: "#F59E0B" },
           { label: "Inactive", value: employees.filter((e) => e.status === "Inactive").length, color: "#EF4444" },
         ].map((stat, i) => (
           <div
             key={i}
-            className="rounded-xl px-4 py-3 flex items-center justify-between"
+            className="rounded-xl px-4 py-3 flex items-center justify-between shadow-sm"
             style={{
-              backgroundColor: "white",
-              border: "1px solid #D1FAE5",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+              backgroundColor: "var(--card)",
+              border: "1px solid var(--border)",
             }}
           >
-            <span style={{ color: "#6B7280", fontSize: "13px" }}>{stat.label}</span>
+            <span style={{ color: "var(--muted-foreground)", fontSize: "13px" }}>{stat.label}</span>
             <span style={{ color: stat.color, fontSize: "20px", fontWeight: 800 }}>{stat.value}</span>
           </div>
         ))}
@@ -74,11 +286,10 @@ export function Employees() {
 
       {/* Filter Bar */}
       <div
-        className="rounded-2xl p-5 mb-5"
+        className="rounded-2xl p-5 mb-5 shadow-sm"
         style={{
-          backgroundColor: "white",
-          border: "1px solid #D1FAE5",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+          backgroundColor: "var(--card)",
+          border: "1px solid var(--border)",
         }}
       >
         <div className="flex items-center gap-3">
@@ -86,12 +297,12 @@ export function Employees() {
           <div
             className="flex items-center gap-2.5 flex-1 rounded-xl px-4"
             style={{
-              backgroundColor: "#F0FDF4",
-              border: "1px solid #D1FAE5",
+              backgroundColor: "var(--background)",
+              border: "1px solid var(--border)",
               height: "40px",
             }}
           >
-            <Search size={15} color="#6B7280" />
+            <Search size={15} color="var(--muted-foreground)" />
             <input
               type="text"
               value={search}
@@ -102,7 +313,7 @@ export function Employees() {
                 outline: "none",
                 background: "transparent",
                 fontSize: "13px",
-                color: "#166534",
+                color: "var(--foreground)",
                 width: "100%",
               }}
             />
@@ -115,28 +326,28 @@ export function Employees() {
               className="flex items-center gap-2 rounded-xl px-4 transition-colors"
               style={{
                 height: "40px",
-                backgroundColor: "#F0FDF4",
-                border: "1px solid #D1FAE5",
-                color: "#166534",
+                backgroundColor: "var(--background)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
                 fontSize: "13px",
                 fontWeight: 500,
                 whiteSpace: "nowrap",
+                cursor: "pointer"
               }}
             >
-              <Filter size={13} color="#6B7280" />
+              <Filter size={13} color="var(--muted-foreground)" />
               {selectedDept}
-              <ChevronDown size={13} color="#6B7280" />
+              <ChevronDown size={13} color="var(--muted-foreground)" />
             </button>
             {showDeptDropdown && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setShowDeptDropdown(false)} />
                 <div
-                  className="absolute top-full left-0 mt-1 rounded-xl overflow-hidden z-20"
+                  className="absolute top-full left-0 mt-1 rounded-xl overflow-hidden z-20 shadow-xl"
                   style={{
                     minWidth: "180px",
-                    backgroundColor: "white",
-                    border: "1px solid #D1FAE5",
-                    boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
                   }}
                 >
                   {departments.map((dept) => (
@@ -146,13 +357,15 @@ export function Employees() {
                       className="w-full px-4 py-2.5 text-left transition-colors"
                       style={{
                         fontSize: "13px",
-                        color: selectedDept === dept ? "#059669" : "#166534",
-                        backgroundColor: selectedDept === dept ? "#ECFDF5" : "transparent",
+                        color: selectedDept === dept ? "var(--primary)" : "var(--foreground)",
+                        backgroundColor: selectedDept === dept ? "var(--secondary)" : "transparent",
                         fontWeight: selectedDept === dept ? 600 : 400,
+                        border: "none",
+                        cursor: "pointer"
                       }}
                       onMouseEnter={(e) => {
                         if (selectedDept !== dept)
-                          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0FDF4";
+                          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--background)";
                       }}
                       onMouseLeave={(e) => {
                         if (selectedDept !== dept)
@@ -174,27 +387,27 @@ export function Employees() {
               className="flex items-center gap-2 rounded-xl px-4 transition-colors"
               style={{
                 height: "40px",
-                backgroundColor: "#F0FDF4",
-                border: "1px solid #D1FAE5",
-                color: "#166534",
+                backgroundColor: "var(--background)",
+                border: "1px solid var(--border)",
+                color: "var(--foreground)",
                 fontSize: "13px",
                 fontWeight: 500,
                 whiteSpace: "nowrap",
+                cursor: "pointer"
               }}
             >
               {selectedStatus}
-              <ChevronDown size={13} color="#6B7280" />
+              <ChevronDown size={13} color="var(--muted-foreground)" />
             </button>
             {showStatusDropdown && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setShowStatusDropdown(false)} />
                 <div
-                  className="absolute top-full left-0 mt-1 rounded-xl overflow-hidden z-20"
+                  className="absolute top-full left-0 mt-1 rounded-xl overflow-hidden z-20 shadow-xl"
                   style={{
                     minWidth: "150px",
-                    backgroundColor: "white",
-                    border: "1px solid #D1FAE5",
-                    boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
                   }}
                 >
                   {statuses.map((status) => (
@@ -204,13 +417,15 @@ export function Employees() {
                       className="w-full px-4 py-2.5 text-left transition-colors"
                       style={{
                         fontSize: "13px",
-                        color: selectedStatus === status ? "#059669" : "#166534",
-                        backgroundColor: selectedStatus === status ? "#ECFDF5" : "transparent",
+                        color: selectedStatus === status ? "var(--primary)" : "var(--foreground)",
+                        backgroundColor: selectedStatus === status ? "var(--secondary)" : "transparent",
                         fontWeight: selectedStatus === status ? 600 : 400,
+                        border: "none",
+                        cursor: "pointer"
                       }}
                       onMouseEnter={(e) => {
                         if (selectedStatus !== status)
-                          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0FDF4";
+                          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--background)";
                       }}
                       onMouseLeave={(e) => {
                         if (selectedStatus !== status)
@@ -227,15 +442,18 @@ export function Employees() {
 
           {/* Add Employee Button */}
           <button
-            className="flex items-center gap-2 rounded-xl px-5 transition-all hover:opacity-90"
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 rounded-xl px-5 transition-all hover:opacity-90 active:scale-95"
             style={{
               height: "40px",
-              background: "linear-gradient(135deg, #059669, #047857)",
+              backgroundColor: "var(--primary)",
               color: "white",
               fontSize: "13px",
               fontWeight: 600,
-              boxShadow: "0 4px 12px rgba(5, 150, 105, 0.35)",
+              boxShadow: "0 4px 12px rgba(16, 185, 129, 0.2)",
               whiteSpace: "nowrap",
+              border: "none",
+              cursor: "pointer"
             }}
           >
             <Plus size={15} />
@@ -246,19 +464,18 @@ export function Employees() {
 
       {/* Table */}
       <div
-        className="rounded-2xl overflow-hidden"
+        className="rounded-2xl overflow-hidden shadow-sm"
         style={{
-          backgroundColor: "white",
-          border: "1px solid #D1FAE5",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+          backgroundColor: "var(--card)",
+          border: "1px solid var(--border)",
         }}
       >
         {/* Table Header */}
         <div
           className="grid px-6 py-3"
           style={{
-            backgroundColor: "#ECFDF5",
-            borderBottom: "1px solid #D1FAE5",
+            backgroundColor: "var(--secondary)",
+            borderBottom: "1px solid var(--border)",
             gridTemplateColumns: "2.5fr 1fr 1.2fr 1.5fr 1fr 1fr",
           }}
         >
@@ -266,11 +483,12 @@ export function Employees() {
             <span
               key={col}
               style={{
-                color: "#166534",
+                color: "var(--foreground)",
                 fontSize: "11px",
                 fontWeight: 700,
                 letterSpacing: "0.5px",
                 textTransform: "uppercase",
+                opacity: 0.8
               }}
             >
               {col}
@@ -285,13 +503,13 @@ export function Employees() {
             className="grid px-6 py-3.5 items-center cursor-pointer transition-colors"
             style={{
               gridTemplateColumns: "2.5fr 1fr 1.2fr 1.5fr 1fr 1fr",
-              borderBottom: i < paginated.length - 1 ? "1px solid #D1FAE5" : "none",
+              borderBottom: i < paginated.length - 1 ? "1px solid var(--border)" : "none",
               backgroundColor:
                 hoveredRow === emp.id
-                  ? "#ECFDF5"
+                  ? "var(--secondary)"
                   : i % 2 === 0
-                  ? "white"
-                  : "#F0FDF4",
+                    ? "var(--card)"
+                    : "var(--background)",
               transition: "background-color 0.15s",
             }}
             onMouseEnter={() => setHoveredRow(emp.id)}
@@ -303,22 +521,22 @@ export function Employees() {
                 src={emp.avatar}
                 alt={emp.name}
                 className="rounded-full object-cover shrink-0"
-                style={{ width: "36px", height: "36px", border: "2px solid #D1FAE5" }}
+                style={{ width: "36px", height: "36px", border: "2px solid var(--border)" }}
                 onError={(e) => {
                   const el = e.currentTarget;
                   el.style.display = "none";
                   const parent = el.parentElement;
                   if (parent) {
                     const fallback = document.createElement("div");
-                    fallback.style.cssText = `width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#059669,#14B8A6);display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:700;flex-shrink:0;`;
+                    fallback.style.cssText = `width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary));display:flex;align-items:center;justify-content:center;color:var(--card);font-size:13px;font-weight:700;flex-shrink:0;`;
                     fallback.textContent = emp.name.split(" ").map((n) => n[0]).join("").slice(0, 2);
                     parent.insertBefore(fallback, el);
                   }
                 }}
               />
               <div>
-                <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 600 }}>{emp.name}</p>
-                <p style={{ color: "#6B7280", fontSize: "11px" }}>{emp.email}</p>
+                <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{emp.name}</p>
+                <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>{emp.email}</p>
               </div>
             </div>
 
@@ -326,10 +544,10 @@ export function Employees() {
             <span
               className="px-2 py-1 rounded-lg"
               style={{
-                color: "#166534",
+                color: "var(--primary)",
                 fontSize: "12px",
                 fontWeight: 600,
-                backgroundColor: "#ECFDF5",
+                backgroundColor: "var(--secondary)",
                 width: "fit-content",
               }}
             >
@@ -337,17 +555,17 @@ export function Employees() {
             </span>
 
             {/* Department */}
-            <span style={{ color: "#166534", fontSize: "13px" }}>{emp.department}</span>
+            <span style={{ color: "var(--foreground)", fontSize: "13px" }}>{emp.department}</span>
 
             {/* Designation */}
-            <span style={{ color: "#166534", fontSize: "13px" }}>{emp.designation}</span>
+            <span style={{ color: "var(--foreground)", fontSize: "13px" }}>{emp.designation}</span>
 
             {/* Status Badge */}
             <span
               className="px-2.5 py-1 rounded-full"
               style={{
-                backgroundColor: statusConfig[emp.status]?.bg || "#ECFDF5",
-                color: statusConfig[emp.status]?.color || "#166534",
+                backgroundColor: statusConfig[emp.status]?.bg || "var(--secondary)",
+                color: statusConfig[emp.status]?.color || "var(--foreground)",
                 fontSize: "11px",
                 fontWeight: 700,
                 width: "fit-content",
@@ -357,19 +575,19 @@ export function Employees() {
             </span>
 
             {/* Actions */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
               <button
                 onClick={() => navigate(`/employees/${emp.id}`)}
                 className="p-2 rounded-lg transition-colors"
                 title="View"
-                style={{ color: "#6B7280" }}
+                style={{ color: "var(--muted-foreground)" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5";
-                  (e.currentTarget as HTMLButtonElement).style.color = "#059669";
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)";
+                  (e.currentTarget as HTMLButtonElement).style.color = "var(--primary)";
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-                  (e.currentTarget as HTMLButtonElement).style.color = "#6B7280";
+                  (e.currentTarget as HTMLButtonElement).style.color = "var(--muted-foreground)";
                 }}
               >
                 <Eye size={15} />
@@ -377,14 +595,14 @@ export function Employees() {
               <button
                 className="p-2 rounded-lg transition-colors"
                 title="Edit"
-                style={{ color: "#6B7280" }}
+                style={{ color: "var(--muted-foreground)" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0FDF4";
-                  (e.currentTarget as HTMLButtonElement).style.color = "#22C55E";
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)";
+                  (e.currentTarget as HTMLButtonElement).style.color = "var(--primary)";
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-                  (e.currentTarget as HTMLButtonElement).style.color = "#6B7280";
+                  (e.currentTarget as HTMLButtonElement).style.color = "var(--muted-foreground)";
                 }}
               >
                 <Pencil size={15} />
@@ -392,14 +610,14 @@ export function Employees() {
               <button
                 className="p-2 rounded-lg transition-colors"
                 title="Delete"
-                style={{ color: "#6B7280" }}
+                style={{ color: "var(--muted-foreground)" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#FEF2F2";
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(239, 68, 68, 0.1)";
                   (e.currentTarget as HTMLButtonElement).style.color = "#EF4444";
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-                  (e.currentTarget as HTMLButtonElement).style.color = "#6B7280";
+                  (e.currentTarget as HTMLButtonElement).style.color = "var(--muted-foreground)";
                 }}
               >
                 <Trash2 size={15} />
@@ -410,23 +628,23 @@ export function Employees() {
 
         {filtered.length === 0 && (
           <div className="py-16 text-center">
-            <p style={{ color: "#6B7280", fontSize: "14px" }}>No employees found matching your filters.</p>
+            <p style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>No employees found matching your filters.</p>
           </div>
         )}
 
         {/* Pagination */}
         <div
           className="flex items-center justify-between px-6 py-4"
-          style={{ borderTop: "1px solid #D1FAE5" }}
+          style={{ borderTop: "1px solid var(--border)" }}
         >
-          <p style={{ color: "#6B7280", fontSize: "13px" }}>
+          <p style={{ color: "var(--muted-foreground)", fontSize: "13px" }}>
             Showing{" "}
-            <span style={{ color: "#166534", fontWeight: 600 }}>
+            <span style={{ color: "var(--primary)", fontWeight: 600 }}>
               {(page - 1) * ROWS_PER_PAGE + 1}–
               {Math.min(page * ROWS_PER_PAGE, filtered.length)}
             </span>{" "}
             of{" "}
-            <span style={{ color: "#166534", fontWeight: 600 }}>{filtered.length}</span> employees
+            <span style={{ color: "var(--primary)", fontWeight: 600 }}>{filtered.length}</span> employees
           </p>
           <div className="flex items-center gap-1">
             <button
@@ -434,9 +652,9 @@ export function Employees() {
               disabled={page === 1}
               className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors"
               style={{
-                border: "1px solid #D1FAE5",
-                color: page === 1 ? "#CBD5E1" : "#166534",
-                backgroundColor: page === 1 ? "#F0FDF4" : "white",
+                border: "1px solid var(--border)",
+                color: page === 1 ? "var(--muted-foreground)" : "var(--foreground)",
+                backgroundColor: page === 1 ? "var(--background)" : "var(--card)",
                 cursor: page === 1 ? "not-allowed" : "pointer",
               }}
             >
@@ -449,9 +667,9 @@ export function Employees() {
                 className="w-8 h-8 rounded-lg transition-colors"
                 style={{
                   border: "1px solid",
-                  borderColor: page === p ? "#059669" : "#D1FAE5",
-                  color: page === p ? "white" : "#166534",
-                  backgroundColor: page === p ? "#059669" : "white",
+                  borderColor: page === p ? "var(--primary)" : "var(--border)",
+                  color: page === p ? "white" : "var(--foreground)",
+                  backgroundColor: page === p ? "var(--primary)" : "var(--card)",
                   fontSize: "13px",
                   fontWeight: page === p ? 700 : 400,
                   cursor: "pointer",
@@ -465,9 +683,9 @@ export function Employees() {
               disabled={page === totalPages}
               className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors"
               style={{
-                border: "1px solid #D1FAE5",
-                color: page === totalPages ? "#CBD5E1" : "#166534",
-                backgroundColor: page === totalPages ? "#F0FDF4" : "white",
+                border: "1px solid var(--border)",
+                color: page === totalPages ? "var(--muted-foreground)" : "var(--foreground)",
+                backgroundColor: page === totalPages ? "var(--background)" : "var(--card)",
                 cursor: page === totalPages ? "not-allowed" : "pointer",
               }}
             >
@@ -476,6 +694,8 @@ export function Employees() {
           </div>
         </div>
       </div>
+
+      {showAddModal && <AddEmployeeModal onClose={() => setShowAddModal(false)} />}
     </div>
   );
 }

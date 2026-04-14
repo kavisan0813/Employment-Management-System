@@ -43,17 +43,17 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   return (
     <div
-      className="fixed top-0 left-0 h-screen flex flex-col transition-all duration-300 ease-in-out z-50"
+      className="fixed top-0 left-0 h-screen flex flex-col transition-all duration-300 ease-in-out z-50 shadow-sm"
       style={{
         width: collapsed ? "72px" : "240px",
-        backgroundColor: "#064E3B",
-        borderRight: "1px solid rgba(255,255,255,0.08)",
+        backgroundColor: "var(--sidebar-background)",
+        borderRight: "1px solid var(--sidebar-border)",
       }}
     >
       {/* Logo */}
       <div
         className="flex items-center h-16 px-4 shrink-0"
-        style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+        style={{ borderBottom: "1px solid var(--sidebar-border)" }}
       >
         <div
           className="flex items-center justify-center rounded-lg shrink-0"
@@ -70,7 +70,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <span
               className="block whitespace-nowrap"
               style={{
-                color: "white",
+                color: "var(--foreground)",
                 fontSize: "16px",
                 fontWeight: 700,
                 letterSpacing: "-0.3px",
@@ -80,7 +80,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </span>
             <span
               className="block"
-              style={{ color: "#6EE7B7", fontSize: "10px", fontWeight: 500, letterSpacing: "0.5px" }}
+              style={{ color: "var(--primary)", fontSize: "10px", fontWeight: 500, letterSpacing: "0.5px" }}
             >
               EMS PLATFORM
             </span>
@@ -93,7 +93,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         {!collapsed && (
           <p
             className="px-4 mb-2"
-            style={{ color: "#6EE7B7", fontSize: "10px", fontWeight: 600, letterSpacing: "1px" }}
+            style={{ color: "var(--sidebar-foreground)", opacity: 0.6, fontSize: "10px", fontWeight: 700, letterSpacing: "1px" }}
           >
             MAIN MENU
           </p>
@@ -114,17 +114,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     borderRadius: "10px",
                     textDecoration: "none",
                     transition: "all 0.15s ease",
-                    backgroundColor: active ? "rgba(16, 185, 129, 0.15)" : "transparent",
-                    color: active ? "#10B981" : "#A7F3D0",
-                    borderLeft: active ? "2px solid #10B981" : "2px solid transparent",
+                    backgroundColor: active ? "var(--sidebar-primary)" : "transparent",
+                    color: active ? "var(--sidebar-primary-foreground)" : "var(--sidebar-foreground)",
                     justifyContent: collapsed ? "center" : "flex-start",
                   }}
-                  className="hover:bg-[rgba(255,255,255,0.05)] hover:text-white group"
+                  className={`group ${!active && 'hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]'}`}
                 >
                   <item.icon
                     size={18}
                     style={{
-                      color: active ? "#10B981" : "inherit",
+                      color: active ? "var(--sidebar-primary-foreground)" : "inherit",
                       flexShrink: 0,
                     }}
                   />
@@ -132,7 +131,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     <span
                       style={{
                         fontSize: "14px",
-                        fontWeight: active ? 600 : 400,
+                        fontWeight: active ? 600 : 500,
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                       }}
@@ -142,8 +141,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   )}
                   {active && !collapsed && (
                     <span
-                      className="ml-auto w-1.5 h-1.5 rounded-full"
-                      style={{ backgroundColor: "#10B981", flexShrink: 0 }}
+                      className="ml-auto w-2 h-2 rounded-full"
+                      style={{ backgroundColor: "var(--sidebar-primary-foreground)", flexShrink: 0 }}
                     />
                   )}
                 </NavLink>
@@ -156,13 +155,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Bottom section */}
       <div
         className="shrink-0 px-2 pb-4"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "12px" }}
+        style={{ borderTop: "1px solid var(--sidebar-border)", paddingTop: "12px" }}
       >
         {/* User avatar section */}
         {!collapsed && (
           <div
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-2"
-            style={{ backgroundColor: "rgba(255,255,255,0.06)" }}
+            style={{ backgroundColor: "var(--sidebar-accent)" }}
           >
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
@@ -171,10 +170,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               <span style={{ color: "white", fontSize: "12px", fontWeight: 700 }}>RP</span>
             </div>
             <div className="overflow-hidden">
-              <p style={{ color: "white", fontSize: "13px", fontWeight: 600, whiteSpace: "nowrap" }}>
+              <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600, whiteSpace: "nowrap" }}>
                 Ryan Park
               </p>
-              <p style={{ color: "#6EE7B7", fontSize: "11px", whiteSpace: "nowrap" }}>HR Administrator</p>
+              <p style={{ color: "var(--muted-foreground)", fontSize: "11px", whiteSpace: "nowrap" }}>HR Administrator</p>
             </div>
           </div>
         )}
@@ -185,16 +184,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           className="w-full flex items-center justify-center rounded-xl transition-colors"
           style={{
             padding: "8px",
-            color: "#6EE7B7",
+            color: "var(--sidebar-foreground)",
             backgroundColor: "transparent",
+            border: "none",
+            cursor: "pointer"
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(255,255,255,0.08)";
-            (e.currentTarget as HTMLButtonElement).style.color = "#A7F3D0";
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--sidebar-accent)";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-            (e.currentTarget as HTMLButtonElement).style.color = "#6EE7B7";
           }}
         >
           {collapsed ? <ChevronRight size={16} /> : (

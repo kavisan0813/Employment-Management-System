@@ -37,9 +37,9 @@ const tabs = [
 ];
 
 const statusConfig: Record<string, { bg: string; color: string }> = {
-  Active: { bg: "#F0FDF4", color: "#16A34A" },
-  Inactive: { bg: "#FEF2F2", color: "#DC2626" },
-  "On Leave": { bg: "#FFFBEB", color: "#D97706" },
+  Active: { bg: "var(--secondary)", color: "var(--primary)" },
+  Inactive: { bg: "rgba(220, 38, 38, 0.1)", color: "#DC2626" },
+  "On Leave": { bg: "rgba(245, 158, 11, 0.1)", color: "#D97706" },
 };
 
 export function EmployeeProfile() {
@@ -54,21 +54,21 @@ export function EmployeeProfile() {
     <div
       key={label}
       className="flex items-start gap-3 p-4 rounded-xl"
-      style={{ backgroundColor: "#F0FDF4", border: "1px solid #D1FAE5" }}
+      style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)" }}
     >
       {icon && (
         <div
           className="flex items-center justify-center rounded-lg mt-0.5 shrink-0"
-          style={{ width: "28px", height: "28px", backgroundColor: "#ECFDF5" }}
+          style={{ width: "28px", height: "28px", backgroundColor: "var(--secondary)" }}
         >
           {icon}
         </div>
       )}
       <div>
-        <p style={{ color: "#6B7280", fontSize: "11px", fontWeight: 600, letterSpacing: "0.4px", textTransform: "uppercase" }}>
+        <p style={{ color: "var(--muted-foreground)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.4px", textTransform: "uppercase" }}>
           {label}
         </p>
-        <p style={{ color: "#022C22", fontSize: "14px", fontWeight: 500, marginTop: "2px" }}>
+        <p style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 500, marginTop: "2px" }}>
           {value}
         </p>
       </div>
@@ -81,14 +81,14 @@ export function EmployeeProfile() {
       <button
         onClick={() => navigate("/employees")}
         className="flex items-center gap-2 mb-5 rounded-xl px-3 py-2 transition-colors"
-        style={{ color: "#6B7280", fontSize: "13px", fontWeight: 500 }}
+        style={{ color: "var(--muted-foreground)", fontSize: "13px", fontWeight: 500 }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5";
-          (e.currentTarget as HTMLButtonElement).style.color = "#022C22";
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)";
+          (e.currentTarget as HTMLButtonElement).style.color = "var(--primary)";
         }}
         onMouseLeave={(e) => {
           (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-          (e.currentTarget as HTMLButtonElement).style.color = "#6B7280";
+          (e.currentTarget as HTMLButtonElement).style.color = "var(--muted-foreground)";
         }}
       >
         <ArrowLeft size={15} />
@@ -98,13 +98,12 @@ export function EmployeeProfile() {
       <div className="flex gap-5">
         {/* Left Panel */}
         <div
-          className="rounded-2xl p-6 flex flex-col"
+          className="rounded-2xl p-6 flex flex-col shadow-sm"
           style={{
             width: "280px",
             minWidth: "280px",
-            backgroundColor: "white",
-            border: "1px solid #D1FAE5",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+            backgroundColor: "var(--card)",
+            border: "1px solid var(--border)",
           }}
         >
           {/* Avatar */}
@@ -117,8 +116,8 @@ export function EmployeeProfile() {
                 style={{
                   width: "96px",
                   height: "96px",
-                  border: "3px solid white",
-                  boxShadow: "0 0 0 3px #05966930",
+                  border: "3px solid var(--card)",
+                  boxShadow: "0 0 0 3px var(--secondary)",
                 }}
                 onError={(e) => {
                   const el = e.currentTarget;
@@ -129,14 +128,14 @@ export function EmployeeProfile() {
                 className="absolute bottom-1 right-1 w-4 h-4 rounded-full"
                 style={{
                   backgroundColor: employee.status === "Active" ? "#22C55E" : "#F59E0B",
-                  border: "2px solid white",
+                  border: "2px solid var(--card)",
                 }}
               />
             </div>
-            <h2 style={{ color: "#022C22", fontSize: "17px", fontWeight: 700, marginTop: "12px" }}>
+            <h2 style={{ color: "var(--foreground)", fontSize: "17px", fontWeight: 700, marginTop: "12px" }}>
               {employee.name}
             </h2>
-            <p style={{ color: "#6B7280", fontSize: "13px", marginTop: "2px" }}>{employee.designation}</p>
+            <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginTop: "2px" }}>{employee.designation}</p>
             <span
               className="mt-2 px-3 py-1 rounded-full"
               style={{
@@ -151,32 +150,32 @@ export function EmployeeProfile() {
           </div>
 
           {/* Divider */}
-          <div style={{ height: "1px", backgroundColor: "#D1FAE5", margin: "20px 0" }} />
+          <div style={{ height: "1px", backgroundColor: "var(--border)", margin: "20px 0" }} />
 
           {/* Info */}
           <div className="space-y-3 flex-1">
             <div className="flex items-center gap-3">
               <div
                 className="flex items-center justify-center rounded-lg shrink-0"
-                style={{ width: "30px", height: "30px", backgroundColor: "#ECFDF5" }}
+                style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <Building2 size={14} color="#059669" />
+              <Building2 size={14} color="var(--primary)" />
               </div>
               <div>
-                <p style={{ color: "#6B7280", fontSize: "11px" }}>Department</p>
-                <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 600 }}>{employee.department}</p>
+                <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Department</p>
+                <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{employee.department}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div
                 className="flex items-center justify-center rounded-lg shrink-0"
-                style={{ width: "30px", height: "30px", backgroundColor: "#ECFDF5" }}
+                style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <Mail size={14} color="#059669" />
+              <Mail size={14} color="var(--primary)" />
               </div>
               <div>
-                <p style={{ color: "#6B7280", fontSize: "11px" }}>Email</p>
-                <p style={{ color: "#022C22", fontSize: "12px", fontWeight: 500, wordBreak: "break-all" }}>
+                <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Email</p>
+                <p style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 500, wordBreak: "break-all" }}>
                   {employee.email}
                 </p>
               </div>
@@ -184,37 +183,37 @@ export function EmployeeProfile() {
             <div className="flex items-center gap-3">
               <div
                 className="flex items-center justify-center rounded-lg shrink-0"
-                style={{ width: "30px", height: "30px", backgroundColor: "#ECFDF5" }}
+                style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <Phone size={14} color="#059669" />
+              <Phone size={14} color="var(--primary)" />
               </div>
               <div>
-                <p style={{ color: "#6B7280", fontSize: "11px" }}>Phone</p>
-                <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 500 }}>{employee.phone}</p>
+                <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Phone</p>
+                <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 500 }}>{employee.phone}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div
                 className="flex items-center justify-center rounded-lg shrink-0"
-                style={{ width: "30px", height: "30px", backgroundColor: "#ECFDF5" }}
+                style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <MapPin size={14} color="#059669" />
+              <MapPin size={14} color="var(--primary)" />
               </div>
               <div>
-                <p style={{ color: "#6B7280", fontSize: "11px" }}>Location</p>
-                <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 500 }}>{employee.location}</p>
+                <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Location</p>
+                <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 500 }}>{employee.location}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div
                 className="flex items-center justify-center rounded-lg shrink-0"
-                style={{ width: "30px", height: "30px", backgroundColor: "#ECFDF5" }}
+                style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <Calendar size={14} color="#059669" />
+              <Calendar size={14} color="var(--primary)" />
               </div>
               <div>
-                <p style={{ color: "#6B7280", fontSize: "11px" }}>Joined</p>
-                <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 500 }}>
+                <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Joined</p>
+                <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 500 }}>
                   {new Date(employee.joinDate).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
@@ -226,34 +225,34 @@ export function EmployeeProfile() {
             <div className="flex items-center gap-3">
               <div
                 className="flex items-center justify-center rounded-lg shrink-0"
-                style={{ width: "30px", height: "30px", backgroundColor: "#ECFDF5" }}
+                style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <Clock size={14} color="#059669" />
+              <Clock size={14} color="var(--primary)" />
               </div>
               <div>
-                <p style={{ color: "#6B7280", fontSize: "11px" }}>Employment Type</p>
-                <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 500 }}>{employee.employmentType}</p>
+                <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Employment Type</p>
+                <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 500 }}>{employee.employmentType}</p>
               </div>
             </div>
           </div>
 
           {/* Divider */}
-          <div style={{ height: "1px", backgroundColor: "#D1FAE5", margin: "20px 0" }} />
+          <div style={{ height: "1px", backgroundColor: "var(--border)", margin: "20px 0" }} />
 
           {/* Performance score */}
           <div
             className="rounded-xl p-4"
-            style={{ backgroundColor: "#F0FDF4", border: "1px solid #D1FAE5" }}
+            style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)" }}
           >
             <div className="flex items-center justify-between mb-2">
-              <span style={{ color: "#6B7280", fontSize: "12px", fontWeight: 500 }}>Performance Score</span>
-              <span style={{ color: "#059669", fontSize: "16px", fontWeight: 800 }}>
+              <span style={{ color: "var(--muted-foreground)", fontSize: "12px", fontWeight: 500 }}>Performance Score</span>
+              <span style={{ color: "var(--primary)", fontSize: "16px", fontWeight: 800 }}>
                 {employee.performance}%
               </span>
             </div>
             <div
               className="rounded-full overflow-hidden"
-              style={{ height: "6px", backgroundColor: "#D1FAE5" }}
+              style={{ height: "6px", backgroundColor: "var(--secondary)" }}
             >
               <div
                 className="rounded-full"
@@ -284,16 +283,16 @@ export function EmployeeProfile() {
             <button
               className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl transition-colors"
               style={{
-                border: "1px solid #D1FAE5",
-                color: "#166534",
+                border: "1px solid var(--border)",
+                color: "var(--primary)",
                 fontSize: "13px",
-                backgroundColor: "white",
+                backgroundColor: "var(--card)",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0FDF4";
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "white";
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--card)";
               }}
             >
               <Download size={13} />
@@ -332,27 +331,26 @@ export function EmployeeProfile() {
 
           {/* Tabs */}
           <div
-            className="rounded-2xl overflow-hidden"
+            className="rounded-2xl overflow-hidden shadow-sm"
             style={{
-              backgroundColor: "white",
-              border: "1px solid #D1FAE5",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+              backgroundColor: "var(--card)",
+              border: "1px solid var(--border)",
             }}
           >
             {/* Tab Headers */}
             <div
               className="flex"
-              style={{ borderBottom: "1px solid #D1FAE5", backgroundColor: "#ECFDF5" }}
+              style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--secondary)" }}
             >
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className="flex items-center gap-2 px-5 py-4 transition-colors"
+                   className="flex items-center gap-2 px-5 py-4 transition-colors"
                   style={{
-                    color: activeTab === tab.id ? "#059669" : "#6B7280",
-                    borderBottom: activeTab === tab.id ? "2px solid #059669" : "2px solid transparent",
-                    backgroundColor: activeTab === tab.id ? "white" : "transparent",
+                    color: activeTab === tab.id ? "var(--primary)" : "var(--muted-foreground)",
+                    borderBottom: activeTab === tab.id ? "2px solid var(--primary)" : "2px solid transparent",
+                    backgroundColor: activeTab === tab.id ? "var(--card)" : "transparent",
                     fontSize: "13px",
                     fontWeight: activeTab === tab.id ? 700 : 500,
                     marginBottom: "-1px",
@@ -369,42 +367,42 @@ export function EmployeeProfile() {
             <div className="p-6">
               {activeTab === "personal" && (
                 <div>
-                  <h4 style={{ color: "#022C22", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>
+                  <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>
                     Personal Information
                   </h4>
                   <div className="grid grid-cols-2 gap-3">
                     {infoField(
                       "Full Name",
                       employee.name,
-                      <User size={14} color="#059669" />
+                      <User size={14} color="var(--primary)" />
                     )}
                     {infoField(
                       "Date of Birth",
                       new Date(employee.dob).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
-                      <Calendar size={14} color="#059669" />
+                      <Calendar size={14} color="var(--primary)" />
                     )}
                     {infoField(
                       "Gender",
                       employee.gender,
-                      <User size={14} color="#059669" />
+                      <User size={14} color="var(--primary)" />
                     )}
                     {infoField(
                       "Phone Number",
                       employee.phone,
-                      <Phone size={14} color="#059669" />
+                      <Phone size={14} color="var(--primary)" />
                     )}
                     <div className="col-span-2">
                       {infoField(
                         "Home Address",
                         employee.address,
-                        <MapPin size={14} color="#059669" />
+                        <MapPin size={14} color="var(--primary)" />
                       )}
                     </div>
                     <div className="col-span-2">
                       {infoField(
                         "Emergency Contact",
                         employee.emergencyContact,
-                        <AlertCircle size={14} color="#059669" />
+                        <AlertCircle size={14} color="var(--primary)" />
                       )}
                     </div>
                   </div>
@@ -413,7 +411,7 @@ export function EmployeeProfile() {
 
               {activeTab === "documents" && (
                 <div>
-                  <h4 style={{ color: "#022C22", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>
+                  <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>
                     Documents
                   </h4>
                   <div className="space-y-3">
@@ -426,7 +424,7 @@ export function EmployeeProfile() {
                       <div
                         key={doc.name}
                         className="flex items-center justify-between p-4 rounded-xl"
-                        style={{ border: "1px solid #D1FAE5", backgroundColor: "#F0FDF4" }}
+                        style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)" }}
                       >
                         <div className="flex items-center gap-3">
                           <div
@@ -440,8 +438,8 @@ export function EmployeeProfile() {
                             <FileText size={16} color={doc.type === "PDF" ? "#EF4444" : "#059669"} />
                           </div>
                           <div>
-                            <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 600 }}>{doc.name}</p>
-                            <p style={{ color: "#6B7280", fontSize: "11px" }}>
+                            <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{doc.name}</p>
+                            <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>
                               {doc.size} • Uploaded {new Date(doc.date).toLocaleDateString()}
                             </p>
                           </div>
@@ -449,8 +447,8 @@ export function EmployeeProfile() {
                         <button
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors"
                           style={{
-                            color: "#059669",
-                            backgroundColor: "#ECFDF5",
+                            color: "var(--primary)",
+                            backgroundColor: "var(--secondary)",
                             fontSize: "12px",
                             fontWeight: 600,
                           }}
@@ -466,7 +464,7 @@ export function EmployeeProfile() {
 
               {activeTab === "attendance" && (
                 <div>
-                  <h4 style={{ color: "#022C22", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>
+                  <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>
                     Attendance Summary — April 2026
                   </h4>
                   <div className="grid grid-cols-4 gap-3 mb-5">
@@ -479,14 +477,14 @@ export function EmployeeProfile() {
                       <div
                         key={s.label}
                         className="rounded-xl p-4 text-center"
-                        style={{ border: "1px solid #D1FAE5", backgroundColor: "#F0FDF4" }}
+                        style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)" }}
                       >
                         <p style={{ color: s.color, fontSize: "22px", fontWeight: 800 }}>{s.value}</p>
-                        <p style={{ color: "#6B7280", fontSize: "11px", marginTop: "2px" }}>{s.label}</p>
+                        <p style={{ color: "var(--muted-foreground)", fontSize: "11px", marginTop: "2px" }}>{s.label}</p>
                       </div>
                     ))}
                   </div>
-                  <p style={{ color: "#6B7280", fontSize: "12px", textAlign: "center" }}>
+                  <p style={{ color: "var(--muted-foreground)", fontSize: "12px", textAlign: "center" }}>
                     Detailed attendance log available in the Attendance module.
                   </p>
                 </div>
@@ -494,7 +492,7 @@ export function EmployeeProfile() {
 
               {activeTab === "payroll" && (
                 <div>
-                  <h4 style={{ color: "#022C22", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>
+                  <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>
                     Payroll Summary — March 2026
                   </h4>
                   <div className="grid grid-cols-3 gap-3 mb-5">
@@ -506,10 +504,10 @@ export function EmployeeProfile() {
                       <div
                         key={s.label}
                         className="rounded-xl p-4 text-center"
-                        style={{ border: `1px solid ${s.color}20`, backgroundColor: s.bg }}
+                        style={{ border: `1px solid var(--border)`, backgroundColor: "var(--background)" }}
                       >
                         <p style={{ color: s.color, fontSize: "20px", fontWeight: 800 }}>{s.value}</p>
-                        <p style={{ color: "#6B7280", fontSize: "11px", marginTop: "2px" }}>{s.label}</p>
+                        <p style={{ color: "var(--muted-foreground)", fontSize: "11px", marginTop: "2px" }}>{s.label}</p>
                       </div>
                     ))}
                   </div>
@@ -518,20 +516,20 @@ export function EmployeeProfile() {
 
               {activeTab === "performance" && (
                 <div>
-                  <h4 style={{ color: "#022C22", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>
+                  <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>
                     Performance Trend
                   </h4>
                   <ResponsiveContainer width="100%" height={200}>
                     <LineChart data={performanceData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#D1FAE5" />
-                      <XAxis dataKey="name" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <YAxis domain={[70, 100]} tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                      <XAxis dataKey="name" tick={{ fill: "var(--muted-foreground)", fontSize: 11 }} axisLine={false} tickLine={false} />
+                      <YAxis domain={[70, 100]} tick={{ fill: "var(--muted-foreground)", fontSize: 11 }} axisLine={false} tickLine={false} />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: "#064E3B",
-                          border: "1px solid rgba(255,255,255,0.1)",
+                          backgroundColor: "var(--card)",
+                          border: "1px solid var(--border)",
                           borderRadius: "10px",
-                          color: "white",
+                          color: "var(--foreground)",
                           fontSize: "12px",
                         }}
                       />
@@ -539,29 +537,29 @@ export function EmployeeProfile() {
                         key="line-score"
                         type="monotone"
                         dataKey="score"
-                        stroke="#059669"
+                        stroke="var(--primary)"
                         strokeWidth={3}
-                        dot={{ fill: "#059669", r: 5 }}
-                        activeDot={{ r: 7, fill: "#059669" }}
+                        dot={{ fill: "var(--primary)", r: 5 }}
+                        activeDot={{ r: 7, fill: "var(--primary)" }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
                   <div
                     className="mt-4 rounded-xl p-4 flex items-center justify-between"
-                    style={{ backgroundColor: "#F0FDF4", border: "1px solid #D1FAE5" }}
+                    style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)" }}
                   >
                     <div>
-                      <p style={{ color: "#6B7280", fontSize: "12px" }}>Current Score</p>
-                      <p style={{ color: "#059669", fontSize: "22px", fontWeight: 800 }}>{employee.performance}%</p>
+                      <p style={{ color: "var(--muted-foreground)", fontSize: "12px" }}>Current Score</p>
+                      <p style={{ color: "var(--primary)", fontSize: "22px", fontWeight: 800 }}>{employee.performance}%</p>
                     </div>
                     <div>
-                      <p style={{ color: "#6B7280", fontSize: "12px" }}>Rating</p>
+                      <p style={{ color: "var(--muted-foreground)", fontSize: "12px" }}>Rating</p>
                       <p style={{ color: "#22C55E", fontSize: "14px", fontWeight: 700 }}>
                         {employee.performance >= 90 ? "⭐ Excellent" : employee.performance >= 80 ? "✅ Good" : "📈 Improving"}
                       </p>
                     </div>
                     <div>
-                      <p style={{ color: "#6B7280", fontSize: "12px" }}>YoY Change</p>
+                      <p style={{ color: "var(--muted-foreground)", fontSize: "12px" }}>YoY Change</p>
                       <p style={{ color: "#22C55E", fontSize: "14px", fontWeight: 700 }}>+14%</p>
                     </div>
                   </div>

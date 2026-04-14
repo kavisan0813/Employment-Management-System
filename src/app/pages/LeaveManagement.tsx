@@ -120,9 +120,9 @@ const leaveData: LeaveRequest[] = [
 
 /* ─── Status config ─────────────────────── */
 const STATUS_CONFIG: Record<Status, { bg: string; color: string; icon: any; label: string }> = {
-  Pending: { bg: "#FFFBEB", color: "#F59E0B", icon: Clock, label: "Pending" },
-  Approved: { bg: "#F0FDF4", color: "#22C55E", icon: Check, label: "Approved" },
-  Rejected: { bg: "#FEF2F2", color: "#EF4444", icon: X, label: "Rejected" },
+  Pending: { bg: "rgba(245, 158, 11, 0.1)", color: "#F59E0B", icon: Clock, label: "Pending" },
+  Approved: { bg: "var(--secondary)", color: "var(--primary)", icon: Check, label: "Approved" },
+  Rejected: { bg: "rgba(239, 68, 68, 0.1)", color: "#EF4444", icon: X, label: "Rejected" },
 };
 
 /* ─── Stat card config ───────────────────── */
@@ -130,25 +130,25 @@ const statCards = [
   {
     label: "Total Requests",
     value: 156,
-    iconBg: "#ECFDF5",
-    iconColor: "#059669",
+    iconBg: "var(--secondary)",
+    iconColor: "var(--primary)",
   },
   {
     label: "Approved",
     value: 118,
-    iconBg: "#ECFDF5",
-    iconColor: "#059669",
+    iconBg: "var(--secondary)",
+    iconColor: "var(--primary)",
   },
   {
     label: "Pending",
     value: 23,
-    iconBg: "#FFFBEB",
+    iconBg: "rgba(245, 158, 11, 0.1)",
     iconColor: "#F59E0B",
   },
   {
     label: "Rejected",
     value: 15,
-    iconBg: "#FEF2F2",
+    iconBg: "rgba(239, 68, 68, 0.1)",
     iconColor: "#EF4444",
   },
 ];
@@ -177,29 +177,29 @@ function NewRequestModal({ onClose }: { onClose: () => void }) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-2xl overflow-hidden"
-        style={{ backgroundColor: "white", boxShadow: "0 20px 60px rgba(0,0,0,0.18)" }}
+        className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
+        style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal header */}
         <div
           className="flex items-center justify-between px-6 py-4"
-          style={{ borderBottom: "1px solid #D1FAE5" }}
+          style={{ borderBottom: "1px solid var(--border)" }}
         >
           <div>
-            <h3 style={{ color: "#022C22", fontSize: "16px", fontWeight: 700 }}>
+            <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 700 }}>
               New Leave Request
             </h3>
-            <p style={{ color: "#6B7280", fontSize: "12px", marginTop: "2px" }}>
+            <p style={{ color: "var(--muted-foreground)", fontSize: "12px", marginTop: "2px" }}>
               Submit a new leave request for an employee
             </p>
           </div>
           <button
             onClick={onClose}
             className="p-2 rounded-xl transition-colors"
-            style={{ color: "#6B7280" }}
+            style={{ color: "var(--muted-foreground)" }}
             onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.backgroundColor = "#ECFDF5")
+              ((e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)")
             }
             onMouseLeave={(e) =>
               ((e.currentTarget as HTMLElement).style.backgroundColor = "transparent")
@@ -213,15 +213,15 @@ function NewRequestModal({ onClose }: { onClose: () => void }) {
         <div className="px-6 py-5 space-y-4">
           {/* Employee name */}
           <div>
-            <label style={{ color: "#374151", fontSize: "12px", fontWeight: 600 }}>
+            <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>
               Employee Name
             </label>
             <input
               className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none transition-all"
               style={{
-                border: "1px solid #D1FAE5",
-                backgroundColor: "#F9FAFB",
-                color: "#022C22",
+                border: "1px solid var(--border)",
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
               }}
               placeholder="e.g. Sarah Johnson"
               value={form.employee}
@@ -231,15 +231,15 @@ function NewRequestModal({ onClose }: { onClose: () => void }) {
 
           {/* Leave type */}
           <div>
-            <label style={{ color: "#374151", fontSize: "12px", fontWeight: 600 }}>
+            <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>
               Leave Type
             </label>
             <select
               className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none"
               style={{
-                border: "1px solid #D1FAE5",
-                backgroundColor: "#F9FAFB",
-                color: "#022C22",
+                border: "1px solid var(--border)",
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
               }}
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
@@ -253,21 +253,21 @@ function NewRequestModal({ onClose }: { onClose: () => void }) {
           {/* Date range */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label style={{ color: "#374151", fontSize: "12px", fontWeight: 600 }}>From</label>
+              <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>From</label>
               <input
                 type="date"
                 className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none"
-                style={{ border: "1px solid #D1FAE5", backgroundColor: "#F9FAFB", color: "#022C22" }}
+                style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)" }}
                 value={form.from}
                 onChange={(e) => setForm({ ...form, from: e.target.value })}
               />
             </div>
             <div>
-              <label style={{ color: "#374151", fontSize: "12px", fontWeight: 600 }}>To</label>
+              <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>To</label>
               <input
                 type="date"
                 className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none"
-                style={{ border: "1px solid #D1FAE5", backgroundColor: "#F9FAFB", color: "#022C22" }}
+                style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)" }}
                 value={form.to}
                 onChange={(e) => setForm({ ...form, to: e.target.value })}
               />
@@ -276,13 +276,13 @@ function NewRequestModal({ onClose }: { onClose: () => void }) {
 
           {/* Reason */}
           <div>
-            <label style={{ color: "#374151", fontSize: "12px", fontWeight: 600 }}>
-              Reason <span style={{ color: "#9CA3AF" }}>(optional)</span>
+            <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>
+              Reason <span style={{ color: "var(--muted-foreground)" }}>(optional)</span>
             </label>
             <textarea
               rows={3}
               className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none resize-none"
-              style={{ border: "1px solid #D1FAE5", backgroundColor: "#F9FAFB", color: "#022C22" }}
+              style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)" }}
               placeholder="Brief reason for leave..."
               value={form.reason}
               onChange={(e) => setForm({ ...form, reason: e.target.value })}
@@ -293,12 +293,12 @@ function NewRequestModal({ onClose }: { onClose: () => void }) {
         {/* Modal footer */}
         <div
           className="px-6 pb-6 flex gap-3"
-          style={{ borderTop: "1px solid #D1FAE5", paddingTop: "16px" }}
+          style={{ borderTop: "1px solid var(--border)", paddingTop: "16px" }}
         >
           <button
             onClick={onClose}
             className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors"
-            style={{ backgroundColor: "#ECFDF5", color: "#166534" }}
+            style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}
           >
             Cancel
           </button>
@@ -306,7 +306,7 @@ function NewRequestModal({ onClose }: { onClose: () => void }) {
             onClick={onClose}
             className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
             style={{
-              background: "linear-gradient(135deg, #059669, #047857)",
+              background: "var(--primary)",
               boxShadow: "0 4px 12px rgba(5,150,105,0.35)",
             }}
           >
@@ -371,10 +371,10 @@ export function LeaveManagement() {
       {/* ── Page header ── */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 style={{ color: "#022C22", fontSize: "22px", fontWeight: 800, letterSpacing: "-0.4px" }}>
+          <h2 style={{ color: "var(--foreground)", fontSize: "22px", fontWeight: 800, letterSpacing: "-0.4px" }}>
             Leave Management
           </h2>
-          <p style={{ color: "#6B7280", fontSize: "13px", marginTop: "3px" }}>
+          <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginTop: "3px" }}>
             Manage and approve employee leave requests
           </p>
         </div>
@@ -399,17 +399,16 @@ export function LeaveManagement() {
         {dynamicStats.map((card) => (
           <div
             key={card.label}
-            className="rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-transform hover:scale-[1.02]"
+            className="rounded-2xl p-5 flex items-center justify-between cursor-pointer transition-transform hover:scale-[1.02] shadow-sm"
             style={{
-              backgroundColor: "white",
-              border: "1px solid #D1FAE5",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.04)",
+              backgroundColor: "var(--card)",
+              border: "1px solid var(--border)",
             }}
           >
             <div>
               <p
                 style={{
-                  color: "#022C22",
+                  color: "var(--foreground)",
                   fontSize: "30px",
                   fontWeight: 800,
                   letterSpacing: "-1px",
@@ -418,7 +417,7 @@ export function LeaveManagement() {
               >
                 {card.value}
               </p>
-              <p style={{ color: "#6B7280", fontSize: "12px", fontWeight: 500, marginTop: "5px" }}>
+              <p style={{ color: "var(--muted-foreground)", fontSize: "12px", fontWeight: 500, marginTop: "5px" }}>
                 {card.label}
               </p>
             </div>
@@ -440,19 +439,18 @@ export function LeaveManagement() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
         {/* Leave Requests Table */}
         <div
-          className="xl:col-span-2 rounded-2xl overflow-hidden"
+          className="xl:col-span-2 rounded-2xl overflow-hidden shadow-sm"
           style={{
-            backgroundColor: "white",
-            border: "1px solid #D1FAE5",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+            backgroundColor: "var(--card)",
+            border: "1px solid var(--border)",
           }}
         >
           {/* Table toolbar */}
           <div
             className="px-5 py-4 flex items-center justify-between gap-3"
-            style={{ borderBottom: "1px solid #D1FAE5" }}
+            style={{ borderBottom: "1px solid var(--border)" }}
           >
-            <h3 style={{ color: "#022C22", fontSize: "15px", fontWeight: 700, flexShrink: 0 }}>
+            <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700, flexShrink: 0 }}>
               Leave Requests
             </h3>
 
@@ -461,16 +459,16 @@ export function LeaveManagement() {
               <div
                 className="flex items-center gap-2 rounded-xl px-3 py-2"
                 style={{
-                  backgroundColor: "#F0FDF4",
-                  border: "1px solid #D1FAE5",
+                  backgroundColor: "var(--background)",
+                  border: "1px solid var(--border)",
                   maxWidth: "200px",
                   flex: 1,
                 }}
               >
-                <Search size={13} color="#6B7280" />
+                <Search size={13} color="var(--muted-foreground)" />
                 <input
                   className="bg-transparent text-xs outline-none w-full"
-                  style={{ color: "#022C22" }}
+                  style={{ color: "var(--foreground)" }}
                   placeholder="Search employee..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -480,7 +478,7 @@ export function LeaveManagement() {
               {/* Filter tabs */}
               <div
                 className="flex gap-1 rounded-xl p-1 shrink-0"
-                style={{ backgroundColor: "#F0FDF4", border: "1px solid #D1FAE5" }}
+                style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)" }}
               >
                 {filters.map((f) => (
                   <button
@@ -489,8 +487,8 @@ export function LeaveManagement() {
                     onClick={() => setActiveFilter(f)}
                     className="px-3 py-1 text-xs rounded-lg transition-all font-medium"
                     style={{
-                      backgroundColor: activeFilter === f ? "#059669" : "transparent",
-                      color: activeFilter === f ? "white" : "#6B7280",
+                      backgroundColor: activeFilter === f ? "var(--primary)" : "transparent",
+                      color: activeFilter === f ? "white" : "var(--muted-foreground)",
                     }}
                   >
                     {f}
@@ -504,12 +502,12 @@ export function LeaveManagement() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr style={{ backgroundColor: "#ECFDF5", borderBottom: "1px solid #D1FAE5" }}>
+                <tr style={{ backgroundColor: "var(--secondary)", borderBottom: "1px solid var(--border)" }}>
                   {["EMPLOYEE", "LEAVE TYPE", "FROM", "TO", "DAYS", "STATUS", "ACTIONS"].map((h) => (
                     <th
                       key={h}
                       className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: "#166534" }}
+                      style={{ color: "var(--foreground)", opacity: 0.8 }}
                     >
                       {h}
                     </th>
@@ -536,11 +534,11 @@ export function LeaveManagement() {
                       <tr
                         key={req.id}
                         style={{
-                          borderBottom: idx < filtered.length - 1 ? "1px solid #D1FAE5" : "none",
+                          borderBottom: idx < filtered.length - 1 ? "1px solid var(--border)" : "none",
                         }}
                         className="transition-colors"
                         onMouseEnter={(e) =>
-                          ((e.currentTarget as HTMLElement).style.backgroundColor = "#F0FDF4")
+                          ((e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)")
                         }
                         onMouseLeave={(e) =>
                           ((e.currentTarget as HTMLElement).style.backgroundColor = "transparent")
@@ -565,7 +563,7 @@ export function LeaveManagement() {
                             </div>
                             <p
                               style={{
-                                color: "#022C22",
+                                color: "var(--foreground)",
                                 fontSize: "13px",
                                 fontWeight: 600,
                                 whiteSpace: "nowrap",
@@ -578,12 +576,12 @@ export function LeaveManagement() {
 
                         {/* Leave Type */}
                         <td className="px-5 py-3.5">
-                          <span style={{ color: "#166534", fontSize: "13px" }}>{req.type}</span>
+                          <span style={{ color: "var(--foreground)", fontSize: "13px", opacity: 0.9 }}>{req.type}</span>
                         </td>
 
                         {/* From */}
                         <td className="px-5 py-3.5">
-                          <span style={{ color: "#166534", fontSize: "13px" }}>{req.from}</span>
+                          <span style={{ color: "var(--foreground)", fontSize: "13px", opacity: 0.9 }}>{req.from}</span>
                         </td>
 
                         {/* To */}
@@ -591,7 +589,7 @@ export function LeaveManagement() {
                           <span
                             style={{
                               color:
-                                req.days >= 30 ? "#F59E0B" : "#166534",
+                                req.days >= 30 ? "#F59E0B" : "var(--foreground)",
                               fontSize: "13px",
                               fontWeight: req.days >= 30 ? 600 : 400,
                             }}
@@ -639,13 +637,13 @@ export function LeaveManagement() {
                                 id={`approve-${req.id}`}
                                 onClick={() => handleApprove(req.id)}
                                 className="p-1.5 rounded-full transition-colors"
-                                style={{ backgroundColor: "#F0FDF4", color: "#22C55E" }}
+                                style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}
                                 title="Approve"
                                 onMouseEnter={(e) =>
-                                  ((e.currentTarget as HTMLElement).style.backgroundColor = "#DCFCE7")
+                                  ((e.currentTarget as HTMLElement).style.backgroundColor = "rgba(16, 185, 129, 0.2)")
                                 }
                                 onMouseLeave={(e) =>
-                                  ((e.currentTarget as HTMLElement).style.backgroundColor = "#F0FDF4")
+                                  ((e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)")
                                 }
                               >
                                 <Check size={14} />
@@ -682,10 +680,10 @@ export function LeaveManagement() {
           {/* Table footer */}
           <div
             className="px-5 py-3 flex items-center justify-between"
-            style={{ borderTop: "1px solid #D1FAE5" }}
+            style={{ borderTop: "1px solid var(--border)" }}
           >
-            <p style={{ color: "#6B7280", fontSize: "12px" }}>
-              Showing <span style={{ fontWeight: 600, color: "#022C22" }}>{filtered.length}</span>{" "}
+            <p style={{ color: "var(--muted-foreground)", fontSize: "12px" }}>
+              Showing <span style={{ fontWeight: 600, color: "var(--foreground)" }}>{filtered.length}</span>{" "}
               of {requests.length} requests
             </p>
             <div className="flex items-center gap-1">
@@ -694,8 +692,8 @@ export function LeaveManagement() {
                   key={p}
                   className="w-7 h-7 flex items-center justify-center rounded-lg text-xs font-medium transition-colors"
                   style={{
-                    backgroundColor: p === 1 ? "#059669" : "transparent",
-                    color: p === 1 ? "white" : "#6B7280",
+                    backgroundColor: p === 1 ? "var(--primary)" : "transparent",
+                    color: p === 1 ? "white" : "var(--muted-foreground)",
                   }}
                 >
                   {p}
@@ -709,24 +707,23 @@ export function LeaveManagement() {
         <div className="flex flex-col gap-4">
           {/* Mini Calendar */}
           <div
-            className="rounded-2xl p-5"
+            className="rounded-2xl p-5 shadow-sm"
             style={{
-              backgroundColor: "white",
-              border: "1px solid #D1FAE5",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+              backgroundColor: "var(--card)",
+              border: "1px solid var(--border)",
             }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 style={{ color: "#022C22", fontSize: "14px", fontWeight: 700 }}>
+              <h3 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>
                 {MONTHS[currentMonth]} 2026
               </h3>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setCurrentMonth((m) => Math.max(0, m - 1))}
                   className="p-1 rounded-lg transition-colors"
-                  style={{ color: "#6B7280" }}
+                  style={{ color: "var(--muted-foreground)" }}
                   onMouseEnter={(e) =>
-                    ((e.currentTarget as HTMLElement).style.backgroundColor = "#ECFDF5")
+                    ((e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)")
                   }
                   onMouseLeave={(e) =>
                     ((e.currentTarget as HTMLElement).style.backgroundColor = "transparent")
@@ -737,9 +734,9 @@ export function LeaveManagement() {
                 <button
                   onClick={() => setCurrentMonth((m) => Math.min(11, m + 1))}
                   className="p-1 rounded-lg transition-colors"
-                  style={{ color: "#6B7280" }}
+                  style={{ color: "var(--muted-foreground)" }}
                   onMouseEnter={(e) =>
-                    ((e.currentTarget as HTMLElement).style.backgroundColor = "#ECFDF5")
+                    ((e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)")
                   }
                   onMouseLeave={(e) =>
                     ((e.currentTarget as HTMLElement).style.backgroundColor = "transparent")
@@ -775,15 +772,15 @@ export function LeaveManagement() {
                     className="w-7 h-7 mx-auto rounded-full flex items-center justify-center text-xs cursor-pointer transition-colors"
                     style={{
                       backgroundColor: isToday
-                        ? "#059669"
+                        ? "var(--primary)"
                         : hasLeave
-                        ? "#FFFBEB"
+                        ? "rgba(245, 158, 11, 0.1)"
                         : "transparent",
                       color: isToday
                         ? "white"
                         : hasLeave
                         ? "#F59E0B"
-                        : "#166534",
+                        : "var(--foreground)",
                       fontWeight: isToday ? 700 : 400,
                     }}
                   >
@@ -796,7 +793,7 @@ export function LeaveManagement() {
             {/* Legend */}
             <div
               className="flex items-center gap-4 mt-4 pt-4"
-              style={{ borderTop: "1px solid #D1FAE5" }}
+              style={{ borderTop: "1px solid var(--border)" }}
             >
               <div className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#059669" }} />

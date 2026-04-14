@@ -3,11 +3,11 @@ import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import { attendanceCalendar, dailyLogs } from "../data/mockData";
 
 const STATUS_COLORS: Record<string, { bg: string; color: string; dot: string; label: string }> = {
-  Present: { bg: "#F0FDF4", color: "#16A34A", dot: "#22C55E", label: "Present" },
-  Absent: { bg: "#FEF2F2", color: "#DC2626", dot: "#EF4444", label: "Absent" },
-  Leave: { bg: "#FFFBEB", color: "#D97706", dot: "#F59E0B", label: "Leave" },
-  Holiday: { bg: "#F0FDFA", color: "#0D9488", dot: "#14B8A6", label: "Holiday" },
-  Weekend: { bg: "#F0FDF4", color: "#CBD5E1", dot: "#CBD5E1", label: "Weekend" },
+  Present: { bg: "var(--secondary)", color: "var(--primary)", dot: "var(--primary)", label: "Present" },
+  Absent: { bg: "rgba(220, 38, 38, 0.1)", color: "#DC2626", dot: "#EF4444", label: "Absent" },
+  Leave: { bg: "rgba(245, 158, 11, 0.1)", color: "#D97706", dot: "#F59E0B", label: "Leave" },
+  Holiday: { bg: "rgba(20, 184, 166, 0.1)", color: "#0D9488", dot: "#14B8A6", label: "Holiday" },
+  Weekend: { bg: "transparent", color: "var(--muted-foreground)", dot: "var(--muted-foreground)", label: "Weekend" },
 };
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -29,10 +29,10 @@ export function Attendance() {
   while (calendarDays.length % 7 !== 0) calendarDays.push(null);
 
   const logStatusConfig: Record<string, { bg: string; color: string }> = {
-    Present: { bg: "#F0FDF4", color: "#16A34A" },
-    Absent: { bg: "#FEF2F2", color: "#DC2626" },
-    Leave: { bg: "#FFFBEB", color: "#D97706" },
-    Holiday: { bg: "#F0FDFA", color: "#0D9488" },
+    Present: { bg: "var(--secondary)", color: "var(--primary)" },
+    Absent: { bg: "rgba(239, 68, 68, 0.1)", color: "#EF4444" },
+    Leave: { bg: "rgba(245, 158, 11, 0.1)", color: "#F59E0B" },
+    Holiday: { bg: "rgba(20, 184, 166, 0.1)", color: "#14B8A6" },
   };
 
   const summary = {
@@ -48,11 +48,10 @@ export function Attendance() {
       {/* Top bar */}
       <div className="flex items-center justify-between mb-6">
         <div
-          className="flex items-center gap-3 rounded-xl px-4 py-2.5"
+          className="flex items-center gap-3 rounded-xl px-4 py-2.5 shadow-sm"
           style={{
-            backgroundColor: "white",
-            border: "1px solid #D1FAE5",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+            backgroundColor: "var(--card)",
+            border: "1px solid var(--border)",
           }}
         >
           <button
@@ -64,13 +63,13 @@ export function Attendance() {
             <ChevronLeft size={16} />
           </button>
           <div className="flex items-center gap-2">
-            <CalendarDays size={16} color="#059669" />
-            <span style={{ color: "#022C22", fontSize: "14px", fontWeight: 700 }}>April 2026</span>
+            <CalendarDays size={16} color="var(--primary)" />
+            <span style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>April 2026</span>
           </div>
           <button
             className="p-1.5 rounded-lg transition-colors"
-            style={{ color: "#6B7280" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5"; }}
+            style={{ color: "var(--muted-foreground)" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--secondary)"; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
           >
             <ChevronRight size={16} />
@@ -79,15 +78,15 @@ export function Attendance() {
 
         <div
           className="flex items-center gap-2 px-3 py-2 rounded-xl"
-          style={{ backgroundColor: "white", border: "1px solid #D1FAE5" }}
+          style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
         >
           <img
             src="https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
             alt={selectedEmployee}
             className="w-7 h-7 rounded-full object-cover"
           />
-          <span style={{ color: "#022C22", fontSize: "13px", fontWeight: 600 }}>{selectedEmployee}</span>
-          <ChevronRight size={14} color="#6B7280" />
+          <span style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{selectedEmployee}</span>
+          <ChevronRight size={14} color="var(--muted-foreground)" />
         </div>
       </div>
 
@@ -97,18 +96,17 @@ export function Attendance() {
           {/* Summary Row */}
           <div className="grid grid-cols-4 gap-3">
             {[
-              { label: "Working Days", value: summary.totalWorkingDays, color: "#059669", bg: "#ECFDF5" },
-              { label: "Present", value: summary.present, color: "#22C55E", bg: "#F0FDF4" },
-              { label: "Absent", value: summary.absent, color: "#EF4444", bg: "#FEF2F2" },
-              { label: "Leaves Taken", value: summary.leaves, color: "#F59E0B", bg: "#FFFBEB" },
+              { label: "Working Days", value: summary.totalWorkingDays, color: "var(--foreground)", bg: "var(--secondary)" },
+              { label: "Present", value: summary.present, color: "var(--primary)", bg: "var(--secondary)" },
+              { label: "Absent", value: summary.absent, color: "#EF4444", bg: "rgba(239, 68, 68, 0.1)" },
+              { label: "Leaves Taken", value: summary.leaves, color: "#F59E0B", bg: "rgba(245, 158, 11, 0.1)" },
             ].map((s, i) => (
               <div
                 key={i}
-                className="rounded-xl p-4"
+                className="rounded-xl p-4 shadow-sm"
                 style={{
-                  backgroundColor: "white",
-                  border: `1px solid ${s.color}20`,
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                  backgroundColor: "var(--card)",
+                  border: `1px solid var(--border)`,
                 }}
               >
                 <div
@@ -117,22 +115,21 @@ export function Attendance() {
                 >
                   <span style={{ color: s.color, fontSize: "16px", fontWeight: 800 }}>{s.value}</span>
                 </div>
-                <p style={{ color: "#6B7280", fontSize: "12px", fontWeight: 500 }}>{s.label}</p>
+                <p style={{ color: "var(--muted-foreground)", fontSize: "12px", fontWeight: 500 }}>{s.label}</p>
               </div>
             ))}
           </div>
 
           {/* Calendar */}
           <div
-            className="rounded-2xl p-5"
+            className="rounded-2xl p-5 shadow-sm"
             style={{
-              backgroundColor: "white",
-              border: "1px solid #D1FAE5",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+              backgroundColor: "var(--card)",
+              border: "1px solid var(--border)",
             }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 style={{ color: "#022C22", fontSize: "15px", fontWeight: 700 }}>
+              <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>
                 Monthly Attendance Calendar
               </h3>
               {/* Legend */}
@@ -142,12 +139,12 @@ export function Attendance() {
                   .map(([key, val]) => (
                     <div key={key} className="flex items-center gap-1.5">
                       <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: val.dot }} />
-                      <span style={{ color: "#6B7280", fontSize: "11px" }}>{val.label}</span>
+                      <span style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>{val.label}</span>
                     </div>
                   ))}
                 <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#CBD5E1" }} />
-                  <span style={{ color: "#6B7280", fontSize: "11px" }}>Weekend</span>
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "var(--muted-foreground)", opacity: 0.3 }} />
+                  <span style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Weekend</span>
                 </div>
               </div>
             </div>
@@ -159,7 +156,7 @@ export function Attendance() {
                   key={d}
                   className="text-center py-2"
                   style={{
-                    color: d === "Sun" || d === "Sat" ? "#CBD5E1" : "#6B7280",
+                    color: d === "Sun" || d === "Sat" ? "var(--muted-foreground)" : "var(--foreground)",
                     fontSize: "11px",
                     fontWeight: 700,
                     letterSpacing: "0.5px",
@@ -190,14 +187,14 @@ export function Attendance() {
                     style={{
                       height: "56px",
                       backgroundColor: isToday
-                        ? "#059669"
+                        ? "var(--primary)"
                         : isHovered
                         ? config.bg
                         : status === "Weekend"
                         ? "transparent"
                         : config.bg,
                       border: isToday
-                        ? "2px solid #047857"
+                        ? "2px solid var(--primary)"
                         : isHovered
                         ? `1px solid ${config.dot}50`
                         : "1px solid transparent",
@@ -208,7 +205,8 @@ export function Attendance() {
                       style={{
                         fontSize: "14px",
                         fontWeight: isToday ? 800 : 600,
-                        color: isToday ? "white" : status === "Weekend" ? "#CBD5E1" : config.color,
+                        color: isToday ? "white" : status === "Weekend" ? "var(--muted-foreground)" : config.color,
+                        opacity: status === "Weekend" ? 0.4 : 1
                       }}
                     >
                       {day}
@@ -228,17 +226,16 @@ export function Attendance() {
 
         {/* Daily Log Table */}
         <div
-          className="rounded-2xl overflow-hidden"
+          className="rounded-2xl overflow-hidden shadow-sm"
           style={{
-            backgroundColor: "white",
-            border: "1px solid #D1FAE5",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+            backgroundColor: "var(--card)",
+            border: "1px solid var(--border)",
             alignSelf: "flex-start",
           }}
         >
-          <div className="px-5 py-4" style={{ borderBottom: "1px solid #D1FAE5" }}>
-            <h3 style={{ color: "#022C22", fontSize: "14px", fontWeight: 700 }}>Daily Log</h3>
-            <p style={{ color: "#6B7280", fontSize: "11px", marginTop: "2px" }}>April 2026</p>
+          <div className="px-5 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
+            <h3 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>Daily Log</h3>
+            <p style={{ color: "var(--muted-foreground)", fontSize: "11px", marginTop: "2px" }}>April 2026</p>
           </div>
 
           {/* Table header */}
@@ -246,12 +243,12 @@ export function Attendance() {
             className="grid px-5 py-2.5"
             style={{
               gridTemplateColumns: "1fr 1fr 1fr 80px",
-              backgroundColor: "#ECFDF5",
-              borderBottom: "1px solid #D1FAE5",
+              backgroundColor: "var(--secondary)",
+              borderBottom: "1px solid var(--border)",
             }}
           >
             {["Date", "In", "Out", "Status"].map((col) => (
-              <span key={col} style={{ color: "#166534", fontSize: "10px", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase" }}>
+              <span key={col} style={{ color: "var(--foreground)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase", opacity: 0.8 }}>
                 {col}
               </span>
             ))}
@@ -264,18 +261,18 @@ export function Attendance() {
                 className="grid px-5 py-3 items-center"
                 style={{
                   gridTemplateColumns: "1fr 1fr 1fr 80px",
-                  borderBottom: i < dailyLogs.length - 1 ? "1px solid #D1FAE5" : "none",
-                  backgroundColor: i % 2 === 0 ? "white" : "#F0FDF4",
+                  borderBottom: i < dailyLogs.length - 1 ? "1px solid var(--border)" : "none",
+                  backgroundColor: i % 2 === 0 ? "var(--card)" : "var(--background)",
                 }}
               >
-                <span style={{ color: "#022C22", fontSize: "11px", fontWeight: 600 }}>{log.date.split(",")[0].replace("Apr ", "Apr ")}</span>
-                <span style={{ color: "#166534", fontSize: "11px" }}>{log.checkIn}</span>
-                <span style={{ color: "#166534", fontSize: "11px" }}>{log.checkOut}</span>
+                <span style={{ color: "var(--foreground)", fontSize: "11px", fontWeight: 600 }}>{log.date.split(",")[0].replace("Apr ", "Apr ")}</span>
+                <span style={{ color: "var(--foreground)", fontSize: "11px", opacity: 0.8 }}>{log.checkIn}</span>
+                <span style={{ color: "var(--foreground)", fontSize: "11px", opacity: 0.8 }}>{log.checkOut}</span>
                 <span
                   className="px-2 py-0.5 rounded-full text-center"
                   style={{
-                    backgroundColor: logStatusConfig[log.status]?.bg || "#ECFDF5",
-                    color: logStatusConfig[log.status]?.color || "#166534",
+                    backgroundColor: logStatusConfig[log.status]?.bg || "var(--secondary)",
+                    color: logStatusConfig[log.status]?.color || "var(--primary)",
                     fontSize: "10px",
                     fontWeight: 700,
                     width: "fit-content",
@@ -290,19 +287,19 @@ export function Attendance() {
           {/* Bottom summary */}
           <div
             className="px-5 py-4"
-            style={{ borderTop: "1px solid #D1FAE5", backgroundColor: "#ECFDF5" }}
+            style={{ borderTop: "1px solid var(--border)", backgroundColor: "var(--secondary)" }}
           >
             <div className="flex items-center justify-between">
-              <span style={{ color: "#6B7280", fontSize: "12px" }}>Avg. Hours/Day</span>
-              <span style={{ color: "#022C22", fontSize: "13px", fontWeight: 700 }}>9h 06m</span>
+              <span style={{ color: "var(--muted-foreground)", fontSize: "12px" }}>Avg. Hours/Day</span>
+              <span style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 700 }}>9h 06m</span>
             </div>
             <div
               className="rounded-full overflow-hidden mt-2"
-              style={{ height: "4px", backgroundColor: "#D1FAE5" }}
+              style={{ height: "4px", backgroundColor: "var(--border)" }}
             >
               <div
                 className="rounded-full"
-                style={{ width: "88%", height: "100%", backgroundColor: "#059669" }}
+                style={{ width: "88%", height: "100%", backgroundColor: "var(--primary)" }}
               />
             </div>
           </div>

@@ -1,58 +1,16 @@
 import { useState } from "react";
-import { Plus, MoreHorizontal, Eye, MessageSquare, Trash2, Calendar } from "lucide-react";
+import { Plus, MessageSquare, Calendar, ChevronRight, Star, X, Briefcase, MapPin, DollarSign, ChevronDown, Users } from "lucide-react";
 import { recruitmentPipeline } from "../data/mockData";
 
 type Stage = "Applied" | "Screening" | "Interview" | "Offer Sent" | "Hired";
 
-const STAGE_CONFIG: Record<
-  Stage,
-  { color: string; bg: string; border: string; badge: string; badgeText: string }
-> = {
-  Applied: {
-    color: "#059669",
-    bg: "#ECFDF5",
-    border: "#A7F3D0",
-    badge: "#D1FAE5",
-    badgeText: "#047857",
-  },
-  Screening: {
-    color: "#F59E0B",
-    bg: "#FFFBEB",
-    border: "#FDE68A",
-    badge: "#FEF3C7",
-    badgeText: "#B45309",
-  },
-  Interview: {
-    color: "#14B8A6",
-    bg: "#F0FDFA",
-    border: "#99F6E4",
-    badge: "#CCFBF1",
-    badgeText: "#0D9488",
-  },
-  "Offer Sent": {
-    color: "#0EA5E9",
-    bg: "#F0F9FF",
-    border: "#BAE6FD",
-    badge: "#E0F2FE",
-    badgeText: "#0369A1",
-  },
-  Hired: {
-    color: "#22C55E",
-    bg: "#F0FDF4",
-    border: "#BBF7D0",
-    badge: "#DCFCE7",
-    badgeText: "#15803D",
-  },
+const STAGE_CONFIG: Record<Stage, { color: string; bg: string; dot: string }> = {
+  Applied: { color: "#10B981", bg: "#ECFDF5", dot: "#10B981" },
+  Screening: { color: "#059669", bg: "#F0FDF4", dot: "#059669" },
+  Interview: { color: "#14B8A6", bg: "#F0FDFA", dot: "#14B8A6" },
+  "Offer Sent": { color: "#0D9488", bg: "#F0FDFA", dot: "#0D9488" },
+  Hired: { color: "#10B981", bg: "#ECFDF5", dot: "#10B981" },
 };
-
-const AVATAR_COLORS = [
-  "linear-gradient(135deg, #059669, #047857)",
-  "linear-gradient(135deg, #14B8A6, #0D9488)",
-  "linear-gradient(135deg, #EC4899, #DB2777)",
-  "linear-gradient(135deg, #F59E0B, #D97706)",
-  "linear-gradient(135deg, #22C55E, #16A34A)",
-  "linear-gradient(135deg, #0EA5E9, #0369A1)",
-];
 
 interface Candidate {
   id: string;
@@ -61,143 +19,284 @@ interface Candidate {
   date: string;
   avatar: string | null;
   initials: string;
+  type: string;
+  location: string;
+  rating: number;
 }
 
-function CandidateCard({
-  candidate,
-  stage,
-  index,
-}: {
-  candidate: Candidate;
-  stage: Stage;
-  index: number;
-}) {
+function CandidateCard({ candidate }: { candidate: Candidate }) {
   const [hovered, setHovered] = useState(false);
-  const config = STAGE_CONFIG[stage];
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="rounded-xl p-4 transition-all cursor-pointer"
+      className="rounded-[24px] p-5 cursor-pointer"
       style={{
-        backgroundColor: hovered ? "white" : "white",
-        border: hovered ? `1px solid ${config.color}40` : "1px solid #D1FAE5",
-        boxShadow: hovered
-          ? `0 4px 16px rgba(0,0,0,0.08), 0 0 0 2px ${config.color}20`
-          : "0 1px 3px rgba(0,0,0,0.04)",
-        transform: hovered ? "translateY(-1px)" : "translateY(0)",
+        backgroundColor: hovered ? "#F0FFF8" : "#FFFFFF",
+        border: hovered ? "1.5px solid #34D39A" : "1.5px solid #E8FDF0",
+        boxShadow: hovered ? "0 6px 24px rgba(52,211,153,0.18)" : "0 1px 4px rgba(0,0,0,0.04)",
+        transform: hovered ? "translateY(-2px)" : "translateY(0)",
+        transition: "border-color 200ms ease-out, background-color 200ms ease-out, box-shadow 200ms ease-out, transform 200ms ease-out",
       }}
     >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 mb-4">
+        <div
+          className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
+          style={{
+            backgroundColor: candidate.avatar ? "transparent" : "#E4F5ED",
+            border: "1px solid #C9F0DC"
+          }}
+        >
           {candidate.avatar ? (
-            <img
-              src={candidate.avatar}
-              alt={candidate.name}
-              className="rounded-full object-cover shrink-0"
-              style={{ width: "36px", height: "36px", border: "2px solid #D1FAE5" }}
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
+            <img src={candidate.avatar} className="w-full h-full rounded-full object-cover" alt="" />
           ) : (
-            <div
-              className="flex items-center justify-center rounded-full shrink-0"
-              style={{
-                width: "36px",
-                height: "36px",
-                background: AVATAR_COLORS[index % AVATAR_COLORS.length],
-              }}
-            >
-              <span style={{ color: "white", fontSize: "12px", fontWeight: 700 }}>
-                {candidate.initials}
-              </span>
-            </div>
+            <span style={{ color: "#406E5F", fontSize: "12px", fontWeight: 700 }}>{candidate.initials}</span>
           )}
+        </div>
+        <div>
+          <h4 style={{ color: "#0F3047", fontSize: "14px", fontWeight: 700 }}>{candidate.name}</h4>
+          <p style={{ color: "#6B8C7A", fontSize: "12px" }}>{candidate.role}</p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        <span
+          className="px-2.5 py-1 rounded-full text-[10px] font-bold"
+          style={{ backgroundColor: "#E4F5ED", color: "#3EA76F", border: "1px solid #C9F0DC" }}
+        >
+          Applied: {candidate.date.split(",")[0]}
+        </span>
+        <span
+          className="px-2.5 py-1 rounded-full text-[10px] font-bold"
+          style={{ backgroundColor: "#E4F5ED", color: "#406E5F", border: "1px solid #C9F0DC" }}
+        >
+          {candidate.location || "Remote"}
+        </span>
+        <span
+          className="px-2.5 py-1 rounded-full text-[10px] font-bold"
+          style={{ backgroundColor: "#E4F5ED", color: "#406E5F", border: "1px solid #C9F0DC" }}
+        >
+          Full-time
+        </span>
+      </div>
+
+      <div className="flex items-center justify-between mt-2 pt-2">
+        <div className="flex gap-0.5">
+          {[1, 2, 3, 4, 5].map((s) => (
+            <Star
+              key={s}
+              size={12}
+              fill={s <= (candidate.rating || 4) ? "#36C29F" : "transparent"}
+              color={s <= (candidate.rating || 4) ? "#36C29F" : "#C9F0DC"}
+            />
+          ))}
+        </div>
+        <div className="flex items-center gap-3" style={{ color: "#9BBFB0" }}>
+          <MessageSquare size={14} style={{ cursor: "pointer" }} onMouseEnter={(e) => { (e.currentTarget as SVGSVGElement).style.color = "#3EA76F"; }} onMouseLeave={(e) => { (e.currentTarget as SVGSVGElement).style.color = "#9BBFB0"; }} />
+          <Calendar size={14} style={{ cursor: "pointer" }} onMouseEnter={(e) => { (e.currentTarget as SVGSVGElement).style.color = "#3EA76F"; }} onMouseLeave={(e) => { (e.currentTarget as SVGSVGElement).style.color = "#9BBFB0"; }} />
+          <ChevronRight size={16} style={{ color: "#3EA76F" }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── "Post a Job" Modal ────────────────── */
+function PostJobModal({ onClose }: { onClose: () => void }) {
+  const [form, setForm] = useState({
+    title: "",
+    department: "Engineering",
+    location: "Remote",
+    type: "Full-time",
+    experience: "",
+    salary: "",
+    description: "",
+  });
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
+        style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div
+          className="flex items-center justify-between px-6 py-4"
+          style={{ borderBottom: "1px solid var(--border)" }}
+        >
           <div>
-            <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 700 }}>{candidate.name}</p>
-            <p style={{ color: "#6B7280", fontSize: "11px" }}>{candidate.role}</p>
+            <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 700 }}>
+              Post a New Job
+            </h3>
+            <p style={{ color: "var(--muted-foreground)", fontSize: "12px", marginTop: "2px" }}>
+              Create a new job opening for recruitment
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl transition-colors"
+            style={{ color: "var(--muted-foreground)" }}
+            onMouseEnter={(e) =>
+              ((e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)")
+            }
+            onMouseLeave={(e) =>
+              ((e.currentTarget as HTMLElement).style.backgroundColor = "transparent")
+            }
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="px-6 py-5 space-y-4">
+          {/* Job Title */}
+          <div>
+            <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>
+              Job Title
+            </label>
+            <div className="relative mt-1.5">
+              <Briefcase size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--muted-foreground)" }} />
+              <input
+                className="w-full rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none transition-all"
+                style={{
+                  border: "1px solid var(--border)",
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
+                }}
+                placeholder="e.g. Senior React Developer"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {/* Department & Location */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>Department</label>
+              <div className="relative mt-1.5">
+                <Users size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--muted-foreground)" }} />
+                <select
+                  className="w-full rounded-xl pl-9 pr-8 py-2.5 text-sm outline-none appearance-none"
+                  style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)" }}
+                  value={form.department}
+                  onChange={(e) => setForm({ ...form, department: e.target.value })}
+                >
+                  {["Engineering", "Design", "Marketing", "Sales", "HR", "Finance"].map((d) => (
+                    <option key={d}>{d}</option>
+                  ))}
+                </select>
+                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "var(--muted-foreground)" }} />
+              </div>
+            </div>
+            <div>
+              <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>Location</label>
+              <div className="relative mt-1.5">
+                <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--muted-foreground)" }} />
+                <select
+                  className="w-full rounded-xl pl-9 pr-8 py-2.5 text-sm outline-none appearance-none"
+                  style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)" }}
+                  value={form.location}
+                  onChange={(e) => setForm({ ...form, location: e.target.value })}
+                >
+                  {["Remote", "On-site", "Hybrid"].map((l) => (
+                    <option key={l}>{l}</option>
+                  ))}
+                </select>
+                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "var(--muted-foreground)" }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Job Type & Experience */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>Job Type</label>
+              <select
+                className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none appearance-none"
+                style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)" }}
+                value={form.type}
+                onChange={(e) => setForm({ ...form, type: e.target.value })}
+              >
+                {["Full-time", "Part-time", "Contract", "Internship"].map((t) => (
+                  <option key={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>Experience</label>
+              <input
+                className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none"
+                style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)" }}
+                placeholder="e.g. 3-5 years"
+                value={form.experience}
+                onChange={(e) => setForm({ ...form, experience: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {/* Salary Range */}
+          <div>
+            <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>
+              Salary Range
+            </label>
+            <div className="relative mt-1.5">
+              <DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--muted-foreground)" }} />
+              <input
+                className="w-full rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none"
+                style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)" }}
+                placeholder="e.g. $80,000 - $120,000"
+                value={form.salary}
+                onChange={(e) => setForm({ ...form, salary: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>
+              Job Description
+            </label>
+            <textarea
+              rows={3}
+              className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none resize-none"
+              style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)" }}
+              placeholder="Brief description of the role and responsibilities..."
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
           </div>
         </div>
-        <button
-          className="p-1.5 rounded-lg transition-colors"
-          style={{ color: "#CBD5E1" }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5";
-            (e.currentTarget as HTMLButtonElement).style.color = "#6B7280";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-            (e.currentTarget as HTMLButtonElement).style.color = "#CBD5E1";
-          }}
-        >
-          <MoreHorizontal size={14} />
-        </button>
-      </div>
 
-      <div className="flex items-center gap-1.5 mb-3">
-        <Calendar size={11} color="#6B7280" />
-        <span style={{ color: "#6B7280", fontSize: "11px" }}>Applied {candidate.date}</span>
-      </div>
-
-      {/* Action icons */}
-      <div
-        className="flex items-center gap-2 pt-3"
-        style={{ borderTop: "1px solid #D1FAE5" }}
-      >
-        <button
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg flex-1 justify-center transition-colors"
-          style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            color: "#059669",
-            backgroundColor: "#ECFDF5",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#D1FAE5";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5";
-          }}
+        {/* Footer */}
+        <div
+          className="px-6 pb-6 flex gap-3"
+          style={{ borderTop: "1px solid var(--border)", paddingTop: "16px" }}
         >
-          <Eye size={11} />
-          View
-        </button>
-        <button
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg flex-1 justify-center transition-colors"
-          style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            color: "#14B8A6",
-            backgroundColor: "#F0FDFA",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#CCFBF1";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#F0FDFA";
-          }}
-        >
-          <MessageSquare size={11} />
-          Note
-        </button>
-        <button
-          className="flex items-center justify-center px-2.5 py-1.5 rounded-lg transition-colors"
-          style={{
-            fontSize: "11px",
-            color: "#EF4444",
-            backgroundColor: "#FEF2F2",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#FEE2E2";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#FEF2F2";
-          }}
-        >
-          <Trash2 size={11} />
-        </button>
+          <button
+            onClick={onClose}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+            style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onClose}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            style={{
+              background: "var(--primary)",
+              boxShadow: "0 4px 12px rgba(5,150,105,0.35)",
+            }}
+          >
+            Post Job
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -206,6 +305,7 @@ function CandidateCard({
 export function Recruitment() {
   const stages: Stage[] = ["Applied", "Screening", "Interview", "Offer Sent", "Hired"];
   const pipeline = recruitmentPipeline as Record<Stage, Candidate[]>;
+  const [showPostJob, setShowPostJob] = useState(false);
 
   const totalCandidates = stages.reduce(
     (sum, stage) => sum + pipeline[stage].length,
@@ -213,191 +313,116 @@ export function Recruitment() {
   );
 
   return (
-    <div style={{ maxWidth: "1360px" }}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        {/* Pipeline stats */}
+    <div className="pb-10">
+      {showPostJob && <PostJobModal onClose={() => setShowPostJob(false)} />}
+      {/* Top Badges & Post Job Button */}
+      <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           {stages.map((stage) => {
             const config = STAGE_CONFIG[stage];
             return (
               <div
                 key={stage}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl"
-                style={{
-                  backgroundColor: config.badge,
-                  border: `1px solid ${config.border}`,
-                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-full"
+                style={{ backgroundColor: config.bg }}
               >
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: config.color }}
-                />
-                <span style={{ color: config.badgeText, fontSize: "12px", fontWeight: 700 }}>
-                  {pipeline[stage].length}
-                </span>
-                <span style={{ color: config.color, fontSize: "12px" }}>{stage}</span>
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: config.dot }} />
+                <span style={{ color: "#0F3047", fontSize: "14px", fontWeight: 700 }}>{pipeline[stage].length}</span>
+                <span style={{ color: config.color, fontSize: "14px" }}>{stage}</span>
               </div>
             );
           })}
         </div>
-
         <button
-          className="flex items-center gap-2 rounded-xl px-5 py-2.5 transition-all hover:opacity-90"
-          style={{
-            background: "linear-gradient(135deg, #059669, #047857)",
-            color: "white",
-            fontSize: "13px",
-            fontWeight: 700,
-            boxShadow: "0 4px 12px rgba(5, 150, 105, 0.35)",
-          }}
+          onClick={() => setShowPostJob(true)}
+          className="flex items-center gap-2 px-6 py-3 rounded-2xl text-white font-bold transition-all hover:opacity-90 shadow-lg"
+          style={{ background: "#10B981", boxShadow: "0 8px 20px rgba(16, 185, 129, 0.25)" }}
         >
-          <Plus size={15} />
+          <Plus size={18} />
           Post a Job
         </button>
       </div>
 
-      {/* Summary Bar */}
-      <div
-        className="rounded-xl p-4 mb-5 flex items-center gap-6"
-        style={{
-          backgroundColor: "white",
-          border: "1px solid #D1FAE5",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-        }}
-      >
-        <div>
-          <p style={{ color: "#6B7280", fontSize: "11px" }}>Total Candidates</p>
-          <p style={{ color: "#022C22", fontSize: "18px", fontWeight: 800 }}>{totalCandidates}</p>
+      {/* Summary Stats Card */}
+      <div className="bg-white rounded-[28px] p-8 mb-10 flex items-center shadow-sm border border-[#E8FDF0]">
+        <div className="pr-10 border-r border-[#E8FDF0]">
+          <p className="text-[#6B8C7A] text-[13px] font-medium mb-1">Total Candidates</p>
+          <p className="text-[#0F3047] text-3xl font-black">{totalCandidates}</p>
         </div>
-        <div style={{ height: "36px", width: "1px", backgroundColor: "#D1FAE5" }} />
-        {/* Progress bar */}
-        <div className="flex-1">
-          <div className="flex items-center gap-1 mb-1.5">
+
+        {/* Progress Bar & Labels */}
+        <div className="flex-1 px-10">
+          <div className="flex gap-1.5 mb-2.5">
             {stages.map((stage) => {
               const config = STAGE_CONFIG[stage];
               const width = (pipeline[stage].length / totalCandidates) * 100;
               return (
                 <div
                   key={stage}
-                  className="rounded-full transition-all"
-                  style={{
-                    height: "8px",
-                    width: `${width}%`,
-                    backgroundColor: config.color,
-                  }}
-                  title={`${stage}: ${pipeline[stage].length}`}
+                  className="h-2 rounded-full"
+                  style={{ width: `${width}%`, backgroundColor: config.color }}
                 />
               );
             })}
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
             {stages.map((stage) => {
               const config = STAGE_CONFIG[stage];
               return (
-                <div key={stage} className="flex items-center gap-1">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: config.color }} />
-                  <span style={{ color: "#6B7280", fontSize: "11px" }}>
-                    {stage} ({pipeline[stage].length})
-                  </span>
+                <div key={stage} className="flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: config.color }} />
+                  <span className="text-[#6B8C7A] text-[12px]">{stage} ({pipeline[stage].length})</span>
                 </div>
               );
             })}
           </div>
         </div>
-        <div style={{ height: "36px", width: "1px", backgroundColor: "#D1FAE5" }} />
-        <div>
-          <p style={{ color: "#6B7280", fontSize: "11px" }}>Hired This Month</p>
-          <p style={{ color: "#22C55E", fontSize: "18px", fontWeight: 800 }}>
-            {pipeline["Hired"].length}
-          </p>
+
+        <div className="pl-10 border-l border-[#E8FDF0] text-right">
+          <p className="text-[#6B8C7A] text-[13px] font-medium mb-1">Hired This Month</p>
+          <p className="text-[#3EA76F] text-3xl font-black">{pipeline["Hired"].length}</p>
         </div>
       </div>
 
       {/* Kanban Board */}
-      <div className="flex gap-4 overflow-x-auto pb-4">
+      <div className="flex gap-6 overflow-x-auto pb-6 custom-scrollbar">
         {stages.map((stage) => {
           const config = STAGE_CONFIG[stage];
           const candidates = pipeline[stage];
 
           return (
-            <div
-              key={stage}
-              className="flex-shrink-0 rounded-2xl flex flex-col"
-              style={{
-                width: "240px",
-                backgroundColor: "#F0FDF4",
-                border: "1px solid #D1FAE5",
-              }}
-            >
-              {/* Column Header */}
-              <div
-                className="flex items-center justify-between px-4 py-3 rounded-t-2xl"
-                style={{
-                  backgroundColor: config.bg,
-                  borderBottom: `2px solid ${config.color}`,
-                }}
-              >
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: config.color }}
-                  />
+            <div key={stage} className="flex-shrink-0" style={{ width: "320px" }}>
+              <div className="flex items-center justify-between mb-5 px-1">
+                <div className="flex items-center gap-3">
+                  <h3 style={{ color: "#0F3047", fontSize: "16px", fontWeight: 800 }}>{stage}</h3>
                   <span
-                    style={{
-                      color: config.color,
-                      fontSize: "13px",
-                      fontWeight: 700,
-                    }}
+                    className="px-2.5 py-0.5 rounded-full text-[12px] font-bold"
+                    style={{ backgroundColor: "#A8F1C4", color: "#064E3B" }}
                   >
-                    {stage}
+                    {candidates.length}
                   </span>
                 </div>
-                <span
-                  className="flex items-center justify-center w-6 h-6 rounded-full"
-                  style={{
-                    backgroundColor: config.badge,
-                    color: config.badgeText,
-                    fontSize: "11px",
-                    fontWeight: 800,
-                    border: `1px solid ${config.border}`,
-                  }}
+                <button
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all"
+                  style={{ color: "#3EA76F", fontSize: "12px", fontWeight: 700, backgroundColor: "#E4F5ED" }}
                 >
-                  {candidates.length}
-                </span>
+                  <Plus size={14} />
+                  Add
+                </button>
               </div>
 
-              {/* Cards */}
-              <div className="p-3 space-y-3 flex-1 overflow-y-auto" style={{ maxHeight: "520px" }}>
-                {candidates.map((candidate, index) => (
-                  <CandidateCard
-                    key={candidate.id}
-                    candidate={candidate}
-                    stage={stage}
-                    index={index}
-                  />
+              <div className="space-y-4">
+                {candidates.map((candidate) => (
+                  <CandidateCard key={candidate.id} candidate={candidate} />
                 ))}
-
-                {/* Add card button */}
-                <button
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl transition-colors"
-                  style={{
-                    border: `1px dashed ${config.border}`,
-                    color: config.color,
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    backgroundColor: "transparent",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = config.bg;
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-                  }}
+                <div
+                  className="rounded-[24px] flex items-center justify-center py-5 transition-colors group"
+                  style={{ backgroundColor: "#F8FFFE", border: "1px dashed #C9F0DC" }}
                 >
-                  <Plus size={13} />
-                  Add Candidate
-                </button>
+                  <span style={{ color: "#9BBFB0" }} className="text-[13px] font-medium group-hover:text-[#3EA76F] transition-colors">
+                    + Drop candidate here
+                  </span>
+                </div>
               </div>
             </div>
           );
