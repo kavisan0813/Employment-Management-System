@@ -46,9 +46,38 @@ export function EmployeeProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("personal");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const employee = employees.find((e) => e.id === id) || employees[0];
   const status = statusConfig[employee.status] || statusConfig.Active;
+
+  const handleDownloadProfile = () => {
+    const dataStr = JSON.stringify(employee, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${employee.name.replace(/\\s+/g, "_")}_Profile.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadDoc = (doc: any) => {
+    const textContent = `Document Name: ${doc.name}\nFile Size: ${doc.size}\nUpload Date: ${new Date(doc.date).toLocaleDateString()}\n\n[This is a mock representation of the actual file content]`;
+    const blob = new Blob([textContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    // ensure extension is .txt for mock files
+    const filename = doc.name.includes('.') ? doc.name.substring(0, doc.name.lastIndexOf('.')) + '.txt' : doc.name + '.txt';
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   const infoField = (label: string, value: string, icon?: any) => (
     <div
@@ -159,7 +188,7 @@ export function EmployeeProfile() {
                 className="flex items-center justify-center rounded-lg shrink-0"
                 style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <Building2 size={14} color="var(--primary)" />
+                <Building2 size={14} color="var(--primary)" />
               </div>
               <div>
                 <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Department</p>
@@ -171,7 +200,7 @@ export function EmployeeProfile() {
                 className="flex items-center justify-center rounded-lg shrink-0"
                 style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <Mail size={14} color="var(--primary)" />
+                <Mail size={14} color="var(--primary)" />
               </div>
               <div>
                 <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Email</p>
@@ -185,7 +214,7 @@ export function EmployeeProfile() {
                 className="flex items-center justify-center rounded-lg shrink-0"
                 style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <Phone size={14} color="var(--primary)" />
+                <Phone size={14} color="var(--primary)" />
               </div>
               <div>
                 <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Phone</p>
@@ -197,7 +226,7 @@ export function EmployeeProfile() {
                 className="flex items-center justify-center rounded-lg shrink-0"
                 style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <MapPin size={14} color="var(--primary)" />
+                <MapPin size={14} color="var(--primary)" />
               </div>
               <div>
                 <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Location</p>
@@ -209,7 +238,7 @@ export function EmployeeProfile() {
                 className="flex items-center justify-center rounded-lg shrink-0"
                 style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <Calendar size={14} color="var(--primary)" />
+                <Calendar size={14} color="var(--primary)" />
               </div>
               <div>
                 <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Joined</p>
@@ -227,7 +256,7 @@ export function EmployeeProfile() {
                 className="flex items-center justify-center rounded-lg shrink-0"
                 style={{ width: "30px", height: "30px", backgroundColor: "var(--secondary)" }}
               >
-              <Clock size={14} color="var(--primary)" />
+                <Clock size={14} color="var(--primary)" />
               </div>
               <div>
                 <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Employment Type</p>
@@ -268,6 +297,7 @@ export function EmployeeProfile() {
           {/* Action Buttons */}
           <div className="flex gap-2 mt-4">
             <button
+              onClick={() => setIsEditModalOpen(true)}
               className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl transition-opacity hover:opacity-90"
               style={{
                 background: "linear-gradient(135deg, #059669, #047857)",
@@ -281,6 +311,7 @@ export function EmployeeProfile() {
               Edit Profile
             </button>
             <button
+              onClick={handleDownloadProfile}
               className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl transition-colors"
               style={{
                 border: "1px solid var(--border)",
@@ -346,7 +377,7 @@ export function EmployeeProfile() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                   className="flex items-center gap-2 px-5 py-4 transition-colors"
+                  className="flex items-center gap-2 px-5 py-4 transition-colors"
                   style={{
                     color: activeTab === tab.id ? "var(--primary)" : "var(--muted-foreground)",
                     borderBottom: activeTab === tab.id ? "2px solid var(--primary)" : "2px solid transparent",
@@ -445,6 +476,7 @@ export function EmployeeProfile() {
                           </div>
                         </div>
                         <button
+                          onClick={() => handleDownloadDoc(doc)}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors"
                           style={{
                             color: "var(--primary)",
@@ -569,6 +601,67 @@ export function EmployeeProfile() {
           </div>
         </div>
       </div>
+
+      {/* Edit Profile Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div 
+            className="w-full max-w-md p-6 rounded-2xl shadow-xl"
+            style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+          >
+            <h3 style={{ color: "var(--foreground)", fontSize: "18px", fontWeight: 700, marginBottom: "16px" }}>
+              Edit Employee Profile
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Full Name</label>
+                <input 
+                  type="text" 
+                  defaultValue={employee.name}
+                  className="w-full px-3 py-2 rounded-xl outline-none transition-colors"
+                  style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }}
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Designation</label>
+                <input 
+                  type="text" 
+                  defaultValue={employee.designation}
+                  className="w-full px-3 py-2 rounded-xl outline-none transition-colors"
+                  style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }}
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Department</label>
+                <input 
+                  type="text" 
+                  defaultValue={employee.department}
+                  className="w-full px-3 py-2 rounded-xl outline-none transition-colors"
+                  style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }}
+                />
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                  style={{ border: "1px solid var(--border)", color: "var(--foreground)" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--secondary)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  style={{ background: "linear-gradient(135deg, #059669, #047857)", boxShadow: "0 4px 12px rgba(5,150,105,0.3)" }}
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

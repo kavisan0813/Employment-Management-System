@@ -5,11 +5,11 @@ import { recruitmentPipeline } from "../data/mockData";
 type Stage = "Applied" | "Screening" | "Interview" | "Offer Sent" | "Hired";
 
 const STAGE_CONFIG: Record<Stage, { color: string; bg: string; dot: string }> = {
-  Applied: { color: "#10B981", bg: "#ECFDF5", dot: "#10B981" },
-  Screening: { color: "#059669", bg: "#F0FDF4", dot: "#059669" },
-  Interview: { color: "#14B8A6", bg: "#F0FDFA", dot: "#14B8A6" },
-  "Offer Sent": { color: "#0D9488", bg: "#F0FDFA", dot: "#0D9488" },
-  Hired: { color: "#10B981", bg: "#ECFDF5", dot: "#10B981" },
+  Applied: { color: "var(--primary)", bg: "var(--secondary)", dot: "var(--primary)" },
+  Screening: { color: "var(--primary)", bg: "var(--secondary)", dot: "var(--primary)" },
+  Interview: { color: "var(--primary)", bg: "var(--secondary)", dot: "var(--primary)" },
+  "Offer Sent": { color: "var(--primary)", bg: "var(--secondary)", dot: "var(--primary)" },
+  Hired: { color: "var(--primary)", bg: "var(--secondary)", dot: "var(--primary)" },
 };
 
 interface Candidate {
@@ -39,7 +39,7 @@ function CandidateDetailModal({ candidate, stage, onClose }: { candidate: Candid
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header banner */}
-        <div className="relative px-6 pt-6 pb-4" style={{ background: "linear-gradient(135deg, #ECFDF5 0%, #F0FDFA 100%)", borderBottom: "1px solid var(--border)" }}>
+        <div className="relative px-6 pt-6 pb-4" style={{ backgroundColor: "var(--card)", borderBottom: "1px solid var(--border)" }}>
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-2 rounded-xl transition-colors"
@@ -52,20 +52,20 @@ function CandidateDetailModal({ candidate, stage, onClose }: { candidate: Candid
           <div className="flex items-center gap-4">
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: candidate.avatar ? "transparent" : "#E4F5ED", border: "2px solid #C9F0DC" }}
+              style={{ backgroundColor: candidate.avatar ? "transparent" : "var(--secondary)", border: "2px solid var(--border)" }}
             >
               {candidate.avatar ? (
                 <img src={candidate.avatar} className="w-full h-full rounded-full object-cover" alt="" />
               ) : (
-                <span style={{ color: "#406E5F", fontSize: "18px", fontWeight: 700 }}>{candidate.initials}</span>
+                <span style={{ color: "var(--primary)", fontSize: "18px", fontWeight: 700 }}>{candidate.initials}</span>
               )}
             </div>
             <div>
-              <h3 style={{ color: "#0F3047", fontSize: "18px", fontWeight: 800 }}>{candidate.name}</h3>
-              <p style={{ color: "#6B8C7A", fontSize: "13px" }}>{candidate.role}</p>
+              <h3 style={{ color: "var(--foreground)", fontSize: "18px", fontWeight: 800 }}>{candidate.name}</h3>
+              <p style={{ color: "var(--muted-foreground)", fontSize: "13px" }}>{candidate.role}</p>
               <span
                 className="inline-block mt-1 px-3 py-0.5 rounded-full text-[11px] font-bold"
-                style={{ backgroundColor: config.bg, color: config.color, border: `1px solid ${config.dot}30` }}
+                style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", border: "1px solid var(--border)" }}
               >
                 {stage}
               </span>
@@ -93,8 +93,8 @@ function CandidateDetailModal({ candidate, stage, onClose }: { candidate: Candid
                 <Star
                   key={s}
                   size={14}
-                  fill={s <= (candidate.rating || 4) ? "#36C29F" : "transparent"}
-                  color={s <= (candidate.rating || 4) ? "#36C29F" : "#C9F0DC"}
+                  fill={s <= (candidate.rating || 4) ? "var(--primary)" : "transparent"}
+                  color={s <= (candidate.rating || 4) ? "var(--primary)" : "var(--border)"}
                 />
               ))}
             </div>
@@ -139,11 +139,11 @@ function MessageModal({ candidate, onClose }: { candidate: Candidate; onClose: (
       >
         <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ backgroundColor: "#E4F5ED", border: "1px solid #C9F0DC" }}>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ backgroundColor: "var(--secondary)", border: "1px solid var(--border)" }}>
               {candidate.avatar ? (
                 <img src={candidate.avatar} className="w-full h-full rounded-full object-cover" alt="" />
               ) : (
-                <span style={{ color: "#406E5F", fontSize: "11px", fontWeight: 700 }}>{candidate.initials}</span>
+                <span style={{ color: "var(--primary)", fontSize: "11px", fontWeight: 700 }}>{candidate.initials}</span>
               )}
             </div>
             <div>
@@ -466,51 +466,50 @@ function CandidateCard({
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="rounded-[24px] p-5 cursor-pointer"
+      className="rounded-[24px] p-5 cursor-pointer transition-all"
       style={{
-        backgroundColor: hovered ? "#F0FFF8" : "#FFFFFF",
-        border: hovered ? "1.5px solid #34D39A" : "1.5px solid #E8FDF0",
-        boxShadow: hovered ? "0 6px 24px rgba(52,211,153,0.18)" : "0 1px 4px rgba(0,0,0,0.04)",
+        backgroundColor: hovered ? "var(--secondary)" : "var(--card)",
+        border: hovered ? "1.5px solid var(--primary)" : "1.5px solid var(--border)",
+        boxShadow: hovered ? "0 6px 24px rgba(16,185,129,0.18)" : "0 1px 4px rgba(0,0,0,0.04)",
         transform: hovered ? "translateY(-2px)" : "translateY(0)",
-        transition: "border-color 200ms ease-out, background-color 200ms ease-out, box-shadow 200ms ease-out, transform 200ms ease-out",
       }}
     >
       <div className="flex items-center gap-3 mb-4">
         <div
           className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
           style={{
-            backgroundColor: candidate.avatar ? "transparent" : "#E4F5ED",
-            border: "1px solid #C9F0DC"
+            backgroundColor: candidate.avatar ? "transparent" : "var(--secondary)",
+            border: "1px solid var(--border)"
           }}
         >
           {candidate.avatar ? (
             <img src={candidate.avatar} className="w-full h-full rounded-full object-cover" alt="" />
           ) : (
-            <span style={{ color: "#406E5F", fontSize: "12px", fontWeight: 700 }}>{candidate.initials}</span>
+            <span style={{ color: "var(--primary)", fontSize: "12px", fontWeight: 700 }}>{candidate.initials}</span>
           )}
         </div>
         <div>
-          <h4 style={{ color: "#0F3047", fontSize: "14px", fontWeight: 700 }}>{candidate.name}</h4>
-          <p style={{ color: "#6B8C7A", fontSize: "12px" }}>{candidate.role}</p>
+          <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>{candidate.name}</h4>
+          <p style={{ color: "var(--muted-foreground)", fontSize: "12px" }}>{candidate.role}</p>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-4">
         <span
           className="px-2.5 py-1 rounded-full text-[10px] font-bold"
-          style={{ backgroundColor: "#E4F5ED", color: "#3EA76F", border: "1px solid #C9F0DC" }}
+          style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", border: "1px solid var(--border)" }}
         >
           Applied: {candidate.date.split(",")[0]}
         </span>
         <span
           className="px-2.5 py-1 rounded-full text-[10px] font-bold"
-          style={{ backgroundColor: "#E4F5ED", color: "#406E5F", border: "1px solid #C9F0DC" }}
+          style={{ backgroundColor: "var(--secondary)", color: "var(--muted-foreground)", border: "1px solid var(--border)" }}
         >
           {candidate.location || "Remote"}
         </span>
         <span
           className="px-2.5 py-1 rounded-full text-[10px] font-bold"
-          style={{ backgroundColor: "#E4F5ED", color: "#406E5F", border: "1px solid #C9F0DC" }}
+          style={{ backgroundColor: "var(--secondary)", color: "var(--muted-foreground)", border: "1px solid var(--border)" }}
         >
           Full-time
         </span>
@@ -522,29 +521,29 @@ function CandidateCard({
             <Star
               key={s}
               size={12}
-              fill={s <= (candidate.rating || 4) ? "#36C29F" : "transparent"}
-              color={s <= (candidate.rating || 4) ? "#36C29F" : "#C9F0DC"}
+              fill={s <= (candidate.rating || 4) ? "var(--primary)" : "transparent"}
+              color={s <= (candidate.rating || 4) ? "var(--primary)" : "var(--border)"}
             />
           ))}
         </div>
-        <div className="flex items-center gap-3" style={{ color: "#9BBFB0" }}>
+        <div className="flex items-center gap-3" style={{ color: "var(--muted-foreground)" }}>
           <MessageSquare
             size={14}
             style={{ cursor: "pointer" }}
             onClick={(e) => { e.stopPropagation(); onMessage(); }}
-            onMouseEnter={(e) => { (e.currentTarget as SVGSVGElement).style.color = "#3EA76F"; }}
-            onMouseLeave={(e) => { (e.currentTarget as SVGSVGElement).style.color = "#9BBFB0"; }}
+            onMouseEnter={(e) => { (e.currentTarget as SVGSVGElement).style.color = "var(--primary)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as SVGSVGElement).style.color = "var(--muted-foreground)"; }}
           />
           <Calendar
             size={14}
             style={{ cursor: "pointer" }}
             onClick={(e) => { e.stopPropagation(); onSchedule(); }}
-            onMouseEnter={(e) => { (e.currentTarget as SVGSVGElement).style.color = "#3EA76F"; }}
-            onMouseLeave={(e) => { (e.currentTarget as SVGSVGElement).style.color = "#9BBFB0"; }}
+            onMouseEnter={(e) => { (e.currentTarget as SVGSVGElement).style.color = "var(--primary)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as SVGSVGElement).style.color = "var(--muted-foreground)"; }}
           />
           <ChevronRight
             size={16}
-            style={{ color: "#3EA76F", cursor: "pointer" }}
+            style={{ color: "var(--primary)", cursor: "pointer" }}
             onClick={(e) => { e.stopPropagation(); onDetail(); }}
           />
         </div>
@@ -770,8 +769,8 @@ function DropZone({ stage, onDrop }: { stage: Stage; onDrop: () => void }) {
       onMouseLeave={() => setIsHovered(false)}
       style={{
         borderRadius: "24px",
-        border: `2px dashed ${active ? "#10B981" : "#C9F0DC"}`,
-        backgroundColor: active ? "#EDFDF5" : "#F8FFFE",
+        border: `2px dashed ${active ? "var(--primary)" : "var(--border)"}`,
+        backgroundColor: active ? "var(--secondary)" : "var(--card)",
         padding: "28px 16px",
         display: "flex",
         flexDirection: "column",
@@ -790,7 +789,7 @@ function DropZone({ stage, onDrop }: { stage: Stage; onDrop: () => void }) {
           width: "40px",
           height: "40px",
           borderRadius: "50%",
-          backgroundColor: active ? "#10B981" : "#E4F5ED",
+          backgroundColor: active ? "var(--primary)" : "var(--secondary)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -803,7 +802,7 @@ function DropZone({ stage, onDrop }: { stage: Stage; onDrop: () => void }) {
           height="18"
           viewBox="0 0 24 24"
           fill="none"
-          stroke={active ? "#ffffff" : "#3EA76F"}
+          stroke={active ? "white" : "var(--primary)"}
           strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -819,7 +818,7 @@ function DropZone({ stage, onDrop }: { stage: Stage; onDrop: () => void }) {
       <div style={{ textAlign: "center" }}>
         <p
           style={{
-            color: active ? "#0F3047" : "#6B8C7A",
+            color: active ? "var(--foreground)" : "var(--muted-foreground)",
             fontSize: "13px",
             fontWeight: 700,
             margin: 0,
@@ -830,7 +829,7 @@ function DropZone({ stage, onDrop }: { stage: Stage; onDrop: () => void }) {
         </p>
         <p
           style={{
-            color: active ? "#3EA76F" : "#9BBFB0",
+            color: active ? "var(--primary)" : "var(--muted-foreground)",
             fontSize: "11px",
             marginTop: "3px",
             transition: "color 200ms ease-out",
@@ -885,12 +884,12 @@ export function Recruitment() {
             return (
               <div
                 key={stage}
-                className="flex items-center gap-2 px-4 py-2 rounded-full"
-                style={{ backgroundColor: config.bg }}
+                className="flex items-center gap-2 px-4 py-2 rounded-full border"
+                style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}
               >
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: config.dot }} />
-                <span style={{ color: "#0F3047", fontSize: "14px", fontWeight: 700 }}>{pipeline[stage].length}</span>
-                <span style={{ color: config.color, fontSize: "14px" }}>{stage}</span>
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "var(--primary)" }} />
+                <span style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>{pipeline[stage].length}</span>
+                <span style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>{stage}</span>
               </div>
             );
           })}
@@ -906,43 +905,44 @@ export function Recruitment() {
       </div>
 
       {/* Summary Stats Card */}
-      <div className="bg-white rounded-[28px] p-8 mb-10 flex items-center shadow-sm border border-[#E8FDF0]">
-        <div className="pr-10 border-r border-[#E8FDF0]">
-          <p className="text-[#6B8C7A] text-[13px] font-medium mb-1">Total Candidates</p>
-          <p className="text-[#0F3047] text-3xl font-black">{totalCandidates}</p>
+      <div 
+        className="rounded-[28px] p-8 mb-10 flex items-center shadow-sm border"
+        style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}
+      >
+        <div className="pr-10 border-r" style={{ borderColor: "var(--border)" }}>
+          <p style={{ color: "var(--muted-foreground)" }} className="text-[13px] font-medium mb-1">Total Candidates</p>
+          <p style={{ color: "var(--foreground)" }} className="text-3xl font-black">{totalCandidates}</p>
         </div>
 
         {/* Progress Bar & Labels */}
         <div className="flex-1 px-10">
           <div className="flex gap-1.5 mb-2.5">
             {stages.map((stage) => {
-              const config = STAGE_CONFIG[stage];
               const width = (pipeline[stage].length / totalCandidates) * 100;
               return (
                 <div
                   key={stage}
                   className="h-2 rounded-full"
-                  style={{ width: `${width}%`, backgroundColor: config.color }}
+                  style={{ width: `${width}%`, backgroundColor: "var(--primary)" }}
                 />
               );
             })}
           </div>
           <div className="flex items-center gap-5">
             {stages.map((stage) => {
-              const config = STAGE_CONFIG[stage];
               return (
                 <div key={stage} className="flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: config.color }} />
-                  <span className="text-[#6B8C7A] text-[12px]">{stage} ({pipeline[stage].length})</span>
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--primary)" }} />
+                  <span style={{ color: "var(--muted-foreground)" }} className="text-[12px]">{stage} ({pipeline[stage].length})</span>
                 </div>
               );
             })}
           </div>
         </div>
 
-        <div className="pl-10 border-l border-[#E8FDF0] text-right">
-          <p className="text-[#6B8C7A] text-[13px] font-medium mb-1">Hired This Month</p>
-          <p className="text-[#3EA76F] text-3xl font-black">{pipeline["Hired"].length}</p>
+        <div className="pl-10 border-l text-right" style={{ borderColor: "var(--border)" }}>
+          <p style={{ color: "var(--muted-foreground)" }} className="text-[13px] font-medium mb-1">Hired This Month</p>
+          <p style={{ color: "var(--primary)" }} className="text-3xl font-black">{pipeline["Hired"].length}</p>
         </div>
       </div>
 
@@ -956,10 +956,10 @@ export function Recruitment() {
             <div key={stage} className="flex-shrink-0" style={{ width: "320px" }}>
               <div className="flex items-center justify-between mb-5 px-1">
                 <div className="flex items-center gap-3">
-                  <h3 style={{ color: "#0F3047", fontSize: "16px", fontWeight: 800 }}>{stage}</h3>
+                  <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 800 }}>{stage}</h3>
                   <span
                     className="px-2.5 py-0.5 rounded-full text-[12px] font-bold"
-                    style={{ backgroundColor: "#A8F1C4", color: "#064E3B" }}
+                    style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}
                   >
                     {candidates.length}
                   </span>
@@ -967,7 +967,7 @@ export function Recruitment() {
                 <button
                   onClick={() => setAddStage(stage)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all hover:opacity-80"
-                  style={{ color: "#3EA76F", fontSize: "12px", fontWeight: 700, backgroundColor: "#E4F5ED" }}
+                  style={{ color: "var(--primary)", fontSize: "12px", fontWeight: 700, backgroundColor: "var(--secondary)" }}
                 >
                   <Plus size={14} />
                   Add
