@@ -372,13 +372,13 @@ export function Departments() {
                 <h3 style={{ color: "var(--foreground)", fontSize: "18px", fontWeight: 800 }}>
                   {dept.name}
                 </h3>
-                <button
+                {/* <button
                   onClick={(e) => e.stopPropagation()}
                   className="p-1 rounded-lg transition-colors hover:bg-neutral-100 dark:hover:bg-zinc-800"
                   style={{ color: "var(--muted-foreground)" }}
                 >
                   <MoreHorizontal size={18} />
-                </button>
+                </button> */}
               </div>
               <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginTop: "2px" }}>
                 Head: <span style={{ color: "var(--foreground)", fontWeight: 500 }}>{dept.head}</span>

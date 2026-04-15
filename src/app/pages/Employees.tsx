@@ -15,7 +15,7 @@ import {
   Mail,
   Briefcase,
   Calendar as CalendarIcon,
-  DollarSign,
+  IndianRupee,
 } from "lucide-react";
 import { employees } from "../data/mockData";
 
@@ -163,7 +163,7 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
                 Annual Salary (₹)
               </label>
               <div className="relative">
-                <DollarSign size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <IndianRupee size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="number"
                   className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none"
@@ -356,11 +356,10 @@ function EditEmployeeModal({ employee, onClose }: { employee: typeof import("../
               />
             </div>
 
-            {/* Salary */}
             <div>
               <label style={{ color: "#374151", fontSize: "13px", fontWeight: 700, display: "block", marginBottom: "6px" }}>Annual Salary (₹)</label>
               <div className="relative">
-                <DollarSign size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <IndianRupee size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="number"
                   className="w-full rounded-xl pl-10 pr-4 py-3 text-sm outline-none"
