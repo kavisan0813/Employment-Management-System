@@ -20,7 +20,8 @@ import {
   CheckCircle2,
   XCircle,
   MoreVertical,
-  Activity
+  Activity,
+  Download
 } from "lucide-react";
 
 /* ─── Types ─────────────────────────────── */
@@ -335,6 +336,25 @@ export function LeaveManagement() {
   const [currentMonth, setCurrentMonth] = useState(3); // April
   const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);
 
+  const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [exportFormat, setExportFormat] = useState<"CSV" | "Excel" | "PDF">("Excel");
+
+  const handleExport = () => {
+    const content = "Employee,Department,Type,From,To,Days,Status\nSneha Patel,Engineering,Annual Leave,Apr 10,Apr 12,3,Pending";
+    const blob = new Blob([content], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `leave_report.${exportFormat.toLowerCase()}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setIsExportOpen(false);
+  };
+
   const filtered = requests.filter(r => {
     const matchFilter = activeFilter === "All" || r.status === activeFilter;
     const matchSearch = search === "" || r.employee.toLowerCase().includes(search.toLowerCase()) || r.department.toLowerCase().includes(search.toLowerCase());
@@ -396,10 +416,14 @@ export function LeaveManagement() {
           <p className="text-sm font-medium mt-1" style={{ color: "var(--muted-foreground)" }}>Comprehensive absence management, workflow approvals, and analytics.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="px-4 py-2 text-sm font-semibold rounded-xl border border-dashed transition-colors" style={{ borderColor: "var(--border)", color: "var(--foreground)" }}>
+          <button 
+            onClick={() => setIsExportOpen(true)}
+            className="px-4 py-2 text-sm font-semibold rounded-xl border border-dashed transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800" style={{ borderColor: "var(--border)", color: "var(--foreground)" }}>
             Export Report
           </button>
-          <button className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-white shadow-lg transition-all hover:opacity-90 hover:-translate-y-0.5"
+          <button 
+            onClick={() => setIsNewRequestOpen(true)}
+            className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-white shadow-lg transition-all hover:opacity-90 hover:-translate-y-0.5"
             style={{ background: "linear-gradient(135deg, #059669, #047857)", fontSize: "13px", fontWeight: 700 }}>
             <Plus size={16} /> New Request
           </button>
@@ -417,7 +441,14 @@ export function LeaveManagement() {
             <p className="text-xs font-medium text-orange-700 mt-0.5">3 team members have overlapping leaves requested between Apr 10 - Apr 15. Please review pending approvals.</p>
           </div>
         </div>
-        <button className="text-xs font-bold text-orange-800 hover:text-orange-900 underline underline-offset-2">View Conflicts</button>
+        <button 
+          onClick={() => {
+            const conflictReq = requests.find(r => r.conflictWarning);
+            if (conflictReq) setSelectedRequest(conflictReq);
+          }}
+          className="text-xs font-bold text-orange-800 hover:text-orange-900 underline underline-offset-2">
+          View Conflicts
+        </button>
       </div>
 
       {/* Stat Cards Grid */}
@@ -462,9 +493,29 @@ export function LeaveManagement() {
                     onChange={e => setSearch(e.target.value)}
                   />
                 </div>
-                <button className="p-2 rounded-lg border flex items-center gap-2 text-sm font-medium transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800" style={{ borderColor: "var(--border)", color: "var(--foreground)" }}>
-                  <Filter size={14} /> Filter
-                </button>
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                    className="p-2 rounded-lg border flex items-center gap-2 text-sm font-medium transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800" style={{ borderColor: "var(--border)", color: "var(--foreground)" }}>
+                    <Filter size={14} /> {activeFilter === "All" ? "Filter" : activeFilter}
+                  </button>
+                  {showFilterDropdown && (
+                    <div className="absolute right-0 mt-2 w-40 border rounded-xl shadow-lg z-50 py-1" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+                      {["All", "Pending", "Approved", "Rejected"].map(filterTarget => (
+                        <button
+                          key={filterTarget}
+                          className="w-full text-left px-4 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-zinc-800" style={{ color: "var(--foreground)" }}
+                          onClick={() => {
+                            setActiveFilter(filterTarget as any);
+                            setShowFilterDropdown(false);
+                          }}
+                        >
+                          {filterTarget}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -521,7 +572,7 @@ export function LeaveManagement() {
                         </td>
                         <td className="px-3 py-3 text-right">
                           <button 
-                            className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-neutral-200 dark:hover:bg-zinc-700"
+                            className="p-1.5 rounded-lg transition-colors hover:bg-neutral-200 dark:hover:bg-zinc-700"
                             onClick={(e) => { e.stopPropagation(); setSelectedRequest(req); }}
                           >
                             <MoreVertical size={16} style={{ color: "var(--muted-foreground)" }} />
@@ -682,6 +733,136 @@ export function LeaveManagement() {
           onApprove={handleApprove}
           onReject={handleReject}
         />
+      )}
+
+      {/* New Request Modal */}
+      {isNewRequestOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setIsNewRequestOpen(false)}>
+          <div className="w-full max-w-md rounded-2xl shadow-xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }} onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
+              <h3 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>New Leave Request</h3>
+              <button onClick={() => setIsNewRequestOpen(false)} className="p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors" style={{ color: "var(--muted-foreground)" }}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--foreground)" }}>Employee Name</label>
+                <input type="text" className="w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-transparent" style={{ borderColor: "var(--border)", color: "var(--foreground)" }} placeholder="E.g., John Doe" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--foreground)" }}>Leave Type</label>
+                  <select className="w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-transparent [&>option]:bg-[var(--card)]" style={{ borderColor: "var(--border)", color: "var(--foreground)" }}>
+                    <option value="Annual Leave">Annual Leave</option>
+                    <option value="Sick Leave">Sick Leave</option>
+                    <option value="Casual Leave">Casual Leave</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--foreground)" }}>Department</label>
+                  <select className="w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-transparent [&>option]:bg-[var(--card)]" style={{ borderColor: "var(--border)", color: "var(--foreground)" }}>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Design">Design</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Sales">Sales</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--foreground)" }}>From Date</label>
+                  <input type="date" className="w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-transparent file:bg-transparent" style={{ borderColor: "var(--border)", color: "var(--foreground)" }} />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--foreground)" }}>To Date</label>
+                  <input type="date" className="w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-transparent file:bg-transparent" style={{ borderColor: "var(--border)", color: "var(--foreground)" }} />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--foreground)" }}>Remarks (Optional)</label>
+                <textarea rows={3} className="w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-transparent resize-none" style={{ borderColor: "var(--border)", color: "var(--foreground)" }} placeholder="Add any comments or reasons..."></textarea>
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t flex justify-end gap-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
+              <button onClick={() => setIsNewRequestOpen(false)} className="px-4 py-2 rounded-xl text-sm font-bold transition-colors hover:bg-neutral-100 dark:hover:bg-zinc-800" style={{ color: "var(--foreground)" }}>Cancel</button>
+              <button 
+                onClick={() => setIsNewRequestOpen(false)} 
+                className="px-6 py-2 rounded-xl text-sm font-bold text-white shadow-md hover:opacity-90 transition-opacity"
+                style={{ background: "linear-gradient(135deg, #059669, #047857)" }}
+              >
+                Submit Request
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Export Report Modal */}
+      {isExportOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setIsExportOpen(false)}>
+          <div className="w-full max-w-sm rounded-2xl shadow-xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }} onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
+              <div className="flex items-center gap-2">
+                <Download size={18} style={{ color: "var(--primary)" }} />
+                <h3 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Export Report</h3>
+              </div>
+              <button onClick={() => setIsExportOpen(false)} className="p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors" style={{ color: "var(--muted-foreground)" }}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2" style={{ color: "var(--foreground)" }}>Export Format</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button 
+                    onClick={() => setExportFormat("CSV")}
+                    className={`py-2 rounded-lg text-sm font-medium transition-colors focus:ring-2 focus:ring-emerald-500/20 ${exportFormat === "CSV" ? "border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400" : "border hover:border-emerald-500 hover:text-emerald-600 bg-transparent"} `}
+                    style={exportFormat === "CSV" ? {} : { borderColor: "var(--border)", color: "var(--foreground)" }}
+                  >
+                    CSV
+                  </button>
+                  <button 
+                    onClick={() => setExportFormat("Excel")}
+                    className={`py-2 rounded-lg text-sm font-medium transition-colors focus:ring-2 focus:ring-emerald-500/20 ${exportFormat === "Excel" ? "border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400" : "border hover:border-emerald-500 hover:text-emerald-600 bg-transparent"} `}
+                    style={exportFormat === "Excel" ? {} : { borderColor: "var(--border)", color: "var(--foreground)" }}
+                  >
+                    Excel
+                  </button>
+                  <button 
+                    onClick={() => setExportFormat("PDF")}
+                    className={`py-2 rounded-lg text-sm font-medium transition-colors focus:ring-2 focus:ring-emerald-500/20 ${exportFormat === "PDF" ? "border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400" : "border hover:border-emerald-500 hover:text-emerald-600 bg-transparent"} `}
+                    style={exportFormat === "PDF" ? {} : { borderColor: "var(--border)", color: "var(--foreground)" }}
+                  >
+                    PDF
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2" style={{ color: "var(--foreground)" }}>Date Range</label>
+                <select className="w-full px-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-transparent [&>option]:bg-[var(--card)]" style={{ borderColor: "var(--border)", color: "var(--foreground)" }}>
+                  <option value="this_month">This Month</option>
+                  <option value="last_month">Last Month</option>
+                  <option value="q1">Q1 2026</option>
+                  <option value="ytd">Year to Date</option>
+                </select>
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                <input type="checkbox" id="include-rejected" className="rounded text-emerald-600 focus:ring-emerald-500 border-gray-300" />
+                <label htmlFor="include-rejected" className="text-sm font-medium cursor-pointer" style={{ color: "var(--muted-foreground)" }}>Include rejected requests</label>
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t flex justify-end gap-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
+              <button onClick={() => setIsExportOpen(false)} className="px-4 py-2 rounded-xl text-sm font-bold transition-colors hover:bg-neutral-100 dark:hover:bg-zinc-800" style={{ color: "var(--foreground)" }}>Cancel</button>
+              <button 
+                onClick={handleExport}
+                className="px-6 py-2 rounded-xl text-sm font-bold text-white shadow-md hover:opacity-90 transition-opacity flex items-center gap-2 bg-neutral-900 dark:bg-white dark:text-neutral-900"
+              >
+                <Download size={16} /> Export
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

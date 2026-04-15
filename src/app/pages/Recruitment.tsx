@@ -702,7 +702,7 @@ function PostJobModal({ onClose }: { onClose: () => void }) {
               <input
                 className="w-full rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none"
                 style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)" }}
-                placeholder="e.g. $80,000 - $120,000"
+                placeholder="e.g. ₹80,000 - ₹120,000"
                 value={form.salary}
                 onChange={(e) => setForm({ ...form, salary: e.target.value })}
               />

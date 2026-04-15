@@ -292,7 +292,7 @@ export const recentActivities = [
     id: 3,
     type: "payroll",
     text: "March 2026 payroll processed",
-    subtext: "$412,800 total disbursed",
+    subtext: "₹412,800 total disbursed",
     time: "3 hours ago",
     icon: "DollarSign",
     color: "#059669",

@@ -66,13 +66,13 @@ function RunPayrollModal({ onClose, month }: { onClose: () => void; month: strin
                 <div className="flex items-center justify-between mb-4 pb-4" style={{ borderBottom: "1px solid #E5E7EB" }}>
                   <span style={{ color: "#6B7280", fontSize: "14px" }}>Gross Payout</span>
                   <span style={{ color: "#111827", fontSize: "15px", fontWeight: 700 }}>
-                    ${payrollEmployees.reduce((s, e) => s + e.gross, 0).toLocaleString()}
+                    ₹{payrollEmployees.reduce((s, e) => s + e.gross, 0).toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span style={{ color: "#6B7280", fontSize: "14px" }}>Net Disbursement</span>
                   <span style={{ color: "#10B981", fontSize: "22px", fontWeight: 900 }}>
-                    ${totalNet.toLocaleString()}
+                    ₹{totalNet.toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -247,7 +247,7 @@ export function Payroll() {
         {[
           {
             label: "Total Gross Salary",
-            value: `$${totalGross.toLocaleString()}`,
+            value: `₹${totalGross.toLocaleString()}`,
             sub: `${payrollEmployees.length} employees`,
             color: "var(--primary)",
             bg: "var(--secondary)",
@@ -256,7 +256,7 @@ export function Payroll() {
           },
           {
             label: "Total Deductions",
-            value: `$${totalDeductions.toLocaleString()}`,
+            value: `₹${totalDeductions.toLocaleString()}`,
             sub: "Tax, PF & Insurance",
             color: "#EF4444",
             bg: "rgba(239, 68, 68, 0.1)",
@@ -265,7 +265,7 @@ export function Payroll() {
           },
           {
             label: "Net Payout",
-            value: `$${totalNet.toLocaleString()}`,
+            value: `₹${totalNet.toLocaleString()}`,
             sub: "After all deductions",
             color: "#22C55E",
             bg: "rgba(34, 197, 94, 0.1)",
@@ -414,17 +414,17 @@ export function Payroll() {
 
             {/* Gross */}
             <span style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>
-              ${emp.gross.toLocaleString()}
+              ₹{emp.gross.toLocaleString()}
             </span>
 
             {/* Deductions */}
             <span style={{ color: "#EF4444", fontSize: "13px", fontWeight: 500 }}>
-              -${emp.deductions.toLocaleString()}
+              -₹{emp.deductions.toLocaleString()}
             </span>
 
             {/* Net Pay */}
             <span style={{ color: "#10B981", fontSize: "13px", fontWeight: 700 }}>
-              ${emp.net.toLocaleString()}
+              ₹{emp.net.toLocaleString()}
             </span>
 
             {/* Status */}
@@ -470,14 +470,14 @@ export function Payroll() {
                   <div class="emp"><h2>${emp.name}</h2><p>${emp.designation}</p><p>${emp.department}</p></div>
                   <table>
                     <tr><th>Component</th><th style="text-align:right">Amount</th></tr>
-                    <tr><td>Basic Salary</td><td style="text-align:right">$${Math.round(emp.gross * 0.6).toLocaleString()}</td></tr>
-                    <tr><td>HRA</td><td style="text-align:right">$${Math.round(emp.gross * 0.2).toLocaleString()}</td></tr>
-                    <tr><td>Other Allowances</td><td style="text-align:right">$${Math.round(emp.gross * 0.2).toLocaleString()}</td></tr>
-                    <tr><td><strong>Gross Salary</strong></td><td style="text-align:right"><strong>$${emp.gross.toLocaleString()}</strong></td></tr>
-                    <tr><td style="color:#ef4444">Tax Deduction</td><td style="text-align:right;color:#ef4444">-$${Math.round(emp.deductions * 0.5).toLocaleString()}</td></tr>
-                    <tr><td style="color:#ef4444">PF Contribution</td><td style="text-align:right;color:#ef4444">-$${Math.round(emp.deductions * 0.3).toLocaleString()}</td></tr>
-                    <tr><td style="color:#ef4444">Insurance</td><td style="text-align:right;color:#ef4444">-$${Math.round(emp.deductions * 0.2).toLocaleString()}</td></tr>
-                    <tr class="total"><td>Net Pay</td><td style="text-align:right" class="net">$${emp.net.toLocaleString()}</td></tr>
+                    <tr><td>Basic Salary</td><td style="text-align:right">₹${Math.round(emp.gross * 0.6).toLocaleString()}</td></tr>
+                    <tr><td>HRA</td><td style="text-align:right">₹${Math.round(emp.gross * 0.2).toLocaleString()}</td></tr>
+                    <tr><td>Other Allowances</td><td style="text-align:right">₹${Math.round(emp.gross * 0.2).toLocaleString()}</td></tr>
+                    <tr><td><strong>Gross Salary</strong></td><td style="text-align:right"><strong>₹${emp.gross.toLocaleString()}</strong></td></tr>
+                    <tr><td style="color:#ef4444">Tax Deduction</td><td style="text-align:right;color:#ef4444">-₹${Math.round(emp.deductions * 0.5).toLocaleString()}</td></tr>
+                    <tr><td style="color:#ef4444">PF Contribution</td><td style="text-align:right;color:#ef4444">-₹${Math.round(emp.deductions * 0.3).toLocaleString()}</td></tr>
+                    <tr><td style="color:#ef4444">Insurance</td><td style="text-align:right;color:#ef4444">-₹${Math.round(emp.deductions * 0.2).toLocaleString()}</td></tr>
+                    <tr class="total"><td>Net Pay</td><td style="text-align:right" class="net">₹${emp.net.toLocaleString()}</td></tr>
                   </table>
                   <p>Status: <span class="badge ${emp.status === "Paid" ? "paid" : "pending"}">${emp.status === "Paid" ? "✓ Paid" : "⏳ Pending"}</span></p>
                   <div class="footer">This is a system-generated payslip. For queries, contact HR.</div>
@@ -527,13 +527,13 @@ export function Payroll() {
           </span>
           <span />
           <span style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 800 }}>
-            ${totalGross.toLocaleString()}
+            ₹{totalGross.toLocaleString()}
           </span>
           <span style={{ color: "#EF4444", fontSize: "13px", fontWeight: 700 }}>
-            -${totalDeductions.toLocaleString()}
+            -₹{totalDeductions.toLocaleString()}
           </span>
           <span style={{ color: "#10B981", fontSize: "13px", fontWeight: 800 }}>
-            ${totalNet.toLocaleString()}
+            ₹{totalNet.toLocaleString()}
           </span>
           <span />
           <span />

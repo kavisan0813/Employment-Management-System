@@ -160,7 +160,7 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
             {/* Salary */}
             <div>
               <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
-                Annual Salary ($)
+                Annual Salary (₹)
               </label>
               <div className="relative">
                 <DollarSign size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -358,7 +358,7 @@ function EditEmployeeModal({ employee, onClose }: { employee: typeof import("../
 
             {/* Salary */}
             <div>
-              <label style={{ color: "#374151", fontSize: "13px", fontWeight: 700, display: "block", marginBottom: "6px" }}>Annual Salary ($)</label>
+              <label style={{ color: "#374151", fontSize: "13px", fontWeight: 700, display: "block", marginBottom: "6px" }}>Annual Salary (₹)</label>
               <div className="relative">
                 <DollarSign size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input

@@ -130,8 +130,7 @@ function InputField({
         style={{
           border: "1px solid var(--border)",
           height: "44px",
-          backgroundColor: disabled ? "var(--background)" : "var(--background)",
-          opacity: disabled ? 0.6 : 1,
+          backgroundColor: "var(--background)",
         }}
       >
         {icon && <span style={{ color: "var(--muted-foreground)", display: "flex" }}>{icon}</span>}
@@ -145,6 +144,8 @@ function InputField({
             background: "transparent",
             fontSize: "13px",
             color: "var(--foreground)",
+            WebkitTextFillColor: "var(--foreground)",
+            opacity: 1,
             width: "100%",
           }}
         />
@@ -162,6 +163,19 @@ export function UserProfile() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarGradient] = useState("linear-gradient(135deg, #059669, #14B8A6)");
+  const [activeSkills, setActiveSkills] = useState(skills);
+  const [newSkill, setNewSkill] = useState("");
+
+  const handleAddSkill = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && newSkill.trim()) {
+       setActiveSkills([...activeSkills, newSkill.trim()]);
+       setNewSkill("");
+    }
+  }
+
+  const handleRemoveSkill = (skillToRemove: string) => {
+    setActiveSkills(activeSkills.filter(s => s !== skillToRemove));
+  }
 
   const handleSave = () => {
     setSaved(true);
@@ -423,7 +437,7 @@ export function UserProfile() {
               </div>
 
               {/* Bio */}
-              <div>
+              <div className="mb-4">
                 <label
                   style={{
                     color: "var(--primary)",
@@ -447,14 +461,74 @@ export function UserProfile() {
                     padding: "12px 16px",
                     fontSize: "13px",
                     color: "var(--foreground)",
+                    WebkitTextFillColor: "var(--foreground)",
                     backgroundColor: "var(--background)",
                     outline: "none",
                     resize: "none",
                     height: "80px",
                     fontFamily: "inherit",
-                    opacity: isEditing ? 1 : 0.7,
+                    opacity: 1,
                   }}
                 />
+              </div>
+
+              {/* Skills & Expertise */}
+              <div>
+                <label
+                  style={{
+                    color: "var(--primary)",
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    display: "block",
+                    marginBottom: "6px",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  Skills & Expertise
+                </label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {activeSkills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-full"
+                      style={{
+                        backgroundColor: "rgba(5, 150, 105, 0.1)",
+                        color: "var(--primary)",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        border: "1px solid rgba(5, 150, 105, 0.2)",
+                      }}
+                    >
+                      {skill}
+                      {isEditing && (
+                        <button 
+                          onClick={() => handleRemoveSkill(skill)}
+                          className="hover:bg-emerald-200 rounded-full p-0.5 transition-colors flex items-center justify-center"
+                          style={{ color: "var(--primary)", cursor: "pointer", border: "none", background: "transparent" }}
+                        >
+                          <X size={12} />
+                        </button>
+                      )}
+                    </span>
+                  ))}
+                </div>
+                {isEditing && (
+                  <input
+                    type="text"
+                    placeholder="Type a skill and press Enter..."
+                    value={newSkill}
+                    onChange={(e) => setNewSkill(e.target.value)}
+                    onKeyDown={handleAddSkill}
+                    className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-all"
+                    style={{
+                      border: "1px solid var(--border)",
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      WebkitTextFillColor: "var(--foreground)",
+                    }}
+                  />
+                )}
               </div>
 
               {/* Social Links */}
@@ -495,33 +569,6 @@ export function UserProfile() {
                 <p style={{ color: "var(--muted-foreground)", fontSize: "11px", lineHeight: 1.5 }}>
                   Full read/write access to all modules including payroll, recruitment, and settings.
                 </p>
-              </div>
-            </div>
-
-            {/* Skills */}
-            <div
-              className="rounded-2xl p-5"
-              style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
-            >
-              <h3 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "12px" }}>
-                Skills & Expertise
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {skills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="px-3 py-1 rounded-full"
-                    style={{
-                      backgroundColor: "rgba(5, 150, 105, 0.1)",
-                      color: "var(--primary)",
-                      fontSize: "11px",
-                      fontWeight: 600,
-                      border: "1px solid rgba(5, 150, 105, 0.2)",
-                    }}
-                  >
-                    {skill}
-                  </span>
-                ))}
               </div>
             </div>
 

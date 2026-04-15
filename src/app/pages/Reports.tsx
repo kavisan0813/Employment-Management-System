@@ -30,11 +30,11 @@ function KpiCard({ label, value, color }: { label: string; value: string; color:
   );
 }
 
-function ReportHeader({ title, subtitle, onBack }: { title: string; subtitle: string; onBack: () => void }) {
+function ReportHeader({ title, subtitle, onBack, onExportPDF, onExportCSV }: { title: string; subtitle: string; onBack: () => void; onExportPDF?: () => void; onExportCSV?: () => void }) {
   return (
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center gap-4">
-        <button onClick={onBack} className="p-2 rounded-xl transition-colors" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>
+        <button onClick={onBack} className="p-2 rounded-xl transition-colors hover:bg-gray-100" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>
           <ArrowLeft size={18} />
         </button>
         <div>
@@ -43,10 +43,10 @@ function ReportHeader({ title, subtitle, onBack }: { title: string; subtitle: st
         </div>
       </div>
       <div className="flex gap-2">
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", border: "1px solid var(--border)" }}>
+        <button onClick={onExportPDF} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-emerald-50" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", border: "1px solid var(--border)" }}>
           <Download size={14} /> Export PDF
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all" style={{ background: "var(--primary)" }}>
+        <button onClick={onExportCSV} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 shadow-sm" style={{ background: "var(--primary)" }}>
           <Download size={14} /> Export Excel
         </button>
       </div>
@@ -357,13 +357,32 @@ const payrollEmployees = [
 const deductionBreakdown = [{ name: "Tax", value: 45 }, { name: "PF", value: 30 }, { name: "Insurance", value: 25 }];
 
 function PayrollSummary({ onBack }: { onBack: () => void }) {
+  const handleExportCSV = () => {
+    const headers = ["Employee", "Department", "Basic Salary", "Allowances", "Deductions", "Net Pay", "Status"];
+    const rows = payrollEmployees.map(e => [e.name, e.dept, e.basic, e.allowances, e.deductions, e.net, e.status]);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "payroll_summary.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const handleExportPDF = () => {
+    const w = window.open("", "_blank");
+    if (!w) return;
+    const rows = payrollEmployees.map(e => `<tr><td style="padding:8px;border-bottom:1px solid #eee">${e.name}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.dept}</td><td style="padding:8px;border-bottom:1px solid #eee">₹${e.basic.toLocaleString()}</td><td style="padding:8px;border-bottom:1px solid #eee">₹${e.allowances.toLocaleString()}</td><td style="padding:8px;border-bottom:1px solid #eee">₹${e.deductions.toLocaleString()}</td><td style="padding:8px;border-bottom:1px solid #eee">₹${e.net.toLocaleString()}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.status}</td></tr>`).join("");
+    w.document.write(`<html><head><title>Payroll Summary</title><style>body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}h1{color:#059669;margin-bottom:4px}p{color:#6b7280;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{text-align:left;padding:10px 8px;background:#f0fdf4;color:#059669;font-size:11px;text-transform:uppercase;border-bottom:2px solid #059669}</style></head><body><h1>Payroll Summary</h1><p>April 2026</p><table><thead><tr><th>Employee</th><th>Department</th><th>Basic</th><th>Allowances</th><th>Deductions</th><th>Net Pay</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
+    w.document.close(); w.print();
+  };
   return (
     <div>
-      <ReportHeader title="Payroll Summary — April 2026" subtitle="Monthly payroll breakdown" onBack={onBack} />
+      <ReportHeader title="Payroll Summary — April 2026" subtitle="Monthly payroll breakdown" onBack={onBack} onExportPDF={handleExportPDF} onExportCSV={handleExportCSV} />
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <KpiCard label="Total Gross Payout" value="$86,584" color="#059669" />
-        <KpiCard label="Total Deductions" value="$14,884" color="#F59E0B" />
-        <KpiCard label="Net Disbursed" value="$71,700" color="#22C55E" />
+        <KpiCard label="Total Gross Payout" value="₹86,584" color="#059669" />
+        <KpiCard label="Total Deductions" value="₹14,884" color="#F59E0B" />
+        <KpiCard label="Net Disbursed" value="₹71,700" color="#22C55E" />
       </div>
       <div className="grid grid-cols-3 gap-5 mb-6">
         <div className="col-span-2 rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
@@ -411,12 +430,17 @@ function PayrollSummary({ onBack }: { onBack: () => void }) {
               <tr key={i} style={{ borderBottom: "1px solid var(--border)", backgroundColor: i % 2 === 0 ? "var(--card)" : "var(--background)" }}>
                 <td className="px-4 py-3" style={{ color: "var(--foreground)", fontWeight: 600 }}>{emp.name}</td>
                 <td className="px-4 py-3" style={{ color: "var(--muted-foreground)" }}>{emp.dept}</td>
-                <td className="px-4 py-3" style={{ color: "var(--foreground)" }}>${emp.basic.toLocaleString()}</td>
-                <td className="px-4 py-3" style={{ color: "#22C55E" }}>+${emp.allowances.toLocaleString()}</td>
-                <td className="px-4 py-3" style={{ color: "#EF4444" }}>-${emp.deductions.toLocaleString()}</td>
-                <td className="px-4 py-3" style={{ color: "var(--foreground)", fontWeight: 700 }}>${emp.net.toLocaleString()}</td>
+                <td className="px-4 py-3" style={{ color: "var(--foreground)" }}>₹{emp.basic.toLocaleString()}</td>
+                <td className="px-4 py-3" style={{ color: "#22C55E" }}>+₹{emp.allowances.toLocaleString()}</td>
+                <td className="px-4 py-3" style={{ color: "#EF4444" }}>-₹{emp.deductions.toLocaleString()}</td>
+                <td className="px-4 py-3" style={{ color: "var(--foreground)", fontWeight: 700 }}>₹{emp.net.toLocaleString()}</td>
                 <td className="px-4 py-3"><span className="px-2.5 py-1 rounded-full text-[10px] font-bold" style={{ backgroundColor: emp.status === "Paid" ? "#ECFDF5" : "#FFFBEB", color: emp.status === "Paid" ? "#059669" : "#F59E0B" }}>{emp.status}</span></td>
-                <td className="px-4 py-3"><button className="text-xs font-semibold" style={{ color: "var(--primary)" }}>Download</button></td>
+                <td className="px-4 py-3"><button onClick={() => {
+                  const w = window.open("", "_blank");
+                  if (!w) return;
+                  w.document.write(`<html><head><title>Payslip - ${emp.name}</title></head><body style="font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a;max-width:600px;margin:0 auto"><h1 style="color:#059669;margin-bottom:4px">Payslip</h1><p style="color:#6b7280;margin-bottom:32px">Employee: <strong style="color:#111827">${emp.name}</strong></p><table style="width:100%;border-collapse:collapse"><tr style="border-bottom:1px solid #e5e7eb"><td style="padding:12px 0;font-size:14px">Gross Payout</td><td style="text-align:right;font-weight:600;font-size:14px">₹${(emp.basic + emp.allowances).toLocaleString()}</td></tr><tr style="border-bottom:1px solid #e5e7eb"><td style="padding:12px 0;color:#ef4444;font-size:14px">Total Deductions</td><td style="text-align:right;color:#ef4444;font-weight:600;font-size:14px">-₹${emp.deductions.toLocaleString()}</td></tr><tr style="border-top:2px solid #059669"><td style="padding:16px 0;font-weight:800;font-size:16px">Net Pay</td><td style="text-align:right;color:#059669;font-size:22px;font-weight:900">₹${emp.net.toLocaleString()}</td></tr></table><p style="margin-top:32px;font-size:12px;color:#9ca3af;text-align:center">This is a system-generated payslip.</p></body></html>`);
+                  w.document.close(); w.print();
+                }} className="text-xs font-semibold hover:underline" style={{ color: "var(--primary)" }}>Download</button></td>
               </tr>
             ))}
           </tbody>
@@ -443,10 +467,29 @@ const deptAttendance = [
 ];
 
 function AttendanceReport({ onBack }: { onBack: () => void }) {
+  const handleExportCSV = () => {
+    const headers = ["Employee", "Total Days", "Present", "Absent", "Late", "Leave", "Attendance %"];
+    const rows = attendanceData.map(e => [e.name, e.total, e.present, e.absent, e.late, e.leave, `${e.pct}%`]);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "attendance_report.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const handleExportPDF = () => {
+    const w = window.open("", "_blank");
+    if (!w) return;
+    const rows = attendanceData.map(e => `<tr><td style="padding:8px;border-bottom:1px solid #eee">${e.name}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.total}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.present}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.absent}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.late}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.leave}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.pct}%</td></tr>`).join("");
+    w.document.write(`<html><head><title>Attendance Report</title><style>body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}h1{color:#059669;margin-bottom:4px}p{color:#6b7280;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{text-align:left;padding:10px 8px;background:#f0fdf4;color:#059669;font-size:11px;text-transform:uppercase;border-bottom:2px solid #059669}</style></head><body><h1>Attendance Report</h1><p>April 2026</p><table><thead><tr><th>Employee</th><th>Total Days</th><th>Present</th><th>Absent</th><th>Late</th><th>Leave</th><th>Attendance %</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
+    w.document.close(); w.print();
+  };
   const days = Array.from({ length: 30 }, (_, i) => ({ day: i + 1, pct: Math.floor(Math.random() * 30) + 70 }));
   return (
     <div>
-      <ReportHeader title="Attendance Report — April 2026" subtitle="Monthly attendance logs" onBack={onBack} />
+      <ReportHeader title="Attendance Report — April 2026" subtitle="Monthly attendance logs" onBack={onBack} onExportPDF={handleExportPDF} onExportCSV={handleExportCSV} />
       <div className="grid grid-cols-4 gap-4 mb-6">
         <KpiCard label="Present Days" value="20.2" color="#059669" />
         <KpiCard label="Absent Days" value="0.8" color="#EF4444" />
@@ -534,9 +577,28 @@ const deptScores = [
 ];
 
 function PerformanceReview({ onBack }: { onBack: () => void }) {
+  const handleExportCSV = () => {
+    const headers = ["Employee", "Department", "Manager", "Score", "Goals %", "Status", "Date"];
+    const rows = perfEmployees.map(e => [e.name, e.dept, e.manager, e.score, `${e.goals}%`, e.status, e.date]);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "performance_report.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const handleExportPDF = () => {
+    const w = window.open("", "_blank");
+    if (!w) return;
+    const rows = perfEmployees.map(e => `<tr><td style="padding:8px;border-bottom:1px solid #eee">${e.name}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.dept}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.manager}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.score}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.goals}%</td><td style="padding:8px;border-bottom:1px solid #eee">${e.status}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.date}</td></tr>`).join("");
+    w.document.write(`<html><head><title>Performance Review</title><style>body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}h1{color:#059669;margin-bottom:4px}p{color:#6b7280;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{text-align:left;padding:10px 8px;background:#f0fdf4;color:#059669;font-size:11px;text-transform:uppercase;border-bottom:2px solid #059669}</style></head><body><h1>Performance Review</h1><p>Q1 2026</p><table><thead><tr><th>Employee</th><th>Department</th><th>Manager</th><th>Score</th><th>Goals %</th><th>Status</th><th>Last Review</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
+    w.document.close(); w.print();
+  };
   return (
     <div>
-      <ReportHeader title="Performance Review — Q1 2026" subtitle="248 reviews" onBack={onBack} />
+      <ReportHeader title="Performance Review — Q1 2026" subtitle="248 reviews" onBack={onBack} onExportPDF={handleExportPDF} onExportCSV={handleExportCSV} />
       <div className="grid grid-cols-4 gap-4 mb-6">
         <KpiCard label="Avg Score" value="3.9" color="#059669" />
         <KpiCard label="Top Performers (≥4.5)" value="40" color="#22C55E" />
@@ -622,10 +684,29 @@ const recruitCandidates = [
 const sourceBreakdown = [{ name: "LinkedIn", value: 45 }, { name: "Referral", value: 28 }, { name: "Job Portal", value: 18 }, { name: "Other", value: 9 }];
 
 function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
+  const handleExportCSV = () => {
+    const headers = ["Candidate", "Role Applied", "Source", "Stage", "Applied Date", "Last Updated"];
+    const rows = recruitCandidates.map(e => [e.name, e.role, e.source, e.stage, e.applied, e.updated]);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "recruitment_report.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const handleExportPDF = () => {
+    const w = window.open("", "_blank");
+    if (!w) return;
+    const rows = recruitCandidates.map(e => `<tr><td style="padding:8px;border-bottom:1px solid #eee">${e.name}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.role}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.source}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.stage}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.applied}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.updated}</td></tr>`).join("");
+    w.document.write(`<html><head><title>Recruitment Pipeline Report</title><style>body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}h1{color:#059669;margin-bottom:4px}p{color:#6b7280;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{text-align:left;padding:10px 8px;background:#f0fdf4;color:#059669;font-size:11px;text-transform:uppercase;border-bottom:2px solid #059669}</style></head><body><h1>Recruitment Pipeline Report</h1><p>12 candidates · Apr 5, 2026</p><table><thead><tr><th>Candidate</th><th>Role Applied</th><th>Source</th><th>Stage</th><th>Applied</th><th>Updated</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
+    w.document.close(); w.print();
+  };
   const stageColor: Record<string, { bg: string; color: string }> = { Applied: { bg: "#ECFDF5", color: "#059669" }, Screening: { bg: "#FFFBEB", color: "#F59E0B" }, Interview: { bg: "#F0FDFA", color: "#14B8A6" }, Offer: { bg: "#F0F9FF", color: "#0EA5E9" }, Hired: { bg: "#ECFDF5", color: "#22C55E" } };
   return (
     <div>
-      <ReportHeader title="Recruitment Pipeline Report" subtitle="12 candidates · Apr 5, 2026" onBack={onBack} />
+      <ReportHeader title="Recruitment Pipeline Report" subtitle="12 candidates · Apr 5, 2026" onBack={onBack} onExportPDF={handleExportPDF} onExportCSV={handleExportCSV} />
       <div className="grid grid-cols-4 gap-4 mb-6">
         <KpiCard label="Total Applicants" value="120" color="#059669" />
         <KpiCard label="Interviews Scheduled" value="35" color="#14B8A6" />
@@ -717,9 +798,28 @@ const flightRisks = [
 ];
 
 function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
+  const handleExportCSV = () => {
+    const headers = ["Employee", "Department", "Role", "Tenure", "Exit Date", "Reason", "Exit Interview"];
+    const rows = exitedEmployees.map(e => [e.name, e.dept, e.role, e.tenure, e.exit, e.reason, e.interview ? "Yes" : "No"]);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "turnover_report.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const handleExportPDF = () => {
+    const w = window.open("", "_blank");
+    if (!w) return;
+    const rows = exitedEmployees.map(e => `<tr><td style="padding:8px;border-bottom:1px solid #eee">${e.name}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.dept}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.role}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.tenure}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.exit}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.reason}</td><td style="padding:8px;border-bottom:1px solid #eee">${e.interview ? "Yes" : "No"}</td></tr>`).join("");
+    w.document.write(`<html><head><title>Turnover Analysis Report</title><style>body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}h1{color:#059669;margin-bottom:4px}p{color:#6b7280;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{text-align:left;padding:10px 8px;background:#f0fdf4;color:#059669;font-size:11px;text-transform:uppercase;border-bottom:2px solid #059669}</style></head><body><h1>Turnover Analysis Report</h1><p>Mar 31, 2026</p><table><thead><tr><th>Employee</th><th>Department</th><th>Role</th><th>Tenure</th><th>Exit Date</th><th>Reason</th><th>Interviewed</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
+    w.document.close(); w.print();
+  };
   return (
     <div>
-      <ReportHeader title="Turnover Analysis — Annual" subtitle="Mar 31, 2026" onBack={onBack} />
+      <ReportHeader title="Turnover Analysis — Annual" subtitle="Mar 31, 2026" onBack={onBack} onExportPDF={handleExportPDF} onExportCSV={handleExportCSV} />
       <div className="grid grid-cols-3 gap-4 mb-6">
         <KpiCard label="Turnover Rate" value="4.1%" color="#EF4444" />
         <KpiCard label="Avg Tenure" value="3.2 yrs" color="#059669" />
@@ -820,7 +920,7 @@ export function Reports() {
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
           { label: "Total Employees", value: "248", color: "#059669" },
-          { label: "Monthly Payroll", value: "$86,584", color: "#22C55E" },
+          { label: "Monthly Payroll", value: "₹86,584", color: "#22C55E" },
           { label: "Attendance Rate", value: "88.3%", color: "#F59E0B" },
           { label: "Turnover Rate", value: "3.2%", color: "#EF4444" },
         ].map((s, i) => (
@@ -856,7 +956,7 @@ export function Reports() {
           <div className="space-y-4">
             {[
               { label: "Avg. Tenure", value: "3.2 years", bar: 64, color: "#059669" },
-              { label: "Avg. Salary", value: "$94,200", bar: 72, color: "#22C55E" },
+              { label: "Avg. Salary", value: "₹94,200", bar: 72, color: "#22C55E" },
               { label: "Training Hours", value: "48 hrs/yr", bar: 48, color: "#14B8A6" },
               { label: "Retention Rate", value: "96.8%", bar: 97, color: "#F59E0B" },
             ].map((m, i) => (

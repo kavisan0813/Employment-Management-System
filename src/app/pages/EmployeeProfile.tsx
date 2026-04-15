@@ -320,7 +320,7 @@ export function EmployeeProfile() {
               { label: "Employee ID", value: employee.id },
               { label: "Manager", value: employee.manager },
               { label: "Employment", value: employee.employmentType },
-              { label: "Annual Salary", value: `$${employee.salary.toLocaleString()}` },
+              { label: "Annual Salary", value: `₹${employee.salary.toLocaleString()}` },
             ].map((item) => (
               <div key={item.label} className="flex-1">
                 <p style={{ color: "#6EE7B7", fontSize: "11px" }}>{item.label}</p>
@@ -497,9 +497,9 @@ export function EmployeeProfile() {
                   </h4>
                   <div className="grid grid-cols-3 gap-3 mb-5">
                     {[
-                      { label: "Gross Salary", value: `$${employee.grossSalary?.toLocaleString() || "N/A"}`, color: "#059669", bg: "#ECFDF5" },
-                      { label: "Deductions", value: `$${employee.deductions?.toLocaleString() || "N/A"}`, color: "#EF4444", bg: "#FEF2F2" },
-                      { label: "Net Pay", value: `$${employee.netPay?.toLocaleString() || "N/A"}`, color: "#22C55E", bg: "#F0FDF4" },
+                      { label: "Gross Salary", value: `₹${employee.grossSalary?.toLocaleString() || "N/A"}`, color: "#059669", bg: "#ECFDF5" },
+                      { label: "Deductions", value: `₹${employee.deductions?.toLocaleString() || "N/A"}`, color: "#EF4444", bg: "#FEF2F2" },
+                      { label: "Net Pay", value: `₹${employee.netPay?.toLocaleString() || "N/A"}`, color: "#22C55E", bg: "#F0FDF4" },
                     ].map((s) => (
                       <div
                         key={s.label}

@@ -163,7 +163,7 @@ function AddDepartmentModal({ onClose }: { onClose: () => void }) {
                   backgroundColor: "#F9FAFB",
                   color: "#111827",
                 }}
-                placeholder="e.g. $50,000"
+                placeholder="e.g. ₹50,000"
                 value={form.budget}
                 onChange={(e) => setForm({ ...form, budget: e.target.value })}
               />
@@ -219,9 +219,88 @@ function AddDepartmentModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+function DepartmentDetailModal({ dept, onClose }: { dept: Department; onClose: () => void }) {
+  if (!dept) return null;
+  return (
+    <div
+      className="fixed inset-0 z-50 flex justify-end p-4 sm:p-0"
+      style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
+      onClick={onClose}
+    >
+      <div
+        className="w-full sm:w-[450px] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
+        style={{ backgroundColor: "var(--card)", borderColor: "var(--border)", borderLeftWidth: "1px" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between px-6 py-5 border-b" style={{ borderColor: "var(--border)" }}>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: "var(--secondary)" }}>
+              <Building2 size={20} color="var(--primary)" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold" style={{ color: "var(--foreground)" }}>{dept.name}</h3>
+              <p className="text-sm font-medium" style={{ color: "var(--muted-foreground)" }}>Department Details</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl transition-colors hover:bg-neutral-100 dark:hover:bg-zinc-800"
+            style={{ color: "var(--muted-foreground)" }}
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-4 rounded-2xl border" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--background)' }}>
+              <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: "var(--muted-foreground)" }}>Total Employees</p>
+              <div className="flex items-center gap-2">
+                <Users size={16} color="var(--primary)" />
+                <p className="text-lg font-bold" style={{ color: "var(--foreground)" }}>{dept.employees}</p>
+              </div>
+            </div>
+            <div className="p-4 rounded-2xl border" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--background)' }}>
+              <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: "var(--muted-foreground)" }}>Annual Budget</p>
+              <div className="flex items-center gap-2">
+                <DollarSign size={16} color="var(--primary)" />
+                <p className="text-lg font-bold" style={{ color: "var(--foreground)" }}>{dept.budget}</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+             <h4 className="text-sm font-bold mb-3" style={{ color: "var(--foreground)" }}>Department Information</h4>
+             <div className="space-y-4">
+               <div>
+                  <label className="block text-xs font-bold mb-1.5" style={{ color: "var(--muted-foreground)" }}>Department Head</label>
+                  <input type="text" className="w-full px-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-transparent" style={{ borderColor: "var(--border)", color: "var(--foreground)" }} defaultValue={dept.head} />
+               </div>
+               <div>
+                  <label className="block text-xs font-bold mb-1.5" style={{ color: "var(--muted-foreground)" }}>Department Name</label>
+                  <input type="text" className="w-full px-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-transparent" style={{ borderColor: "var(--border)", color: "var(--foreground)" }} defaultValue={dept.name} />
+               </div>
+               <div>
+                  <label className="block text-xs font-bold mb-1.5" style={{ color: "var(--muted-foreground)" }}>Target Growth (%)</label>
+                  <input type="number" className="w-full px-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors bg-transparent" style={{ borderColor: "var(--border)", color: "var(--foreground)" }} defaultValue={dept.growth} />
+               </div>
+             </div>
+          </div>
+        </div>
+        
+        <div className="p-6 border-t flex justify-end gap-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
+           <button onClick={onClose} className="px-5 py-2.5 rounded-xl text-sm font-bold transition-colors hover:bg-neutral-100 dark:hover:bg-zinc-800" style={{ color: "var(--foreground)" }}>Close</button>
+           <button onClick={onClose} className="px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-md hover:opacity-90 transition-opacity" style={{ background: "linear-gradient(135deg, #059669, #047857)" }}>Save Changes</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Departments() {
   const [depts] = useState<Department[]>(departmentsData);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedDept, setSelectedDept] = useState<Department | null>(null);
 
   return (
     <div style={{ maxWidth: "1360px" }}>
@@ -255,7 +334,8 @@ export function Departments() {
         {depts.map((dept) => (
           <div
             key={dept.id}
-            className="group relative rounded-3xl p-6 transition-all duration-300 hover:scale-[1.02]"
+            onClick={() => setSelectedDept(dept)}
+            className="group relative rounded-3xl p-6 transition-all duration-300 hover:scale-[1.02] cursor-pointer hover:shadow-lg"
             style={{
               backgroundColor: "var(--card)",
               border: "1px solid var(--border)",
@@ -293,7 +373,8 @@ export function Departments() {
                   {dept.name}
                 </h3>
                 <button
-                  className="p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1 rounded-lg transition-colors hover:bg-neutral-100 dark:hover:bg-zinc-800"
                   style={{ color: "var(--muted-foreground)" }}
                 >
                   <MoreHorizontal size={18} />
@@ -353,6 +434,7 @@ export function Departments() {
       </div>
 
       {showAddModal && <AddDepartmentModal onClose={() => setShowAddModal(false)} />}
+      {selectedDept && <DepartmentDetailModal dept={selectedDept} onClose={() => setSelectedDept(null)} />}
     </div>
   );
 }

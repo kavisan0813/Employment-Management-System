@@ -11,7 +11,8 @@ interface TopbarProps {
 
 export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarProps) {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [notifications] = useState(3);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState(3);
   const navigate = useNavigate();
 
   return (
@@ -85,39 +86,99 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
       </button>
 
       {/* Notifications */}
-      <button
-        className="relative flex items-center justify-center rounded-xl transition-colors"
-        style={{
-          width: "38px",
-          height: "38px",
-          backgroundColor: "var(--background)",
-          border: "1px solid var(--border)",
-          cursor: "pointer",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--primary)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
-        }}
-      >
-        <Bell size={16} color="var(--primary)" />
-        {notifications > 0 && (
-          <span
-            className="absolute top-0.5 right-0.5 flex items-center justify-center rounded-full"
-            style={{
-              width: "16px",
-              height: "16px",
-              backgroundColor: "#EF4444",
-              fontSize: "9px",
-              fontWeight: 700,
-              color: "white",
-            }}
-          >
-            {notifications}
-          </span>
+      <div className="relative">
+        <button
+          onClick={() => {
+            setShowNotifications(!showNotifications);
+            if (!showNotifications) setNotifications(0);
+          }}
+          className="relative flex items-center justify-center rounded-xl transition-colors"
+          style={{
+            width: "38px",
+            height: "38px",
+            backgroundColor: showNotifications ? "var(--accent)" : "var(--background)",
+            border: "1px solid var(--border)",
+            cursor: "pointer",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--primary)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+          }}
+        >
+          <Bell size={16} color="var(--primary)" />
+          {notifications > 0 && (
+            <span
+              className="absolute top-0.5 right-0.5 flex items-center justify-center rounded-full"
+              style={{
+                width: "16px",
+                height: "16px",
+                backgroundColor: "#EF4444",
+                fontSize: "9px",
+                fontWeight: 700,
+                color: "white",
+              }}
+            >
+              {notifications}
+            </span>
+          )}
+        </button>
+
+        {showNotifications && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(false)} />
+            <div
+              className="absolute right-0 top-full mt-2 rounded-xl overflow-hidden z-50 shadow-lg"
+              style={{
+                width: "320px",
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+              }}
+            >
+              <div
+                className="px-4 py-3 border-b flex justify-between items-center"
+                style={{ borderColor: "var(--border)" }}
+              >
+                <span style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>Notifications</span>
+                <button
+                  onClick={() => setShowNotifications(false)}
+                  style={{ color: "var(--primary)", fontSize: "12px", border: "none", background: "transparent", cursor: "pointer", fontWeight: 600 }}
+                >
+                  Mark all as read
+                </button>
+              </div>
+              <div className="max-h-[300px] overflow-y-auto">
+                {[
+                  { text: "Emily Chen submitted a leave request", time: "5 mins ago", color: "#14B8A6" },
+                  { text: "Payroll successfully processed", time: "1 hour ago", color: "#059669" },
+                  { text: "New candidate application received", time: "2 hours ago", color: "#0EA5E9" }
+                ].map((n, i) => (
+                  <div
+                    key={i}
+                    className="px-4 py-3 flex items-start gap-3 transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800 cursor-pointer"
+                    style={{ borderBottom: "1px solid var(--border)" }}
+                    onClick={() => setShowNotifications(false)}
+                  >
+                    <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: n.color }} />
+                    <div>
+                      <p style={{ color: "var(--foreground)", fontSize: "13px", lineHeight: 1.4 }}>{n.text}</p>
+                      <p style={{ color: "var(--muted-foreground)", fontSize: "11px", marginTop: "2px" }}>{n.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div
+                className="px-4 py-3 text-center border-t cursor-pointer hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-colors"
+                style={{ borderColor: "var(--border)" }}
+                onClick={() => setShowNotifications(false)}
+              >
+                <span style={{ color: "var(--primary)", fontSize: "12px", fontWeight: 600 }}>View All Notifications</span>
+              </div>
+            </div>
+          </>
         )}
-      </button>
+      </div>
 
       {/* User Avatar / Dropdown */}
       <div className="relative">

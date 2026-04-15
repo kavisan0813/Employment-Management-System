@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Building2,
   User,
@@ -107,7 +107,6 @@ function InputField({
           border: "1px solid var(--border)",
           height: "44px",
           backgroundColor: "var(--background)",
-          opacity: disabled ? 0.6 : 1,
         }}
       >
         {icon && (
@@ -123,6 +122,8 @@ function InputField({
             background: "transparent",
             fontSize: "13px",
             color: "var(--foreground)",
+            WebkitTextFillColor: "var(--foreground)",
+            opacity: 1,
             width: "100%",
           }}
         />
@@ -138,6 +139,22 @@ export function Settings() {
   const [saved, setSaved] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [passwordUpdated, setPasswordUpdated] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleUpdatePassword = () => {
+    setPasswordUpdated(true);
+    setTimeout(() => setPasswordUpdated(false), 2500);
+  };
+
+  const handleDeleteAccount = () => {
+    if (window.confirm("Are you absolutely sure you want to delete your account?")) {
+      setIsDeleting(true);
+      setTimeout(() => setIsDeleting(false), 3000); // Simulate deletion delay
+    }
+  };
 
   const handleSave = () => {
     setSaved(true);
@@ -339,12 +356,13 @@ export function Settings() {
                     <span style={{ color: "white", fontSize: "20px", fontWeight: 800 }}>
                       RP
                     </span>
-                    <div
-                      className="absolute bottom-0 right-0 w-5 h-5 rounded-full flex items-center justify-center"
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="absolute bottom-0 right-0 w-5 h-5 rounded-full flex items-center justify-center cursor-pointer"
                       style={{ background: "var(--primary)", border: "2px solid var(--card)" }}
                     >
                       <Camera size={9} color="white" />
-                    </div>
+                    </button>
                   </div>
                   <div>
                     <p
@@ -361,6 +379,7 @@ export function Settings() {
                     </p>
                   </div>
                   <button
+                    onClick={() => fileInputRef.current?.click()}
                     className="ml-auto px-4 py-2 rounded-xl"
                     style={{
                       backgroundColor: "rgba(5, 150, 105, 0.1)",
@@ -373,6 +392,7 @@ export function Settings() {
                   >
                     Change Photo
                   </button>
+                  <input type="file" ref={fileInputRef} accept="image/*" style={{ display: "none" }} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
@@ -681,9 +701,12 @@ export function Settings() {
                   </div>
 
                   <button
+                    onClick={handleUpdatePassword}
                     className="mt-4 px-4 py-2 rounded-xl flex items-center gap-2"
                     style={{
-                      background: "linear-gradient(135deg, #059669, #047857)",
+                      background: passwordUpdated
+                        ? "linear-gradient(135deg, #22C55E, #16A34A)"
+                        : "linear-gradient(135deg, #059669, #047857)",
                       color: "white",
                       fontSize: "13px",
                       fontWeight: 700,
@@ -692,7 +715,7 @@ export function Settings() {
                       boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
                     }}
                   >
-                    <Save size={13} /> Update Password
+                    <Save size={13} /> {passwordUpdated ? "Password Updated!" : "Update Password"}
                   </button>
                 </div>
 
@@ -749,6 +772,7 @@ export function Settings() {
                     Once you delete your account, there is no going back. Please be certain.
                   </p>
                   <button
+                    onClick={handleDeleteAccount}
                     className="px-4 py-2 rounded-xl"
                     style={{
                       backgroundColor: "rgba(239, 68, 68, 0.1)",
@@ -759,7 +783,7 @@ export function Settings() {
                       cursor: "pointer",
                     }}
                   >
-                    Delete Account
+                    {isDeleting ? "Deleting..." : "Delete Account"}
                   </button>
                 </div>
               </div>
