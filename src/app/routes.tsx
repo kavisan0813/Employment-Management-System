@@ -12,8 +12,13 @@ import { Settings } from "./pages/Settings";
 import { LeaveManagement } from "./pages/LeaveManagement";
 import { Departments } from "./pages/Departments";
 import { UserProfile } from "./pages/UserProfile";
+import { Login } from "./pages/Login";
 
 export const router = createBrowserRouter([
+  {
+    path: "/login",
+    Component: Login,
+  },
   {
     path: "/",
     Component: Layout,

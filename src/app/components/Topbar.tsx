@@ -249,6 +249,11 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
               ))}
               <div style={{ height: "1px", backgroundColor: "var(--border)", margin: "4px 0" }} />
               <button
+                onClick={() => {
+                  localStorage.removeItem("isLoggedIn");
+                  setShowDropdown(false);
+                  navigate("/login");
+                }}
                 className="w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left"
                 style={{ color: "#EF4444", fontSize: "13px" }}
                 onMouseEnter={(e) => {

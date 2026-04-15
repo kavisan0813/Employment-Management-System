@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router";
+import { Outlet, useLocation, Navigate } from "react-router";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 
@@ -23,6 +23,10 @@ export function Layout() {
     return saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches);
   });
   const location = useLocation();
+
+  if (!localStorage.getItem("isLoggedIn")) {
+    return <Navigate to="/login" replace />;
+  }
 
   useEffect(() => {
     if (isDark) {
