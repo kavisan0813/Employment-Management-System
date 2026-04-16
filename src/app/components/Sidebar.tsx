@@ -13,7 +13,9 @@ import {
   Zap,
   CalendarDays,
   Store,
+  Sparkles,
 } from "lucide-react";
+
 
 interface SidebarProps {
   collapsed: boolean;
@@ -21,7 +23,9 @@ interface SidebarProps {
 }
 
 const navItems = [
+  { icon: Sparkles, label: "Smart Search", path: "/smart-search" },
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+
   { icon: Users, label: "Employees", path: "/employees" },
   { icon: Store, label: "Departments", path: "/departments" },
   { icon: CalendarCheck, label: "Attendance", path: "/attendance" },

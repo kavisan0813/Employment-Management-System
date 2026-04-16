@@ -13,6 +13,8 @@ import { LeaveManagement } from "./pages/LeaveManagement";
 import { Departments } from "./pages/Departments";
 import { UserProfile } from "./pages/UserProfile";
 import { Login } from "./pages/Login";
+import SmartSearch from "./pages/SmartSearch";
+
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +37,8 @@ export const router = createBrowserRouter([
       { path: "leave", Component: LeaveManagement },
       { path: "departments", Component: Departments },
       { path: "profile", Component: UserProfile },
+      { path: "smart-search", Component: SmartSearch },
+
     ],
   },
 ]);
