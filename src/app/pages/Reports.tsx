@@ -999,7 +999,7 @@ export function Reports() {
                   <report.icon size={16} color={report.color} />
                 </div>
                 <div>
-                  <p style={{ color: "#022C22", fontSize: "13px", fontWeight: 700 }}>{report.title}</p>
+                  <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 700 }}>{report.title}</p>
                   <p style={{ color: "#6B7280", fontSize: "11px", marginTop: "1px" }}>{report.desc}</p>
                   <p style={{ color: "#CBD5E1", fontSize: "10px", marginTop: "4px" }}>{report.size} · {report.generated}</p>
                 </div>

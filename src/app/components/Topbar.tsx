@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Bell, Search, ChevronDown, Settings, LogOut, User, Sun, Moon } from "lucide-react";
+import { Bell, Search, ChevronDown, Settings, LogOut, User, Sun, Moon, X } from "lucide-react";
 
 interface TopbarProps {
   title: string;
@@ -12,6 +12,7 @@ interface TopbarProps {
 export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showAllNotificationsScreen, setShowAllNotificationsScreen] = useState(false);
   const [notifications, setNotifications] = useState(3);
   const navigate = useNavigate();
 
@@ -171,7 +172,7 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
               <div
                 className="px-4 py-3 text-center border-t cursor-pointer hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-colors"
                 style={{ borderColor: "var(--border)" }}
-                onClick={() => setShowNotifications(false)}
+                onClick={() => { setShowNotifications(false); setShowAllNotificationsScreen(true); }}
               >
                 <span style={{ color: "var(--primary)", fontSize: "12px", fontWeight: 600 }}>View All Notifications</span>
               </div>
@@ -270,6 +271,53 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
           </>
         )}
       </div>
+
+      {showAllNotificationsScreen && (
+        <div className="fixed inset-y-0 right-0 z-50 flex transition-all duration-300" style={{ left: `${sidebarWidth}px`, backgroundColor: "var(--background)" }}>
+          <div className="w-full h-full flex flex-col">
+            <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}>
+              <div className="flex items-center gap-4">
+                <h2 style={{ color: "var(--foreground)", fontSize: "24px", fontWeight: 800 }}>Notifications History</h2>
+                <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>3 Unread</span>
+              </div>
+              <button 
+                onClick={() => setShowAllNotificationsScreen(false)} 
+                className="p-2 rounded-xl transition-colors hover:bg-neutral-100 dark:hover:bg-zinc-800"
+                style={{ color: "var(--muted-foreground)" }}
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-6 md:p-10 max-w-4xl mx-auto w-full">
+              <div className="space-y-4">
+                {[
+                  { text: "Emily Chen submitted a leave request for Aug 12-15", time: "5 mins ago", color: "#14B8A6", type: "Leave Request", date: "April 6, 2026" },
+                  { text: "Payroll for March 2026 successfully processed for 248 employees", time: "1 hour ago", color: "#059669", type: "Payroll", date: "April 6, 2026" },
+                  { text: "New candidate application received for Senior Frontend Developer", time: "2 hours ago", color: "#0EA5E9", type: "Recruitment", date: "April 6, 2026" },
+                  { text: "Quarterly Performance Review window is now open", time: "1 day ago", color: "#F59E0B", type: "System", date: "April 5, 2026" },
+                  { text: "System maintenance scheduled for weekend downtime", time: "2 days ago", color: "#EF4444", type: "System", date: "April 4, 2026" },
+                  { text: "Ryan Park updated company policies document", time: "3 days ago", color: "#8B5CF6", type: "Document", date: "April 3, 2026" },
+                ].map((n, i) => (
+                  <div key={i} className="flex gap-4 p-5 rounded-2xl transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800" style={{ border: "1px solid var(--border)", backgroundColor: "var(--card)" }}>
+                    <div className="w-3 h-3 rounded-full mt-2 shrink-0" style={{ backgroundColor: n.color }} />
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <span style={{ color: n.color, fontSize: "12px", fontWeight: 700 }}>{n.type}</span>
+                          <p style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 600, marginTop: "4px" }}>{n.text}</p>
+                        </div>
+                        <span style={{ color: "var(--muted-foreground)", fontSize: "12px", fontWeight: 500 }}>{n.date}</span>
+                      </div>
+                      <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginTop: "8px" }}>{n.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
