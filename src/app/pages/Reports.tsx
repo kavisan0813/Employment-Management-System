@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { Download, FileText, TrendingUp, Users, DollarSign, Calendar, ArrowLeft, Search, ChevronDown, Star, Check, X, AlertTriangle, Clock, ArrowLeftRight, CheckCircle, XCircle, FileDown, Table, Eye, ChevronRight, MessageSquare } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -16,6 +17,13 @@ const swapTrendData = [
   { week: "Mar W4", submitted: 6, approved: 4, declined: 1 },
   { week: "Apr W1", submitted: 5, approved: 3, declined: 0 },
   { week: "Apr W2", submitted: 9, approved: 4, declined: 1 },
+];
+
+const swapTrendMonthData = [
+  { month: "Jan", submitted: 18, approved: 12, declined: 2 },
+  { month: "Feb", submitted: 22, approved: 15, declined: 4 },
+  { month: "Mar", submitted: 26, approved: 18, declined: 5 },
+  { month: "Apr", submitted: 14, approved: 8, declined: 2 },
 ];
 
 const swapReasonData = [
@@ -47,6 +55,13 @@ const otTrendData = [
   { week: "Mar W2", hours: 95 },
   { week: "Mar W3", hours: 130 },
   { week: "Apr W1", hours: 142 },
+];
+
+const otTrendMonthData = [
+  { week: "Jan", hours: 320 },
+  { week: "Feb", hours: 450 },
+  { week: "Mar", hours: 580 },
+  { week: "Apr", hours: 142 }, // Current partial month
 ];
 
 const otDeptData = [
@@ -85,7 +100,64 @@ const otCostForecast = [
 ];
 
 function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [deptFilter, setDeptFilter] = useState("All Departments");
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [trendTab, setTrendTab] = useState("6 Weeks");
+
+  const departments = ["All Departments", ...Array.from(new Set(otEmployeeData.map(e => e.dept)))];
+
+  const filteredEmployees = otEmployeeData.filter(e => {
+    const matchesSearch = e.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          e.dept.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          e.role.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    let matchesTab = true;
+    const cleanFilter = filter.split(' ')[0]; // Handle "All (23)" -> "All"
+    if (cleanFilter === "Exceeded") matchesTab = e.status === "Exceeded";
+    else if (cleanFilter === "High") matchesTab = e.status === "High";
+    else if (cleanFilter === "Low") matchesTab = e.status === "Normal";
+
+    const matchesDept = deptFilter === "All Departments" || e.dept === deptFilter;
+    
+    return matchesSearch && matchesTab && matchesDept;
+  });
+
+  const handleExportCSV = () => {
+    const headers = ["Employee", "Role", "Department", "Regular Hours", "OT Hours", "Total Hours", "Est. Pay", "Status"];
+    const rows = filteredEmployees.map(e => [e.name, e.role, e.dept, e.reg, e.ot, e.total, `₹${e.pay}`, e.status]);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `overtime_monitoring_report_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportPDF = () => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    const rows = filteredEmployees.map(e => 
+      `<tr>
+        <td style="padding:10px;border-bottom:1px solid #eee"><b>${e.name}</b><br/><small>${e.role}</small></td>
+        <td style="padding:10px;border-bottom:1px solid #eee">${e.dept}</td>
+        <td style="padding:10px;border-bottom:1px solid #eee">${e.ot} hrs</td>
+        <td style="padding:10px;border-bottom:1px solid #eee;color:#F59E0B">₹${e.pay}</td>
+      </tr>`
+    ).join("");
+    
+    printWindow.document.write(`
+      <html><head><title>Overtime Monitoring Report</title><style>body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}h1{color:#F59E0B;margin-bottom:4px}p{color:#6b7280;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{text-align:left;padding:10px;background:#FEF3C7;color:#92400E;font-size:11px;text-transform:uppercase;border-bottom:2px solid #F59E0B}</style></head>
+      <body><h1>Overtime Monitoring Report</h1><p>${filteredEmployees.length} records · Produced ${new Date().toLocaleDateString()}</p>
+      <table><thead><tr><th>Employee</th><th>Dept</th><th>OT Hours</th><th>Est. OT Pay</th></tr></thead><tbody>${rows}</tbody></table></body></html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
 
   return (
     <div className="space-y-6">
@@ -93,8 +165,8 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
         title="Overtime Monitoring Report" 
         subtitle="Consolidated overtime tracking across all departments · 142 hrs · Generated Today"
         onBack={onBack}
-        onExportPDF={() => {}}
-        onExportCSV={() => {}}
+        onExportPDF={handleExportPDF}
+        onExportCSV={handleExportCSV}
       />
 
       {/* Alert Banner */}
@@ -108,7 +180,11 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             <p style={{ color: "#92400E", fontSize: "13px", marginTop: "2px" }}>Ravi Kumar (18 hrs), James Carter (17 hrs), Sarah Johnson (16 hrs) require immediate schedule review.</p>
           </div>
         </div>
-        <button className="px-5 py-2 rounded-xl text-xs font-bold text-white transition-transform active:scale-95" style={{ backgroundColor: "#F59E0B" }}>
+        <button 
+          className="px-5 py-2 rounded-xl text-xs font-bold text-white transition-transform active:scale-95" 
+          style={{ backgroundColor: "#F59E0B" }}
+          onClick={() => navigate('/schedule')}
+        >
           Review Schedules
         </button>
       </div>
@@ -127,22 +203,32 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
         <div className="col-span-3 rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
            <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
-                <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>Weekly Overtime Trend</h3>
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold" style={{ backgroundColor: "#ECFDF5", color: "#059669" }}>Last 6 weeks</span>
+                <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>{trendTab === '6 Weeks' ? 'Weekly Overtime Trend' : 'Monthly Overtime Trend'}</h3>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold" style={{ backgroundColor: "#ECFDF5", color: "#059669" }}>Last {trendTab === '6 Weeks' ? '6 weeks' : '4 months'}</span>
               </div>
               <div className="flex bg-[var(--background)] p-1 rounded-full border" style={{ borderColor: "var(--border)" }}>
-                <button className="px-3 py-1 text-[10px] font-bold text-white bg-[#059669] rounded-full">6 Weeks</button>
-                <button className="px-3 py-1 text-[10px] font-bold text-[#6B7280]">3 Months</button>
+                <button 
+                  onClick={() => setTrendTab("6 Weeks")}
+                  className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${trendTab === '6 Weeks' ? 'text-white bg-[#059669]' : 'text-[#6B7280] hover:text-[#059669]'}`}
+                >
+                  6 Weeks
+                </button>
+                <button 
+                  onClick={() => setTrendTab("3 Months")}
+                  className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${trendTab === '3 Months' ? 'text-white bg-[#059669]' : 'text-[#6B7280] hover:text-[#059669]'}`}
+                >
+                  3 Months
+                </button>
               </div>
            </div>
            
            <div className="h-[280px] relative">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={otTrendData}>
+                <AreaChart data={trendTab === '6 Weeks' ? otTrendData : otTrendMonthData}>
                    <defs>
                       <linearGradient id="otGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.2} />
-                        <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
+                         <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.2} />
+                         <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
                       </linearGradient>
                    </defs>
                    <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
@@ -202,11 +288,40 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
           <div className="flex items-center gap-3">
              <div className="relative">
                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
-               <input type="text" placeholder="Search..." className="pl-9 pr-3 py-1.5 text-xs border rounded-lg focus:outline-none w-[220px]" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--foreground)" }} />
+               <input 
+                type="text" 
+                placeholder="Search..." 
+                className="pl-9 pr-3 py-1.5 text-xs border rounded-lg focus:outline-none w-[220px]" 
+                style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--foreground)" }} 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
              </div>
-             <button className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-gray-50 flex items-center gap-2" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}>
-              Filter <ChevronDown size={14} />
-            </button>
+             <div className="relative">
+               <button 
+                className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-gray-50 flex items-center gap-2" 
+                style={{ backgroundColor: "var(--card)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}
+                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+               >
+                {deptFilter === "All Departments" ? "Filter" : deptFilter} <ChevronDown size={14} />
+              </button>
+              {showFilterDropdown && (
+                <div className="absolute right-0 top-full mt-1 z-30 w-[180px] bg-white dark:bg-zinc-900 border border-border rounded-xl shadow-xl overflow-hidden py-1">
+                  {departments.map(dept => (
+                    <button
+                      key={dept}
+                      className={`w-full text-left px-4 py-2 text-xs font-medium hover:bg-emerald-50 hover:text-emerald-700 transition-colors ${deptFilter === dept ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-foreground'}`}
+                      onClick={() => {
+                        setDeptFilter(dept);
+                        setShowFilterDropdown(false);
+                      }}
+                    >
+                      {dept}
+                    </button>
+                  ))}
+                </div>
+              )}
+             </div>
           </div>
         </div>
 
@@ -215,7 +330,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             <button
               key={t}
               onClick={() => setFilter(t)}
-              className={`py-4 px-1 mr-8 text-xs font-bold transition-all border-b-2 ${t.includes(filter) || (filter === 'All' && t.startsWith('All')) ? 'text-[#059669] border-[#059669]' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
+              className={`py-4 px-1 mr-8 text-xs font-bold transition-all border-b-2 ${filter === t || (filter === 'All' && t.startsWith('All')) ? 'text-[#059669] border-[#059669]' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
             >
               {t}
             </button>
@@ -232,7 +347,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
               </tr>
             </thead>
             <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
-              {otEmployeeData.map((e, i) => (
+              {filteredEmployees.map((e, i) => (
                 <tr key={i} className="hover:bg-[#F0FFF8] transition-colors h-[64px]">
                   <td className="px-6 py-2">
                     <div className="flex items-center gap-3">
@@ -272,15 +387,24 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   </td>
                   <td className="px-6 py-2">
                      <div className="flex gap-1.5">
-                        {[Eye, Calendar, MessageSquare].map((Icon, idx) => (
-                           <button key={idx} className="w-8 h-8 rounded-full flex items-center justify-center bg-[#F1FEF2] text-[#6B7280] hover:bg-[#DCFCE7] hover:text-[#059669] transition-all">
-                              <Icon size={14} />
-                           </button>
-                        ))}
+                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[#F1FEF2] text-[#6B7280] hover:bg-[#DCFCE7] hover:text-[#059669] transition-all" onClick={() => navigate('/schedule')} title="View Schedule">
+                          <Eye size={14} />
+                        </button>
+                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[#F1FEF2] text-[#6B7280] hover:bg-[#DCFCE7] hover:text-[#059669] transition-all" onClick={() => navigate('/attendance')} title="View Attendance Logs">
+                          <Calendar size={14} />
+                        </button>
+                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[#F1FEF2] text-[#6B7280] hover:bg-[#DCFCE7] hover:text-[#059669] transition-all" onClick={() => navigate('/employees')} title="View Employee Profile">
+                          <MessageSquare size={14} />
+                        </button>
                      </div>
                   </td>
                 </tr>
               ))}
+              {filteredEmployees.length === 0 && (
+                <tr>
+                  <td colSpan={9} className="px-6 py-10 text-center text-muted-foreground font-bold">No overtime records found</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -329,7 +453,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
          <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
             <div className="flex items-center justify-between mb-1">
                <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>OT Cost This Month</h3>
-               <button className="text-[12px] font-bold text-[#059669] hover:underline">Set OT Alert</button>
+               <button className="text-[12px] font-bold text-[#059669] hover:underline" onClick={() => navigate('/attendance')}>Set OT Alert</button>
             </div>
             <p style={{ color: "#6B7280", fontSize: "13px", marginBottom: "24px" }}>Projected vs Actual spend</p>
             
@@ -366,41 +490,108 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
 }
 
 function ShiftSwapReport({ onBack }: { onBack: () => void }) {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState("All");
+  const [deptFilter, setDeptFilter] = useState("All Departments");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [localRequests, setLocalRequests] = useState(swapRequests);
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [chartTab, setChartTab] = useState("Week");
+
+  const departments = ["All Departments", ...Array.from(new Set(swapRequests.map(r => r.fromDept)))];
+
+  const filtered = localRequests.filter(req => {
+    const matchesSearch = req.from.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      req.to.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      req.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      req.reason.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = filter === "All" || req.status === filter;
+    const matchesDept = deptFilter === "All Departments" || req.fromDept === deptFilter;
+    return matchesSearch && matchesStatus && matchesDept;
+  });
+
+  const handleExportCSV = () => {
+    const headers = ["ID", "Requester", "Department", "Swap With", "Origin Shift", "Requested Shift", "Reason", "Submitted", "Status"];
+    const rows = filtered.map(r => [r.id, r.from, r.fromDept, r.to, `${r.origin} (${r.originDate})`, `${r.requested} (${r.requestedDate})`, r.reason, r.submitted, r.status]);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `shift_swap_report_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportPDF = () => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    const rows = filtered.map(r =>
+      `<tr>
+        <td style="padding:8px;border-bottom:1px solid #eee">${r.id}</td>
+        <td style="padding:8px;border-bottom:1px solid #eee">${r.from}<br/><small>${r.fromDept}</small></td>
+        <td style="padding:8px;border-bottom:1px solid #eee">${r.to}</td>
+        <td style="padding:8px;border-bottom:1px solid #eee">${r.origin} → ${r.requested}</td>
+        <td style="padding:8px;border-bottom:1px solid #eee">${r.status}</td>
+      </tr>`
+    ).join("");
+
+    printWindow.document.write(`
+      <html><head><title>Shift Swap Report</title><style>body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}h1{color:#059669;margin-bottom:4px}p{color:#6b7280;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{text-align:left;padding:10px 8px;background:#f0fdf4;color:#059669;font-size:11px;text-transform:uppercase;border-bottom:2px solid #059669}</style></head>
+      <body><h1>Shift Swap Report</h1><p>${filtered.length} records · Generated ${new Date().toLocaleDateString()}</p>
+      <table><thead><tr><th>ID</th><th>Requester</th><th>Swap With</th><th>Shifts</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></body></html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  const handleApprove = (id: string) => {
+    setLocalRequests(prev => prev.map(req => req.id === id ? { ...req, status: 'Approved' } : req));
+  };
 
   return (
     <div className="space-y-6">
-      <ReportHeader 
-        title="Shift Swap Report" 
-        subtitle="Detailed log of all shift exchange requests · 8 pending · Generated Today"
+      <ReportHeader
+        title="Shift Swap Report"
+        subtitle={`Detailed log of all shift exchange requests · ${localRequests.filter(r => r.status === 'Pending').length} pending · Generated Today`}
         onBack={onBack}
-        onExportPDF={() => {}}
-        onExportCSV={() => {}}
+        onExportPDF={handleExportPDF}
+        onExportCSV={handleExportCSV}
       />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-4 gap-4 mb-6">
-        <KpiCard label="Total Requests" value="24" color="var(--primary)" />
-        <KpiCard label="Approved Swaps" value="13" color="#10B981" />
-        <KpiCard label="Pending Review" value="8" color="#F59E0B" />
-        <KpiCard label="Declined" value="3" color="#EF4444" />
+        <KpiCard label="Total Requests" value={String(localRequests.length)} color="var(--primary)" />
+        <KpiCard label="Approved Swaps" value={String(localRequests.filter(r => r.status === 'Approved').length)} color="#10B981" />
+        <KpiCard label="Pending Review" value={String(localRequests.filter(r => r.status === 'Pending').length)} color="#F59E0B" />
+        <KpiCard label="Declined" value={String(localRequests.filter(r => r.status === 'Declined').length)} color="#EF4444" />
       </div>
 
       {/* Row 2 - Charts */}
       <div className="grid grid-cols-3 gap-6 mb-6">
         <div className="col-span-2 rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
           <div className="flex items-center justify-between mb-8">
-            <h3 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>Swap Requests — Last 4 Weeks</h3>
+            <h3 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>Swap Requests — {chartTab === 'Week' ? 'Last 4 Weeks' : 'Last 4 Months'}</h3>
             <div className="flex bg-[#F1FEF2] p-1 rounded-full">
-              <button className="px-3 py-1 text-[10px] font-bold text-white bg-[#059669] rounded-full">Week</button>
-              <button className="px-3 py-1 text-[10px] font-bold text-[#6B7280]">Month</button>
+              <button
+                onClick={() => setChartTab("Week")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${chartTab === 'Week' ? 'text-white bg-[#059669]' : 'text-[#6B7280] hover:text-[#059669]'}`}
+              >
+                Week
+              </button>
+              <button
+                onClick={() => setChartTab("Month")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${chartTab === 'Month' ? 'text-white bg-[#059669]' : 'text-[#6B7280] hover:text-[#059669]'}`}
+              >
+                Month
+              </button>
             </div>
           </div>
           <div className="h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={swapTrendData} barGap={4}>
+              <BarChart data={chartTab === 'Week' ? swapTrendData : swapTrendMonthData} barGap={4}>
                 <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
-                <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6B7280' }} />
+                <XAxis dataKey={chartTab === 'Week' ? "week" : "month"} axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6B7280' }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6B7280' }} />
                 <Tooltip cursor={{ fill: 'rgba(5,150,105,0.05)' }} contentStyle={{ backgroundColor: "#064E3B", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
                 <Bar dataKey="submitted" fill="#059669" radius={[4, 4, 0, 0]} />
@@ -424,7 +615,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span style={{ color: "var(--foreground)", fontSize: "20px", fontWeight: 800 }}>24</span>
+              <span style={{ color: "var(--foreground)", fontSize: "20px", fontWeight: 800 }}>{localRequests.length}</span>
               <span style={{ color: "var(--muted-foreground)", fontSize: "10px" }}>Total Swaps</span>
             </div>
           </div>
@@ -438,11 +629,40 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
           <div className="flex items-center gap-3">
             <div className="relative">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
-              <input type="text" placeholder="Search..." className="pl-9 pr-3 py-1.5 text-xs border rounded-lg focus:outline-none w-[180px]" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--foreground)" }} />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="pl-9 pr-3 py-1.5 text-xs border rounded-lg focus:outline-none w-[180px]"
+                style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--foreground)" }}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-            <button className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-gray-50 flex items-center gap-2" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}>
-              Filter <ChevronDown size={14} />
-            </button>
+            <div className="relative">
+              <button
+                className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-gray-50 flex items-center gap-2"
+                style={{ backgroundColor: "var(--card)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}
+                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+              >
+                {deptFilter === "All Departments" ? "Filter" : deptFilter} <ChevronDown size={14} />
+              </button>
+              {showFilterDropdown && (
+                <div className="absolute right-0 top-full mt-1 z-30 w-[180px] bg-white dark:bg-zinc-900 border border-border rounded-xl shadow-xl overflow-hidden py-1">
+                  {departments.map(dept => (
+                    <button
+                      key={dept}
+                      className={`w-full text-left px-4 py-2 text-xs font-medium hover:bg-emerald-50 hover:text-emerald-700 transition-colors ${deptFilter === dept ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-foreground'}`}
+                      onClick={() => {
+                        setDeptFilter(dept);
+                        setShowFilterDropdown(false);
+                      }}
+                    >
+                      {dept}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -462,27 +682,27 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
           <table className="w-full text-sm text-left">
             <thead>
               <tr style={{ borderBottom: "1px solid var(--border)", backgroundColor: "rgba(5,150,105,0.02)" }}>
-                {['ID', 'Requester', 'Swap With', 'Shifts', 'Reason', 'Submitted', 'Status', ''].map((h, i) => (
+                {['ID', 'Requester', 'Swap With', 'Shifts', 'Reason', 'Submitted', 'Status', 'Actions'].map((h, i) => (
                   <th key={i} className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider" style={{ color: "var(--muted-foreground)" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
-              {swapRequests.map((req: any, i: number) => (
+              {filtered.map((req: any, i: number) => (
                 <tr key={i} className="hover:bg-[rgba(5,150,105,0.02)] transition-colors">
                   <td className="px-6 py-4 font-mono text-xs" style={{ color: "var(--primary)" }}>{req.id}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm" style={{ background: "linear-gradient(135deg, #059669 0%, #10B981 100%)" }}>{req.from.split(' ').map((n: string)=>n[0]).join('')}</div>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm" style={{ background: "linear-gradient(135deg, #059669 0%, #10B981 100%)" }}>{req.from.split(' ').map((n: string) => n[0]).join('')}</div>
                       <div>
                         <p style={{ color: "var(--foreground)", fontWeight: 600 }}>{req.from}</p>
                         <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>{req.fromDept}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="flex items-center gap-2">
-                       <p style={{ color: "var(--foreground)", fontWeight: 500 }}>{req.to}</p>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2 text-center">
+                      <p style={{ color: "var(--foreground)", fontWeight: 500 }}>{req.to}</p>
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -494,7 +714,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                   <td className="px-6 py-4" style={{ color: "var(--foreground)", maxWidth: "150px" }}>{req.reason}</td>
                   <td className="px-6 py-4" style={{ color: "var(--muted-foreground)" }}>{req.submitted}</td>
                   <td className="px-6 py-4">
-                    <span className="px-3 py-1 rounded-full text-[10px] font-bold" style={{ 
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold" style={{
                       backgroundColor: req.status === 'Approved' ? "#DCFCE7" : req.status === 'Pending' ? "#FEF3C7" : "#FEE2E2",
                       color: req.status === 'Approved' ? "#166534" : req.status === 'Pending' ? "#92400E" : "#991B1B"
                     }}>
@@ -503,12 +723,17 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
-                      <button className="p-1.5 rounded-lg transition-colors hover:bg-gray-100" style={{ color: "var(--muted-foreground)" }}><Eye size={14} /></button>
-                      {req.status === 'Pending' && <button className="p-1.5 rounded-lg font-bold text-[#059669] hover:bg-emerald-50 text-[11px]">APPROVE</button>}
+                      <button className="p-1.5 rounded-lg transition-colors hover:bg-gray-100" style={{ color: "var(--muted-foreground)" }} onClick={() => navigate('/schedule')}><Eye size={14} /></button>
+                      {req.status === 'Pending' && <button className="p-1.5 rounded-lg font-bold text-[#059669] hover:bg-emerald-50 text-[11px]" onClick={() => handleApprove(req.id)}>APPROVE</button>}
                     </div>
                   </td>
                 </tr>
               ))}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-6 py-10 text-center text-muted-foreground font-bold">No swap requests found</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -516,39 +741,39 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
 
       <div className="grid grid-cols-2 gap-6">
         <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-           <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>By Department</h4>
-           <div className="space-y-4">
-              {[
-                { name: 'Operations', count: 8, pct: 100 },
-                { name: 'Engineering', count: 6, pct: 75 },
-                { name: 'Marketing', count: 4, pct: 50 },
-                { name: 'Finance', count: 3, pct: 37 },
-              ].map((d) => (
-                <div key={d.name}>
-                  <div className="flex justify-between text-[11px] mb-1.5 font-bold" style={{ color: "var(--muted-foreground)" }}>
-                    <span>{d.name}</span>
-                    <span style={{ color: "var(--primary)" }}>{d.count} requests</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-[#F1F5F9] rounded-full overflow-hidden">
-                    <div className="h-full bg-[#059669] rounded-full" style={{ width: `${d.pct}%` }} />
-                  </div>
+          <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>By Department</h4>
+          <div className="space-y-4">
+            {[
+              { name: 'Operations', count: 8, pct: 100 },
+              { name: 'Engineering', count: 6, pct: 75 },
+              { name: 'Marketing', count: 4, pct: 50 },
+              { name: 'Finance', count: 3, pct: 37 },
+            ].map((d) => (
+              <div key={d.name}>
+                <div className="flex justify-between text-[11px] mb-1.5 font-bold" style={{ color: "var(--muted-foreground)" }}>
+                  <span>{d.name}</span>
+                  <span style={{ color: "var(--primary)" }}>{d.count} requests</span>
                 </div>
-              ))}
-           </div>
+                <div className="h-1.5 w-full bg-[#F1F5F9] rounded-full overflow-hidden">
+                  <div className="h-full bg-[#059669] rounded-full" style={{ width: `${d.pct}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-           <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>Most Frequent Requesters</h4>
-           <div className="space-y-3">
-             {swapRequests.slice(0, 4).map((r: any, i: number) => (
-               <div key={i} className="flex items-center justify-between p-2 rounded-xl" style={{ backgroundColor: "var(--background)" }}>
-                 <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#E8FDF0] text-[#059669]">{r.from[0]}</div>
-                   <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{r.from}</p>
-                 </div>
-                 <span className="text-[11px] font-bold" style={{ color: "var(--primary)" }}>{4 - i} swaps</span>
-               </div>
-             ))}
-           </div>
+          <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>Most Frequent Requesters</h4>
+          <div className="space-y-3">
+            {localRequests.filter(r => r.status === 'Approved').slice(0, 4).map((r: any, i: number) => (
+              <div key={i} className="flex items-center justify-between p-2 rounded-xl" style={{ backgroundColor: "var(--background)" }}>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#E8FDF0] text-[#059669]">{r.from[0]}</div>
+                  <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{r.from}</p>
+                </div>
+                <span className="text-[11px] font-bold" style={{ color: "var(--primary)" }}>{4 - i} swaps</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -1199,7 +1424,7 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
                 <td className="px-4 py-3" style={{ color: "var(--foreground)", fontWeight: 600 }}>{emp.name}</td>
                 <td className="px-4 py-3" style={{ color: "var(--muted-foreground)" }}>{emp.dept}</td>
                 <td className="px-4 py-3" style={{ color: "var(--muted-foreground)" }}>{emp.manager}</td>
-                <td className="px-4 py-3"><div className="flex items-center gap-1">{[1,2,3,4,5].map(s => <Star key={s} size={11} fill={s <= Math.round(emp.score) ? "#F59E0B" : "transparent"} color={s <= Math.round(emp.score) ? "#F59E0B" : "#D1D5DB"} />)}<span style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 700, marginLeft: "4px" }}>{emp.score}</span></div></td>
+                <td className="px-4 py-3"><div className="flex items-center gap-1">{[1, 2, 3, 4, 5].map(s => <Star key={s} size={11} fill={s <= Math.round(emp.score) ? "#F59E0B" : "transparent"} color={s <= Math.round(emp.score) ? "#F59E0B" : "#D1D5DB"} />)}<span style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 700, marginLeft: "4px" }}>{emp.score}</span></div></td>
                 <td className="px-4 py-3"><div className="flex items-center gap-2"><div className="flex-1 rounded-full overflow-hidden" style={{ height: "5px", backgroundColor: "var(--secondary)" }}><div className="rounded-full h-full" style={{ width: `${emp.goals}%`, backgroundColor: "#059669" }} /></div><span style={{ fontSize: "11px", fontWeight: 600, color: "var(--foreground)" }}>{emp.goals}%</span></div></td>
                 <td className="px-4 py-3"><span className="px-2.5 py-1 rounded-full text-[10px] font-bold" style={{ backgroundColor: emp.status === "Completed" ? "#ECFDF5" : "#FFFBEB", color: emp.status === "Completed" ? "#059669" : "#F59E0B" }}>{emp.status}</span></td>
                 <td className="px-4 py-3" style={{ color: "var(--muted-foreground)", fontSize: "12px" }}>{emp.date}</td>
@@ -1451,7 +1676,14 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
 /* MAIN REPORTS PAGE                             */
 /* ══════════════════════════════════════════════ */
 export function Reports() {
+  const location = useLocation();
   const [activeReport, setActiveReport] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (location.state?.activeReport) {
+      setActiveReport(location.state.activeReport);
+    }
+  }, [location.state]);
 
   // Switch logic for reports
   if (activeReport === "Headcount Report") return <HeadcountReport onBack={() => setActiveReport(null)} />;

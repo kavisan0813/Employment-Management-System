@@ -25,7 +25,7 @@ export function Layout() {
   });
   const location = useLocation();
 
-  if (!localStorage.getItem("isLoggedIn")) {
+  if (!sessionStorage.getItem("isLoggedIn")) {
     return <Navigate to="/login" replace />;
   }
 

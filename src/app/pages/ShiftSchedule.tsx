@@ -451,7 +451,7 @@ export const ShiftSchedule: React.FC = () => {
             )}
           </div>
           <div className="px-6 py-4 mt-auto border-t border-border bg-card rounded-b-2xl">
-            <button className="w-full py-2 text-xs font-bold text-primary hover:bg-secondary rounded-xl transition-colors active:scale-95" onClick={() => navigate('/reports')}>View All Swap Requests</button>
+            <button className="w-full py-2 text-xs font-bold text-primary hover:bg-secondary rounded-xl transition-colors active:scale-95" onClick={() => navigate('/reports', { state: { activeReport: 'Shift Swap Report' } })}>View All Swap Requests</button>
           </div>
         </div>
 
@@ -511,7 +511,7 @@ export const ShiftSchedule: React.FC = () => {
                 setGeneratingReport(true);
                 setTimeout(() => {
                   setGeneratingReport(false);
-                  navigate('/reports');
+                  navigate('/reports', { state: { activeReport: 'Overtime Monitoring' } });
                 }, 1500);
               }}
               disabled={generatingReport}

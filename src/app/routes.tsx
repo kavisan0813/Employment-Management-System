@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import { Layout } from "./components/Layout";
 import { Dashboard } from "./pages/Dashboard";
 import { Employees } from "./pages/Employees";
@@ -16,6 +16,10 @@ import { Login } from "./pages/Login";
 import SmartSearch from "./pages/SmartSearch";
 import { ShiftSchedule } from "./pages/ShiftSchedule";
 
+const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+  const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
+  return isLoggedIn ? <>{children}</> : <Navigate to="/login" replace />;
+};
 
 export const router = createBrowserRouter([
   {
@@ -24,7 +28,11 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
-    Component: Layout,
+    element: (
+      <AuthGuard>
+        <Layout />
+      </AuthGuard>
+    ),
     children: [
       { index: true, Component: Dashboard },
       { path: "employees", Component: Employees },
@@ -40,7 +48,6 @@ export const router = createBrowserRouter([
       { path: "profile", Component: UserProfile },
       { path: "smart-search", Component: SmartSearch },
       { path: "schedule", Component: ShiftSchedule },
-
     ],
   },
 ]);
