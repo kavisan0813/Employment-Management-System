@@ -122,7 +122,7 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
             }}
           >
             <div className="px-4 py-2 border-b bg-neutral-50 dark:bg-zinc-800/50" style={{ borderColor: "var(--border)" }}>
-              <span style={{ color: "var(--muted-foreground)", fontSize: "10px", fontWeight: 700, uppercase: "true" }}>
+              <span style={{ color: "var(--muted-foreground)", fontSize: "10px", fontWeight: 700, textTransform: "uppercase" }}>
                 EMPLOYEES
               </span>
             </div>

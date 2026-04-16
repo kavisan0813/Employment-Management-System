@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, FileText, TrendingUp, Users, DollarSign, Calendar, ArrowLeft, Search, ChevronDown, Star, Check, X, AlertTriangle } from "lucide-react";
+import { Download, FileText, TrendingUp, Users, DollarSign, Calendar, ArrowLeft, Search, ChevronDown, Star, Check, X, AlertTriangle, Clock, ArrowLeftRight, CheckCircle, XCircle, FileDown, Table, Eye, ChevronRight, MessageSquare } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, Legend,
@@ -11,6 +11,550 @@ const headcountTrend = [
   { month: "Jan", count: 237 }, { month: "Feb", count: 241 }, { month: "Mar", count: 244 }, { month: "Apr", count: 248 },
 ];
 
+const swapTrendData = [
+  { week: "Mar W3", submitted: 4, approved: 2, declined: 1 },
+  { week: "Mar W4", submitted: 6, approved: 4, declined: 1 },
+  { week: "Apr W1", submitted: 5, approved: 3, declined: 0 },
+  { week: "Apr W2", submitted: 9, approved: 4, declined: 1 },
+];
+
+const swapReasonData = [
+  { name: "Personal", value: 35, count: 9, color: "#059669" },
+  { name: "Medical", value: 25, count: 6, color: "#14B8A6" },
+  { name: "Travel", value: 20, count: 5, color: "#34D39A" },
+  { name: "Family", value: 12, count: 3, color: "#F59E0B" },
+  { name: "Other", value: 8, count: 1, color: "#D1D5DB" },
+];
+
+const swapRequests = [
+  { id: "SWP-001", from: "Sarah Johnson", fromRole: "Nurse Practitioner", fromDept: "Emergency", to: "Marcus Williams", toRole: "Nurse Practitioner", origin: "Morning", originDate: "Apr 7", requested: "Evening", requestedDate: "Apr 8", reason: "Doctor appointment", submitted: "2 days ago", status: "Pending" },
+  { id: "SWP-002", from: "Ravi Kumar", fromRole: "Senior Surgeon", fromDept: "Surgical", to: "James Carter", toRole: "Senior Surgeon", origin: "Evening", originDate: "Apr 9", requested: "Morning", requestedDate: "Apr 10", reason: "Family event", submitted: "3 days ago", status: "Approved" },
+  { id: "SWP-003", from: "Yuki Tanaka", fromRole: "Pediatrician", fromDept: "Pediatrics", to: "Emily Rodriguez", toRole: "Pediatrician", origin: "Night", originDate: "Apr 11", requested: "Full Day", requestedDate: "Apr 12", reason: "Travel plans", submitted: "4 days ago", status: "Pending" },
+  { id: "SWP-004", from: "Robert Chen", fromRole: "Anesthesiologist", fromDept: "Surgical", to: "Priya Sharma", toRole: "Anesthesiologist", origin: "Morning", originDate: "Apr 6", requested: "Evening", requestedDate: "Apr 7", reason: "Personal commitments", submitted: "1 day ago", status: "Approved" },
+  { id: "SWP-005", from: "Anita Desai", fromRole: "Radiologist", fromDept: "Diagnosis", to: "Siddharth Rao", toRole: "Radiologist", origin: "Evening", originDate: "Apr 13", requested: "Morning", requestedDate: "Apr 14", reason: "Educational Seminar", submitted: "5 days ago", status: "Declined" },
+  { id: "SWP-006", from: "Kevin Malone", fromRole: "Lab Tech", fromDept: "Diagnostics", to: "Oscar Martinez", toRole: "Lab Tech", origin: "Full Day", originDate: "Apr 15", requested: "Night", requestedDate: "Apr 16", reason: "Personal", submitted: "Today", status: "Pending" },
+  { id: "SWP-007", from: "Jim Halpert", fromRole: "Consultant", fromDept: "Outpatient", to: "Dwight Schrute", toRole: "Consultant", origin: "Morning", originDate: "Apr 18", requested: "Evening", requestedDate: "Apr 19", reason: "Family event", submitted: "2 days ago", status: "Approved" },
+  { id: "SWP-008", from: "Pam Beesly", fromRole: "Staff Nurse", fromDept: "Emergency", to: "Phyllis Vance", toRole: "Staff Nurse", origin: "Night", originDate: "Apr 20", requested: "Morning", requestedDate: "Apr 21", reason: "Doctor appointment", submitted: "3 days ago", status: "Pending" },
+];
+
+/* ══════════════════════════════════════════════ */
+/* 8. OVERTIME MONITORING REPORT                 */
+/* ══════════════════════════════════════════════ */
+const otTrendData = [
+  { week: "Feb W3", hours: 64 },
+  { week: "Feb W4", hours: 82 },
+  { week: "Mar W1", hours: 105 },
+  { week: "Mar W2", hours: 95 },
+  { week: "Mar W3", hours: 130 },
+  { week: "Apr W1", hours: 142 },
+];
+
+const otDeptData = [
+  { name: "Operations", hours: 42, status: "High", color: "#EF4444" },
+  { name: "Engineering", hours: 31, status: "High", color: "#EF4444" },
+  { name: "Sales", hours: 24, status: "Med", color: "#F59E0B" },
+  { name: "Finance", hours: 18, status: "Med", color: "#F59E0B" },
+  { name: "Marketing", hours: 14, status: "OK", color: "#34D39A" },
+  { name: "HR", hours: 8, status: "OK", color: "#34D39A" },
+  { name: "Design", hours: 5, status: "OK", color: "#34D39A" },
+];
+
+const otEmployeeData = [
+  { name: "Ravi Kumar", dept: "Operations", role: "Senior Supervisor", reg: 40, ot: 18, total: 58, days: 4, pay: 810, status: "Exceeded" },
+  { name: "James Carter", dept: "Finance", role: "Sr. Accountant", reg: 40, ot: 17, total: 57, days: 4, pay: 765, status: "Exceeded" },
+  { name: "Sarah Johnson", dept: "Engineering", role: "Staff Engineer", reg: 40, ot: 16, total: 56, days: 3, pay: 720, status: "Exceeded" },
+  { name: "Marcus Williams", dept: "Marketing", role: "Manager", reg: 40, ot: 13, total: 53, days: 3, pay: 585, status: "High" },
+  { name: "Anita Desai", dept: "Operations", role: "Specialist", reg: 40, ot: 12, total: 52, days: 3, pay: 540, status: "High" },
+  { name: "Robert Chen", dept: "Finance", role: "Analyst", reg: 40, ot: 11, total: 51, days: 2, pay: 495, status: "High" },
+  { name: "Yuki Tanaka", dept: "Engineering", role: "Lead Dev", reg: 40, ot: 9, total: 49, days: 2, pay: 405, status: "Normal" },
+  { name: "Kevin Malone", dept: "Logistics", role: "Associate", reg: 40, ot: 8, total: 48, days: 2, pay: 360, status: "Normal" },
+];
+
+const otShiftData = [
+  { name: "Night Shift", hours: 64, value: 45, color: "#8B5CF6" },
+  { name: "Evening Shift", hours: 44, value: 31, color: "#F59E0B" },
+  { name: "Morning Shift", hours: 20, value: 14, color: "#059669" },
+  { name: "Full Day", hours: 14, value: 10, color: "#0EA5E9" },
+];
+
+const otCostForecast = [
+  { week: "Week 1", amount: 2100, actual: true },
+  { week: "Week 2", amount: 3420, actual: true },
+  { week: "Week 3", amount: 3840, actual: true },
+  { week: "Week 4", amount: 4260, actual: false },
+];
+
+function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
+  const [filter, setFilter] = useState("All");
+
+  return (
+    <div className="space-y-6">
+      <ReportHeader 
+        title="Overtime Monitoring Report" 
+        subtitle="Consolidated overtime tracking across all departments · 142 hrs · Generated Today"
+        onBack={onBack}
+        onExportPDF={() => {}}
+        onExportCSV={() => {}}
+      />
+
+      {/* Alert Banner */}
+      <div className="rounded-2xl p-4 border-l-4 flex items-center justify-between" style={{ backgroundColor: "#FEF3C7", borderColor: "#FDE68A", borderLeftColor: "#F59E0B" }}>
+        <div className="flex items-center gap-4">
+          <div className="p-2 rounded-full bg-white/50">
+            <AlertTriangle size={20} color="#F59E0B" />
+          </div>
+          <div>
+            <p style={{ color: "#92400E", fontSize: "14px", fontWeight: 700 }}>3 employees have exceeded the 15-hour weekly overtime limit.</p>
+            <p style={{ color: "#92400E", fontSize: "13px", marginTop: "2px" }}>Ravi Kumar (18 hrs), James Carter (17 hrs), Sarah Johnson (16 hrs) require immediate schedule review.</p>
+          </div>
+        </div>
+        <button className="px-5 py-2 rounded-xl text-xs font-bold text-white transition-transform active:scale-95" style={{ backgroundColor: "#F59E0B" }}>
+          Review Schedules
+        </button>
+      </div>
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-4 gap-4">
+        <KpiCard label="Total OT Hours" value="142 hrs" color="#F59E0B" />
+        <KpiCard label="Employees on OT" value="23 (9.3%)" color="var(--primary)" />
+        <KpiCard label="Avg OT / Employee" value="6.2 hrs" color="#10B981" />
+        <KpiCard label="OT Cost Estimate" value="₹4,260" color="#F59E0B" />
+      </div>
+
+      {/* Row 2 - Charts */}
+      <div className="grid grid-cols-5 gap-6">
+        {/* Left: OT Trend */}
+        <div className="col-span-3 rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+           <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>Weekly Overtime Trend</h3>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold" style={{ backgroundColor: "#ECFDF5", color: "#059669" }}>Last 6 weeks</span>
+              </div>
+              <div className="flex bg-[var(--background)] p-1 rounded-full border" style={{ borderColor: "var(--border)" }}>
+                <button className="px-3 py-1 text-[10px] font-bold text-white bg-[#059669] rounded-full">6 Weeks</button>
+                <button className="px-3 py-1 text-[10px] font-bold text-[#6B7280]">3 Months</button>
+              </div>
+           </div>
+           
+           <div className="h-[280px] relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={otTrendData}>
+                   <defs>
+                      <linearGradient id="otGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.2} />
+                        <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
+                      </linearGradient>
+                   </defs>
+                   <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
+                   <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9CA3AF' }} />
+                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9CA3AF' }} />
+                   <Tooltip 
+                      contentStyle={{ backgroundColor: "#0F3047", border: "none", borderRadius: "10px", color: "white", padding: "12px" }}
+                      itemStyle={{ color: "white", fontSize: "12px" }}
+                   />
+                   <Area type="monotone" dataKey="hours" stroke="#F59E0B" strokeWidth={3} fill="url(#otGrad)" dot={{ fill: "#F59E0B", stroke: "white", strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
+                   {/* Threshold Line at 100 */}
+                   <Line type="monotone" dataKey={() => 100} stroke="#EF4444" strokeDasharray="5 5" dot={false} strokeWidth={1} label={{ value: "Limit: 100h", position: "insideRight", fill: "#EF4444", fontSize: 10 }} />
+                </AreaChart>
+              </ResponsiveContainer>
+           </div>
+        </div>
+
+        {/* Right: Dept Breakdown */}
+        <div className="col-span-2 rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+           <div className="flex items-center justify-between mb-6">
+              <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>OT Hours by Department</h3>
+              <span className="text-[11px] font-bold text-[#6B7280]">This week</span>
+           </div>
+           
+           <div className="space-y-4">
+              {otDeptData.map((d, i) => (
+                <div key={i} className="group cursor-pointer">
+                   <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[13px] font-medium text-[#0F3047] w-[130px]">{d.name}</span>
+                      <div className="flex items-center gap-3 flex-1 px-4">
+                         <div className="h-2.5 w-full rounded-full bg-[#FEF3C7] relative overflow-hidden">
+                           <div className="h-full rounded-full transition-all duration-700" style={{ width: `${(d.hours / 45) * 100}%`, backgroundColor: d.color }} />
+                         </div>
+                      </div>
+                      <div className="flex items-center gap-2 w-[80px] justify-end">
+                         <span className="text-[13px] font-bold" style={{ color: d.color }}>{d.hours} hrs</span>
+                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ 
+                            backgroundColor: d.status === 'High' ? "#FEE2E2" : d.status === 'Med' ? "#FEF3C7" : "#DCFCE7",
+                            color: d.status === 'High' ? "#991B1B" : d.status === 'Med' ? "#92400E" : "#166534"
+                         }}>{d.status}</span>
+                      </div>
+                   </div>
+                   <div className="h-[1px] w-full bg-[#F0FDF4] group-last:hidden" />
+                </div>
+              ))}
+           </div>
+        </div>
+      </div>
+
+      {/* Row 3 - Employee OT Details Table */}
+      <div className="rounded-2xl shadow-sm overflow-hidden" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+        <div className="px-6 py-5 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
+          <div>
+            <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>Employee Overtime Details</h3>
+            <p style={{ color: "var(--muted-foreground)", fontSize: "12px" }}>Week of Apr 6–12, 2026</p>
+          </div>
+          <div className="flex items-center gap-3">
+             <div className="relative">
+               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+               <input type="text" placeholder="Search..." className="pl-9 pr-3 py-1.5 text-xs border rounded-lg focus:outline-none w-[220px]" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--foreground)" }} />
+             </div>
+             <button className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-gray-50 flex items-center gap-2" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}>
+              Filter <ChevronDown size={14} />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex px-6 border-b" style={{ borderColor: "var(--border)" }}>
+          {['All (23)', 'Exceeded Limit (3)', 'High OT (8)', 'Low OT (12)'].map((t) => (
+            <button
+              key={t}
+              onClick={() => setFilter(t)}
+              className={`py-4 px-1 mr-8 text-xs font-bold transition-all border-b-2 ${t.includes(filter) || (filter === 'All' && t.startsWith('All')) ? 'text-[#059669] border-[#059669]' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead>
+              <tr style={{ borderBottom: "1px solid var(--border)", backgroundColor: "#F1FEF2" }}>
+                {['Employee', 'Department', 'Regular', 'OT Hours', 'Total', 'Days', 'Est. Pay', 'Status', 'Actions'].map((h, i) => (
+                  <th key={i} className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
+              {otEmployeeData.map((e, i) => (
+                <tr key={i} className="hover:bg-[#F0FFF8] transition-colors h-[64px]">
+                  <td className="px-6 py-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold text-white" style={{ background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)" }}>{e.name.split(' ').map(n=>n[0]).join('')}</div>
+                      <div>
+                        <p style={{ color: "var(--foreground)", fontWeight: 700 }}>{e.name}</p>
+                        <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>{e.role}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-2">
+                     <span className="px-2 py-0.5 rounded text-[11px] font-bold" style={{ backgroundColor: "#ECFDF5", color: "#3EA76F" }}>{e.dept}</span>
+                  </td>
+                  <td className="px-6 py-2 font-mono text-[#0F3047]">{e.reg} hrs</td>
+                  <td className="px-6 py-2">
+                     <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }} />
+                           <span className="font-bold" style={{ color: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }}>{e.ot} hrs</span>
+                        </div>
+                        <div className="w-16 h-1 rounded-full bg-[#FEF3C7] overflow-hidden">
+                           <div className="h-full rounded-full" style={{ width: `${(e.ot / 20) * 100}%`, backgroundColor: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }} />
+                        </div>
+                     </div>
+                  </td>
+                  <td className="px-6 py-2 font-mono font-bold text-[#0F3047]">{e.total} hrs</td>
+                  <td className="px-6 py-2 text-[#6B7280]">{e.days} days</td>
+                  <td className="px-6 py-2 font-mono font-bold text-[#F59E0B]">₹{e.pay}</td>
+                  <td className="px-6 py-2">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold" style={{ 
+                      backgroundColor: e.status === 'Exceeded' ? "#FEE2E2" : e.status === 'High' ? "#FEF3C7" : "#DCFCE7",
+                      color: e.status === 'Exceeded' ? "#991B1B" : e.status === 'High' ? "#92400E" : "#166534",
+                      border: `1px solid ${e.status === 'Exceeded' ? "#FECACA" : "transparent"}`
+                    }}>
+                      {e.status === 'Exceeded' ? "⚠ Exceeded Limit" : e.status === 'High' ? "High OT" : "Normal"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-2">
+                     <div className="flex gap-1.5">
+                        {[Eye, Calendar, MessageSquare].map((Icon, idx) => (
+                           <button key={idx} className="w-8 h-8 rounded-full flex items-center justify-center bg-[#F1FEF2] text-[#6B7280] hover:bg-[#DCFCE7] hover:text-[#059669] transition-all">
+                              <Icon size={14} />
+                           </button>
+                        ))}
+                     </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Bottom Row - Insights */}
+      <div className="grid grid-cols-2 gap-6">
+         {/* Left: OT by Shift */}
+         <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+            <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>Overtime by Shift Type</h3>
+            <p style={{ color: "#6B7280", fontSize: "13px", marginBottom: "20px" }}>Which shifts generate most OT</p>
+            
+            <div className="flex items-center gap-12">
+               <div className="h-[180px] w-[180px] relative">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie data={otShiftData} innerRadius={55} outerRadius={80} paddingAngle={4} dataKey="value">
+                        {otShiftData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span style={{ color: "#0F3047", fontSize: "18px", fontWeight: 800 }}>142 hrs</span>
+                    <span style={{ color: "#6B7280", fontSize: "10px" }}>Total OT</span>
+                  </div>
+               </div>
+               
+               <div className="flex-1 space-y-2">
+                 {otShiftData.map((s, i) => (
+                   <div key={i} className="flex items-center justify-between p-2 rounded-xl hover:bg-[#F0FFF8] transition-colors">
+                      <div className="flex items-center gap-3">
+                         <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
+                         <span className="text-[13px] text-[#0F3047] font-medium">{s.name}</span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                         <span className="text-[13px] font-bold text-[#0F3047]">{s.hours}h</span>
+                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ backgroundColor: "#ECFDF5", color: "#059669" }}>{s.value}%</span>
+                      </div>
+                   </div>
+                 ))}
+               </div>
+            </div>
+         </div>
+
+         {/* Right: OT Cost Forecast */}
+         <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+            <div className="flex items-center justify-between mb-1">
+               <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>OT Cost This Month</h3>
+               <button className="text-[12px] font-bold text-[#059669] hover:underline">Set OT Alert</button>
+            </div>
+            <p style={{ color: "#6B7280", fontSize: "13px", marginBottom: "24px" }}>Projected vs Actual spend</p>
+            
+            <div className="space-y-4">
+               {otCostForecast.map((c, i) => (
+                 <div key={i}>
+                    <div className="flex justify-between text-[12px] mb-1.5">
+                       <span style={{ color: "#6B7280", fontWeight: 600 }}>{c.week}</span>
+                       <span style={{ color: "#F59E0B", fontWeight: 700 }}>₹{c.amount}</span>
+                    </div>
+                    <div className="h-2 w-full bg-[#FEF3C7] rounded-full overflow-hidden">
+                       <div className="h-full rounded-full" style={{ width: `${(c.amount / 5000) * 100}%`, backgroundColor: "#F59E0B" }} />
+                    </div>
+                 </div>
+               ))}
+               
+               <div className="mt-6 p-4 rounded-xl space-y-3" style={{ backgroundColor: "#FEF3C7" }}>
+                  <div className="flex items-center justify-between">
+                     <p style={{ color: "#92400E", fontSize: "14px", fontWeight: 800 }}>Month Total: ₹13,620 / ₹15,000</p>
+                     <p style={{ color: "#92400E", fontSize: "11px", fontWeight: 700 }}>90.8% used</p>
+                  </div>
+                  <div className="h-2 w-full bg-white/50 rounded-full overflow-hidden">
+                     <div className="h-full bg-[#F59E0B] rounded-full" style={{ width: "90.8%" }} />
+                  </div>
+                  <p style={{ color: "#92400E", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
+                     <AlertTriangle size={14} /> ⚠️ Approaching monthly OT budget limit
+                  </p>
+               </div>
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+}
+
+function ShiftSwapReport({ onBack }: { onBack: () => void }) {
+  const [filter, setFilter] = useState("All");
+
+  return (
+    <div className="space-y-6">
+      <ReportHeader 
+        title="Shift Swap Report" 
+        subtitle="Detailed log of all shift exchange requests · 8 pending · Generated Today"
+        onBack={onBack}
+        onExportPDF={() => {}}
+        onExportCSV={() => {}}
+      />
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <KpiCard label="Total Requests" value="24" color="var(--primary)" />
+        <KpiCard label="Approved Swaps" value="13" color="#10B981" />
+        <KpiCard label="Pending Review" value="8" color="#F59E0B" />
+        <KpiCard label="Declined" value="3" color="#EF4444" />
+      </div>
+
+      {/* Row 2 - Charts */}
+      <div className="grid grid-cols-3 gap-6 mb-6">
+        <div className="col-span-2 rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+          <div className="flex items-center justify-between mb-8">
+            <h3 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>Swap Requests — Last 4 Weeks</h3>
+            <div className="flex bg-[#F1FEF2] p-1 rounded-full">
+              <button className="px-3 py-1 text-[10px] font-bold text-white bg-[#059669] rounded-full">Week</button>
+              <button className="px-3 py-1 text-[10px] font-bold text-[#6B7280]">Month</button>
+            </div>
+          </div>
+          <div className="h-[240px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={swapTrendData} barGap={4}>
+                <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
+                <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6B7280' }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6B7280' }} />
+                <Tooltip cursor={{ fill: 'rgba(5,150,105,0.05)' }} contentStyle={{ backgroundColor: "#064E3B", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
+                <Bar dataKey="submitted" fill="#059669" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="approved" fill="#10B981" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="declined" fill="#EF4444" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+          <h3 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "4px" }}>Reason Breakdown</h3>
+          <p style={{ color: "var(--muted-foreground)", fontSize: "11px", marginBottom: "20px" }}>Why employees request swaps</p>
+          <div className="h-[200px] relative">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={swapReasonData} innerRadius={60} outerRadius={85} paddingAngle={2} dataKey="value">
+                  {swapReasonData.map((entry: any, index: number) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                </Pie>
+                <Tooltip contentStyle={{ backgroundColor: "#064E3B", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span style={{ color: "var(--foreground)", fontSize: "20px", fontWeight: 800 }}>24</span>
+              <span style={{ color: "var(--muted-foreground)", fontSize: "10px" }}>Total Swaps</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Row 3 - Table */}
+      <div className="rounded-2xl shadow-sm overflow-hidden" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+        <div className="px-6 py-5 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
+          <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>Swap Request Log</h3>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+              <input type="text" placeholder="Search..." className="pl-9 pr-3 py-1.5 text-xs border rounded-lg focus:outline-none w-[180px]" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--foreground)" }} />
+            </div>
+            <button className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-gray-50 flex items-center gap-2" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}>
+              Filter <ChevronDown size={14} />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex px-6 border-b" style={{ borderColor: "var(--border)" }}>
+          {['All', 'Pending', 'Approved', 'Declined'].map((t) => (
+            <button
+              key={t}
+              onClick={() => setFilter(t)}
+              className={`py-4 px-1 mr-8 text-xs font-bold transition-all border-b-2 ${filter === t ? 'text-[#059669] border-[#059669]' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead>
+              <tr style={{ borderBottom: "1px solid var(--border)", backgroundColor: "rgba(5,150,105,0.02)" }}>
+                {['ID', 'Requester', 'Swap With', 'Shifts', 'Reason', 'Submitted', 'Status', ''].map((h, i) => (
+                  <th key={i} className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider" style={{ color: "var(--muted-foreground)" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
+              {swapRequests.map((req: any, i: number) => (
+                <tr key={i} className="hover:bg-[rgba(5,150,105,0.02)] transition-colors">
+                  <td className="px-6 py-4 font-mono text-xs" style={{ color: "var(--primary)" }}>{req.id}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm" style={{ background: "linear-gradient(135deg, #059669 0%, #10B981 100%)" }}>{req.from.split(' ').map((n: string)=>n[0]).join('')}</div>
+                      <div>
+                        <p style={{ color: "var(--foreground)", fontWeight: 600 }}>{req.from}</p>
+                        <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>{req.fromDept}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <div className="flex items-center gap-2">
+                       <p style={{ color: "var(--foreground)", fontWeight: 500 }}>{req.to}</p>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-1">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold inline-block w-fit" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>{req.origin} → {req.requested}</span>
+                      <span style={{ color: "var(--muted-foreground)", fontSize: "10px" }}>{req.originDate} ↔ {req.requestedDate}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4" style={{ color: "var(--foreground)", maxWidth: "150px" }}>{req.reason}</td>
+                  <td className="px-6 py-4" style={{ color: "var(--muted-foreground)" }}>{req.submitted}</td>
+                  <td className="px-6 py-4">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold" style={{ 
+                      backgroundColor: req.status === 'Approved' ? "#DCFCE7" : req.status === 'Pending' ? "#FEF3C7" : "#FEE2E2",
+                      color: req.status === 'Approved' ? "#166534" : req.status === 'Pending' ? "#92400E" : "#991B1B"
+                    }}>
+                      {req.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex gap-2">
+                      <button className="p-1.5 rounded-lg transition-colors hover:bg-gray-100" style={{ color: "var(--muted-foreground)" }}><Eye size={14} /></button>
+                      {req.status === 'Pending' && <button className="p-1.5 rounded-lg font-bold text-[#059669] hover:bg-emerald-50 text-[11px]">APPROVE</button>}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-6">
+        <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+           <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>By Department</h4>
+           <div className="space-y-4">
+              {[
+                { name: 'Operations', count: 8, pct: 100 },
+                { name: 'Engineering', count: 6, pct: 75 },
+                { name: 'Marketing', count: 4, pct: 50 },
+                { name: 'Finance', count: 3, pct: 37 },
+              ].map((d) => (
+                <div key={d.name}>
+                  <div className="flex justify-between text-[11px] mb-1.5 font-bold" style={{ color: "var(--muted-foreground)" }}>
+                    <span>{d.name}</span>
+                    <span style={{ color: "var(--primary)" }}>{d.count} requests</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-[#F1F5F9] rounded-full overflow-hidden">
+                    <div className="h-full bg-[#059669] rounded-full" style={{ width: `${d.pct}%` }} />
+                  </div>
+                </div>
+              ))}
+           </div>
+        </div>
+        <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+           <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>Most Frequent Requesters</h4>
+           <div className="space-y-3">
+             {swapRequests.slice(0, 4).map((r: any, i: number) => (
+               <div key={i} className="flex items-center justify-between p-2 rounded-xl" style={{ backgroundColor: "var(--background)" }}>
+                 <div className="flex items-center gap-3">
+                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#E8FDF0] text-[#059669]">{r.from[0]}</div>
+                   <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{r.from}</p>
+                 </div>
+                 <span className="text-[11px] font-bold" style={{ color: "var(--primary)" }}>{4 - i} swaps</span>
+               </div>
+             ))}
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const reports = [
   { title: "Headcount Report", desc: "Full employee roster with details", icon: Users, color: "#059669", bg: "#ECFDF5", generated: "Today", size: "248 records" },
   { title: "Payroll Summary", desc: "Monthly payroll breakdown", icon: DollarSign, color: "#22C55E", bg: "#F0FDF4", generated: "Apr 1, 2026", size: "8 pages" },
@@ -18,6 +562,8 @@ const reports = [
   { title: "Performance Review", desc: "Q1 2026 performance scores", icon: TrendingUp, color: "#14B8A6", bg: "#F0FDFA", generated: "Mar 31, 2026", size: "248 reviews" },
   { title: "Recruitment Pipeline", desc: "Hiring funnel & candidate stats", icon: FileText, color: "#0EA5E9", bg: "#F0F9FF", generated: "Apr 5, 2026", size: "12 candidates" },
   { title: "Turnover Analysis", desc: "Employee retention metrics", icon: Users, color: "#EF4444", bg: "#FEF2F2", generated: "Mar 31, 2026", size: "Annual" },
+  { title: "Shift Swap Report", desc: "Detailed log of shift exchange requests", icon: Calendar, color: "#10B981", bg: "#ECFDF5", generated: "Today", size: "8 pending" },
+  { title: "Overtime Monitoring", desc: "Consolidated overtime tracking", icon: Clock, color: "#F59E0B", bg: "#FFFBEB", generated: "Today", size: "142 hrs" },
 ];
 
 /* ─── Shared components ─── */
@@ -907,12 +1453,15 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
 export function Reports() {
   const [activeReport, setActiveReport] = useState<string | null>(null);
 
+  // Switch logic for reports
   if (activeReport === "Headcount Report") return <HeadcountReport onBack={() => setActiveReport(null)} />;
   if (activeReport === "Payroll Summary") return <PayrollSummary onBack={() => setActiveReport(null)} />;
   if (activeReport === "Attendance Report") return <AttendanceReport onBack={() => setActiveReport(null)} />;
   if (activeReport === "Performance Review") return <PerformanceReview onBack={() => setActiveReport(null)} />;
   if (activeReport === "Recruitment Pipeline") return <RecruitmentPipeline onBack={() => setActiveReport(null)} />;
   if (activeReport === "Turnover Analysis") return <TurnoverAnalysis onBack={() => setActiveReport(null)} />;
+  if (activeReport === "Shift Swap Report") return <ShiftSwapReport onBack={() => setActiveReport(null)} />;
+  if (activeReport === "Overtime Monitoring") return <OvertimeMonitoringReport onBack={() => setActiveReport(null)} />;
 
   return (
     <div style={{ maxWidth: "1360px" }}>

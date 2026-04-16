@@ -15,6 +15,7 @@ import {
   CalendarDays,
   Store,
   Sparkles,
+  CalendarClock,
 } from "lucide-react";
 
 
@@ -30,6 +31,7 @@ const navItems = [
   { icon: Users, label: "Employees", path: "/employees" },
   { icon: Store, label: "Departments", path: "/departments" },
   { icon: CalendarCheck, label: "Attendance", path: "/attendance" },
+  { icon: CalendarClock, label: "Schedule", path: "/schedule" },
   { icon: CalendarDays, label: "Leave Management", path: "/leave" },
   { icon: IndianRupee, label: "Payroll", path: "/payroll" },
   { icon: Briefcase, label: "Recruitment", path: "/recruitment" },
