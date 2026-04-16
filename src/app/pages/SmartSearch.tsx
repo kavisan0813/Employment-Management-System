@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 
 import { 
   Search, 
-  Mic, 
   Sparkles, 
   User, 
   Calendar, 
@@ -55,8 +54,8 @@ const SmartSearch = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [results, setResults] = useState<typeof MOCK_RESULTS | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
-  const [isListening, setIsListening] = useState(false);
   const [processedLeaves, setProcessedLeaves] = useState<string[]>([]);
+
   const navigate = useNavigate();
 
 
@@ -100,8 +99,10 @@ const SmartSearch = () => {
       if (q.includes("payroll")) return { employees: [], attendance: [], payroll: MOCK_RESULTS.payroll, leaves: [] };
       if (q.includes("attendance")) return { employees: [], attendance: MOCK_RESULTS.attendance, payroll: [], leaves: [] };
       if (q.includes("leave")) return { employees: MOCK_RESULTS.employees.filter(e => e.status === "On Leave"), attendance: [], payroll: [], leaves: MOCK_RESULTS.leaves };
+      if (q.includes("performer") || q.includes("performance")) return { employees: MOCK_RESULTS.employees, attendance: MOCK_RESULTS.attendance, payroll: [], leaves: [] };
       
       return null;
+
     }
 
     return {
@@ -134,16 +135,6 @@ const SmartSearch = () => {
     handleSearch(undefined, suggestion);
   };
 
-  const startVoice = () => {
-    setIsListening(true);
-    // Simulate voice to text
-    setTimeout(() => {
-      setIsListening(false);
-      const voiceQuery = "Attendance report";
-      setQuery(voiceQuery);
-      handleSearch(undefined, voiceQuery);
-    }, 2000);
-  };
 
 
   const handleAction = (id: string, action: string) => {
@@ -215,31 +206,13 @@ const SmartSearch = () => {
             />
             <div className="absolute inset-y-0 right-3 flex items-center gap-2">
               <Button 
-                type="button"
-                variant="ghost" 
-                size="icon" 
-                onClick={startVoice}
-                className={`rounded-xl transition-all duration-300 ${isListening ? "bg-red-50 text-red-500 scale-110 shadow-lg shadow-red-500/20" : "text-[#10B981] hover:bg-emerald-50"}`}
-              >
-                {isListening ? (
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ repeat: Infinity, duration: 1 }}
-                  >
-                    <Mic size={22} />
-                  </motion.div>
-                ) : (
-                  <Mic size={22} />
-                )}
-              </Button>
-
-              <Button 
                 type="submit"
                 className="h-11 px-6 rounded-xl bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-semibold transition-transform active:scale-95 shadow-lg shadow-emerald-500/20"
               >
                 Search
               </Button>
             </div>
+
           </motion.form>
           {/* Glassmorphism background glow */}
           <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
