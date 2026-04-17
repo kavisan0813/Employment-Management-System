@@ -805,7 +805,12 @@ function ReportHeader({ title, subtitle, onBack, onExportPDF, onExportCSV }: { t
   return (
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center gap-4">
-        <button onClick={onBack} className="p-2 rounded-xl transition-colors hover:bg-gray-100" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>
+        <button onClick={onBack} 
+          className="p-2 rounded-xl transition-all duration-200" 
+          style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = "translateX(-2px)"; e.currentTarget.style.backgroundColor = "var(--primary)"; e.currentTarget.style.color = "white"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = "translateX(0)"; e.currentTarget.style.backgroundColor = "var(--secondary)"; e.currentTarget.style.color = "var(--primary)"; }}
+        >
           <ArrowLeft size={18} />
         </button>
         <div>
@@ -813,12 +818,22 @@ function ReportHeader({ title, subtitle, onBack, onExportPDF, onExportCSV }: { t
           <p style={{ color: "var(--muted-foreground)", fontSize: "13px" }}>{subtitle}</p>
         </div>
       </div>
-      <div className="flex gap-2">
-        <button onClick={onExportPDF} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-emerald-50" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", border: "1px solid var(--border)" }}>
-          <Download size={14} /> Export PDF
+      <div className="flex gap-3">
+        <button onClick={onExportPDF} 
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200" 
+          style={{ backgroundColor: "transparent", color: "var(--primary)", border: "1.5px solid var(--primary)" }}
+          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--primary)"; e.currentTarget.style.color = "white"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(5, 150, 105, 0.2)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--primary)"; e.currentTarget.style.boxShadow = "none"; }}
+        >
+          <FileDown size={14} /> Export PDF
         </button>
-        <button onClick={onExportCSV} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 shadow-sm" style={{ background: "var(--primary)" }}>
-          <Download size={14} /> Export Excel
+        <button onClick={onExportCSV} 
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all duration-200 shadow-sm" 
+          style={{ background: "var(--primary)" }}
+          onMouseEnter={(e) => { e.currentTarget.style.filter = "brightness(1.1)"; e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 15px rgba(5, 150, 105, 0.3)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.filter = "none"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 1px 2px rgba(0,0,0,0.05)"; }}
+        >
+          <Table size={14} /> Export Excel
         </button>
       </div>
     </div>
@@ -925,26 +940,13 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
 
   return (
     <div>
-      {/* Header with Export Buttons */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <button onClick={onBack} className="p-2 rounded-xl transition-colors" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>
-            <ArrowLeft size={18} />
-          </button>
-          <div>
-            <h2 style={{ color: "var(--foreground)", fontSize: "20px", fontWeight: 800 }}>Headcount Report</h2>
-            <p style={{ color: "var(--muted-foreground)", fontSize: "13px" }}>{filtered.length} records · Generated Today</p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <button onClick={handleExportPDF} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", border: "1px solid var(--border)" }}>
-            <Download size={14} /> Export PDF
-          </button>
-          <button onClick={handleExportCSV} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all" style={{ background: "var(--primary)" }}>
-            <Download size={14} /> Export Excel
-          </button>
-        </div>
-      </div>
+      <ReportHeader 
+        title="Headcount Report" 
+        subtitle={`${filtered.length} records · Generated Today`} 
+        onBack={onBack} 
+        onExportPDF={handleExportPDF} 
+        onExportCSV={handleExportCSV} 
+      />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-4 gap-4 mb-6">
@@ -1590,8 +1592,8 @@ const flightRisks = [
 
 function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
   const handleExportCSV = () => {
-    const headers = ["Employee", "Department", "Role", "Tenure", "Exit Date", "Reason", "Exit Interview"];
-    const rows = exitedEmployees.map(e => [e.name, e.dept, e.role, e.tenure, e.exit, e.reason, e.interview ? "Yes" : "No"]);
+    const headers = ["Employee", "Department", "Role", "Tenure", "Exit Date", "Reason", "Process Status"];
+    const rows = exitedEmployees.map(e => [e.name, e.dept, e.role, e.tenure, e.exit, e.reason, e.interview ? "Completed" : "Pending"]);
     const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -1608,84 +1610,139 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
     w.document.write(`<html><head><title>Turnover Analysis Report</title><style>body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}h1{color:#059669;margin-bottom:4px}p{color:#6b7280;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{text-align:left;padding:10px 8px;background:#f0fdf4;color:#059669;font-size:11px;text-transform:uppercase;border-bottom:2px solid #059669}</style></head><body><h1>Turnover Analysis Report</h1><p>Mar 31, 2026</p><table><thead><tr><th>Employee</th><th>Department</th><th>Role</th><th>Tenure</th><th>Exit Date</th><th>Reason</th><th>Interviewed</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
     w.document.close(); w.print();
   };
+
   return (
-    <div>
+    <div className="space-y-6">
       <ReportHeader title="Turnover Analysis — Annual" subtitle="Mar 31, 2026" onBack={onBack} onExportPDF={handleExportPDF} onExportCSV={handleExportCSV} />
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      
+      {/* KPI Cards */}
+      <div className="grid grid-cols-3 gap-5">
         <KpiCard label="Turnover Rate" value="4.1%" color="#EF4444" />
-        <KpiCard label="Avg Tenure" value="3.2 yrs" color="#059669" />
+        <KpiCard label="Avg Tenure" value="3.2 yrs" color="#10B981" />
         <KpiCard label="Retention Rate" value="96.8%" color="#22C55E" />
       </div>
-      <div className="grid grid-cols-3 gap-5 mb-6">
-        <div className="col-span-2 rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-          <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>Monthly Turnover Trend</h4>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={turnoverTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-              <XAxis dataKey="month" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} domain={[2, 5]} />
-              <Tooltip contentStyle={{ backgroundColor: "#064E3B", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
-              <Line type="monotone" dataKey="rate" stroke="#059669" strokeWidth={3} dot={{ fill: "#059669", r: 4 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="space-y-5">
-          <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-            <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "12px" }}>Exit Reasons</h4>
-            <ResponsiveContainer width="100%" height={120}>
-              <PieChart><Pie data={exitReasons} cx="50%" cy="50%" innerRadius={30} outerRadius={50} paddingAngle={3} dataKey="value">{exitReasons.map((_, i) => <Cell key={i} fill={EMERALD_SHADES[i]} />)}</Pie><Tooltip contentStyle={{ backgroundColor: "#064E3B", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} /></PieChart>
-            </ResponsiveContainer>
-            <div className="space-y-1.5 mt-2">{exitReasons.map((r, i) => (<div key={r.name} className="flex items-center justify-between"><div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: EMERALD_SHADES[i] }} /><span style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>{r.name}</span></div><span style={{ color: "var(--foreground)", fontSize: "11px", fontWeight: 700 }}>{r.value}%</span></div>))}</div>
+
+      {/* Row 2: Analytics Grid */}
+      <div className="grid grid-cols-3 gap-5">
+        <div className="col-span-2 space-y-5">
+          {/* Monthly Turnover Trend */}
+          <div className="rounded-2xl p-6 shadow-sm flex flex-col h-[320px]" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+            <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "4px" }}>Monthly Turnover Trend</h4>
+            <p style={{ color: "var(--muted-foreground)", fontSize: "11px", marginBottom: "20px" }}>May 2025 — Apr 2026</p>
+            <div className="flex-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={turnoverTrend}>
+                  <defs>
+                    <linearGradient id="colorRate" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                  <XAxis dataKey="month" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} domain={[2, 5]} hide />
+                  <Tooltip contentStyle={{ backgroundColor: "#0F3047", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
+                  <Area type="monotone" dataKey="rate" stroke="#10B981" strokeWidth={3} fillOpacity={1} fill="url(#colorRate)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-          <div className="rounded-2xl p-5 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-            <h4 style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 700, marginBottom: "10px" }}>
-              <span className="flex items-center gap-2"><AlertTriangle size={14} color="#EF4444" /> Flight Risk</span>
-            </h4>
-            <div className="space-y-2.5">
+
+          {/* Turnover by Department */}
+          <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+            <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "24px" }}>Turnover by Department</h4>
+            <div className="h-[200px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={turnoverByDept} layout="vertical" margin={{ left: -10, right: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="dept" type="category" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} width={85} />
+                  <Tooltip contentStyle={{ backgroundColor: "#0F3047", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
+                  <Bar dataKey="count" fill="#34D399" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-5">
+          {/* Exit Reasons */}
+          <div className="rounded-2xl p-6 shadow-sm h-1/2 flex flex-col" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+            <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "20px" }}>Top Exit Reasons</h4>
+            <div className="flex-1 min-h-[140px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={exitReasons} innerRadius={40} outerRadius={60} paddingAngle={5} dataKey="value">
+                    {exitReasons.map((_, i) => <Cell key={i} fill={EMERALD_SHADES[i]} />)}
+                  </Pie>
+                  <Tooltip contentStyle={{ backgroundColor: "#0F3047", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="space-y-2 mt-4">
+              {exitReasons.map((r, i) => (
+                <div key={r.name} className="flex items-center justify-between text-[11px]">
+                  <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: EMERALD_SHADES[i] }} /><span>{r.name}</span></div>
+                  <span className="font-bold">{r.value}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Flight Risk Alert */}
+          <div className="rounded-2xl p-6 shadow-sm border border-border" style={{ backgroundColor: "var(--card)" }}>
+            <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>Flight Risk Summary</h4>
+            <div className="space-y-3">
               {flightRisks.map((r, i) => (
-                <div key={i} className="flex items-center justify-between p-2 rounded-lg" style={{ backgroundColor: r.risk === "High" ? "rgba(239,68,68,0.05)" : "rgba(245,158,11,0.05)" }}>
-                  <div><p style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 600 }}>{r.name}</p><p style={{ color: "var(--muted-foreground)", fontSize: "10px" }}>{r.dept} · {r.tenure}</p></div>
-                  <span className="px-2 py-0.5 rounded-full text-[9px] font-bold" style={{ backgroundColor: r.risk === "High" ? "#FEF2F2" : "#FFFBEB", color: r.risk === "High" ? "#EF4444" : "#F59E0B" }}>{r.risk}</span>
+                <div key={i} className="flex items-center justify-between p-2.5 rounded-xl bg-background border border-border/50">
+                  <div>
+                    <p style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 700 }}>{r.name}</p>
+                    <p style={{ color: "var(--muted-foreground)", fontSize: "10px" }}>{r.dept} · {r.tenure}</p>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-lg text-[9px] font-bold ${r.risk === "High" ? "bg-red-100 text-red-600" : "bg-amber-100 text-amber-600"}`}>{r.risk}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-5 mb-6">
-        <div className="col-span-2 rounded-2xl shadow-sm overflow-hidden" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+
+      {/* Row 3: Full Width Table */}
+      <div className="rounded-2xl shadow-sm overflow-hidden" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+        <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
+          <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>Exited Employees — Annual Log</h4>
+          <span className="text-[10px] font-bold px-2 py-1 rounded bg-[var(--secondary)] text-[var(--primary)] uppercase">Detailed Summary 2026</span>
+        </div>
+        <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead><tr style={{ borderBottom: "1px solid var(--border)" }}>
-              {["Employee", "Department", "Role", "Tenure", "Exit Date", "Reason", "Exit Interview"].map(h => (
-                <th key={h} className="px-4 py-3 text-left font-semibold" style={{ color: "var(--muted-foreground)", fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.5px" }}>{h}</th>
-              ))}
-            </tr></thead>
-            <tbody>
+            <thead>
+              <tr style={{ borderBottom: "1px solid var(--border)", backgroundColor: "rgba(0,0,0,0.01)" }}>
+                {["Employee", "Department", "Role", "Tenure", "Exit Date", "Reason", "Process"].map(h => (
+                  <th key={h} className="px-6 py-4 text-left font-bold" style={{ color: "var(--muted-foreground)", fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.5px" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
               {exitedEmployees.map((emp, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid var(--border)", backgroundColor: i % 2 === 0 ? "var(--card)" : "var(--background)" }}>
-                  <td className="px-4 py-3" style={{ color: "var(--foreground)", fontWeight: 600 }}>{emp.name}</td>
-                  <td className="px-4 py-3" style={{ color: "var(--muted-foreground)" }}>{emp.dept}</td>
-                  <td className="px-4 py-3" style={{ color: "var(--muted-foreground)" }}>{emp.role}</td>
-                  <td className="px-4 py-3" style={{ color: "var(--foreground)" }}>{emp.tenure}</td>
-                  <td className="px-4 py-3" style={{ color: "var(--muted-foreground)" }}>{emp.exit}</td>
-                  <td className="px-4 py-3" style={{ color: "var(--muted-foreground)" }}>{emp.reason}</td>
-                  <td className="px-4 py-3">{emp.interview ? <Check size={16} color="#059669" /> : <X size={16} color="#EF4444" />}</td>
+                <tr key={i} className="hover:bg-[var(--secondary)] transition-colors">
+                  <td className="px-6 py-4 font-bold text-foreground">{emp.name}</td>
+                  <td className="px-6 py-4 text-muted-foreground">{emp.dept}</td>
+                  <td className="px-6 py-4 text-muted-foreground">{emp.role}</td>
+                  <td className="px-6 py-4">
+                    <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-background border border-border">{emp.tenure}</span>
+                  </td>
+                  <td className="px-6 py-4 text-muted-foreground">{emp.exit}</td>
+                  <td className="px-6 py-4 text-foreground">{emp.reason}</td>
+                  <td className="px-6 py-4">
+                    {emp.interview ? 
+                      <div className="flex items-center gap-1 text-emerald-600 font-bold text-[10px]"><CheckCircle size={14} /> Completed</div> : 
+                      <div className="flex items-center gap-1 text-amber-500 font-bold text-[10px]"><Clock size={14} /> Pending</div>
+                    }
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-        <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-          <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>Turnover by Department</h4>
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={turnoverByDept} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
-              <XAxis type="number" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis dataKey="dept" type="category" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} width={85} />
-              <Tooltip contentStyle={{ backgroundColor: "#064E3B", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
-              <Bar dataKey="count" fill="#059669" radius={[0, 6, 6, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
         </div>
       </div>
     </div>
