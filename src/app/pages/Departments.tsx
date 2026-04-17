@@ -86,20 +86,20 @@ function AddDepartmentModal({ onClose }: { onClose: () => void }) {
         {/* Header */}
         <div
           className="flex items-center justify-between px-8 py-7"
-          style={{ borderBottom: "1px solid #F3F4F6" }}
+          style={{ borderBottom: "1px solid var(--border)", background: "var(--card)" }}
         >
           <div>
-            <h3 style={{ color: "#111827", fontSize: "20px", fontWeight: 800, letterSpacing: "-0.5px" }}>
+            <h3 style={{ color: "var(--foreground)", fontSize: "20px", fontWeight: 800, letterSpacing: "-0.5px" }}>
               Create Department
             </h3>
-            <p style={{ color: "#6B7280", fontSize: "14px", marginTop: "2px" }}>
+            <p style={{ color: "var(--muted-foreground)", fontSize: "14px", marginTop: "2px" }}>
               Define a new organizational unit
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2.5 rounded-2xl transition-colors hover:bg-gray-100"
-            style={{ color: "#9CA3AF" }}
+            className="p-2.5 rounded-2xl transition-colors hover:bg-emerald-500/10"
+            style={{ color: "var(--muted-foreground)" }}
           >
             <X size={20} />
           </button>
@@ -109,17 +109,17 @@ function AddDepartmentModal({ onClose }: { onClose: () => void }) {
         <div className="px-8 py-8 space-y-6">
           {/* Dept Name */}
           <div>
-            <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+            <label style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px", opacity: 0.9 }}>
               Department Name
             </label>
             <div className="relative">
               <Layout size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
-                className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all"
+                className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
                 style={{
-                  border: "1px solid #E5E7EB",
-                  backgroundColor: "#F9FAFB",
-                  color: "#111827",
+                  border: "1px solid var(--border)",
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
                 }}
                 placeholder="e.g. Design Tech"
                 value={form.name}
@@ -130,17 +130,17 @@ function AddDepartmentModal({ onClose }: { onClose: () => void }) {
 
           {/* Dept Head */}
           <div>
-            <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+            <label style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px", opacity: 0.9 }}>
               Department Head
             </label>
             <div className="relative">
               <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
-                className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all"
+                className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
                 style={{
-                  border: "1px solid #E5E7EB",
-                  backgroundColor: "#F9FAFB",
-                  color: "#111827",
+                  border: "1px solid var(--border)",
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
                 }}
                 placeholder="Select an employee..."
                 value={form.head}
@@ -151,17 +151,17 @@ function AddDepartmentModal({ onClose }: { onClose: () => void }) {
 
           {/* Budget */}
           <div>
-            <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+            <label style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px", opacity: 0.9 }}>
               Allocated Budget (Annual)
             </label>
             <div className="relative">
               <DollarSign size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
-                className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all"
+                className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
                 style={{
-                  border: "1px solid #E5E7EB",
-                  backgroundColor: "#F9FAFB",
-                  color: "#111827",
+                  border: "1px solid var(--border)",
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
                 }}
                 placeholder="e.g. ₹50,000"
                 value={form.budget}
@@ -172,16 +172,16 @@ function AddDepartmentModal({ onClose }: { onClose: () => void }) {
 
           {/* Description */}
           <div>
-            <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+            <label style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px", opacity: 0.9 }}>
               Description
             </label>
             <textarea
               rows={3}
-              className="w-full rounded-2xl px-4 py-3.5 text-sm outline-none transition-all resize-none"
+              className="w-full rounded-2xl px-4 py-3.5 text-sm outline-none transition-all resize-none focus:ring-2 focus:ring-emerald-500/20"
               style={{
-                border: "1px solid #E5E7EB",
-                backgroundColor: "#F9FAFB",
-                color: "#111827",
+                border: "1px solid var(--border)",
+                backgroundColor: "var(--background)",
+                color: "var(--foreground)",
               }}
               placeholder="Describe the department's core responsibilities..."
               value={form.description}
@@ -193,12 +193,12 @@ function AddDepartmentModal({ onClose }: { onClose: () => void }) {
         {/* Footer */}
         <div
           className="px-8 py-6 flex gap-4"
-          style={{ borderTop: "1px solid #F3F4F6", background: "white" }}
+          style={{ borderTop: "1px solid var(--border)", background: "var(--card)" }}
         >
           <button
             onClick={onClose}
-            className="flex-1 py-4 rounded-2xl text-sm font-bold transition-all hover:bg-[#ECFDF5]"
-            style={{ backgroundColor: "#F0FDF4", color: "#059669", border: "none" }}
+            className="flex-1 py-4 rounded-2xl text-sm font-bold transition-all hover:bg-emerald-500/10"
+            style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", border: "none" }}
           >
             Cancel
           </button>

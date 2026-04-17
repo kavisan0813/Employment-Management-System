@@ -49,13 +49,13 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
         {/* Modal Header */}
         <div
           className="flex items-center justify-between px-8 py-7"
-          style={{ borderBottom: "1px solid #F3F4F6", background: "white" }}
+          style={{ borderBottom: "1px solid var(--border)", background: "var(--card)" }}
         >
           <div>
-            <h3 style={{ color: "#111827", fontSize: "22px", fontWeight: 800, letterSpacing: "-0.5px" }}>
+            <h3 style={{ color: "var(--foreground)", fontSize: "22px", fontWeight: 800, letterSpacing: "-0.5px" }}>
               Add New Employee
             </h3>
-            <p style={{ color: "#6B7280", fontSize: "14px", marginTop: "2px" }}>
+            <p style={{ color: "var(--muted-foreground)", fontSize: "14px", marginTop: "2px" }}>
               Create a new employee profile in the system
             </p>
           </div>
@@ -73,17 +73,17 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
           <div className="grid grid-cols-2 gap-6">
             {/* Name */}
             <div className="col-span-2">
-              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+              <label style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px", opacity: 0.9 }}>
                 Full Name
               </label>
               <div className="relative">
                 <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all"
+                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
                   style={{
-                    border: "1px solid #E5E7EB",
-                    backgroundColor: "#F9FAFB",
-                    color: "#111827",
+                    border: "1px solid var(--border)",
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
                   }}
                   placeholder="e.g. John Doe"
                   value={form.name}
@@ -94,18 +94,18 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
 
             {/* Email */}
             <div className="col-span-2">
-              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+              <label style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px", opacity: 0.9 }}>
                 Email Address
               </label>
               <div className="relative">
                 <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="email"
-                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all"
+                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
                   style={{
-                    border: "1px solid #E5E7EB",
-                    backgroundColor: "#F9FAFB",
-                    color: "#111827",
+                    border: "1px solid var(--border)",
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
                   }}
                   placeholder="john.doe@company.com"
                   value={form.email}
@@ -116,23 +116,23 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
 
             {/* Department */}
             <div>
-              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+              <label style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px", opacity: 0.9 }}>
                 Department
               </label>
               <div className="relative">
                 <Briefcase size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 <select
-                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none appearance-none"
+                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none appearance-none focus:ring-2 focus:ring-emerald-500/20"
                   style={{
-                    border: "1px solid #E5E7EB",
-                    backgroundColor: "#F9FAFB",
-                    color: "#111827",
+                    border: "1px solid var(--border)",
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
                   }}
                   value={form.department}
                   onChange={(e) => setForm({ ...form, department: e.target.value })}
                 >
                   {departments.slice(1).map((d) => (
-                    <option key={d}>{d}</option>
+                    <option key={d} style={{ backgroundColor: "var(--card)", color: "var(--foreground)" }}>{d}</option>
                   ))}
                 </select>
                 <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
@@ -141,15 +141,15 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
 
             {/* Designation */}
             <div>
-              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+              <label style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px", opacity: 0.9 }}>
                 Designation
               </label>
               <input
-                className="w-full rounded-2xl px-4 py-3.5 text-sm outline-none"
+                className="w-full rounded-2xl px-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
                 style={{
-                  border: "1px solid #E5E7EB",
-                  backgroundColor: "#F9FAFB",
-                  color: "#111827",
+                  border: "1px solid var(--border)",
+                  backgroundColor: "var(--background)",
+                  color: "var(--foreground)",
                 }}
                 placeholder="e.g. Senior Developer"
                 value={form.designation}
@@ -159,18 +159,18 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
 
             {/* Salary */}
             <div>
-              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+              <label style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px", opacity: 0.9 }}>
                 Annual Salary (₹)
               </label>
               <div className="relative">
                 <IndianRupee size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="number"
-                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none"
+                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
                   style={{
-                    border: "1px solid #E5E7EB",
-                    backgroundColor: "#F9FAFB",
-                    color: "#111827",
+                    border: "1px solid var(--border)",
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
                   }}
                   placeholder="75000"
                   value={form.salary}
@@ -181,18 +181,18 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
 
             {/* Join Date */}
             <div>
-              <label style={{ color: "#374151", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px" }}>
+              <label style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, display: "block", marginBottom: "8px", opacity: 0.9 }}>
                 Joining Date
               </label>
               <div className="relative">
                 <CalendarIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="date"
-                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none"
+                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
                   style={{
-                    border: "1px solid #E5E7EB",
-                    backgroundColor: "#F9FAFB",
-                    color: "#111827",
+                    border: "1px solid var(--border)",
+                    backgroundColor: "var(--background)",
+                    color: "var(--foreground)",
                   }}
                   value={form.joinDate}
                   onChange={(e) => setForm({ ...form, joinDate: e.target.value })}
@@ -209,8 +209,8 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
         >
           <button
             onClick={onClose}
-            className="flex-1 py-3.5 rounded-2xl text-sm font-bold transition-all hover:bg-[#ECFDF5]"
-            style={{ backgroundColor: "#F0FDF4", color: "#059669", border: "none" }}
+            className="flex-1 py-3.5 rounded-2xl text-sm font-bold transition-all hover:bg-emerald-500/10"
+            style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", border: "none" }}
           >
             Cancel
           </button>

@@ -35,61 +35,61 @@ function RunPayrollModal({ onClose, month }: { onClose: () => void; month: strin
               <div className="flex items-center justify-between mb-6">
                 <div
                   className="w-14 h-14 rounded-[20px] flex items-center justify-center"
-                  style={{ backgroundColor: "#F0FDF4" }}
+                  style={{ backgroundColor: "var(--secondary)" }}
                 >
-                  <Play size={28} color="#10B981" fill="#10B981" />
+                  <Play size={28} color="var(--primary)" fill="var(--primary)" />
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-xl transition-colors hover:bg-gray-100"
-                  style={{ color: "#9CA3AF" }}
+                  className="p-2 rounded-xl transition-colors hover:bg-emerald-500/10"
+                  style={{ color: "var(--muted-foreground)" }}
                 >
                   <X size={20} />
                 </button>
               </div>
 
-              <h3 style={{ color: "#111827", fontSize: "24px", fontWeight: 800, letterSpacing: "-0.5px" }}>
+              <h3 style={{ color: "var(--foreground)", fontSize: "24px", fontWeight: 800, letterSpacing: "-0.5px" }}>
                 Process Payroll
               </h3>
-              <p style={{ color: "#6B7280", fontSize: "15px", marginTop: "4px" }}>
-                You are about to run the payroll for <span style={{ color: "#111827", fontWeight: 700 }}>{month}</span>.
+              <p style={{ color: "var(--muted-foreground)", fontSize: "15px", marginTop: "4px" }}>
+                You are about to run the payroll for <span style={{ color: "var(--foreground)", fontWeight: 700 }}>{month}</span>.
               </p>
 
               <div
                 className="mt-8 rounded-3xl p-6"
-                style={{ backgroundColor: "#F9FAFB", border: "1px solid #E5E7EB" }}
+                style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)" }}
               >
-                <div className="flex items-center justify-between mb-4 pb-4" style={{ borderBottom: "1px solid #E5E7EB" }}>
-                  <span style={{ color: "#6B7280", fontSize: "14px" }}>Total Employees</span>
-                  <span style={{ color: "#111827", fontSize: "15px", fontWeight: 700 }}>{payrollEmployees.length}</span>
+                <div className="flex items-center justify-between mb-4 pb-4" style={{ borderBottom: "1px solid var(--border)" }}>
+                  <span style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>Total Employees</span>
+                  <span style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>{payrollEmployees.length}</span>
                 </div>
-                <div className="flex items-center justify-between mb-4 pb-4" style={{ borderBottom: "1px solid #E5E7EB" }}>
-                  <span style={{ color: "#6B7280", fontSize: "14px" }}>Gross Payout</span>
-                  <span style={{ color: "#111827", fontSize: "15px", fontWeight: 700 }}>
+                <div className="flex items-center justify-between mb-4 pb-4" style={{ borderBottom: "1px solid var(--border)" }}>
+                  <span style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>Gross Payout</span>
+                  <span style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>
                     ₹{payrollEmployees.reduce((s, e) => s + e.gross, 0).toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span style={{ color: "#6B7280", fontSize: "14px" }}>Net Disbursement</span>
+                  <span style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>Net Disbursement</span>
                   <span style={{ color: "#10B981", fontSize: "22px", fontWeight: 900 }}>
                     ₹{totalNet.toLocaleString()}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-8 flex items-start gap-3 p-5 rounded-2xl" style={{ backgroundColor: "#FFFBEB", border: "1px solid #FEF3C7" }}>
-                <AlertCircle size={20} color="#D97706" className="shrink-0" />
-                <p style={{ color: "#92400E", fontSize: "13px", lineHeight: "1.6" }}>
+              <div className="mt-8 flex items-start gap-3 p-5 rounded-2xl" style={{ backgroundColor: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)" }}>
+                <AlertCircle size={20} color="#F59E0B" className="shrink-0" />
+                <p style={{ color: "#F59E0B", fontSize: "13px", lineHeight: "1.6" }}>
                   Disbursement will be initiated immediately. Please ensure all tax deductions and bonuses are reviewed before confirming.
                 </p>
               </div>
             </div>
 
-            <div className="px-8 py-6 flex gap-4" style={{ borderTop: "1px solid #F3F4F6", background: "white" }}>
+            <div className="px-8 py-6 flex gap-4" style={{ borderTop: "1px solid var(--border)", background: "var(--card)" }}>
               <button
                 onClick={onClose}
-                className="flex-1 py-4 rounded-2xl text-sm font-bold transition-all hover:bg-[#ECFDF5]"
-                style={{ backgroundColor: "#F0FDF4", color: "#059669", border: "none" }}
+                className="flex-1 py-4 rounded-2xl text-sm font-bold transition-all hover:bg-emerald-500/10"
+                style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", border: "none" }}
               >
                 Cancel
               </button>

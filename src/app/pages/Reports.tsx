@@ -340,15 +340,15 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead>
-              <tr style={{ borderBottom: "1px solid var(--border)", backgroundColor: "#F1FEF2" }}>
+              <tr style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--secondary)" }}>
                 {['Employee', 'Department', 'Regular', 'OT Hours', 'Total', 'Days', 'Est. Pay', 'Status', 'Actions'].map((h, i) => (
-                  <th key={i} className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">{h}</th>
+                  <th key={i} className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider" style={{ color: "var(--foreground)", opacity: 0.8 }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
               {filteredEmployees.map((e, i) => (
-                <tr key={i} className="hover:bg-[#F0FFF8] transition-colors h-[64px]">
+                <tr key={i} className="hover:bg-[var(--secondary)] transition-colors h-[64px]">
                   <td className="px-6 py-2">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold text-white" style={{ background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)" }}>{e.name.split(' ').map(n=>n[0]).join('')}</div>
@@ -359,22 +359,22 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                     </div>
                   </td>
                   <td className="px-6 py-2">
-                     <span className="px-2 py-0.5 rounded text-[11px] font-bold" style={{ backgroundColor: "#ECFDF5", color: "#3EA76F" }}>{e.dept}</span>
+                     <span className="px-2 py-0.5 rounded text-[11px] font-bold" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>{e.dept}</span>
                   </td>
-                  <td className="px-6 py-2 font-mono text-[#0F3047]">{e.reg} hrs</td>
+                  <td className="px-6 py-2 font-mono" style={{ color: "var(--foreground)" }}>{e.reg} hrs</td>
                   <td className="px-6 py-2">
                      <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }} />
                            <span className="font-bold" style={{ color: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }}>{e.ot} hrs</span>
                         </div>
-                        <div className="w-16 h-1 rounded-full bg-[#FEF3C7] overflow-hidden">
+                        <div className="w-16 h-1 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
                            <div className="h-full rounded-full" style={{ width: `${(e.ot / 20) * 100}%`, backgroundColor: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }} />
                         </div>
                      </div>
                   </td>
-                  <td className="px-6 py-2 font-mono font-bold text-[#0F3047]">{e.total} hrs</td>
-                  <td className="px-6 py-2 text-[#6B7280]">{e.days} days</td>
+                  <td className="px-6 py-2 font-mono font-bold" style={{ color: "var(--foreground)" }}>{e.total} hrs</td>
+                  <td className="px-6 py-2" style={{ color: "var(--muted-foreground)" }}>{e.days} days</td>
                   <td className="px-6 py-2 font-mono font-bold text-[#F59E0B]">₹{e.pay}</td>
                   <td className="px-6 py-2">
                     <span className="px-3 py-1 rounded-full text-[10px] font-bold" style={{ 
@@ -387,13 +387,13 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   </td>
                   <td className="px-6 py-2">
                      <div className="flex gap-1.5">
-                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[#F1FEF2] text-[#6B7280] hover:bg-[#DCFCE7] hover:text-[#059669] transition-all" onClick={() => navigate('/schedule')} title="View Schedule">
+                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-all" onClick={() => navigate('/schedule')} title="View Schedule">
                           <Eye size={14} />
                         </button>
-                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[#F1FEF2] text-[#6B7280] hover:bg-[#DCFCE7] hover:text-[#059669] transition-all" onClick={() => navigate('/attendance')} title="View Attendance Logs">
+                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-all" onClick={() => navigate('/attendance')} title="View Attendance Logs">
                           <Calendar size={14} />
                         </button>
-                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[#F1FEF2] text-[#6B7280] hover:bg-[#DCFCE7] hover:text-[#059669] transition-all" onClick={() => navigate('/employees')} title="View Employee Profile">
+                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-all" onClick={() => navigate('/employees')} title="View Employee Profile">
                           <MessageSquare size={14} />
                         </button>
                      </div>
@@ -1377,35 +1377,55 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
         <KpiCard label="Reviews Pending" value="23" color="#F59E0B" />
       </div>
       <div className="grid grid-cols-3 gap-5 mb-6">
-        <div className="col-span-2 rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+        {/* Score Distribution Chart */}
+        <div className="rounded-2xl p-6 shadow-sm flex flex-col" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
           <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>Score Distribution</h4>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={scoreDistribution}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-              <XAxis dataKey="range" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ backgroundColor: "#064E3B", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
-              <Bar dataKey="count" fill="#059669" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="flex-1 min-h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={scoreDistribution}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis dataKey="range" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ backgroundColor: "#0F3047", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
+                <Bar dataKey="count" fill="#10B981" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
+
+        {/* Top Performers List */}
         <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-          <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>Top Performers</h4>
-          <div className="space-y-3">
+          <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "20px" }}>Top Performers</h4>
+          <div className="space-y-4">
             {topPerformers.map((p, i) => (
-              <div key={i} className="flex items-center gap-3 p-2.5 rounded-xl" style={{ backgroundColor: i === 0 ? "var(--secondary)" : "transparent" }}>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[10px] font-bold" style={{ background: EMERALD_SHADES[i] }}>{p.initials}</div>
-                <div className="flex-1"><p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{p.name}</p></div>
-                <div className="flex items-center gap-1"><Star size={12} fill="#F59E0B" color="#F59E0B" /><span style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 700 }}>{p.score}</span></div>
+              <div key={i} className="flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-emerald-500/5" style={{ backgroundColor: i === 0 ? "var(--secondary)" : "transparent" }}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-[11px] font-bold shadow-sm" style={{ background: EMERALD_SHADES[i] }}>{p.initials}</div>
+                <div className="flex-1">
+                  <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 700 }}>{p.name}</p>
+                  <p style={{ color: "var(--muted-foreground)", fontSize: "10px" }}>Overall Rating</p>
+                </div>
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-500/10">
+                  <Star size={12} fill="#F59E0B" color="#F59E0B" />
+                  <span style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 800 }}>{p.score}</span>
+                </div>
               </div>
             ))}
           </div>
-          <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, margin: "20px 0 12px" }}>Dept Avg Scores</h4>
-          <div className="space-y-3">
+        </div>
+
+        {/* Dept Avg Scores List */}
+        <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+          <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "20px" }}>Dept Avg Scores</h4>
+          <div className="space-y-6">
             {deptScores.map(d => (
               <div key={d.dept}>
-                <div className="flex items-center justify-between mb-1"><span style={{ color: "var(--muted-foreground)", fontSize: "12px" }}>{d.dept}</span><span style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 700 }}>{d.avg}</span></div>
-                <div className="rounded-full overflow-hidden" style={{ height: "5px", backgroundColor: "var(--secondary)" }}><div className="rounded-full h-full" style={{ width: `${(d.avg / 5) * 100}%`, backgroundColor: "#059669" }} /></div>
+                <div className="flex items-center justify-between mb-2">
+                  <span style={{ color: "var(--muted-foreground)", fontSize: "13px", fontWeight: 500 }}>{d.dept}</span>
+                  <span style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 800 }}>{d.avg}</span>
+                </div>
+                <div className="rounded-full overflow-hidden" style={{ height: "6px", backgroundColor: "var(--secondary)" }}>
+                  <div className="rounded-full h-full transition-all duration-1000" style={{ width: `${(d.avg / 5) * 100}%`, backgroundColor: "#10B981" }} />
+                </div>
               </div>
             ))}
           </div>
