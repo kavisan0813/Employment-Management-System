@@ -15,6 +15,7 @@ import {
   Store,
   Sparkles,
   CalendarClock,
+  Award,
 } from "lucide-react";
 
 
@@ -35,6 +36,7 @@ const navItems = [
   { icon: IndianRupee, label: "Payroll", path: "/payroll" },
   { icon: Briefcase, label: "Recruitment", path: "/recruitment" },
   { icon: TrendingUp, label: "Performance", path: "/performance" },
+  { icon: Award, label: "Increment & Appraisal", path: "/appraisal" },
   { icon: BarChart3, label: "Reports", path: "/reports" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];

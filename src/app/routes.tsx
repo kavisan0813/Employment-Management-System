@@ -18,6 +18,7 @@ const Departments = lazy(() => import("./pages/Departments").then(m => ({ defaul
 const UserProfile = lazy(() => import("./pages/UserProfile").then(m => ({ default: m.UserProfile })));
 const SmartSearch = lazy(() => import("./pages/SmartSearch"));
 const ShiftSchedule = lazy(() => import("./pages/ShiftSchedule").then(m => ({ default: m.ShiftSchedule })));
+const IncrementAppraisal = lazy(() => import("./pages/IncrementAppraisal").then(m => ({ default: m.IncrementAppraisal })));
 
 // Loading fallback displayed while lazy chunks are fetched
 function PageLoader() {
@@ -84,6 +85,7 @@ export const router = createBrowserRouter([
       { path: "profile", element: lazyRoute(UserProfile) },
       { path: "smart-search", element: lazyRoute(SmartSearch) },
       { path: "schedule", element: lazyRoute(ShiftSchedule) },
+      { path: "appraisal", element: lazyRoute(IncrementAppraisal) },
     ],
   },
 ]);
