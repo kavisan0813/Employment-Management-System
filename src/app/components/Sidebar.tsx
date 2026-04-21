@@ -5,7 +5,6 @@ import {
   CalendarCheck,
   IndianRupee,
   Briefcase,
-
   TrendingUp,
   BarChart3,
   Settings,

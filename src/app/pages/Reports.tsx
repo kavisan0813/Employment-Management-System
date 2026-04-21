@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { Download, FileText, TrendingUp, Users, DollarSign, Calendar, ArrowLeft, Search, ChevronDown, Star, Check, X, AlertTriangle, Clock, ArrowLeftRight, CheckCircle, XCircle, FileDown, Table, Eye, ChevronRight, MessageSquare } from "lucide-react";
+import { Download, FileText, TrendingUp, Users, DollarSign, Calendar, ArrowLeft, Search, ChevronDown, Star, AlertTriangle, Clock, CheckCircle, FileDown, Table, Eye, MessageSquare } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, Legend,
+  BarChart, Bar, PieChart, Pie, Cell, Line,
 } from "recharts";
 
 /* ─── Shared data ─── */
@@ -609,7 +609,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={swapReasonData} innerRadius={60} outerRadius={85} paddingAngle={2} dataKey="value">
-                  {swapReasonData.map((entry: any, index: number) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                  {swapReasonData.map((entry: { color: string; name: string; value: number }, index: number) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                 </Pie>
                 <Tooltip contentStyle={{ backgroundColor: "#064E3B", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
               </PieChart>
@@ -688,7 +688,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
               </tr>
             </thead>
             <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
-              {filtered.map((req: any, i: number) => (
+              {filtered.map((req: { id: string; from: string; fromDept: string; to: string; origin: string; requested: string; originDate: string; requestedDate: string; reason: string; submitted: string; status: string }, i: number) => (
                 <tr key={i} className="hover:bg-[rgba(5,150,105,0.02)] transition-colors">
                   <td className="px-6 py-4 font-mono text-xs" style={{ color: "var(--primary)" }}>{req.id}</td>
                   <td className="px-6 py-4">
@@ -764,7 +764,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
         <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
           <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "16px" }}>Most Frequent Requesters</h4>
           <div className="space-y-3">
-            {localRequests.filter(r => r.status === 'Approved').slice(0, 4).map((r: any, i: number) => (
+            {localRequests.filter(r => r.status === 'Approved').slice(0, 4).map((r: { from: string; fromDept: string; to: string; origin: string; requested: string; originDate: string; requestedDate: string; reason: string; submitted: string; status: string; id: string }, i: number) => (
               <div key={i} className="flex items-center justify-between p-2 rounded-xl" style={{ backgroundColor: "var(--background)" }}>
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#E8FDF0] text-[#059669]">{r.from[0]}</div>

@@ -1,5 +1,6 @@
 {
   "css.customData": [],
+  "css.validate": false,
   "css.lint.unknownAtRules": "ignore",
   "json.schemaDownload.enable": false
 }

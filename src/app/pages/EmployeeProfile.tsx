@@ -64,7 +64,7 @@ export function EmployeeProfile() {
     URL.revokeObjectURL(url);
   };
 
-  const handleDownloadDoc = (doc: any) => {
+  const handleDownloadDoc = (doc: { name: string; size: string; date: string }) => {
     const textContent = `Document Name: ${doc.name}\nFile Size: ${doc.size}\nUpload Date: ${new Date(doc.date).toLocaleDateString()}\n\n[This is a mock representation of the actual file content]`;
     const blob = new Blob([textContent], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -79,7 +79,7 @@ export function EmployeeProfile() {
     URL.revokeObjectURL(url);
   };
 
-  const infoField = (label: string, value: string, icon?: any) => (
+  const infoField = (label: string, value: string, icon?: React.ReactNode) => (
     <div
       key={label}
       className="flex items-start gap-3 p-4 rounded-xl"

@@ -13,7 +13,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { employees, performanceData } from "../data/mockData";
+import { employees } from "../data/mockData";
 
 const radarData = [
   { subject: "Productivity", A: 88, fullMark: 100 },

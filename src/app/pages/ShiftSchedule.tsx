@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import {
-  CalendarClock,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -10,26 +9,21 @@ import {
   CheckSquare,
   Clock,
   ArrowLeftRight,
-  MoreVertical,
   CalendarPlus,
   X,
   Search,
   Check,
   Calendar as CalendarIcon,
   Filter,
-  BarChart2,
-  FileText,
   AlertTriangle,
   Download,
-  CheckCircle2,
-  Info,
   CalendarDays,
   Activity,
   UserCheck,
   MoreVertical as MoreIcon
 } from 'lucide-react';
 import { employees as globalEmployees } from '../data/mockData';
-import './ShiftSchedule.css';
+
 
 interface Shift {
   type: 'Morning' | 'Evening' | 'Night' | 'Full Day';
@@ -37,17 +31,12 @@ interface Shift {
   isOT?: boolean;
 }
 
-interface EmployeeSchedule {
-  id: string;
-  name: string;
-  dept: string;
-  avatar: string;
-  shifts: { [key: string]: Shift | null };
+interface ShiftMap {
+  [key: string]: Shift | null;
 }
 
 export const ShiftSchedule: React.FC = () => {
   const [selectedDept, setSelectedDept] = useState('All Departments');
-  const [currentWeek, setCurrentWeek] = useState('Apr 6 - Apr 12, 2026');
   const [showExportModal, setShowExportModal] = useState(false);
   const [view, setView] = useState<'Week' | 'Month' | 'Day'>('Week');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -96,7 +85,7 @@ export const ShiftSchedule: React.FC = () => {
           acc[day] = { type, time: times[type], isOT: Math.random() > 0.8 };
         }
         return acc;
-      }, {} as any)
+      }, {} as ShiftMap)
     }));
   }, []);
 
@@ -223,7 +212,7 @@ export const ShiftSchedule: React.FC = () => {
               <button
                 key={v}
                 className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${view === v ? 'bg-primary text-white shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-                onClick={() => setView(v as any)}
+                onClick={() => setView(v as 'Week' | 'Month' | 'Day')}
               >
                 {v}
               </button>

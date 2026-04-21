@@ -4,13 +4,8 @@ import { recruitmentPipeline } from "../data/mockData";
 
 type Stage = "Applied" | "Screening" | "Interview" | "Offer Sent" | "Hired";
 
-const STAGE_CONFIG: Record<Stage, { color: string; bg: string; dot: string }> = {
-  Applied: { color: "var(--primary)", bg: "var(--secondary)", dot: "var(--primary)" },
-  Screening: { color: "var(--primary)", bg: "var(--secondary)", dot: "var(--primary)" },
-  Interview: { color: "var(--primary)", bg: "var(--secondary)", dot: "var(--primary)" },
-  "Offer Sent": { color: "var(--primary)", bg: "var(--secondary)", dot: "var(--primary)" },
-  Hired: { color: "var(--primary)", bg: "var(--secondary)", dot: "var(--primary)" },
-};
+
+
 
 interface Candidate {
   id: string;
@@ -26,7 +21,6 @@ interface Candidate {
 
 /* ─── Candidate Detail Modal ─────────────────────────────── */
 function CandidateDetailModal({ candidate, stage, onClose }: { candidate: Candidate; stage: Stage; onClose: () => void }) {
-  const config = STAGE_CONFIG[stage];
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -449,7 +443,6 @@ function AddCandidateModal({ stage, onClose }: { stage: Stage; onClose: () => vo
 /* ─── Candidate Card ─────────────────────────────────────── */
 function CandidateCard({
   candidate,
-  stage,
   onMessage,
   onSchedule,
   onDetail,
@@ -880,7 +873,6 @@ export function Recruitment() {
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           {stages.map((stage) => {
-            const config = STAGE_CONFIG[stage];
             return (
               <div
                 key={stage}
@@ -949,7 +941,6 @@ export function Recruitment() {
       {/* Kanban Board */}
       <div className="flex gap-6 overflow-x-auto pb-6 custom-scrollbar">
         {stages.map((stage) => {
-          const config = STAGE_CONFIG[stage];
           const candidates = pipeline[stage];
 
           return (

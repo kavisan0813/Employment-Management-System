@@ -363,8 +363,8 @@ export function Attendance() {
                 // Clearly stronger hover colours per status
                 const hoverBgMap: Record<string, string> = {
                   Present: "rgba(16, 185, 129, 0.25)",
-                  Absent:  "rgba(220, 38,  38,  0.22)",
-                  Leave:   "rgba(245, 158, 11,  0.22)",
+                  Absent: "rgba(220, 38,  38,  0.22)",
+                  Leave: "rgba(245, 158, 11,  0.22)",
                   Holiday: "rgba(20,  184, 166, 0.22)",
                   Weekend: "rgba(107, 114, 128, 0.10)",
                 };
@@ -382,15 +382,15 @@ export function Attendance() {
                       backgroundColor: isToday
                         ? "var(--primary)"
                         : isHov
-                        ? activeBg
-                        : status === "Weekend"
-                        ? "transparent"
-                        : config.bg,
+                          ? activeBg
+                          : status === "Weekend"
+                            ? "transparent"
+                            : config.bg,
                       border: isToday
                         ? "2px solid var(--primary)"
                         : isHov
-                        ? `2px solid ${config.dot}`
-                        : "2px solid transparent",
+                          ? `2px solid ${config.dot}`
+                          : "2px solid transparent",
                       boxShadow: isHov && !isToday
                         ? `0 4px 16px ${config.dot}66`
                         : "none",
@@ -404,10 +404,10 @@ export function Attendance() {
                         color: isToday
                           ? "white"
                           : isHov
-                          ? config.dot
-                          : status === "Weekend"
-                          ? "var(--muted-foreground)"
-                          : config.color,
+                            ? config.dot
+                            : status === "Weekend"
+                              ? "var(--muted-foreground)"
+                              : config.color,
                         opacity: status === "Weekend" && !isHov ? 0.4 : 1,
                         transition: "color 150ms ease",
                       }}

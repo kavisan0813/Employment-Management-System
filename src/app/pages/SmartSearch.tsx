@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
 
 import { 
@@ -9,11 +9,8 @@ import {
   CreditCard, 
   FileText, 
   ArrowRight,
-  Loader2,
   X,
-  CheckCircle2,
   Clock,
-  ChevronRight,
   TrendingUp
 } from "lucide-react";
 

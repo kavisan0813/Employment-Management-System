@@ -1,4 +1,4 @@
-import { Building2, Plus, Users, TrendingUp, MoreHorizontal, X, User, DollarSign, Layout } from "lucide-react";
+import { Building2, Plus, Users, TrendingUp, X, User, DollarSign, Layout } from "lucide-react";
 import { useState } from "react";
 
 /* ─── Types ─────────────────────────────── */

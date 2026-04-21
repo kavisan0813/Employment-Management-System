@@ -24,7 +24,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend,
 } from "recharts";
 import {
   departmentHeadcount,
@@ -99,7 +98,7 @@ const kpiCards = [
   },
 ];
 
-const activityIcons: Record<string, any> = {
+const activityIcons: Record<string, React.ElementType> = {
   UserPlus,
   Calendar,
   DollarSign,
@@ -108,7 +107,7 @@ const activityIcons: Record<string, any> = {
   BookOpen,
 };
 
-const CustomBarTooltip = ({ active, payload, label }: any) => {
+const CustomBarTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) => {
   if (active && payload && payload.length) {
     return (
       <div
@@ -129,7 +128,7 @@ const CustomBarTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const CustomPieTooltip = ({ active, payload }: any) => {
+const CustomPieTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ name: string; value: number }> }) => {
   if (active && payload && payload.length) {
     return (
       <div
@@ -377,7 +376,7 @@ export function Dashboard() {
                   outerRadius={80}
                   paddingAngle={3}
                   dataKey="value"
-                  onMouseEnter={(_: any, index: number) => setActiveIndex(index)}
+                  onMouseEnter={(_: unknown, index: number) => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex(null)}
                 >
                   {attendanceOverview.map((entry, index) => (
@@ -529,7 +528,7 @@ export function Dashboard() {
           </div>
 
           <div className="space-y-4">
-            {recentActivities.map((activity, i) => {
+            {recentActivities.map((activity) => {
               const Icon = activityIcons[activity.icon];
               return (
                 <div key={activity.id} className="flex items-start gap-4 p-2 rounded-xl transition-colors hover:bg-var(--background)">
