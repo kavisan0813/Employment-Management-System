@@ -45,9 +45,9 @@ export function EmployeeProfile() {
   const [isSalaryVisible, setIsSalaryVisible] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
-  const [isAddRecordModalOpen, setIsAddRecordModalOpen] = useState(false);
-  const [isRequestAssetModalOpen, setIsRequestAssetModalOpen] = useState(false);
-  const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
+  const [isTrainingModalOpen, setIsTrainingModalOpen] = useState(false);
+  const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
 
   const employee = employees.find((e) => e.id === id) || employees[0];
 
@@ -454,7 +454,7 @@ export function EmployeeProfile() {
             <div className="rounded-2xl p-7 shadow-sm transition-all" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-black" style={{ color: "var(--foreground)" }}>Training & Certifications</h3>
-                <button className="text-sm font-bold transition-colors hover:opacity-80" style={{ color: "var(--primary)" }} onClick={() => setIsAddRecordModalOpen(true)}>+ Add Record</button>
+                <button className="text-sm font-bold transition-colors hover:opacity-80" style={{ color: "var(--primary)" }} onClick={() => setIsTrainingModalOpen(true)}>+ Add Record</button>
               </div>
               <div className="space-y-4">
                 {[
@@ -478,7 +478,7 @@ export function EmployeeProfile() {
             <div className="rounded-2xl p-7 shadow-sm transition-all" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-black" style={{ color: "var(--foreground)" }}>Assigned Assets</h3>
-                <button className="text-sm font-bold transition-colors hover:opacity-80" style={{ color: "var(--primary)" }} onClick={() => setIsRequestAssetModalOpen(true)}>+ Request Asset</button>
+                <button className="text-sm font-bold transition-colors hover:opacity-80" style={{ color: "var(--primary)" }} onClick={() => setIsAssetModalOpen(true)}>+ Request Asset</button>
               </div>
               <div className="space-y-4">
                 {[
@@ -583,7 +583,7 @@ export function EmployeeProfile() {
                 — {employee.manager || "David Chen"}, 2 weeks ago
               </p>
             </div>
-            <button className="w-full py-2.5 rounded-xl font-bold text-sm transition-colors hover:opacity-90 shadow-sm" style={{ color: "white", backgroundColor: "var(--primary)" }} onClick={() => setIsAddNoteModalOpen(true)}>+ Add New Note</button>
+            <button className="w-full py-2.5 rounded-xl font-bold text-sm transition-colors hover:opacity-90 shadow-sm" style={{ color: "white", backgroundColor: "var(--primary)" }} onClick={() => setIsNoteModalOpen(true)}>+ Add New Note</button>
           </div>
 
           {/* Documents Card */}
@@ -671,36 +671,33 @@ export function EmployeeProfile() {
           </div>
         </div>
       )}
-
       {/* Add Training Record Modal */}
-      {isAddRecordModalOpen && (
+      {isTrainingModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-md p-6 rounded-2xl shadow-xl" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
             <h3 style={{ color: "var(--foreground)", fontSize: "18px", fontWeight: 700, marginBottom: "16px" }}>Add Training Record</h3>
             <div className="space-y-4">
               <div>
-                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Course/Certification Name</label>
-                <input type="text" placeholder="e.g. Advanced React Patterns" className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }} />
+                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Training Name</label>
+                <input type="text" placeholder="e.g. Advanced UI Design" className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }} />
               </div>
-              <div>
-                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Type</label>
-                <select className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }}>
-                  <option>Internal Training</option>
-                  <option>External Certification</option>
-                  <option>Workshop</option>
-                </select>
-              </div>
-              <div>
-                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Status</label>
-                <select className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }}>
-                  <option>Completed</option>
-                  <option>Ongoing</option>
-                  <option>Planned</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Date</label>
+                  <input type="text" placeholder="Jan 2026" className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }} />
+                </div>
+                <div>
+                  <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Type</label>
+                  <select className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }}>
+                    <option>Internal</option>
+                    <option>Certification</option>
+                    <option>External Workshop</option>
+                  </select>
+                </div>
               </div>
               <div className="flex gap-3 mt-6">
-                <button onClick={() => setIsAddRecordModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors hover:opacity-80" style={{ border: "1px solid var(--border)", color: "var(--foreground)" }}>Cancel</button>
-                <button onClick={() => setIsAddRecordModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90" style={{ background: "linear-gradient(135deg, var(--primary), #047857)", boxShadow: "0 4px 12px rgba(5,150,105,0.3)" }}>Add Record</button>
+                <button onClick={() => setIsTrainingModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors hover:opacity-80" style={{ border: "1px solid var(--border)", color: "var(--foreground)" }}>Cancel</button>
+                <button onClick={() => setIsTrainingModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90" style={{ background: "linear-gradient(135deg, var(--primary), #047857)" }}>Add Record</button>
               </div>
             </div>
           </div>
@@ -708,57 +705,49 @@ export function EmployeeProfile() {
       )}
 
       {/* Request Asset Modal */}
-      {isRequestAssetModalOpen && (
+      {isAssetModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-md p-6 rounded-2xl shadow-xl" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-            <h3 style={{ color: "var(--foreground)", fontSize: "18px", fontWeight: 700, marginBottom: "16px" }}>Request Asset</h3>
+            <h3 style={{ color: "var(--foreground)", fontSize: "18px", fontWeight: 700, marginBottom: "16px" }}>Request New Asset</h3>
             <div className="space-y-4">
               <div>
-                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Asset Category</label>
+                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Asset Name</label>
+                <input type="text" placeholder="e.g. Wireless Mouse" className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }} />
+              </div>
+              <div>
+                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Category</label>
                 <select className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }}>
-                  <option>Laptop</option>
-                  <option>Monitor</option>
-                  <option>Accessory</option>
-                  <option>Mobile Device</option>
+                  <option>Hardware</option>
+                  <option>Peripheral</option>
+                  <option>License / Software</option>
                 </select>
               </div>
               <div>
-                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Specific Model / Name</label>
-                <input type="text" placeholder="e.g. Magic Keyboard" className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }} />
-              </div>
-              <div>
                 <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Reason for Request</label>
-                <textarea rows={3} placeholder="Briefly explain why this asset is needed" className="w-full px-3 py-2 rounded-xl outline-none transition-colors resize-none" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }}></textarea>
+                <textarea rows={3} className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px", resize: "none" }}></textarea>
               </div>
               <div className="flex gap-3 mt-6">
-                <button onClick={() => setIsRequestAssetModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors hover:opacity-80" style={{ border: "1px solid var(--border)", color: "var(--foreground)" }}>Cancel</button>
-                <button onClick={() => setIsRequestAssetModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90" style={{ background: "linear-gradient(135deg, var(--primary), #047857)", boxShadow: "0 4px 12px rgba(5,150,105,0.3)" }}>Submit Request</button>
+                <button onClick={() => setIsAssetModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors hover:opacity-80" style={{ border: "1px solid var(--border)", color: "var(--foreground)" }}>Cancel</button>
+                <button onClick={() => setIsAssetModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90" style={{ background: "linear-gradient(135deg, var(--primary), #047857)" }}>Submit Request</button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Add Manager Note Modal */}
-      {isAddNoteModalOpen && (
+      {/* Add Note Modal */}
+      {isNoteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-md p-6 rounded-2xl shadow-xl" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
             <h3 style={{ color: "var(--foreground)", fontSize: "18px", fontWeight: 700, marginBottom: "16px" }}>Add Manager Note</h3>
             <div className="space-y-4">
               <div>
                 <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Note Content</label>
-                <textarea rows={4} placeholder="Type your observations or notes here..." className="w-full px-3 py-2 rounded-xl outline-none transition-colors resize-none" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }}></textarea>
-              </div>
-              <div>
-                <label style={{ display: "block", color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "4px", fontWeight: 500 }}>Visibility</label>
-                <select className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px" }}>
-                  <option>Private (Manager & HR Only)</option>
-                  <option>Visible to Employee</option>
-                </select>
+                <textarea rows={4} placeholder="Type your note here..." className="w-full px-3 py-2 rounded-xl outline-none transition-colors" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "14px", resize: "none" }}></textarea>
               </div>
               <div className="flex gap-3 mt-6">
-                <button onClick={() => setIsAddNoteModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors hover:opacity-80" style={{ border: "1px solid var(--border)", color: "var(--foreground)" }}>Cancel</button>
-                <button onClick={() => setIsAddNoteModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90" style={{ background: "linear-gradient(135deg, var(--primary), #047857)", boxShadow: "0 4px 12px rgba(5,150,105,0.3)" }}>Save Note</button>
+                <button onClick={() => setIsNoteModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors hover:opacity-80" style={{ border: "1px solid var(--border)", color: "var(--foreground)" }}>Cancel</button>
+                <button onClick={() => setIsNoteModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90" style={{ background: "linear-gradient(135deg, var(--primary), #047857)" }}>Save Note</button>
               </div>
             </div>
           </div>

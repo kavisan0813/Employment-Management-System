@@ -511,16 +511,16 @@ export function Employees() {
   const [selectedLocation, setSelectedLocation] = useState("All Locations");
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
-  
+
   const [view, setView] = useState<"table" | "grid" | "team">("table");
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [actionMenuRow, setActionMenuRow] = useState<string | null>(null);
   const [sortCol, setSortCol] = useState("name");
   const [sortDesc, setSortDesc] = useState(false);
-  
+
   const [page, setPage] = useState(1);
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
-  
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [editEmployee, setEditEmployee] = useState<typeof employees[0] | null>(null);
   const [deleteEmployee, setDeleteEmployee] = useState<typeof employees[0] | null>(null);
@@ -544,13 +544,13 @@ export function Employees() {
 
   // Sort
   const sorted = [...filtered].sort((a, b) => {
-     let valA = (a as Record<string, string | number>)[sortCol];
-     let valB = (b as Record<string, string | number>)[sortCol];
-     if (typeof valA === "string") valA = valA.toLowerCase();
-     if (typeof valB === "string") valB = valB.toLowerCase();
-     if (valA < valB) return sortDesc ? 1 : -1;
-     if (valA > valB) return sortDesc ? -1 : 1;
-     return 0;
+    let valA = (a as Record<string, string | number>)[sortCol];
+    let valB = (b as Record<string, string | number>)[sortCol];
+    if (typeof valA === "string") valA = valA.toLowerCase();
+    if (typeof valB === "string") valB = valB.toLowerCase();
+    if (valA < valB) return sortDesc ? 1 : -1;
+    if (valA > valB) return sortDesc ? -1 : 1;
+    return 0;
   });
 
   const totalPages = Math.ceil(sorted.length / ROWS_PER_PAGE);
@@ -567,20 +567,20 @@ export function Employees() {
     }
   };
   const toggleType = (type: string) => {
-     if (selectedTypes.includes(type)) {
-        setSelectedTypes(selectedTypes.filter(t => t !== type));
-     } else {
-        setSelectedTypes([...selectedTypes, type]);
-     }
+    if (selectedTypes.includes(type)) {
+      setSelectedTypes(selectedTypes.filter(t => t !== type));
+    } else {
+      setSelectedTypes([...selectedTypes, type]);
+    }
   };
 
   const handleSort = (col: string) => {
-     if (sortCol === col) {
-        setSortDesc(!sortDesc);
-     } else {
-        setSortCol(col);
-        setSortDesc(false);
-     }
+    if (sortCol === col) {
+      setSortDesc(!sortDesc);
+    } else {
+      setSortCol(col);
+      setSortDesc(false);
+    }
   };
 
   const statusConfig: Record<string, { bg: string; color: string; dot: string }> = {
@@ -671,7 +671,7 @@ export function Employees() {
                 style={{ border: "none", outline: "none", background: "transparent", fontSize: "14px", color: "var(--foreground)", width: "100%" }}
               />
             </div>
-            
+
             <div className="flex items-center gap-3" style={{ borderLeft: "1px solid var(--border)", paddingLeft: "16px" }}>
               <span style={{ color: "var(--muted-foreground)", fontSize: "13px", fontWeight: 500, whiteSpace: "nowrap" }}>
                 Showing <span style={{ color: "var(--foreground)", fontWeight: 700 }}>{filtered.length}</span> employees
@@ -715,62 +715,62 @@ export function Employees() {
           </div>
 
           <div className="flex items-center justify-between">
-             <div className="flex items-center gap-3 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-                <FilterChip value={selectedDept} options={departments} onChange={setSelectedDept} />
-                <FilterChip value={selectedDesignation} options={uniqueDesignations} onChange={setSelectedDesignation} />
-                <FilterChip value={selectedLocation} options={uniqueLocations} onChange={setSelectedLocation} />
-                
-                {/* Employment Type Multi-Select */}
-                <div className="relative shrink-0">
+            <div className="flex items-center gap-3 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+              <FilterChip value={selectedDept} options={departments} onChange={setSelectedDept} />
+              <FilterChip value={selectedDesignation} options={uniqueDesignations} onChange={setSelectedDesignation} />
+              <FilterChip value={selectedLocation} options={uniqueLocations} onChange={setSelectedLocation} />
+
+              {/* Employment Type Multi-Select */}
+              <div className="relative shrink-0">
+                <button
+                  onClick={(e) => { e.stopPropagation(); setShowTypeDropdown(!showTypeDropdown); }}
+                  className="flex items-center gap-2 appearance-none pl-4 pr-3 py-2 rounded-xl text-[13px] font-medium outline-none cursor-pointer transition-colors"
+                  style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)" }}
+                >
+                  Emp. Type {selectedTypes.length > 0 && <span className="ml-1 px-1.5 rounded-md text-[11px]" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>{selectedTypes.length}</span>}
+                  <ChevronDown size={14} style={{ color: "var(--muted-foreground)" }} />
+                </button>
+                {showTypeDropdown && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setShowTypeDropdown(false); }}></div>
+                    <div className="absolute top-full left-0 mt-1 w-48 rounded-xl shadow-xl z-20 py-2" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }} onClick={(e) => e.stopPropagation()}>
+                      {uniqueTypes.map(t => (
+                        <label key={t} className="flex items-center gap-3 px-4 py-2 cursor-pointer transition-colors" style={{ color: "var(--foreground)" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--background)"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
+                          <input type="checkbox" checked={selectedTypes.includes(t)} onChange={() => { toggleType(t); setPage(1); }} className="rounded focus:ring-emerald-500" style={{ accentColor: "var(--primary)" }} />
+                          <span style={{ fontSize: "13px" }}>{t}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="w-px h-6 mx-2 shrink-0" style={{ backgroundColor: "var(--border)" }}></div>
+
+              <div className="flex items-center p-1 rounded-xl shrink-0" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)" }}>
+                {["All", "Active", "Inactive"].map(s => (
                   <button
-                     onClick={(e) => { e.stopPropagation(); setShowTypeDropdown(!showTypeDropdown); }}
-                     className="flex items-center gap-2 appearance-none pl-4 pr-3 py-2 rounded-xl text-[13px] font-medium outline-none cursor-pointer transition-colors"
-                     style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)" }}
+                    key={s}
+                    onClick={() => { setSelectedStatus(s === "All" ? "All Status" : s); setPage(1); }}
+                    className="px-4 py-1.5 rounded-lg text-[13px] font-medium transition-colors"
+                    style={{
+                      backgroundColor: (selectedStatus === s || (s === "All" && selectedStatus === "All Status")) ? "var(--card)" : "transparent",
+                      color: (selectedStatus === s || (s === "All" && selectedStatus === "All Status")) ? "var(--foreground)" : "var(--muted-foreground)",
+                      boxShadow: (selectedStatus === s || (s === "All" && selectedStatus === "All Status")) ? "0 2px 4px rgba(0,0,0,0.05)" : "none",
+                    }}
                   >
-                     Emp. Type {selectedTypes.length > 0 && <span className="ml-1 px-1.5 rounded-md text-[11px]" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>{selectedTypes.length}</span>}
-                     <ChevronDown size={14} style={{ color: "var(--muted-foreground)" }} />
+                    {s}
                   </button>
-                  {showTypeDropdown && (
-                     <>
-                        <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setShowTypeDropdown(false); }}></div>
-                        <div className="absolute top-full left-0 mt-1 w-48 rounded-xl shadow-xl z-20 py-2" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }} onClick={(e) => e.stopPropagation()}>
-                           {uniqueTypes.map(t => (
-                              <label key={t} className="flex items-center gap-3 px-4 py-2 cursor-pointer transition-colors" style={{ color: "var(--foreground)" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--background)"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>
-                                 <input type="checkbox" checked={selectedTypes.includes(t)} onChange={() => { toggleType(t); setPage(1); }} className="rounded focus:ring-emerald-500" style={{ accentColor: "var(--primary)" }} />
-                                 <span style={{ fontSize: "13px" }}>{t}</span>
-                              </label>
-                           ))}
-                        </div>
-                     </>
-                  )}
-                </div>
-                
-                <div className="w-px h-6 mx-2 shrink-0" style={{ backgroundColor: "var(--border)" }}></div>
-                
-                <div className="flex items-center p-1 rounded-xl shrink-0" style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)" }}>
-                   {["All", "Active", "Inactive"].map(s => (
-                      <button
-                         key={s}
-                         onClick={() => { setSelectedStatus(s === "All" ? "All Status" : s); setPage(1); }}
-                         className="px-4 py-1.5 rounded-lg text-[13px] font-medium transition-colors"
-                         style={{
-                            backgroundColor: (selectedStatus === s || (s === "All" && selectedStatus === "All Status")) ? "var(--card)" : "transparent",
-                            color: (selectedStatus === s || (s === "All" && selectedStatus === "All Status")) ? "var(--foreground)" : "var(--muted-foreground)",
-                            boxShadow: (selectedStatus === s || (s === "All" && selectedStatus === "All Status")) ? "0 2px 4px rgba(0,0,0,0.05)" : "none",
-                         }}
-                      >
-                         {s}
-                      </button>
-                   ))}
-                </div>
-             </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bulk Actions */}
       {selectedRows.length > 0 && (
-        <div 
+        <div
           className="sticky z-30 flex items-center justify-between px-5 py-3 mb-4 rounded-xl shadow-md transition-all"
           style={{ top: "140px", backgroundColor: "var(--card)", border: "1px solid var(--primary)" }}
         >
@@ -778,18 +778,18 @@ export function Employees() {
             {selectedRows.length} employees selected
           </span>
           <div className="flex items-center gap-3">
-             <button className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:opacity-80 active:scale-95" style={{ border: "1px solid var(--primary)", color: "var(--primary)", backgroundColor: "transparent", fontSize: "13px", fontWeight: 600 }}>
-               <Send size={14} /> Send Email
-             </button>
-             <button className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:opacity-80 active:scale-95" style={{ border: "1px solid var(--primary)", color: "var(--primary)", backgroundColor: "transparent", fontSize: "13px", fontWeight: 600 }}>
-               <Download size={14} /> Export
-             </button>
-             <button className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:opacity-80 active:scale-95" style={{ border: "1px solid var(--primary)", color: "var(--primary)", backgroundColor: "transparent", fontSize: "13px", fontWeight: 600 }}>
-               <UserCheck size={14} /> Assign Manager
-             </button>
-             <button className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:opacity-80 active:scale-95" style={{ border: "1px solid #EF4444", color: "#EF4444", backgroundColor: "transparent", fontSize: "13px", fontWeight: 600 }}>
-               <Ban size={14} /> Deactivate
-             </button>
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:opacity-80 active:scale-95" style={{ border: "1px solid var(--primary)", color: "var(--primary)", backgroundColor: "transparent", fontSize: "13px", fontWeight: 600 }}>
+              <Send size={14} /> Send Email
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:opacity-80 active:scale-95" style={{ border: "1px solid var(--primary)", color: "var(--primary)", backgroundColor: "transparent", fontSize: "13px", fontWeight: 600 }}>
+              <Download size={14} /> Export
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:opacity-80 active:scale-95" style={{ border: "1px solid var(--primary)", color: "var(--primary)", backgroundColor: "transparent", fontSize: "13px", fontWeight: 600 }}>
+              <UserCheck size={14} /> Assign Manager
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:opacity-80 active:scale-95" style={{ border: "1px solid #EF4444", color: "#EF4444", backgroundColor: "transparent", fontSize: "13px", fontWeight: 600 }}>
+              <Ban size={14} /> Deactivate
+            </button>
           </div>
         </div>
       )}
@@ -798,219 +798,219 @@ export function Employees() {
       {view === "table" ? (
         <div className="rounded-2xl overflow-x-auto shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
           <div style={{ minWidth: "1150px" }}>
-           {/* Table Header */}
-           <div
+            {/* Table Header */}
+            <div
               className="grid items-center px-4 py-3 select-none"
               style={{
-                 backgroundColor: "var(--background)",
-                 borderBottom: "1px solid var(--border)",
-                 gridTemplateColumns: gridCols,
+                backgroundColor: "var(--background)",
+                borderBottom: "1px solid var(--border)",
+                gridTemplateColumns: gridCols,
               }}
-           >
+            >
               <div>
-                 <input 
-                    type="checkbox" 
-                    onChange={toggleAllRows} 
-                    checked={selectedRows.length === paginated.length && paginated.length > 0}
-                    style={{ accentColor: "var(--primary)", cursor: "pointer", width: "16px", height: "16px", borderRadius: "4px" }}
-                 />
+                <input
+                  type="checkbox"
+                  onChange={toggleAllRows}
+                  checked={selectedRows.length === paginated.length && paginated.length > 0}
+                  style={{ accentColor: "var(--primary)", cursor: "pointer", width: "16px", height: "16px", borderRadius: "4px" }}
+                />
               </div>
               {[
-                 { label: "Employee", key: "name" },
-                 { label: "Designation", key: "designation" },
-                 { label: "Department", key: "department" },
-                 { label: "Location", key: "location" },
-                 { label: "Email", key: "email" },
-                 { label: "Phone", key: "phone" },
-                 { label: "Status", key: "status" },
-                 { label: "Joined", key: "joinDate" }
+                { label: "Employee", key: "name" },
+                { label: "Designation", key: "designation" },
+                { label: "Department", key: "department" },
+                { label: "Location", key: "location" },
+                { label: "Email", key: "email" },
+                { label: "Phone", key: "phone" },
+                { label: "Status", key: "status" },
+                { label: "Joined", key: "joinDate" }
               ].map(col => (
-                 <div 
-                    key={col.key} 
-                    className="flex items-center gap-1 cursor-pointer hover:opacity-70 transition-opacity text-[11px] font-bold uppercase tracking-wider" 
-                    style={{ color: "var(--muted-foreground)" }}
-                    onClick={() => handleSort(col.key)}
-                 >
-                    {col.label}
-                    {sortCol === col.key && (
-                       sortDesc ? <ChevronDown size={12} /> : <ChevronUp size={12} />
-                    )}
-                 </div>
+                <div
+                  key={col.key}
+                  className="flex items-center gap-1 cursor-pointer hover:opacity-70 transition-opacity text-[11px] font-bold uppercase tracking-wider"
+                  style={{ color: "var(--muted-foreground)" }}
+                  onClick={() => handleSort(col.key)}
+                >
+                  {col.label}
+                  {sortCol === col.key && (
+                    sortDesc ? <ChevronDown size={12} /> : <ChevronUp size={12} />
+                  )}
+                </div>
               ))}
               <div className="text-[11px] font-bold uppercase tracking-wider text-right" style={{ color: "var(--muted-foreground)" }}>Actions</div>
-           </div>
+            </div>
 
-           {/* Table Rows */}
-           {paginated.map(emp => (
+            {/* Table Rows */}
+            {paginated.map(emp => (
               <div
-                 key={emp.id}
-                 className="grid items-center px-4 transition-colors"
-                 style={{
-                    height: "56px",
-                    borderBottom: "1px solid var(--border)",
-                    backgroundColor: hoveredRow === emp.id ? "var(--secondary)" : "transparent",
-                    gridTemplateColumns: gridCols,
-                 }}
-                 onMouseEnter={() => setHoveredRow(emp.id)}
-                 onMouseLeave={() => setHoveredRow(null)}
+                key={emp.id}
+                className="grid items-center px-4 transition-colors"
+                style={{
+                  height: "56px",
+                  borderBottom: "1px solid var(--border)",
+                  backgroundColor: hoveredRow === emp.id ? "var(--secondary)" : "transparent",
+                  gridTemplateColumns: gridCols,
+                }}
+                onMouseEnter={() => setHoveredRow(emp.id)}
+                onMouseLeave={() => setHoveredRow(null)}
               >
-                 <div>
-                    <input 
-                       type="checkbox" 
-                       checked={selectedRows.includes(emp.id)} 
-                       onChange={() => toggleRowSelection(emp.id)}
-                       style={{ accentColor: "var(--primary)", cursor: "pointer", width: "16px", height: "16px", borderRadius: "4px" }}
-                    />
-                 </div>
-                 {/* Avatar + Name + ID */}
-                 <div className="flex items-center gap-3 pr-2">
-                    <img src={emp.avatar || ""} className="w-9 h-9 rounded-full object-cover border" style={{ borderColor: "var(--border)" }} 
-                       onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          const fallback = document.createElement('div');
-                          fallback.className = 'w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-bold shrink-0';
-                          fallback.style.backgroundColor = `${deptColors[emp.department] || '#6B7280'}20`;
-                          fallback.style.color = deptColors[emp.department] || "var(--foreground)";
-                          fallback.textContent = emp.name.split(' ').map(n=>n[0]).join('').slice(0,2);
-                          e.currentTarget.parentElement?.insertBefore(fallback, e.currentTarget);
-                       }}
-                    />
-                    <div className="min-w-0">
-                       <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--foreground)", lineHeight: "1.2", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{emp.name}</div>
-                       <div style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>{emp.id}</div>
+                <div>
+                  <input
+                    type="checkbox"
+                    checked={selectedRows.includes(emp.id)}
+                    onChange={() => toggleRowSelection(emp.id)}
+                    style={{ accentColor: "var(--primary)", cursor: "pointer", width: "16px", height: "16px", borderRadius: "4px" }}
+                  />
+                </div>
+                {/* Avatar + Name + ID */}
+                <div className="flex items-center gap-3 pr-2">
+                  <img src={emp.avatar || ""} className="w-9 h-9 rounded-full object-cover border" style={{ borderColor: "var(--border)" }}
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      const fallback = document.createElement('div');
+                      fallback.className = 'w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-bold shrink-0';
+                      fallback.style.backgroundColor = `${deptColors[emp.department] || '#6B7280'}20`;
+                      fallback.style.color = deptColors[emp.department] || "var(--foreground)";
+                      fallback.textContent = emp.name.split(' ').map(n => n[0]).join('').slice(0, 2);
+                      e.currentTarget.parentElement?.insertBefore(fallback, e.currentTarget);
+                    }}
+                  />
+                  <div className="min-w-0">
+                    <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--foreground)", lineHeight: "1.2", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{emp.name}</div>
+                    <div style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>{emp.id}</div>
+                  </div>
+                </div>
+                {/* Designation */}
+                <div style={{ fontSize: "13px", color: "var(--foreground)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: "8px" }} title={emp.designation}>{emp.designation}</div>
+                {/* Department badge */}
+                <div>
+                  <span className="px-2.5 py-1 rounded-full text-[11px] font-bold whitespace-nowrap" style={{ backgroundColor: `${deptColors[emp.department] || '#6B7280'}15`, color: deptColors[emp.department] || "var(--foreground)" }}>
+                    {emp.department}
+                  </span>
+                </div>
+                {/* Location */}
+                <div style={{ fontSize: "13px", color: "var(--foreground)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: "8px" }} title={emp.location}>{emp.location}</div>
+                {/* Email */}
+                <div style={{ fontSize: "13px", color: "var(--muted-foreground)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: "8px" }} title={emp.email}>{emp.email}</div>
+                {/* Phone */}
+                <div style={{ fontSize: "13px", color: "var(--foreground)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: "8px" }}>{emp.phone}</div>
+                {/* Status */}
+                <div>
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold w-fit whitespace-nowrap" style={{ backgroundColor: statusConfig[emp.status]?.bg, color: statusConfig[emp.status]?.color }}>
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: statusConfig[emp.status]?.dot }}></span>
+                    {emp.status}
+                  </span>
+                </div>
+                {/* Joined Date */}
+                <div style={{ fontSize: "13px", color: "var(--foreground)" }}>{new Date(emp.joinDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+                {/* Actions */}
+                <div className="relative flex justify-end pr-2">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setActionMenuRow(actionMenuRow === emp.id ? null : emp.id); }}
+                    className="p-1.5 rounded-lg transition-colors"
+                    style={{ color: "var(--muted-foreground)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--secondary)"; e.currentTarget.style.color = "var(--primary)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--muted-foreground)"; }}
+                  >
+                    <MoreVertical size={16} />
+                  </button>
+                  {actionMenuRow === emp.id && (
+                    <div className="absolute right-0 top-full mt-1 w-44 rounded-xl shadow-xl border z-30 py-1" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+                      <button className="w-full text-left px-4 py-2 text-[13px] font-medium transition-colors" style={{ color: "var(--foreground)" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--background)"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"} onClick={() => navigate(`/employees/${emp.id}`)}>View Profile</button>
+                      <button className="w-full text-left px-4 py-2 text-[13px] font-medium transition-colors" style={{ color: "var(--foreground)" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--background)"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"} onClick={() => { setEditEmployee(emp); setActionMenuRow(null); }}>Edit Employee</button>
+                      <button className="w-full text-left px-4 py-2 text-[13px] font-medium transition-colors" style={{ color: "var(--foreground)" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--background)"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"} onClick={() => window.open(`mailto:${emp.email}`)}>Send Message</button>
+                      <div className="h-px my-1 w-full" style={{ backgroundColor: "var(--border)" }}></div>
+                      <button className="w-full text-left px-4 py-2 text-[13px] font-medium text-red-500 transition-colors hover:bg-red-50" onClick={() => { setDeleteEmployee(emp); setActionMenuRow(null); }}>Deactivate</button>
                     </div>
-                 </div>
-                 {/* Designation */}
-                 <div style={{ fontSize: "13px", color: "var(--foreground)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: "8px" }} title={emp.designation}>{emp.designation}</div>
-                 {/* Department badge */}
-                 <div>
-                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold whitespace-nowrap" style={{ backgroundColor: `${deptColors[emp.department] || '#6B7280'}15`, color: deptColors[emp.department] || "var(--foreground)" }}>
-                       {emp.department}
-                    </span>
-                 </div>
-                 {/* Location */}
-                 <div style={{ fontSize: "13px", color: "var(--foreground)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: "8px" }} title={emp.location}>{emp.location}</div>
-                 {/* Email */}
-                 <div style={{ fontSize: "13px", color: "var(--muted-foreground)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: "8px" }} title={emp.email}>{emp.email}</div>
-                 {/* Phone */}
-                 <div style={{ fontSize: "13px", color: "var(--foreground)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingRight: "8px" }}>{emp.phone}</div>
-                 {/* Status */}
-                 <div>
-                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold w-fit whitespace-nowrap" style={{ backgroundColor: statusConfig[emp.status]?.bg, color: statusConfig[emp.status]?.color }}>
-                       <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: statusConfig[emp.status]?.dot }}></span>
-                       {emp.status}
-                    </span>
-                 </div>
-                 {/* Joined Date */}
-                 <div style={{ fontSize: "13px", color: "var(--foreground)" }}>{new Date(emp.joinDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
-                 {/* Actions */}
-                 <div className="relative flex justify-end pr-2">
-                    <button 
-                       onClick={(e) => { e.stopPropagation(); setActionMenuRow(actionMenuRow === emp.id ? null : emp.id); }} 
-                       className="p-1.5 rounded-lg transition-colors" 
-                       style={{ color: "var(--muted-foreground)" }}
-                       onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--secondary)"; e.currentTarget.style.color = "var(--primary)"; }}
-                       onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--muted-foreground)"; }}
-                    >
-                       <MoreVertical size={16} />
-                    </button>
-                    {actionMenuRow === emp.id && (
-                       <div className="absolute right-0 top-full mt-1 w-44 rounded-xl shadow-xl border z-30 py-1" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
-                          <button className="w-full text-left px-4 py-2 text-[13px] font-medium transition-colors" style={{ color: "var(--foreground)" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--background)"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"} onClick={() => navigate(`/employees/${emp.id}`)}>View Profile</button>
-                          <button className="w-full text-left px-4 py-2 text-[13px] font-medium transition-colors" style={{ color: "var(--foreground)" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--background)"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"} onClick={() => { setEditEmployee(emp); setActionMenuRow(null); }}>Edit Employee</button>
-                          <button className="w-full text-left px-4 py-2 text-[13px] font-medium transition-colors" style={{ color: "var(--foreground)" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--background)"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"} onClick={() => window.open(`mailto:${emp.email}`)}>Send Message</button>
-                          <div className="h-px my-1 w-full" style={{ backgroundColor: "var(--border)" }}></div>
-                          <button className="w-full text-left px-4 py-2 text-[13px] font-medium text-red-500 transition-colors hover:bg-red-50" onClick={() => { setDeleteEmployee(emp); setActionMenuRow(null); }}>Deactivate</button>
-                       </div>
-                    )}
-                 </div>
+                  )}
+                </div>
               </div>
-           ))}
-           {filtered.length === 0 && (
-             <div className="py-16 text-center w-full">
-               <p style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>No employees found matching your filters.</p>
-             </div>
-           )}
+            ))}
+            {filtered.length === 0 && (
+              <div className="py-16 text-center w-full">
+                <p style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>No employees found matching your filters.</p>
+              </div>
+            )}
           </div>
         </div>
       ) : view === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-           {paginated.map(emp => (
-              <div 
-                 key={emp.id} 
-                 className="relative group rounded-2xl p-5 transition-all duration-300 overflow-hidden"
-                 style={{ 
-                    backgroundColor: "var(--card)", 
-                    border: "1px solid var(--border)",
-                 }}
-                 onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-4px)";
-                    e.currentTarget.style.boxShadow = "0 12px 24px -8px rgba(0,0,0,0.15)";
-                    e.currentTarget.style.borderColor = "var(--primary)";
-                 }}
-                 onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "none";
-                    e.currentTarget.style.boxShadow = "none";
-                    e.currentTarget.style.borderColor = "var(--border)";
-                 }}
-              >
-                 <div className="absolute top-4 right-4 z-10">
-                    <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ backgroundColor: statusConfig[emp.status]?.bg, color: statusConfig[emp.status]?.color }}>
-                       <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: statusConfig[emp.status]?.dot }}></span>
-                       {emp.status}
-                    </span>
-                 </div>
-                 <div className="flex flex-col items-center mt-2 mb-4 relative z-10">
-                    <img src={emp.avatar || ""} className="w-20 h-20 rounded-full object-cover border-[3px]" style={{ borderColor: "var(--background)" }} 
-                       onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          const fallback = document.createElement('div');
-                          fallback.className = 'w-20 h-20 rounded-full flex items-center justify-center text-[24px] font-bold shrink-0 border-[3px]';
-                          fallback.style.borderColor = 'var(--background)';
-                          fallback.style.backgroundColor = `${deptColors[emp.department] || '#6B7280'}20`;
-                          fallback.style.color = deptColors[emp.department] || "var(--foreground)";
-                          fallback.textContent = emp.name.split(' ').map(n=>n[0]).join('').slice(0,2);
-                          e.currentTarget.parentElement?.insertBefore(fallback, e.currentTarget);
-                       }}
-                    />
-                    <h3 className="mt-4 text-[16px] font-bold" style={{ color: "var(--foreground)" }}>{emp.name}</h3>
-                    <p className="text-[13px] mb-3 text-center px-2" style={{ color: "var(--muted-foreground)" }}>{emp.designation}</p>
-                    <span className="px-2.5 py-1 rounded-full text-[11px] font-bold" style={{ backgroundColor: `${deptColors[emp.department] || '#6B7280'}15`, color: deptColors[emp.department] || "var(--foreground)" }}>
-                       {emp.department}
-                    </span>
-                 </div>
-                 
-                 <div className="flex items-center justify-center gap-1.5 mb-5 text-[12px] relative z-10" style={{ color: "var(--muted-foreground)" }}>
-                    <MapPin size={14} /> {emp.location}
-                 </div>
-                 
-                 <div className="flex items-center justify-center gap-3 pt-4 relative z-10" style={{ borderTop: "1px solid var(--border)" }}>
-                    <button className="p-2.5 rounded-full transition-colors hover:scale-105 active:scale-95" style={{ backgroundColor: "var(--background)", color: "var(--muted-foreground)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--secondary)"; e.currentTarget.style.color = "var(--primary)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--background)"; e.currentTarget.style.color = "var(--muted-foreground)"; }} title="Email" onClick={() => window.open(`mailto:${emp.email}`)}><Mail size={16} /></button>
-                    <button className="p-2.5 rounded-full transition-colors hover:scale-105 active:scale-95" style={{ backgroundColor: "var(--background)", color: "var(--muted-foreground)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--secondary)"; e.currentTarget.style.color = "var(--primary)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--background)"; e.currentTarget.style.color = "var(--muted-foreground)"; }} title="Phone"><Phone size={16} /></button>
-                    <button className="p-2.5 rounded-full transition-colors hover:scale-105 active:scale-95" style={{ backgroundColor: "var(--background)", color: "var(--muted-foreground)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--secondary)"; e.currentTarget.style.color = "var(--primary)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--background)"; e.currentTarget.style.color = "var(--muted-foreground)"; }} title="LinkedIn"><Linkedin size={16} /></button>
-                 </div>
-                 
-                 {/* Expandable View Profile Button */}
-                 <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-300 ease-in-out">
-                    <div className="overflow-hidden">
-                       <div className="pt-4">
-                          <button 
-                             onClick={() => navigate(`/employees/${emp.id}`)}
-                             className="w-full py-2.5 rounded-xl font-bold text-white shadow-md hover:opacity-90 active:scale-95 transition-all"
-                             style={{ backgroundColor: "var(--primary)" }}
-                          >
-                             View Profile
-                          </button>
-                       </div>
-                    </div>
-                 </div>
+          {paginated.map(emp => (
+            <div
+              key={emp.id}
+              className="relative group rounded-2xl p-5 transition-all duration-300 overflow-hidden"
+              style={{
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-4px)";
+                e.currentTarget.style.boxShadow = "0 12px 24px -8px rgba(0,0,0,0.15)";
+                e.currentTarget.style.borderColor = "var(--primary)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "none";
+                e.currentTarget.style.boxShadow = "none";
+                e.currentTarget.style.borderColor = "var(--border)";
+              }}
+            >
+              <div className="absolute top-4 right-4 z-10">
+                <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ backgroundColor: statusConfig[emp.status]?.bg, color: statusConfig[emp.status]?.color }}>
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: statusConfig[emp.status]?.dot }}></span>
+                  {emp.status}
+                </span>
               </div>
-           ))}
-           {filtered.length === 0 && (
-             <div className="col-span-full py-16 text-center">
-               <p style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>No employees found matching your filters.</p>
-             </div>
-           )}
+              <div className="flex flex-col items-center mt-2 mb-4 relative z-10">
+                <img src={emp.avatar || ""} className="w-20 h-20 rounded-full object-cover border-[3px]" style={{ borderColor: "var(--background)" }}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const fallback = document.createElement('div');
+                    fallback.className = 'w-20 h-20 rounded-full flex items-center justify-center text-[24px] font-bold shrink-0 border-[3px]';
+                    fallback.style.borderColor = 'var(--background)';
+                    fallback.style.backgroundColor = `${deptColors[emp.department] || '#6B7280'}20`;
+                    fallback.style.color = deptColors[emp.department] || "var(--foreground)";
+                    fallback.textContent = emp.name.split(' ').map(n => n[0]).join('').slice(0, 2);
+                    e.currentTarget.parentElement?.insertBefore(fallback, e.currentTarget);
+                  }}
+                />
+                <h3 className="mt-4 text-[16px] font-bold" style={{ color: "var(--foreground)" }}>{emp.name}</h3>
+                <p className="text-[13px] mb-3 text-center px-2" style={{ color: "var(--muted-foreground)" }}>{emp.designation}</p>
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-bold" style={{ backgroundColor: `${deptColors[emp.department] || '#6B7280'}15`, color: deptColors[emp.department] || "var(--foreground)" }}>
+                  {emp.department}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-center gap-1.5 mb-5 text-[12px] relative z-10" style={{ color: "var(--muted-foreground)" }}>
+                <MapPin size={14} /> {emp.location}
+              </div>
+
+              <div className="flex items-center justify-center gap-3 pt-4 relative z-10" style={{ borderTop: "1px solid var(--border)" }}>
+                <button className="p-2.5 rounded-full transition-colors hover:scale-105 active:scale-95" style={{ backgroundColor: "var(--background)", color: "var(--muted-foreground)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--secondary)"; e.currentTarget.style.color = "var(--primary)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--background)"; e.currentTarget.style.color = "var(--muted-foreground)"; }} title="Email" onClick={() => window.open(`mailto:${emp.email}`)}><Mail size={16} /></button>
+                <button className="p-2.5 rounded-full transition-colors hover:scale-105 active:scale-95" style={{ backgroundColor: "var(--background)", color: "var(--muted-foreground)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--secondary)"; e.currentTarget.style.color = "var(--primary)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--background)"; e.currentTarget.style.color = "var(--muted-foreground)"; }} title="Phone"><Phone size={16} /></button>
+                <button className="p-2.5 rounded-full transition-colors hover:scale-105 active:scale-95" style={{ backgroundColor: "var(--background)", color: "var(--muted-foreground)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--secondary)"; e.currentTarget.style.color = "var(--primary)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--background)"; e.currentTarget.style.color = "var(--muted-foreground)"; }} title="LinkedIn"><Linkedin size={16} /></button>
+              </div>
+
+              {/* Expandable View Profile Button */}
+              <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-300 ease-in-out">
+                <div className="overflow-hidden">
+                  <div className="pt-4">
+                    <button
+                      onClick={() => navigate(`/employees/${emp.id}`)}
+                      className="w-full py-2.5 rounded-xl font-bold text-white shadow-md hover:opacity-90 active:scale-95 transition-all"
+                      style={{ backgroundColor: "var(--primary)" }}
+                    >
+                      View Profile
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+          {filtered.length === 0 && (
+            <div className="col-span-full py-16 text-center">
+              <p style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>No employees found matching your filters.</p>
+            </div>
+          )}
         </div>
       ) : view === "team" ? (
         <div className="flex flex-col gap-6">
@@ -1025,14 +1025,14 @@ export function Employees() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {paginated.filter(e => e.department === dept).map(emp => (
                   <div key={emp.id} className="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:shadow-md cursor-pointer group" style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)" }} onClick={() => navigate(`/employees/${emp.id}`)}>
-                    <img src={emp.avatar || ""} className="w-11 h-11 rounded-full object-cover border" style={{ borderColor: "var(--border)" }} 
+                    <img src={emp.avatar || ""} className="w-11 h-11 rounded-full object-cover border" style={{ borderColor: "var(--border)" }}
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                         const fallback = document.createElement('div');
                         fallback.className = 'w-11 h-11 rounded-full flex items-center justify-center text-[12px] font-bold shrink-0';
                         fallback.style.backgroundColor = `${deptColors[emp.department] || '#6B7280'}20`;
                         fallback.style.color = deptColors[emp.department] || "var(--foreground)";
-                        fallback.textContent = emp.name.split(' ').map(n=>n[0]).join('').slice(0,2);
+                        fallback.textContent = emp.name.split(' ').map(n => n[0]).join('').slice(0, 2);
                         e.currentTarget.parentElement?.insertBefore(fallback, e.currentTarget);
                       }}
                     />
