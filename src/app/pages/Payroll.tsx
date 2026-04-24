@@ -3,6 +3,8 @@ import {
   Download,
   Play,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   X,
   CheckCircle2,
   Loader2,
@@ -374,15 +376,25 @@ function RunPayrollModal({ onClose, month, year }: { onClose: () => void; month:
   );
 }
 
-function EditPayrollModal({ employee, onClose }: { employee: PayrollEmployee, onClose: () => void }) {
+function EditPayrollModal({ employee, onClose, onSave }: { employee: PayrollEmployee, onClose: () => void, onSave: (updated: PayrollEmployee) => void }) {
   const [gross, setGross] = useState(employee.gross.toString());
   const [deductions, setDeductions] = useState(employee.deductions.toString());
   const [status, setStatus] = useState(employee.status);
-  
+
   const netPay = (parseFloat(gross) || 0) - (parseFloat(deductions) || 0);
 
+  const handleSave = () => {
+    onSave({
+      ...employee,
+      gross: parseFloat(gross) || 0,
+      deductions: parseFloat(deductions) || 0,
+      net: netPay,
+      status
+    });
+  };
+
   return (
-   <div
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
       onClick={onClose}
@@ -405,34 +417,34 @@ function EditPayrollModal({ employee, onClose }: { employee: PayrollEmployee, on
         <div className="p-6 flex flex-col gap-5">
           <div>
             <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Gross Salary (₹)</label>
-            <input 
-              type="number" 
+            <input
+              type="number"
               value={gross}
               onChange={e => setGross(e.target.value)}
               className="w-full border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 bg-transparent text-foreground"
             />
           </div>
-          
+
           <div>
             <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Deductions (₹)</label>
-            <input 
-              type="number" 
+            <input
+              type="number"
               value={deductions}
               onChange={e => setDeductions(e.target.value)}
               className="w-full border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 bg-transparent text-foreground"
             />
           </div>
-          
+
           <div>
             <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Net Pay (₹)</label>
             <div className="w-full border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/5 rounded-xl px-4 py-3 text-sm font-bold text-emerald-600">
               ₹{netPay.toLocaleString()}
             </div>
           </div>
-          
+
           <div>
             <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Status</label>
-            <select 
+            <select
               value={status}
               onChange={e => setStatus(e.target.value)}
               className="w-full border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 bg-transparent text-foreground"
@@ -444,14 +456,14 @@ function EditPayrollModal({ employee, onClose }: { employee: PayrollEmployee, on
         </div>
 
         <div className="p-6 border-t border-border/50 flex gap-4 justify-center">
-          <button 
+          <button
             onClick={onClose}
             className="w-1/2 py-3 border border-border text-foreground font-bold rounded-xl text-sm hover:bg-muted transition-colors"
           >
             Cancel
           </button>
-          <button 
-            onClick={onClose}
+          <button
+            onClick={handleSave}
             className="w-1/2 py-3 bg-emerald-600 text-white font-bold rounded-xl text-sm hover:bg-emerald-700 transition-colors"
           >
             Save Changes
@@ -462,7 +474,28 @@ function EditPayrollModal({ employee, onClose }: { employee: PayrollEmployee, on
   );
 }
 
+function ActionSuccessModal({ title, message, onClose }: { title: string; message: string; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+      <div className="w-full max-w-sm bg-white dark:bg-[#06211C] rounded-3xl p-8 shadow-2xl text-center animate-in zoom-in-95 duration-300">
+        <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6">
+          <CheckCircle2 size={40} className="text-emerald-500" />
+        </div>
+        <h3 className="text-2xl font-black text-foreground mb-2">{title}</h3>
+        <p className="text-sm text-muted-foreground mb-8 leading-relaxed">{message}</p>
+        <button
+          onClick={onClose}
+          className="w-full py-4 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+        >
+          Got it
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function Payroll() {
+  const [employeesData, setEmployeesData] = useState(payrollEmployees);
   const [selectedMonth, setSelectedMonth] = useState("April");
   const [selectedYear, setSelectedYear] = useState("2026");
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
@@ -475,6 +508,9 @@ export function Payroll() {
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [openActionId, setOpenActionId] = useState<string | null>(null);
+  const [actionSuccess, setActionSuccess] = useState<{ title: string; message: string } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const closeMenu = () => setOpenActionId(null);
@@ -482,16 +518,27 @@ export function Payroll() {
     return () => document.removeEventListener("click", closeMenu);
   }, []);
 
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, searchQuery]);
+
   // Filter logic
   const filteredEmployees = useMemo(() => {
-    return payrollEmployees.filter(emp => {
+    return employeesData.filter(emp => {
       const matchesStatus = statusFilter === "All" || emp.status === statusFilter;
       const matchesSearch = emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         emp.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         emp.department.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesStatus && matchesSearch;
     });
-  }, [statusFilter, searchQuery]);
+  }, [statusFilter, searchQuery, employeesData]);
+
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+  const paginatedEmployees = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredEmployees.slice(start, start + itemsPerPage);
+  }, [filteredEmployees, currentPage]);
 
   const totalGross = filteredEmployees.reduce((s, e) => s + e.gross, 0);
   const totalDeductions = filteredEmployees.reduce((s, e) => s + e.deductions, 0);
@@ -499,7 +546,7 @@ export function Payroll() {
 
   // Helper to get leave impact (mock logic)
   const getLeaveImpact = (empId: string) => {
-    const leaves = leaveRequests.filter(lr => lr.employee.includes(payrollEmployees.find(e => e.id === empId)?.name || "") && lr.status === "Approved");
+    const leaves = leaveRequests.filter(lr => lr.employee.includes(employeesData.find(e => e.id === empId)?.name || "") && lr.status === "Approved");
     const totalDays = leaves.reduce((sum, lr) => sum + lr.days, 0);
     if (totalDays === 0) return { days: 0, amount: 0 };
     // Assume 1 day pay deduction for every 3 days leave for this demo
@@ -650,8 +697,8 @@ export function Payroll() {
               key={status}
               onClick={() => setStatusFilter(status as "All" | "Paid" | "Pending")}
               className={`flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold transition-all ${statusFilter === status
-                  ? "bg-white dark:bg-[#04100D] text-emerald-500 shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                ? "bg-white dark:bg-[#04100D] text-emerald-500 shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
                 }`}
             >
               {status}
@@ -671,7 +718,7 @@ export function Payroll() {
             />
           </div>
           <div className="relative">
-            <button 
+            <button
               onClick={(e) => { e.stopPropagation(); setIsFilterOpen(!isFilterOpen); }}
               className={`p-2.5 rounded-xl border transition-colors ${isFilterOpen ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' : 'border-border text-muted-foreground hover:bg-muted/50'}`}
             >
@@ -721,13 +768,13 @@ export function Payroll() {
               </select>
             </div>
             <div className="flex items-end gap-3">
-              <button 
+              <button
                 onClick={() => setIsFilterOpen(false)}
                 className="px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-sm hover:opacity-90 transition-all flex-1"
               >
                 Apply Filters
               </button>
-              <button 
+              <button
                 onClick={() => setIsFilterOpen(false)}
                 className="px-6 py-2.5 bg-muted border border-border font-bold rounded-xl text-sm hover:bg-background transition-all"
               >
@@ -755,7 +802,7 @@ export function Payroll() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
-              {filteredEmployees.map((emp) => {
+              {paginatedEmployees.map((emp) => {
                 const impact = getLeaveImpact(emp.id);
                 return (
                   <tr key={emp.id} className="hover:bg-emerald-500/5 transition-colors group">
@@ -826,7 +873,7 @@ export function Payroll() {
                           <Download size={16} />
                         </button>
                         <div className="relative">
-                          <button 
+                          <button
                             onClick={(e) => { e.stopPropagation(); setOpenActionId(openActionId === emp.id ? null : emp.id); }}
                             className="p-2 rounded-xl text-muted-foreground hover:bg-muted/50 transition-colors"
                           >
@@ -837,11 +884,24 @@ export function Payroll() {
                               <button onClick={() => { setOpenActionId(null); setEditingEmployee(emp); }} className="w-full text-left px-4 py-3 text-sm text-slate-800 dark:text-slate-200 hover:bg-muted/50 transition-colors flex items-center gap-2 font-medium">
                                 <Edit2 size={16} className="text-slate-600 dark:text-slate-400" /> Edit
                               </button>
-                              <button onClick={() => setOpenActionId(null)} className="w-full text-left px-4 py-3 text-sm text-slate-800 dark:text-slate-200 hover:bg-muted/50 transition-colors flex items-center gap-2 font-medium">
+                              <button onClick={() => {
+                                setOpenActionId(null);
+                                setActionSuccess({
+                                  title: "Email Sent!",
+                                  message: `The payslip for ${emp.name} has been successfully sent to their registered email address.`
+                                });
+                              }} className="w-full text-left px-4 py-3 text-sm text-slate-800 dark:text-slate-200 hover:bg-muted/50 transition-colors flex items-center gap-2 font-medium">
                                 <Mail size={16} className="text-slate-600 dark:text-slate-400" /> Email Payslip
                               </button>
                               <div className="bg-orange-50 dark:bg-orange-950/20 border-t border-border/50">
-                                <button onClick={() => setOpenActionId(null)} className="w-full text-left px-4 py-3 text-sm text-amber-600 hover:bg-amber-500/10 transition-colors flex items-center gap-2 font-medium">
+                                <button onClick={() => {
+                                  setOpenActionId(null);
+                                  setEmployeesData(prev => prev.map(e => e.id === emp.id ? { ...e, status: "Pending" } : e));
+                                  setActionSuccess({
+                                    title: "Payment Held",
+                                    message: `The disbursement for ${emp.name} has been placed on hold and moved to Pending status.`
+                                  });
+                                }} className="w-full text-left px-4 py-3 text-sm text-amber-600 hover:bg-amber-500/10 transition-colors flex items-center gap-2 font-medium">
                                   <AlertCircle size={16} className="text-amber-600" /> Hold Payment
                                 </button>
                               </div>
@@ -870,16 +930,53 @@ export function Payroll() {
             </tfoot>
           </table>
         </div>
+
+        {/* Pagination */}
+        <div className="px-6 py-4 border-t border-border bg-muted/10 flex items-center justify-between">
+          <div className="text-xs font-medium text-muted-foreground">
+            Showing <span className="text-foreground font-bold">{Math.min(filteredEmployees.length, (currentPage - 1) * itemsPerPage + 1)}</span> to <span className="text-foreground font-bold">{Math.min(filteredEmployees.length, currentPage * itemsPerPage)}</span> of <span className="text-foreground font-bold">{filteredEmployees.length}</span> employees
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="p-2 rounded-xl border border-border bg-card text-muted-foreground hover:text-emerald-500 hover:border-emerald-500/50 disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${currentPage === page
+                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-xl border border-border bg-card text-muted-foreground hover:text-emerald-500 hover:border-emerald-500/50 disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Process Timeline */}
       <div className="mt-6 bg-card border border-border rounded-3xl p-8 shadow-sm overflow-x-auto">
         <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground mb-10">Process Timeline</h3>
-        
+
         <div className="relative flex justify-between min-w-[700px] px-4">
           {/* Connecting Line */}
           <div className="absolute top-[11px] left-12 right-12 h-[2px] bg-muted-foreground/20 z-0"></div>
-          
+
           {/* Timeline Steps */}
           {[
             { label: "Data Collection", status: "completed" },
@@ -902,8 +999,8 @@ export function Payroll() {
                 )}
               </div>
               <span className={`text-[11px] font-bold text-center -mt-1 ${step.status === "completed" ? "text-emerald-600" :
-                  step.status === "active" ? "text-foreground" :
-                    "text-muted-foreground"
+                step.status === "active" ? "text-foreground" :
+                  "text-muted-foreground"
                 }`}>
                 {step.label}
               </span>
@@ -911,7 +1008,7 @@ export function Payroll() {
           ))}
         </div>
       </div>
-          
+
       {/* Modals */}
       {showRunModal && (
         <RunPayrollModal
@@ -934,6 +1031,22 @@ export function Payroll() {
         <EditPayrollModal
           employee={editingEmployee}
           onClose={() => setEditingEmployee(null)}
+          onSave={(updated) => {
+            setEmployeesData(prev => prev.map(e => e.id === updated.id ? updated : e));
+            setEditingEmployee(null);
+            setActionSuccess({
+              title: "Updated!",
+              message: `Payroll records for ${updated.name} have been successfully updated.`
+            });
+          }}
+        />
+      )}
+
+      {actionSuccess && (
+        <ActionSuccessModal
+          title={actionSuccess.title}
+          message={actionSuccess.message}
+          onClose={() => setActionSuccess(null)}
         />
       )}
 
