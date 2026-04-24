@@ -1,16 +1,16 @@
 import { useState, useEffect, useMemo } from "react";
-import { 
-  Download, 
-  Play, 
-  ChevronDown, 
-  X, 
-  CheckCircle2, 
-  Loader2, 
-  AlertCircle, 
-  Eye, 
-  FileText, 
-  Search, 
-  Filter, 
+import {
+  Download,
+  Play,
+  ChevronDown,
+  X,
+  CheckCircle2,
+  Loader2,
+  AlertCircle,
+  Eye,
+  FileText,
+  Search,
+  Filter,
   Calendar,
   Clock,
   ArrowUpRight,
@@ -25,23 +25,23 @@ import {
 import { payrollEmployees, leaveRequests } from "../data/mockData";
 
 const months = [
-  "January", "February", "March", "April", "May", "June", 
+  "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
 
 const years = ["2024", "2025", "2026"];
 
 /* ─── Payslip Modal ────────────────────── */
-function PayslipModal({ 
-  onClose, 
-  employee, 
-  month, 
-  year 
-}: { 
-  onClose: () => void; 
-  employee: any; 
-  month: string; 
-  year: string 
+function PayslipModal({
+  onClose,
+  employee,
+  month,
+  year
+}: {
+  onClose: () => void;
+  employee: any;
+  month: string;
+  year: string
 }) {
   const [isPrinting, setIsPrinting] = useState(false);
 
@@ -69,7 +69,7 @@ function PayslipModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-      <div 
+      <div
         className="w-full max-w-3xl bg-white dark:bg-[#06211C] rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
@@ -85,20 +85,20 @@ function PayslipModal({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button 
+            <button
               onClick={handlePrint}
               className="p-2 hover:bg-emerald-500/10 rounded-lg text-muted-foreground hover:text-emerald-500 transition-colors"
               title="Print Payslip"
             >
               <Printer size={18} />
             </button>
-            <button 
+            <button
               className="p-2 hover:bg-emerald-500/10 rounded-lg text-muted-foreground hover:text-emerald-500 transition-colors"
               title="Email to Employee"
             >
               <Mail size={18} />
             </button>
-            <button 
+            <button
               onClick={onClose}
               className="p-2 hover:bg-destructive/10 rounded-lg text-muted-foreground hover:text-destructive transition-colors ml-2"
             >
@@ -120,9 +120,8 @@ function PayslipModal({
               </div>
             </div>
             <div className="text-right">
-              <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2 ${
-                employee.status === "Paid" ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
-              }`}>
+              <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2 ${employee.status === "Paid" ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
+                }`}>
                 {employee.status}
               </div>
               <p className="text-xs text-muted-foreground">Payment Date: {month} 28, {year}</p>
@@ -212,13 +211,13 @@ function PayslipModal({
 
         {/* Modal Footer */}
         <div className="px-8 py-4 bg-muted/30 border-t border-border flex justify-end gap-3">
-          <button 
+          <button
             onClick={onClose}
             className="px-6 py-2 rounded-xl text-sm font-bold text-foreground border border-border hover:bg-background transition-colors"
           >
             Close
           </button>
-          <button 
+          <button
             onClick={handlePrint}
             className="px-6 py-2 rounded-xl text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors flex items-center gap-2"
           >
@@ -377,9 +376,9 @@ export function Payroll() {
   const filteredEmployees = useMemo(() => {
     return payrollEmployees.filter(emp => {
       const matchesStatus = statusFilter === "All" || emp.status === statusFilter;
-      const matchesSearch = emp.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            emp.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            emp.department.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        emp.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        emp.department.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesStatus && matchesSearch;
     });
   }, [statusFilter, searchQuery]);
@@ -394,7 +393,7 @@ export function Payroll() {
     const totalDays = leaves.reduce((sum, lr) => sum + lr.days, 0);
     if (totalDays === 0) return { days: 0, amount: 0 };
     // Assume 1 day pay deduction for every 3 days leave for this demo
-    const impactAmount = Math.round((totalDays / 30) * 1000); 
+    const impactAmount = Math.round((totalDays / 30) * 1000);
     return { days: totalDays, amount: impactAmount };
   };
 
@@ -508,7 +507,7 @@ export function Payroll() {
             className="relative group bg-card border border-border rounded-3xl p-6 overflow-hidden hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300"
           >
             <div className={`absolute -right-4 -top-4 w-24 h-24 rounded-full bg-${stat.color}-500/5 group-hover:scale-150 transition-transform duration-500`}></div>
-            
+
             <div className="relative">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{stat.label}</span>
@@ -516,15 +515,15 @@ export function Payroll() {
                   {stat.icon} {stat.trend}
                 </div>
               </div>
-              
+
               <div className="flex items-baseline gap-2">
                 <h3 className="text-3xl font-black text-foreground tracking-tight">{stat.value}</h3>
               </div>
               <p className="text-xs text-muted-foreground mt-2 font-medium">{stat.desc}</p>
-              
+
               <div className="mt-6 w-full h-1.5 bg-muted/50 rounded-full overflow-hidden">
-                <div 
-                  className={`h-full bg-${stat.color}-500 transition-all duration-1000`} 
+                <div
+                  className={`h-full bg-${stat.color}-500 transition-all duration-1000`}
                   style={{ width: i === 0 ? "85%" : i === 1 ? "40%" : "75%" }}
                 ></div>
               </div>
@@ -540,11 +539,10 @@ export function Payroll() {
             <button
               key={status}
               onClick={() => setStatusFilter(status as any)}
-              className={`flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold transition-all ${
-                statusFilter === status 
-                ? "bg-white dark:bg-[#04100D] text-emerald-500 shadow-sm" 
-                : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold transition-all ${statusFilter === status
+                  ? "bg-white dark:bg-[#04100D] text-emerald-500 shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               {status}
             </button>
@@ -554,8 +552,8 @@ export function Payroll() {
         <div className="flex items-center gap-3 w-full md:w-auto pr-2">
           <div className="relative flex-1 md:w-80">
             <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Search employee, ID or department..."
               className="w-full bg-muted/30 border border-border rounded-2xl pl-11 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 transition-all"
               value={searchQuery}
@@ -565,7 +563,7 @@ export function Payroll() {
           <button className="p-2.5 rounded-xl border border-border text-muted-foreground hover:bg-muted/50 transition-colors">
             <Filter size={18} />
           </button>
-          <button 
+          <button
             onClick={() => {
               const headers = ["ID", "Name", "Department", "Gross", "Deductions", "Net Pay", "Status"];
               const rows = filteredEmployees.map(e => [e.id, e.name, e.department, e.gross, e.deductions, e.net, e.status]);
@@ -609,9 +607,9 @@ export function Payroll() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="relative">
-                          <img 
-                            src={emp.avatar} 
-                            alt={emp.name} 
+                          <img
+                            src={emp.avatar}
+                            alt={emp.name}
                             className="w-10 h-10 rounded-full object-cover border-2 border-emerald-500/10"
                           />
                           <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-card ${emp.status === "Paid" ? "bg-emerald-500" : "bg-amber-500"}`}></div>
@@ -650,23 +648,22 @@ export function Payroll() {
                       <span className="text-sm font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-lg">₹{emp.net.toLocaleString()}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                        emp.status === "Paid" ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
-                      }`}>
+                      <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${emp.status === "Paid" ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
+                        }`}>
                         {emp.status === "Paid" ? <CheckCircle2 size={12} /> : <Clock size={12} />}
                         {emp.status}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center gap-2">
-                        <button 
+                        <button
                           onClick={() => setSelectedPayslipEmployee(emp)}
                           className="p-2 rounded-xl border border-border bg-muted/20 text-muted-foreground hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/30 transition-all"
                           title="View Payslip"
                         >
                           <Eye size={16} />
                         </button>
-                        <button 
+                        <button
                           onClick={() => setSelectedPayslipEmployee(emp)}
                           className="p-2 rounded-xl border border-border bg-muted/20 text-muted-foreground hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/30 transition-all"
                           title="Download PDF"
@@ -700,18 +697,58 @@ export function Payroll() {
         </div>
       </div>
 
+      {/* Process Timeline */}
+      <div className="mt-6 bg-card border border-border rounded-3xl p-8 shadow-sm overflow-x-auto">
+        <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground mb-10">Process Timeline</h3>
+        
+        <div className="relative flex justify-between min-w-[700px] px-4">
+          {/* Connecting Line */}
+          <div className="absolute top-[11px] left-12 right-12 h-[2px] bg-muted-foreground/20 z-0"></div>
+          
+          {/* Timeline Steps */}
+          {[
+            { label: "Data Collection", status: "completed" },
+            { label: "Attendance Lock", status: "completed" },
+            { label: "Calculation", status: "active" },
+            { label: "Review", status: "pending" },
+            { label: "Approval", status: "pending" },
+            { label: "Disbursement", status: "pending" }
+          ].map((step, index) => (
+            <div key={index} className="flex flex-col items-center gap-3 relative z-10 w-28">
+              <div className="bg-card px-2 pb-1">
+                {step.status === "completed" && (
+                  <div className="w-6 h-6 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/20"></div>
+                )}
+                {step.status === "active" && (
+                  <div className="w-6 h-6 rounded-full bg-card border-2 border-emerald-400 ring-4 ring-emerald-400/20"></div>
+                )}
+                {step.status === "pending" && (
+                  <div className="w-6 h-6 rounded-full bg-card border-[3px] border-muted-foreground/20"></div>
+                )}
+              </div>
+              <span className={`text-[11px] font-bold text-center -mt-1 ${step.status === "completed" ? "text-emerald-600" :
+                  step.status === "active" ? "text-foreground" :
+                    "text-muted-foreground"
+                }`}>
+                {step.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+          
       {/* Modals */}
       {showRunModal && (
-        <RunPayrollModal 
-          onClose={() => setShowRunModal(false)} 
-          month={selectedMonth} 
-          year={selectedYear} 
+        <RunPayrollModal
+          onClose={() => setShowRunModal(false)}
+          month={selectedMonth}
+          year={selectedYear}
         />
       )}
 
       {selectedPayslipEmployee && (
-        <PayslipModal 
-          onClose={() => setSelectedPayslipEmployee(null)} 
+        <PayslipModal
+          onClose={() => setSelectedPayslipEmployee(null)}
           employee={selectedPayslipEmployee}
           month={selectedMonth}
           year={selectedYear}
@@ -720,7 +757,7 @@ export function Payroll() {
 
       {/* Floating Action Hint */}
       <div className="fixed bottom-8 right-8 z-50">
-        <button 
+        <button
           onClick={() => setShowRunModal(true)}
           className="group relative flex items-center justify-center w-16 h-16 bg-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all duration-300"
         >
