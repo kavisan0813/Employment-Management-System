@@ -18,7 +18,7 @@ import {
   MoreVertical,
   Printer,
   Mail,
-  User,
+  Edit2,
   Building2,
   Wallet
 } from "lucide-react";
@@ -31,6 +31,18 @@ const months = [
 
 const years = ["2024", "2025", "2026"];
 
+interface PayrollEmployee {
+  id: string;
+  name: string;
+  designation: string;
+  department: string;
+  status: string;
+  gross: number;
+  deductions: number;
+  net: number;
+  avatar: string;
+}
+
 /* ─── Payslip Modal ────────────────────── */
 function PayslipModal({
   onClose,
@@ -39,11 +51,11 @@ function PayslipModal({
   year
 }: {
   onClose: () => void;
-  employee: any;
+  employee: PayrollEmployee;
   month: string;
   year: string
 }) {
-  const [isPrinting, setIsPrinting] = useState(false);
+  const [, setIsPrinting] = useState(false);
 
   const handlePrint = () => {
     setIsPrinting(true);
@@ -362,6 +374,94 @@ function RunPayrollModal({ onClose, month, year }: { onClose: () => void; month:
   );
 }
 
+function EditPayrollModal({ employee, onClose }: { employee: PayrollEmployee, onClose: () => void }) {
+  const [gross, setGross] = useState(employee.gross.toString());
+  const [deductions, setDeductions] = useState(employee.deductions.toString());
+  const [status, setStatus] = useState(employee.status);
+  
+  const netPay = (parseFloat(gross) || 0) - (parseFloat(deductions) || 0);
+
+  return (
+   <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
+        style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between p-6 pb-4 border-b border-border/50">
+          <div>
+            <h2 className="text-lg font-black text-foreground">Edit Payroll Entry</h2>
+            <p className="text-sm text-muted-foreground">{employee.name}</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-muted rounded-xl transition-colors">
+            <X size={18} className="text-muted-foreground" />
+          </button>
+        </div>
+
+        <div className="p-6 flex flex-col gap-5">
+          <div>
+            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Gross Salary (₹)</label>
+            <input 
+              type="number" 
+              value={gross}
+              onChange={e => setGross(e.target.value)}
+              className="w-full border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 bg-transparent text-foreground"
+            />
+          </div>
+          
+          <div>
+            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Deductions (₹)</label>
+            <input 
+              type="number" 
+              value={deductions}
+              onChange={e => setDeductions(e.target.value)}
+              className="w-full border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 bg-transparent text-foreground"
+            />
+          </div>
+          
+          <div>
+            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Net Pay (₹)</label>
+            <div className="w-full border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/5 rounded-xl px-4 py-3 text-sm font-bold text-emerald-600">
+              ₹{netPay.toLocaleString()}
+            </div>
+          </div>
+          
+          <div>
+            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Status</label>
+            <select 
+              value={status}
+              onChange={e => setStatus(e.target.value)}
+              className="w-full border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 bg-transparent text-foreground"
+            >
+              <option value="Paid">Processed</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-border/50 flex gap-4 justify-center">
+          <button 
+            onClick={onClose}
+            className="w-1/2 py-3 border border-border text-foreground font-bold rounded-xl text-sm hover:bg-muted transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            onClick={onClose}
+            className="w-1/2 py-3 bg-emerald-600 text-white font-bold rounded-xl text-sm hover:bg-emerald-700 transition-colors"
+          >
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Payroll() {
   const [selectedMonth, setSelectedMonth] = useState("April");
   const [selectedYear, setSelectedYear] = useState("2026");
@@ -370,7 +470,17 @@ export function Payroll() {
   const [statusFilter, setStatusFilter] = useState<"All" | "Paid" | "Pending">("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showRunModal, setShowRunModal] = useState(false);
-  const [selectedPayslipEmployee, setSelectedPayslipEmployee] = useState<any | null>(null);
+  const [selectedPayslipEmployee, setSelectedPayslipEmployee] = useState<PayrollEmployee | null>(null);
+  const [editingEmployee, setEditingEmployee] = useState<PayrollEmployee | null>(null);
+
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [openActionId, setOpenActionId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const closeMenu = () => setOpenActionId(null);
+    document.addEventListener("click", closeMenu);
+    return () => document.removeEventListener("click", closeMenu);
+  }, []);
 
   // Filter logic
   const filteredEmployees = useMemo(() => {
@@ -538,7 +648,7 @@ export function Payroll() {
           {["All", "Paid", "Pending"].map((status) => (
             <button
               key={status}
-              onClick={() => setStatusFilter(status as any)}
+              onClick={() => setStatusFilter(status as "All" | "Paid" | "Pending")}
               className={`flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold transition-all ${statusFilter === status
                   ? "bg-white dark:bg-[#04100D] text-emerald-500 shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
@@ -560,9 +670,14 @@ export function Payroll() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <button className="p-2.5 rounded-xl border border-border text-muted-foreground hover:bg-muted/50 transition-colors">
-            <Filter size={18} />
-          </button>
+          <div className="relative">
+            <button 
+              onClick={(e) => { e.stopPropagation(); setIsFilterOpen(!isFilterOpen); }}
+              className={`p-2.5 rounded-xl border transition-colors ${isFilterOpen ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' : 'border-border text-muted-foreground hover:bg-muted/50'}`}
+            >
+              <Filter size={18} />
+            </button>
+          </div>
           <button
             onClick={() => {
               const headers = ["ID", "Name", "Department", "Gross", "Deductions", "Net Pay", "Status"];
@@ -582,6 +697,46 @@ export function Payroll() {
           </button>
         </div>
       </div>
+
+      {/* Expanded Filter Panel */}
+      {isFilterOpen && (
+        <div className="bg-card border border-border rounded-3xl p-5 mb-6 shadow-sm animate-in slide-in-from-top-2" onClick={e => e.stopPropagation()}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="text-[10px] font-bold text-muted-foreground mb-1.5 block uppercase tracking-wider">Department</label>
+              <select className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-foreground">
+                <option>All Departments</option>
+                <option>Engineering</option>
+                <option>Design</option>
+                <option>Sales</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] font-bold text-muted-foreground mb-1.5 block uppercase tracking-wider">Pay Range</label>
+              <select className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-foreground">
+                <option>All Ranges</option>
+                <option>₹0 - ₹50,000</option>
+                <option>₹50,000 - ₹100,000</option>
+                <option>₹100,000+</option>
+              </select>
+            </div>
+            <div className="flex items-end gap-3">
+              <button 
+                onClick={() => setIsFilterOpen(false)}
+                className="px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-sm hover:opacity-90 transition-all flex-1"
+              >
+                Apply Filters
+              </button>
+              <button 
+                onClick={() => setIsFilterOpen(false)}
+                className="px-6 py-2.5 bg-muted border border-border font-bold rounded-xl text-sm hover:bg-background transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Table Container */}
       <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
@@ -670,9 +825,29 @@ export function Payroll() {
                         >
                           <Download size={16} />
                         </button>
-                        <button className="p-2 rounded-xl text-muted-foreground hover:bg-muted/50 transition-colors">
-                          <MoreVertical size={16} />
-                        </button>
+                        <div className="relative">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setOpenActionId(openActionId === emp.id ? null : emp.id); }}
+                            className="p-2 rounded-xl text-muted-foreground hover:bg-muted/50 transition-colors"
+                          >
+                            <MoreVertical size={16} />
+                          </button>
+                          {openActionId === emp.id && (
+                            <div className="absolute right-0 top-full mt-2 w-44 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+                              <button onClick={() => { setOpenActionId(null); setEditingEmployee(emp); }} className="w-full text-left px-4 py-3 text-sm text-slate-800 dark:text-slate-200 hover:bg-muted/50 transition-colors flex items-center gap-2 font-medium">
+                                <Edit2 size={16} className="text-slate-600 dark:text-slate-400" /> Edit
+                              </button>
+                              <button onClick={() => setOpenActionId(null)} className="w-full text-left px-4 py-3 text-sm text-slate-800 dark:text-slate-200 hover:bg-muted/50 transition-colors flex items-center gap-2 font-medium">
+                                <Mail size={16} className="text-slate-600 dark:text-slate-400" /> Email Payslip
+                              </button>
+                              <div className="bg-orange-50 dark:bg-orange-950/20 border-t border-border/50">
+                                <button onClick={() => setOpenActionId(null)} className="w-full text-left px-4 py-3 text-sm text-amber-600 hover:bg-amber-500/10 transition-colors flex items-center gap-2 font-medium">
+                                  <AlertCircle size={16} className="text-amber-600" /> Hold Payment
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -752,6 +927,13 @@ export function Payroll() {
           employee={selectedPayslipEmployee}
           month={selectedMonth}
           year={selectedYear}
+        />
+      )}
+
+      {editingEmployee && (
+        <EditPayrollModal
+          employee={editingEmployee}
+          onClose={() => setEditingEmployee(null)}
         />
       )}
 
