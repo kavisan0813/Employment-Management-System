@@ -10,9 +10,12 @@ export interface Candidate {
   type: string;
   location: string;
   rating: number;
+  source: "LinkedIn" | "Indeed" | "Referral";
+  interviewerAvatars: string[];
+  interviewDate?: string;
 }
 
-export type Stage = "Applied" | "Screening" | "Interview" | "Offer Sent" | "Hired";
+export type Stage = "Applied" | "Screening" | "Round 1" | "Round 2" | "Offer" | "Hired";
 
 interface RecruitmentContextType {
   recruitmentPipeline: Record<Stage, Candidate[]>;
@@ -27,8 +30,9 @@ export const RecruitmentProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [pipeline, setPipeline] = useState<Record<Stage, Candidate[]>>({
     Applied: [],
     Screening: [],
-    Interview: [],
-    "Offer Sent": [],
+    "Round 1": [],
+    "Round 2": [],
+    Offer: [],
     Hired: [],
   });
 

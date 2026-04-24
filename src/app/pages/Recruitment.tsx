@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Plus, MessageSquare, Calendar, ChevronRight, Star, X, Briefcase,
-  MapPin, DollarSign, ChevronDown, Users, Send, Clock, CheckCircle,
-  Trash2, ArrowRight, AlertTriangle, Search, Filter,
+  MapPin, IndianRupee, ChevronDown, Users, Send, Clock, CheckCircle,
+  Trash2, AlertTriangle, Search, Filter,
   Bell, CheckCircle2, AlertCircle, Info, XCircle,
 } from "lucide-react";
 import { recruitmentPipeline } from "../data/mockData";
@@ -10,16 +10,17 @@ import { useRecruitment } from "../context/AppContext";
 import type { Candidate as ContextCandidate } from "../context/AppContext";
 
 /* ─── Types ──────────────────────────────────────────────── */
-type Stage = "Applied" | "Screening" | "Interview" | "Offer Sent" | "Hired";
+type Stage = "Applied" | "Screening" | "Round 1" | "Round 2" | "Offer" | "Hired";
+type Source = "LinkedIn" | "Indeed" | "Referral";
 type ToastKind = "success" | "error" | "info" | "warning";
 
-const STAGES: Stage[] = ["Applied", "Screening", "Interview", "Offer Sent", "Hired"];
-const OVERLOAD = 10;
+const STAGES: Stage[] = ["Applied", "Screening", "Round 1", "Round 2", "Offer", "Hired"];
 
 interface Candidate {
   id: string; name: string; role: string; date: string;
   avatar: string | null; initials: string; type: string;
-  location: string; rating: number;
+  location: string; rating: number; source: Source;
+  interviewerAvatars: string[]; interviewDate?: string;
 }
 interface ScheduledInterview {
   id: string; candidateId: string; candidateName: string;
@@ -56,7 +57,12 @@ function useEscapeKey(fn: () => void, active = true) {
 }
 
 /* ─── Toast UI ───────────────────────────────────────────── */
-function ToastContainer({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id: string) => void }) {
+interface ToastContainerProps {
+  toasts: Toast[];
+  onDismiss: (id: string) => void;
+}
+
+function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
   const cfg: Record<ToastKind, { bg: string; border: string; color: string; icon: React.ReactNode }> = {
     success: { bg: "rgba(16,185,129,.13)", border: "rgba(16,185,129,.3)", color: "#10B981", icon: <CheckCircle2 size={14} /> },
     error: { bg: "rgba(239,68,68,.13)", border: "rgba(239,68,68,.3)", color: "#EF4444", icon: <XCircle size={14} /> },
@@ -82,12 +88,25 @@ function ToastContainer({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id
 }
 
 /* ─── Search & Filter Bar ────────────────────────────────── */
-function SearchFilterBar({ query, onQueryChange, locationFilter, onLocationChange, typeFilter, onTypeChange, resultCount }: {
-  query: string; onQueryChange: (v: string) => void;
-  locationFilter: string; onLocationChange: (v: string) => void;
-  typeFilter: string; onTypeChange: (v: string) => void;
+interface SearchFilterBarProps {
+  query: string;
+  onQueryChange: (v: string) => void;
+  locationFilter: string;
+  onLocationChange: (v: string) => void;
+  typeFilter: string;
+  onTypeChange: (v: string) => void;
   resultCount: number;
-}) {
+}
+
+function SearchFilterBar({ 
+  query, 
+  onQueryChange, 
+  locationFilter, 
+  onLocationChange, 
+  typeFilter, 
+  onTypeChange, 
+  resultCount 
+}: SearchFilterBarProps) {
   const [open, setOpen] = useState(false);
   const hasFilter = locationFilter !== "All" || typeFilter !== "All";
 
@@ -110,7 +129,11 @@ function SearchFilterBar({ query, onQueryChange, locationFilter, onLocationChang
         <button
           onClick={() => setOpen((v) => !v)}
           className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all"
-          style={{ backgroundColor: open || hasFilter ? "var(--primary)" : "var(--card)", color: open || hasFilter ? "white" : "var(--foreground)", border: "1.5px solid var(--border)" }}
+          style={{ 
+            backgroundColor: open || hasFilter ? "var(--primary)" : "var(--card)", 
+            color: open || hasFilter ? "white" : "var(--foreground)", 
+            border: "1.5px solid var(--border)" 
+          }}
         >
           <Filter size={13} />
           Filters
@@ -145,7 +168,6 @@ function SearchFilterBar({ query, onQueryChange, locationFilter, onLocationChang
     </div>
   );
 }
-
 /* ─── Upcoming Interviews Panel ──────────────────────────── */
 function UpcomingInterviewsPanel({ interviews, onDismiss }: { interviews: ScheduledInterview[]; onDismiss: (id: string) => void }) {
   if (!interviews.length) return null;
@@ -187,12 +209,14 @@ function OpenPositionsModal({ jobs, onClose }: { jobs: JobPosting[]; onClose: ()
           </div>
           <button onClick={onClose} className="p-2 rounded-xl" style={{ color: "var(--muted-foreground)" }}><X size={16} /></button>
         </div>
-        <div className="overflow-y-auto p-6 space-y-3" style={{ maxHeight: "calc(80vh - 80px)" }}>
+        <div className="overflow-y-auto p-12 space-y-3" style={{ maxHeight: "calc(80vh - 80px)" }}>
           {jobs.length === 0 && (
-            <div className="text-center py-12">
-              <Briefcase size={36} style={{ color: "var(--border)", margin: "0 auto 12px" }} />
-              <p style={{ color: "var(--muted-foreground)", fontSize: 14 }}>No open positions yet.</p>
-              <p style={{ color: "var(--muted-foreground)", fontSize: 12, marginTop: 4 }}>Click "Post a Job" to create your first listing.</p>
+            <div className="flex flex-col items-center justify-center text-center py-12">
+              <div className="w-20 h-20 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-200 mb-6">
+                <Briefcase size={40} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-2">No open positions yet.</h3>
+              <p className="text-slate-500 font-medium">Click "Post a Job" to create your first listing.</p>
             </div>
           )}
           {jobs.map((job) => (
@@ -247,70 +271,6 @@ function DeleteConfirmDialog({ candidate, onConfirm, onCancel }: { candidate: Ca
   );
 }
 
-/* ─── Candidate Detail Modal ─────────────────────────────── */
-function CandidateDetailModal({ candidate, stage, nextStage, onClose, onMoveNext, interviews }: {
-  candidate: Candidate; stage: Stage; nextStage: Stage | null;
-  onClose: () => void; onMoveNext: (() => void) | null; interviews: ScheduledInterview[];
-}) {
-  useEscapeKey(onClose);
-  const ivs = interviews.filter((iv) => iv.candidateId === candidate.id);
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.45)" }} onClick={onClose}>
-      <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }} onClick={(e) => e.stopPropagation()}>
-        <div className="relative px-6 pt-6 pb-4" style={{ borderBottom: "1px solid var(--border)" }}>
-          <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-xl transition-colors" style={{ color: "var(--muted-foreground)" }}
-            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.backgroundColor = "var(--secondary)")}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.backgroundColor = "transparent")}><X size={16} /></button>
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: "var(--secondary)", border: "2px solid var(--border)" }}>
-              <span style={{ color: "var(--primary)", fontSize: 18, fontWeight: 700 }}>{candidate.initials}</span>
-            </div>
-            <div>
-              <h3 style={{ color: "var(--foreground)", fontSize: 18, fontWeight: 800 }}>{candidate.name}</h3>
-              <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>{candidate.role}</p>
-              <span className="inline-block mt-1 px-3 py-0.5 rounded-full text-[11px] font-bold" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", border: "1px solid var(--border)" }}>{stage}</span>
-            </div>
-          </div>
-        </div>
-        <div className="px-6 py-5 space-y-3">
-          {[["Applied Date", candidate.date], ["Location", candidate.location || "Remote"], ["Employment Type", candidate.type || "Full-time"]].map(([label, value]) => (
-            <div key={label} className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid var(--border)" }}>
-              <span style={{ color: "var(--muted-foreground)", fontSize: 13 }}>{label}</span>
-              <span style={{ color: "var(--foreground)", fontSize: 13, fontWeight: 600 }}>{value}</span>
-            </div>
-          ))}
-          <div className="flex items-center justify-between py-2" style={{ borderBottom: "1px solid var(--border)" }}>
-            <span style={{ color: "var(--muted-foreground)", fontSize: 13 }}>Rating</span>
-            <div className="flex gap-0.5">
-              {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} fill={s <= candidate.rating ? "var(--primary)" : "transparent"} color={s <= candidate.rating ? "var(--primary)" : "var(--border)"} />)}
-            </div>
-          </div>
-          {ivs.length > 0 && (
-            <div className="pt-1">
-              <p style={{ color: "var(--muted-foreground)", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>Scheduled Interviews</p>
-              <div className="space-y-2">
-                {ivs.map((iv) => (
-                  <div key={iv.id} className="flex items-center gap-2 py-2 px-3 rounded-xl" style={{ backgroundColor: "var(--secondary)" }}>
-                    <Clock size={11} style={{ color: "var(--primary)" }} />
-                    <span style={{ color: "var(--foreground)", fontSize: 12, fontWeight: 600 }}>{iv.date} · {iv.time}</span>
-                    <span style={{ color: "var(--muted-foreground)", fontSize: 11 }}>· {iv.type}{iv.interviewer ? ` · ${iv.interviewer}` : ""}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="px-6 pb-6 flex gap-3" style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
-          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl text-sm font-semibold" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>Close</button>
-          {onMoveNext
-            ? <button onClick={() => { onMoveNext(); onClose(); }} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2" style={{ background: "var(--primary)", boxShadow: "0 4px 12px rgba(5,150,105,.35)" }}><ArrowRight size={14} />Move to {nextStage}</button>
-            : <button disabled className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white opacity-40 cursor-not-allowed" style={{ background: "var(--primary)" }}>Already Hired</button>
-          }
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* ─── Message Modal ──────────────────────────────────────── */
 function MessageModal({ candidate, onClose }: { candidate: Candidate; onClose: () => void }) {
@@ -416,7 +376,19 @@ function AddCandidateModal({ stage, onClose, onAdd }: { stage: Stage; onClose: (
     if (!form.name.trim()) { setError("Name is required"); return; }
     if (!form.role.trim()) { setError("Job role is required"); return; }
     const initials = form.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
-    onAdd(stage, { id: `C${Date.now()}`, name: form.name.trim(), role: form.role.trim(), date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }), avatar: null, initials, type: form.type, location: form.location, rating: 3 });
+    onAdd(stage, { 
+      id: `C${Date.now()}`, 
+      name: form.name.trim(), 
+      role: form.role.trim(), 
+      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }), 
+      avatar: null, 
+      initials, 
+      type: form.type, 
+      location: form.location, 
+      rating: 3,
+      source: "LinkedIn",
+      interviewerAvatars: []
+    });
     onClose();
   };
 
@@ -534,7 +506,7 @@ function PostJobModal({ onClose, onPost }: { onClose: () => void; onPost: (j: Om
             </div>
             {field("Experience", "experience", "e.g. 3-5 years")}
           </div>
-          {field("Salary Range", "salary", "e.g. ₹80,000 – ₹1,20,000", <DollarSign size={13} />)}
+          {field("Salary Range", "salary", "e.g. ₹80,000 – ₹1,20,000", <IndianRupee size={13} />)}
           <div>
             <label style={{ color: "var(--foreground)", fontSize: 12, fontWeight: 600 }}>Job Description</label>
             <textarea rows={3} className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none resize-none" style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)" }} placeholder="Brief description of the role and responsibilities…" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
@@ -569,70 +541,529 @@ function StarRating({ value, onChange, size = 12 }: { value: number; onChange?: 
 }
 
 /* ─── Candidate Card ─────────────────────────────────────── */
-function CandidateCard({ candidate, onMessage, onSchedule, onDetail, onDelete, onMoveNext, onRatingChange, nextStage, onDragStart, interviewCount }: {
-  candidate: Candidate; stage: Stage; nextStage: Stage | null; interviewCount: number;
-  onMessage: () => void; onSchedule: () => void; onDetail: () => void;
-  onDelete: () => void; onMoveNext: () => void; onRatingChange: (v: number) => void;
+function CandidateCard({ candidate, onSchedule, onDetail, onDelete, onMoveNext, nextStage, onDragStart }: {
+  candidate: Candidate; nextStage: Stage | null;
+  onSchedule: () => void; onDetail: () => void;
+  onDelete: () => void; onMoveNext: () => void;
   onDragStart: (e: React.DragEvent) => void;
 }) {
   const [hovered, setHovered] = useState(false);
+
+  const sourceStyles: Record<Source, { bg: string; text: string }> = {
+    LinkedIn: { bg: "#DCFCE7", text: "#00B87C" },
+    Indeed: { bg: "#E0F2FE", text: "#0EA5E9" },
+    Referral: { bg: "#EDE9FE", text: "#8B5CF6" },
+  };
+
+  const currentSource = sourceStyles[candidate.source || "LinkedIn"];
+
   return (
     <div
       draggable
       onDragStart={onDragStart}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="rounded-[24px] p-5 cursor-grab active:cursor-grabbing transition-all"
-      style={{ backgroundColor: hovered ? "var(--secondary)" : "var(--card)", border: hovered ? "1.5px solid var(--primary)" : "1.5px solid var(--border)", boxShadow: hovered ? "0 6px 24px rgba(16,185,129,.18)" : "0 1px 4px rgba(0,0,0,.04)", transform: hovered ? "translateY(-2px)" : "translateY(0)" }}
+      className="rounded-xl shadow-sm p-4 cursor-grab active:cursor-grabbing transition-all border"
+      style={{ 
+        backgroundColor: "var(--card)",
+        boxShadow: hovered ? "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)" : "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)",
+        borderColor: hovered ? "var(--primary)" : "var(--border)"
+      }}
     >
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "var(--secondary)", border: "1px solid var(--border)" }}>
-          <span style={{ color: "var(--primary)", fontSize: 12, fontWeight: 700 }}>{candidate.initials}</span>
-        </div>
-        <div className="flex-1 min-w-0">
-          <h4 style={{ color: "var(--foreground)", fontSize: 14, fontWeight: 700 }} className="truncate">{candidate.name}</h4>
-          <p style={{ color: "var(--muted-foreground)", fontSize: 12 }} className="truncate">{candidate.role}</p>
-        </div>
-        {interviewCount > 0 && (
-          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0" style={{ backgroundColor: "rgba(59,130,246,.12)", color: "#3B82F6", border: "1px solid rgba(59,130,246,.25)" }}>
-            <Clock size={9} />{interviewCount}
-          </span>
-        )}
+      <div className="flex justify-between items-start mb-1">
+        <h4 className="truncate text-[14px] font-bold" style={{ color: "var(--foreground)" }}>{candidate.name}</h4>
+        <span 
+          className="px-2 py-0.5 rounded-full text-[10px] font-bold"
+          style={{ backgroundColor: currentSource.bg, color: currentSource.text }}
+        >
+          {candidate.source || "LinkedIn"}
+        </span>
       </div>
-      <div className="flex flex-wrap gap-2 mb-4">
-        {[candidate.date.split(",")[0], candidate.location || "Remote", candidate.type || "Full-time"].map((tag, i) => (
-          <span key={i} className="px-2.5 py-1 rounded-full text-[10px] font-bold" style={{ backgroundColor: "var(--secondary)", color: i === 0 ? "var(--primary)" : "var(--muted-foreground)", border: "1px solid var(--border)" }}>{tag}</span>
+      
+      <p className="mb-3 truncate text-[13px]" style={{ color: "var(--muted-foreground)" }}>{candidate.role}</p>
+
+      <div className="flex items-center gap-1.5 mb-3">
+        <Calendar size={12} style={{ color: "var(--muted-foreground)" }} />
+        <span className="text-[12px]" style={{ color: "var(--muted-foreground)" }}>Applied 2 days ago</span>
+      </div>
+
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-1">
+          <StarRating value={candidate.rating} size={12} />
+          <span className="text-[12px] font-bold text-amber-500 ml-1">{candidate.rating.toFixed(1)}</span>
+        </div>
+        
+        <div className="flex -space-x-2">
+          {(candidate.interviewerAvatars || []).slice(0, 3).map((av, i) => (
+            <div key={i} className="w-6 h-6 rounded-full border-2 bg-slate-100 overflow-hidden" style={{ borderColor: "var(--card)" }}>
+              <img src={av} alt="" className="w-full h-full object-cover" />
+            </div>
+          ))}
+          {(candidate.interviewerAvatars || []).length > 3 && (
+            <div className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-[10px] font-bold" style={{ borderColor: "var(--card)", backgroundColor: "var(--secondary)", color: "var(--muted-foreground)" }}>
+              +{(candidate.interviewerAvatars || []).length - 3}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {candidate.interviewDate && (
+        <div className="mb-4">
+          <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 w-fit" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>
+            <Clock size={12} />
+            {candidate.interviewDate}
+          </span>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between pt-3 border-t" style={{ borderColor: "var(--border)" }}>
+        <div className="flex gap-3">
+          <button onClick={onDetail} className="text-[13px] font-semibold transition-colors hover:opacity-70" style={{ color: "var(--muted-foreground)" }}>View</button>
+          <button onClick={onSchedule} className="text-[13px] font-semibold transition-colors hover:opacity-70" style={{ color: "var(--primary)" }}>Schedule</button>
+        </div>
+        <div className="flex items-center gap-2">
+          {nextStage && (
+            <button 
+              onClick={(e) => { e.stopPropagation(); onMoveNext(); }} 
+              className="text-[13px] font-bold flex items-center gap-1 transition-all hover:opacity-80" 
+              style={{ color: "#00B87C" }}
+            >
+              Move →
+            </button>
+          )}
+          <button 
+            onClick={(e) => { e.stopPropagation(); onDelete(); }} 
+            className="p-1.5 rounded-lg transition-all"
+            style={{ color: "var(--muted-foreground)" }}
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Candidate Detail Side Panel ────────────────────────── */
+function CandidateDetailSidePanel({ candidate, stage, onClose }: { candidate: Candidate; stage: Stage; onClose: () => void }) {
+  const steps: Stage[] = ["Applied", "Screening", "Round 1", "Round 2", "Offer", "Hired"];
+  const currentIdx = steps.indexOf(stage);
+
+  return (
+    <>
+      <div className="fixed inset-0 z-[100]" style={{ backgroundColor: "rgba(0,0,0,0.3)", backdropFilter: "blur(4px)" }} onClick={onClose} />
+      <div className="fixed top-0 right-0 bottom-0 w-[400px] z-[101] shadow-2xl flex flex-col transform transition-transform duration-300" style={{ backgroundColor: "var(--card)", borderLeft: "1px solid var(--border)" }}>
+        <div className="p-6 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
+          <h2 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Candidate Details</h2>
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center transition-colors" style={{ color: "var(--muted-foreground)" }}>
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-8">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-20 h-20 rounded-2xl overflow-hidden mb-4 border-4" style={{ backgroundColor: "var(--secondary)", borderColor: "var(--secondary)" }}>
+              {candidate.avatar ? (
+                <img src={candidate.avatar} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-2xl font-black" style={{ color: "var(--primary)" }}>
+                  {candidate.initials}
+                </div>
+              )}
+            </div>
+            <h3 className="text-xl font-black mb-1" style={{ color: "var(--foreground)" }}>{candidate.name}</h3>
+            <p className="text-sm font-bold mb-3" style={{ color: "var(--muted-foreground)" }}>{candidate.role}</p>
+            <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>
+              {candidate.source || "LinkedIn"}
+            </span>
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <h4 className="text-[11px] font-black uppercase tracking-widest mb-4" style={{ color: "var(--muted-foreground)" }}>Contact Information</h4>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 text-sm font-bold" style={{ color: "var(--foreground)" }}>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "var(--secondary)", color: "var(--muted-foreground)" }}>
+                    <Send size={14} />
+                  </div>
+                  {candidate.name.toLowerCase().replace(" ", ".")}@example.com
+                </div>
+                <div className="flex items-center gap-3 text-sm font-bold" style={{ color: "var(--foreground)" }}>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "var(--secondary)", color: "var(--muted-foreground)" }}>
+                    <MessageSquare size={14} />
+                  </div>
+                  +1 (555) 000-0000
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-[11px] font-black uppercase tracking-widest mb-4" style={{ color: "var(--muted-foreground)" }}>Hiring Progress</h4>
+              <div className="relative pl-6 space-y-6">
+                <div className="absolute left-[7px] top-2 bottom-2 w-0.5" style={{ backgroundColor: "var(--border)" }} />
+                {steps.map((step, i) => (
+                  <div key={step} className="relative flex items-center gap-4">
+                    <div className={`absolute -left-[23px] w-4 h-4 rounded-full border-2 shadow-sm z-10 ${
+                      i <= currentIdx ? "bg-emerald-500" : ""
+                    }`} style={{ borderColor: "var(--card)", backgroundColor: i <= currentIdx ? "var(--primary)" : "var(--border)" }} />
+                    <span className="text-sm font-bold" style={{ color: i <= currentIdx ? "var(--foreground)" : "var(--muted-foreground)" }}>
+                      {step}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-[11px] font-black uppercase tracking-widest mb-4" style={{ color: "var(--muted-foreground)" }}>Interview Feedback</h4>
+              <div className="rounded-2xl p-4" style={{ backgroundColor: "var(--secondary)", border: "1px solid var(--border)" }}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-bold" style={{ color: "var(--foreground)" }}>Overall Rating</span>
+                  <StarRating value={candidate.rating} size={16} />
+                </div>
+                <p className="text-xs font-medium italic" style={{ color: "var(--muted-foreground)" }}>"Strong technical skills, excellent communication, and clear cultural fit."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t space-y-3" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+          <div className="flex items-center justify-between px-1">
+            <span className="text-sm font-bold" style={{ color: "var(--foreground)" }}>Current Stage</span>
+            <button className="text-sm font-black flex items-center gap-1" style={{ color: "var(--primary)" }}>
+              Move to Stage <ChevronDown size={14} />
+            </button>
+          </div>
+          <button className="w-full py-4 rounded-2xl text-white font-black shadow-xl hover:opacity-90 transition-all uppercase tracking-wider text-xs" style={{ backgroundColor: "var(--primary)", boxShadow: "0 4px 12px rgba(16,185,129,0.3)" }}>
+            Send Offer
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ─── Candidates View ────────────────────────────────────── */
+function CandidatesView({ candidates, onDetail, onSchedule, onMessage }: { 
+  candidates: Candidate[]; 
+  onDetail: (c: Candidate) => void;
+  onSchedule: (c: Candidate) => void;
+  onMessage: (c: Candidate) => void;
+}) {
+  return (
+    <div className="rounded-3xl shadow-sm border overflow-hidden" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+      <table className="w-full">
+        <thead>
+          <tr className="border-b" style={{ backgroundColor: "var(--secondary)", borderColor: "var(--border)" }}>
+            {["Candidate", "Role", "Applied Date", "Location", "Source", "Rating", ""].map((h) => (
+              <th key={h} className="px-8 py-5 text-left text-[11px] font-black uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
+          {candidates.map((c) => (
+            <tr key={c.id} className="transition-all cursor-pointer group hover:opacity-80" style={{ backgroundColor: "var(--card)" }} onClick={() => onDetail(c)}>
+              <td className="px-8 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center font-black text-xs border" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", borderColor: "var(--border)" }}>
+                    {c.avatar ? <img src={c.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : c.initials}
+                  </div>
+                  <div>
+                    <p className="text-sm font-black" style={{ color: "var(--foreground)" }}>{c.name}</p>
+                    <p className="text-[11px] font-bold uppercase tracking-tight" style={{ color: "var(--muted-foreground)" }}>{c.type}</p>
+                  </div>
+                </div>
+              </td>
+              <td className="px-8 py-4 text-sm font-bold" style={{ color: "var(--foreground)" }}>{c.role}</td>
+              <td className="px-8 py-4 text-sm font-bold" style={{ color: "var(--muted-foreground)" }}>{c.date}</td>
+              <td className="px-8 py-4 text-sm font-bold" style={{ color: "var(--muted-foreground)" }}>{c.location}</td>
+              <td className="px-8 py-4">
+                <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${
+                  c.source === "LinkedIn" ? "bg-blue-50 text-blue-600" : 
+                  c.source === "Indeed" ? "bg-indigo-50 text-indigo-600" : "bg-purple-50 text-purple-600"
+                }`}>
+                  {c.source}
+                </span>
+              </td>
+              <td className="px-8 py-4">
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={12} fill={s <= c.rating ? "#F59E0B" : "transparent"} color={s <= c.rating ? "#F59E0B" : "var(--border)"} />)}
+                </div>
+              </td>
+              <td className="px-8 py-4 text-right">
+                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={(e) => { e.stopPropagation(); onMessage(c); }} className="p-2 rounded-lg transition-all" style={{ color: "var(--muted-foreground)" }}><MessageSquare size={16} /></button>
+                  <button onClick={(e) => { e.stopPropagation(); onSchedule(c); }} className="p-2 rounded-lg transition-all" style={{ color: "var(--muted-foreground)" }}><Calendar size={16} /></button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* ─── Interviews View ────────────────────────────────────── */
+function InterviewsView({ interviews, onDismiss }: { interviews: ScheduledInterview[]; onDismiss: (id: string) => void }) {
+  if (interviews.length === 0) {
+    return (
+      <div className="rounded-3xl p-20 flex flex-col items-center justify-center border shadow-sm" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+        <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6" style={{ backgroundColor: "var(--secondary)", color: "var(--muted-foreground)" }}>
+          <Calendar size={40} />
+        </div>
+        <h3 className="text-xl font-bold mb-2" style={{ color: "var(--foreground)" }}>No Scheduled Interviews</h3>
+        <p className="max-w-sm text-center font-medium" style={{ color: "var(--muted-foreground)" }}>When you schedule interviews with candidates, they will appear here.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-6">
+        <h3 className="text-sm font-black uppercase tracking-widest px-1" style={{ color: "var(--muted-foreground)" }}>Upcoming Interviews</h3>
+        {interviews.map((iv) => (
+          <div key={iv.id} className="p-6 rounded-[24px] shadow-sm border group transition-all" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl flex items-center justify-center font-black" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>
+                  {iv.candidateInitials}
+                </div>
+                <div>
+                  <h4 className="text-sm font-black" style={{ color: "var(--foreground)" }}>{iv.candidateName}</h4>
+                  <p className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>{iv.role}</p>
+                </div>
+              </div>
+              <button onClick={() => onDismiss(iv.id)} className="p-2 rounded-xl transition-all" style={{ color: "var(--muted-foreground)" }}><X size={16} /></button>
+            </div>
+            <div className="flex flex-wrap gap-4 items-center pt-4 border-t" style={{ borderColor: "var(--border)" }}>
+              <div className="flex items-center gap-2 text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>
+                <Calendar size={14} className="text-emerald-500" />
+                {iv.date}
+              </div>
+              <div className="flex items-center gap-2 text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>
+                <Clock size={14} className="text-emerald-500" />
+                {iv.time}
+              </div>
+              <div className="flex items-center gap-2 text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>
+                <MapPin size={14} className="text-emerald-500" />
+                {iv.type}
+              </div>
+            </div>
+            <button className="w-full mt-5 py-3 rounded-xl font-black text-[11px] uppercase tracking-wider transition-all" style={{ backgroundColor: "var(--secondary)", color: "var(--foreground)" }}>
+              Join Interview Call
+            </button>
+          </div>
         ))}
       </div>
-      <div className="flex items-center justify-between mt-2 pt-2">
-        <StarRating value={candidate.rating} onChange={onRatingChange} size={13} />
-        <div className="flex items-center gap-3" style={{ color: "var(--muted-foreground)" }}>
-          {[
-            { icon: <MessageSquare size={14} />, action: onMessage, hoverColor: "var(--primary)" },
-            { icon: <Calendar size={14} />, action: onSchedule, hoverColor: "var(--primary)" },
-            { icon: <Trash2 size={14} />, action: onDelete, hoverColor: "#EF4444" },
-          ].map(({ icon, action, hoverColor }, i) => (
-            <span key={i} style={{ cursor: "pointer", display: "flex" }}
-              onClick={(e) => { e.stopPropagation(); action(); }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = hoverColor; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--muted-foreground)"; }}
-            >{icon}</span>
+      <div className="rounded-3xl border p-8" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+        <h3 className="text-sm font-black mb-6" style={{ color: "var(--foreground)" }}>Calendar Preview</h3>
+        <div className="grid grid-cols-7 gap-2">
+          {["S", "M", "T", "W", "T", "F", "S"].map((d) => <div key={d} className="h-8 flex items-center justify-center text-[10px] font-black text-slate-400">{d}</div>)}
+          {Array.from({ length: 31 }).map((_, i) => (
+            <div key={i} className={`h-10 rounded-xl flex items-center justify-center text-xs font-bold transition-all cursor-pointer ${
+              i + 1 === 24 ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200" : ""
+            }`} style={{ color: i + 1 === 24 ? "white" : "var(--foreground)" }}>
+              {i + 1}
+              {i + 1 === 24 && <div className="absolute w-1 h-1 bg-white rounded-full mt-5" />}
+            </div>
           ))}
-          <ChevronRight size={16} style={{ color: "var(--primary)", cursor: "pointer" }} onClick={(e) => { e.stopPropagation(); onDetail(); }} />
+        </div>
+        <div className="mt-8 space-y-4">
+          <h4 className="text-xs font-black uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>Today's Schedule</h4>
+          <div className="p-4 rounded-2xl border" style={{ backgroundColor: "var(--secondary)", borderColor: "var(--border)" }}>
+            <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: "var(--primary)" }}>10:30 AM - 11:30 AM</p>
+            <p className="text-sm font-black" style={{ color: "var(--foreground)" }}>Technical Interview: Sarah Wilson</p>
+          </div>
         </div>
       </div>
-      {nextStage && (
-        <button onClick={(e) => { e.stopPropagation(); onMoveNext(); }} className="w-full mt-3 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all hover:opacity-80" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)", border: "1px solid var(--border)" }}>
-          <ArrowRight size={12} />Move to {nextStage}
-        </button>
-      )}
+    </div>
+  );
+}
+
+/* ─── Analytics View ─────────────────────────────────────── */
+function AnalyticsView() {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="p-8 rounded-3xl border shadow-sm col-span-2" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h3 className="text-lg font-black" style={{ color: "var(--foreground)" }}>Hiring Funnel</h3>
+              <p className="text-sm font-bold" style={{ color: "var(--muted-foreground)" }}>Candidate conversion rates per stage</p>
+            </div>
+            <select className="px-4 py-2 rounded-xl border-none text-xs font-black outline-none" style={{ backgroundColor: "var(--secondary)", color: "var(--foreground)" }}>
+              <option>Last 30 Days</option>
+              <option>Last 6 Months</option>
+            </select>
+          </div>
+          <div className="space-y-6">
+            {[
+              { stage: "Applied", count: 284, color: "#10B981" },
+              { stage: "Screening", count: 142, color: "#14B8A6" },
+              { stage: "Interview", count: 68, color: "#0EA5E9" },
+              { stage: "Offer", count: 12, color: "#8B5CF6" },
+              { stage: "Hired", count: 8, color: "#D946EF" },
+            ].map((f, i, arr) => (
+              <div key={f.stage} className="space-y-2">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-xs font-black" style={{ color: "var(--foreground)" }}>{f.stage}</span>
+                  <span className="text-xs font-black" style={{ color: "var(--foreground)" }}>{f.count} candidates</span>
+                </div>
+                <div className="h-4 bg-slate-50 rounded-full overflow-hidden relative">
+                  <div className="h-full rounded-full transition-all duration-1000" style={{ 
+                    width: `${(f.count / arr[0].count) * 100}%`,
+                    backgroundColor: f.color,
+                    boxShadow: `0 4px 12px ${f.color}33`
+                  }} />
+                  {i > 0 && (
+                    <div className="absolute right-0 top-0 h-full flex items-center pr-3 text-[10px] font-black text-slate-400">
+                      {Math.round((f.count / arr[i-1].count) * 100)}% conversion
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="p-8 rounded-3xl border shadow-sm" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+          <h3 className="text-lg font-black mb-8" style={{ color: "var(--foreground)" }}>Source Distribution</h3>
+          <div className="flex flex-col items-center justify-center py-4">
+            <div className="relative w-48 h-48 mb-8">
+              <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
+                <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="#F1F5F9" strokeWidth="3.5" />
+                <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="#10B981" strokeWidth="3.5" strokeDasharray="60 100" strokeLinecap="round" />
+                <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="#0EA5E9" strokeWidth="3.5" strokeDasharray="25 100" strokeDashoffset="-60" strokeLinecap="round" />
+                <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="#8B5CF6" strokeWidth="3.5" strokeDasharray="15 100" strokeDashoffset="-85" strokeLinecap="round" />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-2xl font-black" style={{ color: "var(--foreground)" }}>284</span>
+                <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>Total</span>
+              </div>
+            </div>
+            <div className="w-full space-y-4">
+              {[
+                { label: "LinkedIn", val: "60%", color: "#10B981" },
+                { label: "Indeed", val: "25%", color: "#0EA5E9" },
+                { label: "Referral", val: "15%", color: "#8B5CF6" },
+              ].map((s) => (
+                <div key={s.label} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: s.color }} />
+                    <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>{s.label}</span>
+                  </div>
+                  <span className="text-xs font-black" style={{ color: "var(--foreground)" }}>{s.val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="p-8 rounded-3xl border shadow-sm" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+          <h3 className="text-sm font-black mb-6 uppercase tracking-widest" style={{ color: "var(--foreground)" }}>Time to Hire (Avg)</h3>
+          <div className="flex items-end gap-3 h-32">
+            {[18, 24, 21, 19, 15, 22, 18].map((v, i) => (
+              <div key={i} className="flex-1 group relative">
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">{v} days</div>
+                <div className="w-full rounded-t-lg transition-all" style={{ height: `${(v / 24) * 100}%`, backgroundColor: "var(--secondary)" }} />
+                <div className="text-[10px] font-black text-center mt-2" style={{ color: "var(--muted-foreground)" }}>{["M", "T", "W", "T", "F", "S", "S"][i]}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="p-8 rounded-3xl border shadow-sm flex items-center justify-between" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+          <div>
+            <h3 className="text-sm font-black mb-2 uppercase tracking-widest" style={{ color: "var(--foreground)" }}>Offer Acceptance</h3>
+            <p className="text-3xl font-black text-emerald-600">86.4%</p>
+            <p className="text-xs font-bold mt-2" style={{ color: "var(--muted-foreground)" }}>↑ 4.2% from last month</p>
+          </div>
+          <div className="w-24 h-24 text-emerald-100">
+            <CheckCircle2 size={96} strokeWidth={1} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Jobs View ──────────────────────────────────────────── */
+function JobsView({ onPostJob, onSelectJob }: { onPostJob: () => void, onSelectJob: (j: JobPosting) => void }) {
+  const sampleJobs: JobPosting[] = [
+    { id: "J1", title: "Senior React Developer", department: "Engineering", location: "Remote", postedAt: "2 days ago", applicants: 24, type: "Full-time", experience: "3-5 years", salary: "₹120k - ₹160k", description: "Senior Role" },
+    { id: "J2", title: "Product Designer", department: "Design", location: "San Francisco", postedAt: "1 week ago", applicants: 42, type: "Full-time", experience: "2-4 years", salary: "₹120k - ₹160k", description: "Design Role" },
+    { id: "J3", title: "Marketing Manager", department: "Marketing", location: "New York", postedAt: "3 days ago", applicants: 15, type: "Full-time", experience: "5+ years", salary: "₹120k - ₹160k", description: "Marketing Role" },
+    { id: "J4", title: "Sales Executive", department: "Sales", location: "Chicago", postedAt: "5 days ago", applicants: 8, type: "Full-time", experience: "1-3 years", salary: "₹120k - ₹160k", description: "Sales Role" },
+    { id: "J5", title: "HR Generalist", department: "HR", location: "Remote", postedAt: "2 weeks ago", applicants: 56, type: "Full-time", experience: "2-3 years", salary: "₹120k - ₹160k", description: "HR Role" },
+  ];
+
+  const statusStyles: Record<string, string> = {
+    Open: "bg-emerald-100 text-emerald-600 border-emerald-200",
+    Paused: "bg-amber-100 text-amber-600 border-amber-200",
+    Closed: "bg-slate-100 text-slate-600 border-slate-200",
+    Draft: "bg-white text-slate-400 border-slate-200 border-dashed border-2",
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between px-1">
+        <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest">Active Listings ({sampleJobs.length})</h3>
+        <button onClick={onPostJob} className="text-xs font-black text-emerald-600 flex items-center gap-1 hover:gap-2 transition-all">Create New <Plus size={14} /></button>
+      </div>
+    <div className="rounded-3xl shadow-sm border overflow-hidden" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+        <table className="w-full">
+          <thead>
+            <tr className="border-b" style={{ backgroundColor: "var(--secondary)", borderColor: "var(--border)" }}>
+              {["Job Title", "Department", "Location", "Posted", "Applicants", "Status", ""].map((h) => (
+                <th key={h} className="px-8 py-5 text-left text-[11px] font-black uppercase tracking-widest" style={{ color: "var(--muted-foreground)" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
+            {sampleJobs.map((j) => (
+              <tr key={j.id} className="transition-all cursor-pointer group hover:opacity-80" style={{ backgroundColor: "var(--card)" }} onClick={() => onSelectJob(j)}>
+                <td className="px-8 py-5">
+                  <p className="text-sm font-black" style={{ color: "var(--foreground)" }}>{j.title}</p>
+                  <p className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Full-time • ₹120k - ₹160k</p>
+                </td>
+                <td className="px-8 py-5 text-sm font-bold" style={{ color: "var(--foreground)" }}>{j.department}</td>
+                <td className="px-8 py-5 text-sm font-bold" style={{ color: "var(--muted-foreground)" }}>
+                  <div className="flex items-center gap-1.5">
+                    <MapPin size={14} style={{ color: "var(--muted-foreground)" }} />
+                    {j.location}
+                  </div>
+                </td>
+                <td className="px-8 py-5 text-sm font-bold" style={{ color: "var(--muted-foreground)" }}>{j.postedAt}</td>
+                <td className="px-8 py-5">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-black" style={{ color: "var(--foreground)" }}>{j.applicants}</span>
+                    <div className="flex-1 w-24 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--secondary)" }}>
+                      <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${Math.min(100, (j.applicants / 50) * 100)}%` }} />
+                    </div>
+                  </div>
+                </td>
+                <td className="px-8 py-5">
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase border ${j.applicants > 40 ? statusStyles.Closed : statusStyles.Open}`}>
+                    {j.applicants > 40 ? "Closed" : "Open"}
+                  </span>
+                </td>
+                <td className="px-8 py-5 text-right">
+                  <ChevronRight size={18} className="transition-all group-hover:translate-x-1" style={{ color: "var(--muted-foreground)" }} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
 
 /* ─── Empty Column State ─────────────────────────────────── */
 function EmptyColumnState({ stage }: { stage: Stage }) {
-  const emojis: Record<Stage, string> = { Applied: "📥", Screening: "🔍", Interview: "🎤", "Offer Sent": "📄", Hired: "🎉" };
+  const emojis: Record<Stage, string> = { Applied: "📥", Screening: "🔍", "Round 1": "🎤", "Round 2": "💬", Offer: "📄", Hired: "🎉" };
   return (
     <div className="rounded-[24px] py-8 px-4 flex flex-col items-center justify-center gap-2 text-center" style={{ border: "1.5px dashed var(--border)", backgroundColor: "var(--background)" }}>
       <span style={{ fontSize: 28, lineHeight: 1 }}>{emojis[stage]}</span>
@@ -670,10 +1101,131 @@ function DropZone({ stage, onDrop, onDragDrop }: { stage: Stage; onDrop: () => v
   );
 }
 
+/* ─── Page Header ────────────────────────────────────────── */
+function PageHeader({ onPostJob, onShowJobs }: { onPostJob: () => void; onShowJobs: () => void }) {
+  return (
+    <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+          <Briefcase size={24} />
+        </div>
+        <div className="flex items-center gap-3">
+          <h1 className="text-[26px] font-black" style={{ color: "var(--foreground)" }}>Recruitment</h1>
+          <span className="px-3 py-1 rounded-full text-xs font-black" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>
+            12 Active Jobs
+          </span>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <button 
+          onClick={onShowJobs}
+          className="px-6 py-2.5 rounded-full font-bold text-sm border hover:opacity-80 transition-all flex items-center gap-2"
+          style={{ backgroundColor: "var(--card)", color: "var(--foreground)", borderColor: "var(--border)" }}
+        >
+          <Briefcase size={18} />
+          Positions
+        </button>
+        <button 
+          onClick={onPostJob}
+          className="px-6 py-2.5 rounded-full font-bold text-sm shadow-lg hover:opacity-90 transition-all flex items-center gap-2 text-white"
+          style={{ backgroundColor: "var(--primary)", boxShadow: "0 4px 12px rgba(16,185,129,0.3)" }}
+        >
+          <Plus size={18} />
+          Post a Job
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Info Bar ───────────────────────────────────────────── */
+function InfoBar() {
+  const stats = [
+    { label: "84 new applications this week", color: "#10B981" },
+    { label: "6 interviews scheduled today", color: "#F59E0B" },
+    { label: "3 offers pending response", color: "#8B5CF6" },
+  ];
+
+  return (
+    <div className="flex items-center gap-6 mb-8 px-1">
+      {stats.map((s, i) => (
+        <div key={i} className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: s.color }} />
+          <span className="text-sm font-semibold" style={{ color: "var(--muted-foreground)" }}>{s.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ─── KPI Cards ──────────────────────────────────────────── */
+function KpiCards() {
+  const cards = [
+    { label: "Open Positions", value: 12, color: "emerald", icon: <Briefcase size={20} /> },
+    { label: "Applications", value: 84, color: "teal", icon: <Users size={20} /> },
+    { label: "Interviews Today", value: 6, color: "amber", icon: <Calendar size={20} /> },
+    { label: "Offers Sent", value: 8, color: "purple", icon: <Send size={20} /> },
+  ];
+
+  const colorMap: Record<string, string> = {
+    emerald: "#10B981",
+    teal: "#14B8A6",
+    amber: "#F59E0B",
+    purple: "#8B5CF6",
+  };
+
+  return (
+    <div className="grid grid-cols-4 gap-6 mb-8">
+      {cards.map((c, i) => (
+        <div key={i} className="p-6 rounded-2xl shadow-sm border flex items-center gap-4 transition-all" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white" style={{ backgroundColor: colorMap[c.color] }}>
+            {c.icon}
+          </div>
+          <div>
+            <p className="text-sm font-bold" style={{ color: "var(--muted-foreground)" }}>{c.label}</p>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl font-black" style={{ color: "var(--foreground)" }}>{c.value}</span>
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-black" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>+12%</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ─── Tabs ───────────────────────────────────────────────── */
+type TabId = "Pipeline" | "Jobs" | "Candidates" | "Interviews" | "Analytics";
+
+function RecruitmentTabs({ active, onChange }: { active: TabId; onChange: (id: TabId) => void }) {
+  const tabs: TabId[] = ["Pipeline", "Jobs", "Candidates", "Interviews", "Analytics"];
+
+  return (
+    <div className="flex items-center gap-8 mb-8 border-b px-1" style={{ borderColor: "var(--border)" }}>
+      {tabs.map((t) => (
+        <button
+          key={t}
+          onClick={() => onChange(t)}
+          className={`pb-4 text-sm font-bold transition-all relative ${
+            active === t ? "text-emerald-600" : ""
+          }`}
+          style={{ color: active === t ? "var(--primary)" : "var(--muted-foreground)" }}
+        >
+          {t}
+          {active === t && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500 rounded-t-full shadow-sm shadow-emerald-200" />
+          )}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 /* ─── Main Page ──────────────────────────────────────────── */
 export function Recruitment() {
   const { recruitmentPipeline: contextPipeline, addCandidate, deleteCandidate, moveCandidate } = useRecruitment();
   const { toasts, toast, dismiss } = useToast();
+  const [activeTab, setActiveTab] = useState<TabId>("Pipeline");
 
   const pipeline = STAGES.reduce((acc, stage) => {
     const ctx = contextPipeline[stage] || [];
@@ -683,12 +1235,11 @@ export function Recruitment() {
   }, {} as Record<Stage, Candidate[]>);
 
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
-  const [ratings, setRatings] = useState<Record<string, number>>({});
   const [interviews, setInterviews] = useState<ScheduledInterview[]>([]);
   const [jobs, setJobs] = useState<JobPosting[]>([]);
 
   const displayPipeline = STAGES.reduce((acc, stage) => {
-    acc[stage] = pipeline[stage].filter((c: Candidate) => !deletedIds.has(c.id)).map((c: Candidate) => ({ ...c, rating: ratings[c.id] ?? c.rating }));
+    acc[stage] = pipeline[stage].filter((c: Candidate) => !deletedIds.has(c.id));
     return acc;
   }, {} as Record<Stage, Candidate[]>);
 
@@ -756,168 +1307,110 @@ export function Recruitment() {
     toast(`"${job.title}" posted successfully`, "success");
   };
 
-  const handleRatingChange = (candidateId: string, value: number) => {
-    setRatings((prev) => ({ ...prev, [candidateId]: value }));
-    toast("Rating updated", "info");
-  };
-
-  const totalCandidates = STAGES.reduce((s, st) => s + displayPipeline[st].length, 0);
-
   return (
-    <div className="pb-10">
+    <div className="min-h-screen -m-6 p-6 transition-colors duration-300" style={{ backgroundColor: "var(--background)" }}>
       <ToastContainer toasts={toasts} onDismiss={dismiss} />
 
-      {/* All modals */}
+      {/* Modals */}
       {showPostJob && <PostJobModal onClose={() => setShowPostJob(false)} onPost={handlePostJob} />}
       {showJobs && <OpenPositionsModal jobs={jobs} onClose={() => setShowJobs(false)} />}
       {addStage && <AddCandidateModal stage={addStage} onClose={() => setAddStage(null)} onAdd={handleAddCandidate} />}
-      {detailCandidate && (() => {
-        const si = STAGES.indexOf(detailCandidate.stage);
-        const nextStage = si < STAGES.length - 1 ? STAGES[si + 1] : null;
-        return (
-          <CandidateDetailModal
-            candidate={detailCandidate.candidate} stage={detailCandidate.stage}
-            nextStage={nextStage} interviews={interviews}
-            onClose={() => setDetailCandidate(null)}
-            onMoveNext={nextStage ? () => handleMoveCandidate(detailCandidate.candidate.id, detailCandidate.stage, nextStage) : null}
-          />
-        );
-      })()}
+      {detailCandidate && (
+        <CandidateDetailSidePanel 
+          candidate={detailCandidate.candidate} 
+          stage={detailCandidate.stage} 
+          onClose={() => setDetailCandidate(null)} 
+        />
+      )}
       {messageCandidate && <MessageModal candidate={messageCandidate} onClose={() => setMessageCandidate(null)} />}
       {scheduleCandidate && <ScheduleModal candidate={scheduleCandidate} onClose={() => setScheduleCandidate(null)} onSchedule={handleSchedule} />}
       {deleteTarget && <DeleteConfirmDialog candidate={deleteTarget.candidate} onConfirm={confirmDelete} onCancel={() => setDeleteTarget(null)} />}
 
-      {/* Header row */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-          {STAGES.map((stage) => {
-            const count = displayPipeline[stage].length;
-            const overloaded = count >= OVERLOAD;
-            return (
-              <div key={stage} className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border" style={{ backgroundColor: "var(--card)", borderColor: overloaded ? "rgba(245,158,11,.4)" : "var(--border)" }}>
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: overloaded ? "#F59E0B" : "var(--primary)" }} />
-                <span style={{ color: overloaded ? "#F59E0B" : "var(--foreground)", fontSize: 13, fontWeight: 700 }}>{count}{overloaded ? " ⚠" : ""}</span>
-                <span style={{ color: "var(--muted-foreground)", fontSize: 13 }}>{stage}</span>
-              </div>
-            );
-          })}
-        </div>
-        <div className="flex gap-2 w-full sm:w-auto">
-          <button onClick={() => setShowJobs(true)} className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl font-bold text-sm transition-all hover:opacity-80" style={{ backgroundColor: "var(--card)", border: "1.5px solid var(--border)", color: "var(--foreground)" }}>
-            <Briefcase size={14} />Positions
-            {jobs.length > 0 && <span className="px-1.5 py-0.5 rounded-full text-[10px] font-black" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>{jobs.length}</span>}
-          </button>
-          <button onClick={() => setShowPostJob(true)} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-white font-bold hover:opacity-90 text-sm" style={{ background: "#10B981", boxShadow: "0 8px 20px rgba(16,185,129,.25)" }}>
-            <Plus size={15} />Post a Job
-          </button>
-        </div>
-      </div>
+      <PageHeader onPostJob={() => setShowPostJob(true)} onShowJobs={() => setShowJobs(true)} />
+      <InfoBar />
+      <KpiCards />
+      <RecruitmentTabs active={activeTab} onChange={setActiveTab} />
 
-      {/* Summary stats */}
-      <div className="rounded-[28px] p-6 sm:p-8 mb-6 flex flex-col sm:flex-row items-stretch sm:items-center shadow-sm border gap-0" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
-        <div className="pb-5 sm:pb-0 sm:pr-10 mb-5 sm:mb-0 border-b sm:border-b-0 sm:border-r text-center sm:text-left" style={{ borderColor: "var(--border)" }}>
-          <p style={{ color: "var(--muted-foreground)" }} className="text-[13px] font-medium mb-1">Total Candidates</p>
-          <p style={{ color: "var(--foreground)" }} className="text-3xl font-black">{totalCandidates}</p>
-        </div>
-        <div className="flex-1 sm:px-10">
-          <div className="flex gap-1.5 mb-2.5">
+      {activeTab === "Pipeline" && (
+        <>
+          {interviews.length > 0 && (
+            <UpcomingInterviewsPanel 
+              interviews={interviews} 
+              onDismiss={(id) => setInterviews(prev => prev.filter(iv => iv.id !== id))} 
+            />
+          )}
+
+          <SearchFilterBar 
+            query={query} 
+            onQueryChange={setQuery} 
+            locationFilter={locationFilter} 
+            onLocationChange={setLocationFilter} 
+            typeFilter={typeFilter} 
+            onTypeChange={setTypeFilter} 
+            resultCount={totalFiltered} 
+          />
+
+          <div className="flex gap-6 overflow-x-auto pb-6 custom-scrollbar">
             {STAGES.map((stage) => {
-              const w = totalCandidates > 0 ? (displayPipeline[stage].length / totalCandidates) * 100 : 0;
-              return <div key={stage} className="h-2 rounded-full transition-all" style={{ width: `${w}%`, backgroundColor: "var(--primary)" }} />;
-            })}
-          </div>
-          <div className="flex items-center gap-3 sm:gap-5 flex-wrap">
-            {STAGES.map((stage) => {
-              const overloaded = displayPipeline[stage].length >= OVERLOAD;
+              const rawCount = displayPipeline[stage].length;
+              const candidates = filteredPipeline[stage];
+
               return (
-                <div key={stage} className="flex items-center gap-1.5">
-                  {overloaded ? <AlertCircle size={10} style={{ color: "#F59E0B" }} /> : <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--primary)" }} />}
-                  <span style={{ color: overloaded ? "#F59E0B" : "var(--muted-foreground)" }} className="text-[11px] sm:text-[12px]">{stage} ({displayPipeline[stage].length})</span>
+                <div key={stage} className="flex-shrink-0" style={{ width: "280px" }}>
+                  <div className="flex items-center justify-between mb-4 px-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-[13px] font-bold" style={{ color: "var(--foreground)" }}>{stage}</h3>
+                      <span className="px-2.5 py-0.5 rounded-full text-[12px] font-bold"
+                        style={{ backgroundColor: "var(--primary)", color: "white" }}>
+                        {rawCount}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 p-3 rounded-xl min-h-[500px]" style={{ backgroundColor: "var(--secondary)", border: "1px solid var(--border)" }}>
+                    {candidates.length === 0 && !isFiltering && <EmptyColumnState stage={stage} />}
+                    {candidates.map((candidate) => {
+                      const si = STAGES.indexOf(stage);
+                      const nextStage = si < STAGES.length - 1 ? STAGES[si + 1] : null;
+                      return (
+                        <CandidateCard
+                          key={candidate.id}
+                          candidate={candidate} nextStage={nextStage}
+                          onSchedule={() => setScheduleCandidate(candidate)}
+                          onDetail={() => setDetailCandidate({ candidate, stage })}
+                          onDelete={() => setDeleteTarget({ candidateId: candidate.id, stage, candidate })}
+                          onMoveNext={() => nextStage && handleMoveCandidate(candidate.id, stage, nextStage)}
+                          onDragStart={(e: React.DragEvent) => { dragRef.current = { candidateId: candidate.id, fromStage: stage }; e.dataTransfer.effectAllowed = "move"; }}
+                        />
+                      );
+                    })}
+                    <DropZone stage={stage} onDrop={() => setAddStage(stage)}
+                      onDragDrop={() => {
+                        const drag = dragRef.current;
+                        if (!drag || drag.fromStage === stage) return;
+                        handleMoveCandidate(drag.candidateId, drag.fromStage, stage);
+                        dragRef.current = null;
+                      }}
+                    />
+                  </div>
                 </div>
               );
             })}
           </div>
-        </div>
-        <div className="pt-5 sm:pt-0 sm:pl-10 mt-5 sm:mt-0 border-t sm:border-t-0 sm:border-l text-center sm:text-right" style={{ borderColor: "var(--border)" }}>
-          <p style={{ color: "var(--muted-foreground)" }} className="text-[13px] font-medium mb-1">Hired This Month</p>
-          <p style={{ color: "var(--primary)" }} className="text-3xl font-black">{displayPipeline["Hired"].length}</p>
-        </div>
-      </div>
+        </>
+      )}
 
-      {/* Upcoming interviews */}
-      <UpcomingInterviewsPanel interviews={interviews} onDismiss={(id) => setInterviews((prev) => prev.filter((iv) => iv.id !== id))} />
-
-      {/* Search & filter */}
-      <SearchFilterBar query={query} onQueryChange={setQuery} locationFilter={locationFilter} onLocationChange={setLocationFilter} typeFilter={typeFilter} onTypeChange={setTypeFilter} resultCount={totalFiltered} />
-
-      {/* Kanban */}
-      <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-6 custom-scrollbar">
-        {STAGES.map((stage) => {
-          const rawCount = displayPipeline[stage].length;
-          const overloaded = rawCount >= OVERLOAD;
-          const candidates = filteredPipeline[stage];
-
-          return (
-            <div key={stage} className="flex-shrink-0" style={{ width: "min(300px, 80vw)" }}>
-              {/* Column header */}
-              <div className="flex items-center justify-between mb-5 px-1">
-                <div className="flex items-center gap-2">
-                  <h3 style={{ color: "var(--foreground)", fontSize: 16, fontWeight: 800 }}>{stage}</h3>
-                  <span className="px-2.5 py-0.5 rounded-full text-[12px] font-bold flex items-center gap-1"
-                    style={{ backgroundColor: overloaded ? "rgba(245,158,11,.12)" : "var(--secondary)", color: overloaded ? "#F59E0B" : "var(--primary)", border: overloaded ? "1px solid rgba(245,158,11,.3)" : "none" }}>
-                    {overloaded && <AlertCircle size={9} />}{rawCount}
-                  </span>
-                </div>
-                <button onClick={() => setAddStage(stage)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all hover:opacity-80" style={{ color: "var(--primary)", fontSize: 12, fontWeight: 700, backgroundColor: "var(--secondary)" }}>
-                  <Plus size={13} />Add
-                </button>
-              </div>
-
-              {/* Overload banner */}
-              {overloaded && (
-                <div className="flex items-center gap-2 px-3 py-2 rounded-xl mb-3 text-xs font-semibold" style={{ backgroundColor: "rgba(245,158,11,.1)", color: "#F59E0B", border: "1px solid rgba(245,158,11,.2)" }}>
-                  <AlertCircle size={11} />Stage overloaded ({rawCount} candidates)
-                </div>
-              )}
-
-              <div className="space-y-4">
-                {candidates.length === 0 && !isFiltering && <EmptyColumnState stage={stage} />}
-                {candidates.length === 0 && isFiltering && (
-                  <div className="rounded-[20px] py-6 px-4 text-center" style={{ border: "1.5px dashed var(--border)" }}>
-                    <p style={{ color: "var(--muted-foreground)", fontSize: 12 }}>No matches in {stage}</p>
-                  </div>
-                )}
-                {candidates.map((candidate) => {
-                  const si = STAGES.indexOf(stage);
-                  const nextStage = si < STAGES.length - 1 ? STAGES[si + 1] : null;
-                  const ivCount = interviews.filter((iv) => iv.candidateId === candidate.id).length;
-                  return (
-                    <CandidateCard
-                      key={candidate.id}
-                      candidate={candidate} stage={stage} nextStage={nextStage} interviewCount={ivCount}
-                      onMessage={() => setMessageCandidate(candidate)}
-                      onSchedule={() => setScheduleCandidate(candidate)}
-                      onDetail={() => setDetailCandidate({ candidate, stage })}
-                      onDelete={() => setDeleteTarget({ candidateId: candidate.id, stage, candidate })}
-                      onMoveNext={() => nextStage && handleMoveCandidate(candidate.id, stage, nextStage)}
-                      onRatingChange={(v) => handleRatingChange(candidate.id, v)}
-                      onDragStart={(e) => { dragRef.current = { candidateId: candidate.id, fromStage: stage }; e.dataTransfer.effectAllowed = "move"; }}
-                    />
-                  );
-                })}
-                <DropZone stage={stage} onDrop={() => setAddStage(stage)}
-                  onDragDrop={() => {
-                    const drag = dragRef.current;
-                    if (!drag || drag.fromStage === stage) return;
-                    handleMoveCandidate(drag.candidateId, drag.fromStage, stage);
-                    dragRef.current = null;
-                  }}
-                />
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {activeTab === "Jobs" && <JobsView onPostJob={() => setShowPostJob(true)} onSelectJob={(j) => { setActiveTab("Pipeline"); toast(`Showing pipeline for ${j.title}`, "info"); }} />}
+      {activeTab === "Candidates" && (
+        <CandidatesView 
+          candidates={Object.values(displayPipeline).flat()} 
+          onDetail={(c) => setDetailCandidate({ candidate: c, stage: "Applied" })} 
+          onSchedule={(c) => setScheduleCandidate(c)}
+          onMessage={(c) => setMessageCandidate(c)}
+        />
+      )}
+      {activeTab === "Interviews" && <InterviewsView interviews={interviews} onDismiss={(id) => setInterviews(prev => prev.filter(iv => iv.id !== id))} />}
+      {activeTab === "Analytics" && <AnalyticsView />}
     </div>
   );
 }

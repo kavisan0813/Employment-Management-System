@@ -470,107 +470,116 @@ export const recruitmentPipeline = {
   Applied: [
     {
       id: "C001",
-      name: "Jordan Blake",
-      role: "Senior React Developer",
-      date: "Apr 1, 2026",
-      avatar: "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-      initials: "JB",
+      name: "John Smith",
+      role: "Frontend Developer",
+      date: "Apr 2, 2026",
+      avatar: "https://images.unsplash.com/photo-1738566061505-556830f8b8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+      initials: "JS",
+      source: "LinkedIn",
+      rating: 4.2,
+      location: "Remote",
+      type: "Full-time",
+      interviewerAvatars: [
+        "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+        "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
+      ]
     },
     {
       id: "C002",
-      name: "Mei Lin",
-      role: "Data Analyst",
-      date: "Apr 2, 2026",
+      name: "Sarah Chen",
+      role: "Backend Developer",
+      date: "Apr 1, 2026",
       avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-      initials: "ML",
-    },
-    {
-      id: "C003",
-      name: "Tyler Brooks",
-      role: "Marketing Specialist",
-      date: "Apr 3, 2026",
-      avatar: null,
-      initials: "TB",
+      initials: "SC",
+      source: "Indeed",
+      rating: 3.8,
+      location: "San Francisco, CA",
+      type: "Full-time",
+      interviewerAvatars: []
     },
   ],
   Screening: [
     {
+      id: "C003",
+      name: "Michael Ross",
+      role: "Fullstack Developer",
+      date: "Mar 30, 2026",
+      avatar: null,
+      initials: "MR",
+      source: "Referral",
+      rating: 4.5,
+      location: "New York, NY",
+      type: "Contract",
+      interviewerAvatars: [
+        "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
+      ]
+    },
+  ],
+  "Round 1": [
+    {
       id: "C004",
-      name: "Sofia Garcia",
-      role: "Product Designer",
+      name: "David Miller",
+      role: "Senior React Developer",
       date: "Mar 28, 2026",
       avatar: "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-      initials: "SG",
+      initials: "DM",
+      source: "LinkedIn",
+      rating: 4.8,
+      location: "Remote",
+      type: "Full-time",
+      interviewerAvatars: [
+        "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+        "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
+      ],
+      interviewDate: "Apr 10, 2:00 PM"
     },
+  ],
+  "Round 2": [
     {
       id: "C005",
-      name: "Noah Williams",
-      role: "Sales Executive",
-      date: "Mar 27, 2026",
-      avatar: null,
-      initials: "NW",
-    },
-  ],
-  Interview: [
-    {
-      id: "C006",
       name: "Priya Nair",
       role: "HR Specialist",
-      date: "Mar 22, 2026",
+      date: "Mar 25, 2026",
       avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       initials: "PN",
-    },
-    {
-      id: "C007",
-      name: "Carlos Mendez",
-      role: "Backend Engineer",
-      date: "Mar 20, 2026",
-      avatar: "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-      initials: "CM",
-    },
-    {
-      id: "C008",
-      name: "Anika Patel",
-      role: "Financial Analyst",
-      date: "Mar 19, 2026",
-      avatar: null,
-      initials: "AP",
+      source: "Indeed",
+      rating: 4.0,
+      location: "Chicago, IL",
+      type: "Full-time",
+      interviewerAvatars: [
+        "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
+      ],
+      interviewDate: "Apr 11, 10:30 AM"
     },
   ],
-  "Offer Sent": [
+  Offer: [
     {
-      id: "C009",
+      id: "C006",
       name: "Ethan Moore",
       role: "DevOps Engineer",
       date: "Mar 15, 2026",
       avatar: "https://images.unsplash.com/photo-1738566061505-556830f8b8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       initials: "EM",
-    },
-    {
-      id: "C010",
-      name: "Lena Fischer",
-      role: "UX Researcher",
-      date: "Mar 14, 2026",
-      avatar: null,
-      initials: "LF",
+      source: "LinkedIn",
+      rating: 4.9,
+      location: "Remote",
+      type: "Full-time",
+      interviewerAvatars: []
     },
   ],
   Hired: [
     {
-      id: "C011",
+      id: "C007",
       name: "Alex Thompson",
       role: "Senior React Developer",
       date: "Mar 10, 2026",
       avatar: "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       initials: "AT",
-    },
-    {
-      id: "C012",
-      name: "Hana Yamamoto",
-      role: "Product Designer",
-      date: "Mar 8, 2026",
-      avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-      initials: "HY",
+      source: "Referral",
+      rating: 5.0,
+      location: "San Francisco, CA",
+      type: "Full-time",
+      interviewerAvatars: []
     },
   ],
 };
