@@ -1,6 +1,11 @@
 import { RouterProvider } from "react-router";
 import { router } from "./routes";
+import { RecruitmentProvider } from "./context/AppContext";
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <RecruitmentProvider>
+      <RouterProvider router={router} />
+    </RecruitmentProvider>
+  );
 }

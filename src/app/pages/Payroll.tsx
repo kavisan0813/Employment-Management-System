@@ -628,6 +628,20 @@ export function Payroll() {
         </div>
       </div>
 
+      {/* Info Bar */}
+      <div className="bg-card border border-border rounded-xl px-5 py-3 flex items-center gap-6 mb-8 shadow-sm overflow-x-auto whitespace-nowrap">
+        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <div className="w-2 h-2 rounded-full bg-[#00B87C]"></div> Payroll due in 8 days
+        </div>
+        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <div className="w-2 h-2 rounded-full bg-orange-500"></div> 36 employees pending action
+        </div>
+        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <div className="w-2 h-2 rounded-full bg-red-500"></div> TDS filing: Apr 15
+        </div>
+      </div>
+
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {[
