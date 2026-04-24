@@ -1,13 +1,13 @@
 import React, { useState, useMemo } from "react";
 import {
-  TrendingUp, Search, ChevronDown, Download, Star, Users, 
-  Calendar, Award, CheckCircle2, Clock, 
-  RefreshCw, ChevronRight, Target, 
-  Activity, UserCheck, Plus, FileText, 
+  TrendingUp, Search, ChevronDown, Download, Star, Users,
+  Calendar, Award, CheckCircle2, Clock,
+  RefreshCw, ChevronRight, Target,
+  Activity, UserCheck, Plus, FileText,
   Trash2, Edit3, Home, X, AlertTriangle
 } from "lucide-react";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, AreaChart, Area, PieChart, Pie
 } from "recharts";
 import { employees, departments } from "../data/mockData";
@@ -78,11 +78,11 @@ function MetricItem({ label, val, icon: Icon }: { label: string; val: number; ic
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Icon size={14} className="text-emerald-500" />
-          <span className="text-xs font-semibold text-slate-600">{label}</span>
+          <span className="text-xs font-semibold text-muted-foreground">{label}</span>
         </div>
-        <span className="text-xs font-bold text-slate-900">{val}%</span>
+        <span className="text-xs font-bold text-foreground">{val}%</span>
       </div>
-      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+      <div className="h-2 bg-secondary rounded-full overflow-hidden">
         <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${val}%` }} />
       </div>
     </div>
@@ -102,7 +102,7 @@ export function Performance() {
   const [history, setHistory] = useState<ReviewHistory[]>(reviewHistory);
   const [activeReview, setActiveReview] = useState<ReviewHistory | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "view" | "edit">("create");
-  const [deleteTarget, setDeleteTarget] = useState<{id: string, name: string} | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string, name: string } | null>(null);
 
   const filteredEmployees = useMemo(() => {
     if (selectedDept === "All Departments") return employees;
@@ -117,14 +117,14 @@ export function Performance() {
   const filteredHistory = useMemo(() => {
     return history.filter(r => {
       const q = search.toLowerCase();
-      const matchesSearch = !q || 
-        r.employeeName.toLowerCase().includes(q) || 
+      const matchesSearch = !q ||
+        r.employeeName.toLowerCase().includes(q) ||
         r.employeeId.toLowerCase().includes(q) ||
         r.department.toLowerCase().includes(q);
-      
+
       const matchesStatus = status === "All" || r.status === status;
       const matchesDept = selectedDept === "All Departments" || r.department === selectedDept;
-      
+
       return matchesSearch && matchesStatus && matchesDept;
     });
   }, [search, status, selectedDept, history]);
@@ -209,25 +209,25 @@ export function Performance() {
       {/* ── Page Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground mb-2 uppercase tracking-widest">
             <Home size={12} />
             <span>Dashboard</span>
             <ChevronRight size={12} />
             <span className="text-emerald-600">Performance Review</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 mb-1">Performance Review</h1>
-          <p className="text-sm font-bold text-slate-500">Track employee performance, appraisal scores, and review history</p>
+          <h1 className="text-2xl font-black text-foreground mb-1">Performance Review</h1>
+          <p className="text-sm font-bold text-muted-foreground">Track employee performance, appraisal scores, and review history</p>
         </div>
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={handleExport}
-            className="px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm font-black flex items-center gap-2 hover:bg-slate-50 transition-all shadow-sm"
+            className="px-5 py-2.5 rounded-xl border border-border bg-card text-foreground text-sm font-black flex items-center gap-2 hover:bg-muted transition-all shadow-sm"
           >
             <Download size={18} /> Export Report
           </button>
-          <button 
+          <button
             onClick={handleStartReview}
-            className="px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-black flex items-center gap-2 hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-200"
+            className="px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-black flex items-center gap-2 hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-40"
           >
             <Plus size={18} /> Start Review
           </button>
@@ -237,110 +237,110 @@ export function Performance() {
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {stats.map((s, i) => (
-          <div key={i} className="bg-white p-5 rounded-[20px] border border-slate-100 shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all">
+          <div key={i} className="bg-card p-5 rounded-[20px] border border-border shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all">
             <div className="flex items-center justify-between mb-4">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110" style={{ backgroundColor: s.bg, color: s.color }}>
                 {s.icon}
               </div>
             </div>
             <div>
-              <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
-              <h3 className="text-2xl font-black text-slate-900 mb-1" style={{ color: s.color }}>{s.val}</h3>
-              <p className="text-[10px] font-bold text-slate-500">{s.sub}</p>
+              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">{s.label}</p>
+              <h3 className="text-2xl font-black text-foreground mb-1" style={{ color: s.color }}>{s.val}</h3>
+              <p className="text-[10px] font-bold text-muted-foreground">{s.sub}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* ── Filter Section ── */}
-      <div className="bg-white p-5 rounded-[24px] border border-slate-100 shadow-sm mb-6">
+      <div className="bg-card p-5 rounded-[24px] border border-border shadow-sm mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Department</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Department</label>
             <div className="relative">
-              <select 
+              <select
                 value={selectedDept}
                 onChange={(e) => { setSelectedDept(e.target.value); setSelectedEmpId("All Employees"); }}
-                className="w-full appearance-none px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all cursor-pointer"
+                className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer"
               >
-                <option>All Departments</option>
-                {departments.map(d => <option key={d.id}>{d.name}</option>)}
+                <option value="All Departments">All Departments</option>
+                {departments.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Employee</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Employee</label>
             <div className="relative">
-              <select 
+              <select
                 value={selectedEmpId}
                 onChange={(e) => setSelectedEmpId(e.target.value)}
-                className="w-full appearance-none px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all cursor-pointer"
+                className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer"
               >
-                <option>All Employees</option>
+                <option value="All Employees">All Employees</option>
                 {filteredEmployees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Year</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Year</label>
             <div className="relative">
-              <select value={year} onChange={(e) => setYear(e.target.value)} className="w-full appearance-none px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all cursor-pointer">
+              <select value={year} onChange={(e) => setYear(e.target.value)} className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer">
                 <option>2026</option>
                 <option>2025</option>
                 <option>2024</option>
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Period</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Period</label>
             <div className="relative">
-              <select value={period} onChange={(e) => setPeriod(e.target.value)} className="w-full appearance-none px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all cursor-pointer">
+              <select value={period} onChange={(e) => setPeriod(e.target.value)} className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer">
                 <option>Monthly</option>
                 <option>Quarterly</option>
                 <option>Half-Yearly</option>
                 <option>Yearly</option>
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Status</label>
             <div className="relative">
-              <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full appearance-none px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all cursor-pointer">
+              <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer">
                 <option>All</option>
                 <option>Pending</option>
                 <option>In Review</option>
                 <option>Completed</option>
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
             </div>
           </div>
 
           <div className="space-y-1.5 lg:col-span-2">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Search</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Search</label>
             <div className="relative">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input 
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
                 type="text"
                 placeholder="Search name or ID..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all"
               />
             </div>
           </div>
         </div>
         <div className="mt-4 flex justify-end">
-          <button 
+          <button
             onClick={() => { setSelectedDept("All Departments"); setSelectedEmpId("All Employees"); setStatus("All"); setSearch(""); }}
-            className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest hover:text-emerald-600 transition-all"
+            className="flex items-center gap-2 text-xs font-black text-muted-foreground uppercase tracking-widest hover:text-emerald-600 transition-all"
           >
             <RefreshCw size={14} /> Clear Filters
           </button>
@@ -348,62 +348,62 @@ export function Performance() {
       </div>
 
       {/* ── Performance Table ── */}
-      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden mb-6">
-        <div className="p-6 border-b border-slate-50 flex items-center justify-between">
-          <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Review History</h3>
+      <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden mb-6">
+        <div className="p-6 border-b border-border flex items-center justify-between">
+          <h3 className="text-sm font-black text-foreground uppercase tracking-widest">Review History</h3>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Recent 5 records</span>
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Recent 5 records</span>
           </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Employee</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Dept</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Period</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Att. Score</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Perf. Score</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Rating</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Recommendation</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Actions</th>
+              <tr className="bg-muted border-b border-border">
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Employee</th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Dept</th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Period</th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Att. Score</th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Perf. Score</th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Rating</th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Recommendation</th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Status</th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-border">
               {filteredHistory.map((r) => (
-                <tr key={r.id} className="hover:bg-slate-50/50 transition-colors">
+                <tr key={r.id} className="hover:bg-muted/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center font-black text-slate-400 text-xs uppercase">
+                      <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center font-black text-muted-foreground text-xs uppercase">
                         {r.employeeName.split(' ').map(n => n[0]).join('')}
                       </div>
                       <div>
-                        <p className="text-sm font-black text-slate-900">{r.employeeName}</p>
-                        <p className="text-[10px] font-bold text-slate-500">{r.employeeId}</p>
+                        <p className="text-sm font-black text-foreground">{r.employeeName}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground">{r.employeeId}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-xs font-bold text-slate-600">{r.department}</span>
+                    <span className="text-xs font-bold text-muted-foreground">{r.department}</span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-xs font-bold text-slate-600">{r.period}</span>
+                    <span className="text-xs font-bold text-muted-foreground">{r.period}</span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-12 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-emerald-500" style={{ width: `${r.attendanceScore}%` }} />
                       </div>
-                      <span className="text-xs font-bold text-slate-900">{r.attendanceScore}%</span>
+                      <span className="text-xs font-bold text-foreground">{r.attendanceScore}%</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-12 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-teal-500" style={{ width: `${r.performanceScore}%` }} />
                       </div>
-                      <span className="text-xs font-bold text-slate-900">{r.performanceScore}%</span>
+                      <span className="text-xs font-bold text-foreground">{r.performanceScore}%</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -413,7 +413,7 @@ export function Performance() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`text-xs font-bold ${r.recommendation === 'Promotion' ? 'text-emerald-600' : 'text-slate-600'}`}>
+                    <span className={`text-xs font-bold ${r.recommendation === 'Promotion' ? 'text-emerald-600' : 'text-muted-foreground'}`}>
                       {r.recommendation}
                     </span>
                   </td>
@@ -422,21 +422,21 @@ export function Performance() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <button 
+                      <button
                         onClick={() => handleView(r)}
-                        className="p-2 rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 transition-all"
+                        className="p-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-600 transition-all"
                       >
                         <FileText size={16} />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleEdit(r)}
-                        className="p-2 rounded-lg hover:bg-amber-50 text-slate-400 hover:text-amber-600 transition-all"
+                        className="p-2 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-500/10 text-muted-foreground hover:text-amber-600 transition-all"
                       >
                         <Edit3 size={16} />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDelete(r.id, r.employeeName)}
-                        className="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-all"
+                        className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-muted-foreground hover:text-red-600 transition-all"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -452,28 +452,28 @@ export function Performance() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Employee Performance Summary Card (Always Visible) */}
         <div className="lg:col-span-12">
-          <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm">
-            <div className="flex items-center justify-between border-b border-slate-50 pb-6 mb-6">
+          <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+            <div className="flex items-center justify-between border-b border-border pb-6 mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-[20px] bg-slate-50 overflow-hidden border-2 border-emerald-50 shrink-0">
+                <div className="w-16 h-16 rounded-[20px] bg-muted overflow-hidden border-2 border-emerald-50 dark:border-emerald-500/20 shrink-0">
                   {selectedEmployee?.avatar ? (
                     <img src={selectedEmployee.avatar} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-xl font-black text-slate-300">
+                    <div className="w-full h-full flex items-center justify-center text-xl font-black text-muted-foreground">
                       <Users size={32} />
                     </div>
                   )}
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-slate-900">{selectedEmployee?.name || "Select Employee"}</h3>
-                  <p className="text-sm font-bold text-slate-500">{selectedEmployee?.id || "EMP---"}</p>
+                  <h3 className="text-lg font-black text-foreground">{selectedEmployee?.name || "Select Employee"}</h3>
+                  <p className="text-sm font-bold text-muted-foreground">{selectedEmployee?.id || "EMP---"}</p>
                 </div>
               </div>
               <div className="flex flex-col items-end">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Overall Performance Score</p>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Overall Performance Score</p>
                 <div className="flex items-center gap-3">
-                   <h4 className="text-3xl font-black text-emerald-600">88.5</h4>
-                   <div className="flex items-center gap-1 text-amber-500">
+                  <h4 className="text-3xl font-black text-emerald-600">88.5</h4>
+                  <div className="flex items-center gap-1 text-amber-500">
                     <Star size={16} fill="currentColor" />
                     <Star size={16} fill="currentColor" />
                     <Star size={16} fill="currentColor" />
@@ -485,42 +485,42 @@ export function Performance() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-               <MetricItem label="Attendance Score" val={95} icon={Calendar} />
-               <MetricItem label="Productivity" val={92} icon={Activity} />
-               <MetricItem label="Teamwork" val={85} icon={Users} />
-               <MetricItem label="Task Completion" val={84} icon={Target} />
+              <MetricItem label="Attendance Score" val={95} icon={Calendar} />
+              <MetricItem label="Productivity" val={92} icon={Activity} />
+              <MetricItem label="Teamwork" val={85} icon={Users} />
+              <MetricItem label="Task Completion" val={84} icon={Target} />
             </div>
           </div>
         </div>
       </div>
 
       {/* ── Appraisal Eligibility Panel ── */}
-      <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm">
-        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Appraisal Eligibility</h3>
+      <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+        <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Appraisal Eligibility</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Attendance %</p>
-            <p className="text-xl font-black text-slate-900">96.8%</p>
+          <div className="p-4 rounded-2xl bg-muted border border-border">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Attendance %</p>
+            <p className="text-xl font-black text-foreground">96.8%</p>
           </div>
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Late Count</p>
+          <div className="p-4 rounded-2xl bg-muted border border-border">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Late Count</p>
             <p className="text-xl font-black text-amber-600">02</p>
           </div>
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Leave Count</p>
-            <p className="text-xl font-black text-slate-900">04</p>
+          <div className="p-4 rounded-2xl bg-muted border border-border">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Leave Count</p>
+            <p className="text-xl font-black text-foreground">04</p>
           </div>
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Perf. Score</p>
+          <div className="p-4 rounded-2xl bg-muted border border-border">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Perf. Score</p>
             <p className="text-xl font-black text-emerald-600">92/100</p>
           </div>
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 lg:col-span-2">
+          <div className="p-4 rounded-2xl bg-muted border border-border lg:col-span-2">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Eligibility</p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Eligibility</p>
               <span className="text-[9px] font-black px-2 py-0.5 rounded bg-emerald-500 text-white">ELIGIBLE</span>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-lg font-black text-slate-900">Suggested Increment</p>
+              <p className="text-lg font-black text-foreground">Suggested Increment</p>
               <p className="text-2xl font-black text-emerald-600">12.5%</p>
             </div>
           </div>
@@ -529,23 +529,24 @@ export function Performance() {
 
       {/* ── Charts Section ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm">
-          <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Performance Trend</h3>
+        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Performance Trend</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={trendData}>
                 <defs>
                   <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #f1f5f9', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
-                  itemStyle={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: 'var(--muted-foreground)' }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: 'var(--muted-foreground)' }} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                  itemStyle={{ fontSize: '12px', fontWeight: 700, color: 'var(--foreground)' }}
+                  labelStyle={{ color: 'var(--muted-foreground)', marginBottom: '4px' }}
                 />
                 <Area type="monotone" dataKey="score" stroke="#10B981" strokeWidth={3} fillOpacity={1} fill="url(#colorScore)" />
               </AreaChart>
@@ -553,17 +554,18 @@ export function Performance() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm">
-          <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Dept Avg Performance</h3>
+        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Dept Avg Performance</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={departments.slice(0, 5)} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" />
+                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="var(--border)" />
                 <XAxis type="number" axisLine={false} tickLine={false} hide />
-                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#64748b' }} width={80} />
-                <Tooltip 
-                  cursor={{ fill: '#f8fafc' }}
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #f1f5f9', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: 'var(--muted-foreground)' }} width={80} />
+                <Tooltip
+                  cursor={{ fill: 'var(--muted)', opacity: 0.2 }}
+                  contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                  itemStyle={{ color: 'var(--foreground)' }}
                 />
                 <Bar dataKey="employees" radius={[0, 10, 10, 0]} barSize={20}>
                   {departments.slice(0, 5).map((entry, index) => (
@@ -575,13 +577,14 @@ export function Performance() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm">
-          <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Rating Distribution</h3>
+        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Rating Distribution</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #f1f5f9', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                <Tooltip
+                  contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                  itemStyle={{ color: 'var(--foreground)' }}
                 />
                 <Pie
                   data={distributionData}
@@ -603,7 +606,7 @@ export function Performance() {
             {distributionData.map((d, i) => (
               <div key={i} className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }} />
-                <span className="text-[10px] font-bold text-slate-500 uppercase">{d.name}</span>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">{d.name}</span>
               </div>
             ))}
           </div>
@@ -614,17 +617,17 @@ export function Performance() {
       <Dialog.Root open={isModalOpen} onOpenChange={setIsModalOpen}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-slate-900/30 z-[100]" />
-          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-4xl bg-white rounded-[32px] shadow-2xl z-[101] overflow-hidden focus:outline-none">
-            <div className="flex items-center justify-between p-6 border-b border-slate-50">
+          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-4xl bg-card rounded-[32px] shadow-2xl z-[101] overflow-hidden focus:outline-none">
+            <div className="flex items-center justify-between p-6 border-b border-border">
               <div>
-                <Dialog.Title className="text-xl font-black text-slate-900">
+                <Dialog.Title className="text-xl font-black text-foreground">
                   {modalMode === "view" ? "Performance Report" : modalMode === "edit" ? "Edit Appraisal" : "New Performance Evaluation"}
                 </Dialog.Title>
-                <Dialog.Description className="text-sm font-bold text-slate-500">
+                <Dialog.Description className="text-sm font-bold text-muted-foreground">
                   {modalMode === "view" ? "Detailed performance analytics and ratings" : `Complete the appraisal for ${selectedEmployee?.name}`}
                 </Dialog.Description>
               </div>
-              <Dialog.Close className="p-2 rounded-xl hover:bg-slate-50 text-slate-400 hover:text-slate-900 transition-all">
+              <Dialog.Close className="p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-all">
                 <X size={20} />
               </Dialog.Close>
             </div>
@@ -633,12 +636,12 @@ export function Performance() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Metrics Summary */}
                 <div className="lg:col-span-5 space-y-6">
-                  <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100">
+                  <div className="p-6 rounded-2xl bg-muted border border-border">
                     <div className="flex items-center gap-4 mb-6">
                       <img src={selectedEmployee?.avatar} alt="" className="w-12 h-12 rounded-xl object-cover" />
                       <div>
-                        <h4 className="font-black text-slate-900">{selectedEmployee?.name}</h4>
-                        <p className="text-xs font-bold text-slate-500">{selectedEmployee?.role || selectedEmployee?.designation}</p>
+                        <h4 className="font-black text-foreground">{selectedEmployee?.name}</h4>
+                        <p className="text-xs font-bold text-muted-foreground">{selectedEmployee?.role || selectedEmployee?.designation}</p>
                       </div>
                     </div>
                     <div className="space-y-4">
@@ -654,65 +657,65 @@ export function Performance() {
                 <div className="lg:col-span-7 space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Review Period</label>
-                      <input type="text" value={activeReview?.period || `${period} ${year}`} readOnly className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-700 outline-none" />
+                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Review Period</label>
+                      <input type="text" value={activeReview?.period || `${period} ${year}`} readOnly className="w-full px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none" />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Reviewer</label>
-                      <input type="text" value="Robert Chen" readOnly className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-700 outline-none" />
+                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Reviewer</label>
+                      <input type="text" value="Robert Chen" readOnly className="w-full px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none" />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Strengths</label>
-                    <textarea 
-                      rows={2} 
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Strengths</label>
+                    <textarea
+                      rows={2}
                       readOnly={modalMode === "view"}
-                      placeholder="Key strengths..." 
-                      className={`w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-bold outline-none focus:border-emerald-500 transition-all ${modalMode === "view" ? 'bg-slate-50 cursor-not-allowed' : ''}`} 
+                      placeholder="Key strengths..."
+                      className={`w-full px-4 py-2.5 rounded-xl border border-border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? 'bg-muted cursor-not-allowed opacity-70' : ''}`}
                       defaultValue={modalMode !== "create" ? "Exceptional attention to detail and consistent high-quality output." : ""}
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Improvement Areas</label>
-                    <textarea 
-                      rows={2} 
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Improvement Areas</label>
+                    <textarea
+                      rows={2}
                       readOnly={modalMode === "view"}
-                      placeholder="Areas to grow..." 
-                      className={`w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-bold outline-none focus:border-emerald-500 transition-all ${modalMode === "view" ? 'bg-slate-50 cursor-not-allowed' : ''}`}
+                      placeholder="Areas to grow..."
+                      className={`w-full px-4 py-2.5 rounded-xl border border-border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? 'bg-muted cursor-not-allowed opacity-70' : ''}`}
                       defaultValue={modalMode !== "create" ? "Could improve communication frequency with external stakeholders." : ""}
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Recommendation</label>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Recommendation</label>
                     <div className="relative">
-                      <select 
+                      <select
                         disabled={modalMode === "view"}
                         defaultValue={activeReview?.recommendation || "No Change"}
-                        className={`w-full appearance-none px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-700 outline-none focus:border-emerald-500 transition-all cursor-pointer ${modalMode === "view" ? 'bg-slate-50 cursor-not-allowed opacity-100' : ''}`}
+                        className={`w-full appearance-none px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer bg-card ${modalMode === "view" ? 'bg-muted cursor-not-allowed opacity-70' : ''}`}
                       >
-                        <option>No Change</option>
-                        <option>Bonus</option>
-                        <option>Increment</option>
-                        <option>Promotion</option>
+                        <option value="No Change">No Change</option>
+                        <option value="Bonus">Bonus</option>
+                        <option value="Increment">Increment</option>
+                        <option value="Promotion">Promotion</option>
                       </select>
-                      {modalMode !== "view" && <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />}
+                      {modalMode !== "view" && <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-6 border-t border-slate-50 flex items-center gap-4 bg-slate-50/50">
-              <Dialog.Close className="flex-1 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-700 text-sm font-black hover:bg-slate-50 transition-all">
+            <div className="p-6 border-t border-border flex items-center gap-4 bg-muted/30">
+              <Dialog.Close className="flex-1 py-3.5 rounded-2xl bg-card border border-border text-foreground text-sm font-black hover:bg-muted transition-all">
                 {modalMode === "view" ? "Close" : "Cancel"}
               </Dialog.Close>
               {modalMode !== "view" && (
-                <button 
+                <button
                   onClick={handleSaveReview}
-                  className="flex-[2] py-3.5 rounded-2xl bg-emerald-500 text-white text-sm font-black shadow-lg shadow-emerald-200 hover:bg-emerald-600 transition-all"
+                  className="flex-[2] py-3.5 rounded-2xl bg-emerald-500 text-white text-sm font-black shadow-lg shadow-emerald-20 hover:bg-emerald-600 transition-all"
                 >
                   {modalMode === "edit" ? "Save Changes" : "Submit Evaluation"}
                 </button>
@@ -726,21 +729,21 @@ export function Performance() {
       <AlertDialog.Root open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialog.Portal>
           <AlertDialog.Overlay className="fixed inset-0 bg-slate-900/30 z-[110]" />
-          <AlertDialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-white rounded-[32px] shadow-2xl z-[111] overflow-hidden focus:outline-none p-8 text-center">
-            <div className="w-20 h-20 rounded-3xl bg-red-50 text-red-500 flex items-center justify-center mx-auto mb-6">
+          <AlertDialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-card rounded-[32px] shadow-2xl z-[111] overflow-hidden focus:outline-none p-8 text-center">
+            <div className="w-20 h-20 rounded-3xl bg-red-50 dark:bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-6">
               <AlertTriangle size={40} />
             </div>
-            <AlertDialog.Title className="text-xl font-black text-slate-900 mb-2">Delete Review Record?</AlertDialog.Title>
-            <AlertDialog.Description className="text-sm font-bold text-slate-500 mb-8">
-              Are you sure you want to delete the performance record for <span className="text-slate-900 font-black">{deleteTarget?.name}</span>? This action cannot be undone.
+            <AlertDialog.Title className="text-xl font-black text-foreground mb-2">Delete Review Record?</AlertDialog.Title>
+            <AlertDialog.Description className="text-sm font-bold text-muted-foreground mb-8">
+              Are you sure you want to delete the performance record for <span className="text-foreground font-black">{deleteTarget?.name}</span>? This action cannot be undone.
             </AlertDialog.Description>
             <div className="flex items-center gap-4">
-              <AlertDialog.Cancel className="flex-1 py-3.5 rounded-2xl bg-slate-100 text-slate-600 text-sm font-black hover:bg-slate-200 transition-all">
+              <AlertDialog.Cancel className="flex-1 py-3.5 rounded-2xl bg-muted text-foreground text-sm font-black hover:bg-secondary transition-all">
                 Cancel
               </AlertDialog.Cancel>
-              <AlertDialog.Action 
+              <AlertDialog.Action
                 onClick={confirmDelete}
-                className="flex-1 py-3.5 rounded-2xl bg-red-500 text-white text-sm font-black shadow-lg shadow-red-200 hover:bg-red-600 transition-all"
+                className="flex-1 py-3.5 rounded-2xl bg-red-500 text-white text-sm font-black shadow-lg shadow-red-20 hover:bg-red-600 transition-all"
               >
                 Delete Record
               </AlertDialog.Action>
