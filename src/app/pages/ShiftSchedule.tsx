@@ -4,7 +4,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
-  ChevronUp,
+
   Plus,
   Users,
   CheckSquare,
@@ -36,6 +36,19 @@ interface ShiftMap {
   [key: string]: Shift | null;
 }
 
+interface SwapItem {
+  id: number;
+  p1: string;
+  p1Init: string;
+  p2: string;
+  p2Init: string;
+  reason: string;
+  detail: string;
+  p1Color: string;
+  p2Color: string;
+  shiftTypes: string;
+}
+
 export const ShiftSchedule: React.FC = () => {
   const [selectedDept, setSelectedDept] = useState('All Departments');
   const [showExportModal, setShowExportModal] = useState(false);
@@ -43,14 +56,14 @@ export const ShiftSchedule: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [activeBrush, setActiveBrush] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0);
-  const [swaps, setSwaps] = useState([
+  const [swaps, setSwaps] = useState<SwapItem[]>([
     { id: 1, p1: 'Sarah J.', p1Init: 'SJ', p2: 'Marcus W.', p2Init: 'MW', reason: 'Doctor appointment', detail: 'Mon Apr 7 Morning ↔ Tue Apr 8 Evening', p1Color: '#059669', p2Color: '#2563EB', shiftTypes: 'Morning ↔ Evening' },
     { id: 2, p1: 'Ravi K.', p1Init: 'RK', p2: 'Sneha P.', p2Init: 'SP', reason: 'Family event', detail: 'Wed Apr 9 Night ↔ Fri Apr 11 Night', p1Color: '#0D9488', p2Color: '#7C3AED', shiftTypes: 'Night ↔ Night' },
     { id: 3, p1: 'James C.', p1Init: 'JC', p2: 'Emily R.', p2Init: 'ER', reason: 'Transport issues', detail: 'Thu Apr 10 Evening ↔ Fri Apr 11 Morning', p1Color: '#D97706', p2Color: '#DB2777', shiftTypes: 'Evening ↔ Morning' },
   ]);
   const [fixingOT, setFixingOT] = useState(false);
   const [generatingReport, setGeneratingReport] = useState(false);
-  const [selectedSwapDetails, setSelectedSwapDetails] = useState<any | null>(null);
+  const [selectedSwapDetails, setSelectedSwapDetails] = useState<SwapItem | null>(null);
   const swapListRef = React.useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -78,14 +91,14 @@ export const ShiftSchedule: React.FC = () => {
         if (rand > 0.3) {
           const types: ('Morning' | 'Evening' | 'Night' | 'Off Day')[] = ['Morning', 'Evening', 'Night', 'Off Day'];
           const type = types[Math.floor(Math.random() * types.length)];
-          const times = {
+          const times: Record<string, string> = {
             'Morning': '06:00 – 14:00',
             'Evening': '14:00 – 22:00',
             'Night': '22:00 – 06:00',
             'Off Day': 'Rest Day'
           };
           if (type !== 'Off Day') {
-            acc[day] = { type: type as any, time: times[type], isOT: Math.random() > 0.8 };
+            acc[day] = { type: type as 'Morning' | 'Evening' | 'Night' | 'Full Day', time: times[type], isOT: Math.random() > 0.8 };
           }
         }
         return acc;
@@ -96,7 +109,7 @@ export const ShiftSchedule: React.FC = () => {
   const handleDrop = (empId: string, day: string, shiftType: string) => {
     setScheduleData(prev => prev.map(emp => {
       if (emp.id === empId) {
-        const times = {
+        const times: Record<string, string> = {
           'Morning': '06:00 – 14:00',
           'Evening': '14:00 – 22:00',
           'Night': '22:00 – 06:00',
@@ -107,8 +120,8 @@ export const ShiftSchedule: React.FC = () => {
           delete updatedShifts[day];
         } else {
           updatedShifts[day] = { 
-            type: shiftType as any, 
-            time: (times as any)[shiftType] || '09:00 – 18:00', 
+            type: shiftType as 'Morning' | 'Evening' | 'Night' | 'Full Day', 
+            time: times[shiftType] || '09:00 – 18:00', 
             isOT: false 
           };
         }
@@ -456,7 +469,7 @@ export const ShiftSchedule: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-sm font-bold text-foreground flex items-center gap-1.5">{swap.p1} ↔ {swap.p2}</span>
-                      <p className="text-xs text-muted-foreground font-medium mt-0.5">{(swap as any).shiftTypes || 'Morning ↔ Evening'}</p>
+                      <p className="text-xs text-muted-foreground font-medium mt-0.5">{swap.shiftTypes}</p>
                     </div>
                   </div>
                   <div className="flex gap-2">
