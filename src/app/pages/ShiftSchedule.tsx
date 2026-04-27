@@ -4,6 +4,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  ChevronUp,
   Plus,
   Users,
   CheckSquare,
@@ -43,16 +44,18 @@ export const ShiftSchedule: React.FC = () => {
   const [activeBrush, setActiveBrush] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0);
   const [swaps, setSwaps] = useState([
-    { id: 1, p1: 'Sarah J.', p1Init: 'SJ', p2: 'Marcus W.', p2Init: 'MW', reason: 'Doctor appointment', detail: 'Mon Apr 7 Morning ↔ Tue Apr 8 Evening', p1Color: 'linear-gradient(135deg, #059669, #047857)', p2Color: 'linear-gradient(135deg, #3B82F6, #2563EB)' },
-    { id: 2, p1: 'Ravi K.', p1Init: 'RK', p2: 'Sneha P.', p2Init: 'SP', reason: 'Family event', detail: 'Wed Apr 9 Night ↔ Fri Apr 11 Night', p1Color: 'linear-gradient(135deg, #14B8A6, #0D9488)', p2Color: 'linear-gradient(135deg, #8B5CF6, #7C3AED)' },
-    { id: 3, p1: 'James C.', p1Init: 'JC', p2: 'Emily R.', p2Init: 'ER', reason: 'Transport issues', detail: 'Thu Apr 10 Evening ↔ Fri Apr 11 Morning', p1Color: 'linear-gradient(135deg, #F59E0B, #D97706)', p2Color: 'linear-gradient(135deg, #EC4899, #DB2777)' },
+    { id: 1, p1: 'Sarah J.', p1Init: 'SJ', p2: 'Marcus W.', p2Init: 'MW', reason: 'Doctor appointment', detail: 'Mon Apr 7 Morning ↔ Tue Apr 8 Evening', p1Color: '#059669', p2Color: '#2563EB', shiftTypes: 'Morning ↔ Evening' },
+    { id: 2, p1: 'Ravi K.', p1Init: 'RK', p2: 'Sneha P.', p2Init: 'SP', reason: 'Family event', detail: 'Wed Apr 9 Night ↔ Fri Apr 11 Night', p1Color: '#0D9488', p2Color: '#7C3AED', shiftTypes: 'Night ↔ Night' },
+    { id: 3, p1: 'James C.', p1Init: 'JC', p2: 'Emily R.', p2Init: 'ER', reason: 'Transport issues', detail: 'Thu Apr 10 Evening ↔ Fri Apr 11 Morning', p1Color: '#D97706', p2Color: '#DB2777', shiftTypes: 'Evening ↔ Morning' },
   ]);
   const [fixingOT, setFixingOT] = useState(false);
   const [generatingReport, setGeneratingReport] = useState(false);
+  const [selectedSwapDetails, setSelectedSwapDetails] = useState<any | null>(null);
+  const swapListRef = React.useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  
+
   const dates = useMemo(() => {
     const baseDate = new Date(2026, 3, 6); // Apr 6, 2026
     return days.map((_, i) => {
@@ -173,22 +176,22 @@ export const ShiftSchedule: React.FC = () => {
       <div className="bg-card p-4 rounded-2xl border border-border shadow-sm flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 p-1 bg-secondary rounded-xl">
-            <button 
-              className="p-1.5 rounded-lg hover:bg-white transition-colors text-muted-foreground hover:text-primary active:scale-90" 
+            <button
+              className="p-1.5 rounded-lg hover:bg-white transition-colors text-muted-foreground hover:text-primary active:scale-90"
               onClick={() => setWeekOffset(prev => prev - 1)}
             >
               <ChevronLeft size={18} />
             </button>
             <span className="text-sm font-bold px-3 text-foreground min-w-[180px] text-center">{weekLabel}</span>
-            <button 
-              className="p-1.5 rounded-lg hover:bg-white transition-colors text-muted-foreground hover:text-primary active:scale-90" 
+            <button
+              className="p-1.5 rounded-lg hover:bg-white transition-colors text-muted-foreground hover:text-primary active:scale-90"
               onClick={() => setWeekOffset(prev => prev + 1)}
             >
               <ChevronRight size={18} />
             </button>
           </div>
-          <button 
-            className="px-4 py-2 text-sm font-bold text-primary bg-secondary border border-primary/20 rounded-xl hover:bg-primary/10 transition-colors active:scale-95" 
+          <button
+            className="px-4 py-2 text-sm font-bold text-primary bg-secondary border border-primary/20 rounded-xl hover:bg-primary/10 transition-colors active:scale-95"
             onClick={() => setWeekOffset(0)}
           >
             Today
@@ -303,8 +306,8 @@ export const ShiftSchedule: React.FC = () => {
               { type: 'Night', color: 'bg-violet-500', label: 'NGT' },
               { type: 'Full Day', color: 'bg-blue-500', label: 'FUL' },
             ].map(type => (
-              <button 
-                key={type.type} 
+              <button
+                key={type.type}
                 className={`group flex flex-col items-center gap-1 p-1 hover:bg-secondary rounded-xl transition-all ${activeBrush === type.type ? 'ring-2 ring-emerald-500 bg-emerald-50' : ''}`}
                 title={`Quick assign ${type.type} shift`}
                 onClick={() => setActiveBrush(activeBrush === type.type ? null : type.type)}
@@ -328,9 +331,9 @@ export const ShiftSchedule: React.FC = () => {
       {/* Weekly Schedule Grid */}
       <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8 bg-white dark:bg-zinc-900">
         <div className="grid grid-cols-[240px_repeat(7,1fr)] bg-secondary/50 border-b border-border">
-          <div className="px-6 py-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center">Employee</div>
+          <div className="px-4 py-3 text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center">Employee</div>
           {days.map((day, i) => (
-            <div key={day} className={`px-4 py-4 text-center border-l border-border flex flex-col justify-center ${day === 'Mon' ? 'bg-primary/5' : ''}`}>
+            <div key={day} className={`px-3 py-3 text-center border-l border-border flex flex-col justify-center ${day === 'Mon' ? 'bg-primary/5' : ''}`}>
               <span className={`text-xs font-extra-bold ${day === 'Mon' ? 'text-primary' : 'text-foreground'}`}>{day}</span>
               <span className="text-[10px] text-muted-foreground font-bold">{dates[i]}</span>
             </div>
@@ -338,11 +341,11 @@ export const ShiftSchedule: React.FC = () => {
         </div>
         <div className="grid-body divide-y divide-border">
           {filteredSchedule.map(emp => (
-            <div key={emp.id} className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[90px]">
-              <div className="px-6 py-4 flex items-center gap-4 border-r border-border/50">
+            <div key={emp.id} className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
+              <div className="px-4 py-2 flex items-center gap-3 border-r border-border/50">
                 <div className="relative flex-shrink-0">
-                  <img src={emp.avatar} alt="" className="w-11 h-11 rounded-full border-2 border-white dark:border-zinc-800 shadow-sm" />
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full"></div>
+                  <img src={emp.avatar} alt="" className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-800 shadow-sm" />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full"></div>
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="text-sm font-extrabold text-foreground leading-tight">{emp.name}</span>
@@ -354,12 +357,12 @@ export const ShiftSchedule: React.FC = () => {
                 return (
                   <div key={day} className="border-l border-border/50 p-1 flex items-stretch">
                     {shift ? (
-                      <div className={`flex-1 rounded-xl p-2.5 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm group ${shift.type === 'Morning' ? 'bg-secondary text-primary border-l-4 border-l-primary' :
-                          shift.type === 'Evening' ? 'bg-[rgba(245,158,11,0.1)] text-[#F59E0B] border-l-4 border-l-[#F59E0B]' :
-                            shift.type === 'Night' ? 'bg-violet-50 text-violet-700 border-l-4 border-l-violet-500' :
-                              'bg-blue-50 text-blue-700 border-l-4 border-l-blue-500'
+                      <div className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm group ${shift.type === 'Morning' ? 'bg-secondary text-primary border-l-4 border-l-primary' :
+                        shift.type === 'Evening' ? 'bg-[rgba(245,158,11,0.1)] text-[#F59E0B] border-l-4 border-l-[#F59E0B]' :
+                          shift.type === 'Night' ? 'bg-violet-50 text-violet-700 border-l-4 border-l-violet-500' :
+                            'bg-blue-50 text-blue-700 border-l-4 border-l-blue-500'
                         }`} onClick={() => setShowAddModal(true)}>
-                        <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center justify-between mb-0.5">
                           <span className="text-[10px] font-black uppercase tracking-tight">{shift.type}</span>
                           {shift.isOT && <span className="text-[8px] bg-red-500 text-white px-1.5 rounded-full font-black animate-pulse">OT</span>}
                         </div>
@@ -388,72 +391,100 @@ export const ShiftSchedule: React.FC = () => {
       {/* Bottom Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
         {/* Swap Requests */}
-        <div id="swaps-panel" className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-full transition-all hover:shadow-md">
-          <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-card rounded-t-2xl">
+        <div id="swaps-panel" className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-full transition-all hover:shadow-md relative">
+          <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-card rounded-t-2xl">
             <div className="flex items-center gap-3">
-              <ArrowLeftRight color="var(--primary)" size={18} />
+              <ArrowLeftRight color="#00B87C" size={18} />
               <h3 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Shift Swap Requests</h3>
             </div>
-            <span className="px-2.5 py-1 bg-amber-50 text-amber-600 text-[10px] font-bold rounded-full border border-amber-100">8 PENDING</span>
+            <span className="px-3 py-1 bg-amber-50/50 text-amber-600 text-[11px] font-bold rounded-full border border-amber-200">3 PENDING</span>
           </div>
-          <div className="p-6 divide-y divide-border overflow-y-auto max-h-[400px]">
-            {swaps.map(swap => (
-              <div key={swap.id} className="py-4 first:pt-0 last:pb-0 group">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center -space-x-2">
-                      <div className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center text-[10px] font-bold text-white shadow-sm" style={{ background: swap.p1Color }}>{swap.p1Init}</div>
-                      <div className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center text-[10px] font-bold text-white shadow-sm" style={{ background: swap.p2Color }}>{swap.p2Init}</div>
+
+          <div className="relative flex flex-1 overflow-hidden">
+            {/* Swap List */}
+            <div ref={swapListRef} className="flex-1 p-4 space-y-4 overflow-y-auto max-h-[400px] pr-10 scrollbar-hide">
+              {swaps.map(swap => (
+                <div key={swap.id} className="pb-4 border-b last:border-b-0 border-border/50 last:pb-0 group">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center -space-x-2">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm" style={{ backgroundColor: swap.p1Color }}>{swap.p1Init}</div>
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm" style={{ backgroundColor: swap.p2Color }}>{swap.p2Init}</div>
+                      </div>
+                      <div>
+                        <span className="text-sm font-bold text-foreground flex items-center gap-1.5">{swap.p1} ↔ {swap.p2}</span>
+                        <p className="text-xs text-muted-foreground font-medium mt-0.5">{(swap as any).shiftTypes || 'Morning ↔ Evening'}</p>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-sm font-bold text-foreground">{swap.p1} ↔ {swap.p2}</span>
-                      <p className="text-[10px] text-muted-foreground font-medium mt-0.5">{swap.reason}</p>
+                    <div className="flex gap-2">
+                      <button
+                        className="w-8 h-8 flex items-center justify-center bg-neutral-50 text-muted-foreground rounded-full border border-border hover:bg-neutral-100 transition-colors active:scale-95"
+                        title="Reject"
+                        onClick={() => setSwaps(prev => prev.filter(s => s.id !== swap.id))}
+                      >
+                        <X size={14} />
+                      </button>
+                      <button
+                        className="w-8 h-8 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-100 transition-colors active:scale-95"
+                        title="Approve"
+                        onClick={() => setSwaps(prev => prev.filter(s => s.id !== swap.id))}
+                      >
+                        <Check size={14} />
+                      </button>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button 
-                      className="p-2 bg-secondary text-foreground rounded-xl hover:bg-neutral-200 transition-colors active:scale-95" 
-                      title="Reject"
-                      onClick={() => setSwaps(prev => prev.filter(s => s.id !== swap.id))}
+
+                  <div className="bg-[#F4FBF7] dark:bg-zinc-800/50 px-4 py-3 rounded-2xl flex items-center justify-between">
+                    <p className="text-[12px] font-medium text-muted-foreground">
+                      {swap.detail}
+                    </p>
+                    <button
+                      className="text-[12px] font-bold text-[#00B87C] hover:underline cursor-pointer"
+                      onClick={() => setSelectedSwapDetails(swap)}
                     >
-                      <X size={14} />
-                    </button>
-                    <button 
-                      className="p-2 bg-primary text-white rounded-xl hover:opacity-90 shadow-sm transition-all shadow-primary/20 active:scale-95" 
-                      title="Approve"
-                      onClick={() => setSwaps(prev => prev.filter(s => s.id !== swap.id))}
-                    >
-                      <Check size={14} />
+                      Details
                     </button>
                   </div>
                 </div>
-                <div className="bg-secondary/40 p-3 rounded-xl border border-secondary">
-                  <p className="text-[11px] font-bold text-foreground flex items-center gap-2">
-                    <CalendarIcon size={12} className="text-muted-foreground" />
-                    {swap.detail}
-                  </p>
-                </div>
+              ))}
+              {swaps.length === 0 && (
+                <div className="py-10 text-center text-muted-foreground font-bold text-sm">No pending requests</div>
+              )}
+            </div>
+
+
+            {/* Custom Scrollbar UI */}
+            <div className="absolute right-3 top-0 bottom-0 w-4 flex flex-col items-center justify-between py-4 border-l border-border/50">
+              <ChevronUp
+                size={12}
+                className="text-muted-foreground cursor-pointer hover:text-primary"
+                onClick={() => swapListRef.current?.scrollBy({ top: -100, behavior: 'smooth' })}
+              />
+              <div className="w-2 flex-1 bg-neutral-200 dark:bg-zinc-700 rounded-full mx-auto my-2 relative">
+                <div className="absolute top-2 left-0 right-0 bg-zinc-400 rounded-full h-20"></div>
               </div>
-            ))}
-            {swaps.length === 0 && (
-              <div className="py-10 text-center text-muted-foreground font-bold text-sm">No pending requests</div>
-            )}
+              <ChevronDown
+                size={12}
+                className="text-muted-foreground cursor-pointer hover:text-primary"
+                onClick={() => swapListRef.current?.scrollBy({ top: 100, behavior: 'smooth' })}
+              />
+            </div>
           </div>
-          <div className="px-6 py-4 mt-auto border-t border-border bg-card rounded-b-2xl">
+          <div className="px-4 py-3 mt-auto border-t border-border bg-card rounded-b-2xl">
             <button className="w-full py-2 text-xs font-bold text-primary hover:bg-secondary rounded-xl transition-colors active:scale-95" onClick={() => navigate('/reports', { state: { activeReport: 'Shift Swap Report' } })}>View All Swap Requests</button>
           </div>
         </div>
 
         {/* Overtime Summary */}
         <div id="overtime-panel" className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-full transition-all hover:shadow-md">
-          <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-card rounded-t-2xl">
+          <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-card rounded-t-2xl">
             <div className="flex items-center gap-3">
               <Clock color="#F59E0B" size={18} />
               <h3 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Overtime Monitoring</h3>
             </div>
             <span className="px-2.5 py-1 bg-secondary text-primary text-[10px] font-bold rounded-full border border-primary/20">142 TOTAL HRS</span>
           </div>
-          <div className="p-6 space-y-5 overflow-y-auto max-h-[400px]">
+          <div className="p-4 space-y-3 overflow-y-auto max-h-[400px]">
             {[
               { name: 'James Carter', hrs: 18, limit: 15, color: '#EF4444', avatar: 'JC' },
               { name: 'Ravi Kumar', hrs: 15, limit: 15, color: '#F59E0B', avatar: 'RK' },
@@ -462,26 +493,26 @@ export const ShiftSchedule: React.FC = () => {
               { name: 'Yuki Tanaka', hrs: 8, limit: 15, color: 'var(--primary)', avatar: 'YT' },
             ].map(item => (
               <div key={item.name} className="group">
-                <div className="flex justify-between items-center mb-2">
+                <div className="flex justify-between items-center mb-1">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[9px] font-bold text-primary">{item.avatar}</div>
                     <span className="text-xs font-bold text-foreground">{item.name}</span>
                   </div>
                   <span className="text-xs font-black" style={{ color: item.color }}>{item.hrs}h <span className="text-[10px] font-medium text-muted-foreground ml-1">/ {item.limit}h</span></span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden">
+                <div className="h-1.5 w-full rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden">
                   <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(item.hrs / 20) * 100}%`, backgroundColor: item.color }} />
                 </div>
               </div>
             ))}
           </div>
-          <div className="px-6 py-4 mt-auto">
-            <div className="bg-amber-50 dark:bg-amber-900/10 p-4 rounded-xl border border-amber-100 dark:border-amber-900/30 flex items-center justify-between">
+          <div className="px-4 py-3 mt-auto">
+            <div className="bg-amber-50 dark:bg-amber-900/10 p-3 rounded-xl border border-amber-100 dark:border-amber-900/30 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <AlertTriangle size={14} className="text-amber-600" />
                 <p className="text-[11px] text-amber-700 dark:text-amber-400 font-bold">3 employees exceed the 15hr limit</p>
               </div>
-              <button 
+              <button
                 className="text-[11px] font-black text-amber-800 dark:text-amber-200 hover:underline active:scale-95 disabled:opacity-50"
                 onClick={() => {
                   setFixingOT(true);
@@ -493,8 +524,8 @@ export const ShiftSchedule: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className="px-6 py-4 border-t border-border bg-card rounded-b-2xl">
-            <button 
+          <div className="px-4 py-3 border-t border-border bg-card rounded-b-2xl">
+            <button
               className="w-full py-2 text-xs font-bold text-primary hover:bg-secondary rounded-xl transition-colors active:scale-95 disabled:opacity-50"
               onClick={() => {
                 setGeneratingReport(true);
@@ -586,6 +617,80 @@ export const ShiftSchedule: React.FC = () => {
                 style={{ background: "linear-gradient(135deg, #059669, #047857)" }}
               >
                 Assign Shift
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Swap Details Modal */}
+      {selectedSwapDetails && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-[32px] shadow-2xl border border-border w-full max-w-md overflow-hidden transform transition-all p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-extrabold text-foreground">Swap Details</h3>
+              <button
+                onClick={() => setSelectedSwapDetails(null)}
+                className="p-2 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-full transition-colors text-muted-foreground hover:text-foreground"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-center gap-12 py-6 bg-[#F8FCFA] dark:bg-zinc-800/30 rounded-2xl mb-6 relative">
+              <div className="flex flex-col items-center">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white shadow-md" style={{ backgroundColor: selectedSwapDetails.p1Color }}>
+                  {selectedSwapDetails.p1Init}
+                </div>
+                <span className="text-sm font-extrabold mt-2 text-foreground">{selectedSwapDetails.p1}</span>
+              </div>
+
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-zinc-900 p-2 rounded-full border border-border shadow-sm">
+                <ArrowLeftRight size={16} className="text-[#00B87C]" />
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white shadow-md" style={{ backgroundColor: selectedSwapDetails.p2Color }}>
+                  {selectedSwapDetails.p2Init}
+                </div>
+                <span className="text-sm font-extrabold mt-2 text-foreground">{selectedSwapDetails.p2}</span>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-8">
+              <div>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Shift Transition</p>
+                <p className="text-sm font-extrabold text-foreground mt-1">{selectedSwapDetails.shiftTypes || 'Morning ↔ Evening'}</p>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Reason For Swap</p>
+                <p className="text-sm font-medium text-muted-foreground mt-1">{selectedSwapDetails.reason}</p>
+              </div>
+
+              <div className="bg-[#F4FBF7] dark:bg-zinc-800/50 px-4 py-3 rounded-2xl flex items-center gap-2 mt-4 border border-[#E0F2F1]/50">
+                <CalendarIcon size={14} className="text-[#00B87C]" />
+                <p className="text-xs font-bold text-foreground">{selectedSwapDetails.detail}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setSwaps(prev => prev.filter(s => s.id !== selectedSwapDetails.id));
+                  setSelectedSwapDetails(null);
+                }}
+                className="px-6 py-2.5 border border-red-200 hover:border-red-300 hover:bg-red-50 text-red-500 text-xs font-bold rounded-full transition-all active:scale-95"
+              >
+                Reject Swap
+              </button>
+              <button
+                onClick={() => {
+                  setSwaps(prev => prev.filter(s => s.id !== selectedSwapDetails.id));
+                  setSelectedSwapDetails(null);
+                }}
+                className="px-6 py-2.5 bg-[#00B87C] hover:bg-[#00A670] text-white text-xs font-bold rounded-full transition-all shadow-md shadow-emerald-500/10 active:scale-95"
+              >
+                Approve Swap
               </button>
             </div>
           </div>
