@@ -19,6 +19,9 @@ const UserProfile = lazy(() => import("./pages/UserProfile").then(m => ({ defaul
 const SmartSearch = lazy(() => import("./pages/SmartSearch"));
 const ShiftSchedule = lazy(() => import("./pages/ShiftSchedule").then(m => ({ default: m.ShiftSchedule })));
 const IncrementAppraisal = lazy(() => import("./pages/IncrementAppraisal").then(m => ({ default: m.IncrementAppraisal })));
+const Onboarding = lazy(() => import("./pages/Onboarding").then(m => ({ default: m.Onboarding })));
+const Training = lazy(() => import("./pages/Training").then(m => ({ default: m.Training })));
+const Documents = lazy(() => import("./pages/Documents").then(m => ({ default: m.Documents })));
 
 // Loading fallback displayed while lazy chunks are fetched
 function PageLoader() {
@@ -86,6 +89,9 @@ export const router = createBrowserRouter([
       { path: "smart-search", element: lazyRoute(SmartSearch) },
       { path: "schedule", element: lazyRoute(ShiftSchedule) },
       { path: "appraisal", element: lazyRoute(IncrementAppraisal) },
+      { path: "onboarding", element: lazyRoute(Onboarding) },
+      { path: "documents", element: lazyRoute(Documents) },
+      { path: "training", element: lazyRoute(Training) },
     ],
   },
 ]);

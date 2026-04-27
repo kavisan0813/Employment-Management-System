@@ -16,6 +16,9 @@ import {
   Sparkles,
   CalendarClock,
   Award,
+  UserPlus,
+  BookOpen,
+  Folder,
 } from "lucide-react";
 
 
@@ -29,6 +32,8 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
 
   { icon: Users, label: "Employees", path: "/employees" },
+  { icon: UserPlus, label: "Onboarding", path: "/onboarding" },
+  { icon: Folder, label: "Documents", path: "/documents" },
   { icon: Store, label: "Departments", path: "/departments" },
   { icon: CalendarCheck, label: "Attendance", path: "/attendance" },
   { icon: CalendarClock, label: "Schedule", path: "/schedule" },
@@ -36,6 +41,7 @@ const navItems = [
   { icon: IndianRupee, label: "Payroll", path: "/payroll" },
   { icon: Briefcase, label: "Recruitment", path: "/recruitment" },
   { icon: TrendingUp, label: "Performance", path: "/performance" },
+  { icon: BookOpen, label: "Training", path: "/training" },
   { icon: Award, label: "Increment & Appraisal", path: "/appraisal" },
   { icon: BarChart3, label: "Reports", path: "/reports" },
   { icon: Settings, label: "Settings", path: "/settings" },
