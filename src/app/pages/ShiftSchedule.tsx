@@ -49,11 +49,87 @@ interface SwapItem {
   shiftTypes: string;
 }
 
+interface ShiftTemplate {
+  id: number;
+  name: string;
+  employeesCount: number;
+  department: string;
+  lastApplied: string;
+  rotationType: string;
+  badge?: 'Active' | 'Most Used' | 'Recently Applied';
+  badgeColor: string;
+  badgeBg: string;
+  weeklySchedule: { [key: string]: string };
+}
+
 export const ShiftSchedule: React.FC = () => {
   const [selectedDept, setSelectedDept] = useState('All Departments');
   const [showExportModal, setShowExportModal] = useState(false);
   const [view, setView] = useState<'Week' | 'Month' | 'Day'>('Week');
   const [showAddModal, setShowAddModal] = useState(false);
+
+  const [templates, setTemplates] = useState<ShiftTemplate[]>([
+    { 
+      id: 1, 
+      name: 'Engineering Week A', 
+      employeesCount: 7, 
+      department: 'Engineering', 
+      lastApplied: 'Apr 1', 
+      rotationType: 'Weekly Rotation',
+      badge: 'Active',
+      badgeColor: '#059669',
+      badgeBg: '#E6F4EA',
+      weeklySchedule: { 'Mon': 'Morning', 'Tue': 'Morning', 'Wed': 'Morning', 'Thu': 'Morning', 'Fri': 'Morning', 'Sat': 'Off Day', 'Sun': 'Off Day' }
+    },
+    { 
+      id: 2, 
+      name: 'Night Rot.', 
+      employeesCount: 4, 
+      department: 'Operations', 
+      lastApplied: 'Apr 5', 
+      rotationType: 'Bi-weekly',
+      badge: 'Most Used',
+      badgeColor: '#7C3AED',
+      badgeBg: '#F3E8FF',
+      weeklySchedule: { 'Mon': 'Night', 'Tue': 'Night', 'Wed': 'Off Day', 'Thu': 'Night', 'Fri': 'Night', 'Sat': 'Night', 'Sun': 'Off Day' }
+    },
+    { 
+      id: 3, 
+      name: 'Weekend Peak', 
+      employeesCount: 12, 
+      department: 'Sales', 
+      lastApplied: 'Mar 28', 
+      rotationType: 'Weekend Only',
+      badge: 'Recently Applied',
+      badgeColor: '#D97706',
+      badgeBg: '#FFFBEB',
+      weeklySchedule: { 'Mon': 'Off Day', 'Tue': 'Off Day', 'Wed': 'Off Day', 'Thu': 'Off Day', 'Fri': 'Evening', 'Sat': 'Morning', 'Sun': 'Morning' }
+    }
+  ]);
+  
+  const [selectedTemplate, setSelectedTemplate] = useState<ShiftTemplate | null>(null);
+  const [showCreateTemplate, setShowCreateTemplate] = useState(false);
+  const [showTemplateMenu, setShowTemplateMenu] = useState<number | null>(null);
+  const [editTemplate, setEditTemplate] = useState<ShiftTemplate | null>(null);
+  const [renameTemplate, setRenameTemplate] = useState<ShiftTemplate | null>(null);
+  const [renameValue, setRenameValue] = useState('');
+  
+  const [newTName, setNewTName] = useState('');
+  const [newTDept, setNewTDept] = useState('Engineering');
+  const [newTRotation, setNewTRotation] = useState('Weekly Rotation');
+  const [newTSchedule, setNewTSchedule] = useState<Record<string, string>>({
+    'Mon': 'Morning', 'Tue': 'Morning', 'Wed': 'Morning', 'Thu': 'Morning', 'Fri': 'Morning', 'Sat': 'Off Day', 'Sun': 'Off Day'
+  });
+  const [advancedApplyTemplate, setAdvancedApplyTemplate] = useState<ShiftTemplate | null>(null);
+  const [applyStep, setApplyStep] = useState<'form' | 'confirmation'>('form');
+  const [applyDept, setApplyDept] = useState('All Departments');
+  const [selectedEmps, setSelectedEmps] = useState<string[]>([]);
+  const [applyDateRange, setApplyDateRange] = useState('Apr 28 - May 4');
+  const [applyStartDay, setApplyStartDay] = useState('Monday');
+  const [applyConflictHandling, setApplyConflictHandling] = useState<'replace' | 'fill' | 'skip'>('replace');
+  const [applyNotes, setApplyNotes] = useState('');
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+
   const [activeBrush, setActiveBrush] = useState<string | null>(null);
   const [weekOffset, setWeekOffset] = useState(0);
   const [swaps, setSwaps] = useState<SwapItem[]>([
@@ -580,6 +656,696 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Shift Templates Section */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">Shift Templates</h3>
+            <p className="text-xs font-medium text-muted-foreground mt-1">Deploy pre-configured schedule routines across organizational groups</p>
+          </div>
+          <button
+            className="flex items-center gap-2 px-4 py-2 bg-[#00B87C] text-white rounded-xl hover:bg-[#00a36d] shadow-sm transition-all text-sm font-bold active:scale-95"
+            onClick={() => setShowCreateTemplate(true)}
+          >
+            <Plus size={18} />
+            <span>Create Template</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {templates.map((tmpl) => (
+            <div
+              key={tmpl.id}
+              className="bg-white dark:bg-zinc-900 rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-all relative flex flex-col justify-between group"
+            >
+              {tmpl.badge && (
+                <span
+                  className="absolute top-4 right-12 px-2.5 py-0.5 text-[10px] font-black rounded-full border uppercase tracking-wide"
+                  style={{
+                    backgroundColor: tmpl.badgeBg,
+                    color: tmpl.badgeColor,
+                    borderColor: `${tmpl.badgeColor}20`,
+                  }}
+                >
+                  {tmpl.badge}
+                </span>
+              )}
+
+              {/* 3-Dot Menu Trigger */}
+              <div className="absolute top-4 right-4">
+                <button
+                  className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowTemplateMenu(showTemplateMenu === tmpl.id ? null : tmpl.id);
+                  }}
+                >
+                  <MoreIcon size={16} />
+                </button>
+                {showTemplateMenu === tmpl.id && (
+                  <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-lg z-30 py-1 animate-in fade-in slide-in-from-top-1">
+                    {['View Template', 'Edit Template', 'Duplicate Template', 'Rename Template', 'Delete Template'].map(
+                      (action) => (
+                        <button
+                          key={action}
+                          className={`w-full text-left px-4 py-2 text-xs font-bold ${action === 'Delete Template' ? 'text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20' : 'text-slate-700 dark:text-slate-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/40'}`}
+                          onClick={() => {
+                            setShowTemplateMenu(null);
+                            if (action === 'View Template') setSelectedTemplate(tmpl);
+                            if (action === 'Edit Template') setEditTemplate(tmpl);
+                            if (action === 'Duplicate Template') {
+                              const newId = Math.max(...templates.map(t => t.id), 0) + 1;
+                              setTemplates(prev => [...prev, {
+                                ...tmpl,
+                                id: newId,
+                                name: `${tmpl.name} (Copy)`,
+                                badge: 'Recently Applied',
+                                badgeColor: '#0EA5E9',
+                                badgeBg: '#E0F2FE'
+                              }]);
+                            }
+                            if (action === 'Rename Template') {
+                              setRenameTemplate(tmpl);
+                              setRenameValue(tmpl.name);
+                            }
+                            if (action === 'Delete Template') setTemplates(prev => prev.filter(t => t.id !== tmpl.id));
+                          }}
+                        >
+                          {action}
+                        </button>
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <h4 className="text-base font-extrabold text-slate-900 dark:text-slate-100 mb-2">{tmpl.name}</h4>
+
+                {/* Shift Legend Compact Chips */}
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {Array.from(new Set(Object.values(tmpl.weeklySchedule))).map((shiftName) => {
+                    const colorMap: Record<string, { bg: string; text: string; dot: string }> = {
+                      'Morning': { bg: 'bg-[#E6F4EA] dark:bg-emerald-900/20', text: 'text-[#00B87C]', dot: '#00B87C' },
+                      'Evening': { bg: 'bg-[#FFFBEB] dark:bg-amber-900/20', text: 'text-[#F59E0B]', dot: '#F59E0B' },
+                      'Night': { bg: 'bg-[#F3E8FF] dark:bg-violet-900/20', text: 'text-[#7C3AED]', dot: '#7C3AED' },
+                      'Off Day': { bg: 'bg-slate-100 dark:bg-slate-800', text: 'text-[#90A4AE]', dot: '#90A4AE' },
+                    };
+                    const colors = colorMap[shiftName] || { bg: 'bg-neutral-100', text: 'text-neutral-600', dot: '#757575' };
+                    return (
+                      <span
+                        key={shiftName}
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black tracking-tight uppercase ${colors.bg} ${colors.text}`}
+                      >
+                        <span
+                          className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: colors.dot }}
+                        />
+                        {shiftName}
+                      </span>
+                    );
+                  })}
+                </div>
+
+                {/* Template Details */}
+                <div className="space-y-1.5 mb-5">
+                  <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                    <Users size={14} />
+                    <span>{tmpl.employeesCount} employees utilizing</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                    <Activity size={14} />
+                    <span>Department: <span className="text-foreground">{tmpl.department}</span></span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                    <Clock size={14} />
+                    <span>Last applied: <span className="text-foreground">{tmpl.lastApplied}</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                className="w-full py-2 rounded-xl text-sm font-extrabold flex items-center justify-center bg-[#00B87C] text-white hover:bg-[#00a36d] transition-all shadow-sm active:scale-95"
+                onClick={() => {
+                  setAdvancedApplyTemplate(tmpl);
+                  setApplyStep('form');
+                  setApplyDept(tmpl.department === 'All Departments' ? 'Engineering' : tmpl.department);
+                  const emps = globalEmployees
+                    .filter(e => tmpl.department === 'All Departments' || e.department.toLowerCase() === tmpl.department.toLowerCase())
+                    .map(e => e.id);
+                  setSelectedEmps(emps);
+                }}
+              >
+                <span>Apply Template</span>
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Advanced Apply Template Workflow */}
+      {advancedApplyTemplate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setAdvancedApplyTemplate(null)}>
+          {applyStep === 'form' ? (
+            <div className="w-full max-w-2xl rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+              
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-border bg-neutral-50 dark:bg-zinc-800/40 flex items-center justify-between flex-shrink-0">
+                <div>
+                  <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100">Apply Shift Template</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">Assign this template to employees for the selected week.</p>
+                </div>
+                <button onClick={() => setAdvancedApplyTemplate(null)} className="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-700 text-muted-foreground">
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Scrollable Body */}
+              <div className="p-6 space-y-6 overflow-y-auto flex-1">
+                
+                {/* Top Info Summary */}
+                <div className="bg-[#F4FBF7] dark:bg-emerald-950/10 border border-[#00B87C]/20 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <p className="text-base font-black text-slate-900 dark:text-slate-100">{advancedApplyTemplate.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{advancedApplyTemplate.department} • {advancedApplyTemplate.employeesCount} Utilizing • Last Applied: {advancedApplyTemplate.lastApplied}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {Array.from(new Set(Object.values(advancedApplyTemplate.weeklySchedule))).map((shiftName) => {
+                      const colorMap: Record<string, string> = {
+                        'Morning': 'bg-[#E6F4EA] text-[#00B87C]',
+                        'Evening': 'bg-[#FFFBEB] text-[#F59E0B]',
+                        'Night': 'bg-[#F3E8FF] text-[#7C3AED]',
+                        'Off Day': 'bg-slate-100 text-slate-400',
+                      };
+                      return (
+                        <span key={shiftName} className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${colorMap[shiftName] || 'bg-neutral-100 text-neutral-600'}`}>
+                          {shiftName}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Form Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">Select Department</label>
+                      <select 
+                        className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold appearance-none"
+                        value={applyDept}
+                        onChange={(e) => {
+                          setApplyDept(e.target.value);
+                          const emps = globalEmployees
+                            .filter(emp => e.target.value === 'All Departments' || emp.department.toLowerCase() === e.target.value.toLowerCase())
+                            .map(emp => emp.id);
+                          setSelectedEmps(emps);
+                        }}
+                      >
+                        {['All Departments', 'Engineering', 'Operations', 'Sales', 'Marketing', 'Finance'].map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide">Select Employees</label>
+                        <button 
+                          className="text-[10px] font-black text-[#00B87C] hover:underline uppercase tracking-wider"
+                          onClick={() => {
+                            const allDeptEmps = globalEmployees
+                              .filter(emp => applyDept === 'All Departments' || emp.department.toLowerCase() === applyDept.toLowerCase())
+                              .map(emp => emp.id);
+                            setSelectedEmps(selectedEmps.length === allDeptEmps.length ? [] : allDeptEmps);
+                          }}
+                        >
+                          {selectedEmps.length === globalEmployees.filter(emp => applyDept === 'All Departments' || emp.department.toLowerCase() === applyDept.toLowerCase()).length ? 'Deselect All' : 'Select All'}
+                        </button>
+                      </div>
+                      <div className="border border-border rounded-xl p-3 bg-neutral-50 dark:bg-zinc-800/50 max-h-[140px] overflow-y-auto space-y-2">
+                        {globalEmployees
+                          .filter(emp => applyDept === 'All Departments' || emp.department.toLowerCase() === applyDept.toLowerCase())
+                          .map(emp => (
+                            <label key={emp.id} className="flex items-center gap-3 p-1.5 rounded-lg hover:bg-white dark:hover:bg-zinc-700/40 transition-colors cursor-pointer">
+                              <input 
+                                type="checkbox"
+                                className="rounded text-[#00B87C] focus:ring-[#00B87C]/20 w-4 h-4 accent-[#00B87C]"
+                                checked={selectedEmps.includes(emp.id)}
+                                onChange={() => {
+                                  setSelectedEmps(prev => prev.includes(emp.id) ? prev.filter(id => id !== emp.id) : [...prev, emp.id]);
+                                }}
+                              />
+                              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{emp.name} <span className="text-[9px] text-muted-foreground uppercase font-black ml-1">({emp.department})</span></span>
+                            </label>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">Select Date Range</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold"
+                        value={applyDateRange}
+                        onChange={(e) => setApplyDateRange(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">Start Day</label>
+                        <select 
+                          className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold appearance-none"
+                          value={applyStartDay}
+                          onChange={(e) => setApplyStartDay(e.target.value)}
+                        >
+                          {['Monday', 'Sunday', 'Custom'].map(d => <option key={d} value={d}>{d}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">Conflicts</label>
+                        <select 
+                          className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold appearance-none"
+                          value={applyConflictHandling}
+                          onChange={(e) => setApplyConflictHandling(e.target.value as 'replace' | 'fill' | 'skip')}
+                        >
+                          <option value="replace">Replace existing</option>
+                          <option value="fill">Fill empty slots</option>
+                          <option value="skip">Skip employees</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">Notes</label>
+                      <input 
+                        type="text" 
+                        placeholder="Optional schedule annotations..."
+                        className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold"
+                        value={applyNotes}
+                        onChange={(e) => setApplyNotes(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Live Preview & Warnings Panel */}
+                <div className="bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-2xl p-4 grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
+                  <div>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">Employees</p>
+                    <p className="text-xl font-extrabold text-slate-800 dark:text-slate-200 mt-0.5">{selectedEmps.length}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">Shifts</p>
+                    <p className="text-xl font-extrabold text-[#00B87C] mt-0.5">{selectedEmps.length * 5}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">Conflicts</p>
+                    <p className="text-xl font-extrabold text-amber-500 mt-0.5">{selectedEmps.length > 0 ? '2' : '0'}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">On Leave</p>
+                    <p className="text-xl font-extrabold text-rose-500 mt-0.5">1</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">OT Risks</p>
+                    <p className="text-xl font-extrabold text-indigo-600 mt-0.5">0</p>
+                  </div>
+                </div>
+
+                {selectedEmps.length > 0 && (
+                  <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 rounded-xl p-3 flex items-center gap-2 text-xs font-bold text-amber-700 dark:text-amber-400">
+                    <AlertTriangle size={16} />
+                    <span>Warning: 2 shifts already assigned to selected staff. 1 employee on approved leave.</span>
+                  </div>
+                )}
+
+              </div>
+
+              {/* Footer */}
+              <div className="px-6 py-4 border-t border-border flex items-center justify-end gap-3 flex-shrink-0">
+                <button
+                  className="px-4 py-2 text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 rounded-xl hover:bg-neutral-200 transition-colors"
+                  onClick={() => setAdvancedApplyTemplate(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-5 py-2 text-xs font-extrabold text-white bg-[#00B87C] rounded-xl hover:bg-[#00a36d] shadow-sm transition-colors active:scale-95 disabled:opacity-50"
+                  disabled={selectedEmps.length === 0}
+                  onClick={() => setApplyStep('confirmation')}
+                >
+                  Preview Schedule
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Step 2: Confirmation Popup */
+            <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+              <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-[#00B87C] flex items-center justify-center mx-auto mb-4">
+                <CalendarPlus size={24} />
+              </div>
+              <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 mb-2">Confirm Apply Template</h3>
+              <p className="text-xs text-muted-foreground mb-5">Apply the <span className="font-black text-slate-800 dark:text-slate-200">"{advancedApplyTemplate.name}"</span> routine to {selectedEmps.length} employees for {applyDateRange}?</p>
+              <div className="flex gap-3">
+                <button
+                  className="w-full py-2 text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 rounded-xl hover:bg-neutral-200 dark:hover:bg-zinc-700 transition-colors"
+                  onClick={() => setApplyStep('form')}
+                >
+                  Back
+                </button>
+                <button
+                  className="w-full py-2 text-xs font-extrabold text-white bg-[#00B87C] rounded-xl hover:bg-[#00a36d] shadow-sm transition-colors active:scale-95"
+                  onClick={() => {
+                    const weekly = advancedApplyTemplate.weeklySchedule;
+                    
+                    setScheduleData(prev => prev.map(emp => {
+                      if (selectedEmps.includes(emp.id)) {
+                        const newShifts = { ...emp.shifts };
+                        const times: Record<string, string> = {
+                          'Morning': '06:00 – 14:00',
+                          'Evening': '14:00 – 22:00',
+                          'Night': '22:00 – 06:00',
+                          'Full Day': '09:00 – 18:00'
+                        };
+                        
+                        Object.entries(weekly).forEach(([day, shiftType]) => {
+                          if (applyConflictHandling === 'skip' && emp.shifts[day]) {
+                            return;
+                          }
+                          if (applyConflictHandling === 'fill' && emp.shifts[day]) {
+                            return;
+                          }
+                          
+                          if (shiftType === 'Off Day') {
+                            delete newShifts[day];
+                          } else {
+                            newShifts[day] = {
+                              type: shiftType as 'Morning' | 'Evening' | 'Night' | 'Full Day',
+                              time: times[shiftType] || '09:00 – 18:00',
+                              isOT: false
+                            };
+                          }
+                        });
+                        return { ...emp, shifts: newShifts };
+                      }
+                      return emp;
+                    }));
+
+                    setTemplates(prev => prev.map(t => t.id === advancedApplyTemplate.id ? {
+                      ...t,
+                      employeesCount: selectedEmps.length,
+                      lastApplied: 'Apr 27'
+                    } : t));
+
+                    setAdvancedApplyTemplate(null);
+                    setShowSuccessToast(true);
+                    setTimeout(() => setShowSuccessToast(false), 3000);
+                  }}
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Success Toast */}
+      {showSuccessToast && (
+        <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3 animate-in slide-in-from-right-5 duration-300">
+          <div className="w-6 h-6 rounded-full bg-[#00B87C] flex items-center justify-center text-white font-bold text-xs">✓</div>
+          <div>
+            <p className="text-xs font-bold">Template Applied Successfully</p>
+          </div>
+        </div>
+      )}
+
+      {/* View Template Modal (Weekly Schedule Preview) */}
+      {selectedTemplate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setSelectedTemplate(null)}>
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in slide-in-from-bottom-4" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-neutral-50 dark:bg-zinc-800/40">
+              <div>
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100">{selectedTemplate.name}</h3>
+                <p className="text-[11px] font-medium text-muted-foreground mt-0.5">{selectedTemplate.rotationType} • {selectedTemplate.department}</p>
+              </div>
+              <button onClick={() => setSelectedTemplate(null)} className="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-700 text-muted-foreground">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-6">
+              <p className="text-xs font-extrabold text-slate-400 tracking-widest uppercase mb-3">Weekly Schedule Preview</p>
+              <div className="divide-y divide-border">
+                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => {
+                  const shift = selectedTemplate.weeklySchedule[day] || 'Off Day';
+                  const colorMap: Record<string, string> = {
+                    'Morning': 'bg-[#E6F4EA] text-[#00B87C]',
+                    'Evening': 'bg-[#FFFBEB] text-[#F59E0B]',
+                    'Night': 'bg-[#F3E8FF] text-[#7C3AED]',
+                    'Off Day': 'bg-slate-100 text-slate-400',
+                  };
+                  return (
+                    <div key={day} className="flex items-center justify-between py-3 text-sm font-bold">
+                      <span className="text-slate-700 dark:text-slate-300">{day}</span>
+                      <span className={`px-3 py-1 text-xs font-black uppercase tracking-wide rounded-full ${colorMap[shift] || 'bg-slate-400 text-white'}`}>{shift}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Template Popup */}
+      {showCreateTemplate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setShowCreateTemplate(false)}>
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-border bg-neutral-50 dark:bg-zinc-800/40 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CalendarPlus className="text-[#00B87C]" size={20} />
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100">Create Shift Template</h3>
+              </div>
+              <button onClick={() => setShowCreateTemplate(false)} className="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-700 text-muted-foreground">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-6 space-y-5">
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">Template Name</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. Morning Flex A" 
+                  className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold"
+                  value={newTName}
+                  onChange={(e) => setNewTName(e.target.value)}
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">Department</label>
+                  <select 
+                    className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold appearance-none"
+                    value={newTDept}
+                    onChange={(e) => setNewTDept(e.target.value)}
+                  >
+                    {['Engineering', 'Operations', 'Sales', 'Marketing', 'Finance'].map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">Rotation Type</label>
+                  <select 
+                    className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold appearance-none"
+                    value={newTRotation}
+                    onChange={(e) => setNewTRotation(e.target.value)}
+                  >
+                    {['Weekly Rotation', 'Bi-weekly', 'Monthly', 'Weekend Only'].map(r => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-3">Weekly Shift Selector</label>
+                <div className="grid grid-cols-7 gap-2 text-center">
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+                    <div key={day}>
+                      <span className="text-[10px] font-black uppercase tracking-tight text-muted-foreground block mb-1.5">{day}</span>
+                      <select
+                        className="w-full p-1.5 text-[10px] font-black bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-lg focus:ring-1 focus:ring-[#00B87C] outline-none appearance-none text-center uppercase cursor-pointer"
+                        value={newTSchedule[day]}
+                        onChange={(e) => setNewTSchedule(prev => ({ ...prev, [day]: e.target.value }))}
+                      >
+                        {['Morning', 'Evening', 'Night', 'Off Day'].map(s => <option key={s} value={s}>{s.substring(0,3)}</option>)}
+                      </select>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-border">
+                <button
+                  className="px-4 py-2 text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 rounded-xl hover:bg-neutral-200 transition-colors"
+                  onClick={() => setShowCreateTemplate(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-5 py-2 text-xs font-extrabold text-white bg-[#00B87C] rounded-xl hover:bg-[#00a36d] shadow-sm transition-colors active:scale-95"
+                  onClick={() => {
+                    if (!newTName.trim()) return;
+                    const newId = templates.length + 1;
+                    setTemplates(prev => [...prev, {
+                      id: newId,
+                      name: newTName,
+                      employeesCount: 0,
+                      department: newTDept,
+                      lastApplied: 'Never',
+                      rotationType: newTRotation,
+                      badge: 'Recently Applied',
+                      badgeColor: '#0ea5e9',
+                      badgeBg: '#E0F2FE',
+                      weeklySchedule: newTSchedule
+                    }]);
+                    setNewTName('');
+                    setShowCreateTemplate(false);
+                  }}
+                >
+                  Save Template
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Template Popup */}
+      {editTemplate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setEditTemplate(null)}>
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-border bg-neutral-50 dark:bg-zinc-800/40 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CalendarPlus className="text-[#00B87C]" size={20} />
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100">Edit Shift Template</h3>
+              </div>
+              <button onClick={() => setEditTemplate(null)} className="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-700 text-muted-foreground">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-6 space-y-5">
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">Template Name</label>
+                <input 
+                  type="text" 
+                  className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold"
+                  value={editTemplate.name}
+                  onChange={(e) => setEditTemplate({ ...editTemplate, name: e.target.value })}
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">Department</label>
+                  <select 
+                    className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold appearance-none"
+                    value={editTemplate.department}
+                    onChange={(e) => setEditTemplate({ ...editTemplate, department: e.target.value })}
+                  >
+                    {['Engineering', 'Operations', 'Sales', 'Marketing', 'Finance'].map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">Rotation Type</label>
+                  <select 
+                    className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold appearance-none"
+                    value={editTemplate.rotationType}
+                    onChange={(e) => setEditTemplate({ ...editTemplate, rotationType: e.target.value })}
+                  >
+                    {['Weekly Rotation', 'Bi-weekly', 'Monthly', 'Weekend Only'].map(r => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-3">Weekly Shift Selector</label>
+                <div className="grid grid-cols-7 gap-2 text-center">
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+                    <div key={day}>
+                      <span className="text-[10px] font-black uppercase tracking-tight text-muted-foreground block mb-1.5">{day}</span>
+                      <select
+                        className="w-full p-1.5 text-[10px] font-black bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-lg focus:ring-1 focus:ring-[#00B87C] outline-none appearance-none text-center uppercase cursor-pointer"
+                        value={editTemplate.weeklySchedule[day]}
+                        onChange={(e) => setEditTemplate({ 
+                          ...editTemplate, 
+                          weeklySchedule: { ...editTemplate.weeklySchedule, [day]: e.target.value } 
+                        })}
+                      >
+                        {['Morning', 'Evening', 'Night', 'Off Day'].map(s => <option key={s} value={s}>{s.substring(0,3)}</option>)}
+                      </select>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-border">
+                <button
+                  className="px-4 py-2 text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 rounded-xl hover:bg-neutral-200 transition-colors"
+                  onClick={() => setEditTemplate(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-5 py-2 text-xs font-extrabold text-white bg-[#00B87C] rounded-xl hover:bg-[#00a36d] shadow-sm transition-colors active:scale-95"
+                  onClick={() => {
+                    setTemplates(prev => prev.map(t => t.id === editTemplate.id ? editTemplate : t));
+                    setEditTemplate(null);
+                  }}
+                >
+                  Update Template
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rename Template Popup */}
+      {renameTemplate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setRenameTemplate(null)}>
+          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 mb-4">Rename Template</h3>
+            <div className="mb-5">
+              <input 
+                type="text" 
+                className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold"
+                value={renameValue}
+                onChange={(e) => setRenameValue(e.target.value)}
+              />
+            </div>
+            <div className="flex justify-end gap-3 pt-4 border-t border-border">
+              <button
+                className="px-4 py-2 text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 rounded-xl hover:bg-neutral-200 transition-colors"
+                onClick={() => setRenameTemplate(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-5 py-2 text-xs font-extrabold text-white bg-[#00B87C] rounded-xl hover:bg-[#00a36d] shadow-sm transition-colors active:scale-95"
+                onClick={() => {
+                  if (!renameValue.trim()) return;
+                  setTemplates(prev => prev.map(t => t.id === renameTemplate.id ? { ...t, name: renameValue } : t));
+                  setRenameTemplate(null);
+                }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* New Request Modal */}
       {showAddModal && (
