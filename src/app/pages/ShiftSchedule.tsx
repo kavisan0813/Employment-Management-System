@@ -66,7 +66,7 @@ export const ShiftSchedule: React.FC = () => {
   }, [weekOffset]);
 
   // Generate dynamic schedule from global data
-  const scheduleData = useMemo(() => {
+  const [scheduleData, setScheduleData] = useState(() => {
     return globalEmployees.map(emp => ({
       id: emp.id,
       name: emp.name,
@@ -74,23 +74,49 @@ export const ShiftSchedule: React.FC = () => {
       initials: emp.name.split(' ').map(n => n[0]).join(''),
       avatar: emp.avatar,
       shifts: days.reduce((acc, day) => {
-        // Randomly assign shifts for demo purposes
         const rand = Math.random();
         if (rand > 0.3) {
-          const types: ('Morning' | 'Evening' | 'Night' | 'Full Day')[] = ['Morning', 'Evening', 'Night', 'Full Day'];
+          const types: ('Morning' | 'Evening' | 'Night' | 'Off Day')[] = ['Morning', 'Evening', 'Night', 'Off Day'];
           const type = types[Math.floor(Math.random() * types.length)];
           const times = {
             'Morning': '06:00 – 14:00',
             'Evening': '14:00 – 22:00',
             'Night': '22:00 – 06:00',
-            'Full Day': '09:00 – 18:00'
+            'Off Day': 'Rest Day'
           };
-          acc[day] = { type, time: times[type], isOT: Math.random() > 0.8 };
+          if (type !== 'Off Day') {
+            acc[day] = { type: type as any, time: times[type], isOT: Math.random() > 0.8 };
+          }
         }
         return acc;
       }, {} as ShiftMap)
     }));
-  }, []);
+  });
+
+  const handleDrop = (empId: string, day: string, shiftType: string) => {
+    setScheduleData(prev => prev.map(emp => {
+      if (emp.id === empId) {
+        const times = {
+          'Morning': '06:00 – 14:00',
+          'Evening': '14:00 – 22:00',
+          'Night': '22:00 – 06:00',
+          'Off Day': 'Rest Day',
+        };
+        const updatedShifts = { ...emp.shifts };
+        if (shiftType === 'Off Day') {
+          delete updatedShifts[day];
+        } else {
+          updatedShifts[day] = { 
+            type: shiftType as any, 
+            time: (times as any)[shiftType] || '09:00 – 18:00', 
+            isOT: false 
+          };
+        }
+        return { ...emp, shifts: updatedShifts };
+      }
+      return emp;
+    }));
+  };
 
   const departments = ['All Departments', ...new Set(globalEmployees.map(e => e.department))];
 
@@ -290,32 +316,34 @@ export const ShiftSchedule: React.FC = () => {
       <div className="bg-white dark:bg-zinc-900 border border-border rounded-2xl p-4 mb-6 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-primary">
-              <Plus size={20} />
+            <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-[#00B87C]">
+              <CalendarPlus size={20} />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none mb-1">Quick Tool</p>
-              <p className="text-sm font-bold text-foreground leading-none">Shift Painter</p>
+              <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest leading-none mb-1">Quick Assign</p>
+              <p className="text-xs font-black text-slate-900 dark:text-slate-100 leading-none">Drag Shift to slot</p>
             </div>
           </div>
           <div className="h-8 w-[1px] bg-border mx-2"></div>
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             {[
-              { type: 'Morning', color: 'bg-emerald-500', label: 'MOR' },
-              { type: 'Evening', color: 'bg-amber-500', label: 'EVE' },
-              { type: 'Night', color: 'bg-violet-500', label: 'NGT' },
-              { type: 'Full Day', color: 'bg-blue-500', label: 'FUL' },
+              { type: 'Morning', color: 'bg-[#00B87C]', label: 'MOR' },
+              { type: 'Evening', color: 'bg-[#F59E0B]', label: 'EVE' },
+              { type: 'Night', color: 'bg-[#7C3AED]', label: 'NGT' },
+              { type: 'Off Day', color: 'bg-[#90A4AE]', label: 'OFF' },
             ].map(type => (
-              <button
+              <div
                 key={type.type}
-                className={`group flex flex-col items-center gap-1 p-1 hover:bg-secondary rounded-xl transition-all ${activeBrush === type.type ? 'ring-2 ring-emerald-500 bg-emerald-50' : ''}`}
-                title={`Quick assign ${type.type} shift`}
+                draggable="true"
+                onDragStart={(e) => e.dataTransfer.setData('shiftType', type.type)}
                 onClick={() => setActiveBrush(activeBrush === type.type ? null : type.type)}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-full cursor-grab active:cursor-grabbing transition-all hover:bg-secondary select-none ${activeBrush === type.type ? 'bg-[#E8F5E9] dark:bg-emerald-900/20 border border-[#00B87C]/20' : ''}`}
               >
-                <div className={`w-8 h-8 rounded-lg ${type.color} flex items-center justify-center text-white text-[10px] font-black shadow-sm group-hover:scale-110 transition-transform`}>
+                <div className={`w-7 h-7 rounded-full ${type.color} flex items-center justify-center text-white text-[9px] font-black shadow-sm`}>
                   {type.label}
                 </div>
-              </button>
+                <span className="text-xs font-extrabold text-foreground pr-1">{type.type}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -355,13 +383,31 @@ export const ShiftSchedule: React.FC = () => {
               {days.map(day => {
                 const shift = emp.shifts[day];
                 return (
-                  <div key={day} className="border-l border-border/50 p-1 flex items-stretch">
+                  <div 
+                    key={day} 
+                    className="border-l border-border/50 p-1 flex items-stretch"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const shiftType = e.dataTransfer.getData('shiftType');
+                      if (shiftType) {
+                        handleDrop(emp.id, day, shiftType);
+                      }
+                    }}
+                    onClick={() => {
+                      if (activeBrush) {
+                        handleDrop(emp.id, day, activeBrush);
+                      } else {
+                        setShowAddModal(true);
+                      }
+                    }}
+                  >
                     {shift ? (
-                      <div className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm group ${shift.type === 'Morning' ? 'bg-secondary text-primary border-l-4 border-l-primary' :
+                      <div className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group ${shift.type === 'Morning' ? 'bg-secondary text-primary border-l-4 border-l-primary' :
                         shift.type === 'Evening' ? 'bg-[rgba(245,158,11,0.1)] text-[#F59E0B] border-l-4 border-l-[#F59E0B]' :
                           shift.type === 'Night' ? 'bg-violet-50 text-violet-700 border-l-4 border-l-violet-500' :
                             'bg-blue-50 text-blue-700 border-l-4 border-l-blue-500'
-                        }`} onClick={() => setShowAddModal(true)}>
+                        }`}>
                         <div className="flex items-center justify-between mb-0.5">
                           <span className="text-[10px] font-black uppercase tracking-tight">{shift.type}</span>
                           {shift.isOT && <span className="text-[8px] bg-red-500 text-white px-1.5 rounded-full font-black animate-pulse">OT</span>}
@@ -372,12 +418,8 @@ export const ShiftSchedule: React.FC = () => {
                         </div>
                       </div>
                     ) : (
-                      <div
-                        className="flex-1 rounded-xl border border-dashed border-border flex flex-col items-center justify-center text-muted-foreground hover:bg-secondary/50 hover:border-primary transition-all cursor-pointer group"
-                        onClick={() => setShowAddModal(true)}
-                      >
-                        <Plus size={14} className="group-hover:text-primary transition-colors" />
-                        <span className="text-[9px] font-bold mt-1 uppercase tracking-tighter opacity-0 group-hover:opacity-100">Assign</span>
+                      <div className="flex-1 rounded-xl border border-dashed border-border/60 hover:border-emerald-500/50 hover:bg-emerald-50/20 transition-colors flex items-center justify-center text-muted-foreground/40 hover:text-emerald-500 cursor-pointer">
+                        <Plus size={12} />
                       </div>
                     )}
                   </div>
@@ -391,86 +433,70 @@ export const ShiftSchedule: React.FC = () => {
       {/* Bottom Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
         {/* Swap Requests */}
-        <div id="swaps-panel" className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-full transition-all hover:shadow-md relative">
-          <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-card rounded-t-2xl">
+        {/* Swap Requests */}
+        <div id="swaps-panel" className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-[400px] transition-all hover:shadow-md overflow-hidden">
+          {/* Header */}
+          <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-card rounded-t-2xl flex-shrink-0">
             <div className="flex items-center gap-3">
               <ArrowLeftRight color="#00B87C" size={18} />
               <h3 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Shift Swap Requests</h3>
             </div>
             <span className="px-3 py-1 bg-amber-50/50 text-amber-600 text-[11px] font-bold rounded-full border border-amber-200">3 PENDING</span>
           </div>
-
-          <div className="relative flex flex-1 overflow-hidden">
-            {/* Swap List */}
-            <div ref={swapListRef} className="flex-1 p-4 space-y-4 overflow-y-auto max-h-[400px] pr-10 scrollbar-hide">
-              {swaps.map(swap => (
-                <div key={swap.id} className="pb-4 border-b last:border-b-0 border-border/50 last:pb-0 group">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center -space-x-2">
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm" style={{ backgroundColor: swap.p1Color }}>{swap.p1Init}</div>
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm" style={{ backgroundColor: swap.p2Color }}>{swap.p2Init}</div>
-                      </div>
-                      <div>
-                        <span className="text-sm font-bold text-foreground flex items-center gap-1.5">{swap.p1} ↔ {swap.p2}</span>
-                        <p className="text-xs text-muted-foreground font-medium mt-0.5">{(swap as any).shiftTypes || 'Morning ↔ Evening'}</p>
-                      </div>
+          
+          {/* Scrollable Request List */}
+          <div ref={swapListRef} className="flex-1 p-4 space-y-4 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent scroll-smooth">
+            {swaps.map(swap => (
+              <div key={swap.id} className="pb-4 border-b last:border-b-0 border-border/50 last:pb-0 group">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center -space-x-2">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm" style={{ backgroundColor: swap.p1Color }}>{swap.p1Init}</div>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm" style={{ backgroundColor: swap.p2Color }}>{swap.p2Init}</div>
                     </div>
-                    <div className="flex gap-2">
-                      <button
-                        className="w-8 h-8 flex items-center justify-center bg-neutral-50 text-muted-foreground rounded-full border border-border hover:bg-neutral-100 transition-colors active:scale-95"
-                        title="Reject"
-                        onClick={() => setSwaps(prev => prev.filter(s => s.id !== swap.id))}
-                      >
-                        <X size={14} />
-                      </button>
-                      <button
-                        className="w-8 h-8 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-100 transition-colors active:scale-95"
-                        title="Approve"
-                        onClick={() => setSwaps(prev => prev.filter(s => s.id !== swap.id))}
-                      >
-                        <Check size={14} />
-                      </button>
+                    <div>
+                      <span className="text-sm font-bold text-foreground flex items-center gap-1.5">{swap.p1} ↔ {swap.p2}</span>
+                      <p className="text-xs text-muted-foreground font-medium mt-0.5">{(swap as any).shiftTypes || 'Morning ↔ Evening'}</p>
                     </div>
                   </div>
-
-                  <div className="bg-[#F4FBF7] dark:bg-zinc-800/50 px-4 py-3 rounded-2xl flex items-center justify-between">
-                    <p className="text-[12px] font-medium text-muted-foreground">
-                      {swap.detail}
-                    </p>
+                  <div className="flex gap-2">
                     <button
-                      className="text-[12px] font-bold text-[#00B87C] hover:underline cursor-pointer"
-                      onClick={() => setSelectedSwapDetails(swap)}
+                      className="w-8 h-8 flex items-center justify-center bg-neutral-50 text-muted-foreground rounded-full border border-border hover:bg-neutral-100 transition-colors active:scale-95"
+                      title="Reject"
+                      onClick={() => setSwaps(prev => prev.filter(s => s.id !== swap.id))}
                     >
-                      Details
+                      <X size={14} />
+                    </button>
+                    <button
+                      className="w-8 h-8 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-100 transition-colors active:scale-95"
+                      title="Approve"
+                      onClick={() => setSwaps(prev => prev.filter(s => s.id !== swap.id))}
+                    >
+                      <Check size={14} />
                     </button>
                   </div>
                 </div>
-              ))}
-              {swaps.length === 0 && (
-                <div className="py-10 text-center text-muted-foreground font-bold text-sm">No pending requests</div>
-              )}
-            </div>
-
-
-            {/* Custom Scrollbar UI */}
-            <div className="absolute right-3 top-0 bottom-0 w-4 flex flex-col items-center justify-between py-4 border-l border-border/50">
-              <ChevronUp
-                size={12}
-                className="text-muted-foreground cursor-pointer hover:text-primary"
-                onClick={() => swapListRef.current?.scrollBy({ top: -100, behavior: 'smooth' })}
-              />
-              <div className="w-2 flex-1 bg-neutral-200 dark:bg-zinc-700 rounded-full mx-auto my-2 relative">
-                <div className="absolute top-2 left-0 right-0 bg-zinc-400 rounded-full h-20"></div>
+                
+                <div className="bg-[#F4FBF7] dark:bg-zinc-800/50 px-4 py-3 rounded-2xl flex items-center justify-between">
+                  <p className="text-[12px] font-medium text-muted-foreground">
+                    {swap.detail}
+                  </p>
+                  <button
+                    className="text-[12px] font-bold text-[#00B87C] hover:underline cursor-pointer"
+                    onClick={() => setSelectedSwapDetails(swap)}
+                  >
+                    Details
+                  </button>
+                </div>
               </div>
-              <ChevronDown
-                size={12}
-                className="text-muted-foreground cursor-pointer hover:text-primary"
-                onClick={() => swapListRef.current?.scrollBy({ top: 100, behavior: 'smooth' })}
-              />
-            </div>
+            ))}
+            {swaps.length === 0 && (
+              <div className="py-10 text-center text-muted-foreground font-bold text-sm">No pending requests</div>
+            )}
           </div>
-          <div className="px-4 py-3 mt-auto border-t border-border bg-card rounded-b-2xl">
+
+          {/* Footer */}
+          <div className="px-4 py-3 mt-auto border-t border-border bg-card rounded-b-2xl flex-shrink-0">
             <button className="w-full py-2 text-xs font-bold text-primary hover:bg-secondary rounded-xl transition-colors active:scale-95" onClick={() => navigate('/reports', { state: { activeReport: 'Shift Swap Report' } })}>View All Swap Requests</button>
           </div>
         </div>
