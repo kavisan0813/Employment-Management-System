@@ -1834,6 +1834,12 @@ export function Reports() {
     "Manager", "Email", "Phone", "Status"
   ]);
   const [selectedFields, setSelectedFields] = useState<string[]>(["Employee ID", "First Name", "Department", "Role"]);
+  const [isQueryRunning, setIsQueryRunning] = useState(false);
+  const [queryResults, setQueryResults] = useState<Record<string, string>[] | null>(null);
+  const [querySummary, setQuerySummary] = useState<{ records: number; time: string; filters: string } | null>(null);
+  const [querySearch, setQuerySearch] = useState("");
+  const [querySort, setQuerySort] = useState<{ field: string; dir: "asc" | "desc" } | null>(null);
+  const [queryPage, setQueryPage] = useState(1);
 
   useEffect(() => {
     if (location.state?.activeReport) {
@@ -1844,6 +1850,141 @@ export function Reports() {
   const triggerToast = (message: string) => {
     setToast({ message, type: "success" });
     setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleDownload = (type: string) => {
+    setShowExportModal(false);
+    triggerToast(`Downloading as ${type}...`);
+
+    let content: string;
+    let filename: string;
+    let mimeType: string;
+
+    if (activeTab === "custom" && queryResults && queryResults.length > 0) {
+      const headers = selectedFields.join(",");
+      const rows = queryResults.map(row =>
+        selectedFields.map(f => `"${row[f] || ''}"`).join(",")
+      ).join("\n");
+      content = `${headers}\n${rows}`;
+
+      if (type.includes("CSV")) {
+        filename = "Custom_Report.csv";
+        mimeType = "text/csv";
+      } else if (type.includes("Excel")) {
+        filename = "Custom_Report.xlsx";
+        mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      } else {
+        filename = "Custom_Report.pdf";
+        mimeType = "application/pdf";
+      }
+    } else {
+      if (type.includes("CSV")) {
+        content = "Employee ID,First Name,Last Name,Department,Role\nEMP-001,Arun,Frontend Dev,Engineering,Role\nEMP-002,Ravi,Sales Exec,Sales,Role";
+        filename = "Employee_Report.csv";
+        mimeType = "text/csv";
+      } else if (type.includes("Excel")) {
+        content = "Employee ID,First Name,Last Name,Department,Role\nEMP-001,Arun,Frontend Dev,Engineering,Role\nEMP-002,Ravi,Sales Exec,Sales,Role";
+        filename = "Employee_Report.xlsx";
+        mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      } else {
+        content = "Employee Report Preview Data";
+        filename = "Employee_Report.pdf";
+        mimeType = "application/pdf";
+      }
+    }
+
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handlePrintCustomQuery = () => {
+    if (!queryResults || queryResults.length === 0) return;
+
+    const headers = selectedFields.map(f => `<th style="padding: 12px; border-bottom: 2px solid #ddd; text-align: left;">${f}</th>`).join("");
+
+    const rows = queryResults.map(row => {
+      const cells = selectedFields.map(f => `<td style="padding: 12px; border-bottom: 1px solid #eee;">${row[f] || '---'}</td>`).join("");
+      return `<tr>${cells}</tr>`;
+    }).join("");
+
+    const printWindow = window.open("", "", "width=900,height=650");
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Custom Report - Employment Management System</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 30px; color: #333; }
+              h2 { color: #111; margin-bottom: 8px; }
+              .summary { font-size: 13px; color: #666; margin-bottom: 24px; border-bottom: 1px solid #ddd; padding-bottom: 12px; }
+              table { width: 100%; border-collapse: collapse; }
+              th { font-weight: bold; background-color: #f9f9f9; }
+            </style>
+          </head>
+          <body>
+            <h2>Custom Query Report</h2>
+            <div class="summary">
+              <strong>Filters:</strong> ${querySummary?.filters || 'None'} <br/>
+              <strong>Records Found:</strong> ${querySummary?.records || 0} | <strong>Generated:</strong> ${querySummary?.time || ''}
+            </div>
+            <table>
+              <thead><tr>${headers}</tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    }
+  };
+
+  const runCustomQuery = () => {
+    if (selectedFields.length === 0) {
+      triggerToast("Please select at least one field");
+      return;
+    }
+
+    setIsQueryRunning(true);
+
+    const mockEmployees = [
+      { "Employee ID": "EMP-001", "First Name": "Arun", "Last Name": "Kumar", "Department": "Engineering", "Role": "Frontend Dev", "Location": "On-site", "Joining Date": "2024-01-15", "Basic Salary": "₹6.5L", "Gross Salary": "₹7.2L", "Attendance %": "94%", "Leave Balance": "12", "Manager": "Ryan Park", "Email": "arun@nexus.hr", "Phone": "+91 98765 43210", "Status": "Active" },
+      { "Employee ID": "EMP-002", "First Name": "Sarah", "Last Name": "Johnson", "Department": "Design", "Role": "UI/UX Designer", "Location": "Remote", "Joining Date": "2024-02-20", "Basic Salary": "₹5.8L", "Gross Salary": "₹6.4L", "Attendance %": "91%", "Leave Balance": "15", "Manager": "Ryan Park", "Email": "sarah@nexus.hr", "Phone": "+91 98765 43211", "Status": "Active" },
+      { "Employee ID": "EMP-003", "First Name": "Ravi", "Last Name": "Sharma", "Department": "Sales", "Role": "Sales Exec", "Location": "Hybrid", "Joining Date": "2023-11-10", "Basic Salary": "₹4.5L", "Gross Salary": "₹5.0L", "Attendance %": "89%", "Leave Balance": "8", "Manager": "Ryan Park", "Email": "ravi@nexus.hr", "Phone": "+91 98765 43212", "Status": "Active" },
+      { "Employee ID": "EMP-004", "First Name": "Anita", "Last Name": "Desai", "Department": "Marketing", "Role": "Content Lead", "Location": "Remote", "Joining Date": "2025-01-05", "Basic Salary": "₹5.2L", "Gross Salary": "₹5.8L", "Attendance %": "87%", "Leave Balance": "14", "Manager": "Ryan Park", "Email": "anita@nexus.hr", "Phone": "+91 98765 43213", "Status": "Active" },
+      { "Employee ID": "EMP-005", "First Name": "Rahul", "Last Name": "Verma", "Department": "Engineering", "Role": "Backend Dev", "Location": "On-site", "Joining Date": "2023-05-12", "Basic Salary": "₹7.5L", "Gross Salary": "₹8.2L", "Attendance %": "95%", "Leave Balance": "10", "Manager": "Ryan Park", "Email": "rahul@nexus.hr", "Phone": "+91 98765 43214", "Status": "Active" },
+      { "Employee ID": "EMP-006", "First Name": "Priya", "Last Name": "Patel", "Department": "Engineering", "Role": "QA Analyst", "Location": "Hybrid", "Joining Date": "2024-06-18", "Basic Salary": "₹4.8L", "Gross Salary": "₹5.3L", "Attendance %": "92%", "Leave Balance": "11", "Manager": "Ryan Park", "Email": "priya@nexus.hr", "Phone": "+91 98765 43215", "Status": "Active" },
+      { "Employee ID": "EMP-007", "First Name": "Vikram", "Last Name": "Singh", "Department": "Sales", "Role": "Account Manager", "Location": "On-site", "Joining Date": "2023-08-22", "Basic Salary": "₹5.5L", "Gross Salary": "₹6.1L", "Attendance %": "90%", "Leave Balance": "9", "Manager": "Ryan Park", "Email": "vikram@nexus.hr", "Phone": "+91 98765 43216", "Status": "Active" },
+      { "Employee ID": "EMP-008", "First Name": "Neha", "Last Name": "Gupta", "Department": "Marketing", "Role": "SEO Specialist", "Location": "Remote", "Joining Date": "2025-02-14", "Basic Salary": "₹4.2L", "Gross Salary": "₹4.6L", "Attendance %": "88%", "Leave Balance": "16", "Manager": "Ryan Park", "Email": "neha@nexus.hr", "Phone": "+91 98765 43217", "Status": "Active" }
+    ];
+
+    setTimeout(() => {
+      const filtered = mockEmployees.filter(emp => {
+        const matchDept = filterDept === "All Departments" || emp.Department === filterDept;
+        const matchLoc = filterLoc === "All Locations" || emp.Location === filterLoc;
+        return matchDept && matchLoc;
+      });
+
+      setQueryResults(filtered);
+      setQuerySummary({
+        records: filtered.length,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        filters: `Dept: ${filterDept} | Loc: ${filterLoc} | Range: ${filterDate}`
+      });
+      setIsQueryRunning(false);
+      triggerToast("Custom query executed successfully!");
+    }, 1500);
   };
 
   const handleFilterChange = (type: string, value: string) => {
@@ -2464,43 +2605,202 @@ export function Reports() {
             </div>
 
             {/* Right Preview Canvas */}
-            <div style={{ width: "67%" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-                <h4 style={{ fontSize: "13px", fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Preview Canvas</h4>
-                <button onClick={() => triggerToast("Custom Query executed successfully.")} style={{ padding: "8px 16px", borderRadius: "8px", fontSize: "12px", fontWeight: 700, color: "white", backgroundColor: "#00B87C", border: "none", cursor: "pointer" }}>
-                  Run Custom Query
+            <div style={{ width: "67%", display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <h4 style={{ fontSize: "14px", fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Preview Canvas</h4>
+                <button
+                  onClick={runCustomQuery}
+                  disabled={isQueryRunning}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "10px 20px",
+                    borderRadius: "10px",
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    color: "white",
+                    backgroundColor: "#00B87C",
+                    border: "none",
+                    cursor: isQueryRunning ? "not-allowed" : "pointer",
+                    opacity: isQueryRunning ? 0.7 : 1
+                  }}
+                >
+                  {isQueryRunning ? (
+                    <>
+                      <div style={{ width: "14px", height: "14px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#ffffff", borderRadius: "50%", animation: "pulse 1s infinite linear" }}></div>
+                      Running Query...
+                    </>
+                  ) : (
+                    <>Run Custom Query</>
+                  )}
                 </button>
               </div>
-              <div style={{ border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden", backgroundColor: "var(--secondary)", maxHeight: "300px", overflowY: "auto" }}>
+
+              {/* Summary & Actions Block */}
+              {querySummary && queryResults && (
+                <div style={{ padding: "16px", backgroundColor: "var(--secondary)", borderRadius: "12px", border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", alignItems: "center" }}>
+                    <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                      <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--foreground)", padding: "4px 8px", backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px" }}>
+                        📊 Records: {querySummary.records}
+                      </span>
+                      <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--foreground)", padding: "4px 8px", backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px" }}>
+                        ⏱️ Time: {querySummary.time}
+                      </span>
+                      <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--muted-foreground)", padding: "4px 8px" }}>
+                        {querySummary.filters}
+                      </span>
+                    </div>
+                    
+                    {/* Actions */}
+                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                      <button onClick={() => handleDownload("CSV (.csv)")} title="Export CSV" style={{ padding: "6px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 700, backgroundColor: "var(--card)", border: "1px solid var(--border)", color: "var(--foreground)", cursor: "pointer" }}>CSV</button>
+                      <button onClick={() => handleDownload("Excel (.xlsx)")} title="Export Excel" style={{ padding: "6px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 700, backgroundColor: "var(--card)", border: "1px solid var(--border)", color: "var(--foreground)", cursor: "pointer" }}>Excel</button>
+                      <button onClick={() => handleDownload("PDF (.pdf)")} title="Export PDF" style={{ padding: "6px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 700, backgroundColor: "var(--card)", border: "1px solid var(--border)", color: "var(--foreground)", cursor: "pointer" }}>PDF</button>
+                      <button onClick={handlePrintCustomQuery} title="Print" style={{ padding: "6px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 700, backgroundColor: "var(--card)", border: "1px solid var(--border)", color: "var(--foreground)", cursor: "pointer" }}>Print</button>
+                      <button onClick={() => { setScheduleReportType("Custom Query"); setShowScheduleModal(true); }} title="Schedule" style={{ padding: "6px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 700, backgroundColor: "#00B87C", border: "none", color: "white", cursor: "pointer" }}>Schedule</button>
+                    </div>
+                  </div>
+
+                  {/* Search Bar within results */}
+                  <div style={{ position: "relative", width: "100%" }}>
+                    <Search size={14} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--muted-foreground)" }} />
+                    <input
+                      type="text"
+                      placeholder="Search within results..."
+                      value={querySearch}
+                      onChange={(e) => { setQuerySearch(e.target.value); setQueryPage(1); }}
+                      style={{ width: "100%", padding: "8px 12px 8px 34px", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", fontSize: "12px", outline: "none" }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Table Wrapper */}
+              <div style={{ border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden", backgroundColor: "var(--secondary)", maxHeight: "350px", overflowY: "auto" }}>
                 {selectedFields.length === 0 ? (
                   <div style={{ padding: "48px", textAlign: "center", fontSize: "13px", fontWeight: 500, color: "var(--muted-foreground)" }}>
                     Select fields from the left picker to preview report data.
                   </div>
+                ) : !queryResults ? (
+                  <div style={{ padding: "48px", textAlign: "center", fontSize: "13px", fontWeight: 500, color: "var(--muted-foreground)" }}>
+                    Click "Run Custom Query" to display your data.
+                  </div>
                 ) : (
-                  <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "12px" }}>
-                    <thead style={{ backgroundColor: "var(--secondary)", borderBottom: "1px solid var(--border)", position: "sticky", top: 0 }}>
-                      <tr>
-                        {selectedFields.map((f) => (
-                          <th key={f} style={{ padding: "12px", fontWeight: 700, color: "var(--foreground)" }}>{f}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody style={{ backgroundColor: "var(--card)" }}>
-                      {[1, 2, 3].map((row) => (
-                        <tr key={row} style={{ borderBottom: "1px solid var(--border)" }}>
-                          {selectedFields.map((f) => (
-                            <td key={f} style={{ padding: "12px", color: "#4B5563" }}>
-                              {f === "Employee ID" ? `EMP-00${row}` :
-                                f === "First Name" ? ["Arun", "Ravi", "Sarah"][row - 1] :
-                                  f === "Department" ? ["Engineering", "Sales", "Finance"][row - 1] :
-                                    f === "Role" ? ["Frontend Dev", "Sales Exec", "Accountant"][row - 1] :
-                                      "---"}
-                            </td>
-                          ))}
+                  <>
+                    <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "12px" }}>
+                      <thead style={{ backgroundColor: "var(--secondary)", borderBottom: "1px solid var(--border)", position: "sticky", top: 0 }}>
+                        <tr>
+                          {selectedFields.map((f) => {
+                            const isSorted = querySort?.field === f;
+                            return (
+                              <th
+                                key={f}
+                                onClick={() => {
+                                  setQuerySort(prev => ({
+                                    field: f,
+                                    dir: prev?.field === f && prev.dir === "asc" ? "desc" : "asc"
+                                  }));
+                                }}
+                                style={{ padding: "12px", fontWeight: 700, color: "var(--foreground)", cursor: "pointer", userSelect: "none" }}
+                              >
+                                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                  {f}
+                                  <span style={{ fontSize: "10px", color: isSorted ? "#00B87C" : "var(--muted-foreground)" }}>
+                                    {isSorted ? (querySort.dir === "asc" ? "▲" : "▼") : "↕"}
+                                  </span>
+                                </div>
+                              </th>
+                            );
+                          })}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody style={{ backgroundColor: "var(--card)" }}>
+                        {(() => {
+                          let processed = [...queryResults];
+                          
+                          // Apply search
+                          if (querySearch) {
+                            processed = processed.filter(emp =>
+                              selectedFields.some(f =>
+                                String(emp[f] || "").toLowerCase().includes(querySearch.toLowerCase())
+                              )
+                            );
+                          }
+
+                          // Apply sort
+                          if (querySort) {
+                            const { field, dir } = querySort;
+                            processed.sort((a, b) => {
+                              const valA = String(a[field] || "").toLowerCase();
+                              const valB = String(b[field] || "").toLowerCase();
+                              return dir === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                            });
+                          }
+
+                          // Apply pagination
+                          const itemsPerPage = 4;
+                          const totalPages = Math.ceil(processed.length / itemsPerPage);
+                          const start = (queryPage - 1) * itemsPerPage;
+                          const paginated = processed.slice(start, start + itemsPerPage);
+
+                          if (paginated.length === 0) {
+                            return (
+                              <tr>
+                                <td colSpan={selectedFields.length} style={{ padding: "24px", textAlign: "center", color: "var(--muted-foreground)" }}>
+                                  No matching records found.
+                                </td>
+                              </tr>
+                            );
+                          }
+
+                          return (
+                            <>
+                              {paginated.map((row, idx) => (
+                                <tr key={idx} style={{ borderBottom: "1px solid var(--border)" }}>
+                                  {selectedFields.map((f) => (
+                                    <td key={f} style={{ padding: "12px", color: "var(--foreground)" }}>
+                                      {row[f] || "---"}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                              
+                              {/* Pagination controls row if multiple pages exist */}
+                              {totalPages > 1 && (
+                                <tr>
+                                  <td colSpan={selectedFields.length} style={{ padding: "12px", borderTop: "1px solid var(--border)", backgroundColor: "var(--secondary)" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                      <span style={{ fontSize: "11px", color: "var(--muted-foreground)" }}>
+                                        Page {queryPage} of {totalPages}
+                                      </span>
+                                      <div style={{ display: "flex", gap: "4px" }}>
+                                        <button
+                                          disabled={queryPage === 1}
+                                          onClick={() => setQueryPage(p => Math.max(1, p - 1))}
+                                          style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", cursor: queryPage === 1 ? "not-allowed" : "pointer", opacity: queryPage === 1 ? 0.5 : 1 }}
+                                        >
+                                          Prev
+                                        </button>
+                                        <button
+                                          disabled={queryPage === totalPages}
+                                          onClick={() => setQueryPage(p => Math.min(totalPages, p + 1))}
+                                          style={{ padding: "4px 8px", borderRadius: "4px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", cursor: queryPage === totalPages ? "not-allowed" : "pointer", opacity: queryPage === totalPages ? 0.5 : 1 }}
+                                        >
+                                          Next
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                            </>
+                          );
+                        })()}
+                      </tbody>
+                    </table>
+                  </>
                 )}
               </div>
             </div>
@@ -2518,7 +2818,7 @@ export function Reports() {
             <p style={{ fontSize: "14px", color: "var(--muted-foreground)", marginBottom: "20px" }}>Choose your preferred file format for downloading:</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "24px" }}>
               {["Excel (.xlsx)", "CSV (.csv)", "PDF (.pdf)"].map(type => (
-                <button key={type} onClick={() => { setShowExportModal(false); triggerToast(`Exporting as ${type}...`); }} style={{ padding: "12px", borderRadius: "10px", border: "1px solid var(--border)", fontSize: "14px", fontWeight: 700, color: "var(--foreground)", backgroundColor: "var(--secondary)", cursor: "pointer", textAlign: "left" }} onMouseEnter={e => e.currentTarget.style.backgroundColor = "rgba(0, 184, 124, 0.1)"} onMouseLeave={e => e.currentTarget.style.backgroundColor = "var(--secondary)"}>
+                <button key={type} onClick={() => handleDownload(type)} style={{ padding: "12px", borderRadius: "10px", border: "1px solid var(--border)", fontSize: "14px", fontWeight: 700, color: "var(--foreground)", backgroundColor: "var(--secondary)", cursor: "pointer", textAlign: "left" }} onMouseEnter={e => e.currentTarget.style.backgroundColor = "rgba(0, 184, 124, 0.1)"} onMouseLeave={e => e.currentTarget.style.backgroundColor = "var(--secondary)"}>
                   📄 {type}
                 </button>
               ))}
@@ -2564,16 +2864,16 @@ export function Reports() {
 
       {/* Preview Modal */}
       {showPreviewModal && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
-          <div style={{ backgroundColor: "white", borderRadius: "16px", padding: "24px", width: "600px", maxHeight: "80vh", overflowY: "auto", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" }}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", width: "600px", maxHeight: "80vh", overflowY: "auto", border: "1px solid var(--border)", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
-              <h3 style={{ fontSize: "18px", fontWeight: 800, color: "#111827" }}>Preview: {showPreviewModal}</h3>
-              <button onClick={() => setShowPreviewModal(null)} style={{ background: "none", border: "none", fontSize: "24px", cursor: "pointer", color: "#9CA3AF" }}>&times;</button>
+              <h3 style={{ fontSize: "18px", fontWeight: 800, color: "var(--foreground)" }}>Preview: {showPreviewModal}</h3>
+              <button onClick={() => setShowPreviewModal(null)} style={{ background: "none", border: "none", fontSize: "24px", cursor: "pointer", color: "var(--muted-foreground)" }}>&times;</button>
             </div>
-            <div style={{ padding: "16px", backgroundColor: "#F9FAFB", borderRadius: "12px", border: "1px solid #E5E7EB", marginBottom: "20px" }}>
+            <div style={{ padding: "16px", backgroundColor: "var(--secondary)", borderRadius: "12px", border: "1px solid var(--border)", marginBottom: "20px" }}>
               <table style={{ width: "100%", fontSize: "13px", textAlign: "left", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr style={{ borderBottom: "2.5px solid #E5E7EB", color: "#374151" }}>
+                  <tr style={{ borderBottom: "2.5px solid var(--border)", color: "var(--foreground)" }}>
                     <th style={{ padding: "8px" }}>Date</th>
                     <th style={{ padding: "8px" }}>Category</th>
                     <th style={{ padding: "8px" }}>Metric</th>
@@ -2586,7 +2886,7 @@ export function Reports() {
                     { date: "2026-04-02", cat: showPreviewModal, metric: "92%", status: "Optimal" },
                     { date: "2026-04-03", cat: showPreviewModal, metric: "88%", status: "Review" },
                   ].map((row, idx) => (
-                    <tr key={idx} style={{ borderBottom: "1px solid #F3F4F6", color: "#4B5563" }}>
+                    <tr key={idx} style={{ borderBottom: "1px solid var(--border)", color: "var(--foreground)" }}>
                       <td style={{ padding: "10px 8px" }}>{row.date}</td>
                       <td style={{ padding: "10px 8px" }}>{row.cat}</td>
                       <td style={{ padding: "10px 8px", fontWeight: 700 }}>{row.metric}</td>
@@ -2605,20 +2905,20 @@ export function Reports() {
 
       {/* Attrition Analysis Modal */}
       {showAttritionModal && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
-          <div style={{ backgroundColor: "white", borderRadius: "16px", padding: "24px", width: "500px", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" }}>
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", width: "500px", border: "1px solid var(--border)", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
-              <h3 style={{ fontSize: "18px", fontWeight: 800, color: "#111827" }}>Attrition Analysis Overview</h3>
-              <button onClick={() => setShowAttritionModal(false)} style={{ background: "none", border: "none", fontSize: "24px", cursor: "pointer", color: "#9CA3AF" }}>&times;</button>
+              <h3 style={{ fontSize: "18px", fontWeight: 800, color: "var(--foreground)" }}>Attrition Analysis Overview</h3>
+              <button onClick={() => setShowAttritionModal(false)} style={{ background: "none", border: "none", fontSize: "24px", cursor: "pointer", color: "var(--muted-foreground)" }}>&times;</button>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "24px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", padding: "12px", backgroundColor: "#FEF2F2", borderRadius: "10px", border: "1px solid rgba(239,68,68,0.2)" }}>
-                <span style={{ fontSize: "14px", fontWeight: 700, color: "#991B1B" }}>Annualized Turnover Rate:</span>
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "12px", backgroundColor: "rgba(239,68,68,0.1)", borderRadius: "10px", border: "1px solid rgba(239,68,68,0.2)" }}>
+                <span style={{ fontSize: "14px", fontWeight: 700, color: "#EF4444" }}>Annualized Turnover Rate:</span>
                 <span style={{ fontSize: "16px", fontWeight: 900, color: "#EF4444" }}>14.2%</span>
               </div>
               <div>
-                <h4 style={{ fontSize: "14px", fontWeight: 700, color: "#374151", marginBottom: "8px" }}>Primary Factors</h4>
-                <ul style={{ fontSize: "13px", color: "#4B5563", paddingLeft: "20px", margin: 0, lineHeight: 1.6 }}>
+                <h4 style={{ fontSize: "14px", fontWeight: 700, color: "var(--foreground)", marginBottom: "8px" }}>Primary Factors</h4>
+                <ul style={{ fontSize: "13px", color: "var(--muted-foreground)", paddingLeft: "20px", margin: 0, lineHeight: 1.6 }}>
                   <li>Career Progression opportunities (45%)</li>
                   <li>Compensation benchmarks (30%)</li>
                   <li>Commute / Workspace relocation (15%)</li>
