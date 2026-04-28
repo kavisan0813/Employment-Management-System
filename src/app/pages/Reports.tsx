@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { Download, FileText, TrendingUp, Users, DollarSign, Calendar, ArrowLeft, Search, ChevronDown, Star, AlertTriangle, Clock, CheckCircle, FileDown, Table, Eye, MessageSquare } from "lucide-react";
+import { Download, FileText, TrendingUp, Users, DollarSign, Calendar, ArrowLeft, Search, ChevronDown, Star, AlertTriangle, Clock, CheckCircle, FileDown, Table, Eye, MessageSquare, BarChart3, RefreshCw, Plus, Check, UserPlus, UserMinus, CalendarCheck, Briefcase } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell, Line,
 } from "recharts";
+import React from "react";
 
 /* ─── Shared data ─── */
-const headcountTrend = [
-  { month: "Oct", count: 228 }, { month: "Nov", count: 233 }, { month: "Dec", count: 235 },
-  { month: "Jan", count: 237 }, { month: "Feb", count: 241 }, { month: "Mar", count: 244 }, { month: "Apr", count: 248 },
-];
+
 
 const swapTrendData = [
   { week: "Mar W3", submitted: 4, approved: 2, declined: 1 },
@@ -110,10 +108,10 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
   const departments = ["All Departments", ...Array.from(new Set(otEmployeeData.map(e => e.dept)))];
 
   const filteredEmployees = otEmployeeData.filter(e => {
-    const matchesSearch = e.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          e.dept.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          e.role.toLowerCase().includes(searchQuery.toLowerCase());
-    
+    const matchesSearch = e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.dept.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.role.toLowerCase().includes(searchQuery.toLowerCase());
+
     let matchesTab = true;
     const cleanFilter = filter.split(' ')[0]; // Handle "All (23)" -> "All"
     if (cleanFilter === "Exceeded") matchesTab = e.status === "Exceeded";
@@ -121,7 +119,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
     else if (cleanFilter === "Low") matchesTab = e.status === "Normal";
 
     const matchesDept = deptFilter === "All Departments" || e.dept === deptFilter;
-    
+
     return matchesSearch && matchesTab && matchesDept;
   });
 
@@ -141,7 +139,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
   const handleExportPDF = () => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
-    const rows = filteredEmployees.map(e => 
+    const rows = filteredEmployees.map(e =>
       `<tr>
         <td style="padding:10px;border-bottom:1px solid #eee"><b>${e.name}</b><br/><small>${e.role}</small></td>
         <td style="padding:10px;border-bottom:1px solid #eee">${e.dept}</td>
@@ -149,7 +147,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
         <td style="padding:10px;border-bottom:1px solid #eee;color:#F59E0B">₹${e.pay}</td>
       </tr>`
     ).join("");
-    
+
     printWindow.document.write(`
       <html><head><title>Overtime Monitoring Report</title><style>body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}h1{color:#F59E0B;margin-bottom:4px}p{color:#6b7280;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{text-align:left;padding:10px;background:#FEF3C7;color:#92400E;font-size:11px;text-transform:uppercase;border-bottom:2px solid #F59E0B}</style></head>
       <body><h1>Overtime Monitoring Report</h1><p>${filteredEmployees.length} records · Produced ${new Date().toLocaleDateString()}</p>
@@ -161,8 +159,8 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="space-y-6">
-      <ReportHeader 
-        title="Overtime Monitoring Report" 
+      <ReportHeader
+        title="Overtime Monitoring Report"
         subtitle="Consolidated overtime tracking across all departments · 142 hrs · Generated Today"
         onBack={onBack}
         onExportPDF={handleExportPDF}
@@ -180,8 +178,8 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             <p style={{ color: "#92400E", fontSize: "13px", marginTop: "2px" }}>Ravi Kumar (18 hrs), James Carter (17 hrs), Sarah Johnson (16 hrs) require immediate schedule review.</p>
           </div>
         </div>
-        <button 
-          className="px-5 py-2 rounded-xl text-xs font-bold text-white transition-transform active:scale-95" 
+        <button
+          className="px-5 py-2 rounded-xl text-xs font-bold text-white transition-transform active:scale-95"
           style={{ backgroundColor: "#F59E0B" }}
           onClick={() => navigate('/schedule')}
         >
@@ -201,80 +199,80 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
       <div className="grid grid-cols-5 gap-6">
         {/* Left: OT Trend */}
         <div className="col-span-3 rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-           <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>{trendTab === '6 Weeks' ? 'Weekly Overtime Trend' : 'Monthly Overtime Trend'}</h3>
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold" style={{ backgroundColor: "#ECFDF5", color: "#059669" }}>Last {trendTab === '6 Weeks' ? '6 weeks' : '4 months'}</span>
-              </div>
-              <div className="flex bg-[var(--background)] p-1 rounded-full border" style={{ borderColor: "var(--border)" }}>
-                <button 
-                  onClick={() => setTrendTab("6 Weeks")}
-                  className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${trendTab === '6 Weeks' ? 'text-white bg-[#059669]' : 'text-[#6B7280] hover:text-[#059669]'}`}
-                >
-                  6 Weeks
-                </button>
-                <button 
-                  onClick={() => setTrendTab("3 Months")}
-                  className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${trendTab === '3 Months' ? 'text-white bg-[#059669]' : 'text-[#6B7280] hover:text-[#059669]'}`}
-                >
-                  3 Months
-                </button>
-              </div>
-           </div>
-           
-           <div className="h-[280px] relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={trendTab === '6 Weeks' ? otTrendData : otTrendMonthData}>
-                   <defs>
-                      <linearGradient id="otGrad" x1="0" y1="0" x2="0" y2="1">
-                         <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.2} />
-                         <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
-                      </linearGradient>
-                   </defs>
-                   <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
-                   <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9CA3AF' }} />
-                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9CA3AF' }} />
-                   <Tooltip 
-                      contentStyle={{ backgroundColor: "#0F3047", border: "none", borderRadius: "10px", color: "white", padding: "12px" }}
-                      itemStyle={{ color: "white", fontSize: "12px" }}
-                   />
-                   <Area type="monotone" dataKey="hours" stroke="#F59E0B" strokeWidth={3} fill="url(#otGrad)" dot={{ fill: "#F59E0B", stroke: "white", strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
-                   {/* Threshold Line at 100 */}
-                   <Line type="monotone" dataKey={() => 100} stroke="#EF4444" strokeDasharray="5 5" dot={false} strokeWidth={1} label={{ value: "Limit: 100h", position: "insideRight", fill: "#EF4444", fontSize: 10 }} />
-                </AreaChart>
-              </ResponsiveContainer>
-           </div>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>{trendTab === '6 Weeks' ? 'Weekly Overtime Trend' : 'Monthly Overtime Trend'}</h3>
+              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold" style={{ backgroundColor: "#ECFDF5", color: "#059669" }}>Last {trendTab === '6 Weeks' ? '6 weeks' : '4 months'}</span>
+            </div>
+            <div className="flex bg-[var(--background)] p-1 rounded-full border" style={{ borderColor: "var(--border)" }}>
+              <button
+                onClick={() => setTrendTab("6 Weeks")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${trendTab === '6 Weeks' ? 'text-white bg-[#059669]' : 'text-[#6B7280] hover:text-[#059669]'}`}
+              >
+                6 Weeks
+              </button>
+              <button
+                onClick={() => setTrendTab("3 Months")}
+                className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${trendTab === '3 Months' ? 'text-white bg-[#059669]' : 'text-[#6B7280] hover:text-[#059669]'}`}
+              >
+                3 Months
+              </button>
+            </div>
+          </div>
+
+          <div className="h-[280px] relative">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={trendTab === '6 Weeks' ? otTrendData : otTrendMonthData}>
+                <defs>
+                  <linearGradient id="otGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
+                <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9CA3AF' }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9CA3AF' }} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: "#0F3047", border: "none", borderRadius: "10px", color: "white", padding: "12px" }}
+                  itemStyle={{ color: "white", fontSize: "12px" }}
+                />
+                <Area type="monotone" dataKey="hours" stroke="#F59E0B" strokeWidth={3} fill="url(#otGrad)" dot={{ fill: "#F59E0B", stroke: "white", strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
+                {/* Threshold Line at 100 */}
+                <Line type="monotone" dataKey={() => 100} stroke="#EF4444" strokeDasharray="5 5" dot={false} strokeWidth={1} label={{ value: "Limit: 100h", position: "insideRight", fill: "#EF4444", fontSize: 10 }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         {/* Right: Dept Breakdown */}
         <div className="col-span-2 rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-           <div className="flex items-center justify-between mb-6">
-              <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>OT Hours by Department</h3>
-              <span className="text-[11px] font-bold text-[#6B7280]">This week</span>
-           </div>
-           
-           <div className="space-y-4">
-              {otDeptData.map((d, i) => (
-                <div key={i} className="group cursor-pointer">
-                   <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[13px] font-medium text-[#0F3047] w-[130px]">{d.name}</span>
-                      <div className="flex items-center gap-3 flex-1 px-4">
-                         <div className="h-2.5 w-full rounded-full bg-[#FEF3C7] relative overflow-hidden">
-                           <div className="h-full rounded-full transition-all duration-700" style={{ width: `${(d.hours / 45) * 100}%`, backgroundColor: d.color }} />
-                         </div>
-                      </div>
-                      <div className="flex items-center gap-2 w-[80px] justify-end">
-                         <span className="text-[13px] font-bold" style={{ color: d.color }}>{d.hours} hrs</span>
-                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ 
-                            backgroundColor: d.status === 'High' ? "#FEE2E2" : d.status === 'Med' ? "#FEF3C7" : "#DCFCE7",
-                            color: d.status === 'High' ? "#991B1B" : d.status === 'Med' ? "#92400E" : "#166534"
-                         }}>{d.status}</span>
-                      </div>
-                   </div>
-                   <div className="h-[1px] w-full bg-[#F0FDF4] group-last:hidden" />
+          <div className="flex items-center justify-between mb-6">
+            <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>OT Hours by Department</h3>
+            <span className="text-[11px] font-bold text-[#6B7280]">This week</span>
+          </div>
+
+          <div className="space-y-4">
+            {otDeptData.map((d, i) => (
+              <div key={i} className="group cursor-pointer">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[13px] font-medium text-[#0F3047] w-[130px]">{d.name}</span>
+                  <div className="flex items-center gap-3 flex-1 px-4">
+                    <div className="h-2.5 w-full rounded-full bg-[#FEF3C7] relative overflow-hidden">
+                      <div className="h-full rounded-full transition-all duration-700" style={{ width: `${(d.hours / 45) * 100}%`, backgroundColor: d.color }} />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 w-[80px] justify-end">
+                    <span className="text-[13px] font-bold" style={{ color: d.color }}>{d.hours} hrs</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{
+                      backgroundColor: d.status === 'High' ? "#FEE2E2" : d.status === 'Med' ? "#FEF3C7" : "#DCFCE7",
+                      color: d.status === 'High' ? "#991B1B" : d.status === 'Med' ? "#92400E" : "#166534"
+                    }}>{d.status}</span>
+                  </div>
                 </div>
-              ))}
-           </div>
+                <div className="h-[1px] w-full bg-[#F0FDF4] group-last:hidden" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -286,23 +284,23 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             <p style={{ color: "var(--muted-foreground)", fontSize: "12px" }}>Week of Apr 6–12, 2026</p>
           </div>
           <div className="flex items-center gap-3">
-             <div className="relative">
-               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
-               <input 
-                type="text" 
-                placeholder="Search..." 
-                className="pl-9 pr-3 py-1.5 text-xs border rounded-lg focus:outline-none w-[220px]" 
-                style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--foreground)" }} 
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="pl-9 pr-3 py-1.5 text-xs border rounded-lg focus:outline-none w-[220px]"
+                style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--foreground)" }}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-             </div>
-             <div className="relative">
-               <button 
-                className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-gray-50 flex items-center gap-2" 
+            </div>
+            <div className="relative">
+              <button
+                className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-gray-50 flex items-center gap-2"
                 style={{ backgroundColor: "var(--card)", borderColor: "var(--border)", color: "var(--muted-foreground)" }}
                 onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-               >
+              >
                 {deptFilter === "All Departments" ? "Filter" : deptFilter} <ChevronDown size={14} />
               </button>
               {showFilterDropdown && (
@@ -321,7 +319,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   ))}
                 </div>
               )}
-             </div>
+            </div>
           </div>
         </div>
 
@@ -351,7 +349,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                 <tr key={i} className="hover:bg-[var(--secondary)] transition-colors h-[64px]">
                   <td className="px-6 py-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold text-white" style={{ background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)" }}>{e.name.split(' ').map(n=>n[0]).join('')}</div>
+                      <div className="w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-bold text-white" style={{ background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)" }}>{e.name.split(' ').map(n => n[0]).join('')}</div>
                       <div>
                         <p style={{ color: "var(--foreground)", fontWeight: 700 }}>{e.name}</p>
                         <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>{e.role}</p>
@@ -359,25 +357,25 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                     </div>
                   </td>
                   <td className="px-6 py-2">
-                     <span className="px-2 py-0.5 rounded text-[11px] font-bold" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>{e.dept}</span>
+                    <span className="px-2 py-0.5 rounded text-[11px] font-bold" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>{e.dept}</span>
                   </td>
                   <td className="px-6 py-2 font-mono" style={{ color: "var(--foreground)" }}>{e.reg} hrs</td>
                   <td className="px-6 py-2">
-                     <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }} />
-                           <span className="font-bold" style={{ color: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }}>{e.ot} hrs</span>
-                        </div>
-                        <div className="w-16 h-1 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
-                           <div className="h-full rounded-full" style={{ width: `${(e.ot / 20) * 100}%`, backgroundColor: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }} />
-                        </div>
-                     </div>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }} />
+                        <span className="font-bold" style={{ color: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }}>{e.ot} hrs</span>
+                      </div>
+                      <div className="w-16 h-1 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
+                        <div className="h-full rounded-full" style={{ width: `${(e.ot / 20) * 100}%`, backgroundColor: e.ot > 15 ? "#EF4444" : e.ot >= 10 ? "#F59E0B" : "#059669" }} />
+                      </div>
+                    </div>
                   </td>
                   <td className="px-6 py-2 font-mono font-bold" style={{ color: "var(--foreground)" }}>{e.total} hrs</td>
                   <td className="px-6 py-2" style={{ color: "var(--muted-foreground)" }}>{e.days} days</td>
                   <td className="px-6 py-2 font-mono font-bold text-[#F59E0B]">₹{e.pay}</td>
                   <td className="px-6 py-2">
-                    <span className="px-3 py-1 rounded-full text-[10px] font-bold" style={{ 
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold" style={{
                       backgroundColor: e.status === 'Exceeded' ? "#FEE2E2" : e.status === 'High' ? "#FEF3C7" : "#DCFCE7",
                       color: e.status === 'Exceeded' ? "#991B1B" : e.status === 'High' ? "#92400E" : "#166534",
                       border: `1px solid ${e.status === 'Exceeded' ? "#FECACA" : "transparent"}`
@@ -386,17 +384,17 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                     </span>
                   </td>
                   <td className="px-6 py-2">
-                     <div className="flex gap-1.5">
-                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-all" onClick={() => navigate('/schedule')} title="View Schedule">
-                          <Eye size={14} />
-                        </button>
-                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-all" onClick={() => navigate('/attendance')} title="View Attendance Logs">
-                          <Calendar size={14} />
-                        </button>
-                        <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-all" onClick={() => navigate('/employees')} title="View Employee Profile">
-                          <MessageSquare size={14} />
-                        </button>
-                     </div>
+                    <div className="flex gap-1.5">
+                      <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-all" onClick={() => navigate('/schedule')} title="View Schedule">
+                        <Eye size={14} />
+                      </button>
+                      <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-all" onClick={() => navigate('/attendance')} title="View Attendance Logs">
+                        <Calendar size={14} />
+                      </button>
+                      <button className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--secondary)] text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-all" onClick={() => navigate('/employees')} title="View Employee Profile">
+                        <MessageSquare size={14} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -412,78 +410,78 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
 
       {/* Bottom Row - Insights */}
       <div className="grid grid-cols-2 gap-6">
-         {/* Left: OT by Shift */}
-         <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-            <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>Overtime by Shift Type</h3>
-            <p style={{ color: "#6B7280", fontSize: "13px", marginBottom: "20px" }}>Which shifts generate most OT</p>
-            
-            <div className="flex items-center gap-12">
-               <div className="h-[180px] w-[180px] relative">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={otShiftData} innerRadius={55} outerRadius={80} paddingAngle={4} dataKey="value">
-                        {otShiftData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span style={{ color: "#0F3047", fontSize: "18px", fontWeight: 800 }}>142 hrs</span>
-                    <span style={{ color: "#6B7280", fontSize: "10px" }}>Total OT</span>
-                  </div>
-               </div>
-               
-               <div className="flex-1 space-y-2">
-                 {otShiftData.map((s, i) => (
-                   <div key={i} className="flex items-center justify-between p-2 rounded-xl hover:bg-[#F0FFF8] transition-colors">
-                      <div className="flex items-center gap-3">
-                         <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
-                         <span className="text-[13px] text-[#0F3047] font-medium">{s.name}</span>
-                      </div>
-                      <div className="flex items-center gap-4">
-                         <span className="text-[13px] font-bold text-[#0F3047]">{s.hours}h</span>
-                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ backgroundColor: "#ECFDF5", color: "#059669" }}>{s.value}%</span>
-                      </div>
-                   </div>
-                 ))}
-               </div>
-            </div>
-         </div>
+        {/* Left: OT by Shift */}
+        <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+          <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>Overtime by Shift Type</h3>
+          <p style={{ color: "#6B7280", fontSize: "13px", marginBottom: "20px" }}>Which shifts generate most OT</p>
 
-         {/* Right: OT Cost Forecast */}
-         <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-            <div className="flex items-center justify-between mb-1">
-               <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>OT Cost This Month</h3>
-               <button className="text-[12px] font-bold text-[#059669] hover:underline" onClick={() => navigate('/attendance')}>Set OT Alert</button>
+          <div className="flex items-center gap-12">
+            <div className="h-[180px] w-[180px] relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={otShiftData} innerRadius={55} outerRadius={80} paddingAngle={4} dataKey="value">
+                    {otShiftData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span style={{ color: "#0F3047", fontSize: "18px", fontWeight: 800 }}>142 hrs</span>
+                <span style={{ color: "#6B7280", fontSize: "10px" }}>Total OT</span>
+              </div>
             </div>
-            <p style={{ color: "#6B7280", fontSize: "13px", marginBottom: "24px" }}>Projected vs Actual spend</p>
-            
-            <div className="space-y-4">
-               {otCostForecast.map((c, i) => (
-                 <div key={i}>
-                    <div className="flex justify-between text-[12px] mb-1.5">
-                       <span style={{ color: "#6B7280", fontWeight: 600 }}>{c.week}</span>
-                       <span style={{ color: "#F59E0B", fontWeight: 700 }}>₹{c.amount}</span>
-                    </div>
-                    <div className="h-2 w-full bg-[#FEF3C7] rounded-full overflow-hidden">
-                       <div className="h-full rounded-full" style={{ width: `${(c.amount / 5000) * 100}%`, backgroundColor: "#F59E0B" }} />
-                    </div>
-                 </div>
-               ))}
-               
-               <div className="mt-6 p-4 rounded-xl space-y-3" style={{ backgroundColor: "#FEF3C7" }}>
-                  <div className="flex items-center justify-between">
-                     <p style={{ color: "#92400E", fontSize: "14px", fontWeight: 800 }}>Month Total: ₹13,620 / ₹15,000</p>
-                     <p style={{ color: "#92400E", fontSize: "11px", fontWeight: 700 }}>90.8% used</p>
+
+            <div className="flex-1 space-y-2">
+              {otShiftData.map((s, i) => (
+                <div key={i} className="flex items-center justify-between p-2 rounded-xl hover:bg-[#F0FFF8] transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
+                    <span className="text-[13px] text-[#0F3047] font-medium">{s.name}</span>
                   </div>
-                  <div className="h-2 w-full bg-white/50 rounded-full overflow-hidden">
-                     <div className="h-full bg-[#F59E0B] rounded-full" style={{ width: "90.8%" }} />
+                  <div className="flex items-center gap-4">
+                    <span className="text-[13px] font-bold text-[#0F3047]">{s.hours}h</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ backgroundColor: "#ECFDF5", color: "#059669" }}>{s.value}%</span>
                   </div>
-                  <p style={{ color: "#92400E", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
-                     <AlertTriangle size={14} /> ⚠️ Approaching monthly OT budget limit
-                  </p>
-               </div>
+                </div>
+              ))}
             </div>
-         </div>
+          </div>
+        </div>
+
+        {/* Right: OT Cost Forecast */}
+        <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+          <div className="flex items-center justify-between mb-1">
+            <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>OT Cost This Month</h3>
+            <button className="text-[12px] font-bold text-[#059669] hover:underline" onClick={() => navigate('/attendance')}>Set OT Alert</button>
+          </div>
+          <p style={{ color: "#6B7280", fontSize: "13px", marginBottom: "24px" }}>Projected vs Actual spend</p>
+
+          <div className="space-y-4">
+            {otCostForecast.map((c, i) => (
+              <div key={i}>
+                <div className="flex justify-between text-[12px] mb-1.5">
+                  <span style={{ color: "#6B7280", fontWeight: 600 }}>{c.week}</span>
+                  <span style={{ color: "#F59E0B", fontWeight: 700 }}>₹{c.amount}</span>
+                </div>
+                <div className="h-2 w-full bg-[#FEF3C7] rounded-full overflow-hidden">
+                  <div className="h-full rounded-full" style={{ width: `${(c.amount / 5000) * 100}%`, backgroundColor: "#F59E0B" }} />
+                </div>
+              </div>
+            ))}
+
+            <div className="mt-6 p-4 rounded-xl space-y-3" style={{ backgroundColor: "#FEF3C7" }}>
+              <div className="flex items-center justify-between">
+                <p style={{ color: "#92400E", fontSize: "14px", fontWeight: 800 }}>Month Total: ₹13,620 / ₹15,000</p>
+                <p style={{ color: "#92400E", fontSize: "11px", fontWeight: 700 }}>90.8% used</p>
+              </div>
+              <div className="h-2 w-full bg-white/50 rounded-full overflow-hidden">
+                <div className="h-full bg-[#F59E0B] rounded-full" style={{ width: "90.8%" }} />
+              </div>
+              <p style={{ color: "#92400E", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <AlertTriangle size={14} /> ⚠️ Approaching monthly OT budget limit
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -781,14 +779,14 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
 }
 
 const reports = [
-  { title: "Headcount Report", desc: "Full employee roster with details", icon: Users, color: "#059669", bg: "#ECFDF5", generated: "Today", size: "248 records" },
-  { title: "Payroll Summary", desc: "Monthly payroll breakdown", icon: DollarSign, color: "#22C55E", bg: "#F0FDF4", generated: "Apr 1, 2026", size: "8 pages" },
-  { title: "Attendance Report", desc: "Monthly attendance logs", icon: Calendar, color: "#F59E0B", bg: "#FFFBEB", generated: "Apr 1, 2026", size: "30 days" },
-  { title: "Performance Review", desc: "Q1 2026 performance scores", icon: TrendingUp, color: "#14B8A6", bg: "#F0FDFA", generated: "Mar 31, 2026", size: "248 reviews" },
-  { title: "Recruitment Pipeline", desc: "Hiring funnel & candidate stats", icon: FileText, color: "#0EA5E9", bg: "#F0F9FF", generated: "Apr 5, 2026", size: "12 candidates" },
-  { title: "Turnover Analysis", desc: "Employee retention metrics", icon: Users, color: "#EF4444", bg: "#FEF2F2", generated: "Mar 31, 2026", size: "Annual" },
-  { title: "Shift Swap Report", desc: "Detailed log of shift exchange requests", icon: Calendar, color: "#10B981", bg: "#ECFDF5", generated: "Today", size: "8 pending" },
-  { title: "Overtime Monitoring", desc: "Consolidated overtime tracking", icon: Clock, color: "#F59E0B", bg: "#FFFBEB", generated: "Today", size: "142 hrs" },
+  { title: "Headcount Report", desc: "Full employee roster with details", icon: Users, color: "#059669", bg: "#ECFDF5", generated: "Today", size: "248 records", category: "Workforce" },
+  { title: "Payroll Summary", desc: "Monthly payroll breakdown", icon: DollarSign, color: "#22C55E", bg: "#F0FDF4", generated: "Apr 1, 2026", size: "8 pages", category: "Finance" },
+  { title: "Attendance Report", desc: "Monthly attendance logs", icon: Calendar, color: "#F59E0B", bg: "#FFFBEB", generated: "Apr 1, 2026", size: "30 days", category: "Workforce" },
+  { title: "Performance Review", desc: "Q1 2026 performance scores", icon: TrendingUp, color: "#14B8A6", bg: "#F0FDFA", generated: "Mar 31, 2026", size: "248 reviews", category: "Workforce" },
+  { title: "Recruitment Pipeline", desc: "Hiring funnel & candidate stats", icon: FileText, color: "#0EA5E9", bg: "#F0F9FF", generated: "Apr 5, 2026", size: "12 candidates", category: "Operations" },
+  { title: "Turnover Analysis", desc: "Employee retention metrics", icon: Users, color: "#EF4444", bg: "#FEF2F2", generated: "Mar 31, 2026", size: "Annual", category: "Workforce" },
+  { title: "Shift Swap Report", desc: "Detailed log of shift exchange requests", icon: Calendar, color: "#10B981", bg: "#ECFDF5", generated: "Today", size: "8 pending", category: "Operations" },
+  { title: "Overtime Monitoring", desc: "Consolidated overtime tracking", icon: Clock, color: "#F59E0B", bg: "#FFFBEB", generated: "Today", size: "142 hrs", category: "Operations" },
 ];
 
 /* ─── Shared components ─── */
@@ -805,8 +803,8 @@ function ReportHeader({ title, subtitle, onBack, onExportPDF, onExportCSV }: { t
   return (
     <div className="flex items-center justify-between mb-6">
       <div className="flex items-center gap-4">
-        <button onClick={onBack} 
-          className="p-2 rounded-xl transition-all duration-200" 
+        <button onClick={onBack}
+          className="p-2 rounded-xl transition-all duration-200"
           style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}
           onMouseEnter={(e) => { e.currentTarget.style.transform = "translateX(-2px)"; e.currentTarget.style.backgroundColor = "var(--primary)"; e.currentTarget.style.color = "white"; }}
           onMouseLeave={(e) => { e.currentTarget.style.transform = "translateX(0)"; e.currentTarget.style.backgroundColor = "var(--secondary)"; e.currentTarget.style.color = "var(--primary)"; }}
@@ -819,16 +817,16 @@ function ReportHeader({ title, subtitle, onBack, onExportPDF, onExportCSV }: { t
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={onExportPDF} 
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200" 
+        <button onClick={onExportPDF}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200"
           style={{ backgroundColor: "transparent", color: "var(--primary)", border: "1.5px solid var(--primary)" }}
           onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--primary)"; e.currentTarget.style.color = "white"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(5, 150, 105, 0.2)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--primary)"; e.currentTarget.style.boxShadow = "none"; }}
         >
           <FileDown size={14} /> Export PDF
         </button>
-        <button onClick={onExportCSV} 
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all duration-200 shadow-sm" 
+        <button onClick={onExportCSV}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all duration-200 shadow-sm"
           style={{ background: "var(--primary)" }}
           onMouseEnter={(e) => { e.currentTarget.style.filter = "brightness(1.1)"; e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 15px rgba(5, 150, 105, 0.3)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.filter = "none"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 1px 2px rgba(0,0,0,0.05)"; }}
@@ -940,12 +938,12 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
 
   return (
     <div>
-      <ReportHeader 
-        title="Headcount Report" 
-        subtitle={`${filtered.length} records · Generated Today`} 
-        onBack={onBack} 
-        onExportPDF={handleExportPDF} 
-        onExportCSV={handleExportCSV} 
+      <ReportHeader
+        title="Headcount Report"
+        subtitle={`${filtered.length} records · Generated Today`}
+        onBack={onBack}
+        onExportPDF={handleExportPDF}
+        onExportCSV={handleExportCSV}
       />
 
       {/* KPI Cards */}
@@ -1614,7 +1612,7 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
   return (
     <div className="space-y-6">
       <ReportHeader title="Turnover Analysis — Annual" subtitle="Mar 31, 2026" onBack={onBack} onExportPDF={handleExportPDF} onExportCSV={handleExportCSV} />
-      
+
       {/* KPI Cards */}
       <div className="grid grid-cols-3 gap-5">
         <KpiCard label="Turnover Rate" value="4.1%" color="#EF4444" />
@@ -1634,8 +1632,8 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
                 <AreaChart data={turnoverTrend}>
                   <defs>
                     <linearGradient id="colorRate" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -1734,8 +1732,8 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
                   <td className="px-6 py-4 text-muted-foreground">{emp.exit}</td>
                   <td className="px-6 py-4 text-foreground">{emp.reason}</td>
                   <td className="px-6 py-4">
-                    {emp.interview ? 
-                      <div className="flex items-center gap-1 text-emerald-600 font-bold text-[10px]"><CheckCircle size={14} /> Completed</div> : 
+                    {emp.interview ?
+                      <div className="flex items-center gap-1 text-emerald-600 font-bold text-[10px]"><CheckCircle size={14} /> Completed</div> :
                       <div className="flex items-center gap-1 text-amber-500 font-bold text-[10px]"><Clock size={14} /> Pending</div>
                     }
                   </td>
@@ -1752,15 +1750,155 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
 /* ══════════════════════════════════════════════ */
 /* MAIN REPORTS PAGE                             */
 /* ══════════════════════════════════════════════ */
+/* ─── Reports & Analytics Redesign Mock Data ─── */
+const hcTrendData6M = [
+  { month: "Nov 25", count: 232 },
+  { month: "Dec 25", count: 235 },
+  { month: "Jan 26", count: 238 },
+  { month: "Feb 26", count: 241 },
+  { month: "Mar 26", count: 245 },
+  { month: "Apr 26", count: 248 },
+];
+const hcTrendData1Y = [
+  { month: "May 25", count: 210 }, { month: "Jun 25", count: 215 },
+  { month: "Jul 25", count: 220 }, { month: "Aug 25", count: 222 },
+  { month: "Sep 25", count: 225 }, { month: "Oct 25", count: 228 },
+  { month: "Nov 25", count: 232 }, { month: "Dec 25", count: 235 },
+  { month: "Jan 26", count: 238 }, { month: "Feb 26", count: 241 },
+  { month: "Mar 26", count: 245 }, { month: "Apr 26", count: 248 },
+];
+const hcTrendData2Y = [
+  { month: "May 24", count: 180 }, { month: "Jul 24", count: 190 },
+  { month: "Sep 24", count: 195 }, { month: "Nov 24", count: 202 },
+  { month: "Jan 25", count: 208 }, { month: "Mar 25", count: 212 },
+  { month: "May 25", count: 210 }, { month: "Jul 25", count: 220 },
+  { month: "Sep 25", count: 225 }, { month: "Nov 25", count: 232 },
+  { month: "Jan 26", count: 238 }, { month: "Apr 26", count: 248 },
+];
+
+
+
+const leaveAnalysisData = [
+  { month: "Nov", CL: 12, EL: 24, SL: 8 },
+  { month: "Dec", CL: 18, EL: 30, SL: 12 },
+  { month: "Jan", CL: 15, EL: 14, SL: 10 },
+  { month: "Feb", CL: 10, EL: 22, SL: 7 },
+  { month: "Mar", CL: 14, EL: 25, SL: 9 },
+  { month: "Apr", CL: 11, EL: 18, SL: 6 },
+];
+
+const landingFunnelData = [
+  { stage: "Applied", count: 120, width: "100%" },
+  { stage: "Screened", count: 68, width: "80%" },
+  { stage: "Interviewed", count: 35, width: "60%" },
+  { stage: "Offered", count: 14, width: "40%" },
+  { stage: "Hired", count: 8, width: "20%" },
+];
+
 export function Reports() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeReport, setActiveReport] = useState<string | null>(null);
+  const [timeRange, setTimeRange] = useState<"6M" | "1Y" | "2Y">("1Y");
+  const [activeTab, setActiveTab] = useState<"standard" | "custom">("standard");
+
+  // Filters state
+  const [filterDate, setFilterDate] = useState("This Month");
+  const [filterDept, setFilterDept] = useState("All Departments");
+  const [filterLoc, setFilterLoc] = useState("All Locations");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [showDateDropdown, setShowDateDropdown] = useState(false);
+  const [showDeptDropdown, setShowDeptDropdown] = useState(false);
+  const [showLocDropdown, setShowLocDropdown] = useState(false);
+
+  // Modals state
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [scheduleReportType, setScheduleReportType] = useState("");
+  const [showPreviewModal, setShowPreviewModal] = useState<string | null>(null);
+  const [showAttritionModal, setShowAttritionModal] = useState(false);
+
+  // Toast state
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
+  // Pre-built reports library view all state
+  const [showAllReports, setShowAllReports] = useState(false);
+  const [reportSearch, setReportSearch] = useState("");
+  const [reportCategory, setReportCategory] = useState("All");
+
+  // Custom report builder states
+  const [availableFields] = useState([
+    "Employee ID", "First Name", "Last Name", "Department", "Role", "Location",
+    "Joining Date", "Basic Salary", "Gross Salary", "Attendance %", "Leave Balance",
+    "Manager", "Email", "Phone", "Status"
+  ]);
+  const [selectedFields, setSelectedFields] = useState<string[]>(["Employee ID", "First Name", "Department", "Role"]);
 
   useEffect(() => {
     if (location.state?.activeReport) {
       setActiveReport(location.state.activeReport);
     }
   }, [location.state]);
+
+  const triggerToast = (message: string) => {
+    setToast({ message, type: "success" });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleFilterChange = (type: string, value: string) => {
+    setIsLoading(true);
+    if (type === 'date') setFilterDate(value);
+    if (type === 'dept') setFilterDept(value);
+    if (type === 'loc') setFilterLoc(value);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 600);
+  };
+
+  const handleResetFilters = () => {
+    setIsLoading(true);
+    setFilterDate("This Month");
+    setFilterDept("All Departments");
+    setFilterLoc("All Locations");
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 600);
+  };
+
+  const getKpis = () => {
+    let employees = 248;
+    let hires = 12;
+    let attrition = 3;
+    let attendance = 91;
+    let payroll = 28.4;
+    let positions = 18;
+
+    if (filterDept === "Engineering") {
+      employees = 98; hires = 5; attrition = 1; attendance = 94; payroll = 14.2; positions = 6;
+    } else if (filterDept === "Design") {
+      employees = 32; hires = 2; attrition = 0; attendance = 91; payroll = 4.1; positions = 3;
+    } else if (filterDept === "Marketing") {
+      employees = 28; hires = 1; attrition = 1; attendance = 87; payroll = 3.2; positions = 2;
+    } else if (filterDept === "Sales") {
+      employees = 35; hires = 3; attrition = 1; attendance = 89; payroll = 3.5; positions = 4;
+    }
+
+    if (filterDate === "Last Month") {
+      employees -= 5;
+      hires = Math.max(0, hires - 2);
+      payroll = payroll * 0.95;
+    }
+
+    return [
+      { label: "Total Employees", value: `${employees}`, color: "#059669", bg: "rgba(5, 150, 105, 0.15)", trend: "+12", icon: Users },
+      { label: "New Hires", value: `${hires}`, color: "#0D9488", bg: "rgba(13, 148, 136, 0.15)", trend: "+4", icon: UserPlus },
+      { label: "Attrition", value: `${attrition}`, color: "#EF4444", bg: "rgba(239, 68, 68, 0.15)", trend: "-1", icon: UserMinus },
+      { label: "Avg Attendance", value: `${attendance}%`, color: "#059669", bg: "rgba(5, 150, 105, 0.15)", trend: "+2.4%", icon: CalendarCheck },
+      { label: "Payroll Cost", value: `₹${payroll.toFixed(1)}L`, color: "#7C3AED", bg: "rgba(124, 58, 237, 0.15)", trend: "+4.2%", icon: DollarSign },
+      { label: "Open Positions", value: `${positions}`, color: "#D97706", bg: "rgba(217, 119, 6, 0.15)", trend: "+2", icon: Briefcase },
+    ];
+  };
 
   // Switch logic for reports
   if (activeReport === "Headcount Report") return <HeadcountReport onBack={() => setActiveReport(null)} />;
@@ -1772,106 +1910,736 @@ export function Reports() {
   if (activeReport === "Shift Swap Report") return <ShiftSwapReport onBack={() => setActiveReport(null)} />;
   if (activeReport === "Overtime Monitoring") return <OvertimeMonitoringReport onBack={() => setActiveReport(null)} />;
 
+  const hcTrend = timeRange === "6M" ? hcTrendData6M : timeRange === "2Y" ? hcTrendData2Y : hcTrendData1Y;
+
   return (
-    <div style={{ maxWidth: "1360px" }}>
-      {/* KPI */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        {[
-          { label: "Total Employees", value: "248", color: "#059669" },
-          { label: "Monthly Payroll", value: "₹86,584", color: "#22C55E" },
-          { label: "Attendance Rate", value: "88.3%", color: "#F59E0B" },
-          { label: "Turnover Rate", value: "3.2%", color: "#EF4444" },
-        ].map((s, i) => (
-          <KpiCard key={i} label={s.label} value={s.value} color={s.color} />
-        ))}
+    <div style={{ backgroundColor: "var(--background)", color: "var(--foreground)", minHeight: "calc(100vh - 64px)", margin: "-24px", padding: "24px" }}>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: .5; }
+        }
+      `}</style>
+
+      {/* PAGE HEADER */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ width: "40px", height: "40px", borderRadius: "12px", backgroundColor: "#00B87C", display: "flex", alignItems: "center", justifyContent: "center", color: "white" }}>
+            <BarChart3 size={20} />
+          </div>
+          <h1 style={{ fontSize: "26px", fontWeight: 800, color: "var(--foreground)" }}>Reports & Analytics</h1>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <button onClick={() => setShowExportModal(true)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 20px", borderRadius: "12px", fontSize: "14px", fontWeight: 700, color: "white", backgroundColor: "#00B87C", border: "none", cursor: "pointer" }}>
+            <Download size={16} /> Export Report
+          </button>
+          <button onClick={() => { setScheduleReportType(""); setShowScheduleModal(true); }} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 20px", borderRadius: "12px", fontSize: "14px", fontWeight: 700, color: "#00B87C", backgroundColor: "transparent", border: "1.5px solid #00B87C", cursor: "pointer" }}>
+            Schedule <ChevronDown size={16} />
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-5 mb-6">
-        {/* Headcount Trend Chart */}
-        <div className="col-span-2 rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-          <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700, marginBottom: "4px" }}>Headcount Growth Trend</h3>
-          <p style={{ color: "var(--muted-foreground)", fontSize: "12px", marginBottom: "20px" }}>Oct 2025 — Apr 2026</p>
-          <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={headcountTrend}>
-              <defs>
-                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-              <XAxis dataKey="month" tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis domain={[220, 255]} tick={{ fill: "#6B7280", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ backgroundColor: "#064E3B", border: "none", borderRadius: "10px", color: "white", fontSize: "12px" }} />
-              <Area type="monotone" dataKey="count" stroke="#059669" strokeWidth={3} fill="url(#areaGrad)" dot={{ fill: "#059669", r: 4 }} />
-            </AreaChart>
-          </ResponsiveContainer>
+      {/* DATE FILTER BAR */}
+      <div style={{ backgroundColor: "var(--card)", borderRadius: "12px", padding: "16px", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", boxShadow: "0 1px 2px rgba(0,0,0,0.05)", position: "relative", zIndex: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+
+          {/* Date filter dropdown */}
+          <div style={{ position: "relative" }}>
+            <button onClick={() => setShowDateDropdown(!showDateDropdown)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", borderRadius: "9999px", backgroundColor: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+              📅 {filterDate} <ChevronDown size={14} />
+            </button>
+            {showDateDropdown && (
+              <div style={{ position: "absolute", top: "100%", left: 0, marginTop: "4px", backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "8px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", minWidth: "150px", zIndex: 30 }}>
+                {["This Month", "Last Month", "Q1 2026", "Q4 2025"].map(d => (
+                  <div key={d} onClick={() => { handleFilterChange('date', d); setShowDateDropdown(false); }} style={{ padding: "8px 16px", fontSize: "13px", cursor: "pointer", color: "var(--foreground)" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--secondary)"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>{d}</div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Dept filter dropdown */}
+          <div style={{ position: "relative" }}>
+            <button onClick={() => setShowDeptDropdown(!showDeptDropdown)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", borderRadius: "9999px", backgroundColor: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+              {filterDept} <ChevronDown size={14} />
+            </button>
+            {showDeptDropdown && (
+              <div style={{ position: "absolute", top: "100%", left: 0, marginTop: "4px", backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "8px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", minWidth: "150px", zIndex: 30 }}>
+                {["All Departments", "Engineering", "Design", "Marketing", "Sales"].map(d => (
+                  <div key={d} onClick={() => { handleFilterChange('dept', d); setShowDeptDropdown(false); }} style={{ padding: "8px 16px", fontSize: "13px", cursor: "pointer", color: "var(--foreground)" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--secondary)"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>{d}</div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Location filter dropdown */}
+          <div style={{ position: "relative" }}>
+            <button onClick={() => setShowLocDropdown(!showLocDropdown)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", borderRadius: "9999px", backgroundColor: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+              {filterLoc} <ChevronDown size={14} />
+            </button>
+            {showLocDropdown && (
+              <div style={{ position: "absolute", top: "100%", left: 0, marginTop: "4px", backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "8px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", minWidth: "150px", zIndex: 30 }}>
+                {["All Locations", "Remote", "Hybrid", "On-site"].map(l => (
+                  <div key={l} onClick={() => { handleFilterChange('loc', l); setShowLocDropdown(false); }} style={{ padding: "8px 16px", fontSize: "13px", cursor: "pointer", color: "var(--foreground)" }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--secondary)"} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}>{l}</div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <button onClick={handleResetFilters} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px", color: "#6B7280", background: "none", border: "none", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+            <RefreshCw size={14} /> Reset
+          </button>
+        </div>
+        <div style={{ fontSize: "13px", fontWeight: 600, color: "#6B7280" }}>
+          Data as of Apr {new Date().getDate()}, 2026
+        </div>
+      </div>
+
+      {/* HEADLINE KPI ROW (6 cards) */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "16px", marginBottom: "24px" }}>
+        {isLoading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} style={{ width: "100%", height: "116px", backgroundColor: "#F3F4F6", borderRadius: "16px", animation: "pulse 1.5s infinite ease-in-out" }}></div>
+          ))
+        ) : (
+          getKpis().map((card, i) => (
+            <div key={i}
+              onClick={() => {
+                if (card.label === "Total Employees") navigate('/employees');
+                else if (card.label === "New Hires") navigate('/recruitment');
+                else if (card.label === "Attrition") setShowAttritionModal(true);
+                else if (card.label === "Avg Attendance") navigate('/attendance');
+                else if (card.label === "Payroll Cost") navigate('/payroll');
+                else if (card.label === "Open Positions") navigate('/recruitment');
+              }}
+              style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "20px", border: "1px solid var(--border)", display: "flex", flexDirection: "column", position: "relative", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", transition: "transform 0.2s" }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 10px 15px -3px rgba(0,0,0,0.1)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.02)"; }}
+            >
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "12px" }}>
+                <div style={{ width: "36px", height: "36px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: card.bg }}>
+                  <card.icon size={18} color={card.color} />
+                </div>
+                <span style={{ padding: "2px 8px", borderRadius: "9999px", fontSize: "11px", fontWeight: 700, backgroundColor: card.color === '#EF4444' ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)', color: card.color === '#EF4444' ? '#EF4444' : '#059669' }}>
+                  {card.trend}
+                </span>
+              </div>
+              <p style={{ fontSize: "26px", fontWeight: 900, color: "var(--foreground)", margin: "0 0 4px 0", letterSpacing: "-0.5px" }}>{card.value}</p>
+              <p style={{ fontSize: "12px", fontWeight: 700, color: "var(--muted-foreground)", margin: 0, textTransform: "uppercase", letterSpacing: "0.5px" }}>{card.label}</p>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* CHARTS ROW 1 */}
+      <div style={{ display: "grid", gridTemplateColumns: "64% 34%", gap: "24px", marginBottom: "24px" }}>
+        {/* Headcount Trend */}
+        <div style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", border: "1px solid var(--border)", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <h3 style={{ fontSize: "16px", fontWeight: 800, color: "var(--foreground)", margin: 0 }}>Headcount Trend</h3>
+              <button
+                onClick={() => setActiveReport("Headcount Report")}
+                style={{ fontSize: "12px", fontWeight: 700, color: "#00B87C", border: "none", background: "none", cursor: "pointer", textDecoration: "underline" }}
+              >
+                View Details
+              </button>
+            </div>
+            <div style={{ display: "flex", backgroundColor: "var(--secondary)", padding: "4px", borderRadius: "8px", border: "1px solid var(--border)" }}>
+              {(["6M", "1Y", "2Y"] as const).map((t) => (
+                <button key={t} onClick={() => setTimeRange(t)}
+                  style={{ padding: "6px 12px", fontSize: "12px", fontWeight: 700, borderRadius: "6px", border: "none", cursor: "pointer", transition: "all 0.2s", backgroundColor: timeRange === t ? "#00B87C" : "transparent", color: timeRange === t ? "white" : "var(--muted-foreground)" }}>
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div style={{ height: "250px" }}>
+            {isLoading ? (
+              <div style={{ width: "100%", height: "100%", backgroundColor: "#F3F4F6", borderRadius: "16px", animation: "pulse 1.5s infinite ease-in-out" }}></div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={hcTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="hcGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#00B87C" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#DCFCE7" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9CA3AF', fontWeight: 600 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9CA3AF', fontWeight: 600 }} />
+                  <Tooltip />
+                  <Area type="monotone" dataKey="count" stroke="#00B87C" strokeWidth={3} fill="url(#hcGrad)" dot={{ fill: "#00B87C", stroke: "white", strokeWidth: 2, r: 4 }} />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
+          </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-          <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700, marginBottom: "16px" }}>Key Metrics</h3>
-          <div className="space-y-4">
+        {/* Hiring Pipeline */}
+        <div
+          onClick={() => navigate('/recruitment')}
+          style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", border: "1px solid var(--border)", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", transition: "transform 0.2s" }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+          onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
+        >
+          <h3 style={{ fontSize: "16px", fontWeight: 800, color: "var(--foreground)", margin: "0 0 16px 0" }}>Hiring Pipeline</h3>
+
+          {/* Pipeline Overview Stats */}
+          <div style={{ display: "flex", justifyContent: "space-between", gap: "8px", marginBottom: "20px", backgroundColor: "var(--secondary)", padding: "12px", borderRadius: "12px", border: "1px solid var(--border)" }}>
+            <div>
+              <div style={{ fontSize: "10px", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Total Talent</div>
+              <div style={{ fontSize: "16px", fontWeight: 900, color: "var(--foreground)" }}>145</div>
+            </div>
+            <div>
+              <div style={{ fontSize: "10px", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Conversion</div>
+              <div style={{ fontSize: "16px", fontWeight: 900, color: "#00B87C" }}>18.5%</div>
+            </div>
+            <div>
+              <div style={{ fontSize: "10px", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.5px" }}>This Month</div>
+              <div style={{ fontSize: "16px", fontWeight: 900, color: "#00B87C" }}>+8</div>
+            </div>
+            <div>
+              <div style={{ fontSize: "10px", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Pending</div>
+              <div style={{ fontSize: "16px", fontWeight: 900, color: "#EF4444" }}>4</div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {[
-              { label: "Avg. Tenure", value: "3.2 years", bar: 64, color: "#059669" },
-              { label: "Avg. Salary", value: "₹94,200", bar: 72, color: "#22C55E" },
-              { label: "Training Hours", value: "48 hrs/yr", bar: 48, color: "#14B8A6" },
-              { label: "Retention Rate", value: "96.8%", bar: 97, color: "#F59E0B" },
-            ].map((m, i) => (
-              <div key={i}>
-                <div className="flex items-center justify-between mb-1">
-                  <span style={{ color: "#6B7280", fontSize: "12px" }}>{m.label}</span>
-                  <span style={{ color: "#022C22", fontSize: "13px", fontWeight: 700 }}>{m.value}</span>
+              { stage: "Applied", count: 145, pct: 100, color: "#9CA3AF" },
+              { stage: "Interviewed", count: 58, pct: 40, color: "#34D399" },
+              { stage: "Offered", count: 12, pct: 8.2, color: "#00B87C" },
+              { stage: "Joined", count: 8, pct: 5.5, color: "#059669" }
+            ].map((st) => (
+              <div
+                key={st.stage}
+                onClick={(e) => { e.stopPropagation(); navigate('/recruitment', { state: { stage: st.stage } }); }}
+                style={{ display: "flex", alignItems: "center", gap: "12px" }}
+              >
+                <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--foreground)", width: "85px" }}>{st.stage}</span>
+                <div style={{ flex: 1, backgroundColor: "var(--secondary)", borderRadius: "9999px", height: "20px", position: "relative", overflow: "hidden" }}>
+                  <div style={{ backgroundColor: st.color, height: "100%", borderRadius: "9999px", display: "flex", alignItems: "center", paddingLeft: "12px", width: `${st.pct}%`, transition: "width 0.5s ease-in-out" }}>
+                    {st.pct >= 15 && <span style={{ color: "white", fontSize: "10px", fontWeight: 700 }}>{st.count}</span>}
+                  </div>
+                  {st.pct < 15 && <span style={{ position: "absolute", left: `${st.pct + 4}%`, top: "50%", transform: "translateY(-50%)", color: "var(--foreground)", fontSize: "10px", fontWeight: 700 }}>{st.count}</span>}
                 </div>
-                <div className="rounded-full overflow-hidden" style={{ height: "5px", backgroundColor: "#D1FAE5" }}>
-                  <div className="rounded-full" style={{ width: `${m.bar}%`, height: "100%", backgroundColor: m.color }} />
-                </div>
+                <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--muted-foreground)", width: "35px", textAlign: "right" }}>{Math.round(st.pct)}%</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Reports Grid */}
-      <div className="rounded-2xl p-6 shadow-sm" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
-        <h3 style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700, marginBottom: "16px" }}>Available Reports</h3>
-        <div className="grid grid-cols-3 gap-4">
-          {reports.map((report, i) => (
-            <div
-              key={i}
-              className="rounded-xl p-4 flex items-start justify-between transition-all cursor-pointer border border-border bg-background"
-              onClick={() => setActiveReport(report.title)}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = "var(--primary)";
-                (e.currentTarget as HTMLDivElement).style.backgroundColor = "var(--secondary)";
-                (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 12px rgba(0,0,0,0.06)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = "var(--border)";
-                (e.currentTarget as HTMLDivElement).style.backgroundColor = "var(--background)";
-                (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
-              }}
-            >
-              <div className="flex items-start gap-3 flex-1">
-                <div className="flex items-center justify-center rounded-xl shrink-0" style={{ width: "36px", height: "36px", backgroundColor: report.bg }}>
-                  <report.icon size={16} color={report.color} />
-                </div>
-                <div>
-                  <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 700 }}>{report.title}</p>
-                  <p style={{ color: "#6B7280", fontSize: "11px", marginTop: "1px" }}>{report.desc}</p>
-                  <p style={{ color: "#CBD5E1", fontSize: "10px", marginTop: "4px" }}>{report.size} · {report.generated}</p>
-                </div>
-              </div>
-              <button className="p-2 rounded-lg transition-colors shrink-0" style={{ color: "#6B7280" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#ECFDF5"; (e.currentTarget as HTMLButtonElement).style.color = "#059669"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "#6B7280"; }}
-              >
-                <Download size={15} />
-              </button>
+      {/* CHARTS ROW 2 */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px", marginBottom: "24px" }}>
+
+        {/* Attendance Heatmap */}
+        <div style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", border: "1px solid var(--border)", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+          <h3 style={{ fontSize: "16px", fontWeight: 800, color: "var(--foreground)", margin: "0 0 20px 0" }}>Attendance Heatmap</h3>
+          {isLoading ? (
+            <div style={{ width: "100%", height: "180px", backgroundColor: "var(--secondary)", borderRadius: "12px", animation: "pulse 1.5s infinite ease-in-out" }}></div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "10px" }}>
+              <div></div>
+              {["W1", "W2", "W3", "W4"].map(w => (
+                <div key={w} style={{ fontSize: "11px", fontWeight: 700, color: "var(--muted-foreground)", textAlign: "center" }}>{w}</div>
+              ))}
+              {["Eng", "Des", "Mkt", "Sales", "HR", "Fin"].map(dept => (
+                <React.Fragment key={dept}>
+                  <div style={{ fontSize: "12px", fontWeight: 700, color: "var(--foreground)", display: "flex", alignItems: "center" }}>{dept}</div>
+                  {[1, 2, 3, 4].map(w => {
+                    const pct = 90 + Math.floor(Math.random() * 10);
+                    const color = pct >= 95 ? "#059669" : pct >= 92 ? "#10B981" : "#34D399";
+                    return (
+                      <div
+                        key={w}
+                        onClick={() => navigate(`/attendance?dept=${dept}&week=${w}`)}
+                        title={`Dept: ${dept}\nWeek: ${w}\nAttendance: ${pct}%\nAbsent: ${Math.floor((100 - pct) * 0.5)}\nLate: ${Math.floor((100 - pct) * 0.8)}`}
+                        style={{ height: "24px", borderRadius: "4px", backgroundColor: color, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: "10px", fontWeight: 700 }}
+                      >
+                        {pct}%
+                      </div>
+                    )
+                  })}
+                </React.Fragment>
+              ))}
             </div>
-          ))}
+          )}
+        </div>
+
+        {/* Leave Analysis */}
+        <div style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", border: "1px solid var(--border)", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+          <h3 style={{ fontSize: "16px", fontWeight: 800, color: "var(--foreground)", margin: "0 0 20px 0" }}>Leave Analysis</h3>
+          <div style={{ height: "180px" }}>
+            {isLoading ? (
+              <div style={{ width: "100%", height: "100%", backgroundColor: "#F3F4F6", borderRadius: "12px", animation: "pulse 1.5s infinite ease-in-out" }}></div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={leaveAnalysisData} margin={{ top: 0, right: 0, left: -25, bottom: 0 }}>
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9CA3AF', fontWeight: 600 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#9CA3AF', fontWeight: 600 }} />
+                  <Tooltip />
+                  <Bar dataKey="CL" name="Casual" stackId="leave" fill="#00B87C" />
+                  <Bar dataKey="EL" name="Earned" stackId="leave" fill="#F59E0B" />
+                  <Bar dataKey="SL" name="Sick" stackId="leave" fill="#0D9488" />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </div>
+
+        {/* Hiring Funnel */}
+        <div style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", border: "1px solid var(--border)", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+          <h3 style={{ fontSize: "16px", fontWeight: 800, color: "var(--foreground)", margin: "0 0 20px 0" }}>Hiring Funnel</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", justifyContent: "center", height: "180px" }}>
+            {isLoading ? (
+              <div style={{ width: "100%", height: "100%", backgroundColor: "var(--secondary)", borderRadius: "12px", animation: "pulse 1.5s infinite ease-in-out" }}></div>
+            ) : (
+              landingFunnelData.map((f, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <span style={{ fontSize: "12px", fontWeight: 700, color: "var(--muted-foreground)", width: "80px" }}>{f.stage}</span>
+                  <div style={{ flex: 1, backgroundColor: "var(--secondary)", borderRadius: "9999px", height: "24px", position: "relative", overflow: "hidden" }}>
+                    <div style={{ backgroundColor: "#00B87C", height: "100%", borderRadius: "9999px", display: "flex", alignItems: "center", paddingLeft: "12px", width: f.width }}>
+                      <span style={{ color: "white", fontSize: "11px", fontWeight: 700 }}>{f.count}</span>
+                    </div>
+                  </div>
+                  <span style={{ fontSize: "12px", fontWeight: 700, color: "#00B87C" }}>{["100%", "56%", "29%", "11%", "6%"][i]}</span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
+
+      {/* CHARTS ROW 3 */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "24px" }}>
+        {/* Late Arrival Tracker */}
+        <div
+          onClick={() => navigate('/attendance', { state: { filter: 'Late' } })}
+          style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", border: "1px solid var(--border)", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", cursor: "pointer", transition: "transform 0.2s" }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+          onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
+        >
+          <h3 style={{ fontSize: "16px", fontWeight: 800, color: "var(--foreground)", margin: "0 0 16px 0" }}>Late Arrival Tracker</h3>
+
+          {/* Metrics Row */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "20px" }}>
+            <div style={{ backgroundColor: "#FEF2F2", padding: "10px", borderRadius: "12px", border: "1px solid rgba(239,68,68,0.1)" }}>
+              <div style={{ fontSize: "10px", fontWeight: 700, color: "#991B1B", textTransform: "uppercase", letterSpacing: "0.5px" }}>Late This Month</div>
+              <div style={{ fontSize: "18px", fontWeight: 900, color: "#EF4444", marginTop: "4px" }}>24</div>
+            </div>
+            <div style={{ backgroundColor: "#FFFBEB", padding: "10px", borderRadius: "12px", border: "1px solid rgba(245,158,11,0.1)" }}>
+              <div style={{ fontSize: "10px", fontWeight: 700, color: "#92400E", textTransform: "uppercase", letterSpacing: "0.5px" }}>Avg Delay</div>
+              <div style={{ fontSize: "18px", fontWeight: 900, color: "#F59E0B", marginTop: "4px" }}>14m</div>
+            </div>
+            <div style={{ backgroundColor: "#ECFDF5", padding: "10px", borderRadius: "12px", border: "1px solid rgba(5,150,105,0.1)" }}>
+              <div style={{ fontSize: "10px", fontWeight: 700, color: "#065F46", textTransform: "uppercase", letterSpacing: "0.5px" }}>Most Punctual</div>
+              <div style={{ fontSize: "14px", fontWeight: 800, color: "#059669", marginTop: "8px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Engineering</div>
+            </div>
+            <div style={{ backgroundColor: "#FEF2F2", padding: "10px", borderRadius: "12px", border: "1px solid rgba(239,68,68,0.1)" }}>
+              <div style={{ fontSize: "10px", fontWeight: 700, color: "#991B1B", textTransform: "uppercase", letterSpacing: "0.5px" }}>High Risk Dept</div>
+              <div style={{ fontSize: "14px", fontWeight: 800, color: "#EF4444", marginTop: "8px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Operations</div>
+            </div>
+          </div>
+
+          {/* Visuals Split */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+            {/* Chart 1: Dept Bar Chart */}
+            <div style={{ height: "100px" }}>
+              <div style={{ fontSize: "11px", fontWeight: 700, color: "#4B5563", marginBottom: "6px" }}>Late Count by Dept</div>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={[
+                  { dept: "Ops", count: 12 },
+                  { dept: "Sales", count: 6 },
+                  { dept: "Eng", count: 2 },
+                  { dept: "Mkt", count: 4 }
+                ]}>
+                  <XAxis dataKey="dept" tick={{ fontSize: 9, fill: "#6B7280" }} axisLine={false} tickLine={false} />
+                  <Bar
+                    dataKey="count"
+                    fill="#EF4444"
+                    radius={[2, 2, 0, 0]}
+                    onClick={(data) => {
+                      navigate('/attendance', { state: { filter: 'Late', dept: data.dept } });
+                    }}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Chart 2: Trend Line */}
+            <div style={{ height: "100px" }}>
+              <div style={{ fontSize: "11px", fontWeight: 700, color: "#4B5563", marginBottom: "6px" }}>Monthly Trend</div>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={[
+                  { month: "Jan", count: 18 },
+                  { month: "Feb", count: 22 },
+                  { month: "Mar", count: 26 },
+                  { month: "Apr", count: 24 }
+                ]}>
+                  <XAxis dataKey="month" tick={{ fontSize: 9, fill: "#6B7280" }} axisLine={false} tickLine={false} />
+                  <Tooltip />
+                  <Area type="monotone" dataKey="count" stroke="#EF4444" strokeWidth={2} fill="#FEF2F2" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Detailed Table Preview */}
+          <div>
+            <div style={{ fontSize: "11px", fontWeight: 700, color: "#4B5563", marginBottom: "6px", borderBottom: "1px solid #E5E7EB", paddingBottom: "4px" }}>Frequent Offenders</div>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", textAlign: "left" }}>
+              <thead>
+                <tr style={{ color: "#9CA3AF", fontWeight: 700 }}>
+                  <th style={{ padding: "4px 0" }}>Employee</th>
+                  <th style={{ padding: "4px 0" }}>Dept</th>
+                  <th style={{ padding: "4px 0", textAlign: "center" }}>Count</th>
+                  <th style={{ padding: "4px 0", textAlign: "right" }}>Avg Delay</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { name: "Ravi Kumar", dept: "Operations", count: 5, delay: "18m" },
+                  { name: "James Carter", dept: "Sales", count: 3, delay: "12m" },
+                  { name: "Sarah Johnson", dept: "Marketing", count: 2, delay: "15m" }
+                ].map((emp, idx) => (
+                  <tr key={idx} style={{ borderBottom: "1px solid #F9FAFB", color: "#374151" }}>
+                    <td style={{ padding: "6px 0", fontWeight: 700 }}>{emp.name}</td>
+                    <td style={{ padding: "6px 0", color: "#6B7280" }}>{emp.dept}</td>
+                    <td style={{ padding: "6px 0", textAlign: "center", fontWeight: 700, color: "#EF4444" }}>{emp.count}</td>
+                    <td style={{ padding: "6px 0", textAlign: "right", fontWeight: 700 }}>{emp.delay}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Department Performance Comparison */}
+        <div style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", border: "1px solid var(--border)", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+          <h3 style={{ fontSize: "16px", fontWeight: 800, color: "var(--foreground)", margin: "0 0 20px 0" }}>Department Performance Comparison</h3>
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", height: "180px" }}>
+            {isLoading ? (
+              <div style={{ width: "100%", height: "100%", backgroundColor: "var(--secondary)", borderRadius: "12px", animation: "pulse 1.5s infinite ease-in-out" }}></div>
+            ) : (
+              <table style={{ width: "100%", fontSize: "12px", textAlign: "left", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid var(--border)", color: "var(--muted-foreground)" }}>
+                    <th style={{ padding: "4px 0" }}>Dept</th>
+                    <th style={{ padding: "4px 0" }}>Attendance</th>
+                    <th style={{ padding: "4px 0" }}>Perf. Score</th>
+                    <th style={{ padding: "4px 0" }}>Productivity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { dept: "Engineering", att: "94%", perf: "4.2", prod: "92%" },
+                    { dept: "Design", att: "91%", perf: "4.0", prod: "88%" },
+                    { dept: "Marketing", att: "87%", perf: "3.5", prod: "82%" },
+                    { dept: "Sales", att: "89%", perf: "3.7", prod: "85%" },
+                  ].map((row, i) => (
+                    <tr key={i} style={{ borderBottom: "1px solid var(--border)", color: "var(--foreground)" }}>
+                      <td style={{ padding: "8px 0", fontWeight: 700 }}>{row.dept}</td>
+                      <td style={{ padding: "8px 0" }}>{row.att}</td>
+                      <td style={{ padding: "8px 0" }}>{row.perf}</td>
+                      <td style={{ padding: "8px 0", color: "#059669", fontWeight: 700 }}>{row.prod}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* TABS FOR BOTTOM SECTION */}
+      <div style={{ display: "flex", gap: "24px", borderBottom: "1px solid #E5E7EB", marginBottom: "24px" }}>
+        <button onClick={() => setActiveTab("standard")}
+          style={{ fontSize: "16px", fontWeight: 800, border: "none", background: "none", cursor: "pointer", color: activeTab === "standard" ? "#00B87C" : "#9CA3AF", borderBottom: activeTab === "standard" ? "3px solid #00B87C" : "none", paddingBottom: "12px", transition: "all 0.2s" }}>
+          Pre-built Reports
+        </button>
+        <button onClick={() => setActiveTab("custom")}
+          style={{ fontSize: "16px", fontWeight: 800, border: "none", background: "none", cursor: "pointer", color: activeTab === "custom" ? "#00B87C" : "#9CA3AF", borderBottom: activeTab === "custom" ? "3px solid #00B87C" : "none", paddingBottom: "12px", transition: "all 0.2s" }}>
+          Custom Report Builder
+        </button>
+      </div>
+
+      {/* PRE-BUILT REPORTS SECTION */}
+      {activeTab === "standard" && (
+        <div style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", border: "1px solid var(--border)", marginBottom: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+
+          {/* Search & Categories */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", marginBottom: "24px" }}>
+            <div style={{ display: "flex", gap: "12px" }}>
+              {["All", "Workforce", "Finance", "Operations"].map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setReportCategory(cat)}
+                  style={{ padding: "6px 16px", borderRadius: "9999px", fontSize: "13px", fontWeight: 600, border: "1px solid", cursor: "pointer", transition: "all 0.2s", backgroundColor: reportCategory === cat ? "#00B87C" : "#F3F4F6", color: reportCategory === cat ? "white" : "#374151", borderColor: reportCategory === cat ? "#00B87C" : "#E5E7EB" }}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            <input
+              type="text"
+              placeholder="Search reports..."
+              value={reportSearch}
+              onChange={(e) => setReportSearch(e.target.value)}
+              style={{ padding: "8px 16px", borderRadius: "9999px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", fontSize: "13px", width: "250px", outline: "none" }}
+            />
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
+            <h3 style={{ fontSize: "16px", fontWeight: 800, color: "var(--foreground)", margin: 0 }}>Pre-built Reports Library</h3>
+            <button onClick={() => setShowAllReports(!showAllReports)} style={{ fontSize: "13px", fontWeight: 700, color: "#00B87C", border: "none", background: "none", cursor: "pointer" }}>
+              {showAllReports ? "Show Less" : "View All →"}
+            </button>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+            {reports
+              .filter(r => reportCategory === "All" || r.category === reportCategory)
+              .filter(r => r.title.toLowerCase().includes(reportSearch.toLowerCase()))
+              .slice(0, showAllReports ? reports.length : 6)
+              .map((report, i) => (
+                <div key={i} style={{ backgroundColor: "var(--card)", borderRadius: "12px", padding: "16px", border: "1px solid var(--border)", display: "flex", flexDirection: "column", justifyContent: "space-between", transition: "transform 0.2s" }} onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"} onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}>
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
+                      <div style={{ width: "36px", height: "36px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: report.bg }}>
+                        <report.icon size={18} color={report.color} />
+                      </div>
+                      <div>
+                        <p style={{ fontSize: "14px", fontWeight: 800, color: "var(--foreground)", margin: 0 }}>{report.title}</p>
+                        <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--muted-foreground)", margin: "2px 0 0 0" }}>Last run: 2 days ago</p>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: "12px", color: "var(--muted-foreground)", margin: "0 0 16px 0", lineHeight: "1.5" }}>{report.desc}</p>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "1px solid var(--border)", paddingTop: "12px" }}>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button onClick={() => setActiveReport(report.title)}
+                        style={{ padding: "6px 16px", borderRadius: "8px", fontSize: "12px", fontWeight: 700, color: "#00B87C", border: "1.5px solid #00B87C", backgroundColor: "transparent", cursor: "pointer" }}>
+                        Generate
+                      </button>
+                      <button onClick={() => setShowPreviewModal(report.title)}
+                        style={{ padding: "6px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: 700, color: "var(--foreground)", border: "1px solid var(--border)", backgroundColor: "var(--secondary)", cursor: "pointer" }}>
+                        Preview
+                      </button>
+                    </div>
+                    <button onClick={() => { setScheduleReportType(report.title); setShowScheduleModal(true); }} style={{ display: "flex", alignItems: "center", gap: "4px", border: "none", background: "none", fontSize: "11px", fontWeight: 600, color: "#9CA3AF", cursor: "pointer" }}>
+                      📅 Schedule
+                    </button>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* CUSTOM REPORT BUILDER */}
+      {activeTab === "custom" && (
+        <div style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", border: "1px solid var(--border)", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+          <h3 style={{ fontSize: "16px", fontWeight: 800, color: "var(--foreground)", margin: "0 0 20px 0" }}>Custom Report Builder</h3>
+          <div style={{ display: "flex", gap: "24px" }}>
+            {/* Left Field Picker */}
+            <div style={{ width: "33%", borderRight: "1px solid var(--border)", paddingRight: "24px" }}>
+              <h4 style={{ fontSize: "13px", fontWeight: 700, color: "var(--foreground)", margin: "0 0 12px 0" }}>Select Fields</h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxHeight: "300px", overflowY: "auto", padding: "2px" }}>
+                {availableFields.map((f) => {
+                  const isSelected = selectedFields.includes(f);
+                  return (
+                    <div key={f} onClick={() => {
+                      setSelectedFields(prev => isSelected ? prev.filter(x => x !== f) : [...prev, f]);
+                    }} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderRadius: "8px", border: "1px solid", cursor: "pointer", transition: "all 0.2s", borderColor: isSelected ? "#00B87C" : "var(--border)", backgroundColor: isSelected ? "rgba(0, 184, 124, 0.1)" : "var(--secondary)", color: isSelected ? "#00B87C" : "var(--foreground)", fontWeight: isSelected ? 700 : 500 }}>
+                      <span style={{ fontSize: "12px" }}>{f}</span>
+                      {isSelected ? <Check size={14} /> : <Plus size={14} color="var(--muted-foreground)" />}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right Preview Canvas */}
+            <div style={{ width: "67%" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+                <h4 style={{ fontSize: "13px", fontWeight: 700, color: "var(--foreground)", margin: 0 }}>Preview Canvas</h4>
+                <button onClick={() => triggerToast("Custom Query executed successfully.")} style={{ padding: "8px 16px", borderRadius: "8px", fontSize: "12px", fontWeight: 700, color: "white", backgroundColor: "#00B87C", border: "none", cursor: "pointer" }}>
+                  Run Custom Query
+                </button>
+              </div>
+              <div style={{ border: "1px solid var(--border)", borderRadius: "12px", overflow: "hidden", backgroundColor: "var(--secondary)", maxHeight: "300px", overflowY: "auto" }}>
+                {selectedFields.length === 0 ? (
+                  <div style={{ padding: "48px", textAlign: "center", fontSize: "13px", fontWeight: 500, color: "var(--muted-foreground)" }}>
+                    Select fields from the left picker to preview report data.
+                  </div>
+                ) : (
+                  <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "12px" }}>
+                    <thead style={{ backgroundColor: "var(--secondary)", borderBottom: "1px solid var(--border)", position: "sticky", top: 0 }}>
+                      <tr>
+                        {selectedFields.map((f) => (
+                          <th key={f} style={{ padding: "12px", fontWeight: 700, color: "var(--foreground)" }}>{f}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody style={{ backgroundColor: "var(--card)" }}>
+                      {[1, 2, 3].map((row) => (
+                        <tr key={row} style={{ borderBottom: "1px solid var(--border)" }}>
+                          {selectedFields.map((f) => (
+                            <td key={f} style={{ padding: "12px", color: "#4B5563" }}>
+                              {f === "Employee ID" ? `EMP-00${row}` :
+                                f === "First Name" ? ["Arun", "Ravi", "Sarah"][row - 1] :
+                                  f === "Department" ? ["Engineering", "Sales", "Finance"][row - 1] :
+                                    f === "Role" ? ["Frontend Dev", "Sales Exec", "Accountant"][row - 1] :
+                                      "---"}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODALS & TOAST OVERLAYS */}
+
+      {/* Export Modal */}
+      {showExportModal && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", width: "400px", border: "1px solid var(--border)", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" }}>
+            <h3 style={{ fontSize: "18px", fontWeight: 800, color: "var(--foreground)", marginBottom: "16px" }}>Export Report</h3>
+            <p style={{ fontSize: "14px", color: "var(--muted-foreground)", marginBottom: "20px" }}>Choose your preferred file format for downloading:</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "24px" }}>
+              {["Excel (.xlsx)", "CSV (.csv)", "PDF (.pdf)"].map(type => (
+                <button key={type} onClick={() => { setShowExportModal(false); triggerToast(`Exporting as ${type}...`); }} style={{ padding: "12px", borderRadius: "10px", border: "1px solid var(--border)", fontSize: "14px", fontWeight: 700, color: "var(--foreground)", backgroundColor: "var(--secondary)", cursor: "pointer", textAlign: "left" }} onMouseEnter={e => e.currentTarget.style.backgroundColor = "rgba(0, 184, 124, 0.1)"} onMouseLeave={e => e.currentTarget.style.backgroundColor = "var(--secondary)"}>
+                  📄 {type}
+                </button>
+              ))}
+            </div>
+            <button onClick={() => setShowExportModal(false)} style={{ width: "100%", padding: "10px", borderRadius: "10px", backgroundColor: "var(--secondary)", border: "none", color: "var(--muted-foreground)", fontSize: "14px", fontWeight: 700, cursor: "pointer" }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Schedule Modal */}
+      {showScheduleModal && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div style={{ backgroundColor: "var(--card)", borderRadius: "16px", padding: "24px", width: "450px", border: "1px solid var(--border)", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" }}>
+            <h3 style={{ fontSize: "18px", fontWeight: 800, color: "var(--foreground)", marginBottom: "16px" }}>Schedule Automated Report</h3>
+            {scheduleReportType && <p style={{ fontSize: "13px", color: "#00B87C", fontWeight: 700, marginBottom: "16px" }}>Target: {scheduleReportType}</p>}
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "24px" }}>
+              <div>
+                <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--foreground)", display: "block", marginBottom: "6px" }}>Frequency</label>
+                <select style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--secondary)", color: "var(--foreground)", outline: "none" }}>
+                  <option style={{ backgroundColor: "var(--card)" }}>Daily</option>
+                  <option style={{ backgroundColor: "var(--card)" }}>Weekly</option>
+                  <option style={{ backgroundColor: "var(--card)" }}>Monthly</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--foreground)", display: "block", marginBottom: "6px" }}>Email Recipients</label>
+                <input type="email" placeholder="e.g. admin@nexus.hr" style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--secondary)", color: "var(--foreground)", outline: "none" }} />
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: "12px" }}>
+              <button onClick={() => { setShowScheduleModal(false); triggerToast("Report schedule created successfully."); }} style={{ flex: 1, padding: "12px", borderRadius: "10px", backgroundColor: "#00B87C", color: "white", fontSize: "14px", fontWeight: 700, border: "none", cursor: "pointer" }}>
+                Save Schedule
+              </button>
+              <button onClick={() => setShowScheduleModal(false)} style={{ padding: "12px", borderRadius: "10px", backgroundColor: "var(--secondary)", color: "var(--muted-foreground)", fontSize: "14px", fontWeight: 700, border: "none", cursor: "pointer" }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Preview Modal */}
+      {showPreviewModal && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div style={{ backgroundColor: "white", borderRadius: "16px", padding: "24px", width: "600px", maxHeight: "80vh", overflowY: "auto", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+              <h3 style={{ fontSize: "18px", fontWeight: 800, color: "#111827" }}>Preview: {showPreviewModal}</h3>
+              <button onClick={() => setShowPreviewModal(null)} style={{ background: "none", border: "none", fontSize: "24px", cursor: "pointer", color: "#9CA3AF" }}>&times;</button>
+            </div>
+            <div style={{ padding: "16px", backgroundColor: "#F9FAFB", borderRadius: "12px", border: "1px solid #E5E7EB", marginBottom: "20px" }}>
+              <table style={{ width: "100%", fontSize: "13px", textAlign: "left", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "2.5px solid #E5E7EB", color: "#374151" }}>
+                    <th style={{ padding: "8px" }}>Date</th>
+                    <th style={{ padding: "8px" }}>Category</th>
+                    <th style={{ padding: "8px" }}>Metric</th>
+                    <th style={{ padding: "8px" }}>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { date: "2026-04-01", cat: showPreviewModal, metric: "95%", status: "Optimal" },
+                    { date: "2026-04-02", cat: showPreviewModal, metric: "92%", status: "Optimal" },
+                    { date: "2026-04-03", cat: showPreviewModal, metric: "88%", status: "Review" },
+                  ].map((row, idx) => (
+                    <tr key={idx} style={{ borderBottom: "1px solid #F3F4F6", color: "#4B5563" }}>
+                      <td style={{ padding: "10px 8px" }}>{row.date}</td>
+                      <td style={{ padding: "10px 8px" }}>{row.cat}</td>
+                      <td style={{ padding: "10px 8px", fontWeight: 700 }}>{row.metric}</td>
+                      <td style={{ padding: "10px 8px" }}><span style={{ padding: "2px 6px", borderRadius: "4px", fontSize: "11px", fontWeight: 700, backgroundColor: row.status === 'Optimal' ? '#DCFCE7' : '#FEF3C7', color: row.status === 'Optimal' ? '#15803D' : '#B45309' }}>{row.status}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <button onClick={() => { setActiveReport(showPreviewModal); setShowPreviewModal(null); }} style={{ width: "100%", padding: "12px", borderRadius: "10px", backgroundColor: "#00B87C", color: "white", fontSize: "14px", fontWeight: 700, border: "none", cursor: "pointer" }}>
+              View Complete Sub-Report
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Attrition Analysis Modal */}
+      {showAttritionModal && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div style={{ backgroundColor: "white", borderRadius: "16px", padding: "24px", width: "500px", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+              <h3 style={{ fontSize: "18px", fontWeight: 800, color: "#111827" }}>Attrition Analysis Overview</h3>
+              <button onClick={() => setShowAttritionModal(false)} style={{ background: "none", border: "none", fontSize: "24px", cursor: "pointer", color: "#9CA3AF" }}>&times;</button>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "24px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "12px", backgroundColor: "#FEF2F2", borderRadius: "10px", border: "1px solid rgba(239,68,68,0.2)" }}>
+                <span style={{ fontSize: "14px", fontWeight: 700, color: "#991B1B" }}>Annualized Turnover Rate:</span>
+                <span style={{ fontSize: "16px", fontWeight: 900, color: "#EF4444" }}>14.2%</span>
+              </div>
+              <div>
+                <h4 style={{ fontSize: "14px", fontWeight: 700, color: "#374151", marginBottom: "8px" }}>Primary Factors</h4>
+                <ul style={{ fontSize: "13px", color: "#4B5563", paddingLeft: "20px", margin: 0, lineHeight: 1.6 }}>
+                  <li>Career Progression opportunities (45%)</li>
+                  <li>Compensation benchmarks (30%)</li>
+                  <li>Commute / Workspace relocation (15%)</li>
+                </ul>
+              </div>
+            </div>
+            <button onClick={() => { setActiveReport("Turnover Analysis"); setShowAttritionModal(false); }} style={{ width: "100%", padding: "12px", borderRadius: "10px", backgroundColor: "#00B87C", color: "white", fontSize: "14px", fontWeight: 700, border: "none", cursor: "pointer" }}>
+              Explore Detailed Statistics
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Toast */}
+      {toast && (
+        <div style={{ position: "fixed", bottom: "24px", right: "24px", padding: "12px 24px", borderRadius: "12px", backgroundColor: "#111827", color: "white", fontSize: "13px", fontWeight: 700, boxShadow: "0 10px 15px -3px rgba(0,0,0,0.3)", zIndex: 60, display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#00B87C" }} />
+          {toast.message}
+        </div>
+      )}
+
     </div>
   );
 }
