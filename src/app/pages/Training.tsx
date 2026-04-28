@@ -423,7 +423,7 @@ export function Training() {
   };
 
   return (
-    <div className="w-full p-6 min-h-screen bg-[#F0FDF4] dark:bg-zinc-950/30">
+    <div className="w-full p-6 min-h-screen bg-background">
 
       {/* ── Page Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">

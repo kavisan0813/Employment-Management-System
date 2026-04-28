@@ -113,6 +113,36 @@
   --color-sidebar-border: var(--sidebar-border);
 }
 
+@layer utilities {
+  .dark {
+    .bg-zinc-950, .bg-neutral-950, .bg-slate-950 {
+      background-color: var(--background) !important;
+    }
+    .bg-zinc-900, .bg-neutral-900, .bg-slate-900 {
+      background-color: var(--card) !important;
+    }
+    .bg-zinc-800, .bg-neutral-800, .bg-slate-800 {
+      background-color: var(--secondary) !important;
+    }
+    .bg-zinc-800\/50, .bg-neutral-800\/50, .bg-slate-800\/50 {
+      background-color: rgba(6, 45, 36, 0.5) !important;
+    }
+    .bg-zinc-800\/40, .bg-neutral-800\/40, .bg-slate-800\/40 {
+      background-color: rgba(6, 45, 36, 0.4) !important;
+    }
+    .bg-zinc-800\/30, .bg-neutral-800\/30, .bg-slate-800\/30 {
+      background-color: rgba(6, 45, 36, 0.3) !important;
+    }
+    .bg-zinc-800\/20, .bg-neutral-800\/20, .bg-slate-800\/20 {
+      background-color: rgba(6, 45, 36, 0.2) !important;
+    }
+
+    .border-zinc-800, .border-neutral-800, .border-slate-800 {
+      border-color: var(--border) !important;
+    }
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

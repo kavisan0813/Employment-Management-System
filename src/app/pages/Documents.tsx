@@ -114,6 +114,7 @@ export function Documents() {
   // Modals
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [previewDoc, setPreviewDoc] = useState<DocItem | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   // Upload State
   const [uploadForm, setUploadForm] = useState({
     name: "",
@@ -200,7 +201,7 @@ export function Documents() {
   });
 
   return (
-    <div className="min-h-screen p-6 bg-[#F0FDF4] dark:bg-zinc-950/30 w-full">
+    <div className="min-h-screen p-6 bg-background w-full">
 
       {/* ── Page Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
@@ -394,7 +395,7 @@ export function Documents() {
                         <button onClick={() => handleArchive(doc.id)} className="p-1.5 hover:bg-neutral-50 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-amber-600" title="Archive">
                           <Archive size={14} />
                         </button>
-                        <button onClick={() => handleDelete(doc.id)} className="p-1.5 hover:bg-neutral-50 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-rose-600" title="Delete">
+                        <button onClick={() => setConfirmDeleteId(doc.id)} className="p-1.5 hover:bg-neutral-50 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-rose-600" title="Delete">
                           <Trash2 size={14} />
                         </button>
                       </div>
@@ -407,6 +408,19 @@ export function Documents() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          
+          {/* Dedicated Upload Document Card in Grid */}
+          <div 
+            onClick={() => setShowUploadModal(true)}
+            className="bg-[#F0FDF4]/50 dark:bg-zinc-800/20 p-4 rounded-2xl border-2 border-dashed border-[#00B87C]/30 hover:border-[#00B87C]/80 flex flex-col items-center justify-center text-center relative cursor-pointer transition-all hover:-translate-y-1 hover:shadow-md group min-h-[160px]"
+          >
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#E6F4EA] text-[#00B87C] mb-3 shadow-sm group-hover:scale-105 transition-transform">
+              <UploadCloud size={24} />
+            </div>
+            <h4 className="text-xs font-extrabold text-slate-900 dark:text-slate-100">Upload Document</h4>
+            <p className="text-[10px] font-bold text-slate-400 mt-1">Drag files or click to browse</p>
+          </div>
+
           {filteredDocs.map(doc => (
             <div key={doc.id} className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-border shadow-sm flex flex-col items-center text-center relative transition-all hover:-translate-y-1 hover:shadow-md group">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getFileIconColor(doc.type)} mb-3 shadow-md`}>
@@ -426,6 +440,9 @@ export function Documents() {
                 </button>
                 <button onClick={() => handleArchive(doc.id)} className="text-slate-400 hover:text-amber-600 text-[10px] font-extrabold flex items-center gap-1">
                   <Archive size={12} /> Archive
+                </button>
+                <button onClick={() => setConfirmDeleteId(doc.id)} className="text-slate-400 hover:text-rose-600 text-[10px] font-extrabold flex items-center gap-1">
+                  <Trash2 size={12} /> Delete
                 </button>
               </div>
             </div>
@@ -559,6 +576,36 @@ export function Documents() {
         </div>
       )}
 
+      {/* ── Delete Confirmation Modal ── */}
+      {confirmDeleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setConfirmDeleteId(null)}>
+          <div 
+            className="w-full max-w-sm bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-xl p-6 animate-in zoom-in-95" 
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 mb-2">Confirm Deletion</h3>
+            <p className="text-xs text-slate-500 mb-4 font-bold">Are you absolutely sure you want to permanently remove this document? This action cannot be undone.</p>
+            
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setConfirmDeleteId(null)}
+                className="flex-1 py-2 bg-neutral-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 text-xs font-black rounded-xl transition-all"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  handleDelete(confirmDeleteId);
+                  setConfirmDeleteId(null);
+                }}
+                className="flex-1 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-black rounded-xl shadow-sm transition-all active:scale-95 flex items-center justify-center gap-1"
+              >
+                <Trash2 size={14} /> Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
