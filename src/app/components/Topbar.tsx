@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { Bell, Search, ChevronDown, Settings, LogOut, User, Sun, Moon, X, UserSearch, ArrowRight } from "lucide-react";
 import { employees } from "../data/mockData";
 
@@ -20,6 +20,7 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
   const [showSearchResults, setShowSearchResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -42,7 +43,7 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
 
   return (
     <div
-      className="fixed top-0 right-0 flex items-center h-16 z-40 transition-all duration-300"
+      className="fixed top-0 right-0 flex items-center h-16 z-[1000] transition-all duration-300"
       style={{
         left: `${sidebarWidth}px`,
         backgroundColor: "var(--card)",
@@ -193,15 +194,15 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
           style={{
             width: "38px",
             height: "38px",
-            backgroundColor: showNotifications ? "var(--accent)" : "var(--background)",
-            border: "1px solid var(--border)",
+            backgroundColor: location.pathname === "/notifications" || showNotifications ? "var(--accent)" : "var(--background)",
+            border: `1px solid ${location.pathname === "/notifications" ? "#00B87C" : "var(--border)"}`,
             cursor: "pointer",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--primary)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "#00B87C";
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor = location.pathname === "/notifications" ? "#00B87C" : "var(--border)";
           }}
         >
           <Bell size={16} color="var(--primary)" />
@@ -224,9 +225,9 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
 
         {showNotifications && (
           <>
-            <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(false)} />
+            <div className="fixed inset-0 z-[1000]" onClick={() => setShowNotifications(false)} />
             <div
-              className="absolute right-0 top-full mt-2 rounded-xl overflow-hidden z-50 shadow-lg"
+              className="absolute right-0 top-full mt-2 rounded-xl overflow-hidden z-[1001] shadow-lg"
               style={{
                 width: "320px",
                 backgroundColor: "var(--card)",
@@ -268,7 +269,7 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
               <div
                 className="px-4 py-3 text-center border-t cursor-pointer hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-colors"
                 style={{ borderColor: "var(--border)" }}
-                onClick={() => { setShowNotifications(false); setShowAllNotificationsScreen(true); }}
+                onClick={() => { setShowNotifications(false); navigate("/notifications"); }}
               >
                 <span style={{ color: "var(--primary)", fontSize: "12px", fontWeight: 600 }}>View All Notifications</span>
               </div>
@@ -315,9 +316,9 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
 
         {showDropdown && (
           <>
-            <div className="fixed inset-0 z-40" onClick={() => setShowDropdown(false)} />
+            <div className="fixed inset-0 z-[1000]" onClick={() => setShowDropdown(false)} />
             <div
-              className="absolute right-0 top-full mt-2 rounded-xl overflow-hidden z-50 shadow-lg"
+              className="absolute right-0 top-full mt-2 rounded-xl overflow-hidden z-[1001] shadow-lg"
               style={{
                 width: "180px",
                 backgroundColor: "var(--card)",

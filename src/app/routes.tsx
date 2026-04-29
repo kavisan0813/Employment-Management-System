@@ -22,6 +22,7 @@ const IncrementAppraisal = lazy(() => import("./pages/IncrementAppraisal").then(
 const Onboarding = lazy(() => import("./pages/Onboarding").then(m => ({ default: m.Onboarding })));
 const Training = lazy(() => import("./pages/Training").then(m => ({ default: m.Training })));
 const Documents = lazy(() => import("./pages/Documents").then(m => ({ default: m.Documents })));
+const Notifications = lazy(() => import("./pages/Notifications").then(m => ({ default: m.Notifications })));
 
 // Loading fallback displayed while lazy chunks are fetched
 function PageLoader() {
@@ -92,6 +93,7 @@ export const router = createBrowserRouter([
       { path: "onboarding", element: lazyRoute(Onboarding) },
       { path: "documents", element: lazyRoute(Documents) },
       { path: "training", element: lazyRoute(Training) },
+      { path: "notifications", element: lazyRoute(Notifications) },
     ],
   },
 ]);

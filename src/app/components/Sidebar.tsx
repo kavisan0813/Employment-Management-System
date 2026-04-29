@@ -44,7 +44,6 @@ const navItems = [
   { icon: BookOpen, label: "Training", path: "/training" },
   { icon: Award, label: "Increment & Appraisal", path: "/appraisal" },
   { icon: BarChart3, label: "Reports", path: "/reports" },
-  { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
@@ -171,6 +170,52 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         className="shrink-0 px-2 pb-4"
         style={{ borderTop: "1px solid var(--sidebar-border)", paddingTop: "12px" }}
       >
+        {/* Settings NavLink */}
+        <NavLink
+          to="/settings"
+          title={collapsed ? "Settings" : undefined}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            padding: collapsed ? "10px 14px" : "10px 12px",
+            borderRadius: "10px",
+            textDecoration: "none",
+            transition: "all 0.15s ease",
+            backgroundColor: isActive("/settings") ? "var(--sidebar-primary)" : "transparent",
+            color: isActive("/settings") ? "var(--sidebar-primary-foreground)" : "var(--sidebar-foreground)",
+            justifyContent: collapsed ? "center" : "flex-start",
+            marginBottom: "8px",
+          }}
+          className={`group ${!isActive("/settings") && 'hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]'}`}
+        >
+          <Settings
+            size={18}
+            style={{
+              color: isActive("/settings") ? "var(--sidebar-primary-foreground)" : "inherit",
+              flexShrink: 0,
+            }}
+          />
+          {!collapsed && (
+            <span
+              style={{
+                fontSize: "14px",
+                fontWeight: isActive("/settings") ? 600 : 500,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+              }}
+            >
+              Settings
+            </span>
+          )}
+          {isActive("/settings") && !collapsed && (
+            <span
+              className="ml-auto w-2 h-2 rounded-full"
+              style={{ backgroundColor: "var(--sidebar-primary-foreground)", flexShrink: 0 }}
+            />
+          )}
+        </NavLink>
+
         {/* User avatar section */}
         {!collapsed && (
           <div

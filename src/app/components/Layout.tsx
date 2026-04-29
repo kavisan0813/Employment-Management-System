@@ -15,6 +15,7 @@ const pageTitles: Record<string, string> = {
   "/reports": "Reports & Analytics",
   "/settings": "System Settings",
   "/profile": "My Profile",
+  "/notifications": "Notifications & Announcements",
 };
 
 export function Layout() {
