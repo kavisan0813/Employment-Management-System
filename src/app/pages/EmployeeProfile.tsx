@@ -198,7 +198,7 @@ export function EmployeeProfile() {
                     </button>
                     {isMoreMenuOpen && (
                       <div 
-                        className="absolute right-0 top-full mt-2 w-48 rounded-xl shadow-lg z-50 py-1"
+                        className="absolute right-0 top-full mt-2 w-48 rounded-xl shadow-lg z-[2000] py-1"
                         style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
                       >
 
@@ -615,7 +615,7 @@ export function EmployeeProfile() {
 
       {/* Edit Profile Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div
             className="w-full max-w-md p-6 rounded-2xl shadow-xl"
             style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
@@ -673,7 +673,7 @@ export function EmployeeProfile() {
       )}
       {/* Add Training Record Modal */}
       {isTrainingModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-md p-6 rounded-2xl shadow-xl" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
             <h3 style={{ color: "var(--foreground)", fontSize: "18px", fontWeight: 700, marginBottom: "16px" }}>Add Training Record</h3>
             <div className="space-y-4">
@@ -706,7 +706,7 @@ export function EmployeeProfile() {
 
       {/* Request Asset Modal */}
       {isAssetModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-md p-6 rounded-2xl shadow-xl" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
             <h3 style={{ color: "var(--foreground)", fontSize: "18px", fontWeight: 700, marginBottom: "16px" }}>Request New Asset</h3>
             <div className="space-y-4">
@@ -737,7 +737,7 @@ export function EmployeeProfile() {
 
       {/* Add Note Modal */}
       {isNoteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-md p-6 rounded-2xl shadow-xl" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
             <h3 style={{ color: "var(--foreground)", fontSize: "18px", fontWeight: 700, marginBottom: "16px" }}>Add Manager Note</h3>
             <div className="space-y-4">

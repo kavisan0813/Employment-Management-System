@@ -177,7 +177,7 @@ function DepartmentFormModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
       style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
       onClick={onClose}
     >
@@ -316,7 +316,7 @@ function DepartmentDetailModal({ dept, onClose }: { dept: Department; onClose: (
   
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end p-4 sm:p-0"
+      className="fixed inset-0 z-[2000] flex justify-end p-4 sm:p-0"
       style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
       onClick={onClose}
     >
@@ -672,7 +672,7 @@ export function Departments() {
 
       {/* Confirmation Modal for Deletion */}
       {deleteConfirmDept && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95">
             <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950/40 text-rose-600 flex items-center justify-center mx-auto mb-4">
               <AlertTriangle size={24} />
@@ -702,7 +702,7 @@ export function Departments() {
 
       {/* Assign Head Modal */}
       {assignHeadDept && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 animate-in fade-in zoom-in-95" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100 mb-1">Assign Head</h3>
             <p className="text-xs text-muted-foreground mb-4">Update the management lead for <span className="font-black text-slate-800 dark:text-slate-200">"{assignHeadDept.name}"</span>.</p>
@@ -743,7 +743,7 @@ export function Departments() {
       {/* View Employees Modal */}
       {viewEmployeesDept && (
         <div
-          className="fixed inset-0 z-50 flex justify-end p-4 sm:p-0"
+          className="fixed inset-0 z-[2000] flex justify-end p-4 sm:p-0"
           style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
           onClick={() => setViewEmployeesDept(null)}
         >

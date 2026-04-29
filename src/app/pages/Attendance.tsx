@@ -227,7 +227,7 @@ export function Attendance() {
       {/* Day Detail Modal Overlay */}
       {selectedDayDetail && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200"
           onClick={() => setSelectedDayDetail(null)}
         >
           <div 
@@ -393,7 +393,7 @@ export function Attendance() {
           </button>
           
           {showDeptDropdown && (
-            <div className="absolute top-[calc(100%+8px)] left-0 w-full z-50 rounded-2xl border bg-white dark:bg-zinc-900 shadow-xl overflow-hidden" style={{ borderColor: "var(--border)" }}>
+            <div className="absolute top-[calc(100%+8px)] left-0 w-full z-[2000] rounded-2xl border bg-white dark:bg-zinc-900 shadow-xl overflow-hidden" style={{ borderColor: "var(--border)" }}>
               <div className="max-h-60 overflow-y-auto">
                 <button 
                   onClick={() => handleDeptChange("All Departments")}
@@ -433,7 +433,7 @@ export function Attendance() {
           </button>
 
           {showEmpDropdown && (
-            <div className="absolute top-[calc(100%+8px)] left-0 w-full z-50 rounded-2xl border bg-white dark:bg-zinc-900 shadow-xl overflow-hidden" style={{ borderColor: "var(--border)" }}>
+            <div className="absolute top-[calc(100%+8px)] left-0 w-full z-[2000] rounded-2xl border bg-white dark:bg-zinc-900 shadow-xl overflow-hidden" style={{ borderColor: "var(--border)" }}>
               <div className="p-2 border-b" style={{ borderColor: "var(--border)" }}>
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-zinc-800 border" style={{ borderColor: "var(--border)" }}>
                   <Search size={12} className="text-muted-foreground" />

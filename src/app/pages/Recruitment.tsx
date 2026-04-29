@@ -200,7 +200,7 @@ function UpcomingInterviewsPanel({ interviews, onDismiss }: { interviews: Schedu
 function OpenPositionsModal({ jobs, onClose }: { jobs: JobPosting[]; onClose: () => void }) {
   useEscapeKey(onClose);
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.45)" }} onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.45)" }} onClick={onClose}>
       <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", maxHeight: "80vh" }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
           <div>
@@ -249,7 +249,7 @@ function OpenPositionsModal({ jobs, onClose }: { jobs: JobPosting[]; onClose: ()
 function DeleteConfirmDialog({ candidate, onConfirm, onCancel }: { candidate: Candidate; onConfirm: () => void; onCancel: () => void }) {
   useEscapeKey(onCancel);
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.55)" }} onClick={onCancel}>
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.55)" }} onClick={onCancel}>
       <div className="w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }} onClick={(e) => e.stopPropagation()}>
         <div className="px-6 pt-6 pb-4 flex flex-col items-center text-center gap-3">
           <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(239,68,68,.1)", border: "1px solid rgba(239,68,68,.2)" }}>
@@ -277,7 +277,7 @@ function MessageModal({ candidate, onClose }: { candidate: Candidate; onClose: (
   const [msg, setMsg] = useState("");
   useEscapeKey(onClose);
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.45)" }} onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.45)" }} onClick={onClose}>
       <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
           <div className="flex items-center gap-3">
@@ -318,7 +318,7 @@ function ScheduleModal({ candidate, onClose, onSchedule }: {
     onClose();
   };
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.45)" }} onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.45)" }} onClick={onClose}>
       <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", maxHeight: "90vh" }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 flex-shrink-0" style={{ borderBottom: "1px solid var(--border)" }}>
           <div>
@@ -393,7 +393,7 @@ function AddCandidateModal({ stage, onClose, onAdd }: { stage: Stage; onClose: (
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.45)" }} onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.45)" }} onClick={onClose}>
       <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", maxHeight: "90vh" }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 flex-shrink-0" style={{ borderBottom: "1px solid var(--border)" }}>
           <div>
@@ -472,7 +472,7 @@ function PostJobModal({ onClose, onPost }: { onClose: () => void; onPost: (j: Om
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.45)" }} onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,.45)" }} onClick={onClose}>
       <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", maxHeight: "90vh" }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 flex-shrink-0" style={{ borderBottom: "1px solid var(--border)" }}>
           <div>
@@ -651,8 +651,8 @@ function CandidateDetailSidePanel({ candidate, stage, onClose }: { candidate: Ca
 
   return (
     <>
-      <div className="fixed inset-0 z-[100]" style={{ backgroundColor: "rgba(0,0,0,0.3)", backdropFilter: "blur(4px)" }} onClick={onClose} />
-      <div className="fixed top-0 right-0 bottom-0 w-[400px] z-[101] shadow-2xl flex flex-col transform transition-transform duration-300" style={{ backgroundColor: "var(--card)", borderLeft: "1px solid var(--border)" }}>
+      <div className="fixed inset-0 z-[2000]" style={{ backgroundColor: "rgba(0,0,0,0.3)", backdropFilter: "blur(4px)" }} onClick={onClose} />
+      <div className="fixed top-0 right-0 bottom-0 w-[400px] z-[2010] shadow-2xl flex flex-col transform transition-transform duration-300" style={{ backgroundColor: "var(--card)", borderLeft: "1px solid var(--border)" }}>
         <div className="p-6 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
           <h2 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>Candidate Details</h2>
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center transition-colors" style={{ color: "var(--muted-foreground)" }}>

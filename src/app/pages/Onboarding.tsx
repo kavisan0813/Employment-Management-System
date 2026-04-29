@@ -211,7 +211,7 @@ function NewHireFormModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
       style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
       onClick={onClose}
     >
@@ -620,7 +620,7 @@ export function Onboarding() {
       {/* ── Employee Detail Panel (Drawer) ── */}
       {selectedHire && (
         <div
-          className="fixed inset-0 z-50 flex justify-end p-4 sm:p-0"
+          className="fixed inset-0 z-[2000] flex justify-end p-4 sm:p-0"
           style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
           onClick={() => setSelectedHire(null)}
         >
@@ -772,7 +772,7 @@ export function Onboarding() {
       )}
 
       {reminderPrompt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95">
             <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-[#00B87C] flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 size={24} />

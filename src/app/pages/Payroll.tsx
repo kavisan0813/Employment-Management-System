@@ -82,9 +82,9 @@ function PayslipModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40">
       <div
-        className="w-full max-w-3xl bg-white dark:bg-[#06211C] rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+        className="w-full max-w-3xl bg-white dark:bg-[#06211C] rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
@@ -122,9 +122,9 @@ function PayslipModal({
         </div>
 
         {/* Modal Body - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-8 payslip-content">
+        <div className="flex-1 overflow-y-auto p-6 payslip-content">
           {/* Company Branding */}
-          <div className="flex justify-between items-start mb-10">
+          <div className="flex justify-between items-start mb-6">
             <div>
               <h2 className="text-2xl font-black text-emerald-600 tracking-tight">NexusHR</h2>
               <p className="text-sm text-muted-foreground">Premium Enterprise Solutions</p>
@@ -143,7 +143,7 @@ function PayslipModal({
           </div>
 
           {/* Employee Info Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-6 rounded-2xl bg-muted/30 border border-border mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 rounded-xl bg-muted/30 border border-border mb-6">
             <div>
               <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Employee Name</p>
               <p className="text-sm font-bold text-foreground">{employee.name}</p>
@@ -258,7 +258,7 @@ function RunPayrollModal({ onClose, month, year }: { onClose: () => void; month:
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50"
       onClick={onClose}
     >
       <div
@@ -395,7 +395,7 @@ function EditPayrollModal({ employee, onClose, onSave }: { employee: PayrollEmpl
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
       style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
       onClick={onClose}
     >
@@ -476,7 +476,7 @@ function EditPayrollModal({ employee, onClose, onSave }: { employee: PayrollEmpl
 
 function ActionSuccessModal({ title, message, onClose }: { title: string; message: string; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="w-full max-w-sm bg-white dark:bg-[#06211C] rounded-3xl p-8 shadow-2xl text-center animate-in zoom-in-95 duration-300">
         <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6">
           <CheckCircle2 size={40} className="text-emerald-500" />
@@ -894,7 +894,7 @@ export function Payroll() {
                             <MoreVertical size={16} />
                           </button>
                           {openActionId === emp.id && (
-                            <div className="absolute right-0 top-full mt-2 w-44 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
+                            <div className="absolute right-0 top-full mt-2 w-44 bg-card border border-border rounded-xl shadow-xl z-[2000] overflow-hidden animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
                               <button onClick={() => { setOpenActionId(null); setEditingEmployee(emp); }} className="w-full text-left px-4 py-3 text-sm text-slate-800 dark:text-slate-200 hover:bg-muted/50 transition-colors flex items-center gap-2 font-medium">
                                 <Edit2 size={16} className="text-slate-600 dark:text-slate-400" /> Edit
                               </button>
@@ -1065,7 +1065,7 @@ export function Payroll() {
       )}
 
       {/* Floating Action Hint */}
-      <div className="fixed bottom-8 right-8 z-50">
+      <div className="fixed bottom-8 right-8 z-[2000]">
         <button
           onClick={() => setShowRunModal(true)}
           className="group relative flex items-center justify-center w-16 h-16 bg-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all duration-300"

@@ -616,8 +616,8 @@ export function Performance() {
       {/* ── Review Modal ── */}
       <Dialog.Root open={isModalOpen} onOpenChange={setIsModalOpen}>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-slate-900/30 z-[100]" />
-          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-4xl bg-card rounded-[32px] shadow-2xl z-[101] overflow-hidden focus:outline-none">
+          <Dialog.Overlay className="fixed inset-0 bg-slate-900/30 z-[2000]" />
+          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-4xl bg-card rounded-[32px] shadow-2xl z-[2010] overflow-hidden focus:outline-none">
             <div className="flex items-center justify-between p-6 border-b border-border">
               <div>
                 <Dialog.Title className="text-xl font-black text-foreground">
@@ -728,8 +728,8 @@ export function Performance() {
       {/* ── Delete Confirmation Modal ── */}
       <AlertDialog.Root open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialog.Portal>
-          <AlertDialog.Overlay className="fixed inset-0 bg-slate-900/30 z-[110]" />
-          <AlertDialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-card rounded-[32px] shadow-2xl z-[111] overflow-hidden focus:outline-none p-8 text-center">
+          <AlertDialog.Overlay className="fixed inset-0 bg-slate-900/30 z-[2000]" />
+          <AlertDialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-card rounded-[32px] shadow-2xl z-[2010] overflow-hidden focus:outline-none p-8 text-center">
             <div className="w-20 h-20 rounded-3xl bg-red-50 dark:bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-6">
               <AlertTriangle size={40} />
             </div>

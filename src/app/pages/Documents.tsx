@@ -452,7 +452,7 @@ export function Documents() {
 
       {/* ── Upload Modal ── */}
       {showUploadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setShowUploadModal(false)}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40" onClick={() => setShowUploadModal(false)}>
           <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-xl p-6 animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
               <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100">Upload Document</h3>
@@ -516,7 +516,7 @@ export function Documents() {
 
       {/* ── Preview Side Drawer ── */}
       {previewDoc && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/40" onClick={() => setPreviewDoc(null)}>
+        <div className="fixed inset-0 z-[2000] flex justify-end bg-black/40" onClick={() => setPreviewDoc(null)}>
           <div
             className="w-full max-w-md bg-white dark:bg-zinc-900 h-full shadow-2xl animate-in slide-in-from-right p-6 flex flex-col"
             onClick={e => e.stopPropagation()}
@@ -578,7 +578,7 @@ export function Documents() {
 
       {/* ── Delete Confirmation Modal ── */}
       {confirmDeleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setConfirmDeleteId(null)}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40" onClick={() => setConfirmDeleteId(null)}>
           <div 
             className="w-full max-w-sm bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-xl p-6 animate-in zoom-in-95" 
             onClick={e => e.stopPropagation()}

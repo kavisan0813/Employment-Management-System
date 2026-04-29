@@ -56,7 +56,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   return (
     <div
-      className="fixed top-0 left-0 h-screen flex flex-col transition-all duration-300 ease-in-out z-50 shadow-sm"
+      className="fixed top-0 left-0 h-screen flex flex-col transition-all duration-300 ease-in-out z-[2000] shadow-sm"
       style={{
         width: collapsed ? "72px" : "240px",
         backgroundColor: "var(--sidebar-background)",

@@ -806,7 +806,7 @@ export const ShiftSchedule: React.FC = () => {
 
       {/* Advanced Apply Template Workflow */}
       {advancedApplyTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setAdvancedApplyTemplate(null)}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setAdvancedApplyTemplate(null)}>
           {applyStep === 'form' ? (
             <div className="w-full max-w-2xl rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
               
@@ -1075,7 +1075,7 @@ export const ShiftSchedule: React.FC = () => {
 
       {/* Success Toast */}
       {showSuccessToast && (
-        <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3 animate-in slide-in-from-right-5 duration-300">
+        <div className="fixed bottom-5 right-5 z-[2000] bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3 animate-in slide-in-from-right-5 duration-300">
           <div className="w-6 h-6 rounded-full bg-[#00B87C] flex items-center justify-center text-white font-bold text-xs">✓</div>
           <div>
             <p className="text-xs font-bold">Template Applied Successfully</p>
@@ -1085,7 +1085,7 @@ export const ShiftSchedule: React.FC = () => {
 
       {/* View Template Modal (Weekly Schedule Preview) */}
       {selectedTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setSelectedTemplate(null)}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setSelectedTemplate(null)}>
           <div className="w-full max-w-md rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in slide-in-from-bottom-4" onClick={e => e.stopPropagation()}>
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-neutral-50 dark:bg-zinc-800/40">
               <div>
@@ -1122,7 +1122,7 @@ export const ShiftSchedule: React.FC = () => {
 
       {/* Create Template Popup */}
       {showCreateTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setShowCreateTemplate(false)}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setShowCreateTemplate(false)}>
           <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
             <div className="px-6 py-4 border-b border-border bg-neutral-50 dark:bg-zinc-800/40 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -1224,7 +1224,7 @@ export const ShiftSchedule: React.FC = () => {
 
       {/* Edit Template Popup */}
       {editTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setEditTemplate(null)}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setEditTemplate(null)}>
           <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
             <div className="px-6 py-4 border-b border-border bg-neutral-50 dark:bg-zinc-800/40 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -1314,7 +1314,7 @@ export const ShiftSchedule: React.FC = () => {
 
       {/* Rename Template Popup */}
       {renameTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setRenameTemplate(null)}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setRenameTemplate(null)}>
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 mb-4">Rename Template</h3>
             <div className="mb-5">
@@ -1349,7 +1349,7 @@ export const ShiftSchedule: React.FC = () => {
 
       {/* New Request Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setShowAddModal(false)}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setShowAddModal(false)}>
           <div className="w-full max-w-md rounded-2xl shadow-xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }} onClick={e => e.stopPropagation()}>
             <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
               <div className="flex items-center gap-3">
@@ -1429,7 +1429,7 @@ export const ShiftSchedule: React.FC = () => {
       )}
       {/* Swap Details Modal */}
       {selectedSwapDetails && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="bg-white dark:bg-zinc-900 rounded-[32px] shadow-2xl border border-border w-full max-w-md overflow-hidden transform transition-all p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-extrabold text-foreground">Swap Details</h3>

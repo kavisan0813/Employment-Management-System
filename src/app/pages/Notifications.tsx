@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Bell, Check, Settings, Calendar, IndianRupee, Info, Gift, Pin, X, Bold, Italic, Underline, List, RotateCcw, Link2 } from "lucide-react";
+import { useNavigate } from "react-router";
+import { Bell, Check, Settings, Calendar, IndianRupee, Info, Gift, Pin, X, Bold, Italic, Underline, List, RotateCcw, Link2, ArrowLeft } from "lucide-react";
 
 interface NotificationItem {
   id: number;
@@ -27,6 +28,7 @@ interface AnnouncementItem {
 }
 
 export function Notifications() {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState<"All" | "Unread" | "Approvals" | "Mentions" | "System">("All");
   const [activeModal, setActiveModal] = useState<"create_announcement" | null>(null);
   const [showPreferences, setShowPreferences] = useState(false);
@@ -107,6 +109,19 @@ export function Notifications() {
       {/* PAGE HEADER */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
+          <button 
+            onClick={() => navigate(-1)}
+            className="flex items-center justify-center rounded-xl transition-colors hover:bg-[var(--accent)]"
+            style={{ 
+              width: "42px", 
+              height: "42px", 
+              border: "1px solid var(--border)",
+              backgroundColor: "var(--card)",
+              cursor: "pointer"
+            }}
+          >
+            <ArrowLeft size={20} color="var(--foreground)" />
+          </button>
           <div 
             style={{ 
               width: "42px", 
@@ -482,7 +497,7 @@ export function Notifications() {
             position: "fixed",
             inset: 0,
             backgroundColor: "rgba(0,0,0,0.5)",
-            zIndex: 100,
+            zIndex: 2000,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -621,12 +636,12 @@ export function Notifications() {
               position: "fixed",
               inset: 0,
               backgroundColor: "rgba(0,0,0,0.3)",
-              zIndex: 110,
+              zIndex: 2000,
             }}
             onClick={() => setShowPreferences(false)}
           />
           <div 
-            className="fixed top-0 right-0 h-full z-[120] overflow-y-auto transition-all duration-300"
+            className="fixed top-0 right-0 h-full z-[2010] overflow-y-auto transition-all duration-300"
             style={{ 
               width: "380px", 
               backgroundColor: "var(--card)", 

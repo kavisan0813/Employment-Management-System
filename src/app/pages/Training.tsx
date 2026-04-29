@@ -161,7 +161,7 @@ function AddCourseModal({ onClose, onSave }: { onClose: () => void; onSave: (c: 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40" onClick={onClose}>
       <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-border p-6 animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
           <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100">Create Course</h3>
@@ -245,7 +245,7 @@ function AssignCourseModal({ courses, onClose }: { courses: Course[]; onClose: (
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40" onClick={onClose}>
       <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-border p-6 animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
           <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100">Assign Training</h3>
@@ -301,7 +301,7 @@ function CoursePlayerModal({ course, onClose, onUpdateProgress }: { course: Cour
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40" onClick={onClose}>
       <div className="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-border p-6 animate-in zoom-in-95 flex flex-col" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
           <div>

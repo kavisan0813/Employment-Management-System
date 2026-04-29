@@ -115,7 +115,7 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
         {/* Search Results Dropdown */}
         {showSearchResults && searchQuery.trim() !== "" && (
           <div
-            className="absolute top-full left-0 mt-2 rounded-xl shadow-xl z-50 overflow-hidden"
+            className="absolute top-full left-0 mt-2 rounded-xl shadow-xl z-[2000] overflow-hidden"
             style={{
               width: "320px",
               backgroundColor: "var(--card)",
@@ -248,9 +248,9 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
               </div>
               <div className="max-h-[300px] overflow-y-auto">
                 {[
-                  { text: "Emily Chen submitted a leave request", time: "5 mins ago", color: "#14B8A6" },
-                  { text: "Payroll successfully processed", time: "1 hour ago", color: "#059669" },
-                  { text: "New candidate application received", time: "2 hours ago", color: "#0EA5E9" }
+                  { text: "MFA Verification Required", time: "2h ago", color: "#EF4444" },
+                  { text: "Leave Request Approved", time: "3h ago", color: "#00B87C" },
+                  { text: "Payroll Disbursed", time: "5h ago", color: "#8B5CF6" }
                 ].map((n, i) => (
                   <div
                     key={i}
@@ -370,7 +370,7 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
       </div>
 
       {showAllNotificationsScreen && (
-        <div className="fixed inset-y-0 right-0 z-50 flex transition-all duration-300" style={{ left: `${sidebarWidth}px`, backgroundColor: "var(--background)" }}>
+        <div className="fixed inset-y-0 right-0 z-[2000] flex transition-all duration-300" style={{ left: `${sidebarWidth}px`, backgroundColor: "var(--background)" }}>
           <div className="w-full h-full flex flex-col">
             <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}>
               <div className="flex items-center gap-4">
@@ -389,12 +389,13 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
             <div className="flex-1 overflow-y-auto p-6 md:p-10 max-w-4xl mx-auto w-full">
               <div className="space-y-4">
                 {[
-                  { text: "Emily Chen submitted a leave request for Aug 12-15", time: "5 mins ago", color: "#14B8A6", type: "Leave Request", date: "April 6, 2026" },
-                  { text: "Payroll for March 2026 successfully processed for 248 employees", time: "1 hour ago", color: "#059669", type: "Payroll", date: "April 6, 2026" },
-                  { text: "New candidate application received for Senior Frontend Developer", time: "2 hours ago", color: "#0EA5E9", type: "Recruitment", date: "April 6, 2026" },
-                  { text: "Quarterly Performance Review window is now open", time: "1 day ago", color: "#F59E0B", type: "System", date: "April 5, 2026" },
-                  { text: "System maintenance scheduled for weekend downtime", time: "2 days ago", color: "#EF4444", type: "System", date: "April 4, 2026" },
-                  { text: "Ryan Park updated company policies document", time: "3 days ago", color: "#8B5CF6", type: "Document", date: "April 3, 2026" },
+                  { text: "Ensure multi-factor authentication is verified before April 30.", time: "2h ago", color: "#EF4444", type: "Alert", date: "April 6, 2026" },
+                  { text: "Your annual leave request for May 12-15 has been approved by HR.", time: "3h ago", color: "#00B87C", type: "Leave", date: "April 6, 2026" },
+                  { text: "Salary slip for March 2026 is available for download.", time: "5h ago", color: "#8B5CF6", type: "Payroll", date: "April 6, 2026" },
+                  { text: "Sarah Johnson tagged you in security policy v2.3.", time: "1d ago", color: "#0EA5E9", type: "Info", date: "April 5, 2026" },
+                  { text: "Wish Emily Chen a wonderful happy birthday today!", time: "1d ago", color: "#F59E0B", type: "Birthday", date: "April 5, 2026" },
+                  { text: "David Miller requested a shift swap for next Friday.", time: "2d ago", color: "#00B87C", type: "Leave", date: "April 4, 2026" },
+                  { text: "Quarterly increments have been logged into the performance matrix.", time: "3d ago", color: "#0EA5E9", type: "Info", date: "April 3, 2026" },
                 ].map((n, i) => (
                   <div key={i} className="flex gap-4 p-5 rounded-2xl transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800" style={{ border: "1px solid var(--border)", backgroundColor: "var(--card)" }}>
                     <div className="w-3 h-3 rounded-full mt-2 shrink-0" style={{ backgroundColor: n.color }} />

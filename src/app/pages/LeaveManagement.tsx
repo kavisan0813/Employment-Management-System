@@ -270,7 +270,7 @@ function DetailDrawer({
   const canAct = request.status === "Pending";
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end" style={{ backgroundColor: "rgba(0,0,0,0.4)" }} onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] flex justify-end" style={{ backgroundColor: "rgba(0,0,0,0.4)" }} onClick={onClose}>
       <div 
         className="w-[500px] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
         style={{ backgroundColor: "var(--card)", borderLeft: "1px solid var(--border)" }}
@@ -1108,7 +1108,7 @@ export function LeaveManagement() {
                     </div>
                     {/* Tooltip */}
                     {leaves.length > 0 && (
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-[2000]">
                         <div className="bg-zinc-900 text-white text-[10px] py-1 px-2 rounded-md shadow-lg whitespace-nowrap">
                           {leaves.map(l => l.name).join(", ")}
                         </div>
@@ -1178,7 +1178,7 @@ export function LeaveManagement() {
 
       {/* New Request Modal */}
       {isNewRequestOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setIsNewRequestOpen(false)}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setIsNewRequestOpen(false)}>
           <div className="w-full max-w-xl rounded-2xl shadow-xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }} onClick={e => e.stopPropagation()}>
             <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
               <div className="flex items-center gap-2">
@@ -1285,7 +1285,7 @@ export function LeaveManagement() {
 
       {/* Export Report Modal */}
       {isExportOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setIsExportOpen(false)}>
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setIsExportOpen(false)}>
           <div className="w-full max-w-sm rounded-2xl shadow-xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }} onClick={e => e.stopPropagation()}>
             <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
               <div className="flex items-center gap-2">

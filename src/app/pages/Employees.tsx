@@ -47,7 +47,7 @@ function AddEmployeeModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
       style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
       onClick={onClose}
     >
@@ -254,7 +254,7 @@ function EditEmployeeModal({ employee, onClose }: { employee: typeof import("../
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
       style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
       onClick={onClose}
     >
@@ -423,7 +423,7 @@ function EditEmployeeModal({ employee, onClose }: { employee: typeof import("../
 function DeleteConfirmModal({ employee, onClose }: { employee: typeof import("../data/mockData").employees[0]; onClose: () => void }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
       onClick={onClose}
     >
