@@ -2,6 +2,8 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 import { Layout } from "./components/Layout";
 import { Login } from "./pages/Login";
+import { Signup } from "./pages/Signup";
+import { AuthSuccess } from "./pages/AuthSuccess";
 
 // Lazy-loaded page components for code splitting
 const Dashboard = lazy(() => import("./pages/Dashboard").then(m => ({ default: m.Dashboard })));
@@ -66,6 +68,14 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     Component: Login,
+  },
+  {
+    path: "/signup",
+    Component: Signup,
+  },
+  {
+    path: "/signup-success",
+    Component: AuthSuccess,
   },
   {
     path: "/",
