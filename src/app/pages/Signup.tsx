@@ -11,7 +11,6 @@ type UserRole =
   | "Super Admin" 
   | "HR Admin" 
   | "Manager" 
-  | "Team Lead" 
   | "Payroll Admin" 
   | "Recruiter" 
   | "Employee";
@@ -346,6 +345,7 @@ export function Signup() {
                   <option value="">Select Location</option>
                   <option value="Mumbai">Mumbai (HQ)</option>
                   <option value="Bangalore">Bangalore Hub</option>
+                  <option value="Chennai">Chennai Office</option>
                   <option value="Delhi">Delhi Office</option>
                   <option value="Remote">Remote</option>
                 </select>
