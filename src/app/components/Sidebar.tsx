@@ -19,6 +19,7 @@ import {
   UserPlus,
   BookOpen,
   Folder,
+  Receipt,
 } from "lucide-react";
 
 
@@ -39,6 +40,7 @@ const navItems = [
   { icon: CalendarClock, label: "Schedule", path: "/schedule" },
   { icon: CalendarDays, label: "Leave Management", path: "/leave" },
   { icon: IndianRupee, label: "Payroll", path: "/payroll" },
+  { icon: Receipt, label: "Expenses", path: "/expenses" },
   { icon: Briefcase, label: "Recruitment", path: "/recruitment" },
   { icon: TrendingUp, label: "Performance", path: "/performance" },
   { icon: BookOpen, label: "Training", path: "/training" },

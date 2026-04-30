@@ -11,6 +11,7 @@ const Employees = lazy(() => import("./pages/Employees").then(m => ({ default: m
 const EmployeeProfile = lazy(() => import("./pages/EmployeeProfile").then(m => ({ default: m.EmployeeProfile })));
 const Attendance = lazy(() => import("./pages/Attendance").then(m => ({ default: m.Attendance })));
 const Payroll = lazy(() => import("./pages/Payroll").then(m => ({ default: m.Payroll })));
+const Expenses = lazy(() => import("./pages/ExpenseManagement").then(m => ({ default: m.Expenses })));
 const Recruitment = lazy(() => import("./pages/Recruitment").then(m => ({ default: m.Recruitment })));
 const Performance = lazy(() => import("./pages/Performance").then(m => ({ default: m.Performance })));
 const Reports = lazy(() => import("./pages/Reports").then(m => ({ default: m.Reports })));
@@ -90,6 +91,7 @@ export const router = createBrowserRouter([
       { path: "employees/:id", element: lazyRoute(EmployeeProfile) },
       { path: "attendance", element: lazyRoute(Attendance) },
       { path: "payroll", element: lazyRoute(Payroll) },
+      { path: "expenses", element: lazyRoute(Expenses) },
       { path: "recruitment", element: lazyRoute(Recruitment) },
       { path: "performance", element: lazyRoute(Performance) },
       { path: "reports", element: lazyRoute(Reports) },

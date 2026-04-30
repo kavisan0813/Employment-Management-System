@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router";
 import {
   Building2,
   FolderTree,
@@ -177,8 +178,15 @@ const permissionGroups = [
 /* ── Main Component ── */
 
 export function Settings() {
-  const [activeSubTab, setActiveSubTab] = useState("roles");
+  const [searchParams] = useSearchParams();
+  const [activeSubTab, setActiveSubTab] = useState(searchParams.get("tab") || "company");
   const [expandedGroups, setExpandedGroups] = useState({ core: true, hr: true, analytics: true });
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab) setActiveSubTab(tab);
+  }, [searchParams]);
+
   const [permissions, setPermissions] = useState<Record<string, Record<string, string>>>(initialPermissions);
   const [rolesList, setRolesList] = useState(rolesData);
   const [selectedRoleForEdit, setSelectedRoleForEdit] = useState<typeof rolesData[0] | null>(null);
