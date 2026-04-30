@@ -53,10 +53,10 @@ export function Login() {
           >
             <Zap size={32} color="white" fill="white" />
           </div>
-          <h1 style={{ color: "#022C22", fontSize: "30px", fontWeight: 800, letterSpacing: "-0.5px" }}>
+          <h1 style={{ color: "var(--foreground)", fontSize: "30px", fontWeight: 800, letterSpacing: "-0.5px" }}>
             NexusHR
           </h1>
-          <p style={{ color: "#064E3B", fontSize: "14px", fontWeight: 600, marginTop: "6px", opacity: 0.85 }}>
+          <p style={{ color: "var(--muted-foreground)", fontSize: "14px", fontWeight: 600, marginTop: "6px" }}>
             Enterprise Management System
           </p>
         </div>
@@ -64,14 +64,14 @@ export function Login() {
         {isForgotPassword ? (
           <form onSubmit={handleResetPassword} className="space-y-6">
             <div>
-              <p style={{ fontSize: "14px", fontWeight: 500, color: "#064E3B", marginBottom: "16px" }}>
+              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--muted-foreground)", marginBottom: "16px" }}>
                 Enter your email address and we'll send you a link to reset your password.
               </p>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "#022C22", marginBottom: "8px" }}>
+              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)", marginBottom: "8px" }}>
                 Work Email Address
               </label>
               <div className="relative group">
-                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "#059669" }} />
+                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
                 <input
                   type="email"
                   required
@@ -103,7 +103,7 @@ export function Login() {
               </span>
             </button>
             <div className="text-center pt-2">
-              <a href="#" onClick={(e) => { e.preventDefault(); setIsForgotPassword(false); }} className="hover:underline transition-all" style={{ fontSize: "13px", fontWeight: 800, color: "#059669" }}>
+              <a href="#" onClick={(e) => { e.preventDefault(); setIsForgotPassword(false); }} className="hover:underline transition-all" style={{ fontSize: "13px", fontWeight: 800, color: "var(--primary)" }}>
                 Back to Login
               </a>
             </div>
@@ -111,11 +111,11 @@ export function Login() {
         ) : (
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "#022C22", marginBottom: "8px" }}>
+              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)", marginBottom: "8px" }}>
                 Work Email Address
               </label>
               <div className="relative group">
-                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "#059669" }} />
+                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
                 <input
                   type="email"
                   required
@@ -133,11 +133,11 @@ export function Login() {
             </div>
 
             <div>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "#022C22", marginBottom: "8px" }}>
+              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)", marginBottom: "8px" }}>
                 Password
               </label>
               <div className="relative group">
-                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "#059669" }} />
+                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
                 <input
                   type="password"
                   required
@@ -163,9 +163,9 @@ export function Login() {
                   className="w-4 h-4 rounded cursor-pointer"
                   style={{ accentColor: "#10B981" }}
                 />
-                <span style={{ fontSize: "13px", fontWeight: 700, color: "#022C22" }}>Remember me</span>
+                <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--foreground)" }}>Remember me</span>
               </label>
-              <a href="#" onClick={(e) => { e.preventDefault(); setIsForgotPassword(true); }} className="hover:underline transition-all" style={{ fontSize: "13px", fontWeight: 800, color: "#059669" }}>
+              <a href="#" onClick={(e) => { e.preventDefault(); setIsForgotPassword(true); }} className="hover:underline transition-all" style={{ fontSize: "13px", fontWeight: 800, color: "var(--primary)" }}>
                 Forgot Password?
               </a>
             </div>
@@ -187,8 +187,11 @@ export function Login() {
           </form>
         )}
 
-        <div className="mt-8 text-center">
-          <p style={{ fontSize: "12px", fontWeight: 700, color: "#064E3B", opacity: 0.7 }}>
+        <div className="mt-8 text-center space-y-3">
+          <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--foreground)" }}>
+            New to NexusHR? <a href="#" onClick={(e) => { e.preventDefault(); navigate("/signup"); }} className="hover:underline transition-all" style={{ color: "var(--primary)", fontWeight: 800 }}>Create an Account</a>
+          </p>
+          <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--muted-foreground)" }}>
             v2.0.4 · Enterprise Protection Active
           </p>
         </div>
