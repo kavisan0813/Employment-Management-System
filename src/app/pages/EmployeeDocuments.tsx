@@ -15,6 +15,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
+import { AnimatePresence, motion } from "motion/react";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types                                                           */
@@ -251,12 +252,29 @@ function CategoryCard({
 /* ─────────────────────────────────────────────────────────────── */
 export function EmployeeDocuments() {
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [preselectedDocType, setPreselectedDocType] = useState<string | undefined>();
   const [viewingDoc, setViewingDoc] = useState<string | null>(null);
+  const [newDoc, setNewDoc] = useState({
+    type: "",
+    name: "",
+    expiryDate: "",
+    notes: ""
+  });
 
-  const handleUpload = (docName?: string) => {
-    setPreselectedDocType(typeof docName === 'string' ? docName : undefined);
+  const openUploadModal = (docName?: string) => {
+    const type = typeof docName === 'string' ? docName : "";
+    setNewDoc({
+      type: type,
+      name: "",
+      expiryDate: "",
+      notes: ""
+    });
     setShowUploadModal(true);
+  };
+
+  const handleUploadSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    showToast("Uploaded", "success", `${newDoc.name || 'Document'} has been uploaded.`);
+    setShowUploadModal(false);
   };
 
   return (
@@ -273,7 +291,7 @@ export function EmployeeDocuments() {
           </h1>
         </div>
         <button
-          onClick={() => handleUpload()}
+          onClick={() => openUploadModal()}
           className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl font-black shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
         >
           <UploadCloud size={18} />
@@ -305,51 +323,127 @@ export function EmployeeDocuments() {
           <CategoryCard
             key={cat.id}
             cat={cat}
-            onUploadClick={handleUpload}
+            onUploadClick={openUploadModal}
             onViewClick={(name) => setViewingDoc(name)}
           />
         ))}
       </div>
 
-      {/* ─── Modals ──────────────────────────────────────────────── */}
-      {showUploadModal && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 animate-in fade-in duration-200">
-           <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px]" onClick={() => setShowUploadModal(false)} />
-           <div className="relative bg-card w-full max-w-[480px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border">
-              <div className="p-6 border-b border-border flex items-center justify-between">
-                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                       <UploadCloud size={20} className="text-primary" />
-                    </div>
+            {/* ─── Upload Modal ────────────────────────────────────────── */}
+      <AnimatePresence>
+        {showUploadModal && (
+          <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowUploadModal(false)}
+              className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] dark:bg-black/60"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative bg-card w-full max-w-[500px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col"
+            >
+              <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-primary border border-primary/20">
+                    <UploadCloud size={22} />
+                  </div>
+                  <div>
                     <h3 className="text-[18px] font-black text-foreground">Upload Document</h3>
-                 </div>
-                 <button onClick={() => setShowUploadModal(false)} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors">
-                    <X size={20} />
-                 </button>
+                    <p className="text-[12px] font-bold text-muted-foreground">Submit files for verification</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowUploadModal(false)} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors">
+                  <X size={20} />
+                </button>
               </div>
-              <form className="p-6 space-y-5" onSubmit={(e) => { e.preventDefault(); showToast("Uploaded", "success", "Document has been uploaded."); setShowUploadModal(false); }}>
-                 <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Document Type</label>
-                    <select className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none" defaultValue={preselectedDocType}>
-                       <option value="">Select type...</option>
-                       {DOC_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+
+              <form onSubmit={handleUploadSubmit} className="p-6 space-y-6">
+                <div className="grid grid-cols-1 gap-5">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">DOCUMENT TYPE</label>
+                    <select 
+                      required
+                      value={newDoc.type}
+                      onChange={(e) => setNewDoc({ ...newDoc, type: e.target.value })}
+                      className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all appearance-none"
+                    >
+                      <option value="">Select Category</option>
+                      {DOC_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
-                 </div>
-                 <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">File Selection</label>
-                    <div className="border-2 border-dashed border-border rounded-2xl p-8 flex flex-col items-center justify-center gap-2 hover:bg-secondary transition-all cursor-pointer">
-                       <UploadCloud size={32} className="text-muted-foreground" />
-                       <p className="text-[13px] font-black text-foreground">Drop file or Click to Browse</p>
-                       <p className="text-[11px] font-bold text-muted-foreground">PDF, PNG, JPG (Max 10MB)</p>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">DOCUMENT NAME</label>
+                    <input 
+                      required
+                      type="text" 
+                      placeholder="e.g. Passport Copy, Degree Certificate" 
+                      value={newDoc.name}
+                      onChange={(e) => setNewDoc({ ...newDoc, name: e.target.value })}
+                      className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">FILE UPLOAD</label>
+                    <div className="border-2 border-dashed border-border rounded-2xl p-8 bg-secondary/50 flex flex-col items-center justify-center gap-2 hover:border-primary transition-all cursor-pointer group">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                        <UploadCloud size={20} />
+                      </div>
+                      <p className="text-[13px] font-black text-foreground">Browse Files</p>
+                      <p className="text-[11px] font-bold text-muted-foreground">PDF, JPG, PNG (Max 10MB)</p>
                     </div>
-                 </div>
-                 <button type="submit" className="w-full py-4 bg-primary text-white text-[14px] font-black rounded-2xl shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all">
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">EXPIRY DATE (OPTIONAL)</label>
+                      <div className="relative">
+                        <input 
+                          type="date" 
+                          value={newDoc.expiryDate}
+                          onChange={(e) => setNewDoc({ ...newDoc, expiryDate: e.target.value })}
+                          className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">NOTES (OPTIONAL)</label>
+                      <input 
+                        type="text" 
+                        placeholder="Additional info..." 
+                        value={newDoc.notes}
+                        onChange={(e) => setNewDoc({ ...newDoc, notes: e.target.value })}
+                        className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-2">
+                  <button 
+                    type="button" 
+                    onClick={() => setShowUploadModal(false)}
+                    className="flex-1 px-6 py-3.5 border border-border rounded-xl text-[13px] font-black text-muted-foreground hover:bg-secondary transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="flex-1 px-6 py-3.5 bg-primary text-white rounded-xl font-black text-[13px] shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
+                  >
                     Upload Document
-                 </button>
+                  </button>
+                </div>
               </form>
-           </div>
-        </div>
-      )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {viewingDoc && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 animate-in fade-in duration-200">

@@ -16,16 +16,8 @@ import {
   UploadCloud,
   X,
   FileText,
-  MoreVertical,
-  Trash2,
-  Eye,
   Edit3,
-  RotateCcw,
-  Info,
   ChevronDown,
-  Layout as LayoutIcon,
-  TrendingUp,
-  AlertCircle,
   Gauge
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
@@ -160,7 +152,7 @@ const MOCK_EXPENSES: Expense[] = [
   }
 ];
 
-const CATEGORY_CONFIG: Record<ExpenseCategory, { icon: any, bg: string, color: string, chip: string }> = {
+const CATEGORY_CONFIG: Record<ExpenseCategory, { icon: React.ElementType, bg: string, color: string, chip: string }> = {
   "Travel": { icon: Plane, bg: "bg-sky-500/10", color: "text-sky-500", chip: "bg-sky-500/10 text-sky-500 border-sky-500/20" },
   "Food": { icon: Utensils, bg: "bg-amber-500/10", color: "text-amber-500", chip: "bg-amber-500/10 text-amber-500 border-amber-500/20" },
   "Equipment": { icon: Monitor, bg: "bg-purple-500/10", color: "text-purple-500", chip: "bg-purple-500/10 text-purple-500 border-purple-500/20" },
@@ -183,7 +175,7 @@ function StatusBadge({ status }: { status: ExpenseStatus }) {
     "Rejected": "bg-rose-500/10 text-rose-500 border-rose-500/20",
     "Draft": "bg-secondary text-muted-foreground border-border"
   };
-  const icons: Record<ExpenseStatus, any> = {
+  const icons: Record<ExpenseStatus, React.ElementType> = {
     "Approved": CheckCircle2,
     "Pending": Clock,
     "Rejected": X,
@@ -205,7 +197,19 @@ function ReceiptBadge({ status }: { status: "Attached" | "Missing" | "Pending" }
   return <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1.5 uppercase tracking-wider"><UploadCloud size={12} /> Upload</span>;
 }
 
-function SummaryCard({ icon: Icon, color, bg, label, value, subValue, chip, chipColor, progress }: any) {
+interface SummaryCardProps {
+  icon: React.ElementType;
+  color: string;
+  bg: string;
+  label: string;
+  value: string;
+  subValue: string;
+  chip?: string;
+  chipColor?: 'green' | 'amber' | 'purple' | 'sky';
+  progress?: number;
+}
+
+function SummaryCard({ icon: Icon, color, bg, label, value, subValue, chip, chipColor, progress }: SummaryCardProps) {
   return (
     <div className="bg-card p-5 rounded-[24px] border border-border shadow-sm relative group hover:shadow-md transition-all">
       <div className="flex items-start justify-between mb-4">
@@ -427,7 +431,7 @@ export function EmployeeExpenses() {
               {['All', 'Pending', 'Approved', 'Rejected'].map(tab => (
                  <button
                   key={tab}
-                  onClick={() => setActiveTab(tab as any)}
+                  onClick={() => setActiveTab(tab as 'All' | 'Pending' | 'Approved' | 'Rejected')}
                   className={`py-4 text-[13px] font-black relative transition-all ${
                     activeTab === tab ? "text-primary" : "text-muted-foreground hover:text-foreground"
                   }`}

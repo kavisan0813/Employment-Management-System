@@ -6,11 +6,9 @@ import {
   ThumbsUp,
   Eye,
   CheckCircle,
-  Clock,
   MoreVertical,
   ChevronLeft,
   ChevronRight,
-  User,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 

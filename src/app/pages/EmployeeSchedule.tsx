@@ -1,18 +1,14 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import {
   Clock,
   ChevronLeft,
   ChevronRight,
-  CalendarDays,
-  Plus,
   ArrowLeftRight,
   MoreVertical,
   CheckCircle2,
   AlertCircle,
-  MapPin,
   X,
   Search,
-  Activity
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 
@@ -29,15 +25,6 @@ interface Shift {
   location: string;
 }
 
-interface SwapRequest {
-  id: string;
-  requestedDate: string;
-  withEmployee: string;
-  withEmpInitials: string;
-  status: "Pending" | "Approved" | "Rejected";
-  avatarColor: string;
-}
-
 /* ─────────────────────────────────────────────────────────────── */
 /* Static Data                                                     */
 /* ─────────────────────────────────────────────────────────────── */
@@ -49,11 +36,16 @@ const UPCOMING_SHIFTS: Shift[] = [
   { id: "S5", date: "Apr 10", day: "Fri", type: "Night", time: "12:00 AM - 08:00 AM", hours: "8h", location: "Head Office, BLR" },
 ];
 
-const MY_SWAP_REQUESTS: SwapRequest[] = [
-  { id: "SW-01", requestedDate: "Apr 12, 2026", withEmployee: "Rahul Verma", withEmpInitials: "RV", status: "Pending", avatarColor: "bg-blue-500" }
-];
+/* ─────────────────────────────────────────────────────────────── */
+/* Shift Styling                                                  */
+/* ─────────────────────────────────────────────────────────────── */
+interface ShiftColor {
+  bg: string;
+  text: string;
+  border: string;
+}
 
-const SHIFT_COLORS: Record<string, any> = {
+const SHIFT_COLORS: Record<string, ShiftColor> = {
   "Morning": { bg: "bg-emerald-500/10", text: "text-primary", border: "border-primary/20" },
   "Evening": { bg: "bg-amber-500/10", text: "text-amber-600", border: "border-amber-500/20" },
   "Night": { bg: "bg-purple-500/10", text: "text-purple-600", border: "border-purple-500/20" },
@@ -64,7 +56,15 @@ const SHIFT_COLORS: Record<string, any> = {
 /* Components                                                      */
 /* ─────────────────────────────────────────────────────────────── */
 
-function PersonalShiftOverviewCard({ label, value, subValue, trend, trendColor }: any) {
+interface ShiftOverviewProps {
+  label: string;
+  value: string | number;
+  subValue: string;
+  trend?: string;
+  trendColor?: 'amber' | 'teal';
+}
+
+function PersonalShiftOverviewCard({ label, value, subValue, trend, trendColor }: ShiftOverviewProps) {
   return (
     <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col justify-between h-full">
       <div>
@@ -129,7 +129,7 @@ export function EmployeeSchedule() {
              {['Week', 'Month', 'Day'].map(v => (
                <button 
                 key={v}
-                onClick={() => setView(v as any)}
+                onClick={() => setView(v as 'Week' | 'Month' | 'Day')}
                 className={`px-4 py-1.5 rounded-lg text-[13px] font-black transition-all ${view === v ? 'bg-emerald-500/10 text-primary' : 'text-muted-foreground hover:text-foreground'}`}
                >
                  {v}

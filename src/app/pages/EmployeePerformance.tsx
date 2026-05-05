@@ -1,20 +1,14 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useLocation } from "react-router";
 import {
   Target,
   Clock,
   Award,
   Plus,
-  CheckCircle2,
-  AlertCircle,
-  MoreVertical,
-  ChevronDown,
   X,
   MessageSquare,
   TrendingUp,
   Download,
-  Calendar,
-  User,
   Info,
   ChevronRight,
   Star
@@ -127,7 +121,18 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function SummaryCard({ icon: Icon, color, bg, label, value, subValue, chip, chipColor }: any) {
+interface SummaryCardProps {
+  icon: React.ElementType;
+  color: string;
+  bg: string;
+  label: string;
+  value: string | number;
+  subValue: string;
+  chip?: string;
+  chipColor?: 'green' | 'amber' | 'purple' | 'teal';
+}
+
+function SummaryCard({ icon: Icon, color, bg, label, value, subValue, chip, chipColor }: SummaryCardProps) {
   return (
     <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex items-center gap-4 transition-all hover:shadow-md">
       <div className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center ${color}`}>
@@ -154,7 +159,7 @@ function SummaryCard({ icon: Icon, color, bg, label, value, subValue, chip, chip
   );
 }
 
-function ModalLayout({ title, icon: Icon, onClose, children }: { title: string, icon: any, onClose: () => void, children: React.ReactNode }) {
+function ModalLayout({ title, icon: Icon, onClose, children }: { title: string, icon: React.ElementType, onClose: () => void, children: React.ReactNode }) {
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] dark:bg-black/60" onClick={onClose} />

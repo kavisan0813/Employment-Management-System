@@ -2,11 +2,8 @@ import { useState, useMemo } from "react";
 import {
   Calendar as CalendarIcon,
   Plus,
-  ChevronLeft,
-  ChevronRight,
   X,
   Paperclip,
-  AlertCircle,
   CalendarX,
   Clock,
   CheckCircle2,
@@ -29,19 +26,34 @@ const LEAVE_TYPES = [
   { id: "CO", name: "Comp Off", total: 5, used: 2, color: "#8B5CF6", bg: "rgba(139, 92, 246, 0.1)" },
 ];
 
+interface LeaveRequest {
+  id: string;
+  type: string;
+  from: string;
+  to: string;
+  days: number;
+  reason: string;
+  status: string;
+  appliedOn: string;
+}
+
 export function EmployeeLeaves() {
   const [activeTab, setActiveTab] = useState("My Requests");
   const [showApplyModal, setShowApplyModal] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<any>(null);
-  const [requests, setRequests] = useState([
+  const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);
+  const [requests, setRequests] = useState<LeaveRequest[]>([
     { id: "LR-1024", type: "CL", from: "2026-04-18", to: "2026-04-20", days: 3, reason: "Family event in hometown", status: "Pending", appliedOn: "Apr 12, 2026" },
     { id: "LR-1018", type: "EL", from: "2026-05-10", to: "2026-05-15", days: 6, reason: "Annual vacation", status: "Approved", appliedOn: "Apr 05, 2026" },
   ]);
 
-  const handleApplyLeave = (newLeave: any) => {
-    const leaveEntry = {
+  const handleApplyLeave = (newLeave: Partial<LeaveRequest>) => {
+    const leaveEntry: LeaveRequest = {
       id: `LR-${Math.floor(1000 + Math.random() * 9000)}`,
-      ...newLeave,
+      type: newLeave.type || "CL",
+      from: newLeave.from || "",
+      to: newLeave.to || "",
+      days: newLeave.days || 0,
+      reason: newLeave.reason || "",
       status: "Pending",
       appliedOn: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
     };
@@ -233,7 +245,7 @@ function PolicyTab() {
   );
 }
 
-export function ApplyLeaveModal({ isOpen, onClose, onSubmit }: { isOpen: boolean; onClose: () => void; onSubmit: (data: any) => void }) {
+export function ApplyLeaveModal({ isOpen, onClose, onSubmit }: { isOpen: boolean; onClose: () => void; onSubmit: (data: Partial<LeaveRequest>) => void }) {
   const [formData, setFormData] = useState({
     type: "CL",
     from: "",
@@ -381,7 +393,7 @@ export function ApplyLeaveModal({ isOpen, onClose, onSubmit }: { isOpen: boolean
   );
 }
 
-function LeaveDetailDrawer({ request, onClose }: { request: any; onClose: () => void }) {
+function LeaveDetailDrawer({ request, onClose }: { request: LeaveRequest | null; onClose: () => void }) {
   if (!request) return null;
 
   return (
@@ -453,7 +465,7 @@ function LeaveDetailDrawer({ request, onClose }: { request: any; onClose: () => 
   );
 }
 
-function DetailItem({ label, value }: { label: string; value: any }) {
+function DetailItem({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="space-y-1">
       <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">{label}</p>
@@ -462,7 +474,7 @@ function DetailItem({ label, value }: { label: string; value: any }) {
   );
 }
 
-function TimelineItem({ icon, title, subtitle, status }: { icon: any; title: string; subtitle: string; status: 'completed' | 'current' | 'upcoming' }) {
+function TimelineItem({ icon, title, subtitle, status }: { icon: React.ReactNode; title: string; subtitle: string; status: 'completed' | 'current' | 'upcoming' }) {
   const colors = {
     completed: "bg-primary text-white border-primary",
     current: "bg-amber-500 text-white border-amber-500 animate-pulse",

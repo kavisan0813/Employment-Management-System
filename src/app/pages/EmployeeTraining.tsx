@@ -1,16 +1,4 @@
-import { useState } from "react";
-import {
-  BookOpen,
-  CheckCircle2,
-  Award,
-  ChevronRight,
-  ArrowRight,
-  Clock,
-  AlertCircle,
-  Book,
-  Download,
-  Plus
-} from "lucide-react";
+import { BookOpen, CheckCircle2, Award, ArrowRight, Clock, AlertCircle, Book, Download, Plus } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 
 /* ─────────────────────────────────────────────────────────────── */
@@ -73,7 +61,16 @@ const MY_CERTIFICATIONS: Certification[] = [
 /* Components                                                      */
 /* ─────────────────────────────────────────────────────────────── */
 
-function StatsCard({ icon: Icon, color, label, value, subValue, bg }: any) {
+interface StatsCardProps {
+  icon: React.ElementType;
+  color: string;
+  label: string;
+  value: string | number;
+  subValue: string;
+  bg: string;
+}
+
+function StatsCard({ icon: Icon, color, label, value, subValue, bg }: StatsCardProps) {
   return (
     <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex items-center gap-4 transition-all hover:shadow-md">
       <div className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center`}>

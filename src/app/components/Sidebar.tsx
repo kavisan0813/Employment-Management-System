@@ -3,8 +3,8 @@ import {
   LayoutDashboard, Users, CalendarCheck, IndianRupee, Briefcase,
   TrendingUp, BarChart3, Settings, ChevronLeft, ChevronRight,
   Zap, CalendarDays, Store, Sparkles, CalendarClock,
-  Award, UserPlus, BookOpen, Folder, Receipt, LogOut, ShieldCheck, UserCircle,
-  Home, Target, Megaphone, Users as UsersIcon, Clock
+  Award, UserPlus, BookOpen, Folder, Receipt, LogOut, ShieldCheck,
+  Home, Megaphone, Users as UsersIcon, Clock
 } from "lucide-react";
 import { useAuth, ROLE_CONFIG, type UserRole } from "../context/AuthContext";
 
