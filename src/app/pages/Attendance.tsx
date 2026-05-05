@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
+import { EmployeeAttendance } from "./EmployeeAttendance";
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router";
 import { 
   ChevronLeft, 
@@ -99,7 +101,12 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export function Attendance() {
+  const { user } = useAuth();
   const navigate = useNavigate();
+
+  if (user?.role === "Employee") {
+    return <EmployeeAttendance />;
+  }
   const [view, setView] = useState<"table" | "calendar">("table");
   const [selectedDept, setSelectedDept] = useState("All Departments");
   const [selectedEmpId, setSelectedEmpId] = useState("All Employees");

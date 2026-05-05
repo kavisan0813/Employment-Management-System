@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Outlet, useLocation, Navigate } from "react-router";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
+import { useAuth } from "../context/AuthContext";
 
 const pageTitles: Record<string, string> = {
   "/": "Dashboard",
@@ -44,7 +45,9 @@ export function Layout() {
   const isEmployeeProfile = location.pathname.startsWith("/employees/") && location.pathname !== "/employees";
   const title = isEmployeeProfile ? "Employee Profile" : (pageTitles[basePath] || "NexusHR EMS");
 
-  const sidebarWidth = collapsed ? 72 : 240;
+  const { user } = useAuth();
+  const currentRole = user?.role;
+  const sidebarWidth = currentRole === "Employee" ? 235 : (collapsed ? 72 : 240);
 
   return (
     <div style={{ backgroundColor: "var(--background)", minHeight: "100vh", color: "var(--foreground)" }}>

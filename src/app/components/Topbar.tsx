@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { Bell, Search, ChevronDown, Settings, LogOut, User, Sun, Moon, X, UserSearch, ArrowRight } from "lucide-react";
 import { employees } from "../data/mockData";
+import { useAuth } from "../context/AuthContext";
 
 
 interface TopbarProps {
@@ -21,6 +22,7 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -32,13 +34,13 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const filteredEmployees = searchQuery.trim() === "" 
-    ? [] 
-    : employees.filter(emp => 
-        emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        emp.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        emp.id.toLowerCase().includes(searchQuery.toLowerCase())
-      ).slice(0, 5);
+  const filteredEmployees = searchQuery.trim() === ""
+    ? []
+    : employees.filter(emp =>
+      emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      emp.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      emp.id.toLowerCase().includes(searchQuery.toLowerCase())
+    ).slice(0, 5);
 
 
   return (
@@ -103,7 +105,7 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
             }}
           />
           {searchQuery && (
-            <button 
+            <button
               onClick={() => setSearchQuery("")}
               className="p-1 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-full"
             >
@@ -147,7 +149,7 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
                     <ArrowRight size={14} className="text-gray-300 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
                   </div>
                 ))}
-                <div 
+                <div
                   className="px-4 py-2 text-center hover:bg-neutral-50 dark:hover:bg-zinc-800 cursor-pointer border-t"
                   style={{ borderColor: "var(--border)" }}
                 >
@@ -299,13 +301,13 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
             className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
             style={{ background: "linear-gradient(135deg, #059669, #14B8A6)" }}
           >
-            <span style={{ color: "white", fontSize: "11px", fontWeight: 700 }}>RP</span>
+            <span style={{ color: "white", fontSize: "11px", fontWeight: 700 }}>{user?.initials || "RP"}</span>
           </div>
           <div className="text-left hidden md:block">
             <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600, lineHeight: 1.2 }}>
-              Ryan Park
+              {user?.name || "Ryan Park"}
             </p>
-            <p style={{ color: "var(--muted-foreground)", fontSize: "11px", lineHeight: 1.2 }}>Admin</p>
+            <p style={{ color: "var(--muted-foreground)", fontSize: "11px", lineHeight: 1.2 }}>{user?.role || "Admin"}</p>
           </div>
           <ChevronDown
             size={14}
@@ -348,7 +350,7 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
               <div style={{ height: "1px", backgroundColor: "var(--border)", margin: "4px 0" }} />
               <button
                 onClick={() => {
-                  localStorage.removeItem("isLoggedIn");
+                  logout();
                   setShowDropdown(false);
                   navigate("/login");
                 }}
@@ -377,15 +379,15 @@ export function Topbar({ title, sidebarWidth, isDark, onToggleTheme }: TopbarPro
                 <h2 style={{ color: "var(--foreground)", fontSize: "24px", fontWeight: 800 }}>Notifications History</h2>
                 <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}>3 Unread</span>
               </div>
-              <button 
-                onClick={() => setShowAllNotificationsScreen(false)} 
+              <button
+                onClick={() => setShowAllNotificationsScreen(false)}
                 className="p-2 rounded-xl transition-colors hover:bg-neutral-100 dark:hover:bg-zinc-800"
                 style={{ color: "var(--muted-foreground)" }}
               >
                 <X size={24} />
               </button>
             </div>
-            
+
             <div className="flex-1 overflow-y-auto p-6 md:p-10 max-w-4xl mx-auto w-full">
               <div className="space-y-4">
                 {[

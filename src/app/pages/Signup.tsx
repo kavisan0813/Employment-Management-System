@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { 
-  Mail, Lock, Zap, ArrowRight, User, Phone, 
-  Building2, Briefcase, MapPin, Eye, EyeOff, 
+import {
+  Mail, Lock, Zap, ArrowRight, User, Phone,
+  Building2, Briefcase, MapPin, Eye, EyeOff,
   ShieldCheck, CheckCircle2, ChevronDown
 } from "lucide-react";
 import { toast } from "sonner";
 
-type UserRole = 
-  | "Super Admin" 
-  | "HR Admin" 
-  | "Manager" 
-  | "Payroll Admin" 
-  | "Recruiter" 
+type UserRole =
+  | "Super Admin"
+  | "HR Admin"
+  | "Manager"
+  | "Payroll Admin"
+  | "Recruiter"
   | "Employee";
 
 interface PasswordStrength {
@@ -27,7 +27,7 @@ export function Signup() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   // Form State
   const [formData, setFormData] = useState({
     fullName: "",
@@ -64,7 +64,7 @@ export function Signup() {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validations
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
@@ -76,18 +76,18 @@ export function Signup() {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      
+
       const needsApproval = ["HR Admin", "Manager", "Payroll Admin"].includes(formData.role);
-      
+
       if (needsApproval) {
         setIsSuccess(true);
       } else {
-        navigate("/signup-success", { 
-          state: { 
-            name: formData.fullName, 
-            email: formData.email, 
-            role: formData.role 
-          } 
+        navigate("/signup-success", {
+          state: {
+            name: formData.fullName,
+            email: formData.email,
+            role: formData.role
+          }
         });
       }
     }, 1500);
@@ -95,7 +95,7 @@ export function Signup() {
 
   if (isSuccess) {
     return (
-      <div 
+      <div
         className="min-h-screen w-full flex items-center justify-center p-6"
         style={{
           backgroundImage: "url('/login-bg.png')",
@@ -104,7 +104,7 @@ export function Signup() {
           backgroundColor: "#E0F2FE",
         }}
       >
-        <div 
+        <div
           className="w-full max-w-[480px] rounded-[32px] p-12 text-center animate-in fade-in zoom-in-95 duration-500 shadow-2xl"
           style={{ background: "var(--card)", border: "1px solid var(--border)" }}
         >
@@ -117,7 +117,7 @@ export function Signup() {
           <p style={{ color: "var(--muted-foreground)", fontSize: "16px", fontWeight: 500, marginTop: "12px", lineHeight: "1.6" }}>
             Your account is awaiting administrator approval. You will receive an email once your access is provisioned.
           </p>
-          
+
           <button
             onClick={() => navigate("/login")}
             className="w-full mt-10 rounded-2xl py-4 font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
@@ -378,7 +378,7 @@ export function Signup() {
                     color: "var(--foreground)",
                   }}
                 />
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-emerald-600 transition-colors"
@@ -386,7 +386,7 @@ export function Signup() {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              
+
               {/* Password Strength Meter */}
               {formData.password && (
                 <div className="space-y-1.5 mt-2">
@@ -396,13 +396,13 @@ export function Signup() {
                   </div>
                   <div className="h-1.5 w-full bg-border rounded-full overflow-hidden flex gap-1">
                     {[1, 2, 3, 4].map((i) => (
-                      <div 
-                        key={i} 
-                        className="h-full flex-1 transition-all duration-500" 
-                        style={{ 
+                      <div
+                        key={i}
+                        className="h-full flex-1 transition-all duration-500"
+                        style={{
                           backgroundColor: i <= strength.score ? strength.color : "transparent",
                           opacity: i <= strength.score ? 1 : 0.2
-                        }} 
+                        }}
                       />
                     ))}
                   </div>
@@ -429,7 +429,7 @@ export function Signup() {
                     color: "var(--foreground)",
                   }}
                 />
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-emerald-600 transition-colors"

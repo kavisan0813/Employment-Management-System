@@ -1,11 +1,17 @@
 import { RouterProvider } from "react-router";
 import { router } from "./routes";
 import { RecruitmentProvider } from "./context/AppContext";
+import { WorkflowProvider } from "./context/WorkflowContext";
+import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
   return (
-    <RecruitmentProvider>
-      <RouterProvider router={router} />
-    </RecruitmentProvider>
+    <AuthProvider>
+      <WorkflowProvider>
+        <RecruitmentProvider>
+          <RouterProvider router={router} />
+        </RecruitmentProvider>
+      </WorkflowProvider>
+    </AuthProvider>
   );
 }

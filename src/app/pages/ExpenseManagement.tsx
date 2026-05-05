@@ -14,6 +14,8 @@ import {
 } from "recharts";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
+import { EmployeeExpenses } from "./EmployeeExpenses";
 
 /* ─── Mock Data ─────────────────────────── */
 const trendData = [
@@ -122,7 +124,14 @@ interface ExpenseClaim {
 }
 
 export function Expenses() {
+  const { user } = useAuth();
   const navigate = useNavigate();
+
+  // If user is an employee, show the Self-Service Portal
+  if (user?.role === "Employee") {
+    return <EmployeeExpenses />;
+  }
+
   const [claims] = useState<ExpenseClaim[]>(initialClaims);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");

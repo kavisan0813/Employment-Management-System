@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
+import { EmployeePayslips } from "./EmployeePayslips";
+import { useAuth } from "../context/AuthContext";
 import {
   Download,
   Play,
@@ -495,7 +497,12 @@ function ActionSuccessModal({ title, message, onClose }: { title: string; messag
 }
 
 export function Payroll() {
+  const { user } = useAuth();
   const [employeesData, setEmployeesData] = useState(payrollEmployees);
+
+  if (user?.role === "Employee") {
+    return <EmployeePayslips />;
+  }
   const [selectedMonth, setSelectedMonth] = useState("April");
   const [selectedYear, setSelectedYear] = useState("2026");
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);

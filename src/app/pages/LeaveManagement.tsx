@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { EmployeeLeaves } from "./EmployeeLeaves";
+import { useAuth } from "../context/AuthContext";
 import {
   Calendar as CalendarIcon,
   Plus,
@@ -513,6 +515,7 @@ function DetailDrawer({
 
 
 export function LeaveManagement() {
+  const { user } = useAuth();
   const [requests, setRequests] = useState<LeaveRequest[]>(leaveData);
 
   const [search, setSearch] = useState("");
@@ -522,6 +525,10 @@ export function LeaveManagement() {
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState<"CSV" | "Excel" | "PDF">("Excel");
+
+  if (user?.role === "Employee") {
+    return <EmployeeLeaves />;
+  }
 
   // Advanced Filter States
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);

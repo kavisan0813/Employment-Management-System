@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import {
-  Users, UserCheck, UserMinus, Briefcase, DollarSign, Star,
+  Users, UserCheck, Briefcase, DollarSign, Star,
   BookOpen, ArrowUpRight, MoreHorizontal, TrendingUp, TrendingDown,
   CheckCircle2, Clock, Play, ClipboardList,
   Award, ChevronRight, Activity, Zap, Calendar, Bell,
@@ -11,7 +11,10 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
+import { useAuth } from "../context/AuthContext";
+import { EmployeeSelfService } from "./EmployeeSelfService";
 import { departmentHeadcount, attendanceOverview, recentActivities } from "../data/mockData";
+import { useWorkflow } from "../context/WorkflowContext";
 
 // ─── Constants ─────────────────────────────────────────────
 const HEADCOUNT_TREND = [
@@ -63,12 +66,6 @@ const QUICK_ACTIONS = [
   { label: "View Appraisals",    icon: Award,         route: "/appraisal",  color: "#059669", bg: "rgba(5,150,105,0.1)"  },
 ];
 
-const KPI_CARDS = [
-  { title: "Total Employees", value: "248",  trend: "+4.9%", up: true,  sub: "+12 this month",       icon: Users,   grad: "linear-gradient(135deg,#059669,#047857)", accent: "#059669", route: "/employees",  spark: [60,65,70,68,72,75,80,78,82,85,88,92] },
-  { title: "Present Today",   value: "219",  trend: "+2.1%", up: true,  sub: "88.3% attendance",     icon: UserCheck,grad:"linear-gradient(135deg,#22C55E,#16A34A)", accent: "#22C55E",route: "/attendance", spark: [70,72,75,73,76,80,82,85,83,87,88,90] },
-  { title: "On Leave Today",  value: "17",   trend: "-1.2%", up: false, sub: "6.9% of workforce",    icon: UserMinus,grad:"linear-gradient(135deg,#F59E0B,#D97706)", accent: "#F59E0B",route: "/leave",      spark: [30,28,25,27,24,22,20,21,19,17,18,17] },
-  { title: "Open Positions",  value: "18",   trend: "+12.5%",up: true,  sub: "6 urgent",             icon: Briefcase,grad:"linear-gradient(135deg,#8B5CF6,#7C3AED)", accent: "#8B5CF6",route: "/recruitment",spark: [10,11,12,13,14,13,15,16,15,17,18,18] },
-];
 
 const activityIcons: Record<string, React.ElementType> = {
   UserPlus: Users, Calendar, DollarSign, Briefcase, Star, BookOpen,
@@ -142,6 +139,11 @@ function SectionHeader({ title, sub, action, onAction }: { title: string; sub?: 
 
 // ─── Main ──────────────────────────────────────────────────
 export function Dashboard() {
+  const { user } = useAuth();
+  if (user?.role === "Employee") {
+    return <EmployeeSelfService />;
+  }
+
   const navigate = useNavigate();
   const [openMenu,      setOpenMenu]      = useState<number | null>(null);
   const [trendFilter,   setTrendFilter]   = useState<"6M"|"1Y"|"2Y">("1Y");
@@ -149,6 +151,15 @@ export function Dashboard() {
   const [hoveredAction, setHoveredAction] = useState<number | null>(null);
   const [approvalState, setApprovalState] = useState<Record<number, "approved"|"rejected"|null>>({});
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const { counts: wfCounts } = useWorkflow();
+
+  const KPI_CARDS = [
+    { title: "Total Employees", value: wfCounts.total.toString(), trend: "+4.9%", up: true,  sub: "+12 this month",       icon: Users,   grad: "linear-gradient(135deg,#059669,#047857)", accent: "#059669", route: "/employees",  spark: [60,65,70,68,72,75,80,78,82,85,88,92] },
+    { title: "Present Today",   value: "219",  trend: "+2.1%", up: true,  sub: "88.3% attendance",     icon: UserCheck,grad:"linear-gradient(135deg,#22C55E,#16A34A)", accent: "#22C55E",route: "/attendance", spark: [70,72,75,73,76,80,82,85,83,87,88,90] },
+    { title: "Pending Actions",  value: wfCounts.pending.toString(), trend: "-1.2%", up: false, sub: "Requires approval",    icon: Clock,grad:"linear-gradient(135deg,#F59E0B,#D97706)", accent: "#F59E0B",route: "/leave",      spark: [30,28,25,27,24,22,20,21,19,17,18,17] },
+    { title: "Open Positions",  value: "18",   trend: "+12.5%",up: true,  sub: "6 urgent",             icon: Briefcase,grad:"linear-gradient(135deg,#8B5CF6,#7C3AED)", accent: "#8B5CF6",route: "/recruitment",spark: [10,11,12,13,14,13,15,16,15,17,18,18] },
+  ];
 
   useEffect(() => {
     function h(e: MouseEvent) {

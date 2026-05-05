@@ -1,4 +1,6 @@
 import { useState, useRef } from "react";
+import { EmployeeSelfProfile } from "./EmployeeSelfProfile";
+import { useAuth } from "../context/AuthContext";
 import {
   User,
   Settings,
@@ -155,7 +157,12 @@ function InputField({
 }
 
 export function UserProfile() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("profile");
+
+  if (user?.role === "Employee") {
+    return <EmployeeSelfProfile />;
+  }
   const [activeSettingsSection, setActiveSettingsSection] = useState("company");
   const [isEditing, setIsEditing] = useState(false);
   const [saved, setSaved] = useState(false);
