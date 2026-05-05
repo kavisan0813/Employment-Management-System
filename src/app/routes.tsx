@@ -28,6 +28,7 @@ const Training           = lazy(() => import("./pages/Training").then(m => ({ de
 const Documents          = lazy(() => import("./pages/Documents").then(m => ({ default: m.Documents })));
 const Notifications      = lazy(() => import("./pages/Notifications").then(m => ({ default: m.Notifications })));
 const EmployeeSelfService = lazy(() => import("./pages/EmployeeSelfService").then(m => ({ default: m.EmployeeSelfService })));
+const EmployeeHRRequests = lazy(() => import("./pages/EmployeeHRRequests"));
 const ReimbursementHistory = lazy(() => import("./pages/ReimbursementHistory").then(m => ({ default: m.ReimbursementHistory })));
 const ExpensePolicy      = lazy(() => import("./pages/ExpensePolicy").then(m => ({ default: m.ExpensePolicy })));
 const ExpenseSupport     = lazy(() => import("./pages/ExpenseSupport").then(m => ({ default: m.ExpenseSupport })));
@@ -216,8 +217,9 @@ export const router = createBrowserRouter([
       { path: "reimbursement-history", element: protectedRoute(ReimbursementHistory) },
       { path: "expense-policy",  element: protectedRoute(ExpensePolicy) },
       { path: "expense-support", element: protectedRoute(ExpenseSupport) },
-      { path: "support",         element: protectedRoute(EmployeeSupport) },
+      {path: "support",         element: protectedRoute(EmployeeSupport) },
       { path: "my-documents",    element: protectedRoute(EmployeeDocuments) },
+      { path: "hr-requests",     element: protectedRoute(EmployeeHRRequests) },
       { path: "goals",           element: <Protected><PerformanceWrapper /></Protected> },
     ],
   },

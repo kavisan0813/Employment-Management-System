@@ -11,6 +11,8 @@ import {
   FileText,
   Plus,
   ShieldAlert,
+  ChevronRight,
+  Paperclip
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,6 +22,7 @@ const TABS = ["Personal Info", "Employment", "Documents", "Emergency Contact", "
 export function EmployeeSelfProfile() {
   const [activeTab, setActiveTab] = useState("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
@@ -38,12 +41,18 @@ export function EmployeeSelfProfile() {
           <h1 className="text-[26px] font-black text-foreground leading-none">My Profile</h1>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowUpdateModal(true)}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all bg-primary text-white shadow-lg shadow-emerald-500/20 hover:opacity-90 active:scale-95"
+          >
+            <Edit3 size={16} /> Request Update
+          </button>
           {!isEditing ? (
             <button
               onClick={() => setIsEditing(true)}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all border border-primary text-primary hover:bg-primary/10 active:scale-95"
             >
-              <Edit3 size={16} /> Edit Profile
+              <User size={16} /> Edit Profile
             </button>
           ) : (
             <div className="flex gap-3">
@@ -63,6 +72,12 @@ export function EmployeeSelfProfile() {
           )}
         </div>
       </div>
+
+      <AnimatePresence>
+        {showUpdateModal && (
+          <ProfileUpdateModal onClose={() => setShowUpdateModal(false)} />
+        )}
+      </AnimatePresence>
 
       {/* ─── Profile Hero Card ────────────────────────────────────── */}
       <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
@@ -499,6 +514,146 @@ function SettingsTab() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
+  const [fieldToUpdate, setFieldToUpdate] = useState("Phone");
+  const [currentValue] = useState("+91 98765 43210");
+  const [newValue, setNewValue] = useState("");
+  const [reason, setReason] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    showToast("Request Submitted", "success", "Your profile update request has been sent to HR for approval.");
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+      />
+      
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="relative bg-card w-full max-w-[550px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col max-h-[90vh]"
+      >
+        <div className="p-6 border-b border-border flex items-center justify-between bg-white dark:bg-card">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-primary border border-emerald-500/20 shadow-sm">
+              <User size={24} />
+            </div>
+            <div>
+              <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">PROFILE UPDATE REQUEST</h3>
+              <p className="text-[12px] font-bold text-muted-foreground">Request changes to your managed profile details</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors active:scale-90">
+            <X size={22} />
+          </button>
+        </div>
+
+        <div className="p-8 overflow-y-auto custom-scrollbar flex-1 bg-white dark:bg-card">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-6">
+              <div className="flex flex-col gap-2">
+                <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                  FIELD TO UPDATE
+                </label>
+                <div className="relative">
+                  <select 
+                    value={fieldToUpdate}
+                    onChange={(e) => setFieldToUpdate(e.target.value)}
+                    className="w-full bg-[#F0FDF4] dark:bg-emerald-950/50 border border-emerald-500/20 rounded-2xl px-5 py-4 text-[14px] font-bold text-slate-900 dark:text-emerald-50 focus:outline-none focus:border-primary appearance-none transition-all"
+                  >
+                    <option value="Phone" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">Phone Number</option>
+                    <option value="Address" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">Address</option>
+                    <option value="Bank Details" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">Bank Details</option>
+                    <option value="Emergency Contact" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">Emergency Contact</option>
+                    <option value="Personal Info" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">Personal Information</option>
+                  </select>
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+                    <ChevronRight size={18} className="rotate-90" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col gap-2">
+                  <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                    CURRENT VALUE
+                  </label>
+                  <input 
+                    type="text"
+                    readOnly
+                    value={currentValue}
+                    className="w-full bg-secondary/30 border border-border rounded-2xl px-5 py-4 text-[14px] font-bold text-muted-foreground cursor-not-allowed"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                    NEW VALUE
+                  </label>
+                  <input 
+                    type="text"
+                    required
+                    placeholder="Enter new value"
+                    value={newValue}
+                    onChange={(e) => setNewValue(e.target.value)}
+                    className="w-full bg-white dark:bg-card border border-border rounded-2xl px-5 py-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                  REASON FOR UPDATE
+                </label>
+                <textarea 
+                  placeholder="Explain why this update is needed..." 
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  required
+                  className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-3xl px-6 py-5 text-[15px] font-medium text-foreground placeholder:text-slate-400 focus:outline-none focus:border-primary transition-all min-h-[140px] resize-none"
+                />
+              </div>
+
+              <div className="p-5 border-2 border-dashed border-emerald-500/10 rounded-3xl flex items-center justify-between group hover:border-primary/40 cursor-pointer transition-all bg-[#F0FDF4]/20 dark:bg-emerald-500/5">
+                <div className="flex items-center gap-4">
+                  <div className="text-slate-500 group-hover:text-primary transition-colors">
+                    <Paperclip size={20} />
+                  </div>
+                  <span className="text-[14px] font-black text-slate-600 dark:text-slate-400">Attach Supporting Doc (Optional)</span>
+                </div>
+                <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">PDF, JPG</span>
+              </div>
+            </div>
+
+            <div className="flex gap-4 pt-4">
+              <button 
+                type="button" 
+                onClick={onClose}
+                className="flex-1 py-4.5 px-8 border border-slate-200 dark:border-border rounded-[20px] text-[15px] font-black text-slate-500 hover:bg-secondary transition-all uppercase tracking-widest"
+              >
+                CANCEL
+              </button>
+              <button 
+                type="submit"
+                className="flex-[1.5] py-4.5 px-8 bg-[#00B87C] text-white rounded-[20px] text-[15px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/25 hover:opacity-95 active:scale-[0.98] transition-all"
+              >
+                SUBMIT REQUEST
+              </button>
+            </div>
+          </form>
+        </div>
+      </motion.div>
     </div>
   );
 }

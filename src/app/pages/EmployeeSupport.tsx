@@ -1,23 +1,45 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { 
   Headphones, 
   Plus, 
   Search, 
-  UploadCloud,
   ChevronRight,
+  ChevronLeft,
   Monitor,
   IndianRupee,
   CalendarDays,
   Key,
   UserPlus,
-  HeartPulse
+  HeartPulse,
+  X,
+  MessageSquare,
+  FileText,
+  CheckCircle2,
+  Clock,
+  Paperclip
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "framer-motion";
 
-const TABS = ["My Tickets", "New Ticket", "Knowledge Base"];
+interface Ticket {
+  id: string;
+  subject: string;
+  category: string;
+  priority: string;
+  status: string;
+  created: string;
+  catColor: string;
+  catBg: string;
+  priorityColor: string;
+  priorityBg: string;
+  statusColor: string;
+  statusBg: string;
+}
 
-const TICKETS = [
+const TABS = ["My Tickets", "Knowledge Base"];
+
+const TICKETS: Ticket[] = [
   {
     id: "#TKT-0421",
     subject: "Laptop slow, need RAM upgrade",
@@ -72,7 +94,10 @@ const FAQ_CATEGORIES = [
 ];
 
 export function EmployeeSupport() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("My Tickets");
+  const [showNewTicketModal, setShowNewTicketModal] = useState(false);
+  const [viewingTicket, setViewingTicket] = useState<Ticket | null>(null);
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-700 max-w-[1400px] mx-auto pb-10">
@@ -80,15 +105,21 @@ export function EmployeeSupport() {
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-4">
         <div className="flex items-center gap-4">
+          <button 
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all active:scale-95"
+          >
+            <ChevronLeft size={20} />
+          </button>
           <div className="w-11 h-11 rounded-[12px] flex items-center justify-center shadow-sm border" style={{ backgroundColor: "#E0F2FE", borderColor: "rgba(14, 165, 233, 0.2)" }}>
             <Headphones size={22} color="#0EA5E9" />
           </div>
           <h1 className="text-[26px] font-black text-foreground leading-none">Support & Helpdesk</h1>
         </div>
         <button 
-          onClick={() => setActiveTab("New Ticket")}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all text-white shadow-lg hover:opacity-95"
-          style={{ backgroundColor: "#00B87C", boxShadow: "0 4px 14px rgba(0, 184, 124, 0.2)" }}
+          onClick={() => setShowNewTicketModal(true)}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all text-white shadow-lg hover:opacity-95 active:scale-95"
+          style={{ backgroundColor: "#00B87C", boxShadow: "0 4px 14px rgba(0, 184, 124, 0.25)" }}
         >
           <Plus size={18} /> Raise New Ticket
         </button>
@@ -98,7 +129,10 @@ export function EmployeeSupport() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Card 1 */}
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative">
+        <div 
+          onClick={() => {}} 
+          className="bg-card p-6 rounded-[24px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
+        >
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
           <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">OPEN TICKETS</p>
           <p className="text-[32px] font-black" style={{ color: "#F59E0B" }}>2</p>
@@ -106,7 +140,10 @@ export function EmployeeSupport() {
         </div>
 
         {/* Card 2 */}
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative">
+        <div 
+          onClick={() => {}} 
+          className="bg-card p-6 rounded-[24px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
+        >
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
           <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">RESOLVED</p>
           <p className="text-[32px] font-black" style={{ color: "#00B87C" }}>8</p>
@@ -150,12 +187,24 @@ export function EmployeeSupport() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-            {activeTab === "My Tickets" && <MyTicketsTab />}
-            {activeTab === "New Ticket" && <NewTicketTab onSubmit={() => setActiveTab("My Tickets")} />}
+            {activeTab === "My Tickets" && <MyTicketsTab onViewTicket={(t: Ticket) => setViewingTicket(t)} />}
             {activeTab === "Knowledge Base" && <KnowledgeBaseTab />}
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* ─── Modals ──────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {showNewTicketModal && (
+          <NewTicketModal onClose={() => setShowNewTicketModal(false)} />
+        )}
+        {viewingTicket && (
+          <TicketDetailModal 
+            ticket={viewingTicket} 
+            onClose={() => setViewingTicket(null)} 
+          />
+        )}
+      </AnimatePresence>
 
     </div>
   );
@@ -163,7 +212,7 @@ export function EmployeeSupport() {
 
 /* ─── Sub-components ─────────────────────────────────────────────── */
 
-function MyTicketsTab() {
+function MyTicketsTab({ onViewTicket }: { onViewTicket: (t: Ticket) => void }) {
   return (
     <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
@@ -181,9 +230,9 @@ function MyTicketsTab() {
           </thead>
           <tbody className="divide-y divide-border">
             {TICKETS.map((row, i) => (
-              <tr key={i} className="hover:bg-secondary/50 transition-colors">
+              <tr key={i} className="hover:bg-secondary/50 transition-colors group cursor-pointer" onClick={() => onViewTicket(row)}>
                 <td className="px-6 py-4">
-                  <span className="font-mono text-[12px] font-bold text-muted-foreground">{row.id}</span>
+                  <span className="font-mono text-[12px] font-bold text-muted-foreground group-hover:text-primary transition-colors">{row.id}</span>
                 </td>
                 <td className="px-6 py-4 text-[14px] font-bold text-foreground max-w-[250px] truncate">
                   {row.subject}
@@ -220,149 +269,252 @@ function MyTicketsTab() {
   );
 }
 
-function NewTicketTab({ onSubmit }: { onSubmit: () => void }) {
+function NewTicketModal({ onClose }: { onClose: () => void }) {
   const [priority, setPriority] = useState("Medium");
-  const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     showToast("Ticket Raised", "success", "Your support ticket has been submitted successfully.");
-    onSubmit();
+    onClose();
   };
 
   return (
-    <div className="bg-card rounded-2xl p-6 border border-border shadow-sm">
-      <h2 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest mb-6">
-        RAISE A SUPPORT TICKET
-      </h2>
+    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] dark:bg-black/60"
+      />
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="relative bg-card w-full max-w-[500px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col max-h-[90vh]"
+      >
+        <div className="p-6 border-b border-border flex items-center justify-between bg-white dark:bg-card">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-primary border border-emerald-500/20 shadow-sm">
+              <Plus size={24} />
+            </div>
+            <div>
+              <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">RAISE NEW REQUEST</h3>
+              <p className="text-[12px] font-bold text-muted-foreground">Submit your query to the HR team</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors active:scale-90">
+            <X size={22} />
+          </button>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          {/* Category Dropdown */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-              Category
-            </label>
-            <div className="relative">
-              <select className="w-full bg-background border border-border rounded-xl px-4 py-3 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary appearance-none transition-all shadow-inner">
-                <option value="">Select category...</option>
-                <option value="IT Hardware">IT Hardware</option>
-                <option value="IT Software">IT Software</option>
-                <option value="HR Request">HR Request</option>
-                <option value="Access & Permissions">Access & Permissions</option>
-                <option value="Payroll Query">Payroll Query</option>
-                <option value="Other">Other</option>
-              </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
-                ▾
+        <div className="p-8 overflow-y-auto custom-scrollbar flex-1 bg-white dark:bg-card">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-6">
+              <div className="flex flex-col gap-2">
+                <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                  REQUEST CATEGORY
+                </label>
+                <div className="relative">
+                  <select className="w-full bg-[#F0FDF4] dark:bg-emerald-950/50 border border-emerald-500/20 rounded-2xl px-5 py-4 text-[14px] font-bold text-slate-900 dark:text-emerald-50 focus:outline-none focus:border-primary appearance-none transition-all">
+                    <option value="HR Support" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">HR Support</option>
+                    <option value="IT Hardware" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">IT Hardware</option>
+                    <option value="IT Software" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">IT Software</option>
+                    <option value="Payroll" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">Payroll</option>
+                  </select>
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+                    <ChevronRight size={18} className="rotate-90" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                  PRIORITY LEVEL
+                </label>
+                <div className="grid grid-cols-4 gap-3">
+                  {["Low", "Medium", "High", "Urgent"].map(level => (
+                    <button
+                      key={level}
+                      type="button"
+                      onClick={() => setPriority(level)}
+                      className={`py-3.5 rounded-2xl text-[13px] font-black transition-all border-2 ${
+                        priority === level 
+                          ? "bg-[#00B87C] text-white border-[#00B87C] shadow-lg shadow-emerald-500/20 scale-[1.02]" 
+                          : "bg-[#F0FDF4]/50 dark:bg-emerald-500/5 text-slate-500 border-transparent hover:border-emerald-500/20"
+                      }`}
+                    >
+                      {level}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                  MESSAGE / DESCRIPTION
+                </label>
+                <textarea 
+                  placeholder="Explain your query in detail..." 
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                  className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-3xl px-6 py-5 text-[15px] font-medium text-foreground placeholder:text-slate-400 focus:outline-none focus:border-primary transition-all min-h-[160px] resize-none"
+                />
+              </div>
+
+              <div className="p-5 border-2 border-dashed border-emerald-500/10 rounded-3xl flex items-center justify-between group hover:border-primary/40 cursor-pointer transition-all bg-[#F0FDF4]/20 dark:bg-emerald-500/5">
+                <div className="flex items-center gap-4">
+                  <div className="text-slate-500 group-hover:text-primary transition-colors">
+                    <Paperclip size={20} />
+                  </div>
+                  <span className="text-[14px] font-black text-slate-600 dark:text-slate-400">Attach Document (Optional)</span>
+                </div>
+                <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">PDF, JPG</span>
               </div>
             </div>
-          </div>
 
-          {/* Priority Toggles */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-              Priority
-            </label>
-            <div className="flex bg-secondary p-1 rounded-xl border border-border">
-              {["Low", "Medium", "High", "Critical"].map(level => {
-                const isActive = priority === level;
-                let activeBg = "var(--primary)";
-                if (level === "Critical") activeBg = "#EF4444";
-                else if (level === "High") activeBg = "#F59E0B";
+            <div className="flex gap-4 pt-4">
+              <button 
+                type="button" 
+                onClick={onClose}
+                className="flex-1 py-4.5 px-8 border border-slate-200 dark:border-border rounded-[20px] text-[15px] font-black text-slate-500 hover:bg-secondary transition-all uppercase tracking-widest"
+              >
+                CANCEL
+              </button>
+              <button 
+                type="submit"
+                className="flex-[1.5] py-4.5 px-8 bg-[#00B87C] text-white rounded-[20px] text-[15px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/25 hover:opacity-95 active:scale-[0.98] transition-all"
+              >
+                SUBMIT REQUEST
+              </button>
+            </div>
+          </form>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
-                return (
-                  <button
-                    key={level}
-                    type="button"
-                    onClick={() => setPriority(level)}
-                    className={`flex-1 py-2 text-[12px] font-black rounded-lg transition-all ${
-                      isActive ? "shadow-md text-white" : "text-muted-foreground hover:text-foreground"
-                    }`}
-                    style={{ backgroundColor: isActive ? activeBg : "transparent" }}
-                  >
-                    {level}
-                  </button>
-                );
-              })}
+function TicketDetailModal({ ticket, onClose }: { ticket: Ticket, onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[3000] flex items-center justify-end">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] dark:bg-black/60"
+      />
+      <motion.div 
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", damping: 30, stiffness: 300 }}
+        className="relative bg-card w-full max-w-[500px] h-full shadow-2xl border-l border-border flex flex-col"
+      >
+        <div className="p-8 border-b border-border flex items-center justify-between bg-secondary/20">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+              <MessageSquare size={24} />
+            </div>
+            <div>
+              <h3 className="text-xl font-black text-foreground">{ticket.id}</h3>
+              <p className="text-[12px] font-bold text-muted-foreground">Raised on {ticket.created}</p>
             </div>
           </div>
+          <button onClick={onClose} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors">
+            <X size={24} />
+          </button>
         </div>
 
-        {/* Subject */}
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-            Subject
-          </label>
-          <input 
-            type="text" 
-            placeholder="Briefly describe your issue" 
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            required
-            className="w-full bg-background border border-border rounded-xl px-4 py-3 text-[14px] font-bold text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary transition-all shadow-inner"
-          />
-        </div>
+        <div className="p-8 overflow-y-auto custom-scrollbar flex-1 space-y-8">
+          <div className="grid grid-cols-2 gap-8">
+             <div className="space-y-1">
+                <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Status</p>
+                <div className="flex">
+                   <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest border" style={{ backgroundColor: ticket.statusBg, color: ticket.statusColor, borderColor: ticket.statusBg }}>
+                      {ticket.status}
+                   </span>
+                </div>
+             </div>
+             <div className="space-y-1">
+                <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Priority</p>
+                <div className="flex">
+                   <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest border" style={{ backgroundColor: ticket.priorityBg, color: ticket.priorityColor, borderColor: ticket.priorityBg }}>
+                      {ticket.priority}
+                   </span>
+                </div>
+             </div>
+             <div className="space-y-1">
+                <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Category</p>
+                <p className="text-[15px] font-black text-foreground">{ticket.category}</p>
+             </div>
+             <div className="space-y-1">
+                <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Assigned To</p>
+                <div className="flex items-center gap-2">
+                   <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[10px] font-black text-primary">IT</div>
+                   <p className="text-[14px] font-bold text-foreground">IT Support Team</p>
+                </div>
+             </div>
+          </div>
 
-        {/* Description */}
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-            Description
-          </label>
-          <textarea 
-            placeholder="Describe your issue in detail..." 
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            className="w-full bg-background border border-border rounded-xl px-4 py-4 text-[14px] font-medium text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary transition-all shadow-inner min-h-[120px] resize-none"
-          />
-        </div>
+          <div className="space-y-3">
+             <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Subject</p>
+             <h4 className="text-[18px] font-black text-foreground leading-tight">{ticket.subject}</h4>
+          </div>
 
-        {/* Attachment Upload */}
-        <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-            Attachment (Optional)
-          </label>
-          <div className="w-full border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center bg-background hover:bg-secondary/50 transition-colors cursor-pointer group">
-            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center mb-3 group-hover:bg-primary/10 transition-colors">
-              <UploadCloud size={20} className="text-muted-foreground group-hover:text-primary transition-colors" />
-            </div>
-            <p className="text-[13px] font-bold text-foreground mb-1">Click to upload or drag and drop</p>
-            <p className="text-[11px] text-muted-foreground">PNG, JPG, PDF up to 10MB</p>
+          <div className="space-y-3">
+             <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Description</p>
+             <div className="p-5 bg-secondary/30 rounded-2xl border border-border text-[14px] font-medium text-foreground leading-relaxed italic">
+                "The current laptop is struggling with performance when running multiple development environments. It seems like the 8GB RAM is insufficient. Requesting an upgrade to 16GB or 32GB if possible to maintain productivity."
+             </div>
+          </div>
+
+          <div className="space-y-4">
+             <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Ticket Timeline</p>
+             <div className="relative pl-6 space-y-8 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-border">
+                <div className="relative flex gap-4">
+                   <div className="absolute -left-6 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white border-4 border-card z-10 shadow-sm">
+                      <Plus size={10} />
+                   </div>
+                   <div>
+                      <p className="text-[13px] font-black text-foreground leading-none">Ticket Created</p>
+                      <p className="text-[11px] font-bold text-muted-foreground mt-1">by Priya Sharma • {ticket.created}</p>
+                   </div>
+                </div>
+                <div className="relative flex gap-4">
+                   <div className="absolute -left-6 w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center text-white border-4 border-card z-10 shadow-sm animate-pulse">
+                      <Clock size={10} />
+                   </div>
+                   <div>
+                      <p className="text-[13px] font-black text-foreground leading-none">Assigned to IT Team</p>
+                      <p className="text-[11px] font-bold text-muted-foreground mt-1">Awaiting technician pick-up</p>
+                   </div>
+                </div>
+                <div className="relative flex gap-4 opacity-40">
+                   <div className="absolute -left-6 w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-muted-foreground border-4 border-card z-10">
+                      <CheckCircle2 size={10} />
+                   </div>
+                   <div>
+                      <p className="text-[13px] font-black text-foreground leading-none">Resolution Provided</p>
+                      <p className="text-[11px] font-bold text-muted-foreground mt-1">Status will update to Resolved</p>
+                   </div>
+                </div>
+             </div>
           </div>
         </div>
 
-        {/* Assign To Dropdown */}
-        <div className="flex flex-col gap-2 md:w-1/2">
-          <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-            Assign To Department
-          </label>
-          <div className="relative">
-            <select className="w-full bg-background border border-border rounded-xl px-4 py-3 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary appearance-none transition-all shadow-inner">
-              <option value="">Select department...</option>
-              <option value="IT Team">IT Team</option>
-              <option value="HR Team">HR Team</option>
-              <option value="Finance">Finance</option>
-              <option value="Admin">Admin</option>
-            </select>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
-              ▾
-            </div>
-          </div>
+        <div className="p-8 bg-secondary/30 border-t border-border flex gap-4">
+           <button className="flex-1 py-4 bg-card border border-border rounded-2xl text-[13px] font-black text-foreground hover:bg-secondary transition-all flex items-center justify-center gap-2">
+              <FileText size={18} /> Add Comment
+           </button>
+           <button className="flex-1 py-4 bg-card border border-border rounded-2xl text-[13px] font-black text-rose-500 hover:bg-rose-50 transition-all">
+              Cancel Ticket
+           </button>
         </div>
-
-        {/* Submit Button */}
-        <button 
-          type="submit"
-          className="w-full py-4 text-white rounded-xl text-[14px] font-black uppercase tracking-widest shadow-xl hover:opacity-95 active:scale-[0.99] transition-all"
-          style={{ backgroundColor: "#00B87C", boxShadow: "0 8px 20px rgba(0, 184, 124, 0.25)" }}
-        >
-          Submit Ticket
-        </button>
-
-      </form>
+      </motion.div>
     </div>
   );
 }

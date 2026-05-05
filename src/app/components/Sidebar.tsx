@@ -4,7 +4,8 @@ import {
   TrendingUp, BarChart3, Settings, ChevronLeft, ChevronRight,
   Zap, CalendarDays, Store, Sparkles, CalendarClock,
   Award, UserPlus, BookOpen, Folder, Receipt, LogOut, ShieldCheck,
-  Home, Megaphone, Users as UsersIcon, Clock
+  Home, Megaphone, Users as UsersIcon, Clock,
+  
 } from "lucide-react";
 import { useAuth, ROLE_CONFIG, type UserRole } from "../context/AuthContext";
 
@@ -58,6 +59,7 @@ const EMPLOYEE_NAV_ITEMS = [
   { icon: Folder,        label: "My Documents",     path: "/my-documents" },
   { icon: TrendingUp,    label: "My Performance",   path: "/performance" },
   { icon: Clock,         label: "Shift & Schedule", path: "/schedule" },
+
   { icon: BookOpen,      label: "Training",         path: "/training" },
   { icon: Megaphone,     label: "Announcements",    path: "/notifications" },
   { icon: UsersIcon,     label: "Team Directory",   path: "/employees" },

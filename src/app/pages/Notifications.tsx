@@ -32,7 +32,7 @@ export function Notifications() {
   const [activeFilter, setActiveFilter] = useState<"All" | "Unread" | "Approvals" | "Mentions" | "System">("All");
   const [activeModal, setActiveModal] = useState<"create_announcement" | null>(null);
   const [showPreferences, setShowPreferences] = useState(false);
-  
+
   // Notification data
   const [notifications, setNotifications] = useState<NotificationItem[]>([
     { id: 1, type: "Alert", title: "MFA Verification Required", description: "Ensure multi-factor authentication is verified before April 30.", time: "2h ago", read: false, category: "System" },
@@ -105,16 +105,16 @@ export function Notifications() {
 
   return (
     <div style={{ maxWidth: "1400px", minHeight: "calc(100vh - 100px)" }}>
-      
+
       {/* PAGE HEADER */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={() => navigate(-1)}
             className="flex items-center justify-center rounded-xl transition-colors hover:bg-[var(--accent)]"
-            style={{ 
-              width: "42px", 
-              height: "42px", 
+            style={{
+              width: "42px",
+              height: "42px",
               border: "1px solid var(--border)",
               backgroundColor: "var(--card)",
               cursor: "pointer"
@@ -122,14 +122,14 @@ export function Notifications() {
           >
             <ArrowLeft size={20} color="var(--foreground)" />
           </button>
-          <div 
-            style={{ 
-              width: "42px", 
-              height: "42px", 
-              backgroundColor: "#00B87C", 
-              borderRadius: "12px", 
-              display: "flex", 
-              alignItems: "center", 
+          <div
+            style={{
+              width: "42px",
+              height: "42px",
+              backgroundColor: "#00B87C",
+              borderRadius: "12px",
+              display: "flex",
+              alignItems: "center",
               justifyContent: "center",
               boxShadow: "0 4px 12px rgba(0, 184, 124, 0.2)"
             }}
@@ -191,10 +191,10 @@ export function Notifications() {
 
       {/* 2-COLUMN LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
-        
+
         {/* LEFT COLUMN (35%) — Notifications Feed */}
-        <div 
-          className="lg:col-span-4 rounded-2xl p-6" 
+        <div
+          className="lg:col-span-4 rounded-2xl p-6"
           style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
         >
           <div className="flex items-center justify-between mb-4">
@@ -249,11 +249,11 @@ export function Notifications() {
                     transition: "all 0.15s",
                   }}
                 >
-                  <div 
-                    style={{ 
-                      width: "40px", 
-                      height: "40px", 
-                      borderRadius: "10px", 
+                  <div
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "10px",
                       backgroundColor: details.bg,
                       display: "flex",
                       alignItems: "center",
@@ -264,22 +264,22 @@ export function Notifications() {
                     <details.icon size={18} color={details.color} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p 
-                      style={{ 
-                        fontSize: "13px", 
-                        fontWeight: !notif.read ? 700 : 600, 
-                        color: "var(--foreground)", 
+                    <p
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: !notif.read ? 700 : 600,
+                        color: "var(--foreground)",
                         margin: 0,
                         lineHeight: 1.3
                       }}
                     >
                       {notif.title}
                     </p>
-                    <p 
+                    <p
                       className="truncate"
-                      style={{ 
-                        fontSize: "12px", 
-                        color: "var(--muted-foreground)", 
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
                         margin: "2px 0 0",
                         lineHeight: 1.3
                       }}
@@ -317,8 +317,8 @@ export function Notifications() {
         </div>
 
         {/* RIGHT COLUMN (65%) — Announcements */}
-        <div 
-          className="lg:col-span-6 rounded-2xl p-6" 
+        <div
+          className="lg:col-span-6 rounded-2xl p-6"
           style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
         >
           <div className="flex items-center justify-between mb-6">
@@ -350,8 +350,8 @@ export function Notifications() {
                 <div
                   key={ann.id}
                   className="rounded-xl p-4 relative"
-                  style={{ 
-                    backgroundColor: "var(--input-background)", 
+                  style={{
+                    backgroundColor: "var(--input-background)",
                     border: "1px solid var(--border)",
                     borderLeft: `4px solid ${style.border}`
                   }}
@@ -359,11 +359,11 @@ export function Notifications() {
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2">
                       <Pin size={14} color="var(--muted-foreground)" style={{ transform: "rotate(45deg)" }} />
-                      <span 
-                        style={{ 
-                          backgroundColor: style.bg, 
-                          color: style.color, 
-                          padding: "2px 8px", 
+                      <span
+                        style={{
+                          backgroundColor: style.bg,
+                          color: style.color,
+                          padding: "2px 8px",
                           borderRadius: "8px",
                           fontSize: "10px",
                           fontWeight: 700,
@@ -385,7 +385,7 @@ export function Notifications() {
 
                   <div className="flex justify-between items-center pt-3" style={{ borderTop: "1px solid var(--border)" }}>
                     <div className="flex items-center gap-2">
-                      <div 
+                      <div
                         className="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-xs"
                         style={{ backgroundColor: "#00B87C" }}
                       >
@@ -395,7 +395,7 @@ export function Notifications() {
                         Posted by <strong style={{ color: "var(--foreground)" }}>{ann.author}</strong> ({ann.authorRole})
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
                       <span>👍 {ann.likes}</span>
                       <span>💬 {ann.comments}</span>
@@ -425,11 +425,11 @@ export function Notifications() {
                   style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
                 >
                   <div className="flex justify-between items-center mb-2">
-                    <span 
-                      style={{ 
-                        backgroundColor: style.bg, 
-                        color: style.color, 
-                        padding: "2px 8px", 
+                    <span
+                      style={{
+                        backgroundColor: style.bg,
+                        color: style.color,
+                        padding: "2px 8px",
                         borderRadius: "8px",
                         fontSize: "10px",
                         fontWeight: 700,
@@ -450,7 +450,7 @@ export function Notifications() {
 
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      <div 
+                      <div
                         className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold text-[10px]"
                         style={{ backgroundColor: "#00B87C" }}
                       >
@@ -460,7 +460,7 @@ export function Notifications() {
                         {ann.author}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center gap-3 text-[11px] text-[var(--muted-foreground)]">
                       <span>👍 {ann.likes}</span>
                       <span>💬 {ann.comments}</span>
@@ -492,7 +492,7 @@ export function Notifications() {
 
       {/* MODAL: CREATE ANNOUNCEMENT */}
       {activeModal === "create_announcement" && (
-        <div 
+        <div
           style={{
             position: "fixed",
             inset: 0,
@@ -503,16 +503,16 @@ export function Notifications() {
             justifyContent: "center",
           }}
         >
-          <div 
-            className="rounded-2xl p-6 max-w-xl w-full mx-4" 
+          <div
+            className="rounded-2xl p-6 max-w-xl w-full mx-4"
             style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", boxShadow: "0 12px 40px rgba(0,0,0,0.2)" }}
           >
             <div className="flex justify-between items-center mb-4">
               <h2 style={{ fontSize: "18px", fontWeight: 700, color: "var(--foreground)", margin: 0 }}>
                 New Announcement
               </h2>
-              <button 
-                onClick={() => setActiveModal(null)} 
+              <button
+                onClick={() => setActiveModal(null)}
                 style={{ background: "none", border: "none", color: "var(--muted-foreground)", cursor: "pointer" }}
               >
                 <X size={20} />
@@ -524,8 +524,8 @@ export function Notifications() {
                 <label style={{ display: "block", fontSize: "11px", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", marginBottom: "6px" }}>
                   Announcement Title
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Enter descriptive title..."
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{ backgroundColor: "var(--input-background)", borderColor: "var(--border)", color: "var(--foreground)" }}
@@ -568,12 +568,12 @@ export function Notifications() {
                 <label style={{ display: "block", fontSize: "11px", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", marginBottom: "6px" }}>
                   Content
                 </label>
-                <div 
-                  className="rounded-xl border overflow-hidden" 
+                <div
+                  className="rounded-xl border overflow-hidden"
                   style={{ borderColor: "var(--border)" }}
                 >
-                  <div 
-                    className="flex items-center gap-1 px-2 py-1 border-b" 
+                  <div
+                    className="flex items-center gap-1 px-2 py-1 border-b"
                     style={{ backgroundColor: "var(--input-background)", borderColor: "var(--border)" }}
                   >
                     <button className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"><Bold size={14} /></button>
@@ -584,7 +584,7 @@ export function Notifications() {
                     <button className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"><Link2 size={14} /></button>
                     <button className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700 ml-auto"><RotateCcw size={14} /></button>
                   </div>
-                  <textarea 
+                  <textarea
                     rows={4}
                     placeholder="Compose your announcement here..."
                     className="w-full px-3 py-2.5 text-sm outline-none resize-none"
@@ -604,7 +604,7 @@ export function Notifications() {
                     Push Alert
                   </label>
                 </div>
-                
+
                 <button
                   onClick={() => {
                     setActiveModal(null);
@@ -631,7 +631,7 @@ export function Notifications() {
       {/* PREFERENCES SLIDE PANEL */}
       {showPreferences && (
         <>
-          <div 
+          <div
             style={{
               position: "fixed",
               inset: 0,
@@ -640,11 +640,11 @@ export function Notifications() {
             }}
             onClick={() => setShowPreferences(false)}
           />
-          <div 
+          <div
             className="fixed top-0 right-0 h-full z-[2010] overflow-y-auto transition-all duration-300"
-            style={{ 
-              width: "380px", 
-              backgroundColor: "var(--card)", 
+            style={{
+              width: "380px",
+              backgroundColor: "var(--card)",
               borderLeft: "1px solid var(--border)",
               boxShadow: "-4px 0 20px rgba(0,0,0,0.15)",
               padding: "24px"
@@ -654,8 +654,8 @@ export function Notifications() {
               <h2 style={{ fontSize: "18px", fontWeight: 700, color: "var(--foreground)", margin: 0 }}>
                 Notification Preferences
               </h2>
-              <button 
-                onClick={() => setShowPreferences(false)} 
+              <button
+                onClick={() => setShowPreferences(false)}
                 style={{ background: "none", border: "none", color: "var(--muted-foreground)", cursor: "pointer" }}
               >
                 <X size={20} />
@@ -672,8 +672,8 @@ export function Notifications() {
                   <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--foreground)", textTransform: "capitalize" }}>
                     {key === "wfh" ? "Work From Home" : key}
                   </span>
-                  <div 
-                    className="p-3 rounded-xl space-y-2" 
+                  <div
+                    className="p-3 rounded-xl space-y-2"
                     style={{ backgroundColor: "var(--input-background)", border: "1px solid var(--border)" }}
                   >
                     {Object.entries(methods).map(([method, enabled]) => (
