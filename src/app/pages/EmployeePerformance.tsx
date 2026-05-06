@@ -12,7 +12,22 @@ import {
   Info,
   ChevronRight,
   Star,
+  FileText,
+  History,
+  CheckCircle2,
 } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Cell,
+} from "recharts";
 import { showToast } from "../components/workflow/ToastNotification";
 
 /* ─────────────────────────────────────────────────────────────── */
@@ -21,6 +36,15 @@ import { showToast } from "../components/workflow/ToastNotification";
 type GoalStatus = "Not Started" | "In Progress" | "Completed" | "Overdue";
 type GoalPriority = "High" | "Medium" | "Low";
 type GoalCategory = "Technical" | "Soft Skills" | "Leadership" | "Operational";
+
+interface GoalUpdate {
+  id: number;
+  date: string;
+  user: string;
+  comment: string;
+  progress: number;
+  type: "Created" | "Updated" | "Reviewed" | "Completed";
+}
 
 interface Goal {
   id: number;
@@ -33,6 +57,8 @@ interface Goal {
   description: string;
   targetMetric: string;
   managerComments: string;
+  lastUpdated: string;
+  timeline: GoalUpdate[];
 }
 
 interface PerformanceReview {
@@ -49,6 +75,9 @@ interface PerformanceReview {
   strengths: string[];
   improvements: string[];
   feedback: string;
+  hrComments: string;
+  periodStart: string;
+  periodEnd: string;
 }
 
 /* ─────────────────────────────────────────────────────────────── */
@@ -68,6 +97,33 @@ const MOCK_GOALS: Goal[] = [
     targetMetric: "Certification completion & demo project",
     managerComments:
       "Great progress, ensure you apply the learnings to the new dashboard.",
+    lastUpdated: "May 01, 2026",
+    timeline: [
+      {
+        id: 1,
+        date: "Apr 15, 2026 10:00 AM",
+        user: "System",
+        comment: "Goal Created",
+        progress: 0,
+        type: "Created",
+      },
+      {
+        id: 2,
+        date: "Apr 25, 2026 02:30 PM",
+        user: "Marcus Williams",
+        comment: "Initial review and guidance provided.",
+        progress: 10,
+        type: "Reviewed",
+      },
+      {
+        id: 3,
+        date: "May 01, 2026 04:45 PM",
+        user: "Sathya (You)",
+        comment: "Completed hooks module and started optimization patterns.",
+        progress: 85,
+        type: "Updated",
+      },
+    ],
   },
   {
     id: 2,
@@ -81,31 +137,17 @@ const MOCK_GOALS: Goal[] = [
       "Ensure consistent punctuality and minimal unplanned leaves throughout the year.",
     targetMetric: "Attendance records from EMS",
     managerComments: "Consistency is key. Keep up the good work.",
-  },
-  {
-    id: 3,
-    title: "Complete 5 project tasks",
-    category: "Operational",
-    progress: 100,
-    targetDate: "Apr 30, 2026",
-    priority: "High",
-    status: "Completed",
-    description:
-      "Deliver assigned features for the NexusHR mobile app integration.",
-    targetMetric: "Jira task completion",
-    managerComments: "Excellent delivery, ahead of schedule.",
-  },
-  {
-    id: 4,
-    title: "Improve client response time",
-    category: "Soft Skills",
-    progress: 40,
-    targetDate: "Jun 15, 2026",
-    priority: "High",
-    status: "In Progress",
-    description: "Reduce average ticket response time from 4 hours to 1 hour.",
-    targetMetric: "CRM response analytics",
-    managerComments: "Focus on early morning ticket triaging.",
+    lastUpdated: "Apr 28, 2026",
+    timeline: [
+      {
+        id: 1,
+        date: "Jan 01, 2026 09:00 AM",
+        user: "System",
+        comment: "Goal Created",
+        progress: 0,
+        type: "Created",
+      },
+    ],
   },
 ];
 
@@ -118,7 +160,7 @@ const MOCK_REVIEWS: PerformanceReview[] = [
     attendanceScore: 96,
     goalCompletion: 90,
     kpiScore: 92,
-    recommendation: "Salary Increment",
+    recommendation: "Salary Increment & Promotion",
     status: "Approved",
     date: "Mar 28, 2026",
     strengths: [
@@ -129,6 +171,9 @@ const MOCK_REVIEWS: PerformanceReview[] = [
     improvements: ["Time Management for minor tasks", "Public speaking"],
     feedback:
       "Exceptional contribution to the React migration project. One of the top performers in the engineering team.",
+    hrComments: "Candidate eligible for senior role appraisal.",
+    periodStart: "Apr 01, 2025",
+    periodEnd: "Mar 31, 2026",
   },
   {
     id: 2,
@@ -138,13 +183,38 @@ const MOCK_REVIEWS: PerformanceReview[] = [
     attendanceScore: 94,
     goalCompletion: 85,
     kpiScore: 88,
-    recommendation: "N/A",
+    recommendation: "Training Suggested",
     status: "Approved",
     date: "Sep 15, 2025",
     strengths: ["Reliability", "Coding Standards"],
     improvements: ["Requirement gathering"],
     feedback: "Solid performance, meeting all key targets.",
+    hrComments: "Consistent performance observed.",
+    periodStart: "Apr 01, 2025",
+    periodEnd: "Sep 30, 2025",
   },
+];
+
+const PERFORMANCE_TREND_DATA = [
+  { month: "Apr", score: 4.0 },
+  { month: "May", score: 4.1 },
+  { month: "Jun", score: 4.3 },
+  { month: "Jul", score: 4.2 },
+  { month: "Aug", score: 4.4 },
+  { month: "Sep", score: 4.2 },
+  { month: "Oct", score: 4.5 },
+  { month: "Nov", score: 4.3 },
+  { month: "Dec", score: 4.6 },
+  { month: "Jan", score: 4.5 },
+  { month: "Feb", score: 4.7 },
+  { month: "Mar", score: 4.5 },
+];
+
+const GOAL_COMPLETION_DATA = [
+  { name: "Technical", completed: 80, target: 100 },
+  { name: "Soft Skills", completed: 60, target: 100 },
+  { name: "Leadership", completed: 40, target: 100 },
+  { name: "Operational", completed: 95, target: 100 },
 ];
 
 /* ─────────────────────────────────────────────────────────────── */
@@ -191,9 +261,13 @@ function SummaryCard({
   subValue,
   chip,
   chipColor,
-}: SummaryCardProps) {
+  onClick,
+}: SummaryCardProps & { onClick?: () => void }) {
   return (
-    <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex items-center gap-4 transition-all hover:shadow-md">
+    <div
+      onClick={onClick}
+      className={`bg-card p-6 rounded-[24px] border border-border shadow-sm flex items-center gap-4 transition-all hover:shadow-md ${onClick ? "cursor-pointer" : ""}`}
+    >
       <div
         className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center ${color}`}
       >
@@ -236,11 +310,13 @@ function ModalLayout({
   icon: Icon,
   onClose,
   children,
+  maxWidth = "520px",
 }: {
   title: string;
   icon: React.ElementType;
   onClose: () => void;
   children: React.ReactNode;
+  maxWidth?: string;
 }) {
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 animate-in fade-in duration-200">
@@ -248,7 +324,10 @@ function ModalLayout({
         className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] dark:bg-black/60"
         onClick={onClose}
       />
-      <div className="relative bg-card w-full max-w-[520px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-border">
+      <div
+        className="relative bg-card w-full rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-border"
+        style={{ maxWidth }}
+      >
         <div className="p-6 border-b border-border flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
@@ -279,16 +358,22 @@ export function EmployeePerformance() {
   const [activeTab, setActiveTab] = useState<"My Goals" | "My Performance">(
     location.pathname === "/goals" ? "My Goals" : "My Performance",
   );
-  const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
-  const [selectedReview, setSelectedReview] =
+
+  // Modal States
+  const [selectedGoalDetail, setSelectedGoalDetail] = useState<Goal | null>(
+    null,
+  );
+  const [goalToUpdate, setGoalToUpdate] = useState<Goal | null>(null);
+  const [showGoalTimeline, setShowGoalTimeline] = useState<Goal | null>(null);
+  const [showPerformanceSummary, setShowPerformanceSummary] = useState(false);
+  const [selectedReviewDetail, setSelectedReviewDetail] =
     useState<PerformanceReview | null>(null);
+  const [showExportModal, setShowExportModal] = useState(false);
   const [showAddGoal, setShowAddGoal] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
 
   // Form States (Mock)
-  const [feedbackManager, setFeedbackManager] = useState("");
-  const [feedbackTopic, setFeedbackTopic] = useState("");
-  const [feedbackMessage, setFeedbackMessage] = useState("");
+
 
   const handleDownloadReport = () => {
     showToast(
@@ -306,9 +391,6 @@ export function EmployeePerformance() {
       "Your request has been sent to the manager.",
     );
     setShowFeedback(false);
-    setFeedbackManager("");
-    setFeedbackTopic("");
-    setFeedbackMessage("");
   };
 
   return (
@@ -387,7 +469,7 @@ export function EmployeePerformance() {
                 {MOCK_GOALS.map((goal) => (
                   <div
                     key={goal.id}
-                    onClick={() => setSelectedGoal(goal)}
+                    onClick={() => setSelectedGoalDetail(goal)}
                     className="p-5 flex items-center justify-between hover:bg-secondary/30 transition-colors cursor-pointer group"
                   >
                     <div className="flex items-center gap-5">
@@ -451,66 +533,50 @@ export function EmployeePerformance() {
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
             {/* Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <div
-                onClick={() => setSelectedReview(MOCK_REVIEWS[0])}
-                className="cursor-pointer"
-              >
-                <SummaryCard
-                  icon={Star}
-                  color="text-amber-500"
-                  bg="bg-amber-500/10"
-                  label="OVERALL SCORE"
-                  value="4.5"
-                  subValue="FY 2025-26"
-                  chip="Excellent"
-                  chipColor="green"
-                />
-              </div>
-              <div
-                onClick={() => setSelectedReview(MOCK_REVIEWS[0])}
-                className="cursor-pointer"
-              >
-                <SummaryCard
-                  icon={Clock}
-                  color="text-blue-500"
-                  bg="bg-blue-500/10"
-                  label="ATTENDANCE SCORE"
-                  value="96%"
-                  subValue="Last 12 Months"
-                  chip="On Track"
-                  chipColor="green"
-                />
-              </div>
-              <div
-                onClick={() => setSelectedReview(MOCK_REVIEWS[0])}
-                className="cursor-pointer"
-              >
-                <SummaryCard
-                  icon={Target}
-                  color="text-primary"
-                  bg="bg-emerald-500/10"
-                  label="GOAL COMPLETION"
-                  value="90%"
-                  subValue="8/10 Completed"
-                  chip="High"
-                  chipColor="green"
-                />
-              </div>
-              <div
-                onClick={() => setSelectedReview(MOCK_REVIEWS[0])}
-                className="cursor-pointer"
-              >
-                <SummaryCard
-                  icon={Award}
-                  color="text-purple-500"
-                  bg="bg-purple-500/10"
-                  label="MANAGER RATING"
-                  value="A"
-                  subValue="Top Performer"
-                  chip="Elite"
-                  chipColor="purple"
-                />
-              </div>
+              <SummaryCard
+                icon={Star}
+                color="text-amber-500"
+                bg="bg-amber-500/10"
+                label="OVERALL SCORE"
+                value="4.5"
+                subValue="FY 2025-26"
+                chip="Excellent"
+                chipColor="green"
+                onClick={() => setShowPerformanceSummary(true)}
+              />
+              <SummaryCard
+                icon={Clock}
+                color="text-blue-500"
+                bg="bg-blue-500/10"
+                label="ATTENDANCE SCORE"
+                value="96%"
+                subValue="Last 12 Months"
+                chip="On Track"
+                chipColor="green"
+                onClick={() => setShowPerformanceSummary(true)}
+              />
+              <SummaryCard
+                icon={Target}
+                color="text-primary"
+                bg="bg-emerald-500/10"
+                label="GOAL COMPLETION"
+                value="90%"
+                subValue="8/10 Completed"
+                chip="High"
+                chipColor="green"
+                onClick={() => setShowPerformanceSummary(true)}
+              />
+              <SummaryCard
+                icon={Award}
+                color="text-purple-500"
+                bg="bg-purple-500/10"
+                label="MANAGER RATING"
+                value="A"
+                subValue="Top Performer"
+                chip="Elite"
+                chipColor="purple"
+                onClick={() => setShowPerformanceSummary(true)}
+              />
             </div>
 
             {/* Review History Table */}
@@ -550,7 +616,7 @@ export function EmployeePerformance() {
                       <tr
                         key={review.id}
                         className="hover:bg-secondary transition-colors cursor-pointer group"
-                        onClick={() => setSelectedReview(review)}
+                        onClick={() => setSelectedReviewDetail(review)}
                       >
                         <td className="px-6 py-4">
                           <div className="flex flex-col">
@@ -663,19 +729,44 @@ export function EmployeePerformance() {
       /* ─────────────────────────────────────────────────────────────── */}
 
       {/* 1. Goal Detail Modal */}
-      {selectedGoal && (
+      {selectedGoalDetail && (
         <ModalLayout
-          title="Goal Detail"
+          title="Goal Details"
           icon={Target}
-          onClose={() => setSelectedGoal(null)}
+          onClose={() => setSelectedGoalDetail(null)}
         >
           <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                  Category
+                </h4>
+                <span className="px-3 py-1 bg-secondary rounded-lg text-[11px] font-black text-foreground border border-border">
+                  {selectedGoalDetail.category}
+                </span>
+              </div>
+              <div className="text-right">
+                <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                  Priority
+                </h4>
+                <span
+                  className={`px-3 py-1 rounded-lg text-[11px] font-black border ${
+                    selectedGoalDetail.priority === "High"
+                      ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
+                      : "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                  }`}
+                >
+                  {selectedGoalDetail.priority}
+                </span>
+              </div>
+            </div>
+
             <div>
               <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
                 Goal Description
               </h4>
               <p className="text-[13px] font-bold text-foreground leading-relaxed">
-                {selectedGoal.description}
+                {selectedGoalDetail.description}
               </p>
             </div>
 
@@ -685,7 +776,7 @@ export function EmployeePerformance() {
                   Target Metric
                 </h4>
                 <p className="text-[13px] font-black text-primary">
-                  {selectedGoal.targetMetric}
+                  {selectedGoalDetail.targetMetric}
                 </p>
               </div>
               <div>
@@ -693,7 +784,7 @@ export function EmployeePerformance() {
                   Due Date
                 </h4>
                 <p className="text-[13px] font-black text-foreground">
-                  {selectedGoal.targetDate}
+                  {selectedGoalDetail.targetDate}
                 </p>
               </div>
             </div>
@@ -704,13 +795,13 @@ export function EmployeePerformance() {
                   Current Progress
                 </h4>
                 <span className="text-[13px] font-black text-primary">
-                  {selectedGoal.progress}%
+                  {selectedGoalDetail.progress}%
                 </span>
               </div>
               <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                 <div
                   className="h-full bg-primary"
-                  style={{ width: `${selectedGoal.progress}%` }}
+                  style={{ width: `${selectedGoalDetail.progress}%` }}
                 />
               </div>
             </div>
@@ -720,38 +811,636 @@ export function EmployeePerformance() {
                 <MessageSquare size={12} /> Manager Comments
               </h4>
               <p className="text-[12px] font-bold text-muted-foreground italic">
-                "{selectedGoal.managerComments}"
+                "{selectedGoalDetail.managerComments}"
+              </p>
+              <p className="text-[10px] font-bold text-muted-foreground mt-2 text-right">
+                Last updated: {selectedGoalDetail.lastUpdated}
               </p>
             </div>
 
-            <div className="flex items-center gap-3 pt-4">
+            <div className="flex flex-col gap-3 pt-4">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setGoalToUpdate(selectedGoalDetail)}
+                  className="flex-1 py-3 px-4 rounded-xl bg-primary text-white text-[13px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all"
+                >
+                  Update Progress
+                </button>
+                <button
+                  onClick={() => setShowGoalTimeline(selectedGoalDetail)}
+                  className="flex-1 py-3 px-4 rounded-xl border border-border text-[13px] font-black text-foreground hover:bg-secondary transition-all flex items-center justify-center gap-2"
+                >
+                  <History size={16} /> View Timeline
+                </button>
+              </div>
               <button
-                onClick={() => setSelectedGoal(null)}
-                className="flex-1 py-3 px-4 rounded-xl border border-border text-[13px] font-black text-muted-foreground hover:bg-secondary transition-all"
+                onClick={() => setSelectedGoalDetail(null)}
+                className="w-full py-3 px-4 rounded-xl border border-border text-[13px] font-black text-muted-foreground hover:bg-secondary transition-all"
               >
                 Close
-              </button>
-              <button
-                onClick={() =>
-                  showToast(
-                    "Progress Updated",
-                    "success",
-                    "Progress has been recorded.",
-                  )
-                }
-                className="flex-[2] py-3 px-4 rounded-xl bg-primary text-white text-[13px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all"
-              >
-                Update Progress
               </button>
             </div>
           </div>
         </ModalLayout>
       )}
 
-      {/* 2. Add Goal Modal */}
+      {/* 2. Update Goal Progress Modal */}
+      {goalToUpdate && (
+        <ModalLayout
+          title="Update Goal Progress"
+          icon={TrendingUp}
+          onClose={() => setGoalToUpdate(null)}
+        >
+          <form
+            className="space-y-5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              showToast(
+                "Progress Updated",
+                "success",
+                "Your goal progress has been updated and a history entry was added.",
+              );
+              setGoalToUpdate(null);
+            }}
+          >
+            <div className="p-4 bg-secondary/50 rounded-2xl border border-border mb-4">
+              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                Currently Updating
+              </p>
+              <p className="text-[14px] font-black text-foreground">
+                {goalToUpdate.title}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Current Progress
+                </label>
+                <div className="w-full px-4 py-3 bg-secondary/30 border border-border rounded-xl text-[13px] font-bold text-muted-foreground">
+                  {goalToUpdate.progress}%
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  New Progress (%)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  defaultValue={goalToUpdate.progress}
+                  className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                Progress Notes
+              </label>
+              <textarea
+                rows={3}
+                placeholder="What have you achieved since the last update?"
+                className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none resize-none focus:border-primary transition-all"
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                Attachment (Optional)
+              </label>
+              <div className="w-full px-4 py-3 bg-secondary border border-dashed border-border rounded-xl text-[12px] font-bold text-muted-foreground text-center hover:bg-secondary/80 transition-all cursor-pointer">
+                Click to upload proof of progress
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setGoalToUpdate(null)}
+                className="flex-1 py-4 rounded-xl border border-border text-[14px] font-black text-muted-foreground hover:bg-secondary transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-[2] py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all"
+              >
+                Save Update
+              </button>
+            </div>
+          </form>
+        </ModalLayout>
+      )}
+
+      {/* 3. Performance Summary Modal */}
+      {showPerformanceSummary && (
+        <ModalLayout
+          title="Performance Summary"
+          icon={TrendingUp}
+          onClose={() => setShowPerformanceSummary(false)}
+          maxWidth="700px"
+        >
+          <div className="space-y-8 pb-4">
+            {/* Quick Metrics Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {[
+                { label: "Overall Score", val: "4.5", color: "text-amber-500" },
+                { label: "Attendance", val: "96%", color: "text-blue-500" },
+                { label: "KPI Score", val: "92%", color: "text-primary" },
+                { label: "Goals", val: "90%", color: "text-purple-500" },
+              ].map((m) => (
+                <div
+                  key={m.label}
+                  className="p-4 bg-card border border-border rounded-2xl text-center"
+                >
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                    {m.label}
+                  </p>
+                  <p className={`text-[18px] font-black ${m.color}`}>
+                    {m.val}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Performance Trend Chart */}
+            <div className="space-y-3">
+              <h4 className="text-[12px] font-black text-foreground uppercase tracking-widest flex items-center gap-2">
+                <TrendingUp size={16} className="text-primary" /> Monthly
+                Performance Trend
+              </h4>
+              <div className="h-[200px] w-full bg-secondary/30 rounded-2xl border border-border p-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={PERFORMANCE_TREND_DATA}>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke="rgba(0,0,0,0.05)"
+                    />
+                    <XAxis
+                      dataKey="month"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{
+                        fontSize: 10,
+                        fontWeight: 900,
+                        fill: "#71717a",
+                      }}
+                    />
+                    <YAxis
+                      domain={[0, 5]}
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{
+                        fontSize: 10,
+                        fontWeight: 900,
+                        fill: "#71717a",
+                      }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        borderRadius: "12px",
+                        border: "1px solid #e4e4e7",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                        fontSize: "12px",
+                        fontWeight: "900",
+                      }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="score"
+                      stroke="#10b981"
+                      strokeWidth={3}
+                      dot={{ r: 4, fill: "#10b981", strokeWidth: 2 }}
+                      activeDot={{ r: 6, strokeWidth: 0 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Goal Completion Chart */}
+            <div className="space-y-3">
+              <h4 className="text-[12px] font-black text-foreground uppercase tracking-widest flex items-center gap-2">
+                <Target size={16} className="text-purple-500" /> Goal Completion
+                by Category
+              </h4>
+              <div className="h-[200px] w-full bg-secondary/30 rounded-2xl border border-border p-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={GOAL_COMPLETION_DATA} layout="vertical">
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      horizontal={false}
+                      stroke="rgba(0,0,0,0.05)"
+                    />
+                    <XAxis
+                      type="number"
+                      domain={[0, 100]}
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{
+                        fontSize: 10,
+                        fontWeight: 900,
+                        fill: "#71717a",
+                      }}
+                    />
+                    <YAxis
+                      dataKey="name"
+                      type="category"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{
+                        fontSize: 10,
+                        fontWeight: 900,
+                        fill: "#71717a",
+                      }}
+                      width={100}
+                    />
+                    <Tooltip
+                      cursor={{ fill: "rgba(0,0,0,0.02)" }}
+                      contentStyle={{
+                        borderRadius: "12px",
+                        border: "1px solid #e4e4e7",
+                        fontSize: "12px",
+                        fontWeight: "900",
+                      }}
+                    />
+                    <Bar dataKey="completed" radius={[0, 4, 4, 0]} barSize={20}>
+                      {GOAL_COMPLETION_DATA.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={index % 2 === 0 ? "#10b981" : "#8b5cf6"}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => {
+                  setShowPerformanceSummary(false);
+                  setSelectedReviewDetail(MOCK_REVIEWS[0]);
+                }}
+                className="flex-1 py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
+              >
+                <FileText size={18} /> View Full Review
+              </button>
+              <button
+                onClick={() => {
+                  setShowPerformanceSummary(false);
+                  setShowExportModal(true);
+                }}
+                className="flex-1 py-4 rounded-xl border border-border text-[14px] font-black text-foreground hover:bg-secondary transition-all flex items-center justify-center gap-2"
+              >
+                <Download size={18} /> Download Report
+              </button>
+              <button
+                onClick={() => {
+                  setShowPerformanceSummary(false);
+                  setShowFeedback(true);
+                }}
+                className="flex-1 py-4 rounded-xl border border-border text-[14px] font-black text-foreground hover:bg-secondary transition-all flex items-center justify-center gap-2"
+              >
+                <MessageSquare size={18} /> Request Feedback
+              </button>
+            </div>
+          </div>
+        </ModalLayout>
+      )}
+
+      {/* 4. Performance Review Detail Modal (Expanded) */}
+      {selectedReviewDetail && (
+        <ModalLayout
+          title="Review Detail"
+          icon={Award}
+          onClose={() => setSelectedReviewDetail(null)}
+          maxWidth="600px"
+        >
+          <div className="space-y-6">
+            <div className="flex items-center justify-between bg-secondary p-5 rounded-2xl border border-border">
+              <div>
+                <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                  Review Period
+                </h4>
+                <p className="text-[16px] font-black text-foreground">
+                  {selectedReviewDetail.period}
+                </p>
+                <p className="text-[11px] font-bold text-muted-foreground mt-0.5">
+                  {selectedReviewDetail.periodStart} -{" "}
+                  {selectedReviewDetail.periodEnd}
+                </p>
+              </div>
+              <div className="text-right">
+                <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                  Overall Rating
+                </h4>
+                <p className="text-[24px] font-black text-primary leading-none mt-1">
+                  {selectedReviewDetail.overallScore}
+                  <span className="text-[14px] text-muted-foreground font-bold">
+                    /5.0
+                  </span>
+                </p>
+                <p className="text-[12px] font-black text-muted-foreground mt-1 uppercase tracking-wider">
+                  {selectedReviewDetail.rating}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="text-[12px] font-black text-foreground uppercase tracking-widest border-b border-border pb-2">
+                  KPI Breakdown
+                </h4>
+                <div className="space-y-3">
+                  {[
+                    { label: "KPI Score", val: selectedReviewDetail.kpiScore },
+                    {
+                      label: "Attendance",
+                      val: selectedReviewDetail.attendanceScore,
+                    },
+                    {
+                      label: "Goal Comp.",
+                      val: selectedReviewDetail.goalCompletion,
+                    },
+                  ].map((item) => (
+                    <div key={item.label} className="space-y-1">
+                      <div className="flex justify-between text-[11px] font-black">
+                        <span className="text-muted-foreground uppercase">
+                          {item.label}
+                        </span>
+                        <span>{item.val}%</span>
+                      </div>
+                      <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary"
+                          style={{ width: `${item.val}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-[12px] font-black text-foreground uppercase tracking-widest border-b border-border pb-2">
+                  Highlights
+                </h4>
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-primary uppercase tracking-widest">
+                      Top Strengths
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedReviewDetail.strengths.slice(0, 2).map((s) => (
+                        <span
+                          key={s}
+                          className="px-2 py-0.5 bg-emerald-500/10 rounded text-[10px] font-bold text-primary border border-primary/20"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest">
+                      Growth Areas
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedReviewDetail.improvements
+                        .slice(0, 2)
+                        .map((s) => (
+                          <span
+                            key={s}
+                            className="px-2 py-0.5 bg-rose-500/10 rounded text-[10px] font-bold text-rose-500 border border-rose-500/20"
+                          >
+                            {s}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 pt-2">
+              <div className="bg-card p-4 rounded-2xl border border-border shadow-sm">
+                <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <MessageSquare size={14} className="text-primary" /> Manager
+                  Feedback
+                </h4>
+                <p className="text-[13px] font-bold text-foreground leading-relaxed italic">
+                  "{selectedReviewDetail.feedback}"
+                </p>
+              </div>
+              <div className="bg-card p-4 rounded-2xl border border-border shadow-sm">
+                <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <Info size={14} className="text-blue-500" /> HR Comments
+                </h4>
+                <p className="text-[13px] font-bold text-muted-foreground leading-relaxed">
+                  {selectedReviewDetail.hrComments}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-5 bg-purple-500/10 rounded-2xl border border-purple-500/20 flex items-center justify-between">
+              <div>
+                <h4 className="text-[11px] font-black text-purple-600 uppercase tracking-widest">
+                  Recommendation
+                </h4>
+                <p className="text-[16px] font-black text-purple-700">
+                  {selectedReviewDetail.recommendation}
+                </p>
+              </div>
+              <CheckCircle2 size={32} className="text-purple-500 opacity-40" />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+              <button
+                onClick={() =>
+                  showToast(
+                    "Review Downloaded",
+                    "success",
+                    "Detailed review PDF is ready."
+                  )
+                }
+                className="flex-1 py-4 rounded-xl border border-border text-[14px] font-black text-foreground hover:bg-secondary transition-all flex items-center justify-center gap-2"
+              >
+                <Download size={18} /> Download Review
+              </button>
+              <button
+                onClick={() => {
+                  showToast(
+                    "Review Acknowledged",
+                    "success",
+                    "Your acknowledgment has been recorded."
+                  );
+                  setSelectedReviewDetail(null);
+                }}
+                className="flex-1 py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
+              >
+                <CheckCircle2 size={18} /> Acknowledge Review
+              </button>
+            </div>
+          </div>
+        </ModalLayout>
+      )}
+
+      {/* 5. Export Modal */}
+      {showExportModal && (
+        <ModalLayout
+          title="Download Performance Report"
+          icon={Download}
+          onClose={() => setShowExportModal(false)}
+        >
+          <div className="space-y-6">
+            <p className="text-[13px] font-bold text-muted-foreground leading-relaxed">
+              Select the format and type of report you wish to generate for your
+              performance records.
+            </p>
+
+            <div className="space-y-3">
+              {[
+                {
+                  id: "pdf",
+                  label: "Detailed Performance PDF",
+                  desc: "Complete review including feedback and charts",
+                  icon: FileText,
+                  color: "text-rose-500",
+                },
+                {
+                  id: "excel",
+                  label: "KPI Metrics Excel",
+                  desc: "Raw data for scores and goal progress",
+                  icon: Target,
+                  color: "text-emerald-500",
+                },
+                {
+                  id: "summary",
+                  label: "Summary Report",
+                  desc: "Single page overview of key highlights",
+                  icon: Award,
+                  color: "text-amber-500",
+                },
+              ].map((opt) => (
+                <div
+                  key={opt.id}
+                  className="p-4 bg-secondary/50 rounded-2xl border border-border hover:border-primary transition-all cursor-pointer group flex items-center gap-4"
+                  onClick={() => {
+                    showToast(
+                      "Report Downloaded",
+                      "success",
+                      `${opt.label} downloaded successfully.`
+                    );
+                    setShowExportModal(false);
+                  }}
+                >
+                  <div
+                    className={`w-10 h-10 rounded-xl bg-card flex items-center justify-center ${opt.color} shadow-sm group-hover:scale-110 transition-transform`}
+                  >
+                    <opt.icon size={20} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[14px] font-black text-foreground">
+                      {opt.label}
+                    </p>
+                    <p className="text-[11px] font-bold text-muted-foreground">
+                      {opt.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => setShowExportModal(false)}
+              className="w-full py-4 rounded-xl bg-secondary text-foreground text-[14px] font-black hover:bg-secondary/80 transition-all mt-2"
+            >
+              Cancel
+            </button>
+          </div>
+        </ModalLayout>
+      )}
+
+      {/* 6. Goal Timeline Modal */}
+      {showGoalTimeline && (
+        <ModalLayout
+          title="Goal Progress Timeline"
+          icon={History}
+          onClose={() => setShowGoalTimeline(null)}
+        >
+          <div className="space-y-6">
+            <div className="p-4 bg-secondary/30 rounded-2xl border border-border">
+              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                Goal
+              </p>
+              <p className="text-[14px] font-black text-foreground">
+                {showGoalTimeline.title}
+              </p>
+            </div>
+            <div className="relative space-y-8 before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-[2px] before:bg-border">
+              {showGoalTimeline.timeline.map((entry) => (
+                <div key={entry.id} className="relative pl-12">
+                  <div
+                    className={`absolute left-0 top-0 w-10 h-10 rounded-full border-4 border-card flex items-center justify-center z-10 ${
+                      entry.type === "Created"
+                        ? "bg-emerald-500/10 text-primary"
+                        : entry.type === "Completed"
+                          ? "bg-purple-500/10 text-purple-500"
+                          : "bg-blue-500/10 text-blue-500"
+                    }`}
+                  >
+                    {entry.type === "Created" ? (
+                      <Target size={14} />
+                    ) : (
+                      <CheckCircle2 size={14} />
+                    )}
+                  </div>
+                  <div className="p-4 bg-secondary/40 rounded-2xl border border-border shadow-sm">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] font-black text-foreground">
+                        {entry.type}
+                      </span>
+                      <span className="text-[10px] font-bold text-muted-foreground">
+                        {entry.date}
+                      </span>
+                    </div>
+                    <p className="text-[12px] font-bold text-muted-foreground leading-relaxed">
+                      {entry.comment}
+                    </p>
+                    <div className="flex items-center gap-2 mt-3">
+                      <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[9px] font-black text-muted-foreground">
+                        {entry.user.substring(0, 1)}
+                      </div>
+                      <span className="text-[11px] font-black text-foreground">
+                        {entry.user}
+                      </span>
+                      <span className="ml-auto text-[11px] font-black text-primary">
+                        {entry.progress}% Progress
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => setShowGoalTimeline(null)}
+              className="w-full py-4 rounded-xl bg-secondary text-foreground text-[14px] font-black hover:bg-secondary/80 transition-all mt-4"
+            >
+              Close History
+            </button>
+          </div>
+        </ModalLayout>
+      )}
+
+      {/* 7. Propose New Goal Modal */}
       {showAddGoal && (
         <ModalLayout
-          title="Add New Goal"
+          title="Propose New Goal"
           icon={Plus}
           onClose={() => setShowAddGoal(false)}
         >
@@ -762,7 +1451,7 @@ export function EmployeePerformance() {
               showToast(
                 "Goal Proposed",
                 "success",
-                "Your goal request has been submitted.",
+                "Your goal request has been submitted to your manager."
               );
               setShowAddGoal(false);
             }}
@@ -792,14 +1481,24 @@ export function EmployeePerformance() {
               </div>
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                  Due Date
+                  Priority
                 </label>
-                <input
-                  type="date"
-                  className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none"
-                  required
-                />
+                <select className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none appearance-none">
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
               </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                Due Date
+              </label>
+              <input
+                type="date"
+                className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none"
+                required
+              />
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
@@ -833,144 +1532,22 @@ export function EmployeePerformance() {
         </ModalLayout>
       )}
 
-      {/* 3. Performance Review Detail Modal */}
-      {selectedReview && (
-        <ModalLayout
-          title="Performance Review Detail"
-          icon={Award}
-          onClose={() => setSelectedReview(null)}
-        >
-          <div className="space-y-6">
-            <div className="flex items-center justify-between bg-secondary p-4 rounded-2xl border border-border">
-              <div>
-                <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                  Review Period
-                </h4>
-                <p className="text-[15px] font-black text-foreground">
-                  {selectedReview.period}
-                </p>
-              </div>
-              <div className="text-right">
-                <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                  Overall Score
-                </h4>
-                <p className="text-[20px] font-black text-primary">
-                  {selectedReview.overallScore}
-                  <span className="text-[12px] text-muted-foreground">
-                    /5.0
-                  </span>
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                {
-                  label: "Attendance",
-                  val: `${selectedReview.attendanceScore}%`,
-                },
-                {
-                  label: "Goal Comp.",
-                  val: `${selectedReview.goalCompletion}%`,
-                },
-                { label: "KPI Score", val: selectedReview.kpiScore },
-              ].map((s) => (
-                <div
-                  key={s.label}
-                  className="p-3 bg-card border border-border rounded-xl text-center"
-                >
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
-                    {s.label}
-                  </p>
-                  <p className="text-[14px] font-black text-foreground">
-                    {s.val}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-[11px] font-black text-primary uppercase tracking-widest mb-2">
-                  Key Strengths
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {selectedReview.strengths.map((s) => (
-                    <span
-                      key={s}
-                      className="px-3 py-1 bg-emerald-500/10 rounded-lg text-[11px] font-bold text-primary border border-primary/20"
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h4 className="text-[11px] font-black text-rose-500 uppercase tracking-widest mb-2">
-                  Areas for Improvement
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {selectedReview.improvements.map((s) => (
-                    <span
-                      key={s}
-                      className="px-3 py-1 bg-rose-500/10 rounded-lg text-[11px] font-bold text-rose-500 border border-rose-500/20"
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
-                Manager Feedback
-              </h4>
-              <p className="text-[13px] font-bold text-foreground leading-relaxed italic">
-                "{selectedReview.feedback}"
-              </p>
-            </div>
-
-            <div className="p-4 bg-purple-500/10 rounded-2xl border border-purple-500/20 flex items-center justify-between">
-              <div>
-                <h4 className="text-[11px] font-black text-purple-600 uppercase tracking-widest">
-                  Recommendation
-                </h4>
-                <p className="text-[13px] font-black text-purple-600">
-                  {selectedReview.recommendation}
-                </p>
-              </div>
-              <div className="text-right">
-                <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                  Final Rating
-                </h4>
-                <p className="text-[13px] font-black text-foreground">
-                  {selectedReview.rating}
-                </p>
-              </div>
-            </div>
-          </div>
-        </ModalLayout>
-      )}
-
-      {/* 4. Request Feedback Modal */}
+      {/* 8. Request Feedback Modal */}
       {showFeedback && (
         <ModalLayout
           title="Request Feedback"
           icon={MessageSquare}
           onClose={() => setShowFeedback(false)}
         >
-          <form onSubmit={handleSendFeedback} className="space-y-5">
+          <form
+            onSubmit={handleSendFeedback}
+            className="space-y-5"
+          >
             <div className="space-y-1.5">
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
                 Select Manager / Colleague
               </label>
-              <select
-                value={feedbackManager}
-                onChange={(e) => setFeedbackManager(e.target.value)}
-                className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none"
-                required
-              >
+              <select className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none appearance-none" required>
                 <option value="">Select a person...</option>
                 <option>Marcus Williams (Manager)</option>
                 <option>Sarah Johnson (Team Lead)</option>
@@ -983,8 +1560,6 @@ export function EmployeePerformance() {
               </label>
               <input
                 type="text"
-                value={feedbackTopic}
-                onChange={(e) => setFeedbackTopic(e.target.value)}
                 placeholder="e.g. Project Delivery, Collaboration"
                 className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
                 required
@@ -996,8 +1571,6 @@ export function EmployeePerformance() {
               </label>
               <textarea
                 rows={4}
-                value={feedbackMessage}
-                onChange={(e) => setFeedbackMessage(e.target.value)}
                 placeholder="Briefly explain what aspects you'd like feedback on..."
                 className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none resize-none"
                 required
@@ -1006,15 +1579,24 @@ export function EmployeePerformance() {
             <div className="bg-emerald-500/10 p-3 rounded-xl border border-primary/20 flex items-center gap-3">
               <Info size={16} className="text-primary" />
               <p className="text-[11px] font-black text-primary">
-                You will receive a notification once they respond.
+                A notification will be sent to the selected person.
               </p>
             </div>
-            <button
-              type="submit"
-              className="w-full py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all mt-2"
-            >
-              Send Feedback Request
-            </button>
+            <div className="flex items-center gap-3 mt-2">
+              <button
+                type="button"
+                onClick={() => setShowFeedback(false)}
+                className="flex-1 py-4 rounded-xl border border-border text-[14px] font-black text-muted-foreground hover:bg-secondary transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-[2] py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all"
+              >
+                Send Request
+              </button>
+            </div>
           </form>
         </ModalLayout>
       )}

@@ -41,7 +41,7 @@ export function EmployeeSelfProfile() {
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full pb-10">
+    <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-4">

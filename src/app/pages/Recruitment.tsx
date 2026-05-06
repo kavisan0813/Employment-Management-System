@@ -1661,13 +1661,8 @@ function CandidateCard({
 }) {
   const [hovered, setHovered] = useState(false);
 
-  const sourceStyles: Record<Source, { bg: string; text: string }> = {
-    LinkedIn: { bg: "#DCFCE7", text: "#00B87C" },
-    Indeed: { bg: "#E0F2FE", text: "#0EA5E9" },
-    Referral: { bg: "#EDE9FE", text: "#8B5CF6" },
-  };
 
-  const currentSource = sourceStyles[candidate.source || "LinkedIn"];
+
 
   return (
     <div
@@ -3117,12 +3112,7 @@ function JobsView({
   onSelectJob: (j: JobPosting) => void;
   onDeleteJob: (id: string) => void;
 }) {
-  const statusStyles: Record<string, string> = {
-    Open: "bg-emerald-100 text-emerald-600 border-emerald-200",
-    Paused: "bg-amber-100 text-amber-600 border-amber-200",
-    Closed: "bg-slate-100 text-slate-600 border-slate-200",
-    Draft: "bg-white text-slate-400 border-slate-200 border-dashed border-2",
-  };
+
 
   return (
     <div className="space-y-6">

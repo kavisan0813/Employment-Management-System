@@ -16,43 +16,32 @@ export default defineConfig({
 
   build: {
     target: 'esnext',
-    minify: 'terser',
+    minify: 'esbuild', // Faster and uses less memory than terser
     sourcemap: false,
     cssCodeSplit: true,
-    chunkSizeWarningLimit: 700,
-
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
+    chunkSizeWarningLimit: 1000,
 
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
+            // Group the core React ecosystem
             if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'react-vendor'
+              return 'vendor-core';
             }
-
+            // Group heavy UI components
+            if (id.includes('@mui') || id.includes('@radix-ui')) {
+              return 'vendor-ui';
+            }
+            // Group data visualization
             if (id.includes('recharts')) {
-              return 'charts-vendor'
+              return 'vendor-charts';
             }
-
-            if (id.includes('@radix-ui')) {
-              return 'radix-vendor'
-            }
-
-            if (id.includes('@mui')) {
-              return 'mui-vendor'
-            }
-
+            // Group icons and animations
             if (id.includes('lucide-react') || id.includes('motion')) {
-              return 'ui-vendor'
+              return 'vendor-utils';
             }
-
-            return 'vendor'
+            // Let everything else be handled naturally to avoid circular dependencies
           }
         },
       },

@@ -574,7 +574,7 @@ export function Settings() {
     offboardingFfDeadline: "45",
   });
 
-  const updateExtraConfig = (key: string, value: any) => {
+  const updateExtraConfig = (key: string, value: string | boolean) => {
     setExtraConfig((prev) => ({ ...prev, [key]: value }));
   };
 
