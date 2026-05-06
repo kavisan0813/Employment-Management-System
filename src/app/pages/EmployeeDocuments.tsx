@@ -455,7 +455,7 @@ export function EmployeeDocuments() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowUploadModal(false)}
-              className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] dark:bg-black/60"
+              className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -598,7 +598,7 @@ export function EmployeeDocuments() {
       {viewingDoc && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div
-            className="absolute inset-0 bg-background/60 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-background/40"
             onClick={() => setViewingDoc(null)}
           />
           <div className="relative bg-card w-full max-w-[420px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border">

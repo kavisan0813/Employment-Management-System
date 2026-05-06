@@ -111,7 +111,7 @@ export function EmployeeSelfProfile() {
                   PS
                 </div>
                 <div
-                  className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer backdrop-blur-[1px]"
+                  className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <Camera size={24} className="text-white" />
@@ -245,7 +245,7 @@ export function EmployeeSelfProfile() {
         <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-card/80 backdrop-blur-md rounded-2xl border border-border shadow-2xl p-4 flex items-center gap-6 animate-in slide-in-from-bottom-10"
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-card/40 rounded-2xl border border-border shadow-2xl p-4 flex items-center gap-6 animate-in slide-in-from-bottom-10"
         >
           <p className="text-sm font-bold text-foreground px-4 border-r border-border">
             You have unsaved changes
@@ -852,7 +852,7 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-background/40"
       />
 
       <motion.div

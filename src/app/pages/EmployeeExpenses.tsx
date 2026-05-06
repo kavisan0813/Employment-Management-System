@@ -990,7 +990,7 @@ export function EmployeeExpenses() {
       {showAddModal && (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div
-            className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] dark:bg-black/60"
+            className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
             onClick={() => setShowAddModal(false)}
           />
           <div className="relative bg-card w-full max-w-[520px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-border">
@@ -1157,7 +1157,7 @@ export function EmployeeExpenses() {
       {selectedExpense && (
         <div className="fixed inset-0 z-[4000] flex justify-end animate-in fade-in duration-300">
           <div
-            className="absolute inset-0 bg-slate-950/20 backdrop-blur-[1px]"
+            className="absolute inset-0 bg-slate-950/20"
             onClick={() => setSelectedExpense(null)}
           />
           <div className="relative w-full max-w-[400px] bg-card h-screen shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 border-l border-border">

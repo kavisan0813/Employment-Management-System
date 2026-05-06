@@ -223,10 +223,7 @@ const Modal = ({
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 animate-in fade-in duration-200">
-      <div
-        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-slate-950/40" onClick={onClose} />
       <div className="relative bg-card w-full max-w-[480px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border flex flex-col max-h-[90vh]">
         <div className="p-6 border-b border-border flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
@@ -1218,9 +1215,27 @@ export function EmployeeSchedule() {
                 <div className="relative pl-6 space-y-6">
                   <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-border" />
                   {[
-                    { label: "Submitted", status: "completed", date: selectedRequest.createdAt },
-                    { label: "Manager Review", status: selectedRequest.status === "Pending" ? "active" : "completed", date: "In Progress" },
-                    { label: selectedRequest.status, status: selectedRequest.status === "Pending" ? "upcoming" : "completed", date: "Final Action" },
+                    {
+                      label: "Submitted",
+                      status: "completed",
+                      date: selectedRequest.createdAt,
+                    },
+                    {
+                      label: "Manager Review",
+                      status:
+                        selectedRequest.status === "Pending"
+                          ? "active"
+                          : "completed",
+                      date: "In Progress",
+                    },
+                    {
+                      label: selectedRequest.status,
+                      status:
+                        selectedRequest.status === "Pending"
+                          ? "upcoming"
+                          : "completed",
+                      date: "Final Action",
+                    },
                   ].map((step, i) => (
                     <div key={i} className="relative flex items-center gap-3">
                       <div

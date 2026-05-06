@@ -321,7 +321,7 @@ function ModalLayout({
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div
-        className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] dark:bg-black/60"
+        className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
         onClick={onClose}
       />
       <div
@@ -373,7 +373,6 @@ export function EmployeePerformance() {
   const [showFeedback, setShowFeedback] = useState(false);
 
   // Form States (Mock)
-
 
   const handleDownloadReport = () => {
     showToast(
@@ -960,9 +959,7 @@ export function EmployeePerformance() {
                   <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
                     {m.label}
                   </p>
-                  <p className={`text-[18px] font-black ${m.color}`}>
-                    {m.val}
-                  </p>
+                  <p className={`text-[18px] font-black ${m.color}`}>{m.val}</p>
                 </div>
               ))}
             </div>
@@ -1266,7 +1263,7 @@ export function EmployeePerformance() {
                   showToast(
                     "Review Downloaded",
                     "success",
-                    "Detailed review PDF is ready."
+                    "Detailed review PDF is ready.",
                   )
                 }
                 className="flex-1 py-4 rounded-xl border border-border text-[14px] font-black text-foreground hover:bg-secondary transition-all flex items-center justify-center gap-2"
@@ -1278,7 +1275,7 @@ export function EmployeePerformance() {
                   showToast(
                     "Review Acknowledged",
                     "success",
-                    "Your acknowledgment has been recorded."
+                    "Your acknowledgment has been recorded.",
                   );
                   setSelectedReviewDetail(null);
                 }}
@@ -1335,7 +1332,7 @@ export function EmployeePerformance() {
                     showToast(
                       "Report Downloaded",
                       "success",
-                      `${opt.label} downloaded successfully.`
+                      `${opt.label} downloaded successfully.`,
                     );
                     setShowExportModal(false);
                   }}
@@ -1451,7 +1448,7 @@ export function EmployeePerformance() {
               showToast(
                 "Goal Proposed",
                 "success",
-                "Your goal request has been submitted to your manager."
+                "Your goal request has been submitted to your manager.",
               );
               setShowAddGoal(false);
             }}
@@ -1539,15 +1536,15 @@ export function EmployeePerformance() {
           icon={MessageSquare}
           onClose={() => setShowFeedback(false)}
         >
-          <form
-            onSubmit={handleSendFeedback}
-            className="space-y-5"
-          >
+          <form onSubmit={handleSendFeedback} className="space-y-5">
             <div className="space-y-1.5">
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
                 Select Manager / Colleague
               </label>
-              <select className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none appearance-none" required>
+              <select
+                className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none appearance-none"
+                required
+              >
                 <option value="">Select a person...</option>
                 <option>Marcus Williams (Manager)</option>
                 <option>Sarah Johnson (Team Lead)</option>

@@ -585,7 +585,7 @@ export function EmployeeAnnouncements() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowConfirmModal(null)}
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-background/40 "
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -801,7 +801,7 @@ function AnnouncementDetailModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="absolute inset-0 bg-background/80 backdrop-blur-md"
+        className="absolute inset-0 bg-background/40"
       />
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 30 }}
