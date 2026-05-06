@@ -12,12 +12,18 @@ import {
   Plus,
   ShieldAlert,
   ChevronRight,
-  Paperclip
+  Paperclip,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "framer-motion";
 
-const TABS = ["Personal Info", "Employment", "Documents", "Emergency Contact", "Settings"];
+const TABS = [
+  "Personal Info",
+  "Employment",
+  "Documents",
+  "Emergency Contact",
+  "Settings",
+];
 
 export function EmployeeSelfProfile() {
   const [activeTab, setActiveTab] = useState("Personal Info");
@@ -27,18 +33,24 @@ export function EmployeeSelfProfile() {
 
   const handleSave = () => {
     setIsEditing(false);
-    showToast("Profile Updated", "success", "Your changes have been saved successfully.");
+    showToast(
+      "Profile Updated",
+      "success",
+      "Your changes have been saved successfully.",
+    );
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-700 max-w-[1400px] mx-auto pb-10">
+    <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full pb-10">
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-4">
           <div className="w-11 h-11 rounded-[12px] bg-secondary flex items-center justify-center shadow-sm">
             <User size={22} className="text-primary" />
           </div>
-          <h1 className="text-[26px] font-black text-foreground leading-none">My Profile</h1>
+          <h1 className="text-[26px] font-black text-foreground leading-none">
+            My Profile
+          </h1>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -82,11 +94,14 @@ export function EmployeeSelfProfile() {
       {/* ─── Profile Hero Card ────────────────────────────────────── */}
       <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
         {/* Top Gradient Strip */}
-        <div 
+        <div
           className="h-[100px] w-full"
-          style={{ background: "linear-gradient(135deg, var(--primary) 0%, #065F46 100%)" }}
+          style={{
+            background:
+              "linear-gradient(135deg, var(--primary) 0%, #065F46 100%)",
+          }}
         ></div>
-        
+
         <div className="px-8 pb-8 relative">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Avatar Section */}
@@ -95,13 +110,18 @@ export function EmployeeSelfProfile() {
                 <div className="w-24 h-24 rounded-full border-[4px] border-card bg-primary flex items-center justify-center text-white font-black text-3xl shadow-xl overflow-hidden">
                   PS
                 </div>
-                <div 
+                <div
                   className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer backdrop-blur-[1px]"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <Camera size={24} className="text-white" />
                 </div>
-                <input ref={fileInputRef} type="file" className="hidden" accept="image/*" />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                />
               </div>
             </div>
 
@@ -109,43 +129,70 @@ export function EmployeeSelfProfile() {
             <div className="flex-1 pt-4">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-[26px] font-black text-foreground tracking-tight">Priya Sharma</h2>
-                  <p className="text-[15px] font-bold text-primary mt-0.5">Senior Frontend Developer</p>
-                  
+                  <h2 className="text-[26px] font-black text-foreground tracking-tight">
+                    Priya Sharma
+                  </h2>
+                  <p className="text-[15px] font-bold text-primary mt-0.5">
+                    Senior Frontend Developer
+                  </p>
+
                   <div className="flex flex-wrap items-center gap-3 mt-4">
-                    <span className="px-3 py-1 rounded-lg bg-secondary text-muted-foreground text-[11px] font-black uppercase tracking-wider border border-border shadow-sm">#EMP-0142</span>
-                    <span className="px-3 py-1 rounded-lg bg-primary/10 text-primary text-[11px] font-black uppercase tracking-wider border border-primary/20 shadow-sm">Engineering</span>
-                    <span className="flex items-center gap-1.5 text-muted-foreground text-[13px] font-bold">
-                      <MapPin size={14} className="text-primary" /> Chennai, India
+                    <span className="px-3 py-1 rounded-lg bg-secondary text-muted-foreground text-[11px] font-black uppercase tracking-wider border border-border shadow-sm">
+                      #EMP-0142
                     </span>
-                    <span className="text-muted-foreground text-[13px] font-bold">Since Mar 2021</span>
+                    <span className="px-3 py-1 rounded-lg bg-primary/10 text-primary text-[11px] font-black uppercase tracking-wider border border-primary/20 shadow-sm">
+                      Engineering
+                    </span>
+                    <span className="flex items-center gap-1.5 text-muted-foreground text-[13px] font-bold">
+                      <MapPin size={14} className="text-primary" /> Chennai,
+                      India
+                    </span>
+                    <span className="text-muted-foreground text-[13px] font-bold">
+                      Since Mar 2021
+                    </span>
                   </div>
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
                   <div className="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
                     <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                    <span className="text-[12px] font-black text-primary uppercase tracking-wider">Active</span>
+                    <span className="text-[12px] font-black text-primary uppercase tracking-wider">
+                      Active
+                    </span>
                   </div>
-                  <span className="px-4 py-1 rounded-full bg-secondary text-muted-foreground text-[11px] font-black uppercase tracking-widest border border-border shadow-sm">Full-time</span>
+                  <span className="px-4 py-1 rounded-full bg-secondary text-muted-foreground text-[11px] font-black uppercase tracking-widest border border-border shadow-sm">
+                    Full-time
+                  </span>
                 </div>
               </div>
 
               {/* Stat Boxes */}
               <div className="flex items-center gap-10 mt-8 pt-6 border-t border-border">
                 <div className="flex flex-col">
-                  <p className="text-[24px] font-black text-foreground tracking-tight">4.2 yrs</p>
-                  <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Tenure</p>
+                  <p className="text-[24px] font-black text-foreground tracking-tight">
+                    4.2 yrs
+                  </p>
+                  <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Tenure
+                  </p>
                 </div>
                 <div className="w-px h-10 bg-border"></div>
                 <div className="flex flex-col">
-                  <p className="text-[24px] font-black text-foreground tracking-tight">92%</p>
-                  <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Attendance</p>
+                  <p className="text-[24px] font-black text-foreground tracking-tight">
+                    92%
+                  </p>
+                  <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Attendance
+                  </p>
                 </div>
                 <div className="w-px h-10 bg-border"></div>
                 <div className="flex flex-col">
-                  <p className="text-[24px] font-black text-foreground tracking-tight">4.5 ★</p>
-                  <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Rating</p>
+                  <p className="text-[24px] font-black text-foreground tracking-tight">
+                    4.5 ★
+                  </p>
+                  <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Rating
+                  </p>
                 </div>
               </div>
             </div>
@@ -160,8 +207,8 @@ export function EmployeeSelfProfile() {
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-8 py-3 rounded-[14px] text-[14px] transition-all whitespace-nowrap flex items-center gap-2 ${
-              activeTab === tab 
-                ? "bg-secondary text-primary font-black shadow-sm" 
+              activeTab === tab
+                ? "bg-secondary text-primary font-black shadow-sm"
                 : "text-muted-foreground font-bold hover:text-foreground hover:bg-background"
             }`}
           >
@@ -180,10 +227,14 @@ export function EmployeeSelfProfile() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-            {activeTab === "Personal Info" && <PersonalTab isEditing={isEditing} />}
+            {activeTab === "Personal Info" && (
+              <PersonalTab isEditing={isEditing} />
+            )}
             {activeTab === "Employment" && <EmploymentTab />}
             {activeTab === "Documents" && <DocumentsTab />}
-            {activeTab === "Emergency Contact" && <EmergencyTab isEditing={isEditing} />}
+            {activeTab === "Emergency Contact" && (
+              <EmergencyTab isEditing={isEditing} />
+            )}
             {activeTab === "Settings" && <SettingsTab />}
           </motion.div>
         </AnimatePresence>
@@ -191,12 +242,14 @@ export function EmployeeSelfProfile() {
 
       {/* ─── Save Bar (Editing Mode) ─────────────────────────────── */}
       {isEditing && (
-        <motion.div 
+        <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
           className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-card/80 backdrop-blur-md rounded-2xl border border-border shadow-2xl p-4 flex items-center gap-6 animate-in slide-in-from-bottom-10"
         >
-          <p className="text-sm font-bold text-foreground px-4 border-r border-border">You have unsaved changes</p>
+          <p className="text-sm font-bold text-foreground px-4 border-r border-border">
+            You have unsaved changes
+          </p>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsEditing(false)}
@@ -223,7 +276,9 @@ function Label({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 mb-6">
       <div className="w-1.5 h-5 bg-primary rounded-full"></div>
-      <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">{children}</h3>
+      <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
+        {children}
+      </h3>
     </div>
   );
 }
@@ -237,10 +292,19 @@ interface InputFieldProps {
   isTextarea?: boolean;
 }
 
-function InputField({ label, value, disabled, placeholder = "", type = "text", isTextarea = false }: InputFieldProps) {
+function InputField({
+  label,
+  value,
+  disabled,
+  placeholder = "",
+  type = "text",
+  isTextarea = false,
+}: InputFieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">{label}</label>
+      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+        {label}
+      </label>
       {isTextarea ? (
         <textarea
           disabled={disabled}
@@ -270,22 +334,45 @@ interface DropdownFieldProps {
   disabled: boolean;
 }
 
-function DropdownField({ label, value, options, disabled }: DropdownFieldProps) {
+function DropdownField({
+  label,
+  value,
+  options,
+  disabled,
+}: DropdownFieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">{label}</label>
+      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+        {label}
+      </label>
       <div className="relative">
-        <select 
+        <select
           disabled={disabled}
           defaultValue={value}
           className="w-full h-12 bg-background border border-border rounded-xl px-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary transition-all appearance-none disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          {options.map((opt: string) => <option key={opt} value={opt}>{opt}</option>)}
+          {options.map((opt: string) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
         </select>
         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
-           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-           </svg>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M2.5 4.5L6 8L9.5 4.5"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
       </div>
     </div>
@@ -300,24 +387,74 @@ function PersonalTab({ isEditing }: { isEditing: boolean }) {
         <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
           <Label>PERSONAL DETAILS</Label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField label="Full Name" value="Priya Sharma" disabled={!isEditing} />
-            <InputField label="Date of Birth" value="1995-08-15" type="date" disabled={!isEditing} />
-            <DropdownField label="Gender" value="Female" options={["Male", "Female", "Other"]} disabled={!isEditing} />
-            <DropdownField label="Blood Group" value="O+" options={["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]} disabled={!isEditing} />
-            <DropdownField label="Marital Status" value="Single" options={["Single", "Married", "Divorced"]} disabled={!isEditing} />
-            <InputField label="Nationality" value="Indian" disabled={!isEditing} />
+            <InputField
+              label="Full Name"
+              value="Priya Sharma"
+              disabled={!isEditing}
+            />
+            <InputField
+              label="Date of Birth"
+              value="1995-08-15"
+              type="date"
+              disabled={!isEditing}
+            />
+            <DropdownField
+              label="Gender"
+              value="Female"
+              options={["Male", "Female", "Other"]}
+              disabled={!isEditing}
+            />
+            <DropdownField
+              label="Blood Group"
+              value="O+"
+              options={["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]}
+              disabled={!isEditing}
+            />
+            <DropdownField
+              label="Marital Status"
+              value="Single"
+              options={["Single", "Married", "Divorced"]}
+              disabled={!isEditing}
+            />
+            <InputField
+              label="Nationality"
+              value="Indian"
+              disabled={!isEditing}
+            />
           </div>
         </div>
 
         <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
           <Label>CONTACT INFORMATION</Label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField label="Personal Email" value="priya.sharma@gmail.com" disabled={!isEditing} />
-            <InputField label="Mobile Number" value="+91 98765 43210" disabled={!isEditing} />
-            <InputField label="Alternate Phone" value="" placeholder="Enter number" disabled={!isEditing} />
-            <InputField label="LinkedIn" value="linkedin.com/in/priya-sharma" disabled={!isEditing} />
+            <InputField
+              label="Personal Email"
+              value="priya.sharma@gmail.com"
+              disabled={!isEditing}
+            />
+            <InputField
+              label="Mobile Number"
+              value="+91 98765 43210"
+              disabled={!isEditing}
+            />
+            <InputField
+              label="Alternate Phone"
+              value=""
+              placeholder="Enter number"
+              disabled={!isEditing}
+            />
+            <InputField
+              label="LinkedIn"
+              value="linkedin.com/in/priya-sharma"
+              disabled={!isEditing}
+            />
             <div className="md:col-span-2">
-              <InputField label="Current Address" value="Flat 402, Green Meadows Apartment, Velachery, Chennai - 600042" isTextarea disabled={!isEditing} />
+              <InputField
+                label="Current Address"
+                value="Flat 402, Green Meadows Apartment, Velachery, Chennai - 600042"
+                isTextarea
+                disabled={!isEditing}
+              />
             </div>
           </div>
         </div>
@@ -328,8 +465,18 @@ function PersonalTab({ isEditing }: { isEditing: boolean }) {
         <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
           <Label>SKILLS & EXPERTISE</Label>
           <div className="flex flex-wrap gap-2.5">
-            {["React", "Node.js", "PostgreSQL", "Docker", "AWS", "TypeScript"].map(skill => (
-              <span key={skill} className="px-3.5 py-2 rounded-xl bg-secondary text-primary text-[12px] font-black border border-primary/10 shadow-sm transition-all hover:scale-105">
+            {[
+              "React",
+              "Node.js",
+              "PostgreSQL",
+              "Docker",
+              "AWS",
+              "TypeScript",
+            ].map((skill) => (
+              <span
+                key={skill}
+                className="px-3.5 py-2 rounded-xl bg-secondary text-primary text-[12px] font-black border border-primary/10 shadow-sm transition-all hover:scale-105"
+              >
                 {skill}
               </span>
             ))}
@@ -347,11 +494,18 @@ function PersonalTab({ isEditing }: { isEditing: boolean }) {
             {[
               { lang: "English", prof: "Native" },
               { lang: "Hindi", prof: "Fluent" },
-              { lang: "Tamil", prof: "Conversational" }
-            ].map(l => (
-              <div key={l.lang} className="flex items-center justify-between p-3 rounded-xl bg-background border border-border">
-                <span className="text-[14px] font-black text-foreground">{l.lang}</span>
-                <span className="text-[11px] font-black text-primary uppercase tracking-widest px-2 py-0.5 bg-primary/10 rounded-md">{l.prof}</span>
+              { lang: "Tamil", prof: "Conversational" },
+            ].map((l) => (
+              <div
+                key={l.lang}
+                className="flex items-center justify-between p-3 rounded-xl bg-background border border-border"
+              >
+                <span className="text-[14px] font-black text-foreground">
+                  {l.lang}
+                </span>
+                <span className="text-[11px] font-black text-primary uppercase tracking-widest px-2 py-0.5 bg-primary/10 rounded-md">
+                  {l.prof}
+                </span>
               </div>
             ))}
           </div>
@@ -359,11 +513,11 @@ function PersonalTab({ isEditing }: { isEditing: boolean }) {
 
         <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
           <Label>BIO / ABOUT</Label>
-          <InputField 
-            label="Tell about yourself" 
-            value="Passionate senior frontend developer with 5+ years of experience in building enterprise-grade web applications. Expert in React ecosystem and focused on crafting premium user experiences." 
-            isTextarea 
-            disabled={!isEditing} 
+          <InputField
+            label="Tell about yourself"
+            value="Passionate senior frontend developer with 5+ years of experience in building enterprise-grade web applications. Expert in React ecosystem and focused on crafting premium user experiences."
+            isTextarea
+            disabled={!isEditing}
           />
         </div>
       </div>
@@ -383,7 +537,7 @@ function EmploymentTab() {
     { label: "Joining Date", value: "15-03-2021" },
     { label: "Probation End Date", value: "15-09-2021" },
     { label: "Notice Period", value: "60 Days" },
-    { label: "Cost Center", value: "CC-TECH-04" }
+    { label: "Cost Center", value: "CC-TECH-04" },
   ];
 
   return (
@@ -393,15 +547,20 @@ function EmploymentTab() {
           <AlertCircle size={24} />
         </div>
         <p className="text-[14px] font-bold text-primary leading-relaxed">
-          These details are managed by HR. Contact your department administrator to request updates to your professional profile.
+          These details are managed by HR. Contact your department administrator
+          to request updates to your professional profile.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-12">
-        {fields.map(f => (
+        {fields.map((f) => (
           <div key={f.label} className="group">
-            <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 group-hover:text-primary transition-colors">{f.label}</p>
-            <p className="text-[16px] font-black text-foreground tracking-tight">{f.value}</p>
+            <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 group-hover:text-primary transition-colors">
+              {f.label}
+            </p>
+            <p className="text-[16px] font-black text-foreground tracking-tight">
+              {f.value}
+            </p>
           </div>
         ))}
       </div>
@@ -411,36 +570,81 @@ function EmploymentTab() {
 
 function DocumentsTab() {
   const docs = [
-    { name: "Aadhar Card", type: "ID Proof", status: "Verified", color: "#3B82F6" },
-    { name: "PAN Card", type: "ID Proof", status: "Verified", color: "#F59E0B" },
-    { name: "Passport", type: "Identity", status: "Verified", color: "#8B5CF6" },
-    { name: "Bank Passbook", type: "Finance", status: "Pending", color: "#10B981" },
-    { name: "Educational Certificate", type: "Academics", status: "Verified", color: "#EC4899" },
-    { name: "Experience Letters", type: "Work", status: "Under Review", color: "#6366F1" }
+    {
+      name: "Aadhar Card",
+      type: "ID Proof",
+      status: "Verified",
+      color: "#3B82F6",
+    },
+    {
+      name: "PAN Card",
+      type: "ID Proof",
+      status: "Verified",
+      color: "#F59E0B",
+    },
+    {
+      name: "Passport",
+      type: "Identity",
+      status: "Verified",
+      color: "#8B5CF6",
+    },
+    {
+      name: "Bank Passbook",
+      type: "Finance",
+      status: "Pending",
+      color: "#10B981",
+    },
+    {
+      name: "Educational Certificate",
+      type: "Academics",
+      status: "Verified",
+      color: "#EC4899",
+    },
+    {
+      name: "Experience Letters",
+      type: "Work",
+      status: "Under Review",
+      color: "#6366F1",
+    },
   ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {docs.map(doc => (
-        <div key={doc.name} className="bg-card rounded-[24px] p-7 border border-border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+      {docs.map((doc) => (
+        <div
+          key={doc.name}
+          className="bg-card rounded-[24px] p-7 border border-border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group"
+        >
           <div className="flex items-start justify-between mb-5">
             <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-background group-hover:bg-primary/10 transition-colors shadow-inner">
               <FileText size={28} style={{ color: doc.color }} />
             </div>
-            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
-              doc.status === 'Verified' ? 'bg-primary/10 text-primary border-primary/20' :
-              doc.status === 'Pending' ? 'bg-amber-500/10 text-amber-600 border-amber-500/20' :
-              'bg-blue-500/10 text-blue-600 border-blue-500/20'
-            }`}>
+            <span
+              className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+                doc.status === "Verified"
+                  ? "bg-primary/10 text-primary border-primary/20"
+                  : doc.status === "Pending"
+                    ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                    : "bg-blue-500/10 text-blue-600 border-blue-500/20"
+              }`}
+            >
               {doc.status}
             </span>
           </div>
-          <h4 className="text-[16px] font-black text-foreground mb-1 group-hover:text-primary transition-colors">{doc.name}</h4>
-          <p className="text-[13px] font-bold text-muted-foreground mb-8 uppercase tracking-wide">{doc.type}</p>
-          
+          <h4 className="text-[16px] font-black text-foreground mb-1 group-hover:text-primary transition-colors">
+            {doc.name}
+          </h4>
+          <p className="text-[13px] font-bold text-muted-foreground mb-8 uppercase tracking-wide">
+            {doc.type}
+          </p>
+
           <div className="flex gap-3">
-            <button className="flex-1 py-3 rounded-xl bg-background text-foreground text-[12px] font-black border border-border hover:bg-secondary transition-all">View</button>
-            <button className="flex-1 py-3 rounded-xl border border-primary text-primary text-[12px] font-black hover:bg-primary/10 transition-all">Replace</button>
+            <button className="flex-1 py-3 rounded-xl bg-background text-foreground text-[12px] font-black border border-border hover:bg-secondary transition-all">
+              View
+            </button>
+            <button className="flex-1 py-3 rounded-xl border border-primary text-primary text-[12px] font-black hover:bg-primary/10 transition-all">
+              Replace
+            </button>
           </div>
         </div>
       ))}
@@ -453,12 +657,24 @@ function EmergencyTab({ isEditing }: { isEditing: boolean }) {
     <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
       <Label>PRIMARY EMERGENCY CONTACT</Label>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-        <InputField label="Contact Name" value="Rajesh Sharma" disabled={!isEditing} />
+        <InputField
+          label="Contact Name"
+          value="Rajesh Sharma"
+          disabled={!isEditing}
+        />
         <InputField label="Relationship" value="Father" disabled={!isEditing} />
-        <InputField label="Phone Number" value="+91 98450 12345" disabled={!isEditing} />
-        <InputField label="Email Address" value="rajesh.s@example.com" disabled={!isEditing} />
+        <InputField
+          label="Phone Number"
+          value="+91 98450 12345"
+          disabled={!isEditing}
+        />
+        <InputField
+          label="Email Address"
+          value="rajesh.s@example.com"
+          disabled={!isEditing}
+        />
       </div>
-      
+
       <button className="flex items-center gap-2 text-primary font-black text-[13px] hover:underline transition-all">
         <Plus size={18} /> Add Another Contact
       </button>
@@ -467,33 +683,124 @@ function EmergencyTab({ isEditing }: { isEditing: boolean }) {
 }
 
 function SettingsTab() {
+  const [preferences, setPreferences] = useState({
+    email: true,
+    inApp: true,
+    sms: false,
+    leave: true,
+    expense: true,
+    payslip: true,
+    announcements: false,
+  });
+
+  const toggle = (key: keyof typeof preferences) => {
+    setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const ToggleItem = ({
+    label,
+    value,
+    onToggle,
+  }: {
+    label: string;
+    value: boolean;
+    onToggle: () => void;
+  }) => (
+    <div className="flex items-center justify-between py-3.5 group">
+      <span className="text-[15px] font-bold text-foreground/90 group-hover:text-primary transition-colors">
+        {label}
+      </span>
+      <button
+        onClick={onToggle}
+        className={`w-11 h-6 rounded-full transition-all relative border-2 ${
+          value
+            ? "bg-primary/10 border-primary"
+            : "bg-secondary/50 border-border"
+        }`}
+      >
+        <div
+          className={`absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full transition-all ${
+            value ? "right-1 bg-primary" : "left-1 bg-muted-foreground/40"
+          }`}
+        />
+      </button>
+    </div>
+  );
+
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       <div className="lg:w-[60%] space-y-6">
         <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
           <Label>ACCOUNT PREFERENCES</Label>
-          
-          <div className="space-y-8">
-            {[
-              { label: "Email Notifications", desc: "Receive updates about payroll and attendance via email" },
-              { label: "Push Notifications", desc: "Get real-time alerts on your browser/mobile" },
-              { label: "SMS Alerts", desc: "Receive critical updates via text message" }
-            ].map(item => (
-              <div key={item.label} className="flex items-center justify-between p-4 rounded-2xl bg-background border border-border/50 group hover:border-primary/30 transition-all">
-                <div>
-                  <h4 className="text-[15px] font-black text-foreground group-hover:text-primary transition-colors">{item.label}</h4>
-                  <p className="text-[13px] text-muted-foreground font-bold mt-1">{item.desc}</p>
-                </div>
-                <div className="w-12 h-6 bg-primary rounded-full relative cursor-pointer shadow-inner">
-                  <div className="absolute top-1 right-1 w-4 h-4 bg-white rounded-full shadow-md"></div>
-                </div>
+
+          <div className="space-y-10">
+            {/* Delivery Channels */}
+            <div>
+              <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">
+                Delivery Channels
+              </h4>
+              <div className="space-y-1 divide-y divide-border/50">
+                <ToggleItem
+                  label="Email Notifications"
+                  value={preferences.email}
+                  onToggle={() => toggle("email")}
+                />
+                <ToggleItem
+                  label="In-App Notifications"
+                  value={preferences.inApp}
+                  onToggle={() => toggle("inApp")}
+                />
+                <ToggleItem
+                  label="SMS Notifications"
+                  value={preferences.sms}
+                  onToggle={() => toggle("sms")}
+                />
               </div>
-            ))}
+            </div>
+
+            {/* Alert Types */}
+            <div>
+              <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">
+                Alert Types
+              </h4>
+              <div className="space-y-1 divide-y divide-border/50">
+                <ToggleItem
+                  label="Leave Request Updates"
+                  value={preferences.leave}
+                  onToggle={() => toggle("leave")}
+                />
+                <ToggleItem
+                  label="Expense Claim Status"
+                  value={preferences.expense}
+                  onToggle={() => toggle("expense")}
+                />
+                <ToggleItem
+                  label="Monthly Payslip Alerts"
+                  value={preferences.payslip}
+                  onToggle={() => toggle("payslip")}
+                />
+                <ToggleItem
+                  label="Company Announcements"
+                  value={preferences.announcements}
+                  onToggle={() => toggle("announcements")}
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-            <DropdownField label="Preferred Language" value="English (US)" options={["English (US)", "English (UK)", "Hindi"]} disabled={false} />
-            <DropdownField label="Timezone" value="(GMT+05:30) India Standard Time" options={["(GMT+05:30) IST", "(GMT-08:00) PST"]} disabled={false} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 pt-8 border-t border-border">
+            <DropdownField
+              label="Preferred Language"
+              value="English (US)"
+              options={["English (US)", "English (UK)", "Hindi"]}
+              disabled={false}
+            />
+            <DropdownField
+              label="Timezone"
+              value="(GMT+05:30) India Standard Time"
+              options={["(GMT+05:30) IST", "(GMT-08:00) PST"]}
+              disabled={false}
+            />
           </div>
         </div>
       </div>
@@ -504,10 +811,15 @@ function SettingsTab() {
           <button className="w-full py-4 rounded-2xl border border-border text-foreground font-black text-[14px] flex items-center justify-center gap-3 hover:bg-secondary transition-all shadow-sm">
             <Shield size={18} className="text-primary" /> Change Password
           </button>
-          
+
           <div className="mt-8 pt-8 border-t border-border">
-            <h4 className="text-[13px] font-black text-rose-500 mb-2 uppercase tracking-widest">Danger Zone</h4>
-            <p className="text-[12px] text-muted-foreground mb-6 font-bold">Once you deactivate your account, there is no going back. Please be certain.</p>
+            <h4 className="text-[13px] font-black text-rose-500 mb-2 uppercase tracking-widest">
+              Danger Zone
+            </h4>
+            <p className="text-[12px] text-muted-foreground mb-6 font-bold">
+              Once you deactivate your account, there is no going back. Please
+              be certain.
+            </p>
             <button className="w-full py-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 font-black text-[14px] flex items-center justify-center gap-3 hover:bg-rose-500 hover:text-white transition-all shadow-sm">
               <ShieldAlert size={18} /> Deactivate Account
             </button>
@@ -525,21 +837,25 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    showToast("Request Submitted", "success", "Your profile update request has been sent to HR for approval.");
+    showToast(
+      "Request Submitted",
+      "success",
+      "Your profile update request has been sent to HR for approval.",
+    );
     onClose();
   };
 
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
         className="absolute inset-0 bg-background/80 backdrop-blur-sm"
       />
-      
-      <motion.div 
+
+      <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -551,11 +867,18 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
               <User size={24} />
             </div>
             <div>
-              <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">PROFILE UPDATE REQUEST</h3>
-              <p className="text-[12px] font-bold text-muted-foreground">Request changes to your managed profile details</p>
+              <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">
+                PROFILE UPDATE REQUEST
+              </h3>
+              <p className="text-[12px] font-bold text-muted-foreground">
+                Request changes to your managed profile details
+              </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors active:scale-90">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors active:scale-90"
+          >
             <X size={22} />
           </button>
         </div>
@@ -568,16 +891,41 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
                   FIELD TO UPDATE
                 </label>
                 <div className="relative">
-                  <select 
+                  <select
                     value={fieldToUpdate}
                     onChange={(e) => setFieldToUpdate(e.target.value)}
                     className="w-full bg-[#F0FDF4] dark:bg-emerald-950/50 border border-emerald-500/20 rounded-2xl px-5 py-4 text-[14px] font-bold text-slate-900 dark:text-emerald-50 focus:outline-none focus:border-primary appearance-none transition-all"
                   >
-                    <option value="Phone" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">Phone Number</option>
-                    <option value="Address" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">Address</option>
-                    <option value="Bank Details" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">Bank Details</option>
-                    <option value="Emergency Contact" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">Emergency Contact</option>
-                    <option value="Personal Info" className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50">Personal Information</option>
+                    <option
+                      value="Phone"
+                      className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50"
+                    >
+                      Phone Number
+                    </option>
+                    <option
+                      value="Address"
+                      className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50"
+                    >
+                      Address
+                    </option>
+                    <option
+                      value="Bank Details"
+                      className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50"
+                    >
+                      Bank Details
+                    </option>
+                    <option
+                      value="Emergency Contact"
+                      className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50"
+                    >
+                      Emergency Contact
+                    </option>
+                    <option
+                      value="Personal Info"
+                      className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50"
+                    >
+                      Personal Information
+                    </option>
                   </select>
                   <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
                     <ChevronRight size={18} className="rotate-90" />
@@ -590,7 +938,7 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
                   <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
                     CURRENT VALUE
                   </label>
-                  <input 
+                  <input
                     type="text"
                     readOnly
                     value={currentValue}
@@ -601,7 +949,7 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
                   <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
                     NEW VALUE
                   </label>
-                  <input 
+                  <input
                     type="text"
                     required
                     placeholder="Enter new value"
@@ -616,8 +964,8 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
                 <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
                   REASON FOR UPDATE
                 </label>
-                <textarea 
-                  placeholder="Explain why this update is needed..." 
+                <textarea
+                  placeholder="Explain why this update is needed..."
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   required
@@ -630,21 +978,25 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
                   <div className="text-slate-500 group-hover:text-primary transition-colors">
                     <Paperclip size={20} />
                   </div>
-                  <span className="text-[14px] font-black text-slate-600 dark:text-slate-400">Attach Supporting Doc (Optional)</span>
+                  <span className="text-[14px] font-black text-slate-600 dark:text-slate-400">
+                    Attach Supporting Doc (Optional)
+                  </span>
                 </div>
-                <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">PDF, JPG</span>
+                <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                  PDF, JPG
+                </span>
               </div>
             </div>
 
             <div className="flex gap-4 pt-4">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={onClose}
                 className="flex-1 py-4.5 px-8 border border-slate-200 dark:border-border rounded-[20px] text-[15px] font-black text-slate-500 hover:bg-secondary transition-all uppercase tracking-widest"
               >
                 CANCEL
               </button>
-              <button 
+              <button
                 type="submit"
                 className="flex-[1.5] py-4.5 px-8 bg-[#00B87C] text-white rounded-[20px] text-[15px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/25 hover:opacity-95 active:scale-[0.98] transition-all"
               >

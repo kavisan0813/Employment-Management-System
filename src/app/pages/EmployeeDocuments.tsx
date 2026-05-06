@@ -50,10 +50,25 @@ const CATEGORIES: DocCategory[] = [
     iconBg: "bg-emerald-500/10",
     iconColor: "text-primary",
     items: [
-      { name: "Aadhar Card",      status: "uploaded",     uploadedDate: "Apr 1, 2026",  actions: ["view"] },
-      { name: "PAN Card",         status: "uploaded",     uploadedDate: "Uploaded",      actions: ["view"] },
-      { name: "Passport",         status: "expiring",     expiryLabel: "Expires Jun 2026", actions: ["view", "update"] },
-      { name: "Driving License",  status: "not-uploaded",                                 actions: ["upload"] },
+      {
+        name: "Aadhar Card",
+        status: "uploaded",
+        uploadedDate: "Apr 1, 2026",
+        actions: ["view"],
+      },
+      {
+        name: "PAN Card",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      {
+        name: "Passport",
+        status: "expiring",
+        expiryLabel: "Expires Jun 2026",
+        actions: ["view", "update"],
+      },
+      { name: "Driving License", status: "not-uploaded", actions: ["upload"] },
     ],
   },
   {
@@ -63,10 +78,30 @@ const CATEGORIES: DocCategory[] = [
     iconBg: "bg-purple-500/10",
     iconColor: "text-purple-500",
     items: [
-      { name: "Offer Letter",         status: "uploaded", uploadedDate: "Uploaded", actions: ["view"] },
-      { name: "Appointment Letter",   status: "uploaded", uploadedDate: "Uploaded", actions: ["view"] },
-      { name: "NDA",                  status: "uploaded", uploadedDate: "Uploaded", actions: ["view"] },
-      { name: "Last Appraisal",       status: "uploaded", uploadedDate: "Uploaded", actions: ["view"] },
+      {
+        name: "Offer Letter",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      {
+        name: "Appointment Letter",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      {
+        name: "NDA",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      {
+        name: "Last Appraisal",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
     ],
   },
   {
@@ -76,10 +111,25 @@ const CATEGORIES: DocCategory[] = [
     iconBg: "bg-blue-500/10",
     iconColor: "text-blue-500",
     items: [
-      { name: "10th Certificate",  status: "uploaded",     uploadedDate: "Uploaded", actions: ["view"] },
-      { name: "12th Certificate",  status: "uploaded",     uploadedDate: "Uploaded", actions: ["view"] },
-      { name: "B.Tech Degree",     status: "uploaded",     uploadedDate: "Uploaded", actions: ["view"] },
-      { name: "PG Diploma",        status: "not-uploaded",                            actions: ["upload"] },
+      {
+        name: "10th Certificate",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      {
+        name: "12th Certificate",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      {
+        name: "B.Tech Degree",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      { name: "PG Diploma", status: "not-uploaded", actions: ["upload"] },
     ],
   },
   {
@@ -89,9 +139,23 @@ const CATEGORIES: DocCategory[] = [
     iconBg: "bg-amber-500/10",
     iconColor: "text-amber-500",
     items: [
-      { name: "Bank Passbook",           status: "uploaded",     uploadedDate: "Uploaded", actions: ["view"] },
-      { name: "Form 16 (2024-25)",        status: "uploaded",     uploadedDate: "Uploaded", actions: ["view"] },
-      { name: "Investment Proofs",        status: "not-uploaded",                            actions: ["upload"] },
+      {
+        name: "Bank Passbook",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      {
+        name: "Form 16 (2024-25)",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      {
+        name: "Investment Proofs",
+        status: "not-uploaded",
+        actions: ["upload"],
+      },
     ],
   },
   {
@@ -101,8 +165,18 @@ const CATEGORIES: DocCategory[] = [
     iconBg: "bg-rose-500/10",
     iconColor: "text-rose-500",
     items: [
-      { name: "Medical Insurance Card", status: "uploaded", uploadedDate: "Uploaded", actions: ["view"] },
-      { name: "Health Declaration",     status: "uploaded", uploadedDate: "Uploaded", actions: ["view"] },
+      {
+        name: "Medical Insurance Card",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      {
+        name: "Health Declaration",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
     ],
   },
   {
@@ -112,27 +186,61 @@ const CATEGORIES: DocCategory[] = [
     iconBg: "bg-emerald-500/10",
     iconColor: "text-primary",
     items: [
-      { name: "ID Card (digital)", status: "uploaded", uploadedDate: "Uploaded", actions: ["view"] },
-      { name: "Access Badge",      status: "uploaded", uploadedDate: "Uploaded", actions: ["view"] },
-      { name: "NDA",               status: "uploaded", uploadedDate: "Uploaded", actions: ["view"] },
+      {
+        name: "ID Card (digital)",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      {
+        name: "Access Badge",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
+      {
+        name: "NDA",
+        status: "uploaded",
+        uploadedDate: "Uploaded",
+        actions: ["view"],
+      },
     ],
   },
 ];
 
 const DOC_TYPES = [
-  "Aadhar Card", "PAN Card", "Passport", "Driving License",
-  "Offer Letter", "Appointment Letter", "NDA",
-  "10th Certificate", "12th Certificate", "B.Tech Degree", "PG Diploma",
-  "Bank Passbook", "Form 16", "Investment Proofs",
-  "Medical Insurance Card", "Health Declaration",
-  "ID Card", "Access Badge", "Other",
+  "Aadhar Card",
+  "PAN Card",
+  "Passport",
+  "Driving License",
+  "Offer Letter",
+  "Appointment Letter",
+  "NDA",
+  "10th Certificate",
+  "12th Certificate",
+  "B.Tech Degree",
+  "PG Diploma",
+  "Bank Passbook",
+  "Form 16",
+  "Investment Proofs",
+  "Medical Insurance Card",
+  "Health Declaration",
+  "ID Card",
+  "Access Badge",
+  "Other",
 ];
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Components                                                      */
 /* ─────────────────────────────────────────────────────────────── */
 
-function StatusChip({ status, expiryLabel }: { status: DocStatus; expiryLabel?: string }) {
+function StatusChip({
+  status,
+  expiryLabel,
+}: {
+  status: DocStatus;
+  expiryLabel?: string;
+}) {
   if (status === "uploaded") {
     return (
       <span className="flex items-center gap-1 text-[11px] font-black text-primary">
@@ -171,7 +279,7 @@ function CategoryCard({
   onViewClick: (docName: string) => void;
 }) {
   const uploadedCount = cat.items.filter(
-    (i) => i.status === "uploaded" || i.status === "expiring"
+    (i) => i.status === "uploaded" || i.status === "expiring",
   ).length;
   const hasIssues =
     cat.items.some((i) => i.status === "expiring") ||
@@ -180,14 +288,18 @@ function CategoryCard({
   return (
     <div className="bg-card rounded-[24px] border border-border shadow-sm hover:shadow-md transition-all overflow-hidden">
       <div className="p-5 border-b border-border flex items-center gap-4">
-        <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${cat.iconBg}`}>
+        <div
+          className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${cat.iconBg}`}
+        >
           <cat.icon size={20} className={cat.iconColor} />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-[15px] font-black text-foreground leading-tight truncate">
             {cat.title}
           </h3>
-          <p className="text-[11px] font-bold text-muted-foreground mt-0.5">{cat.items.length} total items</p>
+          <p className="text-[11px] font-bold text-muted-foreground mt-0.5">
+            {cat.items.length} total items
+          </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-primary text-[10px] font-black border border-primary/20">
@@ -214,7 +326,9 @@ function CategoryCard({
                 {doc.name}
               </p>
               {doc.status === "uploaded" && (
-                <span className="text-[11px] font-bold text-muted-foreground">{doc.uploadedDate}</span>
+                <span className="text-[11px] font-bold text-muted-foreground">
+                  {doc.uploadedDate}
+                </span>
               )}
             </div>
 
@@ -257,29 +371,32 @@ export function EmployeeDocuments() {
     type: "",
     name: "",
     expiryDate: "",
-    notes: ""
+    notes: "",
   });
 
   const openUploadModal = (docName?: string) => {
-    const type = typeof docName === 'string' ? docName : "";
+    const type = typeof docName === "string" ? docName : "";
     setNewDoc({
       type: type,
       name: "",
       expiryDate: "",
-      notes: ""
+      notes: "",
     });
     setShowUploadModal(true);
   };
 
   const handleUploadSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    showToast("Uploaded", "success", `${newDoc.name || 'Document'} has been uploaded.`);
+    showToast(
+      "Uploaded",
+      "success",
+      `${newDoc.name || "Document"} has been uploaded.`,
+    );
     setShowUploadModal(false);
   };
 
   return (
-    <div className="flex flex-col gap-8 animate-in fade-in duration-700 max-w-[1400px] mx-auto pb-20">
-
+    <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -329,18 +446,18 @@ export function EmployeeDocuments() {
         ))}
       </div>
 
-            {/* ─── Upload Modal ────────────────────────────────────────── */}
+      {/* ─── Upload Modal ────────────────────────────────────────── */}
       <AnimatePresence>
         {showUploadModal && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowUploadModal(false)}
               className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] dark:bg-black/60"
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -352,11 +469,18 @@ export function EmployeeDocuments() {
                     <UploadCloud size={22} />
                   </div>
                   <div>
-                    <h3 className="text-[18px] font-black text-foreground">Upload Document</h3>
-                    <p className="text-[12px] font-bold text-muted-foreground">Submit files for verification</p>
+                    <h3 className="text-[18px] font-black text-foreground">
+                      Upload Document
+                    </h3>
+                    <p className="text-[12px] font-bold text-muted-foreground">
+                      Submit files for verification
+                    </p>
                   </div>
                 </div>
-                <button onClick={() => setShowUploadModal(false)} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors">
+                <button
+                  onClick={() => setShowUploadModal(false)}
+                  className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors"
+                >
                   <X size={20} />
                 </button>
               </div>
@@ -364,60 +488,86 @@ export function EmployeeDocuments() {
               <form onSubmit={handleUploadSubmit} className="p-6 space-y-6">
                 <div className="grid grid-cols-1 gap-5">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">DOCUMENT TYPE</label>
-                    <select 
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                      DOCUMENT TYPE
+                    </label>
+                    <select
                       required
                       value={newDoc.type}
-                      onChange={(e) => setNewDoc({ ...newDoc, type: e.target.value })}
+                      onChange={(e) =>
+                        setNewDoc({ ...newDoc, type: e.target.value })
+                      }
                       className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all appearance-none"
                     >
                       <option value="">Select Category</option>
-                      {DOC_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                      {DOC_TYPES.map((t) => (
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">DOCUMENT NAME</label>
-                    <input 
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                      DOCUMENT NAME
+                    </label>
+                    <input
                       required
-                      type="text" 
-                      placeholder="e.g. Passport Copy, Degree Certificate" 
+                      type="text"
+                      placeholder="e.g. Passport Copy, Degree Certificate"
                       value={newDoc.name}
-                      onChange={(e) => setNewDoc({ ...newDoc, name: e.target.value })}
+                      onChange={(e) =>
+                        setNewDoc({ ...newDoc, name: e.target.value })
+                      }
                       className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">FILE UPLOAD</label>
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                      FILE UPLOAD
+                    </label>
                     <div className="border-2 border-dashed border-border rounded-2xl p-8 bg-secondary/50 flex flex-col items-center justify-center gap-2 hover:border-primary transition-all cursor-pointer group">
                       <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                         <UploadCloud size={20} />
                       </div>
-                      <p className="text-[13px] font-black text-foreground">Browse Files</p>
-                      <p className="text-[11px] font-bold text-muted-foreground">PDF, JPG, PNG (Max 10MB)</p>
+                      <p className="text-[13px] font-black text-foreground">
+                        Browse Files
+                      </p>
+                      <p className="text-[11px] font-bold text-muted-foreground">
+                        PDF, JPG, PNG (Max 10MB)
+                      </p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">EXPIRY DATE (OPTIONAL)</label>
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                        EXPIRY DATE (OPTIONAL)
+                      </label>
                       <div className="relative">
-                        <input 
-                          type="date" 
+                        <input
+                          type="date"
                           value={newDoc.expiryDate}
-                          onChange={(e) => setNewDoc({ ...newDoc, expiryDate: e.target.value })}
+                          onChange={(e) =>
+                            setNewDoc({ ...newDoc, expiryDate: e.target.value })
+                          }
                           className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
                         />
                       </div>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">NOTES (OPTIONAL)</label>
-                      <input 
-                        type="text" 
-                        placeholder="Additional info..." 
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                        NOTES (OPTIONAL)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Additional info..."
                         value={newDoc.notes}
-                        onChange={(e) => setNewDoc({ ...newDoc, notes: e.target.value })}
+                        onChange={(e) =>
+                          setNewDoc({ ...newDoc, notes: e.target.value })
+                        }
                         className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
                       />
                     </div>
@@ -425,14 +575,14 @@ export function EmployeeDocuments() {
                 </div>
 
                 <div className="flex gap-4 pt-2">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => setShowUploadModal(false)}
                     className="flex-1 px-6 py-3.5 border border-border rounded-xl text-[13px] font-black text-muted-foreground hover:bg-secondary transition-all"
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     type="submit"
                     className="flex-1 px-6 py-3.5 bg-primary text-white rounded-xl font-black text-[13px] shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
                   >
@@ -447,35 +597,48 @@ export function EmployeeDocuments() {
 
       {viewingDoc && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 animate-in fade-in duration-200">
-           <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px]" onClick={() => setViewingDoc(null)} />
-           <div className="relative bg-card w-full max-w-[420px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border">
-              <div className="p-6 border-b border-border flex items-center justify-between">
-                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                       <FileText size={20} className="text-primary" />
-                    </div>
-                    <div>
-                       <h3 className="text-[15px] font-black text-foreground">{viewingDoc}</h3>
-                       <p className="text-[11px] font-bold text-primary">Preview</p>
-                    </div>
-                 </div>
-                 <button onClick={() => setViewingDoc(null)} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors">
-                    <X size={20} />
-                 </button>
+          <div
+            className="absolute inset-0 bg-background/60 backdrop-blur-[2px]"
+            onClick={() => setViewingDoc(null)}
+          />
+          <div className="relative bg-card w-full max-w-[420px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border">
+            <div className="p-6 border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                  <FileText size={20} className="text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-[15px] font-black text-foreground">
+                    {viewingDoc}
+                  </h3>
+                  <p className="text-[11px] font-bold text-primary">Preview</p>
+                </div>
               </div>
-              <div className="p-8 flex flex-col items-center gap-6">
-                 <div className="w-full aspect-[3/4] bg-secondary rounded-2xl border border-border flex flex-col items-center justify-center gap-2">
-                    <FileText size={48} className="text-muted-foreground/30" />
-                    <p className="text-[12px] font-bold text-muted-foreground italic">Document Preview Not Available</p>
-                 </div>
-                 <button 
-                  onClick={() => { showToast("Downloading", "info", "File download started."); setViewingDoc(null); }}
-                  className="w-full py-4 bg-primary text-white text-[14px] font-black rounded-2xl shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all"
-                 >
-                    Download File
-                 </button>
+              <button
+                onClick={() => setViewingDoc(null)}
+                className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-8 flex flex-col items-center gap-6">
+              <div className="w-full aspect-[3/4] bg-secondary rounded-2xl border border-border flex flex-col items-center justify-center gap-2">
+                <FileText size={48} className="text-muted-foreground/30" />
+                <p className="text-[12px] font-bold text-muted-foreground italic">
+                  Document Preview Not Available
+                </p>
               </div>
-           </div>
+              <button
+                onClick={() => {
+                  showToast("Downloading", "info", "File download started.");
+                  setViewingDoc(null);
+                }}
+                className="w-full py-4 bg-primary text-white text-[14px] font-black rounded-2xl shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all"
+              >
+                Download File
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

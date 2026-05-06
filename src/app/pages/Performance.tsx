@@ -1,14 +1,41 @@
 import React, { useState, useMemo } from "react";
 import {
-  TrendingUp, Search, ChevronDown, Download, Star, Users,
-  Calendar, Award, CheckCircle2, Clock,
-  RefreshCw, ChevronRight, Target,
-  Activity, UserCheck, Plus, FileText,
-  Trash2, Edit3, Home, X, AlertTriangle
+  TrendingUp,
+  Search,
+  ChevronDown,
+  Download,
+  Star,
+  Users,
+  Calendar,
+  Award,
+  CheckCircle2,
+  Clock,
+  RefreshCw,
+  ChevronRight,
+  Target,
+  Activity,
+  UserCheck,
+  Plus,
+  FileText,
+  Trash2,
+  Edit3,
+  Home,
+  X,
+  AlertTriangle,
 } from "lucide-react";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Cell, AreaChart, Area, PieChart, Pie
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+  AreaChart,
+  Area,
+  PieChart,
+  Pie,
 } from "recharts";
 import { employees, departments } from "../data/mockData";
 import { toast, Toaster } from "sonner";
@@ -34,11 +61,66 @@ interface ReviewHistory {
 
 /* ─── Mock Data ──────────────────────────────────────────── */
 const reviewHistory: ReviewHistory[] = [
-  { id: "R001", employeeId: "EMP001", employeeName: "Sarah Johnson", department: "Engineering", period: "Q1 2026", attendanceScore: 95, performanceScore: 92, rating: 4.8, recommendation: "Increment", status: "Approved" },
-  { id: "R002", employeeId: "EMP002", employeeName: "Marcus Williams", department: "Marketing", period: "Q1 2026", attendanceScore: 88, performanceScore: 85, rating: 4.2, recommendation: "No Change", status: "Completed" },
-  { id: "R003", employeeId: "EMP003", employeeName: "Yuki Tanaka", department: "Design", period: "Q1 2026", attendanceScore: 98, performanceScore: 95, rating: 4.9, recommendation: "Promotion", status: "Approved" },
-  { id: "R004", employeeId: "EMP004", employeeName: "James Carter", department: "Finance", period: "Q1 2026", attendanceScore: 82, performanceScore: 80, rating: 3.9, recommendation: "No Change", status: "In Review" },
-  { id: "R005", employeeId: "EMP005", employeeName: "Emily Rodriguez", department: "HR", period: "Q1 2026", attendanceScore: 91, performanceScore: 88, rating: 4.3, recommendation: "Bonus", status: "Pending" },
+  {
+    id: "R001",
+    employeeId: "EMP001",
+    employeeName: "Sarah Johnson",
+    department: "Engineering",
+    period: "Q1 2026",
+    attendanceScore: 95,
+    performanceScore: 92,
+    rating: 4.8,
+    recommendation: "Increment",
+    status: "Approved",
+  },
+  {
+    id: "R002",
+    employeeId: "EMP002",
+    employeeName: "Marcus Williams",
+    department: "Marketing",
+    period: "Q1 2026",
+    attendanceScore: 88,
+    performanceScore: 85,
+    rating: 4.2,
+    recommendation: "No Change",
+    status: "Completed",
+  },
+  {
+    id: "R003",
+    employeeId: "EMP003",
+    employeeName: "Yuki Tanaka",
+    department: "Design",
+    period: "Q1 2026",
+    attendanceScore: 98,
+    performanceScore: 95,
+    rating: 4.9,
+    recommendation: "Promotion",
+    status: "Approved",
+  },
+  {
+    id: "R004",
+    employeeId: "EMP004",
+    employeeName: "James Carter",
+    department: "Finance",
+    period: "Q1 2026",
+    attendanceScore: 82,
+    performanceScore: 80,
+    rating: 3.9,
+    recommendation: "No Change",
+    status: "In Review",
+  },
+  {
+    id: "R005",
+    employeeId: "EMP005",
+    employeeName: "Emily Rodriguez",
+    department: "HR",
+    period: "Q1 2026",
+    attendanceScore: 91,
+    performanceScore: 88,
+    rating: 4.3,
+    recommendation: "Bonus",
+    status: "Pending",
+  },
 ];
 
 const trendData = [
@@ -66,24 +148,46 @@ function StatusBadge({ status }: { status: ReviewStatus }) {
     Approved: { bg: "rgba(20,184,166,0.1)", text: "#0D9488" },
   }[status];
   return (
-    <span style={{ backgroundColor: cfg.bg, color: cfg.text, fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: "20px" }}>
+    <span
+      style={{
+        backgroundColor: cfg.bg,
+        color: cfg.text,
+        fontSize: "11px",
+        fontWeight: 700,
+        padding: "3px 10px",
+        borderRadius: "20px",
+      }}
+    >
       {status}
     </span>
   );
 }
 
-function MetricItem({ label, val, icon: Icon }: { label: string; val: number; icon: React.ElementType }) {
+function MetricItem({
+  label,
+  val,
+  icon: Icon,
+}: {
+  label: string;
+  val: number;
+  icon: React.ElementType;
+}) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Icon size={14} className="text-emerald-500" />
-          <span className="text-xs font-semibold text-muted-foreground">{label}</span>
+          <span className="text-xs font-semibold text-muted-foreground">
+            {label}
+          </span>
         </div>
         <span className="text-xs font-bold text-foreground">{val}%</span>
       </div>
       <div className="h-2 bg-secondary rounded-full overflow-hidden">
-        <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${val}%` }} />
+        <div
+          className="h-full bg-emerald-500 rounded-full"
+          style={{ width: `${val}%` }}
+        />
       </div>
     </div>
   );
@@ -101,50 +205,64 @@ export function Performance() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [history, setHistory] = useState<ReviewHistory[]>(reviewHistory);
   const [activeReview, setActiveReview] = useState<ReviewHistory | null>(null);
-  const [modalMode, setModalMode] = useState<"create" | "view" | "edit">("create");
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string, name: string } | null>(null);
+  const [modalMode, setModalMode] = useState<"create" | "view" | "edit">(
+    "create",
+  );
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const filteredEmployees = useMemo(() => {
     if (selectedDept === "All Departments") return employees;
-    return employees.filter(e => e.department === selectedDept);
+    return employees.filter((e) => e.department === selectedDept);
   }, [selectedDept]);
 
   const selectedEmployee = useMemo(() => {
-    if (modalMode === "create") return employees.find(e => e.id === selectedEmpId);
-    return employees.find(e => e.name === activeReview?.employeeName);
+    if (modalMode === "create")
+      return employees.find((e) => e.id === selectedEmpId);
+    return employees.find((e) => e.name === activeReview?.employeeName);
   }, [selectedEmpId, activeReview, modalMode]);
 
   const filteredHistory = useMemo(() => {
-    return history.filter(r => {
+    return history.filter((r) => {
       const q = search.toLowerCase();
-      const matchesSearch = !q ||
+      const matchesSearch =
+        !q ||
         r.employeeName.toLowerCase().includes(q) ||
         r.employeeId.toLowerCase().includes(q) ||
         r.department.toLowerCase().includes(q);
 
       const matchesStatus = status === "All" || r.status === status;
-      const matchesDept = selectedDept === "All Departments" || r.department === selectedDept;
+      const matchesDept =
+        selectedDept === "All Departments" || r.department === selectedDept;
 
       return matchesSearch && matchesStatus && matchesDept;
     });
   }, [search, status, selectedDept, history]);
 
   const handleExport = () => {
-    toast.loading('Generating performance report...');
+    toast.loading("Generating performance report...");
     setTimeout(() => {
-      const headers = "Employee,Dept,Period,Attendance,Performance,Rating,Recommendation,Status\n";
-      const rows = filteredHistory.map(r => `${r.employeeName},${r.department},${r.period},${r.attendanceScore}%,${r.performanceScore}%,${r.rating},${r.recommendation},${r.status}`).join("\n");
-      const blob = new Blob([headers + rows], { type: 'text/csv' });
+      const headers =
+        "Employee,Dept,Period,Attendance,Performance,Rating,Recommendation,Status\n";
+      const rows = filteredHistory
+        .map(
+          (r) =>
+            `${r.employeeName},${r.department},${r.period},${r.attendanceScore}%,${r.performanceScore}%,${r.rating},${r.recommendation},${r.status}`,
+        )
+        .join("\n");
+      const blob = new Blob([headers + rows], { type: "text/csv" });
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.setAttribute('hidden', '');
-      a.setAttribute('href', url);
-      a.setAttribute('download', `Performance_Report_${year}.csv`);
+      const a = document.createElement("a");
+      a.setAttribute("hidden", "");
+      a.setAttribute("href", url);
+      a.setAttribute("download", `Performance_Report_${year}.csv`);
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       toast.dismiss();
-      toast.success('Report downloaded successfully!');
+      toast.success("Report downloaded successfully!");
     }, 1500);
   };
 
@@ -177,7 +295,7 @@ export function Performance() {
 
   const confirmDelete = () => {
     if (deleteTarget) {
-      setHistory(prev => prev.filter(r => r.id !== deleteTarget.id));
+      setHistory((prev) => prev.filter((r) => r.id !== deleteTarget.id));
       toast.success("Review deleted successfully");
       setIsDeleteOpen(false);
       setDeleteTarget(null);
@@ -186,7 +304,11 @@ export function Performance() {
 
   const handleSaveReview = () => {
     if (modalMode === "edit" && activeReview) {
-      setHistory(prev => prev.map(r => r.id === activeReview.id ? { ...r, status: "Completed" } : r));
+      setHistory((prev) =>
+        prev.map((r) =>
+          r.id === activeReview.id ? { ...r, status: "Completed" } : r,
+        ),
+      );
       toast.success("Review updated successfully");
     } else {
       toast.success("New review submitted successfully");
@@ -195,16 +317,58 @@ export function Performance() {
   };
 
   const stats = [
-    { label: "Total Reviews", val: "1,284", sub: "+12% from last cycle", icon: <FileText size={18} />, color: "#3B82F6", bg: "rgba(59,130,246,0.1)" },
-    { label: "Pending Reviews", val: "124", sub: "Awaiting your action", icon: <Clock size={18} />, color: "#F59E0B", bg: "rgba(245,158,11,0.1)" },
-    { label: "Completed Reviews", val: "842", sub: "65% completion rate", icon: <CheckCircle2 size={18} />, color: "#10B981", bg: "rgba(16,185,129,0.1)" },
-    { label: "Average Score", val: "86.4", sub: "↑ 2.4% vs last year", icon: <TrendingUp size={18} />, color: "#0D9488", bg: "rgba(13,148,136,0.1)" },
-    { label: "Eligible for Increment", val: "48", sub: "Based on perf scores", icon: <Award size={18} />, color: "#8B5CF6", bg: "rgba(139,92,246,0.1)" },
-    { label: "Promotion Recommended", val: "12", sub: "High performers list", icon: <UserCheck size={18} />, color: "#F43F5E", bg: "rgba(244,63,94,0.1)" },
+    {
+      label: "Total Reviews",
+      val: "1,284",
+      sub: "+12% from last cycle",
+      icon: <FileText size={18} />,
+      color: "#3B82F6",
+      bg: "rgba(59,130,246,0.1)",
+    },
+    {
+      label: "Pending Reviews",
+      val: "124",
+      sub: "Awaiting your action",
+      icon: <Clock size={18} />,
+      color: "#F59E0B",
+      bg: "rgba(245,158,11,0.1)",
+    },
+    {
+      label: "Completed Reviews",
+      val: "842",
+      sub: "65% completion rate",
+      icon: <CheckCircle2 size={18} />,
+      color: "#10B981",
+      bg: "rgba(16,185,129,0.1)",
+    },
+    {
+      label: "Average Score",
+      val: "86.4",
+      sub: "↑ 2.4% vs last year",
+      icon: <TrendingUp size={18} />,
+      color: "#0D9488",
+      bg: "rgba(13,148,136,0.1)",
+    },
+    {
+      label: "Eligible for Increment",
+      val: "48",
+      sub: "Based on perf scores",
+      icon: <Award size={18} />,
+      color: "#8B5CF6",
+      bg: "rgba(139,92,246,0.1)",
+    },
+    {
+      label: "Promotion Recommended",
+      val: "12",
+      sub: "High performers list",
+      icon: <UserCheck size={18} />,
+      color: "#F43F5E",
+      bg: "rgba(244,63,94,0.1)",
+    },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6 px-4 md:px-8 py-6">
       <Toaster position="top-right" richColors />
       {/* ── Page Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -215,8 +379,12 @@ export function Performance() {
             <ChevronRight size={12} />
             <span className="text-emerald-600">Performance Review</span>
           </div>
-          <h1 className="text-2xl font-black text-foreground mb-1">Performance Review</h1>
-          <p className="text-sm font-bold text-muted-foreground">Track employee performance, appraisal scores, and review history</p>
+          <h1 className="text-2xl font-black text-foreground mb-1">
+            Performance Review
+          </h1>
+          <p className="text-sm font-bold text-muted-foreground">
+            Track employee performance, appraisal scores, and review history
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -237,16 +405,31 @@ export function Performance() {
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {stats.map((s, i) => (
-          <div key={i} className="bg-card p-5 rounded-[20px] border border-border shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all">
+          <div
+            key={i}
+            className="bg-card p-5 rounded-[20px] border border-border shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all"
+          >
             <div className="flex items-center justify-between mb-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110" style={{ backgroundColor: s.bg, color: s.color }}>
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
+                style={{ backgroundColor: s.bg, color: s.color }}
+              >
                 {s.icon}
               </div>
             </div>
             <div>
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">{s.label}</p>
-              <h3 className="text-2xl font-black text-foreground mb-1" style={{ color: s.color }}>{s.val}</h3>
-              <p className="text-[10px] font-bold text-muted-foreground">{s.sub}</p>
+              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                {s.label}
+              </p>
+              <h3
+                className="text-2xl font-black text-foreground mb-1"
+                style={{ color: s.color }}
+              >
+                {s.val}
+              </h3>
+              <p className="text-[10px] font-bold text-muted-foreground">
+                {s.sub}
+              </p>
             </div>
           </div>
         ))}
@@ -256,22 +439,36 @@ export function Performance() {
       <div className="bg-card p-5 rounded-[24px] border border-border shadow-sm mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Department</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+              Department
+            </label>
             <div className="relative">
               <select
                 value={selectedDept}
-                onChange={(e) => { setSelectedDept(e.target.value); setSelectedEmpId("All Employees"); }}
+                onChange={(e) => {
+                  setSelectedDept(e.target.value);
+                  setSelectedEmpId("All Employees");
+                }}
                 className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer"
               >
                 <option value="All Departments">All Departments</option>
-                {departments.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+                {departments.map((d) => (
+                  <option key={d.id} value={d.name}>
+                    {d.name}
+                  </option>
+                ))}
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
+              <ChevronDown
+                size={14}
+                className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+              />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Employee</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+              Employee
+            </label>
             <div className="relative">
               <select
                 value={selectedEmpId}
@@ -279,54 +476,93 @@ export function Performance() {
                 className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer"
               >
                 <option value="All Employees">All Employees</option>
-                {filteredEmployees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                {filteredEmployees.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.name}
+                  </option>
+                ))}
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
+              <ChevronDown
+                size={14}
+                className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+              />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Year</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+              Year
+            </label>
             <div className="relative">
-              <select value={year} onChange={(e) => setYear(e.target.value)} className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer">
+              <select
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer"
+              >
                 <option>2026</option>
                 <option>2025</option>
                 <option>2024</option>
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
+              <ChevronDown
+                size={14}
+                className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+              />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Period</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+              Period
+            </label>
             <div className="relative">
-              <select value={period} onChange={(e) => setPeriod(e.target.value)} className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer">
+              <select
+                value={period}
+                onChange={(e) => setPeriod(e.target.value)}
+                className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer"
+              >
                 <option>Monthly</option>
                 <option>Quarterly</option>
                 <option>Half-Yearly</option>
                 <option>Yearly</option>
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
+              <ChevronDown
+                size={14}
+                className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+              />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Status</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+              Status
+            </label>
             <div className="relative">
-              <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer">
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer"
+              >
                 <option>All</option>
                 <option>Pending</option>
                 <option>In Review</option>
                 <option>Completed</option>
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
+              <ChevronDown
+                size={14}
+                className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+              />
             </div>
           </div>
 
           <div className="space-y-1.5 lg:col-span-2">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Search</label>
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+              Search
+            </label>
             <div className="relative">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Search
+                size={14}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
               <input
                 type="text"
                 placeholder="Search name or ID..."
@@ -339,7 +575,12 @@ export function Performance() {
         </div>
         <div className="mt-4 flex justify-end">
           <button
-            onClick={() => { setSelectedDept("All Departments"); setSelectedEmpId("All Employees"); setStatus("All"); setSearch(""); }}
+            onClick={() => {
+              setSelectedDept("All Departments");
+              setSelectedEmpId("All Employees");
+              setStatus("All");
+              setSearch("");
+            }}
             className="flex items-center gap-2 text-xs font-black text-muted-foreground uppercase tracking-widest hover:text-emerald-600 transition-all"
           >
             <RefreshCw size={14} /> Clear Filters
@@ -350,24 +591,46 @@ export function Performance() {
       {/* ── Performance Table ── */}
       <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden mb-6">
         <div className="p-6 border-b border-border flex items-center justify-between">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-widest">Review History</h3>
+          <h3 className="text-sm font-black text-foreground uppercase tracking-widest">
+            Review History
+          </h3>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Recent 5 records</span>
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              Recent 5 records
+            </span>
           </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-muted border-b border-border">
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Employee</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Dept</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Period</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Att. Score</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Perf. Score</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Rating</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Recommendation</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Status</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Employee
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Dept
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Period
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Att. Score
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Perf. Score
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Rating
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Recommendation
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -376,44 +639,69 @@ export function Performance() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center font-black text-muted-foreground text-xs uppercase">
-                        {r.employeeName.split(' ').map(n => n[0]).join('')}
+                        {r.employeeName
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </div>
                       <div>
-                        <p className="text-sm font-black text-foreground">{r.employeeName}</p>
-                        <p className="text-[10px] font-bold text-muted-foreground">{r.employeeId}</p>
+                        <p className="text-sm font-black text-foreground">
+                          {r.employeeName}
+                        </p>
+                        <p className="text-[10px] font-bold text-muted-foreground">
+                          {r.employeeId}
+                        </p>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-xs font-bold text-muted-foreground">{r.department}</span>
+                    <span className="text-xs font-bold text-muted-foreground">
+                      {r.department}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-xs font-bold text-muted-foreground">{r.period}</span>
+                    <span className="text-xs font-bold text-muted-foreground">
+                      {r.period}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-500" style={{ width: `${r.attendanceScore}%` }} />
+                        <div
+                          className="h-full bg-emerald-500"
+                          style={{ width: `${r.attendanceScore}%` }}
+                        />
                       </div>
-                      <span className="text-xs font-bold text-foreground">{r.attendanceScore}%</span>
+                      <span className="text-xs font-bold text-foreground">
+                        {r.attendanceScore}%
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-teal-500" style={{ width: `${r.performanceScore}%` }} />
+                        <div
+                          className="h-full bg-teal-500"
+                          style={{ width: `${r.performanceScore}%` }}
+                        />
                       </div>
-                      <span className="text-xs font-bold text-foreground">{r.performanceScore}%</span>
+                      <span className="text-xs font-bold text-foreground">
+                        {r.performanceScore}%
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-1 text-amber-500">
                       <Star size={12} fill="currentColor" />
-                      <span className="text-xs font-black ml-0.5">{r.rating}</span>
+                      <span className="text-xs font-black ml-0.5">
+                        {r.rating}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`text-xs font-bold ${r.recommendation === 'Promotion' ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+                    <span
+                      className={`text-xs font-bold ${r.recommendation === "Promotion" ? "text-emerald-600" : "text-muted-foreground"}`}
+                    >
                       {r.recommendation}
                     </span>
                   </td>
@@ -457,7 +745,11 @@ export function Performance() {
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-[20px] bg-muted overflow-hidden border-2 border-emerald-50 dark:border-emerald-500/20 shrink-0">
                   {selectedEmployee?.avatar ? (
-                    <img src={selectedEmployee.avatar} alt="" className="w-full h-full object-cover" />
+                    <img
+                      src={selectedEmployee.avatar}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-xl font-black text-muted-foreground">
                       <Users size={32} />
@@ -465,12 +757,18 @@ export function Performance() {
                   )}
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-foreground">{selectedEmployee?.name || "Select Employee"}</h3>
-                  <p className="text-sm font-bold text-muted-foreground">{selectedEmployee?.id || "EMP---"}</p>
+                  <h3 className="text-lg font-black text-foreground">
+                    {selectedEmployee?.name || "Select Employee"}
+                  </h3>
+                  <p className="text-sm font-bold text-muted-foreground">
+                    {selectedEmployee?.id || "EMP---"}
+                  </p>
                 </div>
               </div>
               <div className="flex flex-col items-end">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Overall Performance Score</p>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                  Overall Performance Score
+                </p>
                 <div className="flex items-center gap-3">
                   <h4 className="text-3xl font-black text-emerald-600">88.5</h4>
                   <div className="flex items-center gap-1 text-amber-500">
@@ -496,31 +794,47 @@ export function Performance() {
 
       {/* ── Appraisal Eligibility Panel ── */}
       <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-        <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Appraisal Eligibility</h3>
+        <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">
+          Appraisal Eligibility
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Attendance %</p>
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+              Attendance %
+            </p>
             <p className="text-xl font-black text-foreground">96.8%</p>
           </div>
           <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Late Count</p>
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+              Late Count
+            </p>
             <p className="text-xl font-black text-amber-600">02</p>
           </div>
           <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Leave Count</p>
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+              Leave Count
+            </p>
             <p className="text-xl font-black text-foreground">04</p>
           </div>
           <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Perf. Score</p>
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+              Perf. Score
+            </p>
             <p className="text-xl font-black text-emerald-600">92/100</p>
           </div>
           <div className="p-4 rounded-2xl bg-muted border border-border lg:col-span-2">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Eligibility</p>
-              <span className="text-[9px] font-black px-2 py-0.5 rounded bg-emerald-500 text-white">ELIGIBLE</span>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                Eligibility
+              </p>
+              <span className="text-[9px] font-black px-2 py-0.5 rounded bg-emerald-500 text-white">
+                ELIGIBLE
+              </span>
             </div>
             <div className="flex items-center justify-between">
-              <p className="text-lg font-black text-foreground">Suggested Increment</p>
+              <p className="text-lg font-black text-foreground">
+                Suggested Increment
+              </p>
               <p className="text-2xl font-black text-emerald-600">12.5%</p>
             </div>
           </div>
@@ -530,7 +844,9 @@ export function Performance() {
       {/* ── Charts Section ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Performance Trend</h3>
+          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">
+            Performance Trend
+          </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={trendData}>
@@ -540,36 +856,107 @@ export function Performance() {
                     <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: 'var(--muted-foreground)' }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: 'var(--muted-foreground)' }} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
-                  itemStyle={{ fontSize: '12px', fontWeight: 700, color: 'var(--foreground)' }}
-                  labelStyle={{ color: 'var(--muted-foreground)', marginBottom: '4px' }}
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="var(--border)"
                 />
-                <Area type="monotone" dataKey="score" stroke="#10B981" strokeWidth={3} fillOpacity={1} fill="url(#colorScore)" />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    fill: "var(--muted-foreground)",
+                  }}
+                  dy={10}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    fill: "var(--muted-foreground)",
+                  }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "12px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                  }}
+                  itemStyle={{
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: "var(--foreground)",
+                  }}
+                  labelStyle={{
+                    color: "var(--muted-foreground)",
+                    marginBottom: "4px",
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="score"
+                  stroke="#10B981"
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill="url(#colorScore)"
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Dept Avg Performance</h3>
+          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">
+            Dept Avg Performance
+          </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={departments.slice(0, 5)} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="var(--border)" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  horizontal={true}
+                  vertical={false}
+                  stroke="var(--border)"
+                />
                 <XAxis type="number" axisLine={false} tickLine={false} hide />
-                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: 'var(--muted-foreground)' }} width={80} />
+                <YAxis
+                  dataKey="name"
+                  type="category"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    fill: "var(--muted-foreground)",
+                  }}
+                  width={80}
+                />
                 <Tooltip
-                  cursor={{ fill: 'var(--muted)', opacity: 0.2 }}
-                  contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
-                  itemStyle={{ color: 'var(--foreground)' }}
+                  cursor={{ fill: "var(--muted)", opacity: 0.2 }}
+                  contentStyle={{
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "12px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                  }}
+                  itemStyle={{ color: "var(--foreground)" }}
                 />
                 <Bar dataKey="employees" radius={[0, 10, 10, 0]} barSize={20}>
                   {departments.slice(0, 5).map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={['#10B981', '#14B8A6', '#0D9488', '#0891B2', '#0284C7'][index % 5]} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={
+                        ["#10B981", "#14B8A6", "#0D9488", "#0891B2", "#0284C7"][
+                          index % 5
+                        ]
+                      }
+                    />
                   ))}
                 </Bar>
               </BarChart>
@@ -578,13 +965,20 @@ export function Performance() {
         </div>
 
         <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Rating Distribution</h3>
+          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">
+            Rating Distribution
+          </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Tooltip
-                  contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
-                  itemStyle={{ color: 'var(--foreground)' }}
+                  contentStyle={{
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "12px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                  }}
+                  itemStyle={{ color: "var(--foreground)" }}
                 />
                 <Pie
                   data={distributionData}
@@ -605,8 +999,13 @@ export function Performance() {
           <div className="flex flex-wrap justify-center gap-4 mt-2">
             {distributionData.map((d, i) => (
               <div key={i} className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }} />
-                <span className="text-[10px] font-bold text-muted-foreground uppercase">{d.name}</span>
+                <div
+                  className="w-2 h-2 rounded-full"
+                  style={{ backgroundColor: d.color }}
+                />
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                  {d.name}
+                </span>
               </div>
             ))}
           </div>
@@ -621,10 +1020,16 @@ export function Performance() {
             <div className="flex items-center justify-between p-6 border-b border-border">
               <div>
                 <Dialog.Title className="text-xl font-black text-foreground">
-                  {modalMode === "view" ? "Performance Report" : modalMode === "edit" ? "Edit Appraisal" : "New Performance Evaluation"}
+                  {modalMode === "view"
+                    ? "Performance Report"
+                    : modalMode === "edit"
+                      ? "Edit Appraisal"
+                      : "New Performance Evaluation"}
                 </Dialog.Title>
                 <Dialog.Description className="text-sm font-bold text-muted-foreground">
-                  {modalMode === "view" ? "Detailed performance analytics and ratings" : `Complete the appraisal for ${selectedEmployee?.name}`}
+                  {modalMode === "view"
+                    ? "Detailed performance analytics and ratings"
+                    : `Complete the appraisal for ${selectedEmployee?.name}`}
                 </Dialog.Description>
               </div>
               <Dialog.Close className="p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-all">
@@ -638,17 +1043,38 @@ export function Performance() {
                 <div className="lg:col-span-5 space-y-6">
                   <div className="p-6 rounded-2xl bg-muted border border-border">
                     <div className="flex items-center gap-4 mb-6">
-                      <img src={selectedEmployee?.avatar} alt="" className="w-12 h-12 rounded-xl object-cover" />
+                      <img
+                        src={selectedEmployee?.avatar}
+                        alt=""
+                        className="w-12 h-12 rounded-xl object-cover"
+                      />
                       <div>
-                        <h4 className="font-black text-foreground">{selectedEmployee?.name}</h4>
-                        <p className="text-xs font-bold text-muted-foreground">{selectedEmployee?.role || selectedEmployee?.designation}</p>
+                        <h4 className="font-black text-foreground">
+                          {selectedEmployee?.name}
+                        </h4>
+                        <p className="text-xs font-bold text-muted-foreground">
+                          {selectedEmployee?.role ||
+                            selectedEmployee?.designation}
+                        </p>
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <MetricItem label="Attendance" val={activeReview?.attendanceScore || 95} icon={Calendar} />
-                      <MetricItem label="Performance" val={activeReview?.performanceScore || 92} icon={Activity} />
+                      <MetricItem
+                        label="Attendance"
+                        val={activeReview?.attendanceScore || 95}
+                        icon={Calendar}
+                      />
+                      <MetricItem
+                        label="Performance"
+                        val={activeReview?.performanceScore || 92}
+                        icon={Activity}
+                      />
                       <MetricItem label="Teamwork" val={85} icon={Users} />
-                      <MetricItem label="Task Completion" val={88} icon={Target} />
+                      <MetricItem
+                        label="Task Completion"
+                        val={88}
+                        icon={Target}
+                      />
                     </div>
                   </div>
                 </div>
@@ -657,51 +1083,86 @@ export function Performance() {
                 <div className="lg:col-span-7 space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Review Period</label>
-                      <input type="text" value={activeReview?.period || `${period} ${year}`} readOnly className="w-full px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none" />
+                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                        Review Period
+                      </label>
+                      <input
+                        type="text"
+                        value={activeReview?.period || `${period} ${year}`}
+                        readOnly
+                        className="w-full px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none"
+                      />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Reviewer</label>
-                      <input type="text" value="Robert Chen" readOnly className="w-full px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none" />
+                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                        Reviewer
+                      </label>
+                      <input
+                        type="text"
+                        value="Robert Chen"
+                        readOnly
+                        className="w-full px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none"
+                      />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Strengths</label>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                      Strengths
+                    </label>
                     <textarea
                       rows={2}
                       readOnly={modalMode === "view"}
                       placeholder="Key strengths..."
-                      className={`w-full px-4 py-2.5 rounded-xl border border-border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? 'bg-muted cursor-not-allowed opacity-70' : ''}`}
-                      defaultValue={modalMode !== "create" ? "Exceptional attention to detail and consistent high-quality output." : ""}
+                      className={`w-full px-4 py-2.5 rounded-xl border border-border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70" : ""}`}
+                      defaultValue={
+                        modalMode !== "create"
+                          ? "Exceptional attention to detail and consistent high-quality output."
+                          : ""
+                      }
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Improvement Areas</label>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                      Improvement Areas
+                    </label>
                     <textarea
                       rows={2}
                       readOnly={modalMode === "view"}
                       placeholder="Areas to grow..."
-                      className={`w-full px-4 py-2.5 rounded-xl border border-border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? 'bg-muted cursor-not-allowed opacity-70' : ''}`}
-                      defaultValue={modalMode !== "create" ? "Could improve communication frequency with external stakeholders." : ""}
+                      className={`w-full px-4 py-2.5 rounded-xl border border-border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70" : ""}`}
+                      defaultValue={
+                        modalMode !== "create"
+                          ? "Could improve communication frequency with external stakeholders."
+                          : ""
+                      }
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Recommendation</label>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                      Recommendation
+                    </label>
                     <div className="relative">
                       <select
                         disabled={modalMode === "view"}
-                        defaultValue={activeReview?.recommendation || "No Change"}
-                        className={`w-full appearance-none px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer bg-card ${modalMode === "view" ? 'bg-muted cursor-not-allowed opacity-70' : ''}`}
+                        defaultValue={
+                          activeReview?.recommendation || "No Change"
+                        }
+                        className={`w-full appearance-none px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer bg-card ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70" : ""}`}
                       >
                         <option value="No Change">No Change</option>
                         <option value="Bonus">Bonus</option>
                         <option value="Increment">Increment</option>
                         <option value="Promotion">Promotion</option>
                       </select>
-                      {modalMode !== "view" && <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />}
+                      {modalMode !== "view" && (
+                        <ChevronDown
+                          size={14}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
@@ -733,9 +1194,15 @@ export function Performance() {
             <div className="w-20 h-20 rounded-3xl bg-red-50 dark:bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-6">
               <AlertTriangle size={40} />
             </div>
-            <AlertDialog.Title className="text-xl font-black text-foreground mb-2">Delete Review Record?</AlertDialog.Title>
+            <AlertDialog.Title className="text-xl font-black text-foreground mb-2">
+              Delete Review Record?
+            </AlertDialog.Title>
             <AlertDialog.Description className="text-sm font-bold text-muted-foreground mb-8">
-              Are you sure you want to delete the performance record for <span className="text-foreground font-black">{deleteTarget?.name}</span>? This action cannot be undone.
+              Are you sure you want to delete the performance record for{" "}
+              <span className="text-foreground font-black">
+                {deleteTarget?.name}
+              </span>
+              ? This action cannot be undone.
             </AlertDialog.Description>
             <div className="flex items-center gap-4">
               <AlertDialog.Cancel className="flex-1 py-3.5 rounded-2xl bg-muted text-foreground text-sm font-black hover:bg-secondary transition-all">

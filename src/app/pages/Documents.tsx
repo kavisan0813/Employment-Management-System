@@ -1,9 +1,22 @@
 import React, { useState } from "react";
 import {
-  Folder, Search, Grid, List, FileText,
-  UploadCloud, X,
-  Download, Eye, Archive, Trash2, AlertCircle,
-  CheckCircle2, File, Clock, HardDrive, User
+  Folder,
+  Search,
+  Grid,
+  List,
+  FileText,
+  UploadCloud,
+  X,
+  Download,
+  Eye,
+  Archive,
+  Trash2,
+  AlertCircle,
+  CheckCircle2,
+  File,
+  Clock,
+  HardDrive,
+  User,
 } from "lucide-react";
 
 /* ─── Types ─────────────────────────────── */
@@ -16,16 +29,22 @@ interface VersionLog {
 interface DocItem {
   id: string;
   name: string;
-  category: 'HR Policies' | 'IT Policies' | 'Finance' | 'Contracts' | 'Compliance' | 'Templates';
+  category:
+    | "HR Policies"
+    | "IT Policies"
+    | "Finance"
+    | "Contracts"
+    | "Compliance"
+    | "Templates";
   linkedEmployee?: string;
   linkedDept?: string;
   uploadedBy: string;
   date: string;
   expiry?: string;
   version: string;
-  status: 'Active' | 'Pending' | 'Expired' | 'Archived' | 'Missing';
+  status: "Active" | "Pending" | "Expired" | "Archived" | "Missing";
   size: string;
-  type: 'PDF' | 'DOC' | 'XLS' | 'IMG';
+  type: "PDF" | "DOC" | "XLS" | "IMG";
   versions: VersionLog[];
 }
 
@@ -45,8 +64,8 @@ const initialDocs: DocItem[] = [
     type: "PDF",
     versions: [
       { version: "v2.1", updatedBy: "Sarah J.", updatedDate: "2026-04-01" },
-      { version: "v2.0", updatedBy: "Dave K.", updatedDate: "2025-12-15" }
-    ]
+      { version: "v2.0", updatedBy: "Dave K.", updatedDate: "2025-12-15" },
+    ],
   },
   {
     id: "D2",
@@ -59,7 +78,9 @@ const initialDocs: DocItem[] = [
     status: "Active",
     size: "1.1 MB",
     type: "DOC",
-    versions: [{ version: "v1.0", updatedBy: "Dave K.", updatedDate: "2026-02-15" }]
+    versions: [
+      { version: "v1.0", updatedBy: "Dave K.", updatedDate: "2026-02-15" },
+    ],
   },
   {
     id: "D3",
@@ -72,7 +93,9 @@ const initialDocs: DocItem[] = [
     status: "Pending",
     size: "850 KB",
     type: "XLS",
-    versions: [{ version: "v1.4", updatedBy: "HR Admin", updatedDate: "2026-03-10" }]
+    versions: [
+      { version: "v1.4", updatedBy: "HR Admin", updatedDate: "2026-03-10" },
+    ],
   },
   {
     id: "D4",
@@ -86,7 +109,9 @@ const initialDocs: DocItem[] = [
     status: "Expired",
     size: "1.8 MB",
     type: "PDF",
-    versions: [{ version: "v1.0", updatedBy: "Sarah J.", updatedDate: "2025-12-28" }]
+    versions: [
+      { version: "v1.0", updatedBy: "Sarah J.", updatedDate: "2025-12-28" },
+    ],
   },
   {
     id: "D5",
@@ -99,13 +124,15 @@ const initialDocs: DocItem[] = [
     status: "Archived",
     size: "1.5 MB",
     type: "DOC",
-    versions: [{ version: "v1.1", updatedBy: "Sys Admin", updatedDate: "2026-01-05" }]
-  }
+    versions: [
+      { version: "v1.1", updatedBy: "Sys Admin", updatedDate: "2026-01-05" },
+    ],
+  },
 ];
 
 export function Documents() {
   const [docs, setDocs] = useState<DocItem[]>(initialDocs);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [searchTerm, setSearchTerm] = useState("");
   const [catFilter, setCatFilter] = useState("All");
   const [deptFilter, setDeptFilter] = useState("All");
@@ -118,16 +145,28 @@ export function Documents() {
   // Upload State
   const [uploadForm, setUploadForm] = useState({
     name: "",
-    category: "HR Policies" as 'HR Policies' | 'IT Policies' | 'Finance' | 'Contracts' | 'Compliance' | 'Templates',
+    category: "HR Policies" as
+      | "HR Policies"
+      | "IT Policies"
+      | "Finance"
+      | "Contracts"
+      | "Compliance"
+      | "Templates",
     linkedEmployee: "",
     linkedDept: "All",
     expiry: "",
-    notes: ""
+    notes: "",
   });
 
   const handleExport = () => {
-    const csvContent = "data:text/csv;charset=utf-8,Name,Category,Status,UploadedBy,Date\n" +
-      docs.map(d => `${d.name},${d.category},${d.status},${d.uploadedBy},${d.date}`).join("\n");
+    const csvContent =
+      "data:text/csv;charset=utf-8,Name,Category,Status,UploadedBy,Date\n" +
+      docs
+        .map(
+          (d) =>
+            `${d.name},${d.category},${d.status},${d.uploadedBy},${d.date}`,
+        )
+        .join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -148,52 +187,84 @@ export function Documents() {
       linkedEmployee: uploadForm.linkedEmployee || undefined,
       linkedDept: uploadForm.linkedDept,
       uploadedBy: "Sarah J.",
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split("T")[0],
       expiry: uploadForm.expiry || undefined,
       version: "v1.0",
       status: "Active",
       size: "1.5 MB",
-      type: uploadForm.name.endsWith('.pdf') ? 'PDF' : uploadForm.name.endsWith('.xls') ? 'XLS' : 'DOC',
-      versions: [{ version: "v1.0", updatedBy: "Sarah J.", updatedDate: new Date().toISOString().split('T')[0] }]
+      type: uploadForm.name.endsWith(".pdf")
+        ? "PDF"
+        : uploadForm.name.endsWith(".xls")
+          ? "XLS"
+          : "DOC",
+      versions: [
+        {
+          version: "v1.0",
+          updatedBy: "Sarah J.",
+          updatedDate: new Date().toISOString().split("T")[0],
+        },
+      ],
     };
 
-    setDocs(prev => [newDoc, ...prev]);
+    setDocs((prev) => [newDoc, ...prev]);
     setShowUploadModal(false);
-    setUploadForm({ name: "", category: "HR Policies", linkedEmployee: "", linkedDept: "All", expiry: "", notes: "" });
+    setUploadForm({
+      name: "",
+      category: "HR Policies",
+      linkedEmployee: "",
+      linkedDept: "All",
+      expiry: "",
+      notes: "",
+    });
   };
 
   const handleArchive = (id: string) => {
-    setDocs(prev => prev.map(d => d.id === id ? { ...d, status: 'Archived' } : d));
+    setDocs((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, status: "Archived" } : d)),
+    );
   };
 
   const handleDelete = (id: string) => {
-    setDocs(prev => prev.filter(d => d.id !== id));
+    setDocs((prev) => prev.filter((d) => d.id !== id));
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'Active': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
-      case 'Pending': return 'bg-amber-50 text-amber-600 border-amber-100';
-      case 'Expired': return 'bg-rose-50 text-rose-600 border-rose-100';
-      case 'Archived': return 'bg-slate-100 text-slate-500 border-slate-200';
-      case 'Missing': return 'bg-purple-50 text-purple-600 border-purple-100';
-      default: return 'bg-neutral-50 text-slate-600';
+      case "Active":
+        return "bg-emerald-50 text-emerald-600 border-emerald-100";
+      case "Pending":
+        return "bg-amber-50 text-amber-600 border-amber-100";
+      case "Expired":
+        return "bg-rose-50 text-rose-600 border-rose-100";
+      case "Archived":
+        return "bg-slate-100 text-slate-500 border-slate-200";
+      case "Missing":
+        return "bg-purple-50 text-purple-600 border-purple-100";
+      default:
+        return "bg-neutral-50 text-slate-600";
     }
   };
 
   const getFileIconColor = (type: string) => {
     switch (type) {
-      case 'PDF': return 'bg-rose-500 text-white';
-      case 'DOC': return 'bg-blue-500 text-white';
-      case 'XLS': return 'bg-emerald-500 text-white';
-      case 'IMG': return 'bg-purple-500 text-white';
-      default: return 'bg-slate-500 text-white';
+      case "PDF":
+        return "bg-rose-500 text-white";
+      case "DOC":
+        return "bg-blue-500 text-white";
+      case "XLS":
+        return "bg-emerald-500 text-white";
+      case "IMG":
+        return "bg-purple-500 text-white";
+      default:
+        return "bg-slate-500 text-white";
     }
   };
 
   // Filter Calculations
-  const filteredDocs = docs.filter(doc => {
-    const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredDocs = docs.filter((doc) => {
+    const matchesSearch = doc.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     const matchesCat = catFilter === "All" || doc.category === catFilter;
     const matchesDept = deptFilter === "All" || doc.linkedDept === deptFilter;
     const matchesStatus = statusFilter === "All" || doc.status === statusFilter;
@@ -201,15 +272,16 @@ export function Documents() {
   });
 
   return (
-    <div className="min-h-screen p-6 bg-background w-full">
-
+    <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* ── Page Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
         <div>
           <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">
             <span>Dashboard</span>
             <span>/</span>
-            <span className="text-slate-600 dark:text-slate-300 font-bold">Documents</span>
+            <span className="text-slate-600 dark:text-slate-300 font-bold">
+              Documents
+            </span>
           </div>
           <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <Folder size={26} className="text-[#00B87C]" />
@@ -241,19 +313,58 @@ export function Documents() {
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
         {[
-          { label: 'Total Documents', val: docs.length, icon: File, color: 'text-[#00B87C]', bg: 'bg-emerald-50' },
-          { label: 'Expiring Soon', val: '2', icon: AlertCircle, color: 'text-amber-600', bg: 'bg-amber-50' },
-          { label: 'Pending Approval', val: docs.filter(d => d.status === 'Pending').length, icon: Clock, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-          { label: 'Recently Added', val: '4', icon: CheckCircle2, color: 'text-purple-600', bg: 'bg-purple-50' },
-          { label: 'Storage Used', val: '1.2 GB', icon: HardDrive, color: 'text-rose-500', bg: 'bg-rose-50' }
+          {
+            label: "Total Documents",
+            val: docs.length,
+            icon: File,
+            color: "text-[#00B87C]",
+            bg: "bg-emerald-50",
+          },
+          {
+            label: "Expiring Soon",
+            val: "2",
+            icon: AlertCircle,
+            color: "text-amber-600",
+            bg: "bg-amber-50",
+          },
+          {
+            label: "Pending Approval",
+            val: docs.filter((d) => d.status === "Pending").length,
+            icon: Clock,
+            color: "text-indigo-600",
+            bg: "bg-indigo-50",
+          },
+          {
+            label: "Recently Added",
+            val: "4",
+            icon: CheckCircle2,
+            color: "text-purple-600",
+            bg: "bg-purple-50",
+          },
+          {
+            label: "Storage Used",
+            val: "1.2 GB",
+            icon: HardDrive,
+            color: "text-rose-500",
+            bg: "bg-rose-50",
+          },
         ].map((kpi, idx) => (
-          <div key={idx} className="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-border shadow-sm flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${kpi.bg} dark:bg-zinc-800/50 ${kpi.color}`}>
+          <div
+            key={idx}
+            className="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-border shadow-sm flex items-center gap-3"
+          >
+            <div
+              className={`w-10 h-10 rounded-xl flex items-center justify-center ${kpi.bg} dark:bg-zinc-800/50 ${kpi.color}`}
+            >
               <kpi.icon size={18} />
             </div>
             <div>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">{kpi.label}</p>
-              <p className="text-lg font-extrabold tracking-tight-slate-900 dark:text-slate-100 mt-0.5">{kpi.val}</p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                {kpi.label}
+              </p>
+              <p className="text-lg font-extrabold tracking-tight-slate-900 dark:text-slate-100 mt-0.5">
+                {kpi.val}
+              </p>
             </div>
           </div>
         ))}
@@ -263,9 +374,14 @@ export function Documents() {
       <div className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-border shadow-sm flex flex-col gap-3 mb-6">
         <div className="flex flex-wrap gap-3">
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-1">Search Files</label>
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-1">
+              Search Files
+            </label>
             <div className="relative">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search
+                size={14}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
               <input
                 type="text"
                 placeholder="Search by file name..."
@@ -277,7 +393,9 @@ export function Documents() {
           </div>
 
           <div>
-            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-1">Category</label>
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-1">
+              Category
+            </label>
             <select
               className="text-xs p-1.5 border border-border rounded-xl bg-background text-foreground font-bold"
               value={catFilter}
@@ -293,7 +411,9 @@ export function Documents() {
           </div>
 
           <div>
-            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-1">Department</label>
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-1">
+              Department
+            </label>
             <select
               className="text-xs p-1.5 border border-border rounded-xl bg-background text-foreground font-bold"
               value={deptFilter}
@@ -307,7 +427,9 @@ export function Documents() {
           </div>
 
           <div>
-            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-1">Status</label>
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-wider mb-1">
+              Status
+            </label>
             <select
               className="text-xs p-1.5 border border-border rounded-xl bg-background text-foreground font-bold"
               value={statusFilter}
@@ -323,14 +445,14 @@ export function Documents() {
 
           <div className="flex items-end gap-1 border border-border rounded-xl p-0.5 bg-neutral-50 dark:bg-zinc-800 h-[34px] self-end">
             <button
-              className={`p-1 rounded-lg ${viewMode === 'grid' ? 'bg-white dark:bg-zinc-900 text-[#00B87C] shadow-sm' : 'text-slate-400'}`}
-              onClick={() => setViewMode('grid')}
+              className={`p-1 rounded-lg ${viewMode === "grid" ? "bg-white dark:bg-zinc-900 text-[#00B87C] shadow-sm" : "text-slate-400"}`}
+              onClick={() => setViewMode("grid")}
             >
               <Grid size={16} />
             </button>
             <button
-              className={`p-1 rounded-lg ${viewMode === 'list' ? 'bg-white dark:bg-zinc-900 text-[#00B87C] shadow-sm' : 'text-slate-400'}`}
-              onClick={() => setViewMode('list')}
+              className={`p-1 rounded-lg ${viewMode === "list" ? "bg-white dark:bg-zinc-900 text-[#00B87C] shadow-sm" : "text-slate-400"}`}
+              onClick={() => setViewMode("list")}
             >
               <List size={16} />
             </button>
@@ -339,7 +461,7 @@ export function Documents() {
       </div>
 
       {/* ── DOCUMENT TABLE / GRID ── */}
-      {viewMode === 'list' ? (
+      {viewMode === "list" ? (
         <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -357,10 +479,15 @@ export function Documents() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-zinc-800 text-xs font-bold text-slate-700 dark:text-slate-300">
-                {filteredDocs.map(doc => (
-                  <tr key={doc.id} className="hover:bg-[#F8FAF9] dark:hover:bg-zinc-800/40 transition-all">
+                {filteredDocs.map((doc) => (
+                  <tr
+                    key={doc.id}
+                    className="hover:bg-[#F8FAF9] dark:hover:bg-zinc-800/40 transition-all"
+                  >
                     <td className="px-4 py-3 flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${getFileIconColor(doc.type)}`}>
+                      <div
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${getFileIconColor(doc.type)}`}
+                      >
                         <FileText size={16} />
                       </div>
                       <span className="truncate max-w-[180px]">{doc.name}</span>
@@ -380,22 +507,42 @@ export function Documents() {
                     </td>
                     <td className="px-4 py-3">{doc.uploadedBy}</td>
                     <td className="px-4 py-3 text-slate-400">{doc.date}</td>
-                    <td className="px-4 py-3 text-slate-400">{doc.expiry || '-'}</td>
-                    <td className="px-4 py-3"><span className="text-[10px] font-bold bg-neutral-100 dark:bg-zinc-800 px-1 rounded">{doc.version}</span></td>
+                    <td className="px-4 py-3 text-slate-400">
+                      {doc.expiry || "-"}
+                    </td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded-full border text-[9px] font-black tracking-wider uppercase ${getStatusBadge(doc.status)}`}>
+                      <span className="text-[10px] font-bold bg-neutral-100 dark:bg-zinc-800 px-1 rounded">
+                        {doc.version}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`px-2 py-0.5 rounded-full border text-[9px] font-black tracking-wider uppercase ${getStatusBadge(doc.status)}`}
+                      >
                         {doc.status}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => setPreviewDoc(doc)} className="p-1.5 hover:bg-neutral-50 dark:hover:bg-zinc-800 rounded-lg text-slate-500 hover:text-[#00B87C]" title="View">
+                        <button
+                          onClick={() => setPreviewDoc(doc)}
+                          className="p-1.5 hover:bg-neutral-50 dark:hover:bg-zinc-800 rounded-lg text-slate-500 hover:text-[#00B87C]"
+                          title="View"
+                        >
                           <Eye size={14} />
                         </button>
-                        <button onClick={() => handleArchive(doc.id)} className="p-1.5 hover:bg-neutral-50 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-amber-600" title="Archive">
+                        <button
+                          onClick={() => handleArchive(doc.id)}
+                          className="p-1.5 hover:bg-neutral-50 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-amber-600"
+                          title="Archive"
+                        >
                           <Archive size={14} />
                         </button>
-                        <button onClick={() => setConfirmDeleteId(doc.id)} className="p-1.5 hover:bg-neutral-50 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-rose-600" title="Delete">
+                        <button
+                          onClick={() => setConfirmDeleteId(doc.id)}
+                          className="p-1.5 hover:bg-neutral-50 dark:hover:bg-zinc-800 rounded-lg text-slate-400 hover:text-rose-600"
+                          title="Delete"
+                        >
                           <Trash2 size={14} />
                         </button>
                       </div>
@@ -408,40 +555,63 @@ export function Documents() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          
           {/* Dedicated Upload Document Card in Grid */}
-          <div 
+          <div
             onClick={() => setShowUploadModal(true)}
             className="bg-[#F0FDF4]/50 dark:bg-zinc-800/20 p-4 rounded-2xl border-2 border-dashed border-[#00B87C]/30 hover:border-[#00B87C]/80 flex flex-col items-center justify-center text-center relative cursor-pointer transition-all hover:-translate-y-1 hover:shadow-md group min-h-[160px]"
           >
             <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#E6F4EA] text-[#00B87C] mb-3 shadow-sm group-hover:scale-105 transition-transform">
               <UploadCloud size={24} />
             </div>
-            <h4 className="text-xs font-extrabold text-slate-900 dark:text-slate-100">Upload Document</h4>
-            <p className="text-[10px] font-bold text-slate-400 mt-1">Drag files or click to browse</p>
+            <h4 className="text-xs font-extrabold text-slate-900 dark:text-slate-100">
+              Upload Document
+            </h4>
+            <p className="text-[10px] font-bold text-slate-400 mt-1">
+              Drag files or click to browse
+            </p>
           </div>
 
-          {filteredDocs.map(doc => (
-            <div key={doc.id} className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-border shadow-sm flex flex-col items-center text-center relative transition-all hover:-translate-y-1 hover:shadow-md group">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getFileIconColor(doc.type)} mb-3 shadow-md`}>
+          {filteredDocs.map((doc) => (
+            <div
+              key={doc.id}
+              className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-border shadow-sm flex flex-col items-center text-center relative transition-all hover:-translate-y-1 hover:shadow-md group"
+            >
+              <div
+                className={`w-12 h-12 rounded-xl flex items-center justify-center ${getFileIconColor(doc.type)} mb-3 shadow-md`}
+              >
                 <FileText size={24} />
               </div>
 
-              <h4 className="text-xs font-extrabold text-slate-900 dark:text-slate-100 truncate w-full px-2">{doc.name}</h4>
-              <div className="text-[10px] font-bold text-slate-400 mt-1">{doc.size} • {doc.type}</div>
+              <h4 className="text-xs font-extrabold text-slate-900 dark:text-slate-100 truncate w-full px-2">
+                {doc.name}
+              </h4>
+              <div className="text-[10px] font-bold text-slate-400 mt-1">
+                {doc.size} • {doc.type}
+              </div>
 
-              <span className={`mt-2 px-2 py-0.5 rounded-full border text-[8px] font-black tracking-wider uppercase ${getStatusBadge(doc.status)}`}>
+              <span
+                className={`mt-2 px-2 py-0.5 rounded-full border text-[8px] font-black tracking-wider uppercase ${getStatusBadge(doc.status)}`}
+              >
                 {doc.status}
               </span>
 
               <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-neutral-50 dark:border-zinc-800 w-full">
-                <button onClick={() => setPreviewDoc(doc)} className="text-slate-500 hover:text-[#00B87C] text-[10px] font-extrabold flex items-center gap-1">
+                <button
+                  onClick={() => setPreviewDoc(doc)}
+                  className="text-slate-500 hover:text-[#00B87C] text-[10px] font-extrabold flex items-center gap-1"
+                >
                   <Eye size={12} /> View
                 </button>
-                <button onClick={() => handleArchive(doc.id)} className="text-slate-400 hover:text-amber-600 text-[10px] font-extrabold flex items-center gap-1">
+                <button
+                  onClick={() => handleArchive(doc.id)}
+                  className="text-slate-400 hover:text-amber-600 text-[10px] font-extrabold flex items-center gap-1"
+                >
                   <Archive size={12} /> Archive
                 </button>
-                <button onClick={() => setConfirmDeleteId(doc.id)} className="text-slate-400 hover:text-rose-600 text-[10px] font-extrabold flex items-center gap-1">
+                <button
+                  onClick={() => setConfirmDeleteId(doc.id)}
+                  className="text-slate-400 hover:text-rose-600 text-[10px] font-extrabold flex items-center gap-1"
+                >
                   <Trash2 size={12} /> Delete
                 </button>
               </div>
@@ -452,38 +622,75 @@ export function Documents() {
 
       {/* ── Upload Modal ── */}
       {showUploadModal && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40" onClick={() => setShowUploadModal(false)}>
-          <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-xl p-6 animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40"
+          onClick={() => setShowUploadModal(false)}
+        >
+          <div
+            className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-xl p-6 animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
-              <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100">Upload Document</h3>
-              <button onClick={() => setShowUploadModal(false)} className="p-1 text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg"><X size={18} /></button>
+              <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100">
+                Upload Document
+              </h3>
+              <button
+                onClick={() => setShowUploadModal(false)}
+                className="p-1 text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleUploadSubmit} className="space-y-3">
               <div className="border-2 border-dashed border-neutral-200 dark:border-zinc-800 rounded-2xl bg-[#F0FDF4]/30 p-6 flex flex-col items-center text-center relative hover:border-[#00B87C]/50 transition-all cursor-pointer">
                 <UploadCloud size={40} className="text-[#00B87C] mb-1" />
-                <p className="text-xs font-bold text-slate-800 dark:text-slate-200">Drag files here or Browse</p>
-                <span className="text-[9px] text-slate-400 mt-1">Max 25MB · PDF, DOC, XLS</span>
-                <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" />
+                <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                  Drag files here or Browse
+                </p>
+                <span className="text-[9px] text-slate-400 mt-1">
+                  Max 25MB · PDF, DOC, XLS
+                </span>
+                <input
+                  type="file"
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
               </div>
 
               <div>
-                <label className="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">Document Name</label>
+                <label className="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">
+                  Document Name
+                </label>
                 <input
                   type="text"
                   className="w-full text-xs p-2 border border-border bg-background rounded-xl font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20"
                   value={uploadForm.name}
-                  onChange={e => setUploadForm({ ...uploadForm, name: e.target.value })}
+                  onChange={(e) =>
+                    setUploadForm({ ...uploadForm, name: e.target.value })
+                  }
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">Category</label>
+                  <label className="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">
+                    Category
+                  </label>
                   <select
                     className="w-full text-xs p-2 border border-border rounded-xl bg-background text-foreground font-bold cursor-pointer"
                     value={uploadForm.category}
-                    onChange={e => setUploadForm({ ...uploadForm, category: e.target.value as 'HR Policies' | 'IT Policies' | 'Finance' | 'Contracts' | 'Compliance' | 'Templates' })}
+                    onChange={(e) =>
+                      setUploadForm({
+                        ...uploadForm,
+                        category: e.target.value as
+                          | "HR Policies"
+                          | "IT Policies"
+                          | "Finance"
+                          | "Contracts"
+                          | "Compliance"
+                          | "Templates",
+                      })
+                    }
                   >
                     <option value="HR Policies">HR Policies</option>
                     <option value="IT Policies">IT Policies</option>
@@ -493,12 +700,16 @@ export function Documents() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">Expiry Date</label>
+                  <label className="block text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">
+                    Expiry Date
+                  </label>
                   <input
                     type="date"
                     className="w-full text-xs p-2 border border-border bg-background rounded-xl font-bold text-foreground cursor-pointer"
                     value={uploadForm.expiry}
-                    onChange={e => setUploadForm({ ...uploadForm, expiry: e.target.value })}
+                    onChange={(e) =>
+                      setUploadForm({ ...uploadForm, expiry: e.target.value })
+                    }
                   />
                 </div>
               </div>
@@ -516,51 +727,91 @@ export function Documents() {
 
       {/* ── Preview Side Drawer ── */}
       {previewDoc && (
-        <div className="fixed inset-0 z-[2000] flex justify-end bg-black/40" onClick={() => setPreviewDoc(null)}>
+        <div
+          className="fixed inset-0 z-[2000] flex justify-end bg-black/40"
+          onClick={() => setPreviewDoc(null)}
+        >
           <div
             className="w-full max-w-md bg-white dark:bg-zinc-900 h-full shadow-2xl animate-in slide-in-from-right p-6 flex flex-col"
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-border pb-3 mb-4 flex-shrink-0">
-              <h3 className="text-sm font-extrabold text-slate-900 dark:text-slate-100">Document Details</h3>
-              <button onClick={() => setPreviewDoc(null)} className="p-1 text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg"><X size={18} /></button>
+              <h3 className="text-sm font-extrabold text-slate-900 dark:text-slate-100">
+                Document Details
+              </h3>
+              <button
+                onClick={() => setPreviewDoc(null)}
+                className="p-1 text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-lg"
+              >
+                <X size={18} />
+              </button>
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-6 pb-4 scrollbar-none">
               {/* File Display Card */}
               <div className="w-full aspect-video bg-slate-900 rounded-2xl flex flex-col items-center justify-center text-center text-white relative shadow-inner border border-zinc-800">
-                <FileText size={40} className={`${getFileIconColor(previewDoc.type)} p-2 rounded-xl shadow`} />
-                <span className="text-xs font-extrabold mt-3 truncate px-4 w-full">{previewDoc.name}</span>
-                <span className="text-[10px] text-slate-400 mt-1">{previewDoc.size} • {previewDoc.type}</span>
+                <FileText
+                  size={40}
+                  className={`${getFileIconColor(previewDoc.type)} p-2 rounded-xl shadow`}
+                />
+                <span className="text-xs font-extrabold mt-3 truncate px-4 w-full">
+                  {previewDoc.name}
+                </span>
+                <span className="text-[10px] text-slate-400 mt-1">
+                  {previewDoc.size} • {previewDoc.type}
+                </span>
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-50 dark:border-zinc-800/60 pb-1">Metadata</h4>
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-50 dark:border-zinc-800/60 pb-1">
+                  Metadata
+                </h4>
                 <div className="grid grid-cols-2 gap-2 text-xs font-bold">
                   <span className="text-slate-500">Status:</span>
-                  <span className={`text-[9px] px-2 py-0.5 rounded border w-fit ${getStatusBadge(previewDoc.status)}`}>{previewDoc.status}</span>
+                  <span
+                    className={`text-[9px] px-2 py-0.5 rounded border w-fit ${getStatusBadge(previewDoc.status)}`}
+                  >
+                    {previewDoc.status}
+                  </span>
 
                   <span className="text-slate-500">Uploaded By:</span>
-                  <span className="text-slate-800 dark:text-slate-200">{previewDoc.uploadedBy}</span>
+                  <span className="text-slate-800 dark:text-slate-200">
+                    {previewDoc.uploadedBy}
+                  </span>
 
                   <span className="text-slate-500">Date Added:</span>
-                  <span className="text-slate-800 dark:text-slate-200">{previewDoc.date}</span>
+                  <span className="text-slate-800 dark:text-slate-200">
+                    {previewDoc.date}
+                  </span>
 
                   <span className="text-slate-500">Expiry Date:</span>
-                  <span className="text-slate-800 dark:text-slate-200">{previewDoc.expiry || 'None'}</span>
+                  <span className="text-slate-800 dark:text-slate-200">
+                    {previewDoc.expiry || "None"}
+                  </span>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-50 dark:border-zinc-800/60 pb-1">Version History</h4>
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-50 dark:border-zinc-800/60 pb-1">
+                  Version History
+                </h4>
                 <div className="space-y-2">
                   {previewDoc.versions.map((v, i) => (
-                    <div key={i} className="flex items-center justify-between text-xs font-bold bg-neutral-50 dark:bg-zinc-800/30 p-3 rounded-xl border border-border">
+                    <div
+                      key={i}
+                      className="flex items-center justify-between text-xs font-bold bg-neutral-50 dark:bg-zinc-800/30 p-3 rounded-xl border border-border"
+                    >
                       <div className="flex items-center gap-2">
-                        <span className="px-1.5 py-0.5 rounded bg-neutral-200 dark:bg-zinc-700 text-[9px] font-black">{v.version}</span>
-                        <span className="text-slate-700 dark:text-slate-300">{v.updatedBy}</span>
+                        <span className="px-1.5 py-0.5 rounded bg-neutral-200 dark:bg-zinc-700 text-[9px] font-black">
+                          {v.version}
+                        </span>
+                        <span className="text-slate-700 dark:text-slate-300">
+                          {v.updatedBy}
+                        </span>
                       </div>
-                      <span className="text-slate-400 text-[10px]">{v.updatedDate}</span>
+                      <span className="text-slate-400 text-[10px]">
+                        {v.updatedDate}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -578,22 +829,30 @@ export function Documents() {
 
       {/* ── Delete Confirmation Modal ── */}
       {confirmDeleteId && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40" onClick={() => setConfirmDeleteId(null)}>
-          <div 
-            className="w-full max-w-sm bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-xl p-6 animate-in zoom-in-95" 
-            onClick={e => e.stopPropagation()}
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40"
+          onClick={() => setConfirmDeleteId(null)}
+        >
+          <div
+            className="w-full max-w-sm bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-xl p-6 animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 mb-2">Confirm Deletion</h3>
-            <p className="text-xs text-slate-500 mb-4 font-bold">Are you absolutely sure you want to permanently remove this document? This action cannot be undone.</p>
-            
+            <h3 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+              Confirm Deletion
+            </h3>
+            <p className="text-xs text-slate-500 mb-4 font-bold">
+              Are you absolutely sure you want to permanently remove this
+              document? This action cannot be undone.
+            </p>
+
             <div className="flex gap-3">
-              <button 
+              <button
                 onClick={() => setConfirmDeleteId(null)}
                 className="flex-1 py-2 bg-neutral-100 dark:bg-zinc-800 text-slate-700 dark:text-slate-300 text-xs font-black rounded-xl transition-all"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={() => {
                   handleDelete(confirmDeleteId);
                   setConfirmDeleteId(null);

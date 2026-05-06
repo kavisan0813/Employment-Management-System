@@ -1,9 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import {
-  Mail, Lock, Zap, ArrowRight, User, Phone,
-  Building2, Briefcase, MapPin, Eye, EyeOff,
-  ShieldCheck, CheckCircle2, ChevronDown
+  Mail,
+  Lock,
+  Zap,
+  ArrowRight,
+  User,
+  Phone,
+  Building2,
+  Briefcase,
+  MapPin,
+  Eye,
+  EyeOff,
+  ShieldCheck,
+  CheckCircle2,
+  ChevronDown,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -39,10 +50,14 @@ export function Signup() {
     location: "",
     password: "",
     confirmPassword: "",
-    termsAccepted: true
+    termsAccepted: true,
   });
 
-  const [strength, setStrength] = useState<PasswordStrength>({ score: 0, label: "Weak", color: "#EF4444" });
+  const [strength, setStrength] = useState<PasswordStrength>({
+    score: 0,
+    label: "Weak",
+    color: "#EF4444",
+  });
 
   // Calculate Password Strength
   useEffect(() => {
@@ -58,7 +73,8 @@ export function Signup() {
     if (/[^A-Za-z0-9]/.test(pass)) score++;
 
     if (score <= 2) setStrength({ score, label: "Weak", color: "#EF4444" });
-    else if (score === 3) setStrength({ score, label: "Medium", color: "#F59E0B" });
+    else if (score === 3)
+      setStrength({ score, label: "Medium", color: "#F59E0B" });
     else setStrength({ score, label: "Strong", color: "#10B981" });
   }, [formData.password]);
 
@@ -77,7 +93,9 @@ export function Signup() {
     setTimeout(() => {
       setIsLoading(false);
 
-      const needsApproval = ["HR Admin", "Manager", "Payroll Admin"].includes(formData.role);
+      const needsApproval = ["HR Admin", "Manager", "Payroll Admin"].includes(
+        formData.role,
+      );
 
       if (needsApproval) {
         setIsSuccess(true);
@@ -86,8 +104,8 @@ export function Signup() {
           state: {
             name: formData.fullName,
             email: formData.email,
-            role: formData.role
-          }
+            role: formData.role,
+          },
         });
       }
     }, 1500);
@@ -106,16 +124,35 @@ export function Signup() {
       >
         <div
           className="w-full max-w-[480px] rounded-[32px] p-12 text-center animate-in fade-in zoom-in-95 duration-500 shadow-2xl"
-          style={{ background: "var(--card)", border: "1px solid var(--border)" }}
+          style={{
+            background: "var(--card)",
+            border: "1px solid var(--border)",
+          }}
         >
           <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8">
             <CheckCircle2 size={48} />
           </div>
-          <h2 style={{ color: "var(--foreground)", fontSize: "28px", fontWeight: 800, letterSpacing: "-0.5px" }}>
+          <h2
+            style={{
+              color: "var(--foreground)",
+              fontSize: "28px",
+              fontWeight: 800,
+              letterSpacing: "-0.5px",
+            }}
+          >
             Registration Received
           </h2>
-          <p style={{ color: "var(--muted-foreground)", fontSize: "16px", fontWeight: 500, marginTop: "12px", lineHeight: "1.6" }}>
-            Your account is awaiting administrator approval. You will receive an email once your access is provisioned.
+          <p
+            style={{
+              color: "var(--muted-foreground)",
+              fontSize: "16px",
+              fontWeight: 500,
+              marginTop: "12px",
+              lineHeight: "1.6",
+            }}
+          >
+            Your account is awaiting administrator approval. You will receive an
+            email once your access is provisioned.
           </p>
 
           <button
@@ -161,10 +198,24 @@ export function Signup() {
           >
             <Zap size={28} color="white" fill="white" />
           </div>
-          <h1 style={{ color: "var(--foreground)", fontSize: "26px", fontWeight: 800, letterSpacing: "-0.5px" }}>
+          <h1
+            style={{
+              color: "var(--foreground)",
+              fontSize: "26px",
+              fontWeight: 800,
+              letterSpacing: "-0.5px",
+            }}
+          >
             Create Account
           </h1>
-          <p style={{ color: "var(--muted-foreground)", fontSize: "14px", fontWeight: 600, marginTop: "4px" }}>
+          <p
+            style={{
+              color: "var(--muted-foreground)",
+              fontSize: "14px",
+              fontWeight: 600,
+              marginTop: "4px",
+            }}
+          >
             Register to access the Employee Management System
           </p>
         </div>
@@ -173,17 +224,30 @@ export function Signup() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Full Name */}
             <div className="space-y-1.5">
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                }}
+              >
                 Full Name
               </label>
               <div className="relative group">
-                <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
+                <User
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: "var(--primary)" }}
+                />
                 <input
                   type="text"
                   required
                   placeholder="Enter your name"
                   value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullName: e.target.value })
+                  }
                   className="w-full rounded-2xl pl-12 pr-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"
                   style={{
                     background: "var(--background)",
@@ -196,17 +260,30 @@ export function Signup() {
 
             {/* Email Address */}
             <div className="space-y-1.5">
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                }}
+              >
                 Work Email Address
               </label>
               <div className="relative group">
-                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
+                <Mail
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: "var(--primary)" }}
+                />
                 <input
                   type="email"
                   required
                   placeholder="name@nexushr.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   className="w-full rounded-2xl pl-12 pr-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"
                   style={{
                     background: "var(--background)",
@@ -219,17 +296,30 @@ export function Signup() {
 
             {/* Mobile Number */}
             <div className="space-y-1.5">
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                }}
+              >
                 Mobile Number
               </label>
               <div className="relative group">
-                <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
+                <Phone
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: "var(--primary)" }}
+                />
                 <input
                   type="tel"
                   required
                   placeholder="+91 XXXXX XXXXX"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
                   className="w-full rounded-2xl pl-12 pr-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"
                   style={{
                     background: "var(--background)",
@@ -242,16 +332,32 @@ export function Signup() {
 
             {/* Employee ID */}
             <div className="space-y-1.5">
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)" }}>
-                Employee ID <span style={{ fontWeight: 500, opacity: 0.6 }}>(Optional)</span>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                }}
+              >
+                Employee ID{" "}
+                <span style={{ fontWeight: 500, opacity: 0.6 }}>
+                  (Optional)
+                </span>
               </label>
               <div className="relative group">
-                <ShieldCheck size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
+                <ShieldCheck
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: "var(--primary)" }}
+                />
                 <input
                   type="text"
                   placeholder="EMP-XXXXX"
                   value={formData.employeeId}
-                  onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, employeeId: e.target.value })
+                  }
                   className="w-full rounded-2xl pl-12 pr-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"
                   style={{
                     background: "var(--background)",
@@ -264,15 +370,28 @@ export function Signup() {
 
             {/* Department */}
             <div className="space-y-1.5">
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                }}
+              >
                 Department
               </label>
               <div className="relative group">
-                <Building2 size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
+                <Building2
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: "var(--primary)" }}
+                />
                 <select
                   required
                   value={formData.department}
-                  onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, department: e.target.value })
+                  }
                   className="w-full rounded-2xl pl-12 pr-10 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 appearance-none cursor-pointer"
                   style={{
                     background: "var(--background)",
@@ -280,7 +399,9 @@ export function Signup() {
                     color: "var(--foreground)",
                   }}
                 >
-                  <option value="" disabled>Select Department</option>
+                  <option value="" disabled>
+                    Select Department
+                  </option>
                   <option value="Engineering">Engineering</option>
                   <option value="Human Resources">Human Resources</option>
                   <option value="Finance">Finance</option>
@@ -288,21 +409,40 @@ export function Signup() {
                   <option value="Operations">Operations</option>
                   <option value="Sales">Sales</option>
                 </select>
-                <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <ChevronDown
+                  size={16}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                />
               </div>
             </div>
 
             {/* Role */}
             <div className="space-y-1.5">
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                }}
+              >
                 Requested Role
               </label>
               <div className="relative group">
-                <Briefcase size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
+                <Briefcase
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: "var(--primary)" }}
+                />
                 <select
                   required
                   value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      role: e.target.value as UserRole,
+                    })
+                  }
                   className="w-full rounded-2xl pl-12 pr-10 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 appearance-none cursor-pointer"
                   style={{
                     background: "var(--background)",
@@ -310,7 +450,9 @@ export function Signup() {
                     color: "var(--foreground)",
                   }}
                 >
-                  <option value="" disabled>Select Role</option>
+                  <option value="" disabled>
+                    Select Role
+                  </option>
                   <option value="Super Admin">Super Admin</option>
                   <option value="HR Admin">HR Admin</option>
                   <option value="Manager">Manager</option>
@@ -319,7 +461,10 @@ export function Signup() {
                   <option value="Recruiter">Recruiter</option>
                   <option value="Employee">Employee</option>
                 </select>
-                <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <ChevronDown
+                  size={16}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                />
               </div>
             </div>
           </div>
@@ -327,14 +472,30 @@ export function Signup() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Location */}
             <div className="space-y-1.5">
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)" }}>
-                Location <span style={{ fontWeight: 500, opacity: 0.6 }}>(Optional)</span>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                }}
+              >
+                Location{" "}
+                <span style={{ fontWeight: 500, opacity: 0.6 }}>
+                  (Optional)
+                </span>
               </label>
               <div className="relative group">
-                <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
+                <MapPin
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: "var(--primary)" }}
+                />
                 <select
                   value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, location: e.target.value })
+                  }
                   className="w-full rounded-2xl pl-12 pr-10 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 appearance-none cursor-pointer"
                   style={{
                     background: "var(--background)",
@@ -349,7 +510,10 @@ export function Signup() {
                   <option value="Delhi">Delhi Office</option>
                   <option value="Remote">Remote</option>
                 </select>
-                <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <ChevronDown
+                  size={16}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                />
               </div>
             </div>
 
@@ -360,17 +524,30 @@ export function Signup() {
           {/* Password Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="space-y-1.5">
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                }}
+              >
                 Password
               </label>
               <div className="relative group">
-                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
+                <Lock
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: "var(--primary)" }}
+                />
                 <input
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder="••••••••"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                   className="w-full rounded-2xl pl-12 pr-12 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"
                   style={{
                     background: "var(--background)",
@@ -391,8 +568,15 @@ export function Signup() {
               {formData.password && (
                 <div className="space-y-1.5 mt-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Strength</span>
-                    <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: strength.color }}>{strength.label}</span>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                      Strength
+                    </span>
+                    <span
+                      className="text-[10px] font-black uppercase tracking-wider"
+                      style={{ color: strength.color }}
+                    >
+                      {strength.label}
+                    </span>
                   </div>
                   <div className="h-1.5 w-full bg-border rounded-full overflow-hidden flex gap-1">
                     {[1, 2, 3, 4].map((i) => (
@@ -400,8 +584,11 @@ export function Signup() {
                         key={i}
                         className="h-full flex-1 transition-all duration-500"
                         style={{
-                          backgroundColor: i <= strength.score ? strength.color : "transparent",
-                          opacity: i <= strength.score ? 1 : 0.2
+                          backgroundColor:
+                            i <= strength.score
+                              ? strength.color
+                              : "transparent",
+                          opacity: i <= strength.score ? 1 : 0.2,
                         }}
                       />
                     ))}
@@ -411,17 +598,33 @@ export function Signup() {
             </div>
 
             <div className="space-y-1.5">
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                }}
+              >
                 Confirm Password
               </label>
               <div className="relative group">
-                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "var(--primary)" }} />
+                <Lock
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: "var(--primary)" }}
+                />
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   required
                   placeholder="••••••••"
                   value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
                   className="w-full rounded-2xl pl-12 pr-12 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"
                   style={{
                     background: "var(--background)",
@@ -434,12 +637,19 @@ export function Signup() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-emerald-600 transition-colors"
                 >
-                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
                 </button>
               </div>
-              {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-                <p className="text-[10px] font-bold text-destructive mt-1">Passwords do not match</p>
-              )}
+              {formData.confirmPassword &&
+                formData.password !== formData.confirmPassword && (
+                  <p className="text-[10px] font-bold text-destructive mt-1">
+                    Passwords do not match
+                  </p>
+                )}
             </div>
           </div>
 
@@ -455,16 +665,43 @@ export function Signup() {
           >
             <span className="relative z-10 flex items-center justify-center gap-2 text-white font-bold text-[15px]">
               {isLoading ? "Creating Account..." : "Create Account"}
-              {!isLoading && <ArrowRight size={18} className="transition-transform group-hover:translate-x-1.5" />}
+              {!isLoading && (
+                <ArrowRight
+                  size={18}
+                  className="transition-transform group-hover:translate-x-1.5"
+                />
+              )}
             </span>
           </button>
         </form>
 
         <div className="mt-8 text-center space-y-4">
-          <p style={{ fontSize: "14px", fontWeight: 700, color: "var(--foreground)" }}>
-            Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); navigate("/login"); }} className="text-emerald-600 hover:underline cursor-pointer font-black">Sign In</a>
+          <p
+            style={{
+              fontSize: "14px",
+              fontWeight: 700,
+              color: "var(--foreground)",
+            }}
+          >
+            Already have an account?{" "}
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/login");
+              }}
+              className="text-emerald-600 hover:underline cursor-pointer font-black"
+            >
+              Sign In
+            </a>
           </p>
-          <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--muted-foreground)" }}>
+          <p
+            style={{
+              fontSize: "11px",
+              fontWeight: 600,
+              color: "var(--muted-foreground)",
+            }}
+          >
             NexusHR Enterprise Security Protocol Active
           </p>
         </div>

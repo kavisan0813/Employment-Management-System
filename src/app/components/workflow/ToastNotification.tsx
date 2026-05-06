@@ -2,7 +2,11 @@ import { toast } from "sonner"; // Assuming sonner is used based on common patte
 
 export type ToastType = "success" | "error" | "info" | "warning";
 
-export const showToast = (title: string, type: ToastType = "info", description?: string) => {
+export const showToast = (
+  title: string,
+  type: ToastType = "info",
+  description?: string,
+) => {
   const options = {
     description,
     duration: 4000,

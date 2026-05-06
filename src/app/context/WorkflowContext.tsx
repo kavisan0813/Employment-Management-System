@@ -12,7 +12,9 @@ interface WorkflowContextType {
   updateCounts: (newCounts: Partial<WorkflowCounts>) => void;
 }
 
-const WorkflowContext = createContext<WorkflowContextType | undefined>(undefined);
+const WorkflowContext = createContext<WorkflowContextType | undefined>(
+  undefined,
+);
 
 export function WorkflowProvider({ children }: { children: ReactNode }) {
   const [counts, setCounts] = useState<WorkflowCounts>({
@@ -23,7 +25,7 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
   });
 
   const updateCounts = (newCounts: Partial<WorkflowCounts>) => {
-    setCounts(prev => ({ ...prev, ...newCounts }));
+    setCounts((prev) => ({ ...prev, ...newCounts }));
   };
 
   return (
@@ -35,6 +37,7 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
 
 export function useWorkflow() {
   const context = useContext(WorkflowContext);
-  if (context === undefined) throw new Error("useWorkflow must be used within a WorkflowProvider");
+  if (context === undefined)
+    throw new Error("useWorkflow must be used within a WorkflowProvider");
   return context;
 }

@@ -1,29 +1,56 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Mail, Lock, Zap, ArrowRight, ChevronDown, ShieldCheck } from "lucide-react";
-import { useAuth, UserRole, ROLE_HOME_ROUTE, ROLE_CONFIG } from "../context/AuthContext";
+import {
+  Mail,
+  Lock,
+  Zap,
+  ArrowRight,
+  ChevronDown,
+  ShieldCheck,
+} from "lucide-react";
+import {
+  useAuth,
+  UserRole,
+  ROLE_HOME_ROUTE,
+  ROLE_CONFIG,
+} from "../context/AuthContext";
 
 // ─── Demo account map (role → credentials) ──────────────────
-const DEMO_ACCOUNTS: Record<UserRole, { email: string; name: string; initials: string }> = {
-  "Super Admin":   { email: "admin@nexushr.com",   name: "Alex Johnson",  initials: "AJ" },
-  "HR Admin":      { email: "hr@nexushr.com",       name: "Ryan Park",     initials: "RP" },
-  "Manager":       { email: "manager@nexushr.com",  name: "Sarah Chen",    initials: "SC" },
-  "Employee":      { email: "emp@nexushr.com",      name: "John Doe",      initials: "JD" },
-  "Payroll Admin": { email: "payroll@nexushr.com",  name: "Priya Sharma",  initials: "PS" },
-  "Recruiter":     { email: "recruiter@nexushr.com",name: "Marcus Lee",    initials: "ML" },
+const DEMO_ACCOUNTS: Record<
+  UserRole,
+  { email: string; name: string; initials: string }
+> = {
+  "Super Admin": {
+    email: "admin@nexushr.com",
+    name: "Alex Johnson",
+    initials: "AJ",
+  },
+  "HR Admin": { email: "hr@nexushr.com", name: "Ryan Park", initials: "RP" },
+  Manager: { email: "manager@nexushr.com", name: "Sarah Chen", initials: "SC" },
+  Employee: { email: "emp@nexushr.com", name: "John Doe", initials: "JD" },
+  "Payroll Admin": {
+    email: "payroll@nexushr.com",
+    name: "Priya Sharma",
+    initials: "PS",
+  },
+  Recruiter: {
+    email: "recruiter@nexushr.com",
+    name: "Marcus Lee",
+    initials: "ML",
+  },
 };
 
 export function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [email, setEmail]           = useState("");
-  const [password, setPassword]     = useState("");
-  const [remember, setRemember]     = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
   const [selectedRole, setSelectedRole] = useState<UserRole | "">("");
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
-  const [isLoading, setIsLoading]   = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,10 +117,24 @@ export function Login() {
           >
             <Zap size={32} color="white" fill="white" />
           </div>
-          <h1 style={{ color: "var(--foreground)", fontSize: "30px", fontWeight: 800, letterSpacing: "-0.5px" }}>
+          <h1
+            style={{
+              color: "var(--foreground)",
+              fontSize: "30px",
+              fontWeight: 800,
+              letterSpacing: "-0.5px",
+            }}
+          >
             NexusHR
           </h1>
-          <p style={{ color: "var(--muted-foreground)", fontSize: "14px", fontWeight: 600, marginTop: "6px" }}>
+          <p
+            style={{
+              color: "var(--muted-foreground)",
+              fontSize: "14px",
+              fontWeight: 600,
+              marginTop: "6px",
+            }}
+          >
             Enterprise Management System
           </p>
         </div>
@@ -102,33 +143,80 @@ export function Login() {
           /* ── Forgot Password ── */
           <form onSubmit={handleResetPassword} className="space-y-6">
             <div>
-              <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--muted-foreground)", marginBottom: "16px" }}>
-                Enter your email address and we'll send you a link to reset your password.
+              <p
+                style={{
+                  fontSize: "14px",
+                  fontWeight: 500,
+                  color: "var(--muted-foreground)",
+                  marginBottom: "16px",
+                }}
+              >
+                Enter your email address and we'll send you a link to reset your
+                password.
               </p>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)", marginBottom: "8px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                  marginBottom: "8px",
+                }}
+              >
                 Work Email Address
               </label>
               <div className="relative">
-                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "var(--primary)" }} />
+                <Mail
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2"
+                  style={{ color: "var(--primary)" }}
+                />
                 <input
-                  type="email" required placeholder="admin@nexushr.com"
-                  value={resetEmail} onChange={(e) => setResetEmail(e.target.value)}
+                  type="email"
+                  required
+                  placeholder="admin@nexushr.com"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
                   className="w-full rounded-2xl pl-12 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"
-                  style={{ background: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)" }}
+                  style={{
+                    background: "var(--background)",
+                    border: "1px solid var(--border)",
+                    color: "var(--foreground)",
+                  }}
                 />
               </div>
             </div>
             <button
               type="submit"
               className="w-full relative group overflow-hidden rounded-2xl py-4 mt-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
-              style={{ background: "linear-gradient(135deg, #10B981, #059669)", boxShadow: "0 10px 25px rgba(16, 185, 129, 0.4)", border: "none" }}
+              style={{
+                background: "linear-gradient(135deg, #10B981, #059669)",
+                boxShadow: "0 10px 25px rgba(16, 185, 129, 0.4)",
+                border: "none",
+              }}
             >
               <span className="relative z-10 flex items-center justify-center gap-2 text-white font-bold text-[15px]">
-                Send Reset Link <ArrowRight size={18} className="transition-transform group-hover:translate-x-1.5" />
+                Send Reset Link{" "}
+                <ArrowRight
+                  size={18}
+                  className="transition-transform group-hover:translate-x-1.5"
+                />
               </span>
             </button>
             <div className="text-center pt-2">
-              <a href="#" onClick={(e) => { e.preventDefault(); setIsForgotPassword(false); }} className="hover:underline transition-all" style={{ fontSize: "13px", fontWeight: 800, color: "var(--primary)" }}>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsForgotPassword(false);
+                }}
+                className="hover:underline transition-all"
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 800,
+                  color: "var(--primary)",
+                }}
+              >
                 Back to Login
               </a>
             </div>
@@ -138,27 +226,55 @@ export function Login() {
           <form onSubmit={handleLogin} className="space-y-5">
             {/* Role selector */}
             <div>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)", marginBottom: "8px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                  marginBottom: "8px",
+                }}
+              >
                 Sign in as
               </label>
               <div className="relative">
-                <ShieldCheck size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "var(--primary)" }} />
+                <ShieldCheck
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2"
+                  style={{ color: "var(--primary)" }}
+                />
                 <select
                   value={selectedRole}
                   onChange={(e) => setSelectedRole(e.target.value as UserRole)}
                   className="w-full rounded-2xl pl-12 pr-10 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 appearance-none cursor-pointer"
-                  style={{ background: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)" }}
+                  style={{
+                    background: "var(--background)",
+                    border: "1px solid var(--border)",
+                    color: "var(--foreground)",
+                  }}
                 >
                   <option value="">Select your role…</option>
                   {(Object.keys(DEMO_ACCOUNTS) as UserRole[]).map((role) => (
-                    <option key={role} value={role}>{role}</option>
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
                   ))}
                 </select>
-                <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "var(--muted-foreground)" }} />
+                <ChevronDown
+                  size={16}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
+                  style={{ color: "var(--muted-foreground)" }}
+                />
               </div>
               {selectedRole && (
-                <div className="mt-2 flex items-center gap-2 px-3 py-1.5 rounded-xl" style={{ backgroundColor: ROLE_CONFIG[selectedRole].bg }}>
-                  <span className="text-[11px] font-black uppercase tracking-widest" style={{ color: ROLE_CONFIG[selectedRole].color }}>
+                <div
+                  className="mt-2 flex items-center gap-2 px-3 py-1.5 rounded-xl"
+                  style={{ backgroundColor: ROLE_CONFIG[selectedRole].bg }}
+                >
+                  <span
+                    className="text-[11px] font-black uppercase tracking-widest"
+                    style={{ color: ROLE_CONFIG[selectedRole].color }}
+                  >
                     {ROLE_CONFIG[selectedRole].label} access level selected
                   </span>
                 </div>
@@ -167,32 +283,68 @@ export function Login() {
 
             {/* Email */}
             <div>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)", marginBottom: "8px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                  marginBottom: "8px",
+                }}
+              >
                 Work Email Address
               </label>
               <div className="relative">
-                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "var(--primary)" }} />
+                <Mail
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2"
+                  style={{ color: "var(--primary)" }}
+                />
                 <input
-                  type="email" placeholder="admin@nexushr.com"
-                  value={email} onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  placeholder="admin@nexushr.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full rounded-2xl pl-12 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"
-                  style={{ background: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)" }}
+                  style={{
+                    background: "var(--background)",
+                    border: "1px solid var(--border)",
+                    color: "var(--foreground)",
+                  }}
                 />
               </div>
             </div>
 
             {/* Password */}
             <div>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: 700, color: "var(--foreground)", marginBottom: "8px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                  marginBottom: "8px",
+                }}
+              >
                 Password
               </label>
               <div className="relative">
-                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "var(--primary)" }} />
+                <Lock
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2"
+                  style={{ color: "var(--primary)" }}
+                />
                 <input
-                  type="password" placeholder="••••••••"
-                  value={password} onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full rounded-2xl pl-12 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"
-                  style={{ background: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)" }}
+                  style={{
+                    background: "var(--background)",
+                    border: "1px solid var(--border)",
+                    color: "var(--foreground)",
+                  }}
                 />
               </div>
             </div>
@@ -200,12 +352,36 @@ export function Login() {
             {/* Remember / Forgot */}
             <div className="flex items-center justify-between pt-1">
               <label className="flex items-center gap-2.5 cursor-pointer">
-                <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)}
-                  className="w-4 h-4 rounded cursor-pointer" style={{ accentColor: "#10B981" }} />
-                <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--foreground)" }}>Remember me</span>
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  className="w-4 h-4 rounded cursor-pointer"
+                  style={{ accentColor: "#10B981" }}
+                />
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    color: "var(--foreground)",
+                  }}
+                >
+                  Remember me
+                </span>
               </label>
-              <a href="#" onClick={(e) => { e.preventDefault(); setIsForgotPassword(true); }}
-                className="hover:underline transition-all" style={{ fontSize: "13px", fontWeight: 800, color: "var(--primary)" }}>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsForgotPassword(true);
+                }}
+                className="hover:underline transition-all"
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 800,
+                  color: "var(--primary)",
+                }}
+              >
                 Forgot Password?
               </a>
             </div>
@@ -215,11 +391,20 @@ export function Login() {
               type="submit"
               disabled={isLoading}
               className="w-full relative group overflow-hidden rounded-2xl py-4 mt-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70"
-              style={{ background: "linear-gradient(135deg, #10B981, #059669)", boxShadow: "0 10px 25px rgba(16, 185, 129, 0.4)", border: "none" }}
+              style={{
+                background: "linear-gradient(135deg, #10B981, #059669)",
+                boxShadow: "0 10px 25px rgba(16, 185, 129, 0.4)",
+                border: "none",
+              }}
             >
               <span className="relative z-10 flex items-center justify-center gap-2 text-white font-bold text-[15px]">
                 {isLoading ? "Signing in…" : "Login"}
-                {!isLoading && <ArrowRight size={18} className="transition-transform group-hover:translate-x-1.5" />}
+                {!isLoading && (
+                  <ArrowRight
+                    size={18}
+                    className="transition-transform group-hover:translate-x-1.5"
+                  />
+                )}
               </span>
             </button>
           </form>
@@ -228,7 +413,17 @@ export function Login() {
         {/* Quick Demo Login chips */}
         {!isForgotPassword && (
           <div className="mt-6">
-            <p style={{ fontSize: "11px", fontWeight: 700, color: "var(--muted-foreground)", textAlign: "center", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "10px" }}>
+            <p
+              style={{
+                fontSize: "11px",
+                fontWeight: 700,
+                color: "var(--muted-foreground)",
+                textAlign: "center",
+                textTransform: "uppercase",
+                letterSpacing: "0.8px",
+                marginBottom: "10px",
+              }}
+            >
               Quick demo access
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
@@ -237,7 +432,11 @@ export function Login() {
                   key={role}
                   onClick={() => handleDemoLogin(role)}
                   className="px-3 py-1.5 rounded-xl text-[11px] font-black transition-all hover:scale-105 active:scale-95"
-                  style={{ backgroundColor: ROLE_CONFIG[role].bg, color: ROLE_CONFIG[role].color, border: `1px solid ${ROLE_CONFIG[role].color}30` }}
+                  style={{
+                    backgroundColor: ROLE_CONFIG[role].bg,
+                    color: ROLE_CONFIG[role].color,
+                    border: `1px solid ${ROLE_CONFIG[role].color}30`,
+                  }}
                 >
                   {role}
                 </button>
@@ -247,13 +446,33 @@ export function Login() {
         )}
 
         <div className="mt-6 text-center space-y-3">
-          <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--foreground)" }}>
+          <p
+            style={{
+              fontSize: "13px",
+              fontWeight: 600,
+              color: "var(--foreground)",
+            }}
+          >
             New to NexusHR?{" "}
-            <a href="#" onClick={(e) => { e.preventDefault(); navigate("/signup"); }} className="hover:underline transition-all" style={{ color: "var(--primary)", fontWeight: 800 }}>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/signup");
+              }}
+              className="hover:underline transition-all"
+              style={{ color: "var(--primary)", fontWeight: 800 }}
+            >
               Create an Account
             </a>
           </p>
-          <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--muted-foreground)" }}>
+          <p
+            style={{
+              fontSize: "11px",
+              fontWeight: 600,
+              color: "var(--muted-foreground)",
+            }}
+          >
             v2.0.4 · Enterprise Protection Active
           </p>
         </div>

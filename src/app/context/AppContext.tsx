@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
 export interface Candidate {
   id: string;
@@ -15,18 +15,59 @@ export interface Candidate {
   interviewDate?: string;
 }
 
-export type Stage = "Applied" | "Screening" | "Round 1" | "Round 2" | "Offer" | "Hired";
+export interface JobPosting {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  experience: string;
+  salary: string;
+  description: string;
+  postedAt: string;
+  applicants: number;
+}
+
+export interface ScheduledInterview {
+  id: string;
+  candidateId: string;
+  candidateName: string;
+  candidateInitials: string;
+  role: string;
+  date: string;
+  time: string;
+  type: string;
+  interviewer: string;
+}
+
+export type Stage =
+  | "Applied"
+  | "Screening"
+  | "Round 1"
+  | "Round 2"
+  | "Offer"
+  | "Hired";
 
 interface RecruitmentContextType {
   recruitmentPipeline: Record<Stage, Candidate[]>;
   addCandidate: (stage: Stage, candidate: Candidate) => void;
   deleteCandidate: (id: string, stage: Stage) => void;
   moveCandidate: (id: string, fromStage: Stage, toStage: Stage) => void;
+  jobs: JobPosting[];
+  addJob: (job: Omit<JobPosting, "id" | "postedAt" | "applicants">) => void;
+  deleteJob: (id: string) => void;
+  interviews: ScheduledInterview[];
+  scheduleInterview: (iv: Omit<ScheduledInterview, "id">) => void;
+  cancelInterview: (id: string) => void;
 }
 
-const RecruitmentContext = createContext<RecruitmentContextType | undefined>(undefined);
+const RecruitmentContext = createContext<RecruitmentContextType | undefined>(
+  undefined,
+);
 
-export const RecruitmentProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const RecruitmentProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [pipeline, setPipeline] = useState<Record<Stage, Candidate[]>>({
     Applied: [],
     Screening: [],
@@ -35,6 +76,8 @@ export const RecruitmentProvider: React.FC<{ children: ReactNode }> = ({ childre
     Offer: [],
     Hired: [],
   });
+  const [jobs, setJobs] = useState<JobPosting[]>([]);
+  const [interviews, setInterviews] = useState<ScheduledInterview[]>([]);
 
   const addCandidate = (stage: Stage, candidate: Candidate) => {
     setPipeline((prev) => ({
@@ -62,9 +105,47 @@ export const RecruitmentProvider: React.FC<{ children: ReactNode }> = ({ childre
     });
   };
 
+  const addJob = (job: Omit<JobPosting, "id" | "postedAt" | "applicants">) => {
+    setJobs((prev) => [
+      ...prev,
+      {
+        ...job,
+        id: `J${Date.now()}`,
+        postedAt: new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }),
+        applicants: 0,
+      },
+    ]);
+  };
+
+  const deleteJob = (id: string) => {
+    setJobs((prev) => prev.filter((j) => j.id !== id));
+  };
+
+  const scheduleInterview = (iv: Omit<ScheduledInterview, "id">) => {
+    setInterviews((prev) => [...prev, { ...iv, id: `IV${Date.now()}` }]);
+  };
+
+  const cancelInterview = (id: string) => {
+    setInterviews((prev) => prev.filter((iv) => iv.id !== id));
+  };
+
   return (
     <RecruitmentContext.Provider
-      value={{ recruitmentPipeline: pipeline, addCandidate, deleteCandidate, moveCandidate }}
+      value={{
+        recruitmentPipeline: pipeline,
+        addCandidate,
+        deleteCandidate,
+        moveCandidate,
+        jobs,
+        addJob,
+        deleteJob,
+        interviews,
+        scheduleInterview,
+        cancelInterview,
+      }}
     >
       {children}
     </RecruitmentContext.Provider>
@@ -74,7 +155,7 @@ export const RecruitmentProvider: React.FC<{ children: ReactNode }> = ({ childre
 export const useRecruitment = () => {
   const context = useContext(RecruitmentContext);
   if (context === undefined) {
-    throw new Error('useRecruitment must be used within a RecruitmentProvider');
+    throw new Error("useRecruitment must be used within a RecruitmentProvider");
   }
   return context;
 };

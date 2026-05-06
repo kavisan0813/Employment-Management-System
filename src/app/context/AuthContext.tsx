@@ -1,11 +1,11 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-export type UserRole = 
-  | "Super Admin" 
-  | "HR Admin" 
-  | "Manager" 
-  | "Employee" 
-  | "Payroll Admin" 
+export type UserRole =
+  | "Super Admin"
+  | "HR Admin"
+  | "Manager"
+  | "Employee"
+  | "Payroll Admin"
   | "Recruiter";
 
 export interface User {
@@ -23,22 +23,45 @@ interface AuthContextType {
   hasAccess: (path: string) => boolean;
 }
 
-export const ROLE_CONFIG: Record<UserRole, { label: string; color: string; bg: string }> = {
-  "Super Admin":   { label: "Super Admin",   color: "#10B981", bg: "rgba(16,185,129,0.1)" },
-  "HR Admin":      { label: "HR Admin",      color: "#3B82F6", bg: "rgba(59,130,246,0.1)" },
-  "Manager":       { label: "Manager",       color: "#8B5CF6", bg: "rgba(139,92,246,0.1)" },
-  "Employee":      { label: "Employee",      color: "#64748B", bg: "rgba(100,116,139,0.1)" },
-  "Payroll Admin": { label: "Payroll Admin", color: "#F59E0B", bg: "rgba(245,158,11,0.1)" },
-  "Recruiter":     { label: "Recruiter",     color: "#EF4444", bg: "rgba(239,68,68,0.1)" },
+export const ROLE_CONFIG: Record<
+  UserRole,
+  { label: string; color: string; bg: string }
+> = {
+  "Super Admin": {
+    label: "Super Admin",
+    color: "#10B981",
+    bg: "rgba(16,185,129,0.1)",
+  },
+  "HR Admin": {
+    label: "HR Admin",
+    color: "#3B82F6",
+    bg: "rgba(59,130,246,0.1)",
+  },
+  Manager: { label: "Manager", color: "#8B5CF6", bg: "rgba(139,92,246,0.1)" },
+  Employee: {
+    label: "Employee",
+    color: "#64748B",
+    bg: "rgba(100,116,139,0.1)",
+  },
+  "Payroll Admin": {
+    label: "Payroll Admin",
+    color: "#F59E0B",
+    bg: "rgba(245,158,11,0.1)",
+  },
+  Recruiter: {
+    label: "Recruiter",
+    color: "#EF4444",
+    bg: "rgba(239,68,68,0.1)",
+  },
 };
 
 export const ROLE_HOME_ROUTE: Record<UserRole, string> = {
-  "Super Admin":   "/",
-  "HR Admin":      "/",
-  "Manager":       "/",
-  "Employee":      "/",
+  "Super Admin": "/",
+  "HR Admin": "/",
+  Manager: "/",
+  Employee: "/",
   "Payroll Admin": "/payroll",
-  "Recruiter":     "/recruitment",
+  Recruiter: "/recruitment",
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -67,23 +90,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // In a real app, this would be more complex
     if (user.role === "Super Admin") return true;
     if (user.role === "HR Admin") return true;
-    
+
     if (user.role === "Employee") {
-        const allowed = [
-          "/", "/attendance", "/leave", "/expenses", "/payroll",
-          "/self-service", "/reimbursement-history", "/expense-policy",
-          "/expense-support", "/profile", "/notifications", "/training",
-          "/my-documents", "/employees", "/performance", "/schedule",
-          "/goals", "/documents", "/support"
-        ];
-        return allowed.some(p => path === p || path.startsWith(p + "/"));
+      const allowed = [
+        "/",
+        "/attendance",
+        "/leave",
+        "/expenses",
+        "/payroll",
+        "/self-service",
+        "/reimbursement-history",
+        "/expense-policy",
+        "/expense-support",
+        "/profile",
+        "/notifications",
+        "/training",
+        "/my-documents",
+        "/employees",
+        "/performance",
+        "/schedule",
+        "/goals",
+        "/documents",
+        "/support",
+        "/hr-requests",
+        "/regularization-history",
+        "/my-notifications",
+      ];
+      return allowed.some((p) => path === p || path.startsWith(p + "/"));
     }
-    
+
     return true; // Default allow for demo
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout, hasAccess }}>
+    <AuthContext.Provider
+      value={{ user, isLoggedIn: !!user, login, logout, hasAccess }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -91,6 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) throw new Error("useAuth must be used within an AuthProvider");
+  if (context === undefined)
+    throw new Error("useAuth must be used within an AuthProvider");
   return context;
 }

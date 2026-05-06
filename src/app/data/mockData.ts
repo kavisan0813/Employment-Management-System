@@ -13,7 +13,8 @@ export const employees = [
     grossSalary: 9500,
     deductions: 1140,
     netPay: 8360,
-    avatar: "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     location: "New York, NY",
     manager: "Robert Chen",
     employmentType: "Full-time",
@@ -37,7 +38,8 @@ export const employees = [
     grossSalary: 8500,
     deductions: 1020,
     netPay: 7480,
-    avatar: "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     location: "Chicago, IL",
     manager: "Lisa Park",
     employmentType: "Full-time",
@@ -61,7 +63,8 @@ export const employees = [
     grossSalary: 7800,
     deductions: 936,
     netPay: 6864,
-    avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     location: "San Francisco, CA",
     manager: "Sarah Johnson",
     employmentType: "Full-time",
@@ -85,7 +88,8 @@ export const employees = [
     grossSalary: 8800,
     deductions: 1056,
     netPay: 7744,
-    avatar: "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     location: "Boston, MA",
     manager: "Robert Chen",
     employmentType: "Full-time",
@@ -109,7 +113,8 @@ export const employees = [
     grossSalary: 7200,
     deductions: 864,
     netPay: 6336,
-    avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     location: "Austin, TX",
     manager: "Lisa Park",
     employmentType: "Full-time",
@@ -133,7 +138,8 @@ export const employees = [
     grossSalary: 14500,
     deductions: 1740,
     netPay: 12760,
-    avatar: "https://images.unsplash.com/photo-1738566061505-556830f8b8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1738566061505-556830f8b8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     location: "Seattle, WA",
     manager: "CEO",
     employmentType: "Full-time",
@@ -157,7 +163,8 @@ export const employees = [
     grossSalary: 10500,
     deductions: 1260,
     netPay: 9240,
-    avatar: "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     location: "New York, NY",
     manager: "Robert Chen",
     employmentType: "Full-time",
@@ -181,7 +188,8 @@ export const employees = [
     grossSalary: 6800,
     deductions: 816,
     netPay: 5984,
-    avatar: "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     location: "Los Angeles, CA",
     manager: "Marcus Williams",
     employmentType: "Part-time",
@@ -205,7 +213,8 @@ export const employees = [
     grossSalary: 9200,
     deductions: 1104,
     netPay: 8096,
-    avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     location: "Dallas, TX",
     manager: "CEO",
     employmentType: "Full-time",
@@ -229,7 +238,8 @@ export const employees = [
     grossSalary: 12000,
     deductions: 1440,
     netPay: 10560,
-    avatar: "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     location: "Miami, FL",
     manager: "CEO",
     employmentType: "Full-time",
@@ -242,14 +252,70 @@ export const employees = [
 ];
 
 export const departments = [
-  { id: "D001", name: "Engineering", head: "Robert Chen", employees: 68, budget: 2800000, color: "#059669" },
-  { id: "D002", name: "Marketing", head: "Marcus Williams", employees: 42, budget: 950000, color: "#14B8A6" },
-  { id: "D003", name: "Design", head: "Yuki Tanaka", employees: 28, budget: 720000, color: "#10B981" },
-  { id: "D004", name: "Finance", head: "James Carter", employees: 31, budget: 1100000, color: "#F59E0B" },
-  { id: "D005", name: "HR", head: "Emily Rodriguez", employees: 23, budget: 600000, color: "#22C55E" },
-  { id: "D006", name: "Product", head: "Priya Sharma", employees: 36, budget: 1500000, color: "#047857" },
-  { id: "D007", name: "Sales", head: "Leo Martinez", employees: 55, budget: 1800000, color: "#EF4444" },
-  { id: "D008", name: "Operations", head: "Aisha Patel", employees: 29, budget: 1300000, color: "#0EA5E9" },
+  {
+    id: "D001",
+    name: "Engineering",
+    head: "Robert Chen",
+    employees: 68,
+    budget: 2800000,
+    color: "#059669",
+  },
+  {
+    id: "D002",
+    name: "Marketing",
+    head: "Marcus Williams",
+    employees: 42,
+    budget: 950000,
+    color: "#14B8A6",
+  },
+  {
+    id: "D003",
+    name: "Design",
+    head: "Yuki Tanaka",
+    employees: 28,
+    budget: 720000,
+    color: "#10B981",
+  },
+  {
+    id: "D004",
+    name: "Finance",
+    head: "James Carter",
+    employees: 31,
+    budget: 1100000,
+    color: "#F59E0B",
+  },
+  {
+    id: "D005",
+    name: "HR",
+    head: "Emily Rodriguez",
+    employees: 23,
+    budget: 600000,
+    color: "#22C55E",
+  },
+  {
+    id: "D006",
+    name: "Product",
+    head: "Priya Sharma",
+    employees: 36,
+    budget: 1500000,
+    color: "#047857",
+  },
+  {
+    id: "D007",
+    name: "Sales",
+    head: "Leo Martinez",
+    employees: 55,
+    budget: 1800000,
+    color: "#EF4444",
+  },
+  {
+    id: "D008",
+    name: "Operations",
+    head: "Aisha Patel",
+    employees: 29,
+    budget: 1300000,
+    color: "#0EA5E9",
+  },
 ];
 
 export const departmentHeadcount = [
@@ -327,7 +393,10 @@ export const recentActivities = [
 ];
 
 // Attendance calendar for April 2026
-export const attendanceCalendar: Record<number, "Present" | "Absent" | "Leave" | "Holiday" | "Weekend"> = {
+export const attendanceCalendar: Record<
+  number,
+  "Present" | "Absent" | "Leave" | "Holiday" | "Weekend"
+> = {
   1: "Present",
   2: "Present",
   3: "Present",
@@ -361,18 +430,90 @@ export const attendanceCalendar: Record<number, "Present" | "Absent" | "Leave" |
 };
 
 export const dailyLogs = [
-  { date: "Apr 01, 2026", checkIn: "08:58 AM", checkOut: "06:02 PM", hours: "9h 04m", status: "Present" },
-  { date: "Apr 02, 2026", checkIn: "09:05 AM", checkOut: "06:15 PM", hours: "9h 10m", status: "Present" },
-  { date: "Apr 03, 2026", checkIn: "08:47 AM", checkOut: "05:55 PM", hours: "9h 08m", status: "Present" },
-  { date: "Apr 06, 2026", checkIn: "09:12 AM", checkOut: "06:30 PM", hours: "9h 18m", status: "Present" },
-  { date: "Apr 07, 2026", checkIn: "08:55 AM", checkOut: "06:10 PM", hours: "9h 15m", status: "Present" },
-  { date: "Apr 08, 2026", checkIn: "09:00 AM", checkOut: "06:05 PM", hours: "9h 05m", status: "Present" },
-  { date: "Apr 09, 2026", checkIn: "08:50 AM", checkOut: "05:50 PM", hours: "9h 00m", status: "Present" },
-  { date: "Apr 10, 2026", checkIn: "09:20 AM", checkOut: "06:25 PM", hours: "9h 05m", status: "Present" },
-  { date: "Apr 13, 2026", checkIn: "09:02 AM", checkOut: "06:08 PM", hours: "9h 06m", status: "Present" },
-  { date: "Apr 14, 2026", checkIn: "08:48 AM", checkOut: "05:52 PM", hours: "9h 04m", status: "Present" },
-  { date: "Apr 15, 2026", checkIn: "—", checkOut: "—", hours: "—", status: "Leave" },
-  { date: "Apr 16, 2026", checkIn: "—", checkOut: "—", hours: "—", status: "Leave" },
+  {
+    date: "Apr 01, 2026",
+    checkIn: "08:58 AM",
+    checkOut: "06:02 PM",
+    hours: "9h 04m",
+    status: "Present",
+  },
+  {
+    date: "Apr 02, 2026",
+    checkIn: "09:05 AM",
+    checkOut: "06:15 PM",
+    hours: "9h 10m",
+    status: "Present",
+  },
+  {
+    date: "Apr 03, 2026",
+    checkIn: "08:47 AM",
+    checkOut: "05:55 PM",
+    hours: "9h 08m",
+    status: "Present",
+  },
+  {
+    date: "Apr 06, 2026",
+    checkIn: "09:12 AM",
+    checkOut: "06:30 PM",
+    hours: "9h 18m",
+    status: "Present",
+  },
+  {
+    date: "Apr 07, 2026",
+    checkIn: "08:55 AM",
+    checkOut: "06:10 PM",
+    hours: "9h 15m",
+    status: "Present",
+  },
+  {
+    date: "Apr 08, 2026",
+    checkIn: "09:00 AM",
+    checkOut: "06:05 PM",
+    hours: "9h 05m",
+    status: "Present",
+  },
+  {
+    date: "Apr 09, 2026",
+    checkIn: "08:50 AM",
+    checkOut: "05:50 PM",
+    hours: "9h 00m",
+    status: "Present",
+  },
+  {
+    date: "Apr 10, 2026",
+    checkIn: "09:20 AM",
+    checkOut: "06:25 PM",
+    hours: "9h 05m",
+    status: "Present",
+  },
+  {
+    date: "Apr 13, 2026",
+    checkIn: "09:02 AM",
+    checkOut: "06:08 PM",
+    hours: "9h 06m",
+    status: "Present",
+  },
+  {
+    date: "Apr 14, 2026",
+    checkIn: "08:48 AM",
+    checkOut: "05:52 PM",
+    hours: "9h 04m",
+    status: "Present",
+  },
+  {
+    date: "Apr 15, 2026",
+    checkIn: "—",
+    checkOut: "—",
+    hours: "—",
+    status: "Leave",
+  },
+  {
+    date: "Apr 16, 2026",
+    checkIn: "—",
+    checkOut: "—",
+    hours: "—",
+    status: "Leave",
+  },
 ];
 
 export const payrollEmployees = [
@@ -381,7 +522,8 @@ export const payrollEmployees = [
     name: "Sarah Johnson",
     designation: "Senior Software Engineer",
     department: "Engineering",
-    avatar: "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     gross: 9500,
     deductions: 1140,
     net: 8360,
@@ -392,7 +534,8 @@ export const payrollEmployees = [
     name: "Marcus Williams",
     designation: "Marketing Manager",
     department: "Marketing",
-    avatar: "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     gross: 8500,
     deductions: 1020,
     net: 7480,
@@ -403,7 +546,8 @@ export const payrollEmployees = [
     name: "Yuki Tanaka",
     designation: "Lead UX Designer",
     department: "Design",
-    avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     gross: 7800,
     deductions: 936,
     net: 6864,
@@ -414,7 +558,8 @@ export const payrollEmployees = [
     name: "James Carter",
     designation: "Senior Financial Analyst",
     department: "Finance",
-    avatar: "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     gross: 8800,
     deductions: 1056,
     net: 7744,
@@ -425,7 +570,8 @@ export const payrollEmployees = [
     name: "Emily Rodriguez",
     designation: "HR Business Partner",
     department: "HR",
-    avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     gross: 7200,
     deductions: 864,
     net: 6336,
@@ -436,7 +582,8 @@ export const payrollEmployees = [
     name: "Robert Chen",
     designation: "VP of Engineering",
     department: "Engineering",
-    avatar: "https://images.unsplash.com/photo-1738566061505-556830f8b8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1738566061505-556830f8b8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     gross: 14500,
     deductions: 1740,
     net: 12760,
@@ -447,7 +594,8 @@ export const payrollEmployees = [
     name: "Priya Sharma",
     designation: "Senior Product Manager",
     department: "Product",
-    avatar: "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     gross: 10500,
     deductions: 1260,
     net: 9240,
@@ -458,7 +606,8 @@ export const payrollEmployees = [
     name: "Leo Martinez",
     designation: "Director of Sales",
     department: "Sales",
-    avatar: "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     gross: 12000,
     deductions: 1440,
     net: 10560,
@@ -473,7 +622,8 @@ export const recruitmentPipeline = {
       name: "John Smith",
       role: "Frontend Developer",
       date: "Apr 2, 2026",
-      avatar: "https://images.unsplash.com/photo-1738566061505-556830f8b8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+      avatar:
+        "https://images.unsplash.com/photo-1738566061505-556830f8b8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       initials: "JS",
       source: "LinkedIn",
       rating: 4.2,
@@ -481,21 +631,22 @@ export const recruitmentPipeline = {
       type: "Full-time",
       interviewerAvatars: [
         "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-        "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
-      ]
+        "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+      ],
     },
     {
       id: "C002",
       name: "Sarah Chen",
       role: "Backend Developer",
       date: "Apr 1, 2026",
-      avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+      avatar:
+        "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       initials: "SC",
       source: "Indeed",
       rating: 3.8,
       location: "San Francisco, CA",
       type: "Full-time",
-      interviewerAvatars: []
+      interviewerAvatars: [],
     },
   ],
   Screening: [
@@ -511,8 +662,8 @@ export const recruitmentPipeline = {
       location: "New York, NY",
       type: "Contract",
       interviewerAvatars: [
-        "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
-      ]
+        "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+      ],
     },
   ],
   "Round 1": [
@@ -521,7 +672,8 @@ export const recruitmentPipeline = {
       name: "David Miller",
       role: "Senior React Developer",
       date: "Mar 28, 2026",
-      avatar: "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+      avatar:
+        "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       initials: "DM",
       source: "LinkedIn",
       rating: 4.8,
@@ -529,9 +681,9 @@ export const recruitmentPipeline = {
       type: "Full-time",
       interviewerAvatars: [
         "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-        "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
+        "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       ],
-      interviewDate: "Apr 10, 2:00 PM"
+      interviewDate: "Apr 10, 2:00 PM",
     },
   ],
   "Round 2": [
@@ -540,16 +692,17 @@ export const recruitmentPipeline = {
       name: "Priya Nair",
       role: "HR Specialist",
       date: "Mar 25, 2026",
-      avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+      avatar:
+        "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       initials: "PN",
       source: "Indeed",
       rating: 4.0,
       location: "Chicago, IL",
       type: "Full-time",
       interviewerAvatars: [
-        "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"
+        "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       ],
-      interviewDate: "Apr 11, 10:30 AM"
+      interviewDate: "Apr 11, 10:30 AM",
     },
   ],
   Offer: [
@@ -558,13 +711,14 @@ export const recruitmentPipeline = {
       name: "Ethan Moore",
       role: "DevOps Engineer",
       date: "Mar 15, 2026",
-      avatar: "https://images.unsplash.com/photo-1738566061505-556830f8b8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+      avatar:
+        "https://images.unsplash.com/photo-1738566061505-556830f8b8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       initials: "EM",
       source: "LinkedIn",
       rating: 4.9,
       location: "Remote",
       type: "Full-time",
-      interviewerAvatars: []
+      interviewerAvatars: [],
     },
   ],
   Hired: [
@@ -573,13 +727,14 @@ export const recruitmentPipeline = {
       name: "Alex Thompson",
       role: "Senior React Developer",
       date: "Mar 10, 2026",
-      avatar: "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+      avatar:
+        "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       initials: "AT",
       source: "Referral",
       rating: 5.0,
       location: "San Francisco, CA",
       type: "Full-time",
-      interviewerAvatars: []
+      interviewerAvatars: [],
     },
   ],
 };
@@ -596,7 +751,8 @@ export const leaveRequests = [
   {
     id: "LR001",
     employee: "Sarah Johnson",
-    avatar: "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     type: "Annual Leave",
     from: "Apr 10",
     to: "Apr 14",
@@ -606,7 +762,8 @@ export const leaveRequests = [
   {
     id: "LR002",
     employee: "Marcus Williams",
-    avatar: "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     type: "Sick Leave",
     from: "Apr 7",
     to: "Apr 8",
@@ -616,7 +773,8 @@ export const leaveRequests = [
   {
     id: "LR003",
     employee: "Yuki Tanaka",
-    avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     type: "Personal Leave",
     from: "Apr 20",
     to: "Apr 21",
@@ -626,7 +784,8 @@ export const leaveRequests = [
   {
     id: "LR004",
     employee: "James Carter",
-    avatar: "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1758876204244-930299843f07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     type: "Annual Leave",
     from: "Apr 1",
     to: "Apr 7",
@@ -636,7 +795,8 @@ export const leaveRequests = [
   {
     id: "LR005",
     employee: "Emily Rodriguez",
-    avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     type: "Sick Leave",
     from: "Mar 28",
     to: "Mar 29",
@@ -646,7 +806,8 @@ export const leaveRequests = [
   {
     id: "LR006",
     employee: "Priya Sharma",
-    avatar: "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     type: "Annual Leave",
     from: "Apr 15",
     to: "Apr 16",

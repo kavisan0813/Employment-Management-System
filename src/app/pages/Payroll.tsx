@@ -24,13 +24,23 @@ import {
   Mail,
   Edit2,
   Building2,
-  Wallet
+  Wallet,
 } from "lucide-react";
 import { payrollEmployees, leaveRequests } from "../data/mockData";
 
 const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const years = ["2024", "2025", "2026"];
@@ -52,12 +62,12 @@ function PayslipModal({
   onClose,
   employee,
   month,
-  year
+  year,
 }: {
   onClose: () => void;
   employee: PayrollEmployee;
   month: string;
-  year: string
+  year: string;
 }) {
   const [, setIsPrinting] = useState(false);
 
@@ -78,9 +88,15 @@ function PayslipModal({
   ];
 
   const deductions = [
-    { label: "Income Tax (TDS)", amount: Math.round(employee.deductions * 0.6) },
+    {
+      label: "Income Tax (TDS)",
+      amount: Math.round(employee.deductions * 0.6),
+    },
     { label: "Provident Fund", amount: Math.round(employee.deductions * 0.3) },
-    { label: "Professional Tax", amount: Math.round(employee.deductions * 0.1) },
+    {
+      label: "Professional Tax",
+      amount: Math.round(employee.deductions * 0.1),
+    },
   ];
 
   return (
@@ -96,8 +112,12 @@ function PayslipModal({
               <FileText size={20} className="text-emerald-500" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-foreground">Employee Payslip</h3>
-              <p className="text-xs text-muted-foreground">{month} {year} • {employee.id}</p>
+              <h3 className="text-lg font-bold text-foreground">
+                Employee Payslip
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                {month} {year} • {employee.id}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -128,39 +148,66 @@ function PayslipModal({
           {/* Company Branding */}
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h2 className="text-2xl font-black text-emerald-600 tracking-tight">NexusHR</h2>
-              <p className="text-sm text-muted-foreground">Premium Enterprise Solutions</p>
+              <h2 className="text-2xl font-black text-emerald-600 tracking-tight">
+                NexusHR
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Premium Enterprise Solutions
+              </p>
               <div className="mt-4 text-xs text-muted-foreground">
                 <p>123 Tech Avenue, Innovation Park</p>
                 <p>Silicon Valley, CA 94025</p>
               </div>
             </div>
             <div className="text-right">
-              <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2 ${employee.status === "Paid" ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
-                }`}>
+              <div
+                className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-2 ${
+                  employee.status === "Paid"
+                    ? "bg-emerald-500/10 text-emerald-600"
+                    : "bg-amber-500/10 text-amber-600"
+                }`}
+              >
                 {employee.status}
               </div>
-              <p className="text-xs text-muted-foreground">Payment Date: {month} 28, {year}</p>
+              <p className="text-xs text-muted-foreground">
+                Payment Date: {month} 28, {year}
+              </p>
             </div>
           </div>
 
           {/* Employee Info Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 rounded-xl bg-muted/30 border border-border mb-6">
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Employee Name</p>
-              <p className="text-sm font-bold text-foreground">{employee.name}</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
+                Employee Name
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                {employee.name}
+              </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Designation</p>
-              <p className="text-sm font-bold text-foreground">{employee.designation}</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
+                Designation
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                {employee.designation}
+              </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Department</p>
-              <p className="text-sm font-bold text-foreground">{employee.department}</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
+                Department
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                {employee.department}
+              </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Pay Period</p>
-              <p className="text-sm font-bold text-foreground">{month} {year}</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
+                Pay Period
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                {month} {year}
+              </p>
             </div>
           </div>
 
@@ -174,14 +221,21 @@ function PayslipModal({
               </h4>
               <div className="space-y-3">
                 {components.map((c, i) => (
-                  <div key={i} className="flex justify-between items-center text-sm">
+                  <div
+                    key={i}
+                    className="flex justify-between items-center text-sm"
+                  >
                     <span className="text-muted-foreground">{c.label}</span>
-                    <span className="font-semibold text-foreground">₹{c.amount.toLocaleString()}</span>
+                    <span className="font-semibold text-foreground">
+                      ₹{c.amount.toLocaleString()}
+                    </span>
                   </div>
                 ))}
                 <div className="pt-3 mt-3 border-t border-dashed border-border flex justify-between items-center font-bold text-foreground">
                   <span>Gross Earnings</span>
-                  <span className="text-lg">₹{employee.gross.toLocaleString()}</span>
+                  <span className="text-lg">
+                    ₹{employee.gross.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
@@ -194,14 +248,21 @@ function PayslipModal({
               </h4>
               <div className="space-y-3">
                 {deductions.map((d, i) => (
-                  <div key={i} className="flex justify-between items-center text-sm">
+                  <div
+                    key={i}
+                    className="flex justify-between items-center text-sm"
+                  >
                     <span className="text-muted-foreground">{d.label}</span>
-                    <span className="font-semibold text-red-500">₹{d.amount.toLocaleString()}</span>
+                    <span className="font-semibold text-red-500">
+                      ₹{d.amount.toLocaleString()}
+                    </span>
                   </div>
                 ))}
                 <div className="pt-3 mt-3 border-t border-dashed border-border flex justify-between items-center font-bold text-foreground">
                   <span>Total Deductions</span>
-                  <span className="text-lg text-red-500">₹{employee.deductions.toLocaleString()}</span>
+                  <span className="text-lg text-red-500">
+                    ₹{employee.deductions.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
@@ -210,9 +271,15 @@ function PayslipModal({
           {/* Net Pay Highlight */}
           <div className="mt-10 p-8 rounded-3xl bg-emerald-600 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-emerald-500/20">
             <div>
-              <p className="text-emerald-100 text-xs font-bold uppercase tracking-widest mb-1">Net Payable Amount</p>
-              <h2 className="text-4xl font-black">₹{employee.net.toLocaleString()}</h2>
-              <p className="text-emerald-200 text-[10px] mt-2 italic">Amount in words: Eight Thousand Three Hundred Sixty Rupees Only</p>
+              <p className="text-emerald-100 text-xs font-bold uppercase tracking-widest mb-1">
+                Net Payable Amount
+              </p>
+              <h2 className="text-4xl font-black">
+                ₹{employee.net.toLocaleString()}
+              </h2>
+              <p className="text-emerald-200 text-[10px] mt-2 italic">
+                Amount in words: Eight Thousand Three Hundred Sixty Rupees Only
+              </p>
             </div>
             <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
               <CheckCircle2 size={32} />
@@ -220,7 +287,10 @@ function PayslipModal({
           </div>
 
           <div className="mt-8 pt-8 border-t border-border flex flex-col md:flex-row justify-between gap-4 text-[10px] text-muted-foreground text-center md:text-left">
-            <p>This is a computer generated payslip and does not require a signature.</p>
+            <p>
+              This is a computer generated payslip and does not require a
+              signature.
+            </p>
             <p>© 2026 NexusHR Inc. All rights reserved.</p>
           </div>
         </div>
@@ -247,8 +317,18 @@ function PayslipModal({
 }
 
 /* ─── Run Payroll Modal ─────────────────── */
-function RunPayrollModal({ onClose, month, year }: { onClose: () => void; month: string; year: string }) {
-  const [step, setStep] = useState<"confirm" | "processing" | "success">("confirm");
+function RunPayrollModal({
+  onClose,
+  month,
+  year,
+}: {
+  onClose: () => void;
+  month: string;
+  year: string;
+}) {
+  const [step, setStep] = useState<"confirm" | "processing" | "success">(
+    "confirm",
+  );
   const totalNet = payrollEmployees.reduce((s, e) => s + e.net, 0);
 
   useEffect(() => {
@@ -265,17 +345,21 @@ function RunPayrollModal({ onClose, month, year }: { onClose: () => void; month:
     >
       <div
         className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300"
-        style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+        style={{
+          backgroundColor: "var(--card)",
+          border: "1px solid var(--border)",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {step === "confirm" && (
           <>
             <div className="px-8 py-8">
               <div className="flex items-center justify-between mb-6">
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center bg-emerald-500/10"
-                >
-                  <Play size={28} className="text-emerald-500 fill-emerald-500" />
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-emerald-500/10">
+                  <Play
+                    size={28}
+                    className="text-emerald-500 fill-emerald-500"
+                  />
                 </div>
                 <button
                   onClick={onClose}
@@ -289,24 +373,37 @@ function RunPayrollModal({ onClose, month, year }: { onClose: () => void; month:
                 Process Payroll
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                You are about to run the payroll for <span className="text-foreground font-bold">{month} {year}</span>.
+                You are about to run the payroll for{" "}
+                <span className="text-foreground font-bold">
+                  {month} {year}
+                </span>
+                .
               </p>
 
-              <div
-                className="mt-8 rounded-2xl p-6 bg-muted/30 border border-border"
-              >
+              <div className="mt-8 rounded-2xl p-6 bg-muted/30 border border-border">
                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-border/50">
-                  <span className="text-muted-foreground text-xs font-medium">Total Employees</span>
-                  <span className="text-foreground text-sm font-bold">{payrollEmployees.length}</span>
+                  <span className="text-muted-foreground text-xs font-medium">
+                    Total Employees
+                  </span>
+                  <span className="text-foreground text-sm font-bold">
+                    {payrollEmployees.length}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-border/50">
-                  <span className="text-muted-foreground text-xs font-medium">Gross Payout</span>
+                  <span className="text-muted-foreground text-xs font-medium">
+                    Gross Payout
+                  </span>
                   <span className="text-foreground text-sm font-bold">
-                    ₹{payrollEmployees.reduce((s, e) => s + e.gross, 0).toLocaleString()}
+                    ₹
+                    {payrollEmployees
+                      .reduce((s, e) => s + e.gross, 0)
+                      .toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground text-xs font-medium">Net Disbursement</span>
+                  <span className="text-muted-foreground text-xs font-medium">
+                    Net Disbursement
+                  </span>
                   <span className="text-emerald-500 text-xl font-black">
                     ₹{totalNet.toLocaleString()}
                   </span>
@@ -314,9 +411,13 @@ function RunPayrollModal({ onClose, month, year }: { onClose: () => void; month:
               </div>
 
               <div className="mt-6 flex items-start gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                <AlertCircle size={18} className="text-amber-500 shrink-0 mt-0.5" />
+                <AlertCircle
+                  size={18}
+                  className="text-amber-500 shrink-0 mt-0.5"
+                />
                 <p className="text-amber-600 text-xs leading-relaxed">
-                  Disbursement will be initiated immediately. Please ensure all tax deductions and bonuses are reviewed before confirming.
+                  Disbursement will be initiated immediately. Please ensure all
+                  tax deductions and bonuses are reviewed before confirming.
                 </p>
               </div>
             </div>
@@ -345,7 +446,9 @@ function RunPayrollModal({ onClose, month, year }: { onClose: () => void; month:
                 <Loader2 size={40} className="text-emerald-500 animate-spin" />
               </div>
             </div>
-            <h3 className="text-xl font-bold text-foreground">Processing Payroll...</h3>
+            <h3 className="text-xl font-bold text-foreground">
+              Processing Payroll...
+            </h3>
             <p className="text-sm text-muted-foreground mt-2 max-w-[240px]">
               Securely calculating disbursements and initiating bank transfers.
             </p>
@@ -354,16 +457,18 @@ function RunPayrollModal({ onClose, month, year }: { onClose: () => void; month:
 
         {step === "success" && (
           <div className="p-12 flex flex-col items-center justify-center text-center">
-            <div
-              className="w-20 h-20 rounded-full mb-8 flex items-center justify-center bg-emerald-500/10"
-            >
+            <div className="w-20 h-20 rounded-full mb-8 flex items-center justify-center bg-emerald-500/10">
               <CheckCircle2 size={48} className="text-emerald-500" />
             </div>
             <h3 className="text-2xl font-black text-foreground tracking-tight">
               Success!
             </h3>
             <p className="text-sm text-muted-foreground mt-2">
-              Payroll for <span className="text-foreground font-bold">{month} {year}</span> has been processed successfully.
+              Payroll for{" "}
+              <span className="text-foreground font-bold">
+                {month} {year}
+              </span>{" "}
+              has been processed successfully.
             </p>
             <button
               onClick={onClose}
@@ -378,7 +483,15 @@ function RunPayrollModal({ onClose, month, year }: { onClose: () => void; month:
   );
 }
 
-function EditPayrollModal({ employee, onClose, onSave }: { employee: PayrollEmployee, onClose: () => void, onSave: (updated: PayrollEmployee) => void }) {
+function EditPayrollModal({
+  employee,
+  onClose,
+  onSave,
+}: {
+  employee: PayrollEmployee;
+  onClose: () => void;
+  onSave: (updated: PayrollEmployee) => void;
+}) {
   const [gross, setGross] = useState(employee.gross.toString());
   const [deductions, setDeductions] = useState(employee.deductions.toString());
   const [status, setStatus] = useState(employee.status);
@@ -391,7 +504,7 @@ function EditPayrollModal({ employee, onClose, onSave }: { employee: PayrollEmpl
       gross: parseFloat(gross) || 0,
       deductions: parseFloat(deductions) || 0,
       net: netPay,
-      status
+      status,
     });
   };
 
@@ -403,52 +516,68 @@ function EditPayrollModal({ employee, onClose, onSave }: { employee: PayrollEmpl
     >
       <div
         className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
-        style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+        style={{
+          backgroundColor: "var(--card)",
+          border: "1px solid var(--border)",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-6 pb-4 border-b border-border/50">
           <div>
-            <h2 className="text-lg font-black text-foreground">Edit Payroll Entry</h2>
+            <h2 className="text-lg font-black text-foreground">
+              Edit Payroll Entry
+            </h2>
             <p className="text-sm text-muted-foreground">{employee.name}</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-muted rounded-xl transition-colors">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-muted rounded-xl transition-colors"
+          >
             <X size={18} className="text-muted-foreground" />
           </button>
         </div>
 
         <div className="p-6 flex flex-col gap-5">
           <div>
-            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Gross Salary (₹)</label>
+            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">
+              Gross Salary (₹)
+            </label>
             <input
               type="number"
               value={gross}
-              onChange={e => setGross(e.target.value)}
+              onChange={(e) => setGross(e.target.value)}
               className="w-full border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 bg-transparent text-foreground"
             />
           </div>
 
           <div>
-            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Deductions (₹)</label>
+            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">
+              Deductions (₹)
+            </label>
             <input
               type="number"
               value={deductions}
-              onChange={e => setDeductions(e.target.value)}
+              onChange={(e) => setDeductions(e.target.value)}
               className="w-full border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 bg-transparent text-foreground"
             />
           </div>
 
           <div>
-            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Net Pay (₹)</label>
+            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">
+              Net Pay (₹)
+            </label>
             <div className="w-full border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/5 rounded-xl px-4 py-3 text-sm font-bold text-emerald-600">
               ₹{netPay.toLocaleString()}
             </div>
           </div>
 
           <div>
-            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">Status</label>
+            <label className="text-[11px] font-bold text-muted-foreground mb-2 block">
+              Status
+            </label>
             <select
               value={status}
-              onChange={e => setStatus(e.target.value)}
+              onChange={(e) => setStatus(e.target.value)}
               className="w-full border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 bg-transparent text-foreground"
             >
               <option value="Paid">Processed</option>
@@ -476,7 +605,15 @@ function EditPayrollModal({ employee, onClose, onSave }: { employee: PayrollEmpl
   );
 }
 
-function ActionSuccessModal({ title, message, onClose }: { title: string; message: string; onClose: () => void }) {
+function ActionSuccessModal({
+  title,
+  message,
+  onClose,
+}: {
+  title: string;
+  message: string;
+  onClose: () => void;
+}) {
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="w-full max-w-sm bg-white dark:bg-[#06211C] rounded-3xl p-8 shadow-2xl text-center animate-in zoom-in-95 duration-300">
@@ -484,7 +621,9 @@ function ActionSuccessModal({ title, message, onClose }: { title: string; messag
           <CheckCircle2 size={40} className="text-emerald-500" />
         </div>
         <h3 className="text-2xl font-black text-foreground mb-2">{title}</h3>
-        <p className="text-sm text-muted-foreground mb-8 leading-relaxed">{message}</p>
+        <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+          {message}
+        </p>
         <button
           onClick={onClose}
           className="w-full py-4 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
@@ -507,15 +646,22 @@ export function Payroll() {
   const [selectedYear, setSelectedYear] = useState("2026");
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
   const [showYearDropdown, setShowYearDropdown] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"All" | "Paid" | "Pending">("All");
+  const [statusFilter, setStatusFilter] = useState<"All" | "Paid" | "Pending">(
+    "All",
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [showRunModal, setShowRunModal] = useState(false);
-  const [selectedPayslipEmployee, setSelectedPayslipEmployee] = useState<PayrollEmployee | null>(null);
-  const [editingEmployee, setEditingEmployee] = useState<PayrollEmployee | null>(null);
+  const [selectedPayslipEmployee, setSelectedPayslipEmployee] =
+    useState<PayrollEmployee | null>(null);
+  const [editingEmployee, setEditingEmployee] =
+    useState<PayrollEmployee | null>(null);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [openActionId, setOpenActionId] = useState<string | null>(null);
-  const [actionSuccess, setActionSuccess] = useState<{ title: string; message: string } | null>(null);
+  const [actionSuccess, setActionSuccess] = useState<{
+    title: string;
+    message: string;
+  } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -532,9 +678,11 @@ export function Payroll() {
 
   // Filter logic
   const filteredEmployees = useMemo(() => {
-    return employeesData.filter(emp => {
-      const matchesStatus = statusFilter === "All" || emp.status === statusFilter;
-      const matchesSearch = emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    return employeesData.filter((emp) => {
+      const matchesStatus =
+        statusFilter === "All" || emp.status === statusFilter;
+      const matchesSearch =
+        emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         emp.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         emp.department.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesStatus && matchesSearch;
@@ -548,12 +696,20 @@ export function Payroll() {
   }, [filteredEmployees, currentPage]);
 
   const totalGross = filteredEmployees.reduce((s, e) => s + e.gross, 0);
-  const totalDeductions = filteredEmployees.reduce((s, e) => s + e.deductions, 0);
+  const totalDeductions = filteredEmployees.reduce(
+    (s, e) => s + e.deductions,
+    0,
+  );
   const totalNet = filteredEmployees.reduce((s, e) => s + e.net, 0);
 
   // Helper to get leave impact (mock logic)
   const getLeaveImpact = (empId: string) => {
-    const leaves = leaveRequests.filter(lr => lr.employee.includes(employeesData.find(e => e.id === empId)?.name || "") && lr.status === "Approved");
+    const leaves = leaveRequests.filter(
+      (lr) =>
+        lr.employee.includes(
+          employeesData.find((e) => e.id === empId)?.name || "",
+        ) && lr.status === "Approved",
+    );
     const totalDays = leaves.reduce((sum, lr) => sum + lr.days, 0);
     if (totalDays === 0) return { days: 0, amount: 0 };
     // Assume 1 day pay deduction for every 3 days leave for this demo
@@ -562,7 +718,7 @@ export function Payroll() {
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 pb-10">
+    <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
         <div>
@@ -570,7 +726,10 @@ export function Payroll() {
             <Wallet className="text-emerald-500" size={32} />
             Payroll Management
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm font-medium"> Manage disbursements, taxes, and payslips effortlessly.</p>
+          <p className="text-muted-foreground mt-1 text-sm font-medium">
+            {" "}
+            Manage disbursements, taxes, and payslips effortlessly.
+          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -582,14 +741,20 @@ export function Payroll() {
             >
               <Calendar size={16} className="text-emerald-500" />
               {selectedMonth}
-              <ChevronDown size={14} className={`text-muted-foreground transition-transform ${showMonthDropdown ? "rotate-180" : ""}`} />
+              <ChevronDown
+                size={14}
+                className={`text-muted-foreground transition-transform ${showMonthDropdown ? "rotate-180" : ""}`}
+              />
             </button>
             {showMonthDropdown && (
               <div className="absolute top-full left-0 mt-2 w-48 bg-card border border-border rounded-xl shadow-2xl z-40 py-2 animate-in slide-in-from-top-2 duration-200">
                 {months.map((m) => (
                   <button
                     key={m}
-                    onClick={() => { setSelectedMonth(m); setShowMonthDropdown(false); }}
+                    onClick={() => {
+                      setSelectedMonth(m);
+                      setShowMonthDropdown(false);
+                    }}
                     className={`w-full px-4 py-2 text-left text-sm transition-colors ${selectedMonth === m ? "bg-emerald-500/10 text-emerald-600 font-bold" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"}`}
                   >
                     {m}
@@ -606,14 +771,20 @@ export function Payroll() {
               className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 bg-card border border-border shadow-sm hover:border-emerald-500/50 transition-all text-sm font-bold text-foreground"
             >
               {selectedYear}
-              <ChevronDown size={14} className={`text-muted-foreground transition-transform ${showYearDropdown ? "rotate-180" : ""}`} />
+              <ChevronDown
+                size={14}
+                className={`text-muted-foreground transition-transform ${showYearDropdown ? "rotate-180" : ""}`}
+              />
             </button>
             {showYearDropdown && (
               <div className="absolute top-full left-0 mt-2 w-32 bg-card border border-border rounded-xl shadow-2xl z-40 py-2 animate-in slide-in-from-top-2 duration-200">
                 {years.map((y) => (
                   <button
                     key={y}
-                    onClick={() => { setSelectedYear(y); setShowYearDropdown(false); }}
+                    onClick={() => {
+                      setSelectedYear(y);
+                      setShowYearDropdown(false);
+                    }}
                     className={`w-full px-4 py-2 text-left text-sm transition-colors ${selectedYear === y ? "bg-emerald-500/10 text-emerald-600 font-bold" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"}`}
                   >
                     {y}
@@ -638,16 +809,18 @@ export function Payroll() {
       {/* Info Bar */}
       <div className="bg-card border border-border rounded-xl px-5 py-3 flex items-center gap-6 mb-8 shadow-sm overflow-x-auto whitespace-nowrap">
         <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-          <div className="w-2 h-2 rounded-full bg-[#00B87C]"></div> Payroll due in 8 days
+          <div className="w-2 h-2 rounded-full bg-[#00B87C]"></div> Payroll due
+          in 8 days
         </div>
         <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-          <div className="w-2 h-2 rounded-full bg-orange-500"></div> 36 employees pending action
+          <div className="w-2 h-2 rounded-full bg-orange-500"></div> 36
+          employees pending action
         </div>
         <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-          <div className="w-2 h-2 rounded-full bg-red-500"></div> TDS filing: Apr 15
+          <div className="w-2 h-2 rounded-full bg-red-500"></div> TDS filing:
+          Apr 15
         </div>
       </div>
-
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -659,7 +832,7 @@ export function Payroll() {
             isUp: true,
             icon: <ArrowUpRight size={18} />,
             color: "emerald",
-            desc: "Total pre-tax earnings"
+            desc: "Total pre-tax earnings",
           },
           {
             label: "Total Deductions",
@@ -668,7 +841,7 @@ export function Payroll() {
             isUp: false,
             icon: <ArrowDownRight size={18} />,
             color: "rose",
-            desc: "Tax, PF, and insurance"
+            desc: "Tax, PF, and insurance",
           },
           {
             label: "Net Disbursement",
@@ -677,27 +850,37 @@ export function Payroll() {
             isUp: true,
             icon: <ArrowUpRight size={18} />,
             color: "sky",
-            desc: "Final amount paid to employees"
+            desc: "Final amount paid to employees",
           },
         ].map((stat, i) => (
           <div
             key={i}
             className="relative group bg-card border border-border rounded-3xl p-6 overflow-hidden hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300"
           >
-            <div className={`absolute -right-4 -top-4 w-24 h-24 rounded-full bg-${stat.color}-500/5 group-hover:scale-150 transition-transform duration-500`}></div>
+            <div
+              className={`absolute -right-4 -top-4 w-24 h-24 rounded-full bg-${stat.color}-500/5 group-hover:scale-150 transition-transform duration-500`}
+            ></div>
 
             <div className="relative">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{stat.label}</span>
-                <div className={`flex items-center gap-1 text-xs font-bold ${stat.isUp ? "text-emerald-500" : "text-rose-500"}`}>
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  {stat.label}
+                </span>
+                <div
+                  className={`flex items-center gap-1 text-xs font-bold ${stat.isUp ? "text-emerald-500" : "text-rose-500"}`}
+                >
                   {stat.icon} {stat.trend}
                 </div>
               </div>
 
               <div className="flex items-baseline gap-2">
-                <h3 className="text-3xl font-black text-foreground tracking-tight">{stat.value}</h3>
+                <h3 className="text-3xl font-black text-foreground tracking-tight">
+                  {stat.value}
+                </h3>
               </div>
-              <p className="text-xs text-muted-foreground mt-2 font-medium">{stat.desc}</p>
+              <p className="text-xs text-muted-foreground mt-2 font-medium">
+                {stat.desc}
+              </p>
 
               <div className="mt-6 w-full h-1.5 bg-muted/50 rounded-full overflow-hidden">
                 <div
@@ -716,11 +899,14 @@ export function Payroll() {
           {["All", "Paid", "Pending"].map((status) => (
             <button
               key={status}
-              onClick={() => setStatusFilter(status as "All" | "Paid" | "Pending")}
-              className={`flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold transition-all ${statusFilter === status
-                ? "bg-white dark:bg-[#04100D] text-emerald-500 shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-                }`}
+              onClick={() =>
+                setStatusFilter(status as "All" | "Paid" | "Pending")
+              }
+              className={`flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-bold transition-all ${
+                statusFilter === status
+                  ? "bg-white dark:bg-[#04100D] text-emerald-500 shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               {status}
             </button>
@@ -729,7 +915,10 @@ export function Payroll() {
 
         <div className="flex items-center gap-3 w-full md:w-auto pr-2">
           <div className="relative flex-1 md:w-80">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Search
+              size={16}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
             <input
               type="text"
               placeholder="Search employee, ID or department..."
@@ -740,17 +929,39 @@ export function Payroll() {
           </div>
           <div className="relative">
             <button
-              onClick={(e) => { e.stopPropagation(); setIsFilterOpen(!isFilterOpen); }}
-              className={`p-2.5 rounded-xl border transition-colors ${isFilterOpen ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' : 'border-border text-muted-foreground hover:bg-muted/50'}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsFilterOpen(!isFilterOpen);
+              }}
+              className={`p-2.5 rounded-xl border transition-colors ${isFilterOpen ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30" : "border-border text-muted-foreground hover:bg-muted/50"}`}
             >
               <Filter size={18} />
             </button>
           </div>
           <button
             onClick={() => {
-              const headers = ["ID", "Name", "Department", "Gross", "Deductions", "Net Pay", "Status"];
-              const rows = filteredEmployees.map(e => [e.id, e.name, e.department, e.gross, e.deductions, e.net, e.status]);
-              const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+              const headers = [
+                "ID",
+                "Name",
+                "Department",
+                "Gross",
+                "Deductions",
+                "Net Pay",
+                "Status",
+              ];
+              const rows = filteredEmployees.map((e) => [
+                e.id,
+                e.name,
+                e.department,
+                e.gross,
+                e.deductions,
+                e.net,
+                e.status,
+              ]);
+              const csv = [
+                headers.join(","),
+                ...rows.map((r) => r.join(",")),
+              ].join("\n");
               const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
               const url = URL.createObjectURL(blob);
               const a = document.createElement("a");
@@ -768,10 +979,15 @@ export function Payroll() {
 
       {/* Expanded Filter Panel */}
       {isFilterOpen && (
-        <div className="bg-card border border-border rounded-3xl p-5 mb-6 shadow-sm animate-in slide-in-from-top-2" onClick={e => e.stopPropagation()}>
+        <div
+          className="bg-card border border-border rounded-3xl p-5 mb-6 shadow-sm animate-in slide-in-from-top-2"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="text-[10px] font-bold text-muted-foreground mb-1.5 block uppercase tracking-wider">Department</label>
+              <label className="text-[10px] font-bold text-muted-foreground mb-1.5 block uppercase tracking-wider">
+                Department
+              </label>
               <select className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-foreground">
                 <option>All Departments</option>
                 <option>Engineering</option>
@@ -780,7 +996,9 @@ export function Payroll() {
               </select>
             </div>
             <div>
-              <label className="text-[10px] font-bold text-muted-foreground mb-1.5 block uppercase tracking-wider">Pay Range</label>
+              <label className="text-[10px] font-bold text-muted-foreground mb-1.5 block uppercase tracking-wider">
+                Pay Range
+              </label>
               <select className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-foreground">
                 <option>All Ranges</option>
                 <option>₹0 - ₹50,000</option>
@@ -812,21 +1030,40 @@ export function Payroll() {
           <table className="w-full text-left border-collapse min-w-[1000px]">
             <thead>
               <tr className="bg-muted/30 border-b border-border">
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Employee</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Department</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">Base Salary</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">Leave Impact</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">Deductions</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">Net Pay</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-center">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  Employee
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  Department
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">
+                  Base Salary
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">
+                  Leave Impact
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">
+                  Deductions
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">
+                  Net Pay
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-center">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/50">
               {paginatedEmployees.map((emp) => {
                 const impact = getLeaveImpact(emp.id);
                 return (
-                  <tr key={emp.id} className="hover:bg-emerald-500/5 transition-colors group">
+                  <tr
+                    key={emp.id}
+                    className="hover:bg-emerald-500/5 transition-colors group"
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="relative">
@@ -835,45 +1072,76 @@ export function Payroll() {
                             alt={emp.name}
                             className="w-10 h-10 rounded-full object-cover border-2 border-emerald-500/10"
                           />
-                          <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-card ${emp.status === "Paid" ? "bg-emerald-500" : "bg-amber-500"}`}></div>
+                          <div
+                            className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-card ${emp.status === "Paid" ? "bg-emerald-500" : "bg-amber-500"}`}
+                          ></div>
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-foreground group-hover:text-emerald-500 transition-colors">{emp.name}</p>
-                          <p className="text-[10px] text-muted-foreground font-medium uppercase">{emp.id} • {emp.designation}</p>
+                          <p className="text-sm font-bold text-foreground group-hover:text-emerald-500 transition-colors">
+                            {emp.name}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground font-medium uppercase">
+                            {emp.id} • {emp.designation}
+                          </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <Building2 size={14} className="text-muted-foreground" />
-                        <span className="text-xs font-semibold text-foreground">{emp.department}</span>
+                        <Building2
+                          size={14}
+                          className="text-muted-foreground"
+                        />
+                        <span className="text-xs font-semibold text-foreground">
+                          {emp.department}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-sm font-bold text-foreground">₹{emp.gross.toLocaleString()}</span>
+                      <span className="text-sm font-bold text-foreground">
+                        ₹{emp.gross.toLocaleString()}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex flex-col items-end">
-                        <span className={`text-xs font-bold ${impact.amount > 0 ? "text-rose-500" : "text-emerald-500"}`}>
-                          {impact.amount > 0 ? `-₹${impact.amount}` : "No Impact"}
+                        <span
+                          className={`text-xs font-bold ${impact.amount > 0 ? "text-rose-500" : "text-emerald-500"}`}
+                        >
+                          {impact.amount > 0
+                            ? `-₹${impact.amount}`
+                            : "No Impact"}
                         </span>
                         {impact.days > 0 && (
                           <span className="text-[9px] text-muted-foreground flex items-center gap-1 mt-0.5 font-medium">
-                            <Clock size={10} /> {impact.days} days approved leave
+                            <Clock size={10} /> {impact.days} days approved
+                            leave
                           </span>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-xs font-bold text-rose-500">₹{emp.deductions.toLocaleString()}</span>
+                      <span className="text-xs font-bold text-rose-500">
+                        ₹{emp.deductions.toLocaleString()}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-sm font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-lg">₹{emp.net.toLocaleString()}</span>
+                      <span className="text-sm font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-lg">
+                        ₹{emp.net.toLocaleString()}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${emp.status === "Paid" ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
-                        }`}>
-                        {emp.status === "Paid" ? <CheckCircle2 size={12} /> : <Clock size={12} />}
+                      <div
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                          emp.status === "Paid"
+                            ? "bg-emerald-500/10 text-emerald-600"
+                            : "bg-amber-500/10 text-amber-600"
+                        }`}
+                      >
+                        {emp.status === "Paid" ? (
+                          <CheckCircle2 size={12} />
+                        ) : (
+                          <Clock size={12} />
+                        )}
                         {emp.status}
                       </div>
                     </td>
@@ -895,35 +1163,73 @@ export function Payroll() {
                         </button>
                         <div className="relative">
                           <button
-                            onClick={(e) => { e.stopPropagation(); setOpenActionId(openActionId === emp.id ? null : emp.id); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenActionId(
+                                openActionId === emp.id ? null : emp.id,
+                              );
+                            }}
                             className="p-2 rounded-xl text-muted-foreground hover:bg-muted/50 transition-colors"
                           >
                             <MoreVertical size={16} />
                           </button>
                           {openActionId === emp.id && (
-                            <div className="absolute right-0 top-full mt-2 w-44 bg-card border border-border rounded-xl shadow-xl z-[2000] overflow-hidden animate-in fade-in zoom-in-95" onClick={e => e.stopPropagation()}>
-                              <button onClick={() => { setOpenActionId(null); setEditingEmployee(emp); }} className="w-full text-left px-4 py-3 text-sm text-slate-800 dark:text-slate-200 hover:bg-muted/50 transition-colors flex items-center gap-2 font-medium">
-                                <Edit2 size={16} className="text-slate-600 dark:text-slate-400" /> Edit
+                            <div
+                              className="absolute right-0 top-full mt-2 w-44 bg-card border border-border rounded-xl shadow-xl z-[2000] overflow-hidden animate-in fade-in zoom-in-95"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <button
+                                onClick={() => {
+                                  setOpenActionId(null);
+                                  setEditingEmployee(emp);
+                                }}
+                                className="w-full text-left px-4 py-3 text-sm text-slate-800 dark:text-slate-200 hover:bg-muted/50 transition-colors flex items-center gap-2 font-medium"
+                              >
+                                <Edit2
+                                  size={16}
+                                  className="text-slate-600 dark:text-slate-400"
+                                />{" "}
+                                Edit
                               </button>
-                              <button onClick={() => {
-                                setOpenActionId(null);
-                                setActionSuccess({
-                                  title: "Email Sent!",
-                                  message: `The payslip for ${emp.name} has been successfully sent to their registered email address.`
-                                });
-                              }} className="w-full text-left px-4 py-3 text-sm text-slate-800 dark:text-slate-200 hover:bg-muted/50 transition-colors flex items-center gap-2 font-medium">
-                                <Mail size={16} className="text-slate-600 dark:text-slate-400" /> Email Payslip
+                              <button
+                                onClick={() => {
+                                  setOpenActionId(null);
+                                  setActionSuccess({
+                                    title: "Email Sent!",
+                                    message: `The payslip for ${emp.name} has been successfully sent to their registered email address.`,
+                                  });
+                                }}
+                                className="w-full text-left px-4 py-3 text-sm text-slate-800 dark:text-slate-200 hover:bg-muted/50 transition-colors flex items-center gap-2 font-medium"
+                              >
+                                <Mail
+                                  size={16}
+                                  className="text-slate-600 dark:text-slate-400"
+                                />{" "}
+                                Email Payslip
                               </button>
                               <div className="bg-orange-50 dark:bg-orange-950/20 border-t border-border/50">
-                                <button onClick={() => {
-                                  setOpenActionId(null);
-                                  setEmployeesData(prev => prev.map(e => e.id === emp.id ? { ...e, status: "Pending" } : e));
-                                  setActionSuccess({
-                                    title: "Payment Held",
-                                    message: `The disbursement for ${emp.name} has been placed on hold and moved to Pending status.`
-                                  });
-                                }} className="w-full text-left px-4 py-3 text-sm text-amber-600 hover:bg-amber-500/10 transition-colors flex items-center gap-2 font-medium">
-                                  <AlertCircle size={16} className="text-amber-600" /> Hold Payment
+                                <button
+                                  onClick={() => {
+                                    setOpenActionId(null);
+                                    setEmployeesData((prev) =>
+                                      prev.map((e) =>
+                                        e.id === emp.id
+                                          ? { ...e, status: "Pending" }
+                                          : e,
+                                      ),
+                                    );
+                                    setActionSuccess({
+                                      title: "Payment Held",
+                                      message: `The disbursement for ${emp.name} has been placed on hold and moved to Pending status.`,
+                                    });
+                                  }}
+                                  className="w-full text-left px-4 py-3 text-sm text-amber-600 hover:bg-amber-500/10 transition-colors flex items-center gap-2 font-medium"
+                                >
+                                  <AlertCircle
+                                    size={16}
+                                    className="text-amber-600"
+                                  />{" "}
+                                  Hold Payment
                                 </button>
                               </div>
                             </div>
@@ -939,13 +1245,21 @@ export function Payroll() {
               <tr className="bg-muted/30 font-bold border-t border-border">
                 <td className="px-6 py-6" colSpan={2}>
                   <div className="flex items-center gap-4">
-                    <span className="text-sm text-foreground">Total Summary ({filteredEmployees.length} Records)</span>
+                    <span className="text-sm text-foreground">
+                      Total Summary ({filteredEmployees.length} Records)
+                    </span>
                   </div>
                 </td>
-                <td className="px-6 py-6 text-right text-foreground text-sm font-black">₹{totalGross.toLocaleString()}</td>
+                <td className="px-6 py-6 text-right text-foreground text-sm font-black">
+                  ₹{totalGross.toLocaleString()}
+                </td>
                 <td className="px-6 py-6 text-right"></td>
-                <td className="px-6 py-6 text-right text-rose-500 text-sm font-black">₹{totalDeductions.toLocaleString()}</td>
-                <td className="px-6 py-6 text-right text-emerald-600 text-lg font-black">₹{totalNet.toLocaleString()}</td>
+                <td className="px-6 py-6 text-right text-rose-500 text-sm font-black">
+                  ₹{totalDeductions.toLocaleString()}
+                </td>
+                <td className="px-6 py-6 text-right text-emerald-600 text-lg font-black">
+                  ₹{totalNet.toLocaleString()}
+                </td>
                 <td colSpan={2}></td>
               </tr>
             </tfoot>
@@ -955,32 +1269,52 @@ export function Payroll() {
         {/* Pagination */}
         <div className="px-6 py-4 border-t border-border bg-muted/10 flex items-center justify-between">
           <div className="text-xs font-medium text-muted-foreground">
-            Showing <span className="text-foreground font-bold">{Math.min(filteredEmployees.length, (currentPage - 1) * itemsPerPage + 1)}</span> to <span className="text-foreground font-bold">{Math.min(filteredEmployees.length, currentPage * itemsPerPage)}</span> of <span className="text-foreground font-bold">{filteredEmployees.length}</span> employees
+            Showing{" "}
+            <span className="text-foreground font-bold">
+              {Math.min(
+                filteredEmployees.length,
+                (currentPage - 1) * itemsPerPage + 1,
+              )}
+            </span>{" "}
+            to{" "}
+            <span className="text-foreground font-bold">
+              {Math.min(filteredEmployees.length, currentPage * itemsPerPage)}
+            </span>{" "}
+            of{" "}
+            <span className="text-foreground font-bold">
+              {filteredEmployees.length}
+            </span>{" "}
+            employees
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
               className="p-2 rounded-xl border border-border bg-card text-muted-foreground hover:text-emerald-500 hover:border-emerald-500/50 disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
             >
               <ChevronLeft size={18} />
             </button>
             <div className="flex items-center gap-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${currentPage === page
-                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
+                      currentPage === page
+                        ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
-                >
-                  {page}
-                </button>
-              ))}
+                  >
+                    {page}
+                  </button>
+                ),
+              )}
             </div>
             <button
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+              }
               disabled={currentPage === totalPages}
               className="p-2 rounded-xl border border-border bg-card text-muted-foreground hover:text-emerald-500 hover:border-emerald-500/50 disabled:opacity-50 disabled:pointer-events-none transition-all shadow-sm"
             >
@@ -992,7 +1326,9 @@ export function Payroll() {
 
       {/* Process Timeline */}
       <div className="mt-6 bg-card border border-border rounded-3xl p-8 shadow-sm overflow-x-auto">
-        <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground mb-10">Process Timeline</h3>
+        <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground mb-10">
+          Process Timeline
+        </h3>
 
         <div className="relative flex justify-between min-w-[700px] px-4">
           {/* Connecting Line */}
@@ -1005,9 +1341,12 @@ export function Payroll() {
             { label: "Calculation", status: "active" },
             { label: "Review", status: "pending" },
             { label: "Approval", status: "pending" },
-            { label: "Disbursement", status: "pending" }
+            { label: "Disbursement", status: "pending" },
           ].map((step, index) => (
-            <div key={index} className="flex flex-col items-center gap-3 relative z-10 w-28">
+            <div
+              key={index}
+              className="flex flex-col items-center gap-3 relative z-10 w-28"
+            >
               <div className="bg-card px-2 pb-1">
                 {step.status === "completed" && (
                   <div className="w-6 h-6 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/20"></div>
@@ -1019,10 +1358,15 @@ export function Payroll() {
                   <div className="w-6 h-6 rounded-full bg-card border-[3px] border-muted-foreground/20"></div>
                 )}
               </div>
-              <span className={`text-[11px] font-bold text-center -mt-1 ${step.status === "completed" ? "text-emerald-600" :
-                step.status === "active" ? "text-foreground" :
-                  "text-muted-foreground"
-                }`}>
+              <span
+                className={`text-[11px] font-bold text-center -mt-1 ${
+                  step.status === "completed"
+                    ? "text-emerald-600"
+                    : step.status === "active"
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                }`}
+              >
                 {step.label}
               </span>
             </div>
@@ -1053,11 +1397,13 @@ export function Payroll() {
           employee={editingEmployee}
           onClose={() => setEditingEmployee(null)}
           onSave={(updated) => {
-            setEmployeesData(prev => prev.map(e => e.id === updated.id ? updated : e));
+            setEmployeesData((prev) =>
+              prev.map((e) => (e.id === updated.id ? updated : e)),
+            );
             setEditingEmployee(null);
             setActionSuccess({
               title: "Updated!",
-              message: `Payroll records for ${updated.name} have been successfully updated.`
+              message: `Payroll records for ${updated.name} have been successfully updated.`,
             });
           }}
         />

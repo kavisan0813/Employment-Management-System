@@ -44,24 +44,64 @@ const settingsSections = [
   { id: "security", label: "Security & Privacy", icon: Shield },
 ];
 
-const skills = ["HR Strategy", "Talent Acquisition", "Payroll Management", "Employee Relations", "Performance Management", "HRIS Systems"];
+const skills = [
+  "HR Strategy",
+  "Talent Acquisition",
+  "Payroll Management",
+  "Employee Relations",
+  "Performance Management",
+  "HRIS Systems",
+];
 
 const activityLog = [
-  { action: "Updated payroll for March 2026", time: "2 hours ago", type: "payroll" },
-  { action: "Approved leave request from Emily Chen", time: "5 hours ago", type: "leave" },
-  { action: "Added new employee: Marcus Williams", time: "Yesterday", type: "employee" },
-  { action: "Generated Q1 Performance Report", time: "2 days ago", type: "report" },
-  { action: "Scheduled interview with candidate", time: "3 days ago", type: "recruitment" },
+  {
+    action: "Updated payroll for March 2026",
+    time: "2 hours ago",
+    type: "payroll",
+  },
+  {
+    action: "Approved leave request from Emily Chen",
+    time: "5 hours ago",
+    type: "leave",
+  },
+  {
+    action: "Added new employee: Marcus Williams",
+    time: "Yesterday",
+    type: "employee",
+  },
+  {
+    action: "Generated Q1 Performance Report",
+    time: "2 days ago",
+    type: "report",
+  },
+  {
+    action: "Scheduled interview with candidate",
+    time: "3 days ago",
+    type: "recruitment",
+  },
 ];
 
 const stats = [
   { label: "Employees Managed", value: "247", icon: Users, color: "#059669" },
   { label: "Years Experience", value: "8", icon: TrendingUp, color: "#14B8A6" },
-  { label: "Tasks Completed", value: "1,284", icon: CheckCircle2, color: "#22C55E" },
+  {
+    label: "Tasks Completed",
+    value: "1,284",
+    icon: CheckCircle2,
+    color: "#22C55E",
+  },
   { label: "Avg Response Time", value: "1.2h", icon: Clock, color: "#F59E0B" },
 ];
 
-function Toggle({ label, desc, defaultOn = false }: { label: string; desc: string; defaultOn?: boolean }) {
+function Toggle({
+  label,
+  desc,
+  defaultOn = false,
+}: {
+  label: string;
+  desc: string;
+  defaultOn?: boolean;
+}) {
   const [on, setOn] = useState(defaultOn);
   return (
     <div
@@ -69,8 +109,24 @@ function Toggle({ label, desc, defaultOn = false }: { label: string; desc: strin
       style={{ borderBottom: "1px solid var(--border)" }}
     >
       <div>
-        <p style={{ color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}>{label}</p>
-        <p style={{ color: "var(--muted-foreground)", fontSize: "12px", marginTop: "2px" }}>{desc}</p>
+        <p
+          style={{
+            color: "var(--foreground)",
+            fontSize: "13px",
+            fontWeight: 600,
+          }}
+        >
+          {label}
+        </p>
+        <p
+          style={{
+            color: "var(--muted-foreground)",
+            fontSize: "12px",
+            marginTop: "2px",
+          }}
+        >
+          {desc}
+        </p>
       </div>
       <button
         onClick={() => setOn(!on)}
@@ -135,7 +191,11 @@ function InputField({
           backgroundColor: "var(--background)",
         }}
       >
-        {icon && <span style={{ color: "var(--muted-foreground)", display: "flex" }}>{icon}</span>}
+        {icon && (
+          <span style={{ color: "var(--muted-foreground)", display: "flex" }}>
+            {icon}
+          </span>
+        )}
         <input
           type={type}
           defaultValue={value}
@@ -169,20 +229,22 @@ export function UserProfile() {
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [avatarGradient] = useState("linear-gradient(135deg, #059669, #14B8A6)");
+  const [avatarGradient] = useState(
+    "linear-gradient(135deg, #059669, #14B8A6)",
+  );
   const [activeSkills, setActiveSkills] = useState(skills);
   const [newSkill, setNewSkill] = useState("");
 
   const handleAddSkill = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && newSkill.trim()) {
-       setActiveSkills([...activeSkills, newSkill.trim()]);
-       setNewSkill("");
+    if (e.key === "Enter" && newSkill.trim()) {
+      setActiveSkills([...activeSkills, newSkill.trim()]);
+      setNewSkill("");
     }
-  }
+  };
 
   const handleRemoveSkill = (skillToRemove: string) => {
-    setActiveSkills(activeSkills.filter(s => s !== skillToRemove));
-  }
+    setActiveSkills(activeSkills.filter((s) => s !== skillToRemove));
+  };
 
   const handleSave = () => {
     setSaved(true);
@@ -206,7 +268,8 @@ export function UserProfile() {
         <div
           className="rounded-2xl"
           style={{
-            background: "linear-gradient(135deg, #059669 0%, #047857 40%, #14B8A6 100%)",
+            background:
+              "linear-gradient(135deg, #059669 0%, #047857 40%, #14B8A6 100%)",
             height: "160px",
             position: "relative",
             overflow: "hidden",
@@ -243,11 +306,17 @@ export function UserProfile() {
                 onClick={() => setActiveTab(tab.id)}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all"
                 style={{
-                  backgroundColor: activeTab === tab.id ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.08)",
+                  backgroundColor:
+                    activeTab === tab.id
+                      ? "rgba(255,255,255,0.2)"
+                      : "rgba(255,255,255,0.08)",
                   color: "white",
                   fontSize: "13px",
                   fontWeight: activeTab === tab.id ? 700 : 500,
-                  border: activeTab === tab.id ? "1px solid rgba(255,255,255,0.3)" : "1px solid transparent",
+                  border:
+                    activeTab === tab.id
+                      ? "1px solid rgba(255,255,255,0.3)"
+                      : "1px solid transparent",
                   cursor: "pointer",
                   backdropFilter: "blur(4px)",
                 }}
@@ -276,7 +345,11 @@ export function UserProfile() {
                 boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
               }}
             >
-              <span style={{ color: "white", fontSize: "24px", fontWeight: 800 }}>RP</span>
+              <span
+                style={{ color: "white", fontSize: "24px", fontWeight: 800 }}
+              >
+                RP
+              </span>
             </div>
             <button
               onClick={() => fileInputRef.current?.click()}
@@ -291,18 +364,39 @@ export function UserProfile() {
             >
               <Camera size={11} color="white" />
             </button>
-            <input ref={fileInputRef} type="file" accept="image/*" style={{ display: "none" }} />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+            />
           </div>
         </div>
       </div>
 
       {/* Profile Name Row */}
-      <div className="flex items-center justify-between mb-6" style={{ paddingLeft: "152px" }}>
+      <div
+        className="flex items-center justify-between mb-6"
+        style={{ paddingLeft: "152px" }}
+      >
         <div>
-          <h2 style={{ color: "var(--foreground)", fontSize: "22px", fontWeight: 800, lineHeight: 1.2 }}>
+          <h2
+            style={{
+              color: "var(--foreground)",
+              fontSize: "22px",
+              fontWeight: 800,
+              lineHeight: 1.2,
+            }}
+          >
             Ryan Park
           </h2>
-          <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginTop: "2px" }}>
+          <p
+            style={{
+              color: "var(--muted-foreground)",
+              fontSize: "13px",
+              marginTop: "2px",
+            }}
+          >
             HR Administrator &nbsp;·&nbsp; NexusHR Technologies
           </p>
         </div>
@@ -310,14 +404,21 @@ export function UserProfile() {
           {saved && (
             <div
               className="flex items-center gap-2 px-4 py-2 rounded-xl"
-              style={{ backgroundColor: "rgba(34, 197, 94, 0.1)", border: "1px solid rgba(34, 197, 94, 0.3)" }}
+              style={{
+                backgroundColor: "rgba(34, 197, 94, 0.1)",
+                border: "1px solid rgba(34, 197, 94, 0.3)",
+              }}
             >
               <CheckCircle2 size={14} color="#22C55E" />
-              <span style={{ color: "#22C55E", fontSize: "13px", fontWeight: 600 }}>Saved!</span>
+              <span
+                style={{ color: "#22C55E", fontSize: "13px", fontWeight: 600 }}
+              >
+                Saved!
+              </span>
             </div>
           )}
-          {activeTab === "profile" && (
-            isEditing ? (
+          {activeTab === "profile" &&
+            (isEditing ? (
               <div className="flex gap-2">
                 <button
                   onClick={() => setIsEditing(false)}
@@ -365,14 +466,16 @@ export function UserProfile() {
               >
                 <Edit3 size={14} /> Edit Profile
               </button>
-            )
-          )}
+            ))}
         </div>
       </div>
 
       {/* ── MY PROFILE TAB ── */}
       {activeTab === "profile" && (
-        <div className="grid gap-5" style={{ gridTemplateColumns: "1fr 320px" }}>
+        <div
+          className="grid gap-5"
+          style={{ gridTemplateColumns: "1fr 320px" }}
+        >
           {/* LEFT COLUMN */}
           <div className="flex flex-col gap-5">
             {/* Stats */}
@@ -392,8 +495,24 @@ export function UserProfile() {
                   >
                     <s.icon size={16} color={s.color} />
                   </div>
-                  <p style={{ color: "var(--foreground)", fontSize: "22px", fontWeight: 800 }}>{s.value}</p>
-                  <p style={{ color: "var(--muted-foreground)", fontSize: "11px", marginTop: "2px" }}>{s.label}</p>
+                  <p
+                    style={{
+                      color: "var(--foreground)",
+                      fontSize: "22px",
+                      fontWeight: 800,
+                    }}
+                  >
+                    {s.value}
+                  </p>
+                  <p
+                    style={{
+                      color: "var(--muted-foreground)",
+                      fontSize: "11px",
+                      marginTop: "2px",
+                    }}
+                  >
+                    {s.label}
+                  </p>
                 </div>
               ))}
             </div>
@@ -401,7 +520,10 @@ export function UserProfile() {
             {/* Personal Info Card */}
             <div
               className="rounded-2xl p-6"
-              style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+              style={{
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+              }}
             >
               <div className="flex items-center gap-2 mb-5">
                 <div
@@ -410,22 +532,61 @@ export function UserProfile() {
                 >
                   <User size={14} color="var(--primary)" />
                 </div>
-                <h3 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>Personal Information</h3>
+                <h3
+                  style={{
+                    color: "var(--foreground)",
+                    fontSize: "14px",
+                    fontWeight: 700,
+                  }}
+                >
+                  Personal Information
+                </h3>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <InputField label="First Name" value="Ryan" disabled={!isEditing} />
-                <InputField label="Last Name" value="Park" disabled={!isEditing} />
-                <InputField label="Email Address" value="ryan.park@nexushr.com" icon={<Mail size={14} />} disabled={!isEditing} />
-                <InputField label="Phone Number" value="+1 (415) 823-9100" icon={<Phone size={14} />} disabled={!isEditing} />
-                <InputField label="Location" value="San Francisco, CA" icon={<MapPin size={14} />} disabled={!isEditing} />
-                <InputField label="Date Joined" value="March 12, 2018" icon={<Calendar size={14} />} disabled />
+                <InputField
+                  label="First Name"
+                  value="Ryan"
+                  disabled={!isEditing}
+                />
+                <InputField
+                  label="Last Name"
+                  value="Park"
+                  disabled={!isEditing}
+                />
+                <InputField
+                  label="Email Address"
+                  value="ryan.park@nexushr.com"
+                  icon={<Mail size={14} />}
+                  disabled={!isEditing}
+                />
+                <InputField
+                  label="Phone Number"
+                  value="+1 (415) 823-9100"
+                  icon={<Phone size={14} />}
+                  disabled={!isEditing}
+                />
+                <InputField
+                  label="Location"
+                  value="San Francisco, CA"
+                  icon={<MapPin size={14} />}
+                  disabled={!isEditing}
+                />
+                <InputField
+                  label="Date Joined"
+                  value="March 12, 2018"
+                  icon={<Calendar size={14} />}
+                  disabled
+                />
               </div>
             </div>
 
             {/* Professional Info */}
             <div
               className="rounded-2xl p-6"
-              style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+              style={{
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+              }}
             >
               <div className="flex items-center gap-2 mb-5">
                 <div
@@ -434,13 +595,34 @@ export function UserProfile() {
                 >
                   <Briefcase size={14} color="#14B8A6" />
                 </div>
-                <h3 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>Professional Details</h3>
+                <h3
+                  style={{
+                    color: "var(--foreground)",
+                    fontSize: "14px",
+                    fontWeight: 700,
+                  }}
+                >
+                  Professional Details
+                </h3>
               </div>
               <div className="grid grid-cols-2 gap-4 mb-4">
-                <InputField label="Job Title" value="HR Administrator" icon={<Briefcase size={14} />} disabled={!isEditing} />
-                <InputField label="Department" value="Human Resources" disabled={!isEditing} />
+                <InputField
+                  label="Job Title"
+                  value="HR Administrator"
+                  icon={<Briefcase size={14} />}
+                  disabled={!isEditing}
+                />
+                <InputField
+                  label="Department"
+                  value="Human Resources"
+                  disabled={!isEditing}
+                />
                 <InputField label="Employee ID" value="EMP-0001" disabled />
-                <InputField label="Reports To" value="Sarah Mitchell, VP HR" disabled={!isEditing} />
+                <InputField
+                  label="Reports To"
+                  value="Sarah Mitchell, VP HR"
+                  disabled={!isEditing}
+                />
               </div>
 
               {/* Bio */}
@@ -509,10 +691,15 @@ export function UserProfile() {
                     >
                       {skill}
                       {isEditing && (
-                        <button 
+                        <button
                           onClick={() => handleRemoveSkill(skill)}
                           className="hover:bg-emerald-200 rounded-full p-0.5 transition-colors flex items-center justify-center"
-                          style={{ color: "var(--primary)", cursor: "pointer", border: "none", background: "transparent" }}
+                          style={{
+                            color: "var(--primary)",
+                            cursor: "pointer",
+                            border: "none",
+                            background: "transparent",
+                          }}
                         >
                           <X size={12} />
                         </button>
@@ -540,9 +727,24 @@ export function UserProfile() {
 
               {/* Social Links */}
               <div className="grid grid-cols-3 gap-4 mt-4">
-                <InputField label="LinkedIn" value="linkedin.com/in/ryanpark" icon={<Linkedin size={14} />} disabled={!isEditing} />
-                <InputField label="Twitter" value="@ryanpark_hr" icon={<Twitter size={14} />} disabled={!isEditing} />
-                <InputField label="GitHub" value="github.com/ryanpark" icon={<Github size={14} />} disabled={!isEditing} />
+                <InputField
+                  label="LinkedIn"
+                  value="linkedin.com/in/ryanpark"
+                  icon={<Linkedin size={14} />}
+                  disabled={!isEditing}
+                />
+                <InputField
+                  label="Twitter"
+                  value="@ryanpark_hr"
+                  icon={<Twitter size={14} />}
+                  disabled={!isEditing}
+                />
+                <InputField
+                  label="GitHub"
+                  value="github.com/ryanpark"
+                  icon={<Github size={14} />}
+                  disabled={!isEditing}
+                />
               </div>
             </div>
           </div>
@@ -552,29 +754,66 @@ export function UserProfile() {
             {/* Role Badge */}
             <div
               className="rounded-2xl p-5"
-              style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+              style={{
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+              }}
             >
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ background: "linear-gradient(135deg, #059669, #14B8A6)" }}
+                  style={{
+                    background: "linear-gradient(135deg, #059669, #14B8A6)",
+                  }}
                 >
                   <Award size={18} color="white" />
                 </div>
                 <div>
-                  <p style={{ color: "var(--foreground)", fontWeight: 700, fontSize: "13px" }}>HR Administrator</p>
-                  <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>Full Access</p>
+                  <p
+                    style={{
+                      color: "var(--foreground)",
+                      fontWeight: 700,
+                      fontSize: "13px",
+                    }}
+                  >
+                    HR Administrator
+                  </p>
+                  <p
+                    style={{
+                      color: "var(--muted-foreground)",
+                      fontSize: "11px",
+                    }}
+                  >
+                    Full Access
+                  </p>
                 </div>
               </div>
               <div
                 className="rounded-xl p-3"
-                style={{ backgroundColor: "rgba(5, 150, 105, 0.08)", border: "1px solid rgba(5, 150, 105, 0.2)" }}
+                style={{
+                  backgroundColor: "rgba(5, 150, 105, 0.08)",
+                  border: "1px solid rgba(5, 150, 105, 0.2)",
+                }}
               >
-                <p style={{ color: "var(--primary)", fontSize: "12px", fontWeight: 600, marginBottom: "4px" }}>
+                <p
+                  style={{
+                    color: "var(--primary)",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    marginBottom: "4px",
+                  }}
+                >
                   Access Level: Admin
                 </p>
-                <p style={{ color: "var(--muted-foreground)", fontSize: "11px", lineHeight: 1.5 }}>
-                  Full read/write access to all modules including payroll, recruitment, and settings.
+                <p
+                  style={{
+                    color: "var(--muted-foreground)",
+                    fontSize: "11px",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  Full read/write access to all modules including payroll,
+                  recruitment, and settings.
                 </p>
               </div>
             </div>
@@ -582,14 +821,28 @@ export function UserProfile() {
             {/* Website */}
             <div
               className="rounded-2xl p-5"
-              style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+              style={{
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+              }}
             >
-              <h3 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "12px" }}>
+              <h3
+                style={{
+                  color: "var(--foreground)",
+                  fontSize: "14px",
+                  fontWeight: 700,
+                  marginBottom: "12px",
+                }}
+              >
                 Online Presence
               </h3>
               {[
                 { icon: Globe, label: "Website", value: "ryanpark.hr.dev" },
-                { icon: Linkedin, label: "LinkedIn", value: "linkedin.com/in/ryanpark" },
+                {
+                  icon: Linkedin,
+                  label: "LinkedIn",
+                  value: "linkedin.com/in/ryanpark",
+                },
               ].map((link) => (
                 <div key={link.label} className="flex items-center gap-3 mb-3">
                   <div
@@ -599,10 +852,26 @@ export function UserProfile() {
                     <link.icon size={13} color="var(--primary)" />
                   </div>
                   <div>
-                    <p style={{ color: "var(--muted-foreground)", fontSize: "10px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    <p
+                      style={{
+                        color: "var(--muted-foreground)",
+                        fontSize: "10px",
+                        fontWeight: 600,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                      }}
+                    >
                       {link.label}
                     </p>
-                    <p style={{ color: "var(--foreground)", fontSize: "12px", fontWeight: 500 }}>{link.value}</p>
+                    <p
+                      style={{
+                        color: "var(--foreground)",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {link.value}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -611,9 +880,19 @@ export function UserProfile() {
             {/* Recent Activity */}
             <div
               className="rounded-2xl p-5"
-              style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+              style={{
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+              }}
             >
-              <h3 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700, marginBottom: "12px" }}>
+              <h3
+                style={{
+                  color: "var(--foreground)",
+                  fontSize: "14px",
+                  fontWeight: 700,
+                  marginBottom: "12px",
+                }}
+              >
                 Recent Activity
               </h3>
               <div className="flex flex-col gap-3">
@@ -621,11 +900,30 @@ export function UserProfile() {
                   <div key={i} className="flex items-start gap-3">
                     <div
                       className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-                      style={{ backgroundColor: activityTypeColor[log.type] || "var(--primary)" }}
+                      style={{
+                        backgroundColor:
+                          activityTypeColor[log.type] || "var(--primary)",
+                      }}
                     />
                     <div>
-                      <p style={{ color: "var(--foreground)", fontSize: "12px", lineHeight: 1.4 }}>{log.action}</p>
-                      <p style={{ color: "var(--muted-foreground)", fontSize: "10px", marginTop: "2px" }}>{log.time}</p>
+                      <p
+                        style={{
+                          color: "var(--foreground)",
+                          fontSize: "12px",
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {log.action}
+                      </p>
+                      <p
+                        style={{
+                          color: "var(--muted-foreground)",
+                          fontSize: "10px",
+                          marginTop: "2px",
+                        }}
+                      >
+                        {log.time}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -654,8 +952,14 @@ export function UserProfile() {
                 onClick={() => setActiveSettingsSection(sec.id)}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left"
                 style={{
-                  color: activeSettingsSection === sec.id ? "var(--primary)" : "var(--muted-foreground)",
-                  backgroundColor: activeSettingsSection === sec.id ? "var(--secondary)" : "transparent",
+                  color:
+                    activeSettingsSection === sec.id
+                      ? "var(--primary)"
+                      : "var(--muted-foreground)",
+                  backgroundColor:
+                    activeSettingsSection === sec.id
+                      ? "var(--secondary)"
+                      : "transparent",
                   fontSize: "13px",
                   fontWeight: activeSettingsSection === sec.id ? 700 : 500,
                   marginBottom: "2px",
@@ -664,11 +968,15 @@ export function UserProfile() {
                 }}
                 onMouseEnter={(e) => {
                   if (activeSettingsSection !== sec.id)
-                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--background)";
+                    (
+                      e.currentTarget as HTMLButtonElement
+                    ).style.backgroundColor = "var(--background)";
                 }}
                 onMouseLeave={(e) => {
                   if (activeSettingsSection !== sec.id)
-                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+                    (
+                      e.currentTarget as HTMLButtonElement
+                    ).style.backgroundColor = "transparent";
                 }}
               >
                 <sec.icon size={14} />
@@ -681,29 +989,77 @@ export function UserProfile() {
           <div className="flex-1">
             <div
               className="rounded-2xl p-6"
-              style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
+              style={{
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+              }}
             >
               {/* Company Settings */}
               {activeSettingsSection === "company" && (
                 <div>
-                  <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 700, marginBottom: "4px" }}>
+                  <h3
+                    style={{
+                      color: "var(--foreground)",
+                      fontSize: "16px",
+                      fontWeight: 700,
+                      marginBottom: "4px",
+                    }}
+                  >
                     Company Information
                   </h3>
-                  <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "24px" }}>
+                  <p
+                    style={{
+                      color: "var(--muted-foreground)",
+                      fontSize: "13px",
+                      marginBottom: "24px",
+                    }}
+                  >
                     Update your organization details and preferences.
                   </p>
                   <div className="grid grid-cols-2 gap-4">
-                    <InputField label="Company Name" value="NexusHR Technologies" />
-                    <InputField label="Industry" value="Software & Technology" />
-                    <InputField label="Email" value="hr@nexushr.com" icon={<Mail size={14} />} />
-                    <InputField label="Phone" value="+1 (800) 123-4567" icon={<Phone size={14} />} />
+                    <InputField
+                      label="Company Name"
+                      value="NexusHR Technologies"
+                    />
+                    <InputField
+                      label="Industry"
+                      value="Software & Technology"
+                    />
+                    <InputField
+                      label="Email"
+                      value="hr@nexushr.com"
+                      icon={<Mail size={14} />}
+                    />
+                    <InputField
+                      label="Phone"
+                      value="+1 (800) 123-4567"
+                      icon={<Phone size={14} />}
+                    />
                     <div className="col-span-2">
-                      <InputField label="Headquarters" value="1000 Innovation Drive, San Francisco, CA 94105" icon={<MapPin size={14} />} />
+                      <InputField
+                        label="Headquarters"
+                        value="1000 Innovation Drive, San Francisco, CA 94105"
+                        icon={<MapPin size={14} />}
+                      />
                     </div>
-                    <InputField label="Website" value="www.nexushr.com" icon={<Globe size={14} />} />
+                    <InputField
+                      label="Website"
+                      value="www.nexushr.com"
+                      icon={<Globe size={14} />}
+                    />
                     <InputField label="Founded Year" value="2018" />
                     <div className="col-span-2">
-                      <label style={{ color: "var(--primary)", fontSize: "11px", fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      <label
+                        style={{
+                          color: "var(--primary)",
+                          fontSize: "11px",
+                          fontWeight: 700,
+                          display: "block",
+                          marginBottom: "6px",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.5px",
+                        }}
+                      >
                         Company Description
                       </label>
                       <textarea
@@ -726,7 +1082,10 @@ export function UserProfile() {
                   </div>
                   <div className="flex justify-end mt-6">
                     <button
-                      onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 3000); }}
+                      onClick={() => {
+                        setSaved(true);
+                        setTimeout(() => setSaved(false), 3000);
+                      }}
                       className="flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all hover:opacity-90"
                       style={{
                         background: "linear-gradient(135deg, #059669, #047857)",
@@ -748,33 +1107,78 @@ export function UserProfile() {
               {/* Account Settings */}
               {activeSettingsSection === "account" && (
                 <div>
-                  <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 700, marginBottom: "4px" }}>
+                  <h3
+                    style={{
+                      color: "var(--foreground)",
+                      fontSize: "16px",
+                      fontWeight: 700,
+                      marginBottom: "4px",
+                    }}
+                  >
                     Account Settings
                   </h3>
-                  <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "24px" }}>
+                  <p
+                    style={{
+                      color: "var(--muted-foreground)",
+                      fontSize: "13px",
+                      marginBottom: "24px",
+                    }}
+                  >
                     Manage your personal profile information and preferences.
                   </p>
 
                   {/* Avatar row */}
                   <div
                     className="flex items-center gap-4 mb-6 p-4 rounded-xl"
-                    style={{ backgroundColor: "var(--background)", border: "1px solid var(--border)" }}
+                    style={{
+                      backgroundColor: "var(--background)",
+                      border: "1px solid var(--border)",
+                    }}
                   >
                     <div
                       className="w-16 h-16 rounded-full flex items-center justify-center relative"
-                      style={{ background: "linear-gradient(135deg, #059669, #14B8A6)", boxShadow: "0 4px 16px rgba(5,150,105,0.3)" }}
+                      style={{
+                        background: "linear-gradient(135deg, #059669, #14B8A6)",
+                        boxShadow: "0 4px 16px rgba(5,150,105,0.3)",
+                      }}
                     >
-                      <span style={{ color: "white", fontSize: "20px", fontWeight: 800 }}>RP</span>
+                      <span
+                        style={{
+                          color: "white",
+                          fontSize: "20px",
+                          fontWeight: 800,
+                        }}
+                      >
+                        RP
+                      </span>
                       <div
                         className="absolute bottom-0 right-0 w-5 h-5 rounded-full flex items-center justify-center"
-                        style={{ background: "var(--primary)", border: "2px solid var(--card)" }}
+                        style={{
+                          background: "var(--primary)",
+                          border: "2px solid var(--card)",
+                        }}
                       >
                         <Camera size={9} color="white" />
                       </div>
                     </div>
                     <div>
-                      <p style={{ color: "var(--foreground)", fontSize: "15px", fontWeight: 700 }}>Ryan Park</p>
-                      <p style={{ color: "var(--muted-foreground)", fontSize: "13px" }}>HR Administrator</p>
+                      <p
+                        style={{
+                          color: "var(--foreground)",
+                          fontSize: "15px",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Ryan Park
+                      </p>
+                      <p
+                        style={{
+                          color: "var(--muted-foreground)",
+                          fontSize: "13px",
+                        }}
+                      >
+                        HR Administrator
+                      </p>
                     </div>
                     <button
                       className="ml-auto px-4 py-2 rounded-xl"
@@ -794,15 +1198,34 @@ export function UserProfile() {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <InputField label="First Name" value="Ryan" />
                     <InputField label="Last Name" value="Park" />
-                    <InputField label="Email Address" value="ryan.park@nexushr.com" icon={<Mail size={14} />} />
-                    <InputField label="Phone Number" value="+1 (415) 823-9100" icon={<Phone size={14} />} />
-                    <InputField label="Job Title" value="HR Administrator" icon={<Briefcase size={14} />} />
-                    <InputField label="Location" value="San Francisco, CA" icon={<MapPin size={14} />} />
+                    <InputField
+                      label="Email Address"
+                      value="ryan.park@nexushr.com"
+                      icon={<Mail size={14} />}
+                    />
+                    <InputField
+                      label="Phone Number"
+                      value="+1 (415) 823-9100"
+                      icon={<Phone size={14} />}
+                    />
+                    <InputField
+                      label="Job Title"
+                      value="HR Administrator"
+                      icon={<Briefcase size={14} />}
+                    />
+                    <InputField
+                      label="Location"
+                      value="San Francisco, CA"
+                      icon={<MapPin size={14} />}
+                    />
                   </div>
 
                   <div className="flex justify-end mt-6">
                     <button
-                      onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 3000); }}
+                      onClick={() => {
+                        setSaved(true);
+                        setTimeout(() => setSaved(false), 3000);
+                      }}
                       className="flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all hover:opacity-90"
                       style={{
                         background: "linear-gradient(135deg, #059669, #047857)",
@@ -824,19 +1247,60 @@ export function UserProfile() {
               {/* Notifications */}
               {activeSettingsSection === "notifications" && (
                 <div>
-                  <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 700, marginBottom: "4px" }}>
+                  <h3
+                    style={{
+                      color: "var(--foreground)",
+                      fontSize: "16px",
+                      fontWeight: 700,
+                      marginBottom: "4px",
+                    }}
+                  >
                     Notification Preferences
                   </h3>
-                  <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "24px" }}>
+                  <p
+                    style={{
+                      color: "var(--muted-foreground)",
+                      fontSize: "13px",
+                      marginBottom: "24px",
+                    }}
+                  >
                     Control which alerts and updates you receive.
                   </p>
-                  <Toggle label="New Employee Onboarding" desc="Get notified when a new employee joins" defaultOn={true} />
-                  <Toggle label="Leave Requests" desc="Alerts for pending leave approvals" defaultOn={true} />
-                  <Toggle label="Payroll Processed" desc="Confirmation when payroll is run" defaultOn={true} />
-                  <Toggle label="Performance Reviews" desc="Reminders for upcoming review cycles" defaultOn={false} />
-                  <Toggle label="Recruitment Updates" desc="Candidate stage changes and new applications" defaultOn={true} />
-                  <Toggle label="System Alerts" desc="Critical system notifications and errors" defaultOn={true} />
-                  <Toggle label="Email Digest" desc="Weekly summary sent to your email" defaultOn={false} />
+                  <Toggle
+                    label="New Employee Onboarding"
+                    desc="Get notified when a new employee joins"
+                    defaultOn={true}
+                  />
+                  <Toggle
+                    label="Leave Requests"
+                    desc="Alerts for pending leave approvals"
+                    defaultOn={true}
+                  />
+                  <Toggle
+                    label="Payroll Processed"
+                    desc="Confirmation when payroll is run"
+                    defaultOn={true}
+                  />
+                  <Toggle
+                    label="Performance Reviews"
+                    desc="Reminders for upcoming review cycles"
+                    defaultOn={false}
+                  />
+                  <Toggle
+                    label="Recruitment Updates"
+                    desc="Candidate stage changes and new applications"
+                    defaultOn={true}
+                  />
+                  <Toggle
+                    label="System Alerts"
+                    desc="Critical system notifications and errors"
+                    defaultOn={true}
+                  />
+                  <Toggle
+                    label="Email Digest"
+                    desc="Weekly summary sent to your email"
+                    defaultOn={false}
+                  />
                   <div className="flex justify-end mt-6">
                     <button
                       className="flex items-center gap-2 px-6 py-2.5 rounded-xl"
@@ -860,60 +1324,156 @@ export function UserProfile() {
               {/* Security */}
               {activeSettingsSection === "security" && (
                 <div>
-                  <h3 style={{ color: "var(--foreground)", fontSize: "16px", fontWeight: 700, marginBottom: "4px" }}>
+                  <h3
+                    style={{
+                      color: "var(--foreground)",
+                      fontSize: "16px",
+                      fontWeight: 700,
+                      marginBottom: "4px",
+                    }}
+                  >
                     Security & Privacy
                   </h3>
-                  <p style={{ color: "var(--muted-foreground)", fontSize: "13px", marginBottom: "24px" }}>
+                  <p
+                    style={{
+                      color: "var(--muted-foreground)",
+                      fontSize: "13px",
+                      marginBottom: "24px",
+                    }}
+                  >
                     Manage your password, 2FA, and active sessions.
                   </p>
 
                   {/* Change Password */}
                   <div
                     className="rounded-xl p-5 mb-5"
-                    style={{ border: "1px solid var(--border)", backgroundColor: "var(--background)" }}
+                    style={{
+                      border: "1px solid var(--border)",
+                      backgroundColor: "var(--background)",
+                    }}
                   >
                     <div className="flex items-center gap-2 mb-4">
                       <Key size={15} color="var(--primary)" />
-                      <h4 style={{ color: "var(--foreground)", fontSize: "14px", fontWeight: 700 }}>Change Password</h4>
+                      <h4
+                        style={{
+                          color: "var(--foreground)",
+                          fontSize: "14px",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Change Password
+                      </h4>
                     </div>
                     <div className="flex flex-col gap-3">
                       {/* Current password */}
                       <div>
-                        <label style={{ color: "var(--primary)", fontSize: "11px", fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <label
+                          style={{
+                            color: "var(--primary)",
+                            fontSize: "11px",
+                            fontWeight: 700,
+                            display: "block",
+                            marginBottom: "6px",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                          }}
+                        >
                           Current Password
                         </label>
                         <div
                           className="flex items-center gap-2.5 rounded-xl px-4"
-                          style={{ border: "1px solid var(--border)", height: "44px", backgroundColor: "var(--card)" }}
+                          style={{
+                            border: "1px solid var(--border)",
+                            height: "44px",
+                            backgroundColor: "var(--card)",
+                          }}
                         >
                           <Lock size={14} color="var(--muted-foreground)" />
                           <input
                             type={showPassword ? "text" : "password"}
                             placeholder="Enter current password"
-                            style={{ border: "none", outline: "none", background: "transparent", fontSize: "13px", color: "var(--foreground)", width: "100%" }}
+                            style={{
+                              border: "none",
+                              outline: "none",
+                              background: "transparent",
+                              fontSize: "13px",
+                              color: "var(--foreground)",
+                              width: "100%",
+                            }}
                           />
-                          <button onClick={() => setShowPassword(!showPassword)} style={{ border: "none", background: "none", cursor: "pointer", display: "flex" }}>
-                            {showPassword ? <EyeOff size={14} color="var(--muted-foreground)" /> : <Eye size={14} color="var(--muted-foreground)" />}
+                          <button
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{
+                              border: "none",
+                              background: "none",
+                              cursor: "pointer",
+                              display: "flex",
+                            }}
+                          >
+                            {showPassword ? (
+                              <EyeOff
+                                size={14}
+                                color="var(--muted-foreground)"
+                              />
+                            ) : (
+                              <Eye size={14} color="var(--muted-foreground)" />
+                            )}
                           </button>
                         </div>
                       </div>
                       {/* New password */}
                       <div>
-                        <label style={{ color: "var(--primary)", fontSize: "11px", fontWeight: 700, display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <label
+                          style={{
+                            color: "var(--primary)",
+                            fontSize: "11px",
+                            fontWeight: 700,
+                            display: "block",
+                            marginBottom: "6px",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                          }}
+                        >
                           New Password
                         </label>
                         <div
                           className="flex items-center gap-2.5 rounded-xl px-4"
-                          style={{ border: "1px solid var(--border)", height: "44px", backgroundColor: "var(--card)" }}
+                          style={{
+                            border: "1px solid var(--border)",
+                            height: "44px",
+                            backgroundColor: "var(--card)",
+                          }}
                         >
                           <Lock size={14} color="var(--muted-foreground)" />
                           <input
                             type={showNewPassword ? "text" : "password"}
                             placeholder="Enter new password"
-                            style={{ border: "none", outline: "none", background: "transparent", fontSize: "13px", color: "var(--foreground)", width: "100%" }}
+                            style={{
+                              border: "none",
+                              outline: "none",
+                              background: "transparent",
+                              fontSize: "13px",
+                              color: "var(--foreground)",
+                              width: "100%",
+                            }}
                           />
-                          <button onClick={() => setShowNewPassword(!showNewPassword)} style={{ border: "none", background: "none", cursor: "pointer", display: "flex" }}>
-                            {showNewPassword ? <EyeOff size={14} color="var(--muted-foreground)" /> : <Eye size={14} color="var(--muted-foreground)" />}
+                          <button
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                            style={{
+                              border: "none",
+                              background: "none",
+                              cursor: "pointer",
+                              display: "flex",
+                            }}
+                          >
+                            {showNewPassword ? (
+                              <EyeOff
+                                size={14}
+                                color="var(--muted-foreground)"
+                              />
+                            ) : (
+                              <Eye size={14} color="var(--muted-foreground)" />
+                            )}
                           </button>
                         </div>
                         {/* Strength indicator */}
@@ -924,11 +1484,21 @@ export function UserProfile() {
                               className="flex-1 rounded-full"
                               style={{
                                 height: "3px",
-                                backgroundColor: n <= 2 ? "#F59E0B" : "var(--border)",
+                                backgroundColor:
+                                  n <= 2 ? "#F59E0B" : "var(--border)",
                               }}
                             />
                           ))}
-                          <span style={{ color: "#F59E0B", fontSize: "10px", fontWeight: 600, whiteSpace: "nowrap" }}>Medium</span>
+                          <span
+                            style={{
+                              color: "#F59E0B",
+                              fontSize: "10px",
+                              fontWeight: 600,
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            Medium
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -949,22 +1519,56 @@ export function UserProfile() {
                   </div>
 
                   {/* 2FA & Session toggles */}
-                  <Toggle label="Two-Factor Authentication" desc="Require 2FA for all admin accounts" defaultOn={true} />
-                  <Toggle label="Session Timeout" desc="Auto-logout after 30 minutes of inactivity" defaultOn={true} />
-                  <Toggle label="Audit Logging" desc="Track all admin actions for compliance" defaultOn={true} />
-                  <Toggle label="IP Restriction" desc="Only allow access from approved IPs" defaultOn={false} />
+                  <Toggle
+                    label="Two-Factor Authentication"
+                    desc="Require 2FA for all admin accounts"
+                    defaultOn={true}
+                  />
+                  <Toggle
+                    label="Session Timeout"
+                    desc="Auto-logout after 30 minutes of inactivity"
+                    defaultOn={true}
+                  />
+                  <Toggle
+                    label="Audit Logging"
+                    desc="Track all admin actions for compliance"
+                    defaultOn={true}
+                  />
+                  <Toggle
+                    label="IP Restriction"
+                    desc="Only allow access from approved IPs"
+                    defaultOn={false}
+                  />
 
                   {/* Danger zone */}
                   <div
                     className="rounded-xl p-4 mt-5"
-                    style={{ border: "1px solid rgba(239, 68, 68, 0.3)", backgroundColor: "rgba(239, 68, 68, 0.04)" }}
+                    style={{
+                      border: "1px solid rgba(239, 68, 68, 0.3)",
+                      backgroundColor: "rgba(239, 68, 68, 0.04)",
+                    }}
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <AlertCircle size={15} color="#EF4444" />
-                      <p style={{ color: "#EF4444", fontSize: "13px", fontWeight: 700 }}>Danger Zone</p>
+                      <p
+                        style={{
+                          color: "#EF4444",
+                          fontSize: "13px",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Danger Zone
+                      </p>
                     </div>
-                    <p style={{ color: "var(--muted-foreground)", fontSize: "12px", marginBottom: "12px" }}>
-                      Once you delete your account, there is no going back. Please be certain.
+                    <p
+                      style={{
+                        color: "var(--muted-foreground)",
+                        fontSize: "12px",
+                        marginBottom: "12px",
+                      }}
+                    >
+                      Once you delete your account, there is no going back.
+                      Please be certain.
                     </p>
                     <button
                       className="px-4 py-2 rounded-xl"

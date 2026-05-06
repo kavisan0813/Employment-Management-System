@@ -41,44 +41,154 @@ interface Payslip {
 
 const MOCK_PAYSLIPS: Payslip[] = [
   {
-    id: "PAY-2026-04", month: "April", year: 2026, grossPay: 95000, deductions: 19850, netPay: 75150,
-    paidDate: "May 1, 2026", status: "Paid",
-    breakdown: { basicSalary: 50000, hra: 20000, conveyance: 5000, medicalAllowance: 2500, specialAllowance: 17500, providentFund: 6000, professionalTax: 200, incomeTax: 13650 }
+    id: "PAY-2026-04",
+    month: "April",
+    year: 2026,
+    grossPay: 95000,
+    deductions: 19850,
+    netPay: 75150,
+    paidDate: "May 1, 2026",
+    status: "Paid",
+    breakdown: {
+      basicSalary: 50000,
+      hra: 20000,
+      conveyance: 5000,
+      medicalAllowance: 2500,
+      specialAllowance: 17500,
+      providentFund: 6000,
+      professionalTax: 200,
+      incomeTax: 13650,
+    },
   },
   {
-    id: "PAY-2026-03", month: "March", year: 2026, grossPay: 95000, deductions: 19850, netPay: 75150,
-    paidDate: "Apr 1, 2026", status: "Paid",
-    breakdown: { basicSalary: 50000, hra: 20000, conveyance: 5000, medicalAllowance: 2500, specialAllowance: 17500, providentFund: 6000, professionalTax: 200, incomeTax: 13650 }
+    id: "PAY-2026-03",
+    month: "March",
+    year: 2026,
+    grossPay: 95000,
+    deductions: 19850,
+    netPay: 75150,
+    paidDate: "Apr 1, 2026",
+    status: "Paid",
+    breakdown: {
+      basicSalary: 50000,
+      hra: 20000,
+      conveyance: 5000,
+      medicalAllowance: 2500,
+      specialAllowance: 17500,
+      providentFund: 6000,
+      professionalTax: 200,
+      incomeTax: 13650,
+    },
   },
   {
-    id: "PAY-2026-02", month: "February", year: 2026, grossPay: 95000, deductions: 19850, netPay: 75150,
-    paidDate: "Mar 1, 2026", status: "Paid",
-    breakdown: { basicSalary: 50000, hra: 20000, conveyance: 5000, medicalAllowance: 2500, specialAllowance: 17500, providentFund: 6000, professionalTax: 200, incomeTax: 13650 }
+    id: "PAY-2026-02",
+    month: "February",
+    year: 2026,
+    grossPay: 95000,
+    deductions: 19850,
+    netPay: 75150,
+    paidDate: "Mar 1, 2026",
+    status: "Paid",
+    breakdown: {
+      basicSalary: 50000,
+      hra: 20000,
+      conveyance: 5000,
+      medicalAllowance: 2500,
+      specialAllowance: 17500,
+      providentFund: 6000,
+      professionalTax: 200,
+      incomeTax: 13650,
+    },
   },
   {
-    id: "PAY-2026-01", month: "January", year: 2026, grossPay: 95000, deductions: 19850, netPay: 75150,
-    paidDate: "Feb 1, 2026", status: "Paid",
-    breakdown: { basicSalary: 50000, hra: 20000, conveyance: 5000, medicalAllowance: 2500, specialAllowance: 17500, providentFund: 6000, professionalTax: 200, incomeTax: 13650 }
+    id: "PAY-2026-01",
+    month: "January",
+    year: 2026,
+    grossPay: 95000,
+    deductions: 19850,
+    netPay: 75150,
+    paidDate: "Feb 1, 2026",
+    status: "Paid",
+    breakdown: {
+      basicSalary: 50000,
+      hra: 20000,
+      conveyance: 5000,
+      medicalAllowance: 2500,
+      specialAllowance: 17500,
+      providentFund: 6000,
+      professionalTax: 200,
+      incomeTax: 13650,
+    },
   },
   {
-    id: "PAY-2025-12", month: "December", year: 2025, grossPay: 92000, deductions: 18950, netPay: 73050,
-    paidDate: "Jan 1, 2026", status: "Paid",
-    breakdown: { basicSalary: 48000, hra: 19200, conveyance: 5000, medicalAllowance: 2500, specialAllowance: 17300, providentFund: 5760, professionalTax: 200, incomeTax: 12990 }
+    id: "PAY-2025-12",
+    month: "December",
+    year: 2025,
+    grossPay: 92000,
+    deductions: 18950,
+    netPay: 73050,
+    paidDate: "Jan 1, 2026",
+    status: "Paid",
+    breakdown: {
+      basicSalary: 48000,
+      hra: 19200,
+      conveyance: 5000,
+      medicalAllowance: 2500,
+      specialAllowance: 17300,
+      providentFund: 5760,
+      professionalTax: 200,
+      incomeTax: 12990,
+    },
   },
   {
-    id: "PAY-2025-11", month: "November", year: 2025, grossPay: 92000, deductions: 18950, netPay: 73050,
-    paidDate: "Dec 1, 2025", status: "Paid",
-    breakdown: { basicSalary: 48000, hra: 19200, conveyance: 5000, medicalAllowance: 2500, specialAllowance: 17300, providentFund: 5760, professionalTax: 200, incomeTax: 12990 }
+    id: "PAY-2025-11",
+    month: "November",
+    year: 2025,
+    grossPay: 92000,
+    deductions: 18950,
+    netPay: 73050,
+    paidDate: "Dec 1, 2025",
+    status: "Paid",
+    breakdown: {
+      basicSalary: 48000,
+      hra: 19200,
+      conveyance: 5000,
+      medicalAllowance: 2500,
+      specialAllowance: 17300,
+      providentFund: 5760,
+      professionalTax: 200,
+      incomeTax: 12990,
+    },
   },
 ];
 
 const YEARS = ["All Years", "2026", "2025", "2024"];
-const MONTHS = ["All Months", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const MONTHS = [
+  "All Months",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Payslip Preview Modal                                           */
 /* ─────────────────────────────────────────────────────────────── */
-function PayslipModal({ payslip, onClose }: { payslip: Payslip; onClose: () => void }) {
+function PayslipModal({
+  payslip,
+  onClose,
+}: {
+  payslip: Payslip;
+  onClose: () => void;
+}) {
   const earnings = [
     { label: "Basic Salary", value: payslip.breakdown.basicSalary },
     { label: "HRA", value: payslip.breakdown.hra },
@@ -94,7 +204,13 @@ function PayslipModal({ payslip, onClose }: { payslip: Payslip; onClose: () => v
 
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-background/60 backdrop-blur-sm" />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-background/60 backdrop-blur-sm"
+      />
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -107,56 +223,103 @@ function PayslipModal({ payslip, onClose }: { payslip: Payslip; onClose: () => v
               <IndianRupee size={20} className="text-indigo-500" />
             </div>
             <div>
-              <h3 className="text-[18px] font-black text-foreground">Payslip Preview</h3>
-              <p className="text-[12px] font-bold text-muted-foreground">{payslip.month} {payslip.year} · {payslip.id}</p>
+              <h3 className="text-[18px] font-black text-foreground">
+                Payslip Preview
+              </h3>
+              <p className="text-[12px] font-bold text-muted-foreground">
+                {payslip.month} {payslip.year} · {payslip.id}
+              </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-card rounded-xl transition-colors text-muted-foreground"><X size={20} /></button>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-card rounded-xl transition-colors text-muted-foreground"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-8 space-y-6 no-scrollbar">
           <div className="p-5 bg-primary/5 rounded-2xl border border-primary/20 flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-black text-primary uppercase tracking-widest mb-1">Employee</p>
-              <p className="text-[15px] font-black text-foreground">Priya Sharma</p>
-              <p className="text-[12px] font-bold text-muted-foreground">#EMP-0142 · Engineering Team</p>
+              <p className="text-[11px] font-black text-primary uppercase tracking-widest mb-1">
+                Employee
+              </p>
+              <p className="text-[15px] font-black text-foreground">
+                Priya Sharma
+              </p>
+              <p className="text-[12px] font-bold text-muted-foreground">
+                #EMP-0142 · Engineering Team
+              </p>
             </div>
             <div className="text-right">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">Pay Period</p>
-              <p className="text-[15px] font-black text-foreground">{payslip.month} {payslip.year}</p>
-              <p className="text-[12px] font-bold text-muted-foreground">Paid: {payslip.paidDate}</p>
+              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                Pay Period
+              </p>
+              <p className="text-[15px] font-black text-foreground">
+                {payslip.month} {payslip.year}
+              </p>
+              <p className="text-[12px] font-bold text-muted-foreground">
+                Paid: {payslip.paidDate}
+              </p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-5">
             <div className="space-y-3">
-              <h4 className="text-[11px] font-black text-primary uppercase tracking-widest flex items-center gap-1.5"><TrendingUp size={12} /> Earnings</h4>
+              <h4 className="text-[11px] font-black text-primary uppercase tracking-widest flex items-center gap-1.5">
+                <TrendingUp size={12} /> Earnings
+              </h4>
               <div className="bg-background rounded-2xl border border-border overflow-hidden">
                 {earnings.map((e, i) => (
-                  <div key={i} className={`flex justify-between px-4 py-3 text-[12px] ${i < earnings.length - 1 ? 'border-b border-border' : ''}`}>
-                    <span className="font-medium text-muted-foreground">{e.label}</span>
-                    <span className="font-black text-foreground">₹{e.value.toLocaleString()}</span>
+                  <div
+                    key={i}
+                    className={`flex justify-between px-4 py-3 text-[12px] ${i < earnings.length - 1 ? "border-b border-border" : ""}`}
+                  >
+                    <span className="font-medium text-muted-foreground">
+                      {e.label}
+                    </span>
+                    <span className="font-black text-foreground">
+                      ₹{e.value.toLocaleString()}
+                    </span>
                   </div>
                 ))}
                 <div className="flex justify-between px-4 py-3 bg-primary/5 border-t border-primary/20">
-                  <span className="text-[12px] font-black text-primary">Gross Pay</span>
-                  <span className="text-[12px] font-black text-primary">₹{payslip.grossPay.toLocaleString()}</span>
+                  <span className="text-[12px] font-black text-primary">
+                    Gross Pay
+                  </span>
+                  <span className="text-[12px] font-black text-primary">
+                    ₹{payslip.grossPay.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-[11px] font-black text-rose-500 uppercase tracking-widest flex items-center gap-1.5"><ArrowDownCircle size={12} /> Deductions</h4>
+              <h4 className="text-[11px] font-black text-rose-500 uppercase tracking-widest flex items-center gap-1.5">
+                <ArrowDownCircle size={12} /> Deductions
+              </h4>
               <div className="bg-background rounded-2xl border border-border overflow-hidden">
                 {deductionItems.map((d, i) => (
-                  <div key={i} className={`flex justify-between px-4 py-3 text-[12px] ${i < deductionItems.length - 1 ? 'border-b border-border' : ''}`}>
-                    <span className="font-medium text-muted-foreground">{d.label}</span>
-                    <span className="font-black text-rose-500">₹{d.value.toLocaleString()}</span>
+                  <div
+                    key={i}
+                    className={`flex justify-between px-4 py-3 text-[12px] ${i < deductionItems.length - 1 ? "border-b border-border" : ""}`}
+                  >
+                    <span className="font-medium text-muted-foreground">
+                      {d.label}
+                    </span>
+                    <span className="font-black text-rose-500">
+                      ₹{d.value.toLocaleString()}
+                    </span>
                   </div>
                 ))}
                 <div className="flex justify-between px-4 py-3 bg-rose-500/5 border-t border-rose-500/20">
-                  <span className="text-[12px] font-black text-rose-500">Total Deductions</span>
-                  <span className="text-[12px] font-black text-rose-500">₹{payslip.deductions.toLocaleString()}</span>
+                  <span className="text-[12px] font-black text-rose-500">
+                    Total Deductions
+                  </span>
+                  <span className="text-[12px] font-black text-rose-500">
+                    ₹{payslip.deductions.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
@@ -164,8 +327,12 @@ function PayslipModal({ payslip, onClose }: { payslip: Payslip; onClose: () => v
 
           <div className="p-6 bg-primary rounded-2xl flex items-center justify-between shadow-xl shadow-primary/20">
             <div>
-              <p className="text-white/70 text-[11px] font-black uppercase tracking-widest mb-1">Net Take-Home Pay</p>
-              <p className="text-[28px] font-black text-white">₹{payslip.netPay.toLocaleString()}</p>
+              <p className="text-white/70 text-[11px] font-black uppercase tracking-widest mb-1">
+                Net Take-Home Pay
+              </p>
+              <p className="text-[28px] font-black text-white">
+                ₹{payslip.netPay.toLocaleString()}
+              </p>
             </div>
             <div className="text-right text-white/70 text-[12px] font-bold">
               <p>Credited to</p>
@@ -175,9 +342,20 @@ function PayslipModal({ payslip, onClose }: { payslip: Payslip; onClose: () => v
         </div>
 
         <div className="p-6 bg-secondary/30 flex gap-4 border-t border-border shrink-0">
-          <button onClick={onClose} className="flex-1 py-3.5 text-[13px] font-black text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest">Close</button>
           <button
-            onClick={() => showToast("Downloading", "success", `${payslip.month} ${payslip.year} payslip PDF downloaded.`)}
+            onClick={onClose}
+            className="flex-1 py-3.5 text-[13px] font-black text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
+          >
+            Close
+          </button>
+          <button
+            onClick={() =>
+              showToast(
+                "Downloading",
+                "success",
+                `${payslip.month} ${payslip.year} payslip PDF downloaded.`,
+              )
+            }
             className="flex-[2] py-3.5 bg-primary text-white rounded-2xl text-[13px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
           >
             <Download size={16} /> Download PDF
@@ -199,16 +377,17 @@ export function EmployeePayslips() {
   const [previewPayslip, setPreviewPayslip] = useState<Payslip | null>(null);
 
   const filteredPayslips = useMemo(() => {
-    return MOCK_PAYSLIPS.filter(p => {
-      const yearMatch = selectedYear === "All Years" || p.year === parseInt(selectedYear);
-      const monthMatch = selectedMonth === "All Months" || p.month === selectedMonth;
+    return MOCK_PAYSLIPS.filter((p) => {
+      const yearMatch =
+        selectedYear === "All Years" || p.year === parseInt(selectedYear);
+      const monthMatch =
+        selectedMonth === "All Months" || p.month === selectedMonth;
       return yearMatch && monthMatch;
     });
   }, [selectedYear, selectedMonth]);
 
   return (
-    <div className="flex flex-col gap-8 animate-in fade-in duration-700 max-w-[1200px] mx-auto pb-20">
-
+    <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -216,12 +395,18 @@ export function EmployeePayslips() {
             <IndianRupee size={22} className="text-indigo-500" />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground leading-none mb-1">My Payslips</h1>
-            <p className="text-[13px] font-bold text-muted-foreground">View and download your monthly salary statements</p>
+            <h1 className="text-[26px] font-black text-foreground leading-none mb-1">
+              My Payslips
+            </h1>
+            <p className="text-[13px] font-bold text-muted-foreground">
+              View and download your monthly salary statements
+            </p>
           </div>
         </div>
         <button
-          onClick={() => showToast("Exporting", "info", "Generating annual pay statement...")}
+          onClick={() =>
+            showToast("Exporting", "info", "Generating annual pay statement...")
+          }
           className="flex items-center gap-2 px-5 py-2.5 bg-secondary border border-border rounded-xl text-[13px] font-black text-foreground hover:bg-secondary/80 transition-all"
         >
           <Download size={16} /> Export Annual Statement
@@ -235,30 +420,42 @@ export function EmployeePayslips() {
             <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
               <Wallet size={20} className="text-indigo-500" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Current CTC</p>
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              Current CTC
+            </p>
           </div>
           <p className="text-[28px] font-black text-indigo-500">₹18L</p>
-          <p className="text-[12px] font-bold text-muted-foreground mt-1">Annual package · Revised Apr 2025</p>
+          <p className="text-[12px] font-bold text-muted-foreground mt-1">
+            Annual package · Revised Apr 2025
+          </p>
         </div>
         <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
               <TrendingUp size={20} className="text-primary" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Monthly Net Pay</p>
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              Monthly Net Pay
+            </p>
           </div>
           <p className="text-[28px] font-black text-primary">₹75,150</p>
-          <p className="text-[12px] font-bold text-muted-foreground mt-1">After all deductions · April 2026</p>
+          <p className="text-[12px] font-bold text-muted-foreground mt-1">
+            After all deductions · April 2026
+          </p>
         </div>
         <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center">
               <ArrowDownCircle size={20} className="text-rose-500" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Monthly Deductions</p>
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              Monthly Deductions
+            </p>
           </div>
           <p className="text-[28px] font-black text-rose-500">₹19,850</p>
-          <p className="text-[12px] font-bold text-muted-foreground mt-1">PF + Tax + Professional Tax</p>
+          <p className="text-[12px] font-bold text-muted-foreground mt-1">
+            PF + Tax + Professional Tax
+          </p>
         </div>
       </div>
 
@@ -267,32 +464,68 @@ export function EmployeePayslips() {
         <div className="p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-1 h-4 bg-primary rounded-full" />
-            <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[1.5px]">PAYSLIP HISTORY</h3>
-            <span className="text-[11px] font-bold text-muted-foreground/60">{filteredPayslips.length} records</span>
+            <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[1.5px]">
+              PAYSLIP HISTORY
+            </h3>
+            <span className="text-[11px] font-bold text-muted-foreground/60">
+              {filteredPayslips.length} records
+            </span>
           </div>
           <div className="flex items-center gap-2">
             {/* Month Filter */}
             <div className="relative">
-              <div onClick={() => { setShowMonthDrop(!showMonthDrop); setShowYearDrop(false); }} className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-black text-foreground cursor-pointer hover:bg-secondary/80 transition-all">
-                {selectedMonth} <ChevronDown size={14} className="text-muted-foreground" />
+              <div
+                onClick={() => {
+                  setShowMonthDrop(!showMonthDrop);
+                  setShowYearDrop(false);
+                }}
+                className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-black text-foreground cursor-pointer hover:bg-secondary/80 transition-all"
+              >
+                {selectedMonth}{" "}
+                <ChevronDown size={14} className="text-muted-foreground" />
               </div>
               {showMonthDrop && (
                 <div className="absolute top-full mt-1 right-0 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden min-w-[150px] max-h-[220px] overflow-y-auto">
-                  {MONTHS.map(m => (
-                    <button key={m} onClick={() => { setSelectedMonth(m); setShowMonthDrop(false); }} className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedMonth === m ? 'text-primary font-black' : 'text-foreground'}`}>{m}</button>
+                  {MONTHS.map((m) => (
+                    <button
+                      key={m}
+                      onClick={() => {
+                        setSelectedMonth(m);
+                        setShowMonthDrop(false);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedMonth === m ? "text-primary font-black" : "text-foreground"}`}
+                    >
+                      {m}
+                    </button>
                   ))}
                 </div>
               )}
             </div>
             {/* Year Filter */}
             <div className="relative">
-              <div onClick={() => { setShowYearDrop(!showYearDrop); setShowMonthDrop(false); }} className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-black text-foreground cursor-pointer hover:bg-secondary/80 transition-all">
-                {selectedYear} <ChevronDown size={14} className="text-muted-foreground" />
+              <div
+                onClick={() => {
+                  setShowYearDrop(!showYearDrop);
+                  setShowMonthDrop(false);
+                }}
+                className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-black text-foreground cursor-pointer hover:bg-secondary/80 transition-all"
+              >
+                {selectedYear}{" "}
+                <ChevronDown size={14} className="text-muted-foreground" />
               </div>
               {showYearDrop && (
                 <div className="absolute top-full mt-1 right-0 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden min-w-[120px]">
-                  {YEARS.map(y => (
-                    <button key={y} onClick={() => { setSelectedYear(y); setShowYearDrop(false); }} className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedYear === y ? 'text-primary font-black' : 'text-foreground'}`}>{y}</button>
+                  {YEARS.map((y) => (
+                    <button
+                      key={y}
+                      onClick={() => {
+                        setSelectedYear(y);
+                        setShowYearDrop(false);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedYear === y ? "text-primary font-black" : "text-foreground"}`}
+                    >
+                      {y}
+                    </button>
                   ))}
                 </div>
               )}
@@ -304,13 +537,27 @@ export function EmployeePayslips() {
           <table className="w-full text-left min-w-[720px]">
             <thead>
               <tr className="bg-secondary/50 border-b border-border">
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Month</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">Gross Pay</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">Deductions</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">Net Pay</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Paid Date</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Status</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Month
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                  Gross Pay
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                  Deductions
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                  Net Pay
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Paid Date
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -318,35 +565,55 @@ export function EmployeePayslips() {
                 <tr>
                   <td colSpan={7} className="px-6 py-16 text-center">
                     <div className="flex flex-col items-center gap-3">
-                      <FileText size={40} className="text-muted-foreground/30" />
-                      <p className="text-[14px] font-black text-muted-foreground">No payslips found</p>
+                      <FileText
+                        size={40}
+                        className="text-muted-foreground/30"
+                      />
+                      <p className="text-[14px] font-black text-muted-foreground">
+                        No payslips found
+                      </p>
                     </div>
                   </td>
                 </tr>
               ) : (
                 filteredPayslips.map((p) => (
-                  <tr key={p.id} className="hover:bg-secondary/40 transition-colors group">
+                  <tr
+                    key={p.id}
+                    className="hover:bg-secondary/40 transition-colors group"
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/10">
                           <IndianRupee size={16} className="text-indigo-500" />
                         </div>
                         <div>
-                          <p className="text-[14px] font-black text-foreground">{p.month} {p.year}</p>
-                          <p className="text-[11px] font-bold text-muted-foreground">{p.id}</p>
+                          <p className="text-[14px] font-black text-foreground">
+                            {p.month} {p.year}
+                          </p>
+                          <p className="text-[11px] font-bold text-muted-foreground">
+                            {p.id}
+                          </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-[14px] font-black text-foreground">₹{p.grossPay.toLocaleString()}</span>
+                      <span className="text-[14px] font-black text-foreground">
+                        ₹{p.grossPay.toLocaleString()}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-[14px] font-black text-rose-500">₹{p.deductions.toLocaleString()}</span>
+                      <span className="text-[14px] font-black text-rose-500">
+                        ₹{p.deductions.toLocaleString()}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-[16px] font-black text-primary">₹{p.netPay.toLocaleString()}</span>
+                      <span className="text-[16px] font-black text-primary">
+                        ₹{p.netPay.toLocaleString()}
+                      </span>
                     </td>
-                    <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">{p.paidDate}</td>
+                    <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">
+                      {p.paidDate}
+                    </td>
                     <td className="px-6 py-4">
                       {p.status === "Paid" ? (
                         <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/10 text-primary border border-primary/20 flex items-center gap-1.5 w-fit uppercase tracking-wider">
@@ -360,10 +627,22 @@ export function EmployeePayslips() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 justify-end">
-                        <button onClick={() => setPreviewPayslip(p)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-border text-[11px] font-black text-foreground hover:bg-secondary hover:border-primary/30 transition-all">
+                        <button
+                          onClick={() => setPreviewPayslip(p)}
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-border text-[11px] font-black text-foreground hover:bg-secondary hover:border-primary/30 transition-all"
+                        >
                           <Eye size={14} /> View
                         </button>
-                        <button onClick={() => showToast("Downloading", "success", `${p.month} ${p.year} payslip downloaded.`)} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 text-[11px] font-black text-primary hover:bg-primary/20 transition-all">
+                        <button
+                          onClick={() =>
+                            showToast(
+                              "Downloading",
+                              "success",
+                              `${p.month} ${p.year} payslip downloaded.`,
+                            )
+                          }
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 text-[11px] font-black text-primary hover:bg-primary/20 transition-all"
+                        >
                           <Download size={14} /> PDF
                         </button>
                       </div>
@@ -376,14 +655,21 @@ export function EmployeePayslips() {
         </div>
 
         <div className="p-4 px-6 border-t border-border flex items-center justify-between bg-secondary/10">
-          <p className="text-[12px] font-bold text-muted-foreground">Showing {filteredPayslips.length} of {MOCK_PAYSLIPS.length} payslips</p>
-          <p className="text-[11px] font-black text-primary uppercase tracking-widest">FY 2025–26</p>
+          <p className="text-[12px] font-bold text-muted-foreground">
+            Showing {filteredPayslips.length} of {MOCK_PAYSLIPS.length} payslips
+          </p>
+          <p className="text-[11px] font-black text-primary uppercase tracking-widest">
+            FY 2025–26
+          </p>
         </div>
       </div>
 
       {/* ─── Preview Modal ────────────────────────────────────────── */}
       {previewPayslip && (
-        <PayslipModal payslip={previewPayslip} onClose={() => setPreviewPayslip(null)} />
+        <PayslipModal
+          payslip={previewPayslip}
+          onClose={() => setPreviewPayslip(null)}
+        />
       )}
     </div>
   );
