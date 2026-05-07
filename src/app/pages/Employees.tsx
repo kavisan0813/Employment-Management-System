@@ -1545,7 +1545,7 @@ export function Employees() {
             {paginated.map((emp) => (
               <div
                 key={emp.id}
-                className="grid items-center px-4 transition-colors"
+                className="grid items-center px-4 transition-colors cursor-pointer"
                 style={{
                   height: "56px",
                   borderBottom: "1px solid var(--border)",
@@ -1555,8 +1555,9 @@ export function Employees() {
                 }}
                 onMouseEnter={() => setHoveredRow(emp.id)}
                 onMouseLeave={() => setHoveredRow(null)}
+                onClick={() => navigate(`/employees/${emp.id}`)}
               >
-                <div>
+                <div onClick={(e) => e.stopPropagation()}>
                   <input
                     type="checkbox"
                     checked={selectedRows.includes(emp.id)}
@@ -1823,11 +1824,12 @@ export function Employees() {
           {paginated.map((emp) => (
             <div
               key={emp.id}
-              className="relative group rounded-2xl p-5 transition-all duration-300 overflow-hidden"
+              className="relative group rounded-2xl p-5 transition-all duration-300 overflow-hidden cursor-pointer"
               style={{
                 backgroundColor: "var(--card)",
                 border: "1px solid var(--border)",
               }}
+              onClick={() => navigate(`/employees/${emp.id}`)}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-4px)";
                 e.currentTarget.style.boxShadow =
@@ -2204,3 +2206,4 @@ export function Employees() {
     </div>
   );
 }
+0

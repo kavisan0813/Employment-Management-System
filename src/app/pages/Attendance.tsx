@@ -282,6 +282,31 @@ export function Attendance() {
     }, 1500);
   };
 
+  const filteredLogs = useMemo(() => {
+    return dailyLogs.filter((log) => {
+      // If an employee is selected, and we had real data, we'd filter by employeeId.
+      // Since dailyLogs is generic, we'll just respect the department/search filters
+      // by assuming the logs could belong to any employee in that context.
+      if (selectedDept !== "All Departments") {
+        // In a real app, we'd check log.employee.department
+        // For now, we just allow the logs to be shown but they'll be mapped to dept emps.
+      }
+
+      if (searchQuery) {
+        // Mock search: if search query matches any employee in the current filter, show logs
+        const query = searchQuery.toLowerCase();
+        const anyMatch = employees.some(
+          (e) =>
+            e.name.toLowerCase().includes(query) ||
+            e.id.toLowerCase().includes(query),
+        );
+        if (!anyMatch) return false;
+      }
+
+      return true;
+    });
+  }, [selectedDept, selectedEmpId, searchQuery]);
+
   // Calendar Math
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
@@ -922,7 +947,7 @@ export function Attendance() {
                         Punch Out
                       </th>
                       <th
-                        className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b"
+                        className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b text-center"
                         style={{ borderColor: "var(--border)" }}
                       >
                         Working Hours
@@ -930,14 +955,24 @@ export function Attendance() {
                     </tr>
                   </thead>
                   <tbody>
-                    {dailyLogs
+                    {filteredLogs
                       .slice(
                         (currentPage - 1) * itemsPerPage,
                         currentPage * itemsPerPage,
                       )
                       .map((log, i) => {
-                        const emp =
-                          selectedEmployee || employees[i % employees.length];
+                        // Logic to pick a relevant employee for the log
+                        let emp = selectedEmployee;
+                        if (!emp) {
+                          const deptEmps =
+                            selectedDept === "All Departments"
+                              ? employees
+                              : employees.filter(
+                                  (e) => e.department === selectedDept,
+                                );
+                          emp = deptEmps[i % deptEmps.length] || employees[0];
+                        }
+
                         return (
                           <tr
                             key={i}
@@ -1029,20 +1064,24 @@ export function Attendance() {
                               </div>
                             </td>
                             <td
-                              className="px-5 py-2.5 border-b"
+                              className="px-5 py-2.5 border-b text-center"
                               style={{ borderColor: "var(--border)" }}
                             >
-                              <div className="space-y-1">
+                              <div className="flex flex-col items-center">
                                 <p
                                   className="text-xs font-black"
                                   style={{ color: "var(--foreground)" }}
                                 >
                                   {log.hours}
                                 </p>
-                                <div className="w-20 h-1 rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden">
+                                <div className="w-16 h-1 rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden mt-1">
                                   <div
                                     className="h-full bg-emerald-500 rounded-full"
-                                    style={{ width: "85%" }}
+                                    style={{
+                                      width: log.hours.includes("9h")
+                                        ? "95%"
+                                        : "80%",
+                                    }}
                                   />
                                 </div>
                               </div>
@@ -1066,9 +1105,10 @@ export function Attendance() {
                   </span>{" "}
                   to{" "}
                   <span className="text-foreground">
-                    {Math.min(currentPage * itemsPerPage, dailyLogs.length)}
+                    {Math.min(currentPage * itemsPerPage, filteredLogs.length)}
                   </span>{" "}
-                  of <span className="text-foreground">{dailyLogs.length}</span>
+                  of{" "}
+                  <span className="text-foreground">{filteredLogs.length}</span>
                 </p>
                 <div className="flex items-center gap-1.5">
                   <button
@@ -1082,7 +1122,7 @@ export function Attendance() {
                     <ChevronLeft size={14} />
                   </button>
                   {Array.from({
-                    length: Math.ceil(dailyLogs.length / itemsPerPage),
+                    length: Math.ceil(filteredLogs.length / itemsPerPage),
                   }).map((_, i) => (
                     <button
                       key={i}
@@ -1102,7 +1142,7 @@ export function Attendance() {
                     onClick={() =>
                       setCurrentPage((prev) =>
                         Math.min(
-                          Math.ceil(dailyLogs.length / itemsPerPage),
+                          Math.ceil(filteredLogs.length / itemsPerPage),
                           prev + 1,
                         ),
                       )
@@ -1110,7 +1150,8 @@ export function Attendance() {
                     className="p-1.5 rounded-lg border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 disabled:opacity-30 transition-all active:scale-95"
                     style={{ borderColor: "var(--border)" }}
                     disabled={
-                      currentPage === Math.ceil(dailyLogs.length / itemsPerPage)
+                      currentPage ===
+                      Math.ceil(filteredLogs.length / itemsPerPage)
                     }
                   >
                     <ChevronRight size={14} />
