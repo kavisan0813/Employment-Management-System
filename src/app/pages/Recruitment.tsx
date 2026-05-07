@@ -3762,7 +3762,7 @@ export function Recruitment() {
 
   return (
     <div
-      className="w-full px-4 md:px-8 py-6 min-h-screen transition-colors duration-300"
+      className="w-full px-4 md:px-8 py-6 pb-10 min-h-screen transition-colors duration-300"
       style={{ backgroundColor: "var(--background)" }}
     >
       <ToastContainer toasts={toasts} onDismiss={dismiss} />

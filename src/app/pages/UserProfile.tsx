@@ -261,7 +261,7 @@ export function UserProfile() {
   };
 
   return (
-    <div style={{ width: "100%" }}>
+    <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* Banner + Avatar wrapper — relative so avatar can overlap banner edge without clipping */}
       <div style={{ position: "relative", marginBottom: "52px" }}>
         {/* Green gradient banner */}

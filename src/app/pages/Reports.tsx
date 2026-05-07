@@ -5450,7 +5450,7 @@ export function Reports() {
 
   return (
     <div
-      className="w-full px-4 md:px-8 py-6"
+      className="w-full px-4 md:px-8 py-6 pb-10"
       style={{
         backgroundColor: "var(--background)",
         color: "var(--foreground)",

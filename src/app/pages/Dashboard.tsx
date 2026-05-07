@@ -326,30 +326,6 @@ const PieTip = ({
   );
 };
 
-// ─── Sparkline ─────────────────────────────────────────────
-function Sparkline({ data, color }: { data: number[]; color: string }) {
-  const pts = data.map((v, i) => ({ i, v }));
-  const id = `sp${color.replace(/[^a-z0-9]/gi, "").slice(0, 8)}`;
-  return (
-    <ResponsiveContainer width={90} height={36}>
-      <AreaChart data={pts} margin={{ top: 2, right: 0, left: 0, bottom: 2 }}>
-        <defs>
-          <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={color} stopOpacity={0.22} />
-            <stop offset="95%" stopColor={color} stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <Area
-          dataKey="v"
-          stroke={color}
-          strokeWidth={1.8}
-          fill={`url(#${id})`}
-          dot={false}
-        />
-      </AreaChart>
-    </ResponsiveContainer>
-  );
-}
 
 // ─── Avatar initials ───────────────────────────────────────
 function Avatar({
@@ -548,7 +524,7 @@ export function Dashboard() {
   ];
 
   return (
-    <div className="w-full px-4 md:px-8 py-6">
+    <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* ═══ PAGE HEADER ═══ */}
       <div
         style={{
@@ -763,7 +739,6 @@ export function Dashboard() {
               >
                 <card.icon size={19} color="white" />
               </div>
-              <Sparkline data={card.spark} color={card.accent} />
             </div>
 
             <p

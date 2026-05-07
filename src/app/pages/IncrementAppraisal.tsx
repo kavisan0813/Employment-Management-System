@@ -1569,7 +1569,7 @@ export function IncrementAppraisal() {
   }
 
   return (
-    <div style={{ width: "100%" }}>
+    <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* ── Page Header ── */}
       <div style={{ marginBottom: "20px" }}>
         <div

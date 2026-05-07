@@ -307,7 +307,7 @@ export function Attendance() {
   };
 
   return (
-    <div className="w-full px-4 md:px-8 py-6 space-y-5">
+    <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-5">
       {/* Day Detail Modal Overlay */}
       {selectedDayDetail && (
         <div

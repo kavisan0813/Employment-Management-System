@@ -316,7 +316,7 @@ export const ShiftSchedule: React.FC = () => {
   }, [weekOffset]);
 
   return (
-    <div className="w-full mx-auto pb-10 px-4 md:px-8">
+    <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* Page Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

@@ -894,35 +894,29 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
                   <select
                     value={fieldToUpdate}
                     onChange={(e) => setFieldToUpdate(e.target.value)}
-                    className="w-full bg-[#F0FDF4] dark:bg-emerald-950/50 border border-emerald-500/20 rounded-2xl px-5 py-4 text-[14px] font-bold text-slate-900 dark:text-emerald-50 focus:outline-none focus:border-primary appearance-none transition-all"
+                    className="w-full bg-secondary border border-border rounded-2xl px-5 py-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary appearance-none transition-all"
                   >
-                    <option
-                      value="Phone"
-                      className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50"
-                    >
+                    <option value="Phone" className="bg-card text-foreground">
                       Phone Number
                     </option>
-                    <option
-                      value="Address"
-                      className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50"
-                    >
+                    <option value="Address" className="bg-card text-foreground">
                       Address
                     </option>
                     <option
                       value="Bank Details"
-                      className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50"
+                      className="bg-card text-foreground"
                     >
                       Bank Details
                     </option>
                     <option
                       value="Emergency Contact"
-                      className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50"
+                      className="bg-card text-foreground"
                     >
                       Emergency Contact
                     </option>
                     <option
                       value="Personal Info"
-                      className="bg-white text-slate-900 dark:bg-slate-900 dark:text-emerald-50"
+                      className="bg-card text-foreground"
                     >
                       Personal Information
                     </option>

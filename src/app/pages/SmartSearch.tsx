@@ -243,7 +243,7 @@ const SmartSearch = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0FDF4] dark:bg-[#021410] p-6 md:p-10 transition-colors duration-500">
+    <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* Header / Search Bar Section */}
       <div className="max-w-4xl mx-auto space-y-8">
         <motion.div

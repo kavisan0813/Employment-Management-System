@@ -398,9 +398,9 @@ export function Expenses() {
   ];
 
   return (
-    <div className="w-full px-4 pb-10 font-inter">
+    <div className="w-full px-4 md:px-8 py-6 pb-10 font-inter">
       {/* ── Page Header ── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 pt-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
         <div>
           <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             <Layers className="text-emerald-500" size={32} />

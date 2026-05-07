@@ -22161,7 +22161,7 @@ export function Settings() {
 
   return (
     <div
-      className="w-full px-4 md:px-8 py-6"
+      className="w-full px-4 md:px-8 py-6 pb-10"
       style={{
         height: "calc(100vh - 80px)",
         display: "flex",

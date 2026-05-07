@@ -252,10 +252,7 @@ export function Notifications() {
   };
 
   return (
-    <div
-      style={{ width: "100%", minHeight: "calc(100vh - 100px)" }}
-      className="px-4 md:px-8"
-    >
+    <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* PAGE HEADER */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">

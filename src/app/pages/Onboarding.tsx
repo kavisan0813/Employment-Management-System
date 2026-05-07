@@ -565,7 +565,7 @@ export function Onboarding() {
   const getStepIndex = (step: string) => onboardingSteps.indexOf(step);
 
   return (
-    <div className="w-full px-4 md:px-8 pb-10">
+    <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* ── Page Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
         <div>
