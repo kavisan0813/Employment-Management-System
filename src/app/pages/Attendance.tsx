@@ -283,7 +283,7 @@ export function Attendance() {
   };
 
   const filteredLogs = useMemo(() => {
-    return dailyLogs.filter((log) => {
+    return dailyLogs.filter(() => {
       // If an employee is selected, and we had real data, we'd filter by employeeId.
       // Since dailyLogs is generic, we'll just respect the department/search filters
       // by assuming the logs could belong to any employee in that context.

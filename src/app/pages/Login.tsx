@@ -22,21 +22,28 @@ const DEMO_ACCOUNTS: Record<
 > = {
   "Super Admin": {
     email: "admin@nexushr.com",
+    name: "Ryan Park",
+    initials: "RP",
+  },
+  "HR Manager": {
+    email: "hr@nexushr.com",
     name: "Alex Johnson",
     initials: "AJ",
   },
-  "HR Admin": { email: "hr@nexushr.com", name: "Ryan Park", initials: "RP" },
-  Manager: { email: "manager@nexushr.com", name: "Sarah Chen", initials: "SC" },
-  Employee: { email: "emp@nexushr.com", name: "John Doe", initials: "JD" },
-  "Payroll Admin": {
-    email: "payroll@nexushr.com",
+  Finance: {
+    email: "finance@nexushr.com",
     name: "Priya Sharma",
     initials: "PS",
   },
-  Recruiter: {
-    email: "recruiter@nexushr.com",
-    name: "Marcus Lee",
-    initials: "ML",
+  Manager: {
+    email: "manager@nexushr.com",
+    name: "Sarah Chen",
+    initials: "SC",
+  },
+  Employee: {
+    email: "emp@nexushr.com",
+    name: "John Doe",
+    initials: "JD",
   },
 };
 
@@ -58,7 +65,7 @@ export function Login() {
 
     setTimeout(() => {
       // Determine which role to use
-      const role: UserRole = selectedRole || "HR Admin";
+      const role: UserRole = selectedRole || "Employee";
       const account = DEMO_ACCOUNTS[role];
 
       login({

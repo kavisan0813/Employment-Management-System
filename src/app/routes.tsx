@@ -289,6 +289,15 @@ function NotificationsWrapper() {
   return lazyRoute(Notifications);
 }
 
+// ── Payroll Wrapper: role-based view ──────────────────────────
+function PayrollWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Employee") {
+    return lazyRoute(EmployeePayslips);
+  }
+  return lazyRoute(Payroll);
+}
+
 // ── Directory Wrapper: role-based view ────────────────────────
 function DirectoryWrapper() {
   const { user } = useAuth();
@@ -298,13 +307,21 @@ function DirectoryWrapper() {
   return lazyRoute(Employees);
 }
 
-// ── Payroll Wrapper: role-based view ──────────────────────────
-function PayrollWrapper() {
+
+// ── Root Redirect ────────────────────────────────────────────
+function RootRedirect() {
   const { user } = useAuth();
-  if (user?.role === "Employee") {
-    return lazyRoute(EmployeePayslips);
-  }
-  return lazyRoute(Payroll);
+  if (!user) return <Navigate to="/login" replace />;
+  
+  const roleRoutes: Record<string, string> = {
+    "Super Admin": "/admin/dashboard",
+    "HR Manager": "/hr/dashboard",
+    "Finance": "/finance/dashboard",
+    "Manager": "/manager/dashboard",
+    "Employee": "/employee/dashboard",
+  };
+  
+  return <Navigate to={roleRoutes[user.role] || "/employee/dashboard"} replace />;
 }
 
 export const router = createBrowserRouter([
@@ -320,7 +337,12 @@ export const router = createBrowserRouter([
     ),
     children: [
       { path: "403", element: <AccessDenied /> },
-      { index: true, element: protectedRoute(Dashboard) },
+      { index: true, element: <RootRedirect /> },
+      { path: "admin/dashboard", element: protectedRoute(Dashboard) },
+      { path: "hr/dashboard", element: protectedRoute(Dashboard) },
+      { path: "finance/dashboard", element: protectedRoute(Dashboard) },
+      { path: "manager/dashboard", element: protectedRoute(Dashboard) },
+      { path: "employee/dashboard", element: protectedRoute(EmployeeSelfService) },
       {
         path: "employees",
         element: (
@@ -330,6 +352,7 @@ export const router = createBrowserRouter([
         ),
       },
       { path: "employees/:id", element: protectedRoute(EmployeeProfile) },
+      { path: "profile", element: protectedRoute(UserProfile) },
       { path: "attendance", element: protectedRoute(Attendance) },
       {
         path: "payroll",
@@ -354,7 +377,6 @@ export const router = createBrowserRouter([
       { path: "settings", element: protectedRoute(Settings) },
       { path: "leave", element: protectedRoute(LeaveManagement) },
       { path: "departments", element: protectedRoute(Departments) },
-      { path: "profile", element: protectedRoute(UserProfile) },
       { path: "smart-search", element: protectedRoute(SmartSearch) },
       {
         path: "schedule",

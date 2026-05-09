@@ -2,11 +2,10 @@ import { createContext, useContext, useState, ReactNode } from "react";
 
 export type UserRole =
   | "Super Admin"
-  | "HR Admin"
+  | "HR Manager"
+  | "Finance"
   | "Manager"
-  | "Employee"
-  | "Payroll Admin"
-  | "Recruiter";
+  | "Employee";
 
 export interface User {
   name: string;
@@ -29,39 +28,37 @@ export const ROLE_CONFIG: Record<
 > = {
   "Super Admin": {
     label: "Super Admin",
-    color: "#10B981",
-    bg: "rgba(16,185,129,0.1)",
+    color: "#8B5CF6", // Purple accent
+    bg: "rgba(139,92,246,0.1)",
   },
-  "HR Admin": {
-    label: "HR Admin",
-    color: "#3B82F6",
-    bg: "rgba(59,130,246,0.1)",
+  "HR Manager": {
+    label: "HR Manager",
+    color: "#00B87C", // Green accent
+    bg: "rgba(0,184,124,0.1)",
   },
-  Manager: { label: "Manager", color: "#8B5CF6", bg: "rgba(139,92,246,0.1)" },
-  Employee: {
-    label: "Employee",
-    color: "#64748B",
-    bg: "rgba(100,116,139,0.1)",
+  Finance: {
+    label: "Finance",
+    color: "#0EA5E9", // Teal/Purple accent
+    bg: "rgba(14,165,233,0.1)",
   },
-  "Payroll Admin": {
-    label: "Payroll Admin",
-    color: "#F59E0B",
+  Manager: {
+    label: "Manager",
+    color: "#F59E0B", // Amber accent
     bg: "rgba(245,158,11,0.1)",
   },
-  Recruiter: {
-    label: "Recruiter",
-    color: "#EF4444",
-    bg: "rgba(239,68,68,0.1)",
+  Employee: {
+    label: "Employee",
+    color: "#00B87C", // Green accent
+    bg: "rgba(0,184,124,0.1)",
   },
 };
 
 export const ROLE_HOME_ROUTE: Record<UserRole, string> = {
-  "Super Admin": "/",
-  "HR Admin": "/",
-  Manager: "/",
-  Employee: "/",
-  "Payroll Admin": "/payroll",
-  Recruiter: "/recruitment",
+  "Super Admin": "/admin/dashboard",
+  "HR Manager": "/hr/dashboard",
+  Finance: "/finance/dashboard",
+  Manager: "/manager/dashboard",
+  Employee: "/employee/dashboard",
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -86,37 +83,82 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const hasAccess = (path: string) => {
     if (!user) return false;
-    // Simple path-based access control based on roles
-    // In a real app, this would be more complex
+    
+    // Super Admin has access to everything
     if (user.role === "Super Admin") return true;
-    if (user.role === "HR Admin") return true;
+
+    // Normalize path (remove trailing slash)
+    const normalizedPath = path === "/" ? "/" : path.replace(/\/$/, "");
+
+    if (user.role === "HR Manager") {
+      const restricted = ["/settings/security", "/settings/integrations", "/settings/roles"];
+      return !restricted.some(r => normalizedPath.startsWith(r));
+    }
+
+    if (user.role === "Finance") {
+      const allowed = [
+        "/",
+        "/finance/dashboard",
+        "/payroll",
+        "/appraisal", // Increment approvals
+        "/expenses",
+        "/reports",
+        "/attendance",
+        "/leave",
+        "/payslips",
+        "/my-documents",
+        "/employee/dashboard",
+        "/employees", // View only handled in UI
+        "/profile",
+      ];
+      return allowed.some(p => normalizedPath === p || normalizedPath.startsWith(p + "/"));
+    }
+
+    if (user.role === "Manager") {
+      const allowed = [
+        "/",
+        "/manager/dashboard",
+        "/employees", // My Team handled in UI
+        "/attendance", // Team attendance
+        "/schedule", // Team schedule
+        "/leave", // Leave approvals
+        "/performance", // Team performance
+        "/appraisal", // Team appraisal
+        "/training", // Assign training
+        "/expenses", // Team expenses
+        "/employee/dashboard",
+        "/attendance",
+        "/leave",
+        "/payslips",
+        "/my-documents",
+        "/expenses",
+        "/goals",
+        "/performance",
+        "/schedule",
+        "/profile",
+      ];
+      return allowed.some(p => normalizedPath === p || normalizedPath.startsWith(p + "/"));
+    }
 
     if (user.role === "Employee") {
       const allowed = [
         "/",
+        "/employee/dashboard",
+        "/profile",
         "/attendance",
         "/leave",
-        "/expenses",
-        "/payroll",
-        "/self-service",
-        "/reimbursement-history",
-        "/expense-policy",
-        "/expense-support",
-        "/profile",
-        "/notifications",
-        "/training",
+        "/payslips",
         "/my-documents",
-        "/employees",
+        "/expenses",
+        "/goals",
         "/performance",
         "/schedule",
-        "/goals",
-        "/documents",
+        "/training",
+        "/notifications",
+        "/employees", // Team Directory (view only)
         "/support",
-        "/hr-requests",
-        "/regularization-history",
-        "/my-notifications",
       ];
-      return allowed.some((p) => path === p || path.startsWith(p + "/"));
+      return allowed.some(p => normalizedPath === p || normalizedPath.startsWith(p + "/"));
     }
 
     return true; // Default allow for demo

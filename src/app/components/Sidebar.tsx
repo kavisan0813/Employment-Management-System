@@ -16,7 +16,6 @@ import {
   Sparkles,
   CalendarClock,
   Award,
-  UserPlus,
   BookOpen,
   Folder,
   Receipt,
@@ -24,11 +23,10 @@ import {
   ShieldCheck,
   Home,
   Megaphone,
-  Users as UsersIcon,
   Clock,
+  HelpCircle,
 } from "lucide-react";
 import { useAuth, ROLE_CONFIG, type UserRole } from "../context/AuthContext";
-import { motion } from "motion/react";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -36,132 +34,180 @@ interface SidebarProps {
 }
 
 // ─── All nav items with role restrictions ────────────────────
-// `roles: undefined` means visible to all authenticated users
 const ALL_NAV_ITEMS: {
   icon: React.ElementType;
   label: string;
   path: string;
   roles?: UserRole[];
+  section?: "MAIN MENU" | "MY WORKSPACE";
 }[] = [
   { icon: Sparkles, label: "Smart Search", path: "/smart-search" },
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+  { 
+    icon: LayoutDashboard, 
+    label: "Dashboard", 
+    path: "/", 
+    roles: ["Super Admin", "HR Manager", "Finance", "Manager"] 
+  },
 
-  // People Management
+  // Admin / HR Items
   {
     icon: Users,
     label: "Employees",
     path: "/employees",
-    roles: ["Super Admin", "HR Admin", "Manager", "Recruiter"],
-  },
-  {
-    icon: UserPlus,
-    label: "Onboarding",
-    path: "/onboarding",
-    roles: ["Super Admin", "HR Admin", "Recruiter"],
-  },
-  {
-    icon: Folder,
-    label: "Documents",
-    path: "/documents",
-    roles: ["Super Admin", "HR Admin"],
+    roles: ["Super Admin", "HR Manager", "Finance", "Manager"],
   },
   {
     icon: Store,
     label: "Departments",
     path: "/departments",
-    roles: ["Super Admin", "HR Admin"],
+    roles: ["Super Admin", "HR Manager", "Finance"],
   },
-
-  // Time & Attendance
   {
     icon: CalendarCheck,
     label: "Attendance",
     path: "/attendance",
-    roles: ["Super Admin", "HR Admin", "Manager", "Employee"],
+    roles: ["Super Admin", "HR Manager", "Manager"],
   },
   {
     icon: CalendarClock,
     label: "Schedule",
     path: "/schedule",
-    roles: ["Super Admin", "HR Admin", "Manager"],
+    roles: ["Super Admin", "HR Manager", "Manager"],
   },
   {
     icon: CalendarDays,
     label: "Leave Management",
     path: "/leave",
-    roles: ["Super Admin", "HR Admin", "Manager", "Employee"],
+    roles: ["Super Admin", "HR Manager", "Manager"],
   },
-
-  // Finance
   {
     icon: IndianRupee,
     label: "Payroll",
     path: "/payroll",
-    roles: ["Super Admin", "Payroll Admin"],
+    roles: ["Super Admin", "HR Manager", "Finance"],
   },
-  {
-    icon: Receipt,
-    label: "Expenses",
-    path: "/expenses",
-    roles: [
-      "Super Admin",
-      "Payroll Admin",
-      "HR Admin",
-      "Manager",
-      "Employee",
-      "Recruiter",
-    ],
-  },
-
-  // Talent
   {
     icon: Briefcase,
     label: "Recruitment",
     path: "/recruitment",
-    roles: ["Super Admin", "HR Admin", "Recruiter"],
+    roles: ["Super Admin", "HR Manager", "Manager"],
   },
   {
     icon: TrendingUp,
     label: "Performance",
     path: "/performance",
-    roles: ["Super Admin", "HR Admin", "Manager"],
-  },
-  {
-    icon: BookOpen,
-    label: "Training",
-    path: "/training",
-    roles: ["Super Admin", "HR Admin", "Manager", "Recruiter", "Employee"],
+    roles: ["Super Admin", "HR Manager", "Manager"],
   },
   {
     icon: Award,
     label: "Increment & Appraisal",
     path: "/appraisal",
-    roles: ["Super Admin", "HR Admin", "Manager"],
+    roles: ["Super Admin", "HR Manager", "Finance", "Manager"],
   },
-
-  // Analytics
+  {
+    icon: BookOpen,
+    label: "Training",
+    path: "/training",
+    roles: ["Super Admin", "HR Manager", "Manager", "Employee"],
+  },
+  {
+    icon: Folder,
+    label: "Documents",
+    path: "/documents",
+    roles: ["Super Admin", "HR Manager"],
+  },
+  {
+    icon: Receipt,
+    label: "Expenses",
+    path: "/expenses",
+    roles: ["Super Admin", "HR Manager", "Finance", "Manager"],
+  },
   {
     icon: BarChart3,
-    label: "Reports",
+    label: "Reports & Analytics",
     path: "/reports",
-    roles: ["Super Admin", "HR Admin", "Manager", "Payroll Admin"],
+    roles: ["Super Admin", "HR Manager", "Finance", "Manager"],
+  },
+  {
+    icon: Megaphone,
+    label: "Announcements",
+    path: "/notifications",
+    roles: ["Super Admin", "HR Manager", "Finance", "Manager", "Employee"],
+  },
+
+  // My Workspace Items (for non-admins)
+  {
+    icon: Home,
+    label: "My Dashboard",
+    path: "/employee/dashboard",
+    roles: ["Finance", "Manager", "Employee"],
+    section: "MY WORKSPACE",
+  },
+  {
+    icon: CalendarCheck,
+    label: "My Attendance",
+    path: "/attendance",
+    roles: ["Finance", "Manager", "Employee"],
+    section: "MY WORKSPACE",
+  },
+  {
+    icon: CalendarDays,
+    label: "My Leaves",
+    path: "/leave",
+    roles: ["Finance", "Manager", "Employee"],
+    section: "MY WORKSPACE",
+  },
+  {
+    icon: IndianRupee,
+    label: "My Payslips",
+    path: "/payslips",
+    roles: ["Finance", "Manager", "Employee"],
+    section: "MY WORKSPACE",
+  },
+  {
+    icon: Folder,
+    label: "My Documents",
+    path: "/my-documents",
+    roles: ["Finance", "Manager", "Employee"],
+    section: "MY WORKSPACE",
+  },
+  {
+    icon: Receipt,
+    label: "My Expenses",
+    path: "/expenses",
+    roles: ["Finance", "Manager", "Employee"],
+    section: "MY WORKSPACE",
+  },
+  {
+    icon: TrendingUp,
+    label: "My Performance",
+    path: "/performance",
+    roles: ["Finance", "Manager", "Employee"],
+    section: "MY WORKSPACE",
+  },
+  {
+    icon: Clock,
+    label: "My Schedule",
+    path: "/schedule",
+    roles: ["Finance", "Manager", "Employee"],
+    section: "MY WORKSPACE",
+  },
+  {
+    icon: Users,
+    label: "Directory",
+    path: "/directory",
+    roles: ["Employee"],
+    section: "MY WORKSPACE",
+  },
+  {
+    icon: HelpCircle,
+    label: "Support & Helpdesk",
+    path: "/support",
+    roles: ["Employee"],
+    section: "MY WORKSPACE",
   },
 ];
 
-const EMPLOYEE_NAV_ITEMS = [
-  { icon: Home, label: "My Dashboard", path: "/" },
-  { icon: CalendarCheck, label: "My Attendance", path: "/attendance" },
-  { icon: CalendarDays, label: "My Leaves", path: "/leave" },
-  { icon: IndianRupee, label: "My Payslips", path: "/payroll" },
-  { icon: Receipt, label: "My Expenses", path: "/expenses" },
-  { icon: Folder, label: "My Documents", path: "/my-documents" },
-  { icon: TrendingUp, label: "My Performance", path: "/performance" },
-  { icon: Clock, label: "Shift & Schedule", path: "/schedule" },
-
-  { icon: BookOpen, label: "Training", path: "/training" },
-  { icon: Megaphone, label: "Announcements", path: "/notifications" },
-  { icon: UsersIcon, label: "Team Directory", path: "/employees" },
-];
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const location = useLocation();
@@ -170,16 +216,39 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   const currentRole = user?.role as UserRole | undefined;
 
-  // Filter nav items based on current user's role
-  const navItems = ALL_NAV_ITEMS.filter((item) => {
-    if (!item.roles) return true; // visible to all
+  // Filter nav items based on current user's role and section
+  const mainItems = ALL_NAV_ITEMS.filter((item) => {
+    if (item.section === "MY WORKSPACE") return false;
+    if (!item.roles) return true;
+    if (!currentRole) return false;
+    return item.roles.includes(currentRole);
+  });
+
+  const workspaceItems = ALL_NAV_ITEMS.filter((item) => {
+    if (item.section !== "MY WORKSPACE") return false;
+    if (!item.roles) return true;
     if (!currentRole) return false;
     return item.roles.includes(currentRole);
   });
 
   const isActive = (path: string) => {
-    if (path === "/") return location.pathname === "/";
-    return location.pathname.startsWith(path);
+    const currentPath = location.pathname;
+    
+    // Root dashboard handling
+    if (path === "/") {
+      return currentPath === "/" || 
+             currentPath === "/admin/dashboard" || 
+             currentPath === "/hr/dashboard" || 
+             currentPath === "/finance/dashboard" || 
+             currentPath === "/manager/dashboard";
+    }
+    
+    // Exact match for employee dashboard to avoid double highlighting
+    if (path === "/employee/dashboard") {
+      return currentPath === "/employee/dashboard";
+    }
+
+    return currentPath === path || (path !== "/" && currentPath.startsWith(path + "/")) || currentPath.startsWith(path);
   };
 
   const handleLogout = () => {
@@ -188,196 +257,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   };
 
   const roleConf = currentRole ? ROLE_CONFIG[currentRole] : null;
-
-  if (currentRole === "Employee") {
-    const activeNavItems = EMPLOYEE_NAV_ITEMS;
-
-    return (
-      <div
-        className="fixed top-0 left-0 h-screen flex flex-col transition-all duration-300 ease-in-out z-[2000] border-r shadow-sm"
-        style={{
-          width: collapsed ? "72px" : "240px",
-          backgroundColor: "var(--card)",
-          borderColor: "var(--border)",
-        }}
-      >
-        {/* Logo Section */}
-        <div
-          className={`flex items-center h-16 shrink-0 ${collapsed ? "justify-center px-0" : "px-6"}`}
-        >
-          <div
-            className="flex items-center justify-center rounded-[8px] shrink-0"
-            style={{
-              width: "32px",
-              height: "32px",
-              backgroundColor: "var(--primary)",
-            }}
-          >
-            <Zap size={18} color="white" fill="white" />
-          </div>
-          {!collapsed && (
-            <div className="ml-3 animate-in fade-in slide-in-from-left-2 duration-300">
-              <span className="block text-[14px] font-bold text-foreground">
-                NexusHR
-              </span>
-              <span
-                className="block text-[10px] font-bold tracking-[0.5px] text-primary"
-                style={{ fontVariant: "small-caps" }}
-              >
-                EMS PLATFORM
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Profile Card (Top - Hide when collapsed) */}
-        {!collapsed && user && (
-          <div className="mx-3 my-3 p-3 rounded-xl bg-primary/10 flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-300">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-base shadow-sm">
-                {user.initials || "PS"}
-              </div>
-              <div className="overflow-hidden">
-                <p className="text-[13px] font-bold text-foreground truncate">
-                  {user.name}
-                </p>
-                <p className="text-[11px] text-muted-foreground truncate font-medium">
-                  Frontend Developer
-                </p>
-              </div>
-            </div>
-            <div className="space-y-1">
-              <p className="text-[10px] text-muted-foreground/70 font-medium">
-                Engineering · #EMP-0142
-              </p>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
-                  Active Status
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <nav className="flex-1 py-4 overflow-y-auto no-scrollbar">
-          {!collapsed && (
-            <p className="px-6 mb-4 text-[10px] font-black text-muted-foreground uppercase tracking-[2px] opacity-60">
-              MY WORKSPACE
-            </p>
-          )}
-          <ul className={`space-y-1 ${collapsed ? "px-2" : "px-3"}`}>
-            {activeNavItems.map((item) => {
-              const active = isActive(item.path);
-              return (
-                <li key={item.path}>
-                  <NavLink
-                    to={item.path}
-                    title={collapsed ? item.label : undefined}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "12px",
-                      height: "42px",
-                      padding: collapsed ? "0" : "0 14px",
-                      justifyContent: collapsed ? "center" : "flex-start",
-                      borderRadius: "12px",
-                      textDecoration: "none",
-                      transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                      backgroundColor: active
-                        ? "var(--primary)"
-                        : "transparent",
-                      color: active ? "white" : "var(--muted-foreground)",
-                    }}
-                    className={
-                      !active
-                        ? "hover:bg-primary/10 hover:text-primary group"
-                        : "shadow-md shadow-primary/20"
-                    }
-                  >
-                    <item.icon
-                      size={18}
-                      className={`${active ? "text-white" : "text-muted-foreground/60 group-hover:text-primary"} transition-transform group-hover:scale-110`}
-                    />
-                    {!collapsed && (
-                      <span className="text-[13.5px] font-bold whitespace-nowrap animate-in fade-in slide-in-from-left-1">
-                        {item.label}
-                      </span>
-                    )}
-                    {active && !collapsed && (
-                      <motion.span
-                        layoutId="activeDot"
-                        className="ml-auto w-1.5 h-1.5 rounded-full bg-white"
-                      />
-                    )}
-                  </NavLink>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-
-        {/* Bottom Section */}
-        <div className="shrink-0 p-3 border-t border-border flex flex-col gap-2">
-          {/* Bottom User Card - When collapsed */}
-          {collapsed && user && (
-            <div className="flex justify-center py-2">
-              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary font-black text-xs border border-primary/20 cursor-pointer hover:bg-primary hover:text-white transition-all">
-                {user.initials}
-              </div>
-            </div>
-          )}
-
-          {/* User info card (Bottom version for consistency) */}
-          {!collapsed && user && (
-            <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-secondary/50 border border-border/50 mb-1">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-primary text-white font-bold text-xs shadow-sm">
-                {user.initials}
-              </div>
-              <div className="overflow-hidden flex-1">
-                <p className="text-[12px] font-bold text-foreground truncate leading-tight">
-                  {user.name}
-                </p>
-                <p className="text-[10px] text-muted-foreground font-medium truncate uppercase tracking-tighter">
-                  {user.role}
-                </p>
-              </div>
-            </div>
-          )}
-
-          <button
-            onClick={handleLogout}
-            className={`flex items-center gap-3 py-3 rounded-xl transition-all font-black text-sm ${
-              collapsed
-                ? "justify-center text-rose-500 hover:bg-rose-500/10"
-                : "px-4 text-rose-500 bg-rose-500/10 hover:bg-rose-500/20"
-            }`}
-            title={collapsed ? "Sign Out" : undefined}
-          >
-            <LogOut size={18} />
-            {!collapsed && <span>Sign Out</span>}
-          </button>
-
-          <button
-            onClick={onToggle}
-            className="flex items-center justify-center py-2.5 rounded-xl text-muted-foreground hover:bg-secondary transition-all"
-            title={collapsed ? "Expand" : "Collapse"}
-          >
-            {collapsed ? (
-              <ChevronRight size={18} />
-            ) : (
-              <div className="flex items-center gap-2">
-                <ChevronLeft size={18} />
-                <span className="text-[12px] font-bold uppercase tracking-widest">
-                  Collapse
-                </span>
-              </div>
-            )}
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -398,7 +277,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           style={{
             width: "36px",
             height: "36px",
-            background: "linear-gradient(135deg, #10B981, #059669)",
+            background: "linear-gradient(135deg, #00B87C, #059669)",
           }}
         >
           <Zap size={18} color="white" fill="white" />
@@ -451,82 +330,168 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 py-3 overflow-y-auto overflow-x-hidden">
-        {!collapsed && (
-          <p
-            className="px-4 mb-2"
-            style={{
-              color: "var(--sidebar-foreground)",
-              opacity: 0.6,
-              fontSize: "10px",
-              fontWeight: 700,
-              letterSpacing: "1px",
-            }}
-          >
-            MAIN MENU
-          </p>
-        )}
-        <ul className="space-y-0.5 px-2">
-          {navItems.map((item) => {
-            const active = isActive(item.path);
-            return (
-              <li key={item.path}>
-                <NavLink
-                  to={item.path}
-                  title={collapsed ? item.label : undefined}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    padding: collapsed ? "10px 14px" : "9px 12px",
-                    borderRadius: "10px",
-                    textDecoration: "none",
-                    transition: "all 0.15s ease",
-                    backgroundColor: active
-                      ? "var(--sidebar-primary)"
-                      : "transparent",
-                    color: active
-                      ? "var(--sidebar-primary-foreground)"
-                      : "var(--sidebar-foreground)",
-                    justifyContent: collapsed ? "center" : "flex-start",
-                  }}
-                  className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
-                >
-                  <item.icon
-                    size={18}
-                    style={{
-                      color: active
-                        ? "var(--sidebar-primary-foreground)"
-                        : "inherit",
-                      flexShrink: 0,
-                    }}
-                  />
-                  {!collapsed && (
-                    <span
+      <nav className="flex-1 py-3 overflow-y-auto no-scrollbar">
+        {/* MAIN MENU Section */}
+        {mainItems.length > 0 && (
+          <div className="mb-4">
+            {!collapsed && (
+              <p
+                className="px-4 mb-2"
+                style={{
+                  color: "var(--sidebar-foreground)",
+                  opacity: 0.6,
+                  fontSize: "10px",
+                  fontWeight: 700,
+                  letterSpacing: "1px",
+                }}
+              >
+                MAIN MENU
+              </p>
+            )}
+            <ul className="space-y-0.5 px-2">
+              {mainItems.map((item) => {
+                const active = isActive(item.path);
+                return (
+                  <li key={item.path}>
+                    <NavLink
+                      to={item.path}
+                      title={collapsed ? item.label : undefined}
                       style={{
-                        fontSize: "13px",
-                        fontWeight: active ? 600 : 500,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
+                        padding: collapsed ? "10px 14px" : "9px 12px",
+                        borderRadius: "10px",
+                        textDecoration: "none",
+                        transition: "all 0.15s ease",
+                        backgroundColor: active
+                          ? "var(--sidebar-primary)"
+                          : "transparent",
+                        color: active
+                          ? "var(--sidebar-primary-foreground)"
+                          : "var(--sidebar-foreground)",
+                        justifyContent: collapsed ? "center" : "flex-start",
                       }}
+                      className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
                     >
-                      {item.label}
-                    </span>
-                  )}
-                  {active && !collapsed && (
-                    <span
-                      className="ml-auto w-1.5 h-1.5 rounded-full"
+                      <item.icon
+                        size={18}
+                        style={{
+                          color: active
+                            ? "var(--sidebar-primary-foreground)"
+                            : "inherit",
+                          flexShrink: 0,
+                        }}
+                      />
+                      {!collapsed && (
+                        <span
+                          style={{
+                            fontSize: "13px",
+                            fontWeight: active ? 600 : 500,
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {item.label}
+                        </span>
+                      )}
+                      {active && !collapsed && (
+                        <span
+                          className="ml-auto w-1.5 h-1.5 rounded-full"
+                          style={{
+                            backgroundColor: "var(--sidebar-primary-foreground)",
+                            flexShrink: 0,
+                          }}
+                        />
+                      )}
+                    </NavLink>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
+        {/* MY WORKSPACE Section */}
+        {workspaceItems.length > 0 && (
+          <div>
+            {!collapsed && (
+              <p
+                className="px-4 mb-2 mt-2"
+                style={{
+                  color: "var(--sidebar-foreground)",
+                  opacity: 0.6,
+                  fontSize: "10px",
+                  fontWeight: 700,
+                  letterSpacing: "1px",
+                }}
+              >
+                MY WORKSPACE
+              </p>
+            )}
+            <ul className="space-y-0.5 px-2">
+              {workspaceItems.map((item) => {
+                const active = isActive(item.path);
+                return (
+                  <li key={item.path}>
+                    <NavLink
+                      to={item.path}
+                      title={collapsed ? item.label : undefined}
                       style={{
-                        backgroundColor: "var(--sidebar-primary-foreground)",
-                        flexShrink: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
+                        padding: collapsed ? "10px 14px" : "9px 12px",
+                        borderRadius: "10px",
+                        textDecoration: "none",
+                        transition: "all 0.15s ease",
+                        backgroundColor: active
+                          ? "var(--sidebar-primary)"
+                          : "transparent",
+                        color: active
+                          ? "var(--sidebar-primary-foreground)"
+                          : "var(--sidebar-foreground)",
+                        justifyContent: collapsed ? "center" : "flex-start",
                       }}
-                    />
-                  )}
-                </NavLink>
-              </li>
-            );
-          })}
-        </ul>
+                      className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
+                    >
+                      <item.icon
+                        size={18}
+                        style={{
+                          color: active
+                            ? "var(--sidebar-primary-foreground)"
+                            : "inherit",
+                          flexShrink: 0,
+                        }}
+                      />
+                      {!collapsed && (
+                        <span
+                          style={{
+                            fontSize: "13px",
+                            fontWeight: active ? 600 : 500,
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {item.label}
+                        </span>
+                      )}
+                      {active && !collapsed && (
+                        <span
+                          className="ml-auto w-1.5 h-1.5 rounded-full"
+                          style={{
+                            backgroundColor: "var(--sidebar-primary-foreground)",
+                            flexShrink: 0,
+                          }}
+                        />
+                      )}
+                    </NavLink>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
       </nav>
 
       {/* Bottom section */}
@@ -537,9 +502,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           paddingTop: "12px",
         }}
       >
-        {/* Settings — only for Super Admin & HR Admin */}
+        {/* Settings — only for Super Admin & HR Manager */}
         {(!currentRole ||
-          ["Super Admin", "HR Admin"].includes(currentRole)) && (
+          ["Super Admin", "HR Manager"].includes(currentRole)) && (
           <NavLink
             to="/settings"
             title={collapsed ? "Settings" : undefined}
@@ -594,7 +559,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
               style={{
-                background: "linear-gradient(135deg, #059669, #14B8A6)",
+                background: "linear-gradient(135deg, #00B87C, #059669)",
               }}
             >
               <span

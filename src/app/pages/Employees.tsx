@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
 import {
   Search,
   Plus,
@@ -899,6 +900,7 @@ function DeleteConfirmModal({
 
 export function Employees() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [selectedDept, setSelectedDept] = useState("All Departments");
   const [selectedStatus, setSelectedStatus] = useState("All Status");
@@ -924,6 +926,10 @@ export function Employees() {
   const [deleteEmployee, setDeleteEmployee] = useState<
     (typeof employees)[0] | null
   >(null);
+
+  // ─── ROLE BASED RESTRICTIONS ───
+  const canManage = user?.role === "Super Admin" || user?.role === "HR Manager";
+  const isManager = user?.role === "Manager";
 
   const uniqueDesignations = [
     "All Designations",
@@ -1104,34 +1110,59 @@ export function Employees() {
             />
             <span style={{ color: "var(--muted-foreground)" }}>Employees</span>
           </div>
-          <h1
+          <h2
             style={{
+              fontSize: "24px",
+              fontWeight: 900,
               color: "var(--foreground)",
-              fontSize: "28px",
-              fontWeight: 800,
+              margin: 0,
               letterSpacing: "-0.5px",
             }}
           >
-            Employees
-          </h1>
+            {isManager ? "My Team" : "Employee Directory"}
+          </h2>
+          <p
+            style={{
+              fontSize: "13px",
+              color: "var(--muted-foreground)",
+              margin: "2px 0 0",
+            }}
+          >
+            {isManager 
+              ? "View and manage your direct reports" 
+              : `Managing ${filtered.length} total employees across ${departments.length - 1} departments`}
+          </p>
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 rounded-xl px-5 transition-all hover:opacity-90 active:scale-95"
-          style={{
-            height: "44px",
-            backgroundColor: "var(--primary)",
-            color: "white",
-            fontSize: "14px",
-            fontWeight: 600,
-            boxShadow: "0 4px 12px rgba(16, 185, 129, 0.25)",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          <Plus size={18} />
-          Add Employee
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {canManage && (
+            <button
+              onClick={() => setShowAddModal(true)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "10px 20px",
+                borderRadius: "12px",
+                backgroundColor: "#10B981",
+                color: "white",
+                border: "none",
+                fontSize: "14px",
+                fontWeight: 700,
+                cursor: "pointer",
+                boxShadow: "0 4px 12px rgba(16,185,129,0.25)",
+              }}
+              onMouseEnter={(e) =>
+                ((e.currentTarget as HTMLButtonElement).style.opacity = "0.9")
+              }
+              onMouseLeave={(e) =>
+                ((e.currentTarget as HTMLButtonElement).style.opacity = "1")
+              }
+            >
+              <Plus size={18} />
+              Add Employee
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Filters (Sticky) */}
@@ -1757,24 +1788,26 @@ export function Employees() {
                       >
                         View Profile
                       </button>
-                      <button
-                        className="w-full text-left px-4 py-2 text-[13px] font-medium transition-colors"
-                        style={{ color: "var(--foreground)" }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            "var(--background)")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            "transparent")
-                        }
-                        onClick={() => {
-                          setEditEmployee(emp);
-                          setActionMenuRow(null);
-                        }}
-                      >
-                        Edit Employee
-                      </button>
+                      {canManage && (
+                        <button
+                          className="w-full text-left px-4 py-2 text-[13px] font-medium transition-colors"
+                          style={{ color: "var(--foreground)" }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              "var(--background)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              "transparent")
+                          }
+                          onClick={() => {
+                            setEditEmployee(emp);
+                            setActionMenuRow(null);
+                          }}
+                        >
+                          Edit Employee
+                        </button>
+                      )}
                       <button
                         className="w-full text-left px-4 py-2 text-[13px] font-medium transition-colors"
                         style={{ color: "var(--foreground)" }}
@@ -1790,19 +1823,23 @@ export function Employees() {
                       >
                         Send Message
                       </button>
-                      <div
-                        className="h-px my-1 w-full"
-                        style={{ backgroundColor: "var(--border)" }}
-                      ></div>
-                      <button
-                        className="w-full text-left px-4 py-2 text-[13px] font-medium text-red-500 transition-colors hover:bg-red-50"
-                        onClick={() => {
-                          setDeleteEmployee(emp);
-                          setActionMenuRow(null);
-                        }}
-                      >
-                        Deactivate
-                      </button>
+                      {canManage && (
+                        <>
+                          <div
+                            className="h-px my-1 w-full"
+                            style={{ backgroundColor: "var(--border)" }}
+                          ></div>
+                          <button
+                            className="w-full text-left px-4 py-2 text-[13px] font-medium text-red-500 transition-colors hover:bg-red-50"
+                            onClick={() => {
+                              setDeleteEmployee(emp);
+                              setActionMenuRow(null);
+                            }}
+                          >
+                            Deactivate
+                          </button>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
@@ -2206,4 +2243,3 @@ export function Employees() {
     </div>
   );
 }
-0
