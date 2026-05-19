@@ -135,6 +135,115 @@ const EmployeePayslips = lazy(() =>
   })),
 );
 
+// Finance Components
+const FinancePayroll = lazy(() =>
+  import("./pages/FinancePayroll").then((m) => ({ default: m.FinancePayroll })),
+);
+const FinanceReports = lazy(() =>
+  import("./pages/FinanceReports").then((m) => ({ default: m.FinanceReports })),
+);
+const FinancePayrollSettings = lazy(() =>
+  import("./pages/FinancePayrollSettings").then((m) => ({ default: m.FinancePayrollSettings })),
+);
+const FinanceAttendance = lazy(() =>
+  import("./pages/FinanceAttendance").then((m) => ({ default: m.FinanceAttendance })),
+);
+const FinanceDocuments = lazy(() =>
+  import("./pages/FinanceDocuments").then((m) => ({ default: m.FinanceDocuments })),
+);
+const FinanceMyExpenses = lazy(() =>
+  import("./pages/FinanceMyExpenses").then((m) => ({ default: m.FinanceMyExpenses })),
+);
+const FinancePayslips = lazy(() =>
+  import("./pages/FinancePayslips").then((m) => ({ default: m.FinancePayslips })),
+);
+const FinanceProfile = lazy(() =>
+  import("./pages/FinanceProfile").then((m) => ({ default: m.FinanceProfile })),
+);
+const FinancePerformance = lazy(() =>
+  import("./pages/FinancePerformance").then((m) => ({ default: m.FinancePerformance })),
+);
+const FinanceGoals = lazy(() =>
+  import("./pages/FinanceGoals").then((m) => ({ default: m.FinanceGoals })),
+);
+const FinanceSupport = lazy(() =>
+  import("./pages/FinanceSupport").then((m) => ({ default: m.FinanceSupport })),
+);
+const FinanceEmployees = lazy(() =>
+  import("./pages/FinanceEmployees").then((m) => ({ default: m.FinanceEmployees })),
+);
+const FinanceIncrement = lazy(() =>
+  import("./pages/FinanceIncrement").then((m) => ({ default: m.FinanceIncrement })),
+);
+
+// Manager Team & Personal Components
+const ManagerAttendance = lazy(() =>
+  import("./pages/manager/ManagerAttendance").then((m) => ({ default: m.ManagerAttendance })),
+);
+const ManagerTeamSchedule = lazy(() =>
+  import("./pages/manager/ManagerTeamSchedule").then((m) => ({ default: m.ManagerTeamSchedule })),
+);
+const ManagerLeaveApprovals = lazy(() =>
+  import("./pages/manager/ManagerLeaveApprovals").then((m) => ({ default: m.ManagerLeaveApprovals })),
+);
+const ManagerTeamPerformance = lazy(() =>
+  import("./pages/manager/ManagerTeamPerformance").then((m) => ({ default: m.ManagerTeamPerformance })),
+);
+const ManagerTeamTraining = lazy(() =>
+  import("./pages/manager/ManagerTeamTraining").then((m) => ({ default: m.ManagerTeamTraining })),
+);
+const ManagerExpenseApprovals = lazy(() =>
+  import("./pages/manager/ManagerExpenseApprovals").then((m) => ({ default: m.ManagerExpenseApprovals })),
+);
+const ManagerTeam = lazy(() =>
+  import("./pages/manager/ManagerTeam").then((m) => ({ default: m.ManagerTeam })),
+);
+const ManagerTeamAppraisal = lazy(() =>
+  import("./pages/manager/ManagerTeamAppraisal").then((m) => ({ default: m.ManagerTeamAppraisal })),
+);
+const ManagerPersonalDashboard = lazy(() =>
+  import("./pages/manager/ManagerPersonalDashboard").then((m) => ({ default: m.ManagerPersonalDashboard })),
+);
+const ManagerPersonalAttendance = lazy(() =>
+  import("./pages/manager/ManagerPersonalAttendance").then((m) => ({ default: m.ManagerPersonalAttendance })),
+);
+const ManagerPersonalLeaves = lazy(() =>
+  import("./pages/manager/ManagerPersonalLeaves").then((m) => ({ default: m.ManagerPersonalLeaves })),
+);
+const ManagerPersonalExpenses = lazy(() =>
+  import("./pages/manager/ManagerPersonalExpenses").then((m) => ({ default: m.ManagerPersonalExpenses })),
+);
+const ManagerPersonalGoals = lazy(() =>
+  import("./pages/manager/ManagerPersonalGoals").then((m) => ({ default: m.ManagerPersonalGoals })),
+);
+const ManagerPersonalPerformance = lazy(() =>
+  import("./pages/manager/ManagerPersonalPerformance").then((m) => ({ default: m.ManagerPersonalPerformance })),
+);
+const ManagerPersonalPayslips = lazy(() =>
+  import("./pages/manager/ManagerPersonalPayslips").then((m) => ({ default: m.ManagerPersonalPayslips })),
+);
+const ManagerPersonalDocuments = lazy(() =>
+  import("./pages/manager/ManagerPersonalDocuments").then((m) => ({ default: m.ManagerPersonalDocuments })),
+);
+const ManagerProfile = lazy(() =>
+  import("./pages/manager/ManagerProfile").then((m) => ({ default: m.ManagerProfile })), // Force reload
+);
+const ManagerNotifications = lazy(() =>
+  import("./pages/manager/ManagerNotifications").then((m) => ({ default: m.ManagerNotifications })),
+);
+const ManagerAnnouncements = lazy(() =>
+  import("./pages/manager/ManagerAnnouncements").then((m) => ({ default: m.ManagerAnnouncements })),
+);
+const ManagerTeamDirectory = lazy(() =>
+  import("./pages/manager/ManagerTeamDirectory").then((m) => ({ default: m.ManagerTeamDirectory })),
+);
+const ManagerSupportTicket = lazy(() =>
+  import("./pages/manager/ManagerSupportTicket").then((m) => ({ default: m.ManagerSupportTicket })),
+);
+const ManagerSettings = lazy(() =>
+  import("./pages/manager/ManagerSettings").then((m) => ({ default: m.ManagerSettings })),
+);
+
 // Loading spinner
 function PageLoader() {
   return (
@@ -161,6 +270,16 @@ function PageLoader() {
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   );
+}
+
+function ProfileWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceProfile);
+  } else if (user?.role === "Manager") {
+    return lazyRoute(ManagerProfile);
+  }
+  return lazyRoute(UserProfile);
 }
 
 function lazyRoute(Component: React.LazyExoticComponent<React.ComponentType>) {
@@ -256,6 +375,12 @@ function protectedRoute(
 // ── Performance Wrapper: role-based view ──────────────────────
 function PerformanceWrapper() {
   const { user } = useAuth();
+  if (user?.role === "Manager") {
+    return lazyRoute(ManagerTeamPerformance);
+  }
+  if (user?.role === "Finance") {
+    return lazyRoute(FinancePerformance);
+  }
   if (user?.role === "Employee") {
     return lazyRoute(EmployeePerformance);
   }
@@ -265,19 +390,70 @@ function PerformanceWrapper() {
 // ── Schedule Wrapper: role-based view ─────────────────────────
 function ScheduleWrapper() {
   const { user } = useAuth();
+  if (user?.role === "Manager") {
+    return lazyRoute(ManagerTeamSchedule);
+  }
   if (user?.role === "Employee") {
     return lazyRoute(EmployeeSchedule);
   }
   return lazyRoute(ShiftSchedule);
 }
 
+// ── Goals Wrapper: role-based view ────────────────────────────
+function GoalsWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceGoals);
+  }
+  return <PerformanceWrapper />;
+}
+
 // ── Training Wrapper: role-based view ─────────────────────────
 function TrainingWrapper() {
   const { user } = useAuth();
+  if (user?.role === "Manager") {
+    return lazyRoute(ManagerTeamTraining);
+  }
   if (user?.role === "Employee") {
     return lazyRoute(EmployeeTraining);
   }
   return lazyRoute(Training);
+}
+
+function SupportWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceSupport);
+  }
+  return lazyRoute(EmployeeSupport);
+}
+
+function DocumentsWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceDocuments);
+  }
+  return lazyRoute(EmployeeDocuments);
+}
+
+function AttendanceWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Manager") {
+    return lazyRoute(ManagerAttendance);
+  }
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceAttendance);
+  }
+  return lazyRoute(Attendance);
+}
+
+// ── Leave Wrapper: role-based view ────────────────────────────
+function LeaveWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Manager") {
+    return lazyRoute(ManagerLeaveApprovals);
+  }
+  return lazyRoute(LeaveManagement);
 }
 
 // ── Notifications Wrapper: role-based view ────────────────────
@@ -289,13 +465,36 @@ function NotificationsWrapper() {
   return lazyRoute(Notifications);
 }
 
+function PayslipsWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Finance") {
+    return lazyRoute(FinancePayslips);
+  }
+  return lazyRoute(EmployeePayslips);
+}
+
 // ── Payroll Wrapper: role-based view ──────────────────────────
 function PayrollWrapper() {
   const { user } = useAuth();
   if (user?.role === "Employee") {
     return lazyRoute(EmployeePayslips);
   }
+  if (user?.role === "Finance") {
+    return lazyRoute(FinancePayroll);
+  }
   return lazyRoute(Payroll);
+}
+
+// ── Expenses Wrapper: role-based view ─────────────────────────
+function ExpensesWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Manager") {
+    return lazyRoute(ManagerExpenseApprovals);
+  }
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceMyExpenses);
+  }
+  return lazyRoute(Expenses);
 }
 
 // ── Directory Wrapper: role-based view ────────────────────────
@@ -304,7 +503,34 @@ function DirectoryWrapper() {
   if (user?.role === "Employee") {
     return lazyRoute(EmployeeDirectory);
   }
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceEmployees);
+  }
+  if (user?.role === "Manager") {
+    return lazyRoute(ManagerTeam);
+  }
   return lazyRoute(Employees);
+}
+
+// ── Reports Wrapper: role-based view ─────────────────────────
+function ReportsWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceReports);
+  }
+  return lazyRoute(Reports);
+}
+
+// ── Appraisal Wrapper: role-based view ────────────────────────
+function AppraisalWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceIncrement);
+  }
+  if (user?.role === "Manager") {
+    return lazyRoute(ManagerTeamAppraisal);
+  }
+  return lazyRoute(IncrementAppraisal);
 }
 
 
@@ -342,6 +568,19 @@ export const router = createBrowserRouter([
       { path: "hr/dashboard", element: protectedRoute(Dashboard) },
       { path: "finance/dashboard", element: protectedRoute(Dashboard) },
       { path: "manager/dashboard", element: protectedRoute(Dashboard) },
+      { path: "manager/my-dashboard", element: protectedRoute(ManagerPersonalDashboard) },
+      { path: "manager/my-attendance", element: protectedRoute(ManagerPersonalAttendance) },
+      { path: "manager/my-leaves", element: protectedRoute(ManagerPersonalLeaves) },
+      { path: "manager/my-payslips", element: protectedRoute(ManagerPersonalPayslips) },
+      { path: "manager/my-documents", element: protectedRoute(ManagerPersonalDocuments) },
+      { path: "manager/my-expenses", element: protectedRoute(ManagerPersonalExpenses) },
+      { path: "manager/my-goals", element: protectedRoute(ManagerPersonalGoals) },
+      { path: "manager/my-performance", element: protectedRoute(ManagerPersonalPerformance) },
+      { path: "manager/notifications", element: protectedRoute(ManagerNotifications) },
+      { path: "manager/announcements", element: protectedRoute(ManagerAnnouncements) },
+      { path: "manager/directory", element: protectedRoute(ManagerTeamDirectory) },
+      { path: "manager/support", element: protectedRoute(ManagerSupportTicket) },
+      { path: "manager/settings", element: protectedRoute(ManagerSettings) },
       { path: "employee/dashboard", element: protectedRoute(EmployeeSelfService) },
       {
         path: "employees",
@@ -352,8 +591,8 @@ export const router = createBrowserRouter([
         ),
       },
       { path: "employees/:id", element: protectedRoute(EmployeeProfile) },
-      { path: "profile", element: protectedRoute(UserProfile) },
-      { path: "attendance", element: protectedRoute(Attendance) },
+      { path: "profile", element: <Protected><ProfileWrapper /></Protected> },
+      { path: "attendance", element: <Protected><AttendanceWrapper /></Protected> },
       {
         path: "payroll",
         element: (
@@ -362,8 +601,15 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
-      { path: "payslips", element: protectedRoute(EmployeePayslips) },
-      { path: "expenses", element: protectedRoute(Expenses) },
+      { path: "payslips", element: <Protected><PayslipsWrapper /></Protected> },
+      {
+        path: "expenses",
+        element: (
+          <Protected>
+            <ExpensesWrapper />
+          </Protected>
+        ),
+      },
       { path: "recruitment", element: protectedRoute(Recruitment) },
       {
         path: "performance",
@@ -373,9 +619,24 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
-      { path: "reports", element: protectedRoute(Reports) },
+      {
+        path: "reports",
+        element: (
+          <Protected>
+            <ReportsWrapper />
+          </Protected>
+        ),
+      },
       { path: "settings", element: protectedRoute(Settings) },
-      { path: "leave", element: protectedRoute(LeaveManagement) },
+      { path: "settings/payroll", element: protectedRoute(FinancePayrollSettings) },
+      {
+        path: "leave",
+        element: (
+          <Protected>
+            <LeaveWrapper />
+          </Protected>
+        ),
+      },
       { path: "departments", element: protectedRoute(Departments) },
       { path: "smart-search", element: protectedRoute(SmartSearch) },
       {
@@ -386,7 +647,14 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
-      { path: "appraisal", element: protectedRoute(IncrementAppraisal) },
+      {
+        path: "appraisal",
+        element: (
+          <Protected>
+            <AppraisalWrapper />
+          </Protected>
+        ),
+      },
       { path: "onboarding", element: protectedRoute(Onboarding) },
       { path: "documents", element: protectedRoute(Documents) },
       {
@@ -412,8 +680,8 @@ export const router = createBrowserRouter([
       },
       { path: "expense-policy", element: protectedRoute(ExpensePolicy) },
       { path: "expense-support", element: protectedRoute(ExpenseSupport) },
-      { path: "support", element: protectedRoute(EmployeeSupport) },
-      { path: "my-documents", element: protectedRoute(EmployeeDocuments) },
+      { path: "support", element: <Protected><SupportWrapper /></Protected> },
+      { path: "my-documents", element: <Protected><DocumentsWrapper /></Protected> },
       { path: "hr-requests", element: protectedRoute(EmployeeHRRequests) },
       {
         path: "regularization-history",
@@ -427,7 +695,7 @@ export const router = createBrowserRouter([
         path: "goals",
         element: (
           <Protected>
-            <PerformanceWrapper />
+            <GoalsWrapper />
           </Protected>
         ),
       },

@@ -89,8 +89,8 @@ export function Topbar({
         <h1
           style={{
             color: "var(--foreground)",
-            fontSize: "18px",
-            fontWeight: 700,
+            fontSize: "22px",
+            fontWeight: 800,
             lineHeight: 1,
             letterSpacing: "-0.3px",
           }}
@@ -111,7 +111,7 @@ export function Topbar({
       {/* Search */}
       <div className="relative" ref={searchRef}>
         <div
-          className="flex items-center gap-2 rounded-xl px-3 transition-all duration-200"
+          className="flex items-center gap-2 rounded-full px-4 transition-all duration-200"
           style={{
             backgroundColor: "var(--background)",
             border: `1px solid ${showSearchResults && searchQuery ? "var(--primary)" : "var(--border)"}`,
@@ -255,7 +255,7 @@ export function Topbar({
       {/* Theme Toggle */}
       <button
         onClick={onToggleTheme}
-        className="flex items-center justify-center rounded-xl transition-colors"
+        className="flex items-center justify-center rounded-full transition-colors"
         style={{
           width: "38px",
           height: "38px",
@@ -278,7 +278,7 @@ export function Topbar({
             setShowNotifications(!showNotifications);
             if (!showNotifications) setNotifications(0);
           }}
-          className="relative flex items-center justify-center rounded-xl transition-colors"
+          className="relative flex items-center justify-center rounded-full transition-colors"
           style={{
             width: "38px",
             height: "38px",
@@ -448,7 +448,7 @@ export function Topbar({
       <div className="relative">
         <button
           onClick={() => setShowDropdown(!showDropdown)}
-          className="flex items-center gap-2.5 rounded-xl px-2.5 py-1.5 transition-colors"
+          className="flex items-center gap-2.5 rounded-full px-3 py-1.5 transition-colors"
           style={{
             border: "1px solid var(--border)",
             backgroundColor: showDropdown
@@ -483,17 +483,19 @@ export function Topbar({
                 lineHeight: 1.2,
               }}
             >
-              {user?.name || "Ryan Park"}
+              {user?.role === "Finance" ? `${user.name} / ${user.role}` : (user?.name || "Ryan Park")}
             </p>
-            <p
-              style={{
-                color: "var(--muted-foreground)",
-                fontSize: "11px",
-                lineHeight: 1.2,
-              }}
-            >
-              {user?.role || "Admin"}
-            </p>
+            {user?.role !== "Finance" && (
+              <p
+                style={{
+                  color: "var(--muted-foreground)",
+                  fontSize: "11px",
+                  lineHeight: 1.2,
+                }}
+              >
+                {user?.role || "Admin"}
+              </p>
+            )}
           </div>
           <ChevronDown
             size={14}

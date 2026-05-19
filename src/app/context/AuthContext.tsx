@@ -110,6 +110,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/employee/dashboard",
         "/employees", // View only handled in UI
         "/profile",
+        "/settings",
+        "/performance",
+        "/goals",
+        "/support",
       ];
       return allowed.some(p => normalizedPath === p || normalizedPath.startsWith(p + "/"));
     }
@@ -118,6 +122,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const allowed = [
         "/",
         "/manager/dashboard",
+        "/manager/my-dashboard",
+        "/manager/my-attendance",
+        "/manager/my-leaves",
+        "/manager/my-payslips",
+        "/manager/my-documents",
+        "/manager/my-expenses",
+        "/manager/my-goals",
+        "/manager/my-performance",
+        "/manager/notifications",
+        "/manager/announcements",
+        "/manager/directory",
+        "/manager/support",
+        "/manager/settings",
         "/employees", // My Team handled in UI
         "/attendance", // Team attendance
         "/schedule", // Team schedule
@@ -127,15 +144,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/training", // Assign training
         "/expenses", // Team expenses
         "/employee/dashboard",
-        "/attendance",
-        "/leave",
         "/payslips",
         "/my-documents",
-        "/expenses",
         "/goals",
-        "/performance",
-        "/schedule",
         "/profile",
+        "/support",
       ];
       return allowed.some(p => normalizedPath === p || normalizedPath.startsWith(p + "/"));
     }
