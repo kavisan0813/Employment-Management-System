@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { 
   BarChart3, 
   Download, 
@@ -83,7 +83,10 @@ const YOY_GROWTH_DATA = [
 type ReportTab = "Dashboards" | "Payroll Reports" | "Expense Reports" | "Tax Reports" | "Custom Builder";
 
 export function FinanceReports() {
-  const [activeTab, setActiveTab] = useState<ReportTab>("Dashboards");
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState<ReportTab>(
+    location.state?.activeTab || "Dashboards"
+  );
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">

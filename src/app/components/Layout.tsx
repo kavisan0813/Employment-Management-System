@@ -55,9 +55,21 @@ export function Layout() {
   const isEmployeeProfile =
     location.pathname.startsWith("/employees/") &&
     location.pathname !== "/employees";
-  const title = isEmployeeProfile
+  let title = isEmployeeProfile
     ? "Employee Profile"
     : pageTitles[basePath] || "NexusHR EMS";
+  if (basePath === "/notifications" && user?.role === "Finance") {
+    title = "Notifications";
+  }
+  if (location.pathname === "/employee/dashboard" && user?.role === "Finance") {
+    title = "My Dashboard";
+  }
+  if (basePath === "/leave" && user?.role === "Finance") {
+    title = "My Leaves";
+  }
+  if (basePath === "/schedule" && user?.role === "Finance") {
+    title = "My Schedule";
+  }
   
   const defaultSidebarWidth = user?.role === "Manager" ? 235 : 240;
   const sidebarWidth = collapsed ? 72 : defaultSidebarWidth;

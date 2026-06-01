@@ -102,6 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/payroll",
         "/appraisal", // Increment approvals
         "/expenses",
+        "/finance/my-expenses",
         "/reports",
         "/attendance",
         "/leave",
@@ -114,6 +115,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/performance",
         "/goals",
         "/support",
+        "/departments",
+        "/notifications",
+        "/smart-search",
+        "/schedule",
       ];
       return allowed.some(p => normalizedPath === p || normalizedPath.startsWith(p + "/"));
     }

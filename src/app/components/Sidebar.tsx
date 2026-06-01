@@ -228,6 +228,13 @@ const ALL_NAV_ITEMS: {
     roles: ["Finance"],
     section: "MY WORKSPACE",
   },
+  {
+    icon: Settings,
+    label: "Settings",
+    path: "/settings",
+    roles: ["Finance", "Employee"],
+    section: "MY WORKSPACE",
+  },
 ];
 
 // ─── Manager specific items ────────────────────
@@ -281,6 +288,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     if (!item.roles) return true;
     if (!currentRole) return false;
     return item.roles.includes(currentRole);
+  }).map(item => {
+    if (item.label === "My Expenses" && currentRole === "Finance") {
+      return { ...item, path: "/finance/my-expenses" };
+    }
+    return item;
   });
 
   const isActive = (path: string) => {

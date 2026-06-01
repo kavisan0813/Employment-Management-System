@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router";
 import { 
   BarChart3, 
   Download, 
@@ -126,8 +127,15 @@ const MOCK_APPRAISALS: AppraisalEmployee[] = [
 ];
 
 export function FinanceIncrement() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [approvingEmployee, setApprovingEmployee] = useState<AppraisalEmployee | null>(null);
+  const location = useLocation();
+  const [searchQuery, setSearchQuery] = useState(location.state?.search || "");
+  const [approvingEmployee, setApprovingEmployee] = useState<AppraisalEmployee | null>(() => {
+    if (location.state?.employeeId) {
+      const found = MOCK_APPRAISALS.find(emp => emp.id === location.state.employeeId);
+      if (found) return found;
+    }
+    return null;
+  });
 
   const filteredAppraisals = MOCK_APPRAISALS.filter(emp => 
     emp.name.toLowerCase().includes(searchQuery.toLowerCase()) || 

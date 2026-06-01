@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router";
 import { 
   Receipt, 
   Download, 
@@ -99,7 +100,10 @@ const MOCK_EXPENSES: ExpenseClaim[] = [
 ];
 
 export function FinanceExpenses() {
-  const [activeTab, setActiveTab] = useState<"All" | "Pending" | "Approved" | "Rejected">("Pending");
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState<"All" | "Pending" | "Approved" | "Rejected">(
+    location.state?.activeTab || "Pending"
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [viewingExpense, setViewingExpense] = useState<ExpenseClaim | null>(null);

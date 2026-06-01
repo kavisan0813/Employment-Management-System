@@ -136,6 +136,9 @@ const EmployeePayslips = lazy(() =>
 );
 
 // Finance Components
+const FinanceExpenses = lazy(() =>
+  import("./pages/FinanceExpenses").then((m) => ({ default: m.FinanceExpenses })),
+);
 const FinancePayroll = lazy(() =>
   import("./pages/FinancePayroll").then((m) => ({ default: m.FinancePayroll })),
 );
@@ -175,6 +178,13 @@ const FinanceEmployees = lazy(() =>
 const FinanceIncrement = lazy(() =>
   import("./pages/FinanceIncrement").then((m) => ({ default: m.FinanceIncrement })),
 );
+const FinanceDepartments = lazy(() =>
+  import("./pages/FinanceDepartments").then((m) => ({ default: m.FinanceDepartments })),
+);
+const FinancePersonalDashboard = lazy(() =>
+  import("./pages/FinancePersonalDashboard").then((m) => ({ default: m.FinancePersonalDashboard })),
+);
+
 
 // Manager Team & Personal Components
 const ManagerAttendance = lazy(() =>
@@ -210,6 +220,12 @@ const ManagerPersonalAttendance = lazy(() =>
 const ManagerPersonalLeaves = lazy(() =>
   import("./pages/manager/ManagerPersonalLeaves").then((m) => ({ default: m.ManagerPersonalLeaves })),
 );
+const FinanceLeaves = lazy(() =>
+  import("./pages/FinanceLeaves").then((m) => ({ default: m.FinanceLeaves })),
+);
+const FinanceSchedule = lazy(() =>
+  import("./pages/FinanceSchedule").then((m) => ({ default: m.FinanceSchedule })),
+);
 const ManagerPersonalExpenses = lazy(() =>
   import("./pages/manager/ManagerPersonalExpenses").then((m) => ({ default: m.ManagerPersonalExpenses })),
 );
@@ -242,6 +258,9 @@ const ManagerSupportTicket = lazy(() =>
 );
 const ManagerSettings = lazy(() =>
   import("./pages/manager/ManagerSettings").then((m) => ({ default: m.ManagerSettings })),
+);
+const FinanceSettings = lazy(() =>
+  import("./pages/FinanceSettings").then((m) => ({ default: m.FinanceSettings })),
 );
 
 // Loading spinner
@@ -393,6 +412,9 @@ function ScheduleWrapper() {
   if (user?.role === "Manager") {
     return lazyRoute(ManagerTeamSchedule);
   }
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceSchedule);
+  }
   if (user?.role === "Employee") {
     return lazyRoute(EmployeeSchedule);
   }
@@ -418,6 +440,14 @@ function TrainingWrapper() {
     return lazyRoute(EmployeeTraining);
   }
   return lazyRoute(Training);
+}
+
+function DepartmentsWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceDepartments);
+  }
+  return lazyRoute(Departments);
 }
 
 function SupportWrapper() {
@@ -452,6 +482,9 @@ function LeaveWrapper() {
   const { user } = useAuth();
   if (user?.role === "Manager") {
     return lazyRoute(ManagerLeaveApprovals);
+  }
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceLeaves);
   }
   return lazyRoute(LeaveManagement);
 }
@@ -492,7 +525,7 @@ function ExpensesWrapper() {
     return lazyRoute(ManagerExpenseApprovals);
   }
   if (user?.role === "Finance") {
-    return lazyRoute(FinanceMyExpenses);
+    return lazyRoute(FinanceExpenses);
   }
   return lazyRoute(Expenses);
 }
@@ -533,6 +566,24 @@ function AppraisalWrapper() {
   return lazyRoute(IncrementAppraisal);
 }
 
+
+// ── Employee Dashboard Wrapper: role-based view ───────────────
+function EmployeeDashboardWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Finance") {
+    return lazyRoute(FinancePersonalDashboard);
+  }
+  return lazyRoute(EmployeeSelfService);
+}
+
+// ── Settings Wrapper: role-based view ─────────────────────────
+function SettingsWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceSettings);
+  }
+  return lazyRoute(Settings);
+}
 
 // ── Root Redirect ────────────────────────────────────────────
 function RootRedirect() {
@@ -581,7 +632,7 @@ export const router = createBrowserRouter([
       { path: "manager/directory", element: protectedRoute(ManagerTeamDirectory) },
       { path: "manager/support", element: protectedRoute(ManagerSupportTicket) },
       { path: "manager/settings", element: protectedRoute(ManagerSettings) },
-      { path: "employee/dashboard", element: protectedRoute(EmployeeSelfService) },
+      { path: "employee/dashboard", element: <Protected><EmployeeDashboardWrapper /></Protected> },
       {
         path: "employees",
         element: (
@@ -610,6 +661,14 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
+      {
+        path: "finance/my-expenses",
+        element: (
+          <Protected>
+            {lazyRoute(FinanceMyExpenses)}
+          </Protected>
+        ),
+      },
       { path: "recruitment", element: protectedRoute(Recruitment) },
       {
         path: "performance",
@@ -627,7 +686,7 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
-      { path: "settings", element: protectedRoute(Settings) },
+      { path: "settings", element: <Protected><SettingsWrapper /></Protected> },
       { path: "settings/payroll", element: protectedRoute(FinancePayrollSettings) },
       {
         path: "leave",
@@ -637,7 +696,14 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
-      { path: "departments", element: protectedRoute(Departments) },
+      {
+        path: "departments",
+        element: (
+          <Protected>
+            <DepartmentsWrapper />
+          </Protected>
+        ),
+      },
       { path: "smart-search", element: protectedRoute(SmartSearch) },
       {
         path: "schedule",

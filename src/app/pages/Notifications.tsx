@@ -17,7 +17,10 @@ import {
   RotateCcw,
   Link2,
   ArrowLeft,
+  Receipt,
+  AlertCircle,
 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 interface NotificationItem {
   id: number;
@@ -46,6 +49,12 @@ interface AnnouncementItem {
 
 export function Notifications() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  if (user?.role === "Finance") {
+    return <FinanceNotificationsView />;
+  }
+
   const [activeFilter, setActiveFilter] = useState<
     "All" | "Unread" | "Approvals" | "Mentions" | "System"
   >("All");
@@ -1137,3 +1146,605 @@ export function Notifications() {
     </div>
   );
 }
+
+// ─── FINANCE ROLE NOTIFICATIONS MASTERPIECE VIEW ───────────────────
+function FinanceNotificationsView() {
+  const navigate = useNavigate();
+  const [activeFilter, setActiveFilter] = useState<"All" | "Unread" | "Payroll" | "Expenses" | "System" | "Alerts">("All");
+  const [showPreferences, setShowPreferences] = useState(false);
+
+  // Finance-specific Notifications state
+  const [financeNotifications, setFinanceNotifications] = useState([
+    {
+      id: 1,
+      type: "Alert",
+      urgent: true,
+      title: "TDS Filing Deadline in 8 Days",
+      description: "Submit Form 24Q before April 15 to avoid penalties",
+      time: "10:30 AM",
+      read: false,
+      section: "TODAY",
+      category: "Alerts",
+      path: "/reports",
+      state: { activeTab: "Tax Reports" }
+    },
+    {
+      id: 2,
+      type: "Expense",
+      title: "36 Expense Claims Awaiting Your Approval",
+      description: "Total value: ₹42,800 — oldest claim: 4 days",
+      time: "9:45 AM",
+      read: false,
+      section: "TODAY",
+      category: "Expenses",
+      path: "/expenses",
+      state: { activeTab: "Pending" }
+    },
+    {
+      id: 3,
+      type: "Payroll",
+      title: "Payroll Calculation In Progress — April 2026",
+      description: "Stage 3 of 5: Auto-calculation started",
+      time: "9:00 AM",
+      read: false,
+      section: "TODAY",
+      category: "Payroll",
+      path: "/payroll"
+    },
+    {
+      id: 4,
+      type: "Alert",
+      amberAlert: true,
+      title: "PF Payment Due — April 20",
+      description: "Ensure bank transfer initiated by Apr 20, 2026",
+      time: "8:30 AM",
+      read: false,
+      section: "TODAY",
+      category: "Alerts",
+      path: "/finance/dashboard"
+    },
+    {
+      id: 5,
+      type: "Success",
+      title: "Yuki Tanaka Increment Approved by You",
+      description: "+15% increment — ₹94K to ₹1.08L — effective May 1",
+      time: "8:00 AM",
+      read: false,
+      section: "TODAY",
+      category: "System",
+      path: "/appraisal",
+      state: { search: "Yuki Tanaka", employeeId: "EMP-002" }
+    },
+    {
+      id: 6,
+      type: "Payroll",
+      title: "March 2026 Payroll Disbursed Successfully",
+      description: "₹24.2L credited to 1,248 accounts",
+      time: "Apr 5, 6:00 PM",
+      read: true,
+      section: "YESTERDAY",
+      category: "Payroll",
+      path: "/payroll"
+    },
+    {
+      id: 7,
+      type: "Expense",
+      title: "Daniel Kim Expense Rejected — Missing Receipt",
+      description: "₹1,400 claim #EXP-0398 rejected",
+      time: "Apr 5, 3:00 PM",
+      read: true,
+      section: "YESTERDAY",
+      category: "Expenses",
+      path: "/expenses",
+      state: { activeTab: "Rejected" }
+    },
+    {
+      id: 8,
+      type: "Info",
+      title: "New Salary Band Structure Approved by HR",
+      description: "Effective from FY 2026-27",
+      time: "Apr 5, 11:00 AM",
+      read: true,
+      section: "YESTERDAY",
+      category: "System",
+      path: "/settings"
+    },
+    {
+      id: 9,
+      type: "Alert",
+      title: "ESI Contribution Calculation Reminder",
+      description: "Due Apr 21, 2026",
+      time: "Apr 3, 4:30 PM",
+      read: true,
+      section: "THIS WEEK",
+      category: "Alerts",
+      path: "/payroll"
+    },
+    {
+      id: 10,
+      type: "Success",
+      title: "Form 16 Generated for All Employees — FY 2024-25",
+      description: "1,284 employees",
+      time: "Apr 2, 10:00 AM",
+      read: true,
+      section: "THIS WEEK",
+      category: "System",
+      path: "/reports",
+      state: { activeTab: "Tax Reports" }
+    }
+  ]);
+
+  // Preferences Toggles & Channels
+  const [preferences, setPreferences] = useState({
+    tds: true,
+    expenses: true,
+    payroll: true,
+    increments: true,
+    budget: false,
+    maintenance: false,
+    pf: true,
+  });
+
+  const [channels, setChannels] = useState({
+    email: true,
+    push: true,
+    sms: false,
+  });
+
+  const handleMarkAllRead = () => {
+    setFinanceNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const handleRowClick = (notif: typeof financeNotifications[0]) => {
+    // Mark row as read
+    setFinanceNotifications(prev =>
+      prev.map(n => n.id === notif.id ? { ...n, read: true } : n)
+    );
+    // Navigate with deep-linking state if present
+    if (notif.state) {
+      navigate(notif.path, { state: notif.state });
+    } else {
+      navigate(notif.path);
+    }
+  };
+
+  const handleSavePreferences = () => {
+    setShowPreferences(false);
+  };
+
+  // Filter Logic
+  const getFilteredNotifications = () => {
+    return financeNotifications.filter(n => {
+      if (activeFilter === "Unread") return !n.read;
+      if (activeFilter === "Payroll") return n.category === "Payroll";
+      if (activeFilter === "Expenses") return n.category === "Expenses";
+      if (activeFilter === "System") return n.category === "System";
+      if (activeFilter === "Alerts") return n.category === "Alerts";
+      return true;
+    });
+  };
+
+  // Dynamic KPI stats calculations
+  const unreadTodayCount = financeNotifications.filter(n => !n.read && n.section === "TODAY").length;
+  const pendingActionsCount = financeNotifications.filter(n => !n.read && (n.category === "Expenses" || n.category === "Alerts")).length;
+
+  const tabs = [
+    { key: "All", label: `All (${financeNotifications.length})` },
+    { key: "Unread", label: `Unread (${financeNotifications.filter(n => !n.read).length})` },
+    { key: "Payroll", label: "Payroll" },
+    { key: "Expenses", label: "Expenses" },
+    { key: "System", label: "System" },
+    { key: "Alerts", label: "Alerts" }
+  ] as const;
+
+  const getIconDetails = (type: string) => {
+    switch (type) {
+      case "Payroll":
+        return { icon: IndianRupee, color: "#8B5CF6", bg: "#EDE9FE" };
+      case "Expense":
+        return { icon: Receipt, color: "#F59E0B", bg: "#FEF3C7" };
+      case "Alert":
+        return { icon: AlertCircle, color: "#EF4444", bg: "#FEE2E2" };
+      case "Success":
+        return { icon: Check, color: "#00B87C", bg: "#DCFCE7" };
+      default:
+        return { icon: Info, color: "#0EA5E9", bg: "#E0F2FE" };
+    }
+  };
+
+  // Group notifications by section (Today, Yesterday, This Week)
+  const groupedNotifications = () => {
+    const list = getFilteredNotifications();
+    const sections: Record<string, typeof financeNotifications> = {
+      TODAY: [],
+      YESTERDAY: [],
+      "THIS WEEK": []
+    };
+    list.forEach(n => {
+      if (sections[n.section]) {
+        sections[n.section].push(n);
+      }
+    });
+    return sections;
+  };
+
+  const grouped = groupedNotifications();
+
+  return (
+    <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6 animate-in fade-in duration-500 bg-[#F8FAFC] dark:bg-[#0F172A] min-h-screen">
+      {/* PAGE HEADER */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div
+            style={{
+              width: "44px",
+              height: "44px",
+              backgroundColor: "#FEF3C7",
+              borderRadius: "12px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 4px 12px rgba(245, 158, 11, 0.15)"
+            }}
+          >
+            <Bell size={22} color="#F59E0B" fill="#F59E0B" />
+          </div>
+          <div>
+            <h1 className="text-[26px] font-black text-[#1E293B] dark:text-white tracking-tight leading-none">Notifications</h1>
+            <p className="text-[13px] font-bold text-muted-foreground mt-1.5">Stay updated on payroll, expenses and financial alerts</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleMarkAllRead}
+            className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-[13px] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-2 shadow-sm active:scale-95"
+          >
+            Mark All Read
+          </button>
+          <button
+            onClick={() => setShowPreferences(true)}
+            className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-[13px] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-2 shadow-sm active:scale-95"
+          >
+            ⚙ Preferences
+          </button>
+        </div>
+      </div>
+
+      {/* NOTIFICATION STATS ROW */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <KPICard title="UNREAD TODAY" value={unreadTodayCount} color="amber" />
+        <KPICard title="PENDING ACTIONS" value={pendingActionsCount} color="red" />
+        <KPICard title="RESOLVED TODAY" value={8} color="green" />
+      </div>
+
+      {/* FILTER TABS */}
+      <div className="space-y-6">
+        <div className="flex items-center border-b border-border overflow-x-auto scrollbar-hide">
+          {tabs.map((tab) => {
+            const isActive = activeFilter === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveFilter(tab.key)}
+                className={`px-6 py-4 text-[13px] font-black tracking-widest uppercase transition-all relative whitespace-nowrap cursor-pointer ${
+                  isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {tab.label}
+                {isActive && (
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#00B87C]"
+                    style={{ borderRadius: "3px 3px 0 0" }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* NOTIFICATION LIST CARD */}
+        <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-0">
+          {Object.keys(grouped).map(sectionKey => {
+            const items = grouped[sectionKey];
+            if (items.length === 0) return null;
+            return (
+              <div key={sectionKey} className="flex flex-col">
+                {/* Uppercase date header */}
+                <div
+                  style={{
+                    fontSize: "10px",
+                    fontWeight: 700,
+                    color: "#9CA3AF",
+                    letterSpacing: "1.5px",
+                    textTransform: "uppercase",
+                    padding: "12px 24px",
+                    borderBottom: "1px solid var(--border)",
+                    backgroundColor: "var(--background)",
+                    opacity: 0.8
+                  }}
+                >
+                  {sectionKey}
+                </div>
+
+                {/* Notifications list */}
+                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {items.map(notif => {
+                    const details = getIconDetails(notif.type);
+                    const leftBorder = !notif.read
+                      ? notif.urgent
+                        ? "border-l-[3px] border-[#EF4444]"
+                        : "border-l-[3px] border-[#00B87C]"
+                      : "border-l-[3px] border-transparent";
+
+                    const bgTint = !notif.read 
+                      ? "bg-[#F0FDF4] dark:bg-emerald-500/5" 
+                      : "bg-transparent";
+
+                    return (
+                      <div
+                        key={notif.id}
+                        onClick={() => handleRowClick(notif)}
+                        className={`flex items-center justify-between px-6 py-4 cursor-pointer hover:bg-[#F0FDF4] dark:hover:bg-emerald-500/5 transition-all ${bgTint} ${leftBorder}`}
+                        style={{ height: "64px" }}
+                      >
+                        <div className="flex items-center gap-4 min-w-0 flex-1">
+                          {/* Icon square */}
+                          <div
+                            style={{
+                              width: "36px",
+                              height: "36px",
+                              borderRadius: "10px",
+                              backgroundColor: details.bg,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              flexShrink: 0
+                            }}
+                          >
+                            <details.icon size={18} color={details.color} />
+                          </div>
+
+                          {/* Content */}
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[14px] font-bold text-foreground leading-tight truncate">
+                              {notif.title}
+                            </p>
+                            <p className="text-[12px] font-semibold text-muted-foreground leading-relaxed mt-0.5 truncate max-w-[90%]">
+                              {notif.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Right: Time & Unread dot */}
+                        <div className="flex items-center gap-4 flex-shrink-0 ml-4">
+                          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                            {notif.time}
+                          </span>
+                          <div className="w-2.5 h-2.5 flex items-center justify-center">
+                            {!notif.read && (
+                              <div
+                                style={{
+                                  width: "8px",
+                                  height: "8px",
+                                  borderRadius: "50%",
+                                  backgroundColor: "#00B87C"
+                                }}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* PREFERENCES PANEL (Right Slide-in Drawer) */}
+      {showPreferences && (
+        <>
+          {/* Overlay background */}
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              backgroundColor: "rgba(0,0,0,0.3)",
+              zIndex: 2000,
+              backdropFilter: "blur(2px)"
+            }}
+            onClick={() => setShowPreferences(false)}
+          />
+
+          {/* Sliding drawer content */}
+          <div
+            className="fixed top-0 right-0 h-full z-[2010] overflow-y-auto"
+            style={{
+              width: "380px",
+              backgroundColor: "var(--card)",
+              borderLeft: "1px solid var(--border)",
+              boxShadow: "-4px 0 20px rgba(0,0,0,0.15)",
+              padding: "28px",
+              display: "flex",
+              flexDirection: "column"
+            }}
+          >
+            {/* Drawer Header */}
+            <div className="flex justify-between items-center pb-6 border-b border-border/80">
+              <div className="flex items-center gap-3">
+                <Settings size={20} className="text-[#00B87C]" />
+                <h2 className="text-[18px] font-black text-foreground tracking-tight">Notification Preferences</h2>
+              </div>
+              <button
+                onClick={() => setShowPreferences(false)}
+                className="p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-zinc-800 text-muted-foreground hover:text-foreground cursor-pointer transition-all"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Toggle controls */}
+            <div className="flex-1 py-6 space-y-2 overflow-y-auto">
+              <ToggleRow
+                label="TDS / Tax Deadlines"
+                desc="Critical payroll alerts"
+                value={preferences.tds}
+                onChange={() => setPreferences(prev => ({ ...prev, tds: !prev.tds }))}
+              />
+              <ToggleRow
+                label="Expense Claim Alerts"
+                desc="New claims submitted"
+                value={preferences.expenses}
+                onChange={() => setPreferences(prev => ({ ...prev, expenses: !prev.expenses }))}
+              />
+              <ToggleRow
+                label="Payroll Processing"
+                desc="Stage updates"
+                value={preferences.payroll}
+                onChange={() => setPreferences(prev => ({ ...prev, payroll: !prev.payroll }))}
+              />
+              <ToggleRow
+                label="Increment Approvals"
+                desc="Pending your action"
+                value={preferences.increments}
+                onChange={() => setPreferences(prev => ({ ...prev, increments: !prev.increments }))}
+              />
+              <ToggleRow
+                label="Budget Alerts"
+                desc="Department over-budget"
+                value={preferences.budget}
+                onChange={() => setPreferences(prev => ({ ...prev, budget: !prev.budget }))}
+              />
+              <ToggleRow
+                label="System Maintenance"
+                desc="Scheduled downtime"
+                value={preferences.maintenance}
+                onChange={() => setPreferences(prev => ({ ...prev, maintenance: !prev.maintenance }))}
+              />
+              <ToggleRow
+                label="PF/ESI Reminders"
+                desc="Statutory deadlines"
+                value={preferences.pf}
+                onChange={() => setPreferences(prev => ({ ...prev, pf: !prev.pf }))}
+              />
+
+              {/* Channels checkboxes layout */}
+              <div className="mt-8 pt-6 border-t border-border">
+                <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">Notification Channels</h3>
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 text-[13px] font-bold text-foreground cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={channels.email}
+                      onChange={() => setChannels(prev => ({ ...prev, email: !prev.email }))}
+                      className="w-4 h-4 rounded border-slate-300 text-[#00B87C] focus:ring-[#00B87C] cursor-pointer"
+                      style={{ accentColor: "#00B87C" }}
+                    />
+                    <span>Email Notifications</span>
+                  </label>
+                  <label className="flex items-center gap-3 text-[13px] font-bold text-foreground cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={channels.push}
+                      onChange={() => setChannels(prev => ({ ...prev, push: !prev.push }))}
+                      className="w-4 h-4 rounded border-slate-300 text-[#00B87C] focus:ring-[#00B87C] cursor-pointer"
+                      style={{ accentColor: "#00B87C" }}
+                    />
+                    <span>Push Notifications</span>
+                  </label>
+                  <label className="flex items-center gap-3 text-[13px] font-bold text-foreground cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={channels.sms}
+                      onChange={() => setChannels(prev => ({ ...prev, sms: !prev.sms }))}
+                      className="w-4 h-4 rounded border-slate-300 text-[#00B87C] focus:ring-[#00B87C] cursor-pointer"
+                      style={{ accentColor: "#00B87C" }}
+                    />
+                    <span>SMS Alerts</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="pt-6 border-t border-border/80 bg-card">
+              <button
+                onClick={handleSavePreferences}
+                className="w-full py-3.5 bg-[#00B87C] text-white rounded-2xl text-[14px] font-black uppercase tracking-[1.5px] hover:opacity-95 transition-all shadow-lg shadow-emerald-500/20 active:scale-95 cursor-pointer"
+              >
+                Save Preferences
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── PRIVATE COMPONENTS FOR FINANCE NOTIFICATIONS ──────────────────
+function KPICard({ title, value, color }: { title: string; value: number; color: "amber" | "red" | "green" }) {
+  const colors = {
+    amber: { text: "text-[#D97706]", bg: "bg-[#FEF3C7]/40 dark:bg-amber-500/5", border: "border-amber-100/50 dark:border-amber-500/10" },
+    red: { text: "text-rose-500", bg: "bg-rose-50 dark:bg-rose-500/5", border: "border-rose-100/50 dark:border-rose-500/10" },
+    green: { text: "text-[#00B87C]", bg: "bg-[#F0FDF4]/40 dark:bg-emerald-500/5", border: "border-[#00B87C]/20 dark:border-emerald-500/10" }
+  };
+
+  return (
+    <div className={`p-6 bg-card border ${colors[color].border} ${colors[color].bg} rounded-2xl shadow-sm hover:shadow-md transition-all`}>
+      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[1.5px] mb-2">{title}</p>
+      <h3 className={`text-3xl font-black tracking-tighter ${colors[color].text}`}>{value}</h3>
+    </div>
+  );
+}
+
+function ToggleRow({
+  label,
+  desc,
+  value,
+  onChange
+}: {
+  label: string;
+  desc: string;
+  value: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-between py-3.5 border-b border-border/40">
+      <div>
+        <p className="text-[13px] font-bold text-foreground leading-tight">{label}</p>
+        <p className="text-[11px] font-semibold text-muted-foreground mt-1">{desc}</p>
+      </div>
+      <button
+        onClick={onChange}
+        style={{
+          width: "36px",
+          height: "20px",
+          borderRadius: "20px",
+          backgroundColor: value ? "#00B87C" : "#E5E7EB",
+          position: "relative",
+          transition: "all 0.2s",
+          cursor: "pointer",
+          border: "none",
+        }}
+      >
+        <span
+          style={{
+            position: "absolute",
+            top: "2px",
+            left: value ? "18px" : "2px",
+            width: "16px",
+            height: "16px",
+            borderRadius: "50%",
+            backgroundColor: "white",
+            transition: "all 0.2s",
+          }}
+        />
+      </button>
+    </div>
+  );
+}
+
