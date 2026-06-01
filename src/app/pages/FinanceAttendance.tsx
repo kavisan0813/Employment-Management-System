@@ -5,7 +5,10 @@ import {
   Plus,
   Calendar,
   ChevronDown,
+  X,
 } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { showToast } from "../components/workflow/ToastNotification";
 
 const ATTENDANCE_LOGS = [
   { date: "01 Apr 2026", in: "08:52 AM", out: "06:05 PM", status: "Present" },
@@ -25,9 +28,25 @@ const MONTH_NAMES = [
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+interface RegularizationReq {
+  date: string;
+  checkIn: string;
+  checkOut: string;
+  reason: string;
+  status: "Pending" | "Approved";
+}
+
 export function FinanceAttendance() {
   const [selectedMonth, setSelectedMonth] = useState(3); // April
   const [selectedYear] = useState(2026);
+  const [isRegModalOpen, setIsRegModalOpen] = useState(false);
+  const [regRequests, setRegRequests] = useState<RegularizationReq[]>([]);
+  
+  // Modal Fields
+  const [regDate, setRegDate] = useState("2026-04-07");
+  const [regIn, setRegIn] = useState("09:00");
+  const [regOut, setRegOut] = useState("18:00");
+  const [regReason, setRegReason] = useState("");
 
   // Calendar Math
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
@@ -35,6 +54,30 @@ export function FinanceAttendance() {
   const calendarDays = [];
   for (let i = 0; i < firstDayOfMonth; i++) calendarDays.push(null);
   for (let i = 1; i <= daysInMonth; i++) calendarDays.push(i);
+
+  const handleApplyReg = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!regReason.trim()) {
+      showToast("Error", "error", "Please provide a reason for regularization.");
+      return;
+    }
+    const formattedDate = new Date(regDate).toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+    const newReq: RegularizationReq = {
+      date: formattedDate,
+      checkIn: regIn,
+      checkOut: regOut,
+      reason: regReason,
+      status: "Pending"
+    };
+    setRegRequests([newReq, ...regRequests]);
+    setIsRegModalOpen(false);
+    setRegReason("");
+    showToast("Applied", "success", "Regularization request submitted successfully.");
+  };
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-700">
@@ -61,12 +104,15 @@ export function FinanceAttendance() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="px-5 py-2.5 rounded-xl border border-[#00B87C] text-[#00B87C] font-black text-[12px] uppercase tracking-widest hover:bg-[#00B87C]/5 transition-all">
+          <button 
+            onClick={() => setIsRegModalOpen(true)}
+            className="px-5 py-2.5 rounded-xl border border-[#00B87C] text-[#00B87C] font-black text-[12px] uppercase tracking-widest hover:bg-[#00B87C]/5 transition-all"
+          >
             Apply Regularization
           </button>
           <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-card hover:bg-secondary transition-all">
-            <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-[10px] font-black text-white">AD</div>
-            <span className="text-[13px] font-black text-foreground">Ananya Das</span>
+            <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-[10px] font-black text-white">AS</div>
+            <span className="text-[13px] font-black text-foreground">Ananya Sharma</span>
             <ChevronDown size={14} className="text-muted-foreground" />
           </button>
         </div>
@@ -191,19 +237,135 @@ export function FinanceAttendance() {
           <div className="bg-card rounded-[32px] p-6 border border-border shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[16px] font-black text-foreground tracking-tight">Regularization Requests</h3>
-              <button className="text-[12px] font-black text-[#00B87C] hover:underline uppercase tracking-widest">Apply New</button>
+              <button 
+                onClick={() => setIsRegModalOpen(true)}
+                className="text-[12px] font-black text-[#00B87C] hover:underline uppercase tracking-widest bg-transparent"
+              >
+                Apply New
+              </button>
             </div>
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className="w-16 h-16 rounded-3xl bg-muted/50 flex items-center justify-center text-muted-foreground/30 mb-4">
-                <Plus size={32} />
+            
+            {regRequests.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <div className="w-16 h-16 rounded-3xl bg-muted/50 flex items-center justify-center text-muted-foreground/30 mb-4">
+                  <Plus size={32} />
+                </div>
+                <p className="text-[13px] font-bold text-muted-foreground italic">No regularization requests this month</p>
               </div>
-              <p className="text-[13px] font-bold text-muted-foreground italic">No regularization requests this month</p>
-            </div>
+            ) : (
+              <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
+                {regRequests.map((req, index) => (
+                  <div key={index} className="p-4 rounded-2xl border border-border bg-muted/20 flex flex-col gap-1.5">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[13px] font-black text-foreground">{req.date}</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-600 border border-amber-500/20">{req.status}</span>
+                    </div>
+                    <div className="flex items-center gap-4 text-[11px] font-bold text-muted-foreground">
+                      <span>In: <strong className="text-foreground">{req.checkIn}</strong></span>
+                      <span>Out: <strong className="text-foreground">{req.checkOut}</strong></span>
+                    </div>
+                    <p className="text-[11px] font-bold text-muted-foreground italic">"{req.reason}"</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
         </div>
 
       </div>
+
+      {/* ─── REGULARIZATION REQUEST MODAL ─── */}
+      <AnimatePresence>
+        {isRegModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsRegModalOpen(false)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-[460px] bg-card border border-border rounded-[24px] shadow-2xl flex flex-col"
+            >
+              <div className="p-6 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00B87C]">
+                    <Calendar size={20} />
+                  </div>
+                  <h2 className="text-[18px] font-black text-foreground tracking-tight">Apply Regularization</h2>
+                </div>
+                <button onClick={() => setIsRegModalOpen(false)} className="p-2 rounded-xl hover:bg-muted text-muted-foreground bg-transparent">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleApplyReg} className="p-6 space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Select Date</label>
+                  <input 
+                    type="date" 
+                    value={regDate}
+                    onChange={(e) => setRegDate(e.target.value)}
+                    className="w-full h-11 px-4 rounded-xl border border-border bg-card text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C]" 
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Check-In Time</label>
+                    <input 
+                      type="time" 
+                      value={regIn}
+                      onChange={(e) => setRegIn(e.target.value)}
+                      className="w-full h-11 px-4 rounded-xl border border-border bg-card text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C]" 
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Check-Out Time</label>
+                    <input 
+                      type="time" 
+                      value={regOut}
+                      onChange={(e) => setRegOut(e.target.value)}
+                      className="w-full h-11 px-4 rounded-xl border border-border bg-card text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C]" 
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Reason for Regularization</label>
+                  <textarea 
+                    value={regReason}
+                    onChange={(e) => setRegReason(e.target.value)}
+                    placeholder="Describe why you need to regularize this day (e.g. forgot to check in, bio-metric error)..." 
+                    className="w-full h-24 py-3 px-4 rounded-xl border border-border bg-card text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] resize-none" 
+                  />
+                </div>
+
+                <div className="pt-4 border-t border-border flex items-center justify-end gap-3">
+                  <button 
+                    type="button"
+                    onClick={() => setIsRegModalOpen(false)}
+                    className="px-5 py-2.5 rounded-xl border border-border bg-secondary text-[13px] font-bold text-foreground hover:bg-secondary/80 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[13px] font-black shadow-lg shadow-emerald-500/20 hover:bg-[#009966] transition-all"
+                  >
+                    Submit Request
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

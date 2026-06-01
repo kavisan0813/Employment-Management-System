@@ -17,23 +17,54 @@ import {
   Camera,
   Info,
   ChevronDown,
-  Linkedin
+  Linkedin,
+  X,
+  CheckCircle2
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useAuth } from "../context/AuthContext";
+import { showToast } from "../components/workflow/ToastNotification";
 
 type ProfileTab = "Personal Info" | "Employment" | "Documents" | "Emergency Contact" | "Settings";
 
 export function FinanceProfile() {
-  const { user } = useAuth(); // Keep this but prefix with _ if needed, or just use it for the name
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<ProfileTab>("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  // Profile data state
+  const [avatarInitials, setAvatarInitials] = useState("AS");
+  const [skills, setSkills] = useState(["Excel", "SAP", "TDS Filing", "PF Management", "Financial Modeling", "Taxation"]);
+  const [isAddSkillOpen, setIsAddSkillOpen] = useState(false);
+  const [newSkill, setNewSkill] = useState("");
+  const [isMessageOpen, setIsMessageOpen] = useState(false);
+  const [messageText, setMessageText] = useState("");
+
   const handleSave = () => {
     setSaved(true);
     setIsEditing(false);
+    showToast("Profile Updated", "success", "Your changes have been saved successfully.");
     setTimeout(() => setSaved(false), 3000);
+  };
+
+  const handleAddSkillSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
+      setSkills([...skills, newSkill.trim()]);
+      showToast("Skill Added", "success", `"${newSkill.trim()}" has been added to your profile.`);
+      setNewSkill("");
+      setIsAddSkillOpen(false);
+    }
+  };
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (messageText.trim()) {
+      showToast("Message Sent", "success", "Your support message has been sent.");
+      setMessageText("");
+      setIsMessageOpen(false);
+    }
   };
 
   return (
@@ -51,23 +82,35 @@ export function FinanceProfile() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 -mt-10 relative z-10">
             <div className="flex flex-col md:flex-row items-center md:items-end gap-6">
               {/* Avatar with Upload Overlay */}
-              <div className="relative group">
+              <div 
+                onClick={() => {
+                  const input = document.createElement("input");
+                  input.type = "file";
+                  input.accept = "image/*";
+                  input.onchange = () => {
+                    setAvatarInitials("AS");
+                    showToast("Avatar Updated", "success", "Your profile photo has been updated successfully.");
+                  };
+                  input.click();
+                }}
+                className="relative group cursor-pointer"
+              >
                 <div className="w-32 h-32 rounded-[40px] bg-emerald-100 dark:bg-emerald-500/10 border-[6px] border-card shadow-xl overflow-hidden flex items-center justify-center">
-                  <span className="text-4xl font-black text-[#00B87C]">AD</span>
+                  <span className="text-4xl font-black text-[#00B87C]">{avatarInitials}</span>
                 </div>
-                <div className="absolute inset-0 rounded-[40px] bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center cursor-pointer backdrop-blur-[2px] m-[6px]">
+                <div className="absolute inset-0 rounded-[40px] bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px] m-[6px]">
                   <Camera size={24} className="text-white" />
                 </div>
               </div>
 
               <div className="text-center md:text-left pb-2">
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-1">
-                  <h1 className="text-2xl font-black text-foreground tracking-tight">{user?.name || "Ananya Das"}</h1>
+                  <h1 className="text-2xl font-black text-foreground tracking-tight">{"Ananya Sharma"}</h1>
                   <span className="px-2.5 py-1 rounded-lg bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)] text-[10px] font-black uppercase tracking-widest text-white">
                     ● Active
                   </span>
                 </div>
-                <p className="text-[#00B87C] font-bold text-sm mb-3">{user?.role || "Finance Officer"}</p>
+                <p className="text-[#00B87C] font-bold text-sm mb-3">{"Senior Finance Manager"}</p>
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
                   <span className="px-3 py-1 rounded-full bg-muted/50 border border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     #EMP-0088
@@ -100,22 +143,28 @@ export function FinanceProfile() {
                   <span className="text-[11px] font-black text-emerald-600 uppercase tracking-widest">Changes Saved!</span>
                 </motion.div>
               )}
-              <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all shadow-sm">
+              <button 
+                onClick={() => setIsMessageOpen(true)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all shadow-sm bg-transparent"
+              >
                 <MessageSquare size={16} />
                 Message
               </button>
               <button 
                 onClick={() => setIsEditing(!isEditing)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border transition-all shadow-sm font-black text-[12px] uppercase tracking-widest ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border transition-all shadow-sm font-black text-[12px] uppercase tracking-widest bg-transparent ${
                   isEditing 
-                  ? "bg-[#00B87C] border-[#00B87C] text-white" 
+                  ? "bg-[#00B87C] border-[#00B87C] text-white hover:bg-[#009966]" 
                   : "border-border text-foreground hover:bg-muted/50"
                 }`}
               >
                 <Edit3 size={16} />
                 {isEditing ? "Editing..." : "Edit Profile"}
               </button>
-              <button className="p-2.5 rounded-xl border border-border text-foreground hover:bg-muted/50 transition-all shadow-sm">
+              <button 
+                onClick={() => showToast("Info", "info", "Role permissions: Senior Finance Manager workspace.")}
+                className="p-2.5 rounded-xl border border-border text-foreground hover:bg-muted/50 transition-all shadow-sm bg-transparent"
+              >
                 <MoreHorizontal size={20} />
               </button>
             </div>
@@ -128,7 +177,7 @@ export function FinanceProfile() {
                 <Briefcase size={22} />
               </div>
               <div>
-                <p className="text-xl font-black text-foreground tracking-tight">3.8 yrs</p>
+                <p className="text-xl font-black text-foreground tracking-tight">4.4 yrs</p>
                 <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Tenure</p>
               </div>
             </div>
@@ -137,7 +186,7 @@ export function FinanceProfile() {
                 <TrendingUp size={22} />
               </div>
               <div>
-                <p className="text-xl font-black text-foreground tracking-tight">94%</p>
+                <p className="text-xl font-black text-foreground tracking-tight">96%</p>
                 <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Attendance</p>
               </div>
             </div>
@@ -146,7 +195,7 @@ export function FinanceProfile() {
                 <Star size={22} fill="currentColor" />
               </div>
               <div>
-                <p className="text-xl font-black text-foreground tracking-tight">4.3★</p>
+                <p className="text-xl font-black text-foreground tracking-tight">4.8★</p>
                 <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Rating</p>
               </div>
             </div>
@@ -162,7 +211,7 @@ export function FinanceProfile() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab as ProfileTab)}
-              className={`px-8 py-4 text-[13px] font-black tracking-widest uppercase transition-all relative whitespace-nowrap ${
+              className={`px-8 py-4 text-[13px] font-black tracking-widest uppercase transition-all relative whitespace-nowrap bg-transparent border-0 ${
                 isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -188,11 +237,17 @@ export function FinanceProfile() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
-            {activeTab === "Personal Info" && <PersonalInfoTab isEditing={isEditing} />}
+            {activeTab === "Personal Info" && (
+              <PersonalInfoTab 
+                isEditing={isEditing} 
+                skills={skills} 
+                onAddSkillClick={() => setIsAddSkillOpen(true)} 
+              />
+            )}
             {activeTab === "Employment" && <EmploymentTab />}
             {activeTab === "Documents" && <DocumentsTab />}
             {activeTab === "Emergency Contact" && <EmergencyContactTab isEditing={isEditing} />}
-            {activeTab === "Settings" && <SettingsTab />}
+            {activeTab === "Settings" && <SettingsTab onTabChange={setActiveTab} />}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -208,7 +263,7 @@ export function FinanceProfile() {
           >
             <button 
               onClick={() => setIsEditing(false)}
-              className="px-6 py-2.5 rounded-xl border border-border text-muted-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all"
+              className="px-6 py-2.5 rounded-xl border border-border text-muted-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all bg-transparent"
             >
               Cancel
             </button>
@@ -221,13 +276,112 @@ export function FinanceProfile() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ADD SKILL MODAL */}
+      <AnimatePresence>
+        {isAddSkillOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsAddSkillOpen(false)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-[360px] bg-card border border-border rounded-[24px] shadow-2xl p-6"
+            >
+              <h3 className="text-[16px] font-black text-foreground mb-4">Add Custom Skill</h3>
+              <form onSubmit={handleAddSkillSubmit} className="space-y-4">
+                <input 
+                  type="text" 
+                  value={newSkill}
+                  onChange={(e) => setNewSkill(e.target.value)}
+                  placeholder="e.g. GST Auditing, SQL"
+                  className="w-full h-11 px-4 rounded-xl border border-border bg-muted/20 text-sm font-bold text-foreground outline-none focus:border-[#00B87C]"
+                  autoFocus
+                />
+                <div className="flex justify-end gap-2 pt-2">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsAddSkillOpen(false)}
+                    className="px-4 py-2 rounded-xl bg-secondary text-muted-foreground text-xs font-bold"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-[#00B87C] text-white text-xs font-black uppercase tracking-wider shadow-md"
+                  >
+                    Add
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* MESSAGE MODAL */}
+      <AnimatePresence>
+        {isMessageOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMessageOpen(false)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-[440px] bg-card border border-border rounded-[24px] shadow-2xl p-6"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-[16px] font-black text-foreground">Send Message to VP Finance</h3>
+                <button onClick={() => setIsMessageOpen(false)} className="p-1 rounded-lg hover:bg-muted text-muted-foreground bg-transparent border-0"><X size={18} /></button>
+              </div>
+              <form onSubmit={handleSendMessage} className="space-y-4">
+                <textarea 
+                  value={messageText}
+                  onChange={(e) => setMessageText(e.target.value)}
+                  placeholder="Type your message..."
+                  className="w-full h-32 py-3 px-4 rounded-xl border border-border bg-muted/20 text-sm font-bold text-foreground outline-none focus:border-[#00B87C] resize-none"
+                  autoFocus
+                />
+                <div className="flex justify-end gap-2">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsMessageOpen(false)}
+                    className="px-4 py-2 rounded-xl bg-secondary text-muted-foreground text-xs font-bold"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-[#00B87C] text-white text-xs font-black uppercase tracking-wider shadow-md"
+                  >
+                    Send Message
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
 
 /* ─── TAB CONTENT COMPONENTS ─── */
 
-function PersonalInfoTab({ isEditing }: { isEditing: boolean }) {
+function PersonalInfoTab({ isEditing, skills, onAddSkillClick }: { isEditing: boolean; skills: string[]; onAddSkillClick: () => void }) {
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       {/* LEFT COLUMN: 60% */}
@@ -235,10 +389,10 @@ function PersonalInfoTab({ isEditing }: { isEditing: boolean }) {
         <div className="bg-card border border-border rounded-[32px] p-8 shadow-sm">
           <SectionTitle title="Personal Details" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <EditField label="Full Name" value="Ananya Das" disabled={!isEditing} />
+            <EditField label="Full Name" value="Ananya Sharma" disabled={!isEditing} />
             <EditField label="Date of Birth" value="15 Aug 1992" type="date" disabled={!isEditing} />
-            <SelectField label="Gender" value="Female" options={["Male", "Female", "Other"]} disabled={!isEditing} />
-            <SelectField label="Blood Group" value="O+" options={["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]} disabled={!isEditing} />
+            <SelectField label="Gender" value="Female" options={["Female", "Male", "Other"]} disabled={!isEditing} />
+            <SelectField label="Blood Group" value="O+" options={["O+", "A+", "A-", "B+", "B-", "O-", "AB+", "AB-"]} disabled={!isEditing} />
             <SelectField label="Marital Status" value="Single" options={["Single", "Married", "Divorced", "Widowed"]} disabled={!isEditing} />
             <EditField label="Nationality" value="Indian" disabled={!isEditing} />
           </div>
@@ -247,10 +401,10 @@ function PersonalInfoTab({ isEditing }: { isEditing: boolean }) {
         <div className="bg-card border border-border rounded-[32px] p-8 shadow-sm">
           <SectionTitle title="Contact Information" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <EditField label="Personal Email" value="ananya.das@email.com" icon={<Mail size={14} />} disabled={!isEditing} />
+            <EditField label="Personal Email" value="ananya.sharma@email.com" icon={<Mail size={14} />} disabled={!isEditing} />
             <EditField label="Mobile" value="+91 98765 43210" icon={<Phone size={14} />} disabled={!isEditing} />
             <EditField label="Alternate Phone" value="+91 98765 00000" icon={<Phone size={14} />} disabled={!isEditing} />
-            <EditField label="LinkedIn" value="linkedin.com/in/ananya-das-fin" icon={<Linkedin size={14} />} disabled={!isEditing} />
+            <EditField label="LinkedIn" value="linkedin.com/in/ananya-sharma-fin" icon={<Linkedin size={14} />} disabled={!isEditing} />
           </div>
         </div>
 
@@ -271,14 +425,14 @@ function PersonalInfoTab({ isEditing }: { isEditing: boolean }) {
         <div className="bg-card border border-border rounded-[32px] p-8 shadow-sm">
           <SectionTitle title="Skills & Expertise" />
           <div className="flex flex-wrap gap-2.5 mt-6">
-            <SkillChip label="Excel" color="green" />
-            <SkillChip label="SAP" color="blue" />
-            <SkillChip label="TDS Filing" color="amber" />
-            <SkillChip label="PF Management" color="purple" />
-            <SkillChip label="Financial Modeling" color="emerald" />
-            <SkillChip label="Taxation" color="rose" />
+            {skills.map((skill, index) => (
+              <SkillChip key={index} label={skill} color={index % 2 === 0 ? "green" : "blue"} />
+            ))}
             {isEditing && (
-              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-dashed border-border text-[11px] font-bold text-muted-foreground hover:text-foreground transition-all">
+              <button 
+                onClick={onAddSkillClick}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-dashed border-border text-[11px] font-bold text-muted-foreground hover:text-foreground transition-all bg-transparent"
+              >
                 <Plus size={14} /> Add Skill
               </button>
             )}
@@ -322,7 +476,7 @@ function EmploymentTab() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-8">
         <ReadOnlyField label="Employee ID" value="EMP-0088" />
-        <ReadOnlyField label="Designation" value="Finance Officer" />
+        <ReadOnlyField label="Designation" value="Senior Finance Manager" />
         <ReadOnlyField label="Department" value="Finance & Accounts" />
         <ReadOnlyField label="Reporting Manager" value="Sameer Mehta (VP Finance)" />
         <ReadOnlyField label="Employment Type" value="Full-time Permanent" />
@@ -332,7 +486,7 @@ function EmploymentTab() {
         <ReadOnlyField label="Notice Period" value="90 Days" />
         <ReadOnlyField label="Cost Center" value="FIN-GLOBAL-01" />
         <ReadOnlyField label="Probation Status" value="Completed" />
-        <ReadOnlyField label="Official Email" value="ananya.das@nexushr.com" />
+        <ReadOnlyField label="Official Email" value="ananya.sharma@nexushr.com" />
       </div>
     </div>
   );
@@ -348,7 +502,10 @@ function DocumentsTab() {
         <DocCard name="Experience_Letter.pdf" size="2.5 MB" date="Jan 12, 2022" />
         <DocCard name="Aadhar_Verified.pdf" size="0.8 MB" date="Jan 12, 2022" />
       </div>
-      <button className="mt-8 flex items-center gap-2 px-6 py-3 rounded-xl border border-dashed border-border text-muted-foreground font-black text-[12px] uppercase tracking-widest hover:border-[#00B87C] hover:text-[#00B87C] transition-all w-full justify-center">
+      <button 
+        onClick={() => showToast("Upload Document", "success", "File picker opened.")}
+        className="mt-8 flex items-center gap-2 px-6 py-3 rounded-xl border border-dashed border-border text-muted-foreground font-black text-[12px] uppercase tracking-widest hover:border-[#00B87C] hover:text-[#00B87C] transition-all w-full justify-center"
+      >
         <Plus size={18} /> Upload New Document
       </button>
     </div>
@@ -363,7 +520,7 @@ function EmergencyContactTab({ isEditing }: { isEditing: boolean }) {
         <div className="space-y-6">
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Primary Contact</p>
           <div className="grid grid-cols-1 gap-6">
-            <EditField label="Contact Name" value="Rajat Das" disabled={!isEditing} />
+            <EditField label="Contact Name" value="Rajat Sharma" disabled={!isEditing} />
             <EditField label="Relationship" value="Spouse" disabled={!isEditing} />
             <EditField label="Phone Number" value="+91 98765 11111" disabled={!isEditing} />
           </div>
@@ -371,7 +528,7 @@ function EmergencyContactTab({ isEditing }: { isEditing: boolean }) {
         <div className="space-y-6">
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Secondary Contact</p>
           <div className="grid grid-cols-1 gap-6">
-            <EditField label="Contact Name" value="Suman Das" disabled={!isEditing} />
+            <EditField label="Contact Name" value="Suman Sharma" disabled={!isEditing} />
             <EditField label="Relationship" value="Father" disabled={!isEditing} />
             <EditField label="Phone Number" value="+91 98765 22222" disabled={!isEditing} />
           </div>
@@ -381,7 +538,7 @@ function EmergencyContactTab({ isEditing }: { isEditing: boolean }) {
   );
 }
 
-function SettingsTab() {
+function SettingsTab({ onTabChange }: { onTabChange: (tab: ProfileTab) => void }) {
   return (
     <div className="space-y-6">
       <div className="bg-card border border-border rounded-[32px] p-8 shadow-sm">
@@ -405,8 +562,13 @@ function SettingsTab() {
               <p className="text-[12px] font-bold text-muted-foreground">Last changed 45 days ago</p>
             </div>
           </div>
-          <button className="px-6 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all">
-            Change Password
+          <button 
+            onClick={() => {
+              showToast("Info", "info", "To manage security preferences, go to Account -> Security & Password under Settings.");
+            }}
+            className="px-6 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all bg-transparent"
+          >
+            Manage Security
           </button>
         </div>
       </div>
@@ -495,8 +657,23 @@ function LanguageRow({ label, level }: { label: string, level: string }) {
 }
 
 function DocCard({ name, size, date }: { name: string, size: string, date: string }) {
+  const handleDownload = () => {
+    const content = `Mock document download content for: ${name}\nNexusHR Secure Document Repository.`;
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast("Downloaded", "success", `${name} downloaded successfully.`);
+  };
+
   return (
-    <div className="p-4 rounded-2xl border border-border bg-muted/10 group hover:border-[#00B87C]/50 hover:bg-[#00B87C]/5 transition-all cursor-pointer">
+    <div 
+      onClick={handleDownload}
+      className="p-4 rounded-2xl border border-border bg-muted/10 group hover:border-[#00B87C]/50 hover:bg-[#00B87C]/5 transition-all cursor-pointer"
+    >
       <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center mb-4 group-hover:bg-[#00B87C]/20 transition-all">
         <Download size={20} className="text-muted-foreground group-hover:text-[#00B87C]" />
       </div>

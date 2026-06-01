@@ -7,6 +7,7 @@ import {
   ChevronDown
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { showToast } from "../components/workflow/ToastNotification";
 
 interface Payslip {
   id: string;
@@ -37,6 +38,60 @@ export function FinancePayslips() {
     setShowViewer(true);
   };
 
+  const downloadPayslipFile = (payslip: Payslip) => {
+    const content = `
+==================================================
+           NEXUSHR SOLUTIONS PVT LTD
+==================================================
+Salary Statement: ${payslip.month} ${payslip.year}
+Employee Name: Ananya Sharma
+Employee ID: EMP-0088
+Designation: Senior Finance Manager
+Department: Finance
+--------------------------------------------------
+Gross Earning: ${payslip.gross}
+Total Deductions: ${payslip.deductions}
+Net Payable Amount: ${payslip.net}
+Status: ${payslip.status}
+==================================================
+This is a secure, digitally generated pay slip copy.
+Thank you for your valuable contribution.
+`;
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Payslip_Ananya_Sharma_${payslip.month}_${payslip.year}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast("Download Complete", "success", `Salary slip for ${payslip.month} ${payslip.year} downloaded.`);
+  };
+
+  const downloadAllPayslips = () => {
+    let merged = `==================================================\n`;
+    merged += `           NEXUSHR SYSTEM - SALARY HISTORY\n`;
+    merged += `==================================================\n`;
+    merged += `Employee: Ananya Sharma (EMP-0088)\n\n`;
+
+    payslipsData.forEach(p => {
+      merged += `${p.month} ${p.year}: Gross ${p.gross} | Deductions ${p.deductions} | Net Pay ${p.net} [${p.status}]\n`;
+    });
+    merged += `\nReport generated on May 29, 2026.`;
+
+    const blob = new Blob([merged], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `All_Payslips_Ananya_Sharma.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast("Download Complete", "success", "All historical payslips downloaded.");
+  };
+
+  const handleEmailPayslip = (payslip: Payslip) => {
+    showToast("Email Sent", "success", `Payslip for ${payslip.month} ${payslip.year} sent to ananya.sharma@nexushr.com`);
+  };
+
   return (
     <div className="w-full px-4 md:px-8 py-6 space-y-6 animate-in fade-in duration-500 overflow-hidden relative">
       
@@ -51,7 +106,10 @@ export function FinancePayslips() {
             <p className="text-[13px] font-bold text-muted-foreground">Manage and download your salary statements</p>
           </div>
         </div>
-        <button className="px-5 py-2.5 rounded-xl border border-border bg-card text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-secondary transition-all flex items-center gap-2">
+        <button 
+          onClick={downloadAllPayslips}
+          className="px-5 py-2.5 rounded-xl border border-border bg-card text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-secondary transition-all flex items-center gap-2"
+        >
           <Download size={16} /> Download All
         </button>
       </div>
@@ -113,11 +171,14 @@ export function FinancePayslips() {
                   <td className="px-8 text-right space-x-2">
                     <button 
                       onClick={() => handleView(payslip)}
-                      className="px-4 py-1.5 rounded-lg border border-border text-[11px] font-black uppercase tracking-widest hover:bg-muted transition-all"
+                      className="px-4 py-1.5 rounded-lg border border-border text-[11px] font-black uppercase tracking-widest hover:bg-muted transition-all bg-transparent"
                     >
                       View
                     </button>
-                    <button className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground transition-all">
+                    <button 
+                      onClick={() => downloadPayslipFile(payslip)}
+                      className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground transition-all bg-transparent"
+                    >
                       <Download size={14} />
                     </button>
                   </td>
@@ -152,10 +213,13 @@ export function FinancePayslips() {
                   <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">{selectedPayslip.month} {selectedPayslip.year}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button className="p-2 rounded-xl bg-emerald-500 text-white hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20">
+                  <button 
+                    onClick={() => downloadPayslipFile(selectedPayslip)}
+                    className="p-2 rounded-xl bg-[#00B87C] text-white hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20 border-0"
+                  >
                     <Download size={18} />
                   </button>
-                  <button onClick={() => setShowViewer(false)} className="p-2 rounded-xl hover:bg-muted text-muted-foreground">
+                  <button onClick={() => setShowViewer(false)} className="p-2 rounded-xl hover:bg-muted text-muted-foreground bg-transparent border-0">
                     <X size={20} />
                   </button>
                 </div>
@@ -176,9 +240,9 @@ export function FinancePayslips() {
 
                 {/* Employee Info Grid */}
                 <div className="grid grid-cols-2 gap-y-4 gap-x-8">
-                  <InfoItem label="Employee Name" value="Ananya Das" />
+                  <InfoItem label="Employee Name" value="Ananya Sharma" />
                   <InfoItem label="Emp ID" value="EMP-0088" />
-                  <InfoItem label="Designation" value="Finance Officer" />
+                  <InfoItem label="Designation" value="Senior Finance Manager" />
                   <InfoItem label="Department" value="Finance" />
                   <InfoItem label="Bank Account" value="XXXX XXXX 1234" />
                   <InfoItem label="PAN" value="ABCDE1234F" />
@@ -225,10 +289,16 @@ export function FinancePayslips() {
               </div>
 
               <div className="p-6 border-t border-border space-y-3 bg-muted/20">
-                <button className="w-full py-4 bg-[#00B87C] text-white rounded-2xl text-[14px] font-black uppercase tracking-[1.5px] shadow-xl shadow-[#00B87C]/20 hover:opacity-95 transition-all">
+                <button 
+                  onClick={() => downloadPayslipFile(selectedPayslip)}
+                  className="w-full py-4 bg-[#00B87C] text-white rounded-2xl text-[14px] font-black uppercase tracking-[1.5px] shadow-xl shadow-[#00B87C]/20 hover:opacity-95 transition-all border-0"
+                >
                   Download PDF
                 </button>
-                <button className="w-full py-4 border border-border bg-card text-foreground rounded-2xl text-[14px] font-black uppercase tracking-[1.5px] hover:bg-muted transition-all">
+                <button 
+                  onClick={() => handleEmailPayslip(selectedPayslip)}
+                  className="w-full py-4 border border-border bg-card text-foreground rounded-2xl text-[14px] font-black uppercase tracking-[1.5px] hover:bg-muted transition-all"
+                >
                   Email Payslip
                 </button>
               </div>

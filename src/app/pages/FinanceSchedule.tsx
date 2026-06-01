@@ -38,9 +38,36 @@ export function FinanceSchedule() {
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const [showShiftDetails, setShowShiftDetails] = useState<ShiftCell | null>(null);
 
-  const handleRequestSwap = () => {
-    showToast("Swap request submitted successfully to Rajan Kumar.", "success");
+  // Stateful Swap Requests
+  const [swapRequests, setSwapRequests] = useState<any[]>([]);
+  const [colleagueName, setColleagueName] = useState("");
+  const [theirShift, setTheirShift] = useState("Evening Shift (14:00 - 22:00)");
+  const [swapReason, setSwapReason] = useState("");
+
+  const handleRequestSwap = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!colleagueName.trim() || !swapReason.trim()) {
+      showToast("Error", "error", "Please fill in all the fields.");
+      return;
+    }
+    const newRequest = {
+      id: `SWAP-${Math.floor(1000 + Math.random() * 9000)}`,
+      myShift: "Apr 7 (Tue) · Morning · 06:00 – 14:00",
+      colleague: colleagueName,
+      theirShift: theirShift,
+      reason: swapReason,
+      status: "Pending Approval"
+    };
+    setSwapRequests([newRequest, ...swapRequests]);
+    showToast("Success", "success", `Swap request submitted successfully to ${colleagueName}.`);
     setIsSwapModalOpen(false);
+    setColleagueName("");
+    setSwapReason("");
+  };
+
+  const handleCancelSwap = (id: string) => {
+    setSwapRequests(prev => prev.filter(r => r.id !== id));
+    showToast("Cancelled", "info", "Swap request cancelled successfully.");
   };
 
   return (
@@ -60,7 +87,7 @@ export function FinanceSchedule() {
         <div>
           <button 
             onClick={() => setIsSwapModalOpen(true)}
-            className="px-5 py-2.5 rounded-xl border-2 border-[#00B87C] text-[#00B87C] font-black text-[13px] hover:bg-[#00B87C]/10 transition-all flex items-center gap-2 bg-transparent"
+            className="px-5 py-2.5 rounded-xl border-2 border-[#00B87C] text-[#00B87C] font-black text-[13px] hover:bg-[#00B87C]/10 transition-all flex items-center gap-2 bg-transparent cursor-pointer"
           >
             <span className="text-[15px]">↔</span> Request Swap
           </button>
@@ -71,17 +98,17 @@ export function FinanceSchedule() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 p-1 bg-card border border-border rounded-xl shadow-sm">
-            <button className="p-2 hover:bg-secondary rounded-lg text-muted-foreground transition-all">
+            <button className="p-2 hover:bg-secondary rounded-lg text-muted-foreground transition-all bg-transparent border-0">
               <ChevronLeft size={18} />
             </button>
             <div className="px-4 py-1.5 text-[14px] font-black text-foreground whitespace-nowrap">
               Apr 6 – Apr 12, 2026
             </div>
-            <button className="p-2 hover:bg-secondary rounded-lg text-muted-foreground transition-all">
+            <button className="p-2 hover:bg-secondary rounded-lg text-muted-foreground transition-all bg-transparent border-0">
               <ChevronRight size={18} />
             </button>
           </div>
-          <button className="px-5 py-2 bg-card border-2 border-[#00B87C] text-[#00B87C] text-[13px] font-black rounded-xl hover:bg-emerald-500/10 transition-all">
+          <button className="px-5 py-2 bg-card border-2 border-[#00B87C] text-[#00B87C] text-[13px] font-black rounded-xl hover:bg-emerald-500/10 transition-all bg-transparent cursor-pointer">
             Today
           </button>
         </div>
@@ -91,7 +118,7 @@ export function FinanceSchedule() {
             <button
               key={v}
               onClick={() => setView(v)}
-              className={`px-4 py-1.5 rounded-lg text-[13px] font-black transition-all ${
+              className={`px-4 py-1.5 rounded-lg text-[13px] font-black transition-all border-0 bg-transparent cursor-pointer ${
                 view === v ? "bg-[#00B87C] text-white shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
@@ -101,172 +128,76 @@ export function FinanceSchedule() {
         </div>
       </div>
 
-      {/* ═══════ KPI CARDS ═══════ */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col justify-between hover:border-[#00B87C]/30 transition-colors">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-[#DCFCE7] flex items-center justify-center text-[#00B87C]">
-                <Clock size={18} />
-              </div>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-tight">THIS WEEK SHIFTS</p>
-            </div>
-            <p className="text-[32px] font-black text-[#00B87C] leading-none">5</p>
-          </div>
-          <div className="mt-4">
-            <span className="text-[13px] font-bold text-muted-foreground">40h scheduled</span>
+      {/* ═══════ PERSONAL KPI CARDS ═══════ */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:border-[#00B87C]/30 transition-all min-h-[120px]">
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">SHIFTS THIS WEEK</p>
+          <div className="flex items-baseline gap-2 mt-4">
+            <span className="text-3xl font-black text-foreground">4</span>
+            <span className="text-[14px] font-bold text-muted-foreground">/ 5 days</span>
           </div>
         </div>
-
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col justify-between hover:border-[#F59E0B]/30 transition-colors">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-[#F59E0B]">
-                <Clock size={18} />
-              </div>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-tight">OVERTIME</p>
-            </div>
-            <p className="text-[32px] font-black text-[#111827] leading-none dark:text-white">0h</p>
-          </div>
-          <div className="mt-4">
-            <span className="text-[13px] font-bold text-muted-foreground">within 40h limit</span>
+        <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:border-[#00B87C]/30 transition-all min-h-[120px]">
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">WEEKLY HOURS</p>
+          <div className="flex items-baseline gap-2 mt-4">
+            <span className="text-3xl font-black text-[#00B87C]">32</span>
+            <span className="text-[14px] font-bold text-muted-foreground">/ 40 hrs</span>
           </div>
         </div>
-
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col justify-between hover:border-[#00B87C]/30 transition-colors">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-[#DCFCE7] flex items-center justify-center text-[#00B87C]">
-                <Calendar size={18} />
-              </div>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-tight">NEXT DAY OFF</p>
-            </div>
-            <p className="text-[24px] font-black text-[#111827] leading-none dark:text-white mt-2">Saturday</p>
-          </div>
-          <div className="mt-4">
-            <span className="text-[13px] font-bold text-muted-foreground">Apr 11, 2026</span>
+        <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:border-[#00B87C]/30 transition-all min-h-[120px]">
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">OVERTIME HOURS</p>
+          <div className="flex items-baseline gap-2 mt-4">
+            <span className="text-3xl font-black text-amber-500">2.5</span>
+            <span className="text-[14px] font-bold text-muted-foreground">hrs approved</span>
           </div>
         </div>
-
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col justify-between hover:border-[#0EA5E9]/30 transition-colors">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-[#E0F2FE] flex items-center justify-center text-[#0EA5E9]">
-                <CalendarX size={18} />
-              </div>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-tight">SHIFT SWAPS</p>
-            </div>
-            <p className="text-[32px] font-black text-[#0D9488] leading-none">0</p>
-          </div>
-          <div className="mt-4">
-            <span className="text-[13px] font-bold text-muted-foreground">no pending</span>
+        <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:border-[#00B87C]/30 transition-all min-h-[120px]">
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">SHIFT TYPE</p>
+          <div className="flex items-baseline gap-2 mt-4">
+            <span className="text-lg font-black text-foreground uppercase tracking-wider">Morning Standard</span>
           </div>
         </div>
       </div>
 
-      {/* ═══════ MY WEEKLY SCHEDULE GRID ═══════ */}
-      <div className="space-y-4">
-        <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest ml-2">MY WEEKLY SCHEDULE — Apr 6–12</h3>
-        <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-secondary/50">
-                <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border min-w-[200px]">
-                  EMPLOYEE
-                </th>
-                {SHIFT_SCHEDULE.map((s, idx) => (
-                  <th key={idx} className="px-4 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border text-center">
-                    {s.day === 'Mon' ? <span className="text-[#00B87C]">{s.day} {s.date.split(' ')[1]}</span> : <>{s.day} {s.date.split(' ')[1]}</>}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="px-6 py-5 border-b border-border">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-[#0D9488] flex items-center justify-center text-white text-[12px] font-black border-2 border-card shadow-sm">
-                      AD
-                    </div>
-                    <div>
-                      <p className="text-[14px] font-black text-foreground">Ananya Das</p>
-                      <span className="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-black bg-teal-500/10 text-[#0D9488] uppercase">Finance</span>
-                    </div>
-                  </div>
-                </td>
-                {SHIFT_SCHEDULE.map((shift, idx) => (
-                  <td key={idx} className="p-2 border-b border-border text-center align-top min-w-[120px]">
-                    {shift.type === "Morning" && (
-                      <div className="relative group bg-[#DCFCE7] border-l-[3px] border-l-[#00B87C] rounded-xl p-3 flex flex-col items-center justify-center gap-1 shadow-sm transition-all hover:-translate-y-0.5 cursor-pointer min-h-[70px] dark:bg-[#00B87C]/10">
-                        {shift.hasOt && <div className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">OT</div>}
-                        <span className="text-[11px] font-black uppercase tracking-wider text-[#00B87C]">MORNING</span>
-                        <span className="text-[13px] font-bold text-[#374151] dark:text-slate-300">{shift.time}</span>
-                        <div className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
-                          <button className="p-1 rounded hover:bg-black/10 text-[#00B87C]"><Edit2 size={12} /></button>
-                          <button className="p-1 rounded hover:bg-black/10 text-[#00B87C]"><MessageSquare size={12} /></button>
-                        </div>
-                      </div>
-                    )}
-                    {shift.type === "Evening" && (
-                      <div className="relative group bg-[#FEF3C7] border-l-[3px] border-l-[#F59E0B] rounded-xl p-3 flex flex-col items-center justify-center gap-1 shadow-sm transition-all hover:-translate-y-0.5 cursor-pointer min-h-[70px] dark:bg-[#F59E0B]/10">
-                        <span className="text-[11px] font-black uppercase tracking-wider text-[#F59E0B]">EVENING</span>
-                        <span className="text-[13px] font-bold text-[#374151] dark:text-slate-300">{shift.time}</span>
-                        <div className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
-                          <button className="p-1 rounded hover:bg-black/10 text-[#F59E0B]"><Edit2 size={12} /></button>
-                          <button className="p-1 rounded hover:bg-black/10 text-[#F59E0B]"><MessageSquare size={12} /></button>
-                        </div>
-                      </div>
-                    )}
-                    {shift.type === "Night" && (
-                      <div className="relative group bg-[#EDE9FE] border-l-[3px] border-l-[#8B5CF6] rounded-xl p-3 flex flex-col items-center justify-center gap-1 shadow-sm transition-all hover:-translate-y-0.5 cursor-pointer min-h-[70px] dark:bg-[#8B5CF6]/10">
-                        <span className="text-[11px] font-black uppercase tracking-wider text-[#8B5CF6]">NIGHT</span>
-                        <span className="text-[13px] font-bold text-[#374151] dark:text-slate-300">{shift.time}</span>
-                        <div className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
-                          <button className="p-1 rounded hover:bg-black/10 text-[#8B5CF6]"><Edit2 size={12} /></button>
-                          <button className="p-1 rounded hover:bg-black/10 text-[#8B5CF6]"><MessageSquare size={12} /></button>
-                        </div>
-                      </div>
-                    )}
-                    {shift.type === "Off Day" && (
-                      <div className="h-full min-h-[70px] rounded-xl bg-card flex items-center justify-center cursor-pointer transition-all border border-transparent hover:border-border group">
-                        <span className="text-[12px] font-bold text-muted-foreground italic group-hover:text-foreground transition-colors">OFF</span>
-                      </div>
-                    )}
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* ═══════ BOTTOM PANELS ═══════ */}
+      {/* ═══════ WEEKLY SCHEDULE GRID & MY SWAP REQUESTS ═══════ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Upcoming Shifts List */}
+        {/* Left: Schedule Table (2 cols on lg) */}
         <div className="lg:col-span-2 space-y-4">
-          <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest ml-2">NEXT 14 DAYS</h3>
-          <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[600px]">
+          <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest ml-2">WEEKLY GRID</h3>
+          <div className="bg-card border border-border rounded-[32px] overflow-hidden shadow-sm">
+            <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-secondary/50">
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border">DATE</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border">DAY</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border">SHIFT TYPE</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border">TIME</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border">HOURS</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border">LOCATION</th>
+                <tr className="border-b border-border bg-muted/20">
+                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Date</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Day</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Shift Type</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Scheduled Hours</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Overtime</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Location</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                <tr className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setShowShiftDetails({ day: 'Tue', date: 'Apr 7', type: 'Morning', time: '06:00–14:00' })}>
+                <tr className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setShowShiftDetails({ day: 'Mon', date: 'Apr 6', type: 'Morning', time: '06:00–14:00' })}>
+                  <td className="px-6 py-4 text-[13px] font-black text-foreground whitespace-nowrap">Apr 6</td>
+                  <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">Monday</td>
+                  <td className="px-6 py-4">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/10 text-[#00B87C] uppercase tracking-widest border border-emerald-500/20">MORNING</span>
+                  </td>
+                  <td className="px-6 py-4 text-[13px] font-bold text-foreground whitespace-nowrap">06:00 – 14:00</td>
+                  <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">—</td>
+                  <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground whitespace-nowrap">HQ Office</td>
+                </tr>
+                <tr className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setShowShiftDetails({ day: 'Tue', date: 'Apr 7', type: 'Morning', time: '06:00–14:00', hasOt: true })}>
                   <td className="px-6 py-4 text-[13px] font-black text-foreground whitespace-nowrap">Apr 7</td>
                   <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">Tuesday</td>
                   <td className="px-6 py-4">
                     <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/10 text-[#00B87C] uppercase tracking-widest border border-emerald-500/20">MORNING</span>
                   </td>
                   <td className="px-6 py-4 text-[13px] font-bold text-foreground whitespace-nowrap">06:00 – 14:00</td>
-                  <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">8h</td>
+                  <td className="px-6 py-4">
+                    <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 text-[10px] font-black uppercase">2.5 hrs OT</span>
+                  </td>
                   <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground whitespace-nowrap">HQ Office</td>
                 </tr>
                 <tr className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setShowShiftDetails({ day: 'Wed', date: 'Apr 8', type: 'Off Day', time: 'N/A' })}>
@@ -297,9 +228,41 @@ export function FinanceSchedule() {
         {/* My Swap Requests Panel */}
         <div className="space-y-4">
           <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest ml-2">MY SWAP REQUESTS</h3>
-          <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 flex flex-col items-center justify-center text-center min-h-[200px]">
-            <p className="text-[13px] font-bold text-muted-foreground italic">No active swap requests</p>
-          </div>
+          
+          {swapRequests.length === 0 ? (
+            <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 flex flex-col items-center justify-center text-center min-h-[200px]">
+              <p className="text-[13px] font-bold text-muted-foreground italic">No active swap requests</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {swapRequests.map((req) => (
+                <div key={req.id} className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-3 relative hover:border-[#00B87C]/30 transition-all">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[12px] font-black text-[#00B87C] tracking-wider bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10">{req.id}</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-black bg-amber-500/10 text-amber-600 uppercase border border-amber-500/20">{req.status}</span>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">My Shift</p>
+                    <p className="text-[13px] font-bold text-foreground">{req.myShift}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Swap Colleague</p>
+                    <p className="text-[13px] font-bold text-foreground">{req.colleague}</p>
+                    <p className="text-[11px] font-bold text-muted-foreground">Colleague's Shift: {req.theirShift}</p>
+                  </div>
+                  <div className="pt-2 border-t border-border flex justify-between items-center">
+                    <span className="text-[11px] font-bold text-muted-foreground italic">"{req.reason}"</span>
+                    <button 
+                      onClick={() => handleCancelSwap(req.id)}
+                      className="px-3 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-600 text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
       </div>
@@ -328,12 +291,10 @@ export function FinanceSchedule() {
                   </div>
                   <h2 className="text-[18px] font-black text-foreground tracking-tight">Request Shift Swap</h2>
                 </div>
-                <button onClick={() => setIsSwapModalOpen(false)} className="p-2 rounded-xl hover:bg-muted text-muted-foreground">
-                  <X size={20} />
-                </button>
+                <button onClick={() => setIsSwapModalOpen(false)} className="p-2 rounded-xl hover:bg-muted text-muted-foreground bg-transparent border-0"><X size={20} /></button>
               </div>
 
-              <div className="p-6 space-y-6">
+              <form onSubmit={handleRequestSwap} className="p-6 space-y-6">
                 <div className="space-y-2">
                   <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">My shift to swap</label>
                   <div className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border flex items-center gap-3">
@@ -344,41 +305,59 @@ export function FinanceSchedule() {
 
                 <div className="space-y-2">
                   <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Swap with colleague</label>
-                  <input type="text" placeholder="Search colleague name..." className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground" />
+                  <input 
+                    type="text" 
+                    value={colleagueName}
+                    onChange={(e) => setColleagueName(e.target.value)}
+                    placeholder="Search colleague name (e.g. Rajan Kumar)..." 
+                    className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground" 
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Their shift to receive</label>
-                  <select className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-muted-foreground appearance-none">
-                    <option>Select colleague first...</option>
+                  <select 
+                    value={theirShift}
+                    onChange={(e) => setTheirShift(e.target.value)}
+                    className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground appearance-none"
+                  >
+                    <option value="Evening Shift (14:00 - 22:00)">Evening Shift (14:00 - 22:00)</option>
+                    <option value="Night Shift (22:00 - 06:00)">Night Shift (22:00 - 06:00)</option>
+                    <option value="Morning Shift (06:00 - 14:00)">Morning Shift (06:00 - 14:00)</option>
                   </select>
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Reason for swap</label>
-                  <textarea placeholder="Add reason for swap..." className="w-full h-20 px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground resize-none" />
+                  <textarea 
+                    value={swapReason}
+                    onChange={(e) => setSwapReason(e.target.value)}
+                    placeholder="Add reason for swap..." 
+                    className="w-full h-20 px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground resize-none" 
+                  />
                 </div>
 
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F0FDF4] border border-[#00B87C]/30 dark:bg-[#00B87C]/5">
                   <div className="mt-0.5 text-[#00B87C]"><MessageSquare size={16} /></div>
                   <p className="text-[12px] font-black text-[#00B87C]">Your manager Rajan Kumar will be notified for approval</p>
                 </div>
-              </div>
 
-              <div className="p-6 border-t border-border bg-muted/20 flex items-center justify-between gap-4 rounded-b-[24px]">
-                <button 
-                  onClick={() => setIsSwapModalOpen(false)}
-                  className="px-6 py-3 text-[12px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={handleRequestSwap}
-                  className="flex-1 px-6 py-3 rounded-2xl bg-[#00B87C] text-white text-[12px] font-black uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20 text-center"
-                >
-                  Submit Swap Request
-                </button>
-              </div>
+                <div className="p-6 border-t border-border bg-muted/20 flex items-center justify-between gap-4 rounded-b-[24px] -mx-6 -mb-6">
+                  <button 
+                    type="button"
+                    onClick={() => setIsSwapModalOpen(false)}
+                    className="px-6 py-3 text-[12px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors bg-transparent border-0"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    className="flex-1 px-6 py-3 rounded-2xl bg-[#00B87C] text-white text-[12px] font-black uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20 text-center border-0 cursor-pointer"
+                  >
+                    Submit Swap Request
+                  </button>
+                </div>
+              </form>
             </motion.div>
           </div>
         )}
