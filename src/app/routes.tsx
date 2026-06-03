@@ -30,6 +30,9 @@ const Expenses = lazy(() =>
 const Recruitment = lazy(() =>
   import("./pages/Recruitment").then((m) => ({ default: m.Recruitment })),
 );
+const Offboarding = lazy(() =>
+  import("./pages/Offboarding").then((m) => ({ default: m.Offboarding })),
+);
 const Performance = lazy(() =>
   import("./pages/Performance").then((m) => ({ default: m.Performance })),
 );
@@ -76,6 +79,9 @@ const EmployeeSelfService = lazy(() =>
     default: m.EmployeeSelfService,
   })),
 );
+const MyAssets = lazy(() =>
+  import("./pages/MyAssets").then((m) => ({ default: m.MyAssets })),
+);
 const EmployeeHRRequests = lazy(() => import("./pages/EmployeeHRRequests"));
 const ReimbursementHistory = lazy(() =>
   import("./pages/ReimbursementHistory").then((m) => ({
@@ -121,6 +127,12 @@ const EmployeeSupport = lazy(() =>
 const EmployeeRegularizationHistory = lazy(
   () => import("./pages/EmployeeRegularizationHistory"),
 );
+const EmployeeExit = lazy(() =>
+  import("./pages/EmployeeExit").then((m) => ({ default: m.EmployeeExit })),
+);
+const MyOnboarding = lazy(() =>
+  import("./pages/MyOnboarding").then((m) => ({ default: m.MyOnboarding })),
+);
 const EmployeeNotifications = lazy(
   () => import("./pages/EmployeeNotifications"),
 );
@@ -134,6 +146,9 @@ const EmployeePayslips = lazy(() =>
     default: m.EmployeePayslips,
   })),
 );
+const EmployeeSettings = lazy(() =>
+  import("./pages/EmployeeSettings")
+);
 
 // Finance Components
 const FinanceExpenses = lazy(() =>
@@ -145,8 +160,17 @@ const FinancePayroll = lazy(() =>
 const FinanceReports = lazy(() =>
   import("./pages/FinanceReports").then((m) => ({ default: m.FinanceReports })),
 );
+const FinanceAssetCostReport = lazy(() =>
+  import("./pages/FinanceAssetCostReport").then((m) => ({ default: m.FinanceAssetCostReport })),
+);
+const FinanceOnboarding = lazy(() =>
+  import("./pages/FinanceOnboarding").then((m) => ({ default: m.FinanceOnboarding })),
+);
 const FinancePayrollSettings = lazy(() =>
   import("./pages/FinancePayrollSettings").then((m) => ({ default: m.FinancePayrollSettings })),
+);
+const FinanceSettlements = lazy(() =>
+  import("./pages/FinanceSettlements").then((m) => ({ default: m.FinanceSettlements })),
 );
 const FinanceAttendance = lazy(() =>
   import("./pages/FinanceAttendance").then((m) => ({ default: m.FinanceAttendance })),
@@ -256,11 +280,32 @@ const ManagerTeamDirectory = lazy(() =>
 const ManagerSupportTicket = lazy(() =>
   import("./pages/manager/ManagerSupportTicket").then((m) => ({ default: m.ManagerSupportTicket })),
 );
+const ManagerTeamAssets = lazy(() =>
+  import("./pages/manager/ManagerTeamAssets").then((m) => ({ default: m.ManagerTeamAssets })),
+);
+const ManagerExitTasks = lazy(() =>
+  import("./pages/manager/ManagerExitTasks").then((m) => ({ default: m.ManagerExitTasks })),
+);
 const ManagerSettings = lazy(() =>
   import("./pages/manager/ManagerSettings").then((m) => ({ default: m.ManagerSettings })),
 );
+const ManagerTeamOnboarding = lazy(() =>
+  import("./pages/manager/ManagerTeamOnboarding").then((m) => ({ default: m.ManagerTeamOnboarding })),
+);
 const FinanceSettings = lazy(() =>
   import("./pages/FinanceSettings").then((m) => ({ default: m.FinanceSettings })),
+);
+const AuditLogs = lazy(() =>
+  import("./pages/AuditLogs").then((m) => ({ default: m.AuditLogs })),
+);
+const HRAuditLogs = lazy(() =>
+  import("./pages/HRAuditLogs").then((m) => ({ default: m.HRAuditLogs })),
+);
+const FinanceAuditLogs = lazy(() =>
+  import("./pages/FinanceAuditLogs").then((m) => ({ default: m.FinanceAuditLogs })),
+);
+const AssetManagement = lazy(() =>
+  import("./pages/AssetManagement").then((m) => ({ default: m.AssetManagement })),
 );
 
 // Loading spinner
@@ -582,7 +627,21 @@ function SettingsWrapper() {
   if (user?.role === "Finance") {
     return lazyRoute(FinanceSettings);
   }
+  if (user?.role === "Employee") {
+    return lazyRoute(EmployeeSettings);
+  }
   return lazyRoute(Settings);
+}
+
+function AuditLogsWrapper() {
+  const { user } = useAuth();
+  if (user?.role === "Super Admin") {
+    return lazyRoute(AuditLogs);
+  }
+  if (user?.role === "Finance") {
+    return lazyRoute(FinanceAuditLogs);
+  }
+  return lazyRoute(HRAuditLogs);
 }
 
 // ── Root Redirect ────────────────────────────────────────────
@@ -631,7 +690,10 @@ export const router = createBrowserRouter([
       { path: "manager/announcements", element: protectedRoute(ManagerAnnouncements) },
       { path: "manager/directory", element: protectedRoute(ManagerTeamDirectory) },
       { path: "manager/support", element: protectedRoute(ManagerSupportTicket) },
+      { path: "manager/team-assets", element: protectedRoute(ManagerTeamAssets) },
+      { path: "manager/exit-tasks", element: protectedRoute(ManagerExitTasks) },
       { path: "manager/settings", element: protectedRoute(ManagerSettings) },
+      { path: "manager/team-onboarding", element: protectedRoute(ManagerTeamOnboarding) },
       { path: "employee/dashboard", element: <Protected><EmployeeDashboardWrapper /></Protected> },
       {
         path: "employees",
@@ -670,6 +732,7 @@ export const router = createBrowserRouter([
         ),
       },
       { path: "recruitment", element: protectedRoute(Recruitment) },
+      { path: "offboarding", element: protectedRoute(Offboarding) },
       {
         path: "performance",
         element: (
@@ -686,7 +749,25 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
+      {
+        path: "finance/asset-cost-report",
+        element: (
+          <Protected>
+            {lazyRoute(FinanceAssetCostReport)}
+          </Protected>
+        ),
+      },
+      {
+        path: "finance/settlements",
+        element: (
+          <Protected>
+            {lazyRoute(FinanceSettlements)}
+          </Protected>
+        ),
+      },
+      { path: "finance/onboarding", element: protectedRoute(FinanceOnboarding) },
       { path: "settings", element: <Protected><SettingsWrapper /></Protected> },
+      { path: "settings/audit-logs", element: <Protected><AuditLogsWrapper /></Protected> },
       { path: "settings/payroll", element: protectedRoute(FinancePayrollSettings) },
       {
         path: "leave",
@@ -748,6 +829,9 @@ export const router = createBrowserRouter([
       { path: "expense-support", element: protectedRoute(ExpenseSupport) },
       { path: "support", element: <Protected><SupportWrapper /></Protected> },
       { path: "my-documents", element: <Protected><DocumentsWrapper /></Protected> },
+      { path: "my-assets", element: protectedRoute(MyAssets) },
+      { path: "my-exit", element: protectedRoute(EmployeeExit) },
+      { path: "my-onboarding", element: protectedRoute(MyOnboarding) },
       { path: "hr-requests", element: protectedRoute(EmployeeHRRequests) },
       {
         path: "regularization-history",
@@ -765,6 +849,7 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
+      { path: "asset-management", element: protectedRoute(AssetManagement) },
     ],
   },
 ]);

@@ -91,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const normalizedPath = path === "/" ? "/" : path.replace(/\/$/, "");
 
     if (user.role === "HR Manager") {
-      const restricted = ["/settings/security", "/settings/integrations", "/settings/roles"];
+      const restricted = ["/settings/security", "/settings/integrations", "/settings/roles", "/finance/asset-cost-report"];
       return !restricted.some(r => normalizedPath.startsWith(r));
     }
 
@@ -107,7 +107,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/attendance",
         "/leave",
         "/payslips",
+        "/my-exit",
         "/my-documents",
+        "/my-assets",
+        "/finance/asset-cost-report",
+        "/finance/onboarding",
+        "/finance/settlements",
         "/employee/dashboard",
         "/employees", // View only handled in UI
         "/profile",
@@ -119,6 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/notifications",
         "/smart-search",
         "/schedule",
+        "/settings",
       ];
       return allowed.some(p => normalizedPath === p || normalizedPath.startsWith(p + "/"));
     }
@@ -139,7 +145,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/manager/announcements",
         "/manager/directory",
         "/manager/support",
+        "/manager/team-assets",
+        "/manager/team-onboarding",
         "/manager/settings",
+        "/manager/exit-tasks",
         "/employees", // My Team handled in UI
         "/attendance", // Team attendance
         "/schedule", // Team schedule
@@ -150,6 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/expenses", // Team expenses
         "/employee/dashboard",
         "/payslips",
+        "/my-exit",
         "/my-documents",
         "/goals",
         "/profile",
@@ -165,6 +175,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/profile",
         "/attendance",
         "/leave",
+        "/my-exit",
+        "/my-onboarding",
         "/payslips",
         "/my-documents",
         "/expenses",
@@ -174,7 +186,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/training",
         "/notifications",
         "/employees", // Team Directory (view only)
+        "/my-assets",
         "/support",
+        "/settings",
       ];
       return allowed.some(p => normalizedPath === p || normalizedPath.startsWith(p + "/"));
     }

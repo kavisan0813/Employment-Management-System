@@ -27,6 +27,11 @@ import {
   HelpCircle,
   User,
   Star,
+  Package,
+  FileText,
+  UserPlus,
+  Lock,
+  Sprout,
 } from "lucide-react";
 import { useAuth, ROLE_CONFIG, type UserRole } from "../context/AuthContext";
 
@@ -89,10 +94,28 @@ const ALL_NAV_ITEMS: {
     roles: ["Super Admin", "HR Manager", "Finance"],
   },
   {
+    icon: Receipt,
+    label: "Financial Onboarding",
+    path: "/finance/onboarding",
+    roles: ["Finance"],
+  },
+  {
     icon: Briefcase,
     label: "Recruitment",
     path: "/recruitment",
     roles: ["Super Admin", "HR Manager", "Manager"],
+  },
+  {
+    icon: UserPlus,
+    label: "Onboarding",
+    path: "/onboarding",
+    roles: ["Super Admin", "HR Manager"],
+  },
+  {
+    icon: LogOut,
+    label: "Offboarding",
+    path: "/offboarding",
+    roles: ["Super Admin", "HR Manager"],
   },
   {
     icon: TrendingUp,
@@ -137,6 +160,24 @@ const ALL_NAV_ITEMS: {
     roles: ["Super Admin", "HR Manager", "Finance", "Manager", "Employee"],
   },
   {
+    icon: Package,
+    label: "Asset Management",
+    path: "/asset-management",
+    roles: ["Super Admin", "HR Manager"],
+  },
+  {
+    icon: BarChart3,
+    label: "Asset Cost Report",
+    path: "/finance/asset-cost-report",
+    roles: ["Finance"],
+  },
+  {
+    icon: IndianRupee,
+    label: "F&F Settlement",
+    path: "/finance/settlements",
+    roles: ["Finance", "Super Admin", "HR Manager"],
+  },
+  {
     icon: Settings,
     label: "Payroll Settings",
     path: "/settings/payroll",
@@ -144,6 +185,13 @@ const ALL_NAV_ITEMS: {
   },
 
   // My Workspace Items (for non-admins)
+  {
+    icon: UserPlus,
+    label: "My Onboarding",
+    path: "/my-onboarding",
+    roles: ["Employee"],
+    section: "MY WORKSPACE",
+  },
   {
     icon: Home,
     label: "My Dashboard",
@@ -166,6 +214,13 @@ const ALL_NAV_ITEMS: {
     section: "MY WORKSPACE",
   },
   {
+    icon: LogOut,
+    label: "My Exit",
+    path: "/my-exit",
+    roles: ["Employee", "Finance", "Manager"],
+    section: "MY WORKSPACE",
+  },
+  {
     icon: IndianRupee,
     label: "My Payslips",
     path: "/payslips",
@@ -176,6 +231,13 @@ const ALL_NAV_ITEMS: {
     icon: Folder,
     label: "My Documents",
     path: "/my-documents",
+    roles: ["Finance", "Manager", "Employee"],
+    section: "MY WORKSPACE",
+  },
+  {
+    icon: Package,
+    label: "My Assets",
+    path: "/my-assets",
     roles: ["Finance", "Manager", "Employee"],
     section: "MY WORKSPACE",
   },
@@ -203,7 +265,7 @@ const ALL_NAV_ITEMS: {
   {
     icon: Users,
     label: "Directory",
-    path: "/directory",
+    path: "/employees",
     roles: ["Employee"],
     section: "MY WORKSPACE",
   },
@@ -237,6 +299,24 @@ const ALL_NAV_ITEMS: {
   },
 ];
 
+// ─── New Joinee ESS nav items ────────────────────
+const NEW_JOINEE_JOURNEY_ITEMS = [
+  { icon: Sprout, label: "My Onboarding", path: "/my-onboarding" },
+  { icon: User, label: "My Profile", path: "/profile" },
+  { icon: Folder, label: "My Documents", path: "/my-documents" },
+  { icon: BookOpen, label: "My Training", path: "/training" },
+];
+
+const NEW_JOINEE_LOCKED_ITEMS = [
+  { icon: CalendarCheck, label: "My Attendance", path: "/attendance" },
+  { icon: CalendarDays, label: "My Leaves", path: "/leave" },
+  { icon: IndianRupee, label: "My Payslips", path: "/payslips" },
+  { icon: Clock, label: "My Schedule", path: "/schedule" },
+  { icon: TrendingUp, label: "My Performance", path: "/performance" },
+  { icon: Receipt, label: "My Expenses", path: "/expenses" },
+  { icon: Package, label: "My Assets", path: "/my-assets" },
+];
+
 // ─── Manager specific items ────────────────────
 const MANAGER_TEAM_ITEMS = [
   { icon: LayoutDashboard, label: "Team Dashboard", path: "/" },
@@ -247,11 +327,15 @@ const MANAGER_TEAM_ITEMS = [
   { icon: TrendingUp, label: "Team Performance", path: "/performance" },
   { icon: Award, label: "Team Appraisal", path: "/appraisal" },
   { icon: BookOpen, label: "Team Training", path: "/training" },
+  { icon: Sprout, label: "Team Onboarding", path: "/manager/team-onboarding" },
+  { icon: Package, label: "Team Assets", path: "/manager/team-assets" },
+  { icon: LogOut, label: "Exit Tasks", path: "/manager/exit-tasks" },
   { icon: Receipt, label: "Expense Approvals", path: "/expenses" },
 ];
 
 const MANAGER_WORKSPACE_ITEMS = [
   { icon: Home, label: "My Dashboard", path: "/manager/my-dashboard" },
+  { icon: LogOut, label: "My Exit", path: "/my-exit" },
   { icon: CalendarCheck, label: "My Attendance", path: "/manager/my-attendance" },
   { icon: CalendarDays, label: "My Leaves", path: "/manager/my-leaves" },
   { icon: IndianRupee, label: "My Payslips", path: "/manager/my-payslips" },
@@ -274,6 +358,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const { user, logout } = useAuth();
 
   const currentRole = user?.role as UserRole | undefined;
+  const isNewJoinee = currentRole === "Employee" && location.pathname === "/my-onboarding";
 
   // Filter nav items based on current user's role and section
   const mainItems = ALL_NAV_ITEMS.filter((item) => {
@@ -319,6 +404,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     if (path === "/payroll") {
       const isFinanceDash = currentPath === "/finance/dashboard" || (currentPath === "/" && currentRole === "Finance");
       return currentPath === "/payroll" && !isFinanceDash;
+    }
+
+    if (path === "/settings") {
+      return currentPath === "/settings";
     }
 
     return currentPath === path || (path !== "/" && currentPath.startsWith(path + "/")) || currentPath.startsWith(path);
@@ -383,6 +472,48 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         )}
       </div>
 
+      {/* HR Manager / Super Admin User Card */}
+      {!collapsed && (currentRole === "HR Manager" || currentRole === "Super Admin") && (
+        <div className="mx-4 mt-5 mb-2">
+          <div className="flex items-center gap-3 p-1">
+            <div 
+              className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-sm"
+              style={{
+                background: currentRole === "Super Admin"
+                  ? "linear-gradient(135deg, #8B5CF6, #6D28D9)"
+                  : "linear-gradient(135deg, #00B87C, #059669)",
+                color: "white",
+              }}
+            >
+              {currentRole === "Super Admin" ? "SA" : "RP"}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[14px] font-black text-foreground truncate leading-tight">
+                {currentRole === "Super Admin" ? "Super Admin" : "Ryan Park"}
+              </p>
+              <p className="text-[11px] font-bold text-muted-foreground truncate">
+                {currentRole === "Super Admin" ? "System Administrator" : "HR Manager"}
+              </p>
+            </div>
+          </div>
+          <div 
+            className="mt-2 px-2.5 py-1 rounded-full inline-flex items-center gap-1.5"
+            style={{ backgroundColor: currentRole === "Super Admin" ? "rgba(139,92,246,0.1)" : "rgba(0,184,124,0.1)" }}
+          >
+            <div 
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ backgroundColor: currentRole === "Super Admin" ? "#8B5CF6" : "#00B87C" }}
+            />
+            <span 
+              className="text-[10px] font-black uppercase tracking-widest"
+              style={{ color: currentRole === "Super Admin" ? "#8B5CF6" : "#00B87C" }}
+            >
+              {currentRole}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Manager User Card */}
       {!collapsed && currentRole === "Manager" && (
         <div className="mx-4 mt-6 mb-2">
@@ -410,8 +541,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </div>
       )}
 
-      {/* Role Badge (Non-Manager) */}
-      {!collapsed && roleConf && currentRole !== "Manager" && (
+      {/* Role Badge (Non-Manager, Non-HR, Non-SuperAdmin, Non-NewJoinee) */}
+      {!collapsed && roleConf && currentRole !== "Manager" && currentRole !== "HR Manager" && currentRole !== "Super Admin" && !isNewJoinee && (
         <div
           className="mx-3 mt-3 px-3 py-2 rounded-xl flex items-center gap-2"
           style={{ 
@@ -434,7 +565,127 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 py-3 overflow-y-auto no-scrollbar">
-        {currentRole === "Manager" ? (
+        {isNewJoinee ? (
+          <>
+            {/* Welcome User Card */}
+            {!collapsed && (
+              <div className="mx-3 mb-4 p-3 rounded-xl border border-[#00B87C]/20" style={{ backgroundColor: "rgba(0,184,124,0.08)" }}>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00B87C] to-[#059669] flex items-center justify-center text-white text-[11px] font-black shrink-0">PS</div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[14px] font-bold text-foreground truncate">Priya Sharma</p>
+                    <p className="text-[11px] text-muted-foreground truncate">Frontend Developer · Engineering</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 mb-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C] animate-pulse" />
+                  <span className="text-[10px] font-bold text-[#00B87C]">Onboarding in Progress</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--muted)" }}>
+                    <div className="h-full bg-[#00B87C] rounded-full" style={{ width: "45%" }} />
+                  </div>
+                  <span className="text-[9px] font-bold text-[#00B87C] shrink-0">45%</span>
+                </div>
+              </div>
+            )}
+
+            {/* MY JOURNEY Section */}
+            <div className="mb-4">
+              {!collapsed && (
+                <p className="px-4 mb-2" style={{ color: "var(--sidebar-foreground)", opacity: 0.6, fontSize: "10px", fontWeight: 700, letterSpacing: "1px" }}>
+                  MY JOURNEY
+                </p>
+              )}
+              <ul className="space-y-0.5 px-2">
+                {NEW_JOINEE_JOURNEY_ITEMS.map((item) => {
+                  const active = isActive(item.path);
+                  return (
+                    <li key={item.label}>
+                      <NavLink
+                        to={item.path}
+                        title={collapsed ? item.label : undefined}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px",
+                          padding: collapsed ? "10px 14px" : "9px 12px",
+                          borderRadius: "10px",
+                          textDecoration: "none",
+                          transition: "all 0.15s ease",
+                          backgroundColor: active ? "#00B87C" : "transparent",
+                          color: active ? "white" : "var(--sidebar-foreground)",
+                          justifyContent: collapsed ? "center" : "flex-start",
+                        }}
+                        className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
+                      >
+                        <item.icon size={18} style={{ color: active ? "white" : "inherit", flexShrink: 0 }} />
+                        {!collapsed && (
+                          <span style={{ fontSize: "13px", fontWeight: active ? 600 : 500, whiteSpace: "nowrap", overflow: "hidden" }}>
+                            {item.label === "My Onboarding" ? "🌱 My Onboarding" : item.label}
+                          </span>
+                        )}
+                        {active && !collapsed && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white" style={{ flexShrink: 0 }} />}
+                      </NavLink>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            {/* I'LL SEE MORE ONCE ONBOARDED Section */}
+            <div>
+              {!collapsed && (
+                <p className="px-4 mb-2" style={{ color: "var(--sidebar-foreground)", opacity: 0.35, fontSize: "10px", fontWeight: 700, letterSpacing: "1px" }}>
+                  I'LL SEE MORE ONCE ONBOARDED
+                </p>
+              )}
+              <ul className="space-y-0.5 px-2">
+                {NEW_JOINEE_LOCKED_ITEMS.map((item) => {
+                  return (
+                    <li key={item.label}>
+                      <div
+                        title={collapsed ? item.label : undefined}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px",
+                          padding: collapsed ? "10px 14px" : "9px 12px",
+                          borderRadius: "10px",
+                          textDecoration: "none",
+                          opacity: 0.45,
+                          cursor: "not-allowed",
+                          justifyContent: collapsed ? "center" : "flex-start",
+                          position: "relative",
+                        }}
+                        className="group"
+                      >
+                        {collapsed ? <Lock size={14} style={{ color: "var(--muted-foreground)", flexShrink: 0 }} /> : (
+                          <div className="relative">
+                            <item.icon size={18} style={{ color: "var(--muted-foreground)", flexShrink: 0 }} />
+                            <Lock size={10} className="absolute -top-1 -right-1" style={{ color: "var(--muted-foreground)" }} />
+                          </div>
+                        )}
+                        {!collapsed && (
+                          <span style={{ fontSize: "13px", fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", color: "var(--muted-foreground)" }}>
+                            {item.label}
+                          </span>
+                        )}
+                      </div>
+                      {!collapsed && (
+                        <div className="absolute left-12 right-3 hidden group-hover:block">
+                          <div className="px-2 py-1 rounded-md bg-gray-800 text-white text-[9px] whitespace-nowrap shadow-lg" style={{ marginTop: "-24px" }}>
+                            Available after onboarding
+                          </div>
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </>
+        ) : currentRole === "Manager" ? (
           <>
             {/* MY TEAM Section */}
             <div className="mb-6">
@@ -749,56 +1000,114 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           paddingTop: "12px",
         }}
       >
-        {/* Settings — only for Super Admin & HR Manager */}
+        {/* Settings Section — for Super Admin, HR Manager & Finance */}
         {(!currentRole ||
-          ["Super Admin", "HR Manager"].includes(currentRole)) && (
-          <NavLink
-            to="/settings"
-            title={collapsed ? "Settings" : undefined}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              padding: collapsed ? "10px 14px" : "9px 12px",
-              borderRadius: "10px",
-              textDecoration: "none",
-              transition: "all 0.15s ease",
-              backgroundColor: isActive("/settings")
-                ? "var(--sidebar-primary)"
-                : "transparent",
-              color: isActive("/settings")
-                ? "var(--sidebar-primary-foreground)"
-                : "var(--sidebar-foreground)",
-              justifyContent: collapsed ? "center" : "flex-start",
-              marginBottom: "6px",
-            }}
-            className={`group ${!isActive("/settings") && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
-          >
-            <Settings
-              size={18}
-              style={{
-                color: isActive("/settings")
-                  ? "var(--sidebar-primary-foreground)"
-                  : "inherit",
-                flexShrink: 0,
-              }}
-            />
+          ["Super Admin", "HR Manager", "Finance"].includes(currentRole)) && (
+          <>
             {!collapsed && (
-              <span
+              <p
+                className="px-4 mb-2"
                 style={{
-                  fontSize: "13px",
-                  fontWeight: isActive("/settings") ? 600 : 500,
-                  whiteSpace: "nowrap",
+                  color: "var(--sidebar-foreground)",
+                  opacity: 0.6,
+                  fontSize: "10px",
+                  fontWeight: 700,
+                  letterSpacing: "1px",
                 }}
               >
-                Settings
-              </span>
+                SETTINGS
+              </p>
             )}
-          </NavLink>
+            <NavLink
+              to="/settings/audit-logs"
+              title={collapsed ? "Audit Logs" : undefined}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                padding: collapsed ? "10px 14px" : "9px 12px",
+                borderRadius: "10px",
+                textDecoration: "none",
+                transition: "all 0.15s ease",
+                backgroundColor: isActive("/settings/audit-logs")
+                  ? "var(--sidebar-primary)"
+                  : "transparent",
+                color: isActive("/settings/audit-logs")
+                  ? "var(--sidebar-primary-foreground)"
+                  : "var(--sidebar-foreground)",
+                justifyContent: collapsed ? "center" : "flex-start",
+              }}
+              className={`group ${!isActive("/settings/audit-logs") && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
+            >
+              <FileText
+                size={18}
+                style={{
+                  color: isActive("/settings/audit-logs")
+                    ? "var(--sidebar-primary-foreground)"
+                    : "inherit",
+                  flexShrink: 0,
+                }}
+              />
+              {!collapsed && (
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: isActive("/settings/audit-logs") ? 600 : 500,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Audit Logs
+                </span>
+              )}
+            </NavLink>
+            <NavLink
+              to="/settings"
+              title={collapsed ? "Settings" : undefined}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                padding: collapsed ? "10px 14px" : "9px 12px",
+                borderRadius: "10px",
+                textDecoration: "none",
+                transition: "all 0.15s ease",
+                backgroundColor: isActive("/settings")
+                  ? "var(--sidebar-primary)"
+                  : "transparent",
+                color: isActive("/settings")
+                  ? "var(--sidebar-primary-foreground)"
+                  : "var(--sidebar-foreground)",
+                justifyContent: collapsed ? "center" : "flex-start",
+                marginBottom: "6px",
+              }}
+              className={`group ${!isActive("/settings") && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
+            >
+              <Settings
+                size={18}
+                style={{
+                  color: isActive("/settings")
+                    ? "var(--sidebar-primary-foreground)"
+                    : "inherit",
+                  flexShrink: 0,
+                }}
+              />
+              {!collapsed && (
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: isActive("/settings") ? 600 : 500,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Settings
+                </span>
+              )}
+            </NavLink>
+          </>
         )}
 
-        {/* User info card (Non-Manager) */}
-        {!collapsed && user && currentRole !== "Manager" && (
+        {/* User info card (Finance/Employee only — HR Manager & Super Admin have top profile cards) */}
+        {!collapsed && user && currentRole !== "Manager" && currentRole !== "HR Manager" && currentRole !== "Super Admin" && !isNewJoinee && (
           <div
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-2"
             style={{ backgroundColor: "var(--sidebar-accent)" }}

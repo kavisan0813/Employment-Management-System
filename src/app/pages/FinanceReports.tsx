@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router";
+import { useAuth } from "../context/AuthContext";
 import { 
   BarChart3, 
   Download, 
@@ -12,7 +13,25 @@ import {
   ChevronRight,
   BarChart as BarChartIcon,
   Settings,
-  Database
+  Database,
+  Package,
+  Laptop,
+  Smartphone,
+  Monitor,
+  Printer,
+  Wifi,
+  Watch,
+  Car,
+  IndianRupee,
+  AlertTriangle,
+  TrendingUp,
+  Search,
+  CheckCircle2,
+  RefreshCw,
+  Building2,
+  Wrench,
+  Activity,
+  ShieldCheck
 } from "lucide-react";
 import { 
   AreaChart, 
@@ -80,7 +99,37 @@ const YOY_GROWTH_DATA = [
   { month: "Apr", lastYear: 24.8, currentYear: 28.4 }
 ];
 
-type ReportTab = "Dashboards" | "Payroll Reports" | "Expense Reports" | "Tax Reports" | "Custom Builder";
+const ASSET_COST_BY_CATEGORY = [
+  { id: "cat1", category: "Laptops", count: 142, totalValue: 18500000, annualDepreciation: 3700000, bookValue: 14800000, icon: "Laptop", status: "Active" },
+  { id: "cat2", category: "Smartphones", count: 85, totalValue: 4250000, annualDepreciation: 850000, bookValue: 3400000, icon: "Smartphone", status: "Active" },
+  { id: "cat3", category: "Monitors", count: 68, totalValue: 2040000, annualDepreciation: 340000, bookValue: 1700000, icon: "Monitor", status: "Active" },
+  { id: "cat4", category: "Printers", count: 24, totalValue: 960000, annualDepreciation: 160000, bookValue: 800000, icon: "Printer", status: "Depreciating" },
+  { id: "cat5", category: "Servers & Networking", count: 43, totalValue: 6200000, annualDepreciation: 1240000, bookValue: 4960000, icon: "Wifi", status: "Critical" },
+  { id: "cat6", category: "Accessories", count: 120, totalValue: 1200000, annualDepreciation: 240000, bookValue: 960000, icon: "Watch", status: "Active" },
+  { id: "cat7", category: "Vehicles", count: 12, totalValue: 7200000, annualDepreciation: 1200000, bookValue: 6000000, icon: "Car", status: "Depreciating" },
+];
+
+const DEPT_ASSET_DIST_DATA = [
+  { department: "Engineering", value: 35, color: "#00B87C" },
+  { department: "Sales", value: 18, color: "#8B5CF6" },
+  { department: "Operations", value: 15, color: "#F59E0B" },
+  { department: "Marketing", value: 12, color: "#3B82F6" },
+  { department: "Finance", value: 10, color: "#EC4899" },
+  { department: "HR", value: 6, color: "#EF4444" },
+  { department: "Legal", value: 4, color: "#14B8A6" },
+];
+
+const ASSET_VALUE_BY_DEPT = [
+  { department: "Engineering", total: 85, depreciated: 32, current: 53 },
+  { department: "Sales", total: 42, depreciated: 15, current: 27 },
+  { department: "Operations", total: 35, depreciated: 14, current: 21 },
+  { department: "Marketing", total: 28, depreciated: 9, current: 19 },
+  { department: "Finance", total: 22, depreciated: 8, current: 14 },
+  { department: "HR", total: 15, depreciated: 5, current: 10 },
+  { department: "Legal", total: 10, depreciated: 3, current: 7 },
+];
+
+type ReportTab = "Dashboards" | "Payroll Reports" | "Expense Reports" | "Tax Reports" | "Asset Reports" | "Custom Builder";
 
 export function FinanceReports() {
   const location = useLocation();
@@ -144,7 +193,7 @@ export function FinanceReports() {
       {/* TABS */}
       <div className="space-y-6">
         <div className="flex items-center border-b border-border overflow-x-auto scrollbar-hide">
-          {["Dashboards", "Payroll Reports", "Expense Reports", "Tax Reports", "Custom Builder"].map((tab) => {
+          {["Dashboards", "Payroll Reports", "Expense Reports", "Tax Reports", "Asset Reports", "Custom Builder"].map((tab) => {
             const isActive = activeTab === tab;
             return (
               <button
@@ -180,6 +229,7 @@ export function FinanceReports() {
               {activeTab === "Payroll Reports" && <ReportCatalogTab section="PAYROLL REPORTS" type="payroll" />}
               {activeTab === "Expense Reports" && <ReportCatalogTab section="EXPENSE REPORTS" type="expense" />}
               {activeTab === "Tax Reports" && <ReportCatalogTab section="TAX REPORTS" type="tax" />}
+              {activeTab === "Asset Reports" && <AssetReportsTab />}
               {activeTab === "Custom Builder" && <CustomBuilderTab />}
             </motion.div>
           </AnimatePresence>
@@ -415,6 +465,140 @@ function CustomBuilderTab() {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── ASSET REPORTS TAB ─── */
+
+function AssetReportsTab() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const assetReports = [
+    ...(user?.role === "Finance" ? [{
+      name: "Asset Cost Report",
+      desc: "Asset valuation, depreciation overview, and category-wise cost breakdown",
+      icon: "BarChart3",
+      color: "#8B5CF6",
+      bgColor: "#EDE9FE",
+      path: "/finance/asset-cost-report"
+    }] : []),
+    {
+      name: "Asset Lifecycle Report",
+      desc: "End-of-life tracking, replacement planning, and asset aging analysis",
+      icon: "RefreshCw",
+      color: "#F59E0B",
+      bgColor: "#FEF3C7",
+      path: "#"
+    },
+    {
+      name: "Asset Utilization Report",
+      desc: "Usage metrics, idle asset identification, and allocation efficiency",
+      icon: "Activity",
+      color: "#0EA5E9",
+      bgColor: "#E0F2FE",
+      path: "#"
+    },
+    {
+      name: "Department Asset Summary",
+      desc: "Department-wise asset count, value, and per-employee cost analysis",
+      icon: "Building2",
+      color: "#00B87C",
+      bgColor: "#DCFCE7",
+      path: "#"
+    },
+    {
+      name: "Maintenance Cost Report",
+      desc: "Repair history, vendor-wise spend, and maintenance cost trends",
+      icon: "Wrench",
+      color: "#EC4899",
+      bgColor: "#FCE7F3",
+      path: "#"
+    },
+    {
+      name: "Compliance & Audit Report",
+      desc: "Asset tagging status, verification records, and audit trail summary",
+      icon: "ShieldCheck",
+      color: "#14B8A6",
+      bgColor: "#CCFBF1",
+      path: "#"
+    }
+  ];
+
+  const getIcon = (iconName: string, size = 20) => {
+    switch (iconName) {
+      case "BarChart3": return <BarChart3 size={size} />;
+      case "RefreshCw": return <RefreshCw size={size} />;
+      case "Activity": return <Activity size={size} />;
+      case "Building2": return <Building2 size={size} />;
+      case "Wrench": return <Wrench size={size} />;
+      case "ShieldCheck": return <ShieldCheck size={size} />;
+      default: return <FileText size={size} />;
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-[1.5px] mb-4">ASSET REPORTS</h4>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {assetReports.map((report, i) => (
+          <motion.div
+            key={i}
+            whileHover={{ y: -4 }}
+            className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col h-full group"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center border transition-all shrink-0"
+                style={{ backgroundColor: report.bgColor, color: report.color, borderColor: `${report.color}30` }}
+              >
+                {getIcon(report.icon)}
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => { alert(`Scheduling ${report.name}...`); }}
+                  className="p-2 hover:bg-muted rounded-xl transition-all text-muted-foreground"
+                  title="Schedule"
+                >
+                  <Clock size={16} />
+                </button>
+                <button
+                  onClick={() => { alert(`Settings for ${report.name}...`); }}
+                  className="p-2 hover:bg-muted rounded-xl transition-all text-muted-foreground"
+                  title="Settings"
+                >
+                  <Settings size={16} />
+                </button>
+              </div>
+            </div>
+            <div className="flex-1">
+              <h4 className="text-[14px] font-bold text-foreground tracking-tight mb-1 group-hover:text-[#00B87C] transition-colors">{report.name}</h4>
+              <p className="text-[12px] font-medium text-muted-foreground leading-relaxed line-clamp-2">{report.desc}</p>
+            </div>
+            <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  {i === 0 ? "Updated 2h ago" : i === 1 ? "Updated 1d ago" : `Last run: ${["Apr 2", "Mar 28", "Apr 5", "Apr 1", "Mar 30"][i - 2]}`}
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  if (report.path !== "#") {
+                    navigate(report.path);
+                  } else {
+                    alert(`Opening ${report.name}...`);
+                  }
+                }}
+                className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest flex items-center gap-1 hover:underline"
+              >
+                Generate <ChevronRight size={14} />
+              </button>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </div>
   );
