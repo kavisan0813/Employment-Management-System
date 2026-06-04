@@ -98,12 +98,12 @@ Thank you for your valuable contribution.
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#EDE9FE] dark:bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6]">
-            <FileText size={24} />
+          <div className="w-11 h-11 rounded-[10px] bg-[#EDE9FE] dark:bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6]">
+            <FileText size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-foreground tracking-tight">My Payslips</h1>
-            <p className="text-[13px] font-bold text-muted-foreground">Manage and download your salary statements</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">My Payslips</h1>
+            <p className="text-[13px] text-[#6B7280]">Manage and download your salary statements</p>
           </div>
         </div>
         <button 
@@ -141,17 +141,17 @@ Thank you for your valuable contribution.
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-border bg-muted/10">
-                <th className="px-8 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Month</th>
-                <th className="px-8 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Gross Salary</th>
-                <th className="px-8 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Deductions</th>
-                <th className="px-8 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Net Salary</th>
-                <th className="px-8 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Status</th>
-                <th className="px-8 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">Action</th>
+                <th className="px-8 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Month</th>
+                <th className="px-8 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Gross Salary</th>
+                <th className="px-8 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Deductions</th>
+                <th className="px-8 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Net Salary</th>
+                <th className="px-8 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Status</th>
+                <th className="px-8 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {payslipsData.map((payslip) => (
-                <tr key={payslip.id} className="h-14 hover:bg-[#F0FDF4] dark:hover:bg-emerald-500/5 transition-all group">
+                <tr key={payslip.id} className="h-14 hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all group">
                   <td className="px-8 text-[14px] font-bold text-foreground">
                     <div className="flex items-center gap-3">
                       {payslip.month} {payslip.year}
@@ -164,14 +164,14 @@ Thank you for your valuable contribution.
                   <td className="px-8 text-[14px] font-bold text-rose-600">{payslip.deductions}</td>
                   <td className="px-8 text-[14px] font-black text-[#00B87C]">{payslip.net}</td>
                   <td className="px-8">
-                    <span className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest ${payslip.status === 'Credited' ? 'text-[#00B87C]' : 'text-amber-500'}`}>
+                    <span className={`flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider ${payslip.status === 'Credited' ? 'text-[#00B87C]' : 'text-amber-500'}`}>
                       <CheckCircle2 size={12} /> {payslip.status}
                     </span>
                   </td>
                   <td className="px-8 text-right space-x-2">
                     <button 
                       onClick={() => handleView(payslip)}
-                      className="px-4 py-1.5 rounded-lg border border-border text-[11px] font-black uppercase tracking-widest hover:bg-muted transition-all bg-transparent"
+                      className="px-4 py-1.5 rounded-lg border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all bg-transparent"
                     >
                       View
                     </button>
@@ -230,7 +230,7 @@ Thank you for your valuable contribution.
                 <div className="text-center space-y-2">
                   <div className="w-12 h-12 rounded-2xl bg-[#00B87C] mx-auto flex items-center justify-center text-white font-black text-xl shadow-lg shadow-[#00B87C]/20 mb-4">N</div>
                   <h4 className="text-[16px] font-black text-foreground uppercase tracking-tight">NexusHR Solutions Pvt Ltd</h4>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
                     123, Business District, Whitefield, Bangalore - 560066<br />
                     CIN: U74140KA2022PTC123456
                   </p>
@@ -281,10 +281,10 @@ Thank you for your valuable contribution.
                 </div>
 
                 {/* NET PAY */}
-                <div className="p-6 rounded-[24px] bg-[#00B87C]/5 border border-[#00B87C]/20 text-center space-y-1">
+                <div className="p-6 rounded-2xl bg-[#00B87C]/5 border border-[#00B87C]/20 text-center space-y-1">
                   <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">NET PAYABLE AMOUNT</p>
                   <h2 className="text-[32px] font-black text-[#00B87C] tracking-tight">{selectedPayslip.net}</h2>
-                  <p className="text-[10px] font-bold text-[#00B87C] opacity-70 uppercase tracking-widest">Eighty Two Thousand Four Hundred Only</p>
+                  <p className="text-[11px] font-bold text-[#00B87C] opacity-70 uppercase tracking-widest">Eighty Two Thousand Four Hundred Only</p>
                 </div>
               </div>
 
@@ -321,7 +321,7 @@ function KPICard({ label, value, subValue, color, chip }: { label: string, value
 
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm group hover:border-[#00B87C]/30 transition-all">
-      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">{label}</p>
+      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-3">{label}</p>
       <div className="flex flex-col gap-1">
         <h3 className={`text-2xl font-black tracking-tight ${colorClasses[color]}`}>{value}</h3>
         <div className="flex items-center gap-2">
@@ -337,7 +337,7 @@ function KPICard({ label, value, subValue, color, chip }: { label: string, value
 
 function FilterDropdown({ label }: { label: string }) {
   return (
-    <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-card text-[11px] font-black uppercase tracking-widest hover:bg-secondary transition-all">
+    <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-card text-[11px] font-semibold uppercase tracking-wider hover:bg-secondary transition-all">
       {label} <ChevronDown size={14} className="text-muted-foreground" />
     </button>
   );

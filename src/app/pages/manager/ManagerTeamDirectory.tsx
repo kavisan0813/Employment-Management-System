@@ -21,7 +21,7 @@ import {
   Send,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types                                                           */
@@ -216,7 +216,7 @@ const StatusBadge = ({ status }: { status: Colleague["status"] }) => {
   };
   return (
     <span
-      className={`px-2.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${styles[status]}`}
+      className={`px-2.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border ${styles[status]}`}
     >
       {status}
     </span>
@@ -237,7 +237,7 @@ const AvailabilityBadge = ({
   return (
     <div className="flex items-center gap-1.5">
       <div className={`w-2.5 h-2.5 rounded-full ${styles[availability]}`} />
-      <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+      <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
         {availability}
       </span>
     </div>
@@ -329,14 +329,14 @@ export function ManagerTeamDirectory() {
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-500/10 pb-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-sm flex-shrink-0">
-            <Users size={24} className="text-[#00B87C]" />
+          <div className="w-11 h-11 rounded-[10px] bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-sm flex-shrink-0">
+            <Users size={22} className="text-[#00B87C]" />
           </div>
           <div>
-            <h1 className="text-[28px] font-black text-foreground leading-none">
+            <h1 className="text-[26px] font-bold text-foreground leading-none">
               Team Directory
             </h1>
-            <p className="text-[14px] font-bold text-muted-foreground mt-1.5 uppercase tracking-widest">
+            <p className="text-[13px] text-[#6B7280]">
               Directory of direct reports and all company employees
             </p>
           </div>
@@ -348,7 +348,7 @@ export function ManagerTeamDirectory() {
             onClick={() =>
               showToast("Exporting", "success", "Directory list exported successfully.")
             }
-            className="px-4 py-2.5 bg-card border border-border rounded-xl text-[13px] font-black text-foreground hover:bg-secondary transition-all flex items-center gap-2"
+            className="px-4 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:bg-secondary transition-all flex items-center gap-2"
           >
             <ExternalLink size={16} className="text-[#00B87C]" />
             Export
@@ -399,7 +399,7 @@ export function ManagerTeamDirectory() {
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="px-4 py-3 text-[13px] font-black text-rose-500 hover:bg-rose-500/5 rounded-xl transition-all flex items-center gap-2 shrink-0 border border-rose-500/20"
+              className="px-4 py-3 text-[13px] font-bold text-rose-500 hover:bg-rose-500/5 rounded-xl transition-all flex items-center gap-2 shrink-0 border border-rose-500/20"
             >
               <X size={16} /> Clear Filters
             </button>
@@ -455,7 +455,7 @@ export function ManagerTeamDirectory() {
           <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-muted-foreground mb-4">
             <Search size={32} />
           </div>
-          <h3 className="text-[18px] font-black text-foreground">
+          <h3 className="text-[18px] font-bold text-foreground">
             No colleagues found
           </h3>
           <p className="text-[14px] font-bold text-muted-foreground">
@@ -463,7 +463,7 @@ export function ManagerTeamDirectory() {
           </p>
           <button
             onClick={clearFilters}
-            className="mt-6 px-6 py-3 bg-[#00B87C] text-white rounded-xl font-black text-[13px] hover:opacity-90 transition-all shadow-lg shadow-emerald-500/25"
+            className="mt-6 px-6 py-3 bg-[#00B87C] text-white rounded-xl font-bold text-[13px] hover:opacity-90 transition-all shadow-lg shadow-emerald-500/25"
           >
             Clear All Filters
           </button>
@@ -476,11 +476,11 @@ export function ManagerTeamDirectory() {
               <div className="flex items-center justify-between border-b border-emerald-500/10 pb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-1 h-5 bg-[#00B87C] rounded-full" />
-                  <h3 className="text-[14px] font-black text-foreground uppercase tracking-widest">
+                  <h3 className="text-[14px] font-bold text-foreground uppercase tracking-wider">
                     My Team (Direct Reports)
                   </h3>
                 </div>
-                <span className="text-[11px] font-black text-[#00B87C] bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 uppercase tracking-wider">
+                <span className="text-[11px] font-bold text-[#00B87C] bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 uppercase tracking-wider">
                   {directReports.length} Direct Reports
                 </span>
               </div>
@@ -520,11 +520,11 @@ export function ManagerTeamDirectory() {
               <div className="flex items-center justify-between border-b border-border pb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-1 h-5 bg-slate-400 rounded-full" />
-                  <h3 className="text-[14px] font-black text-foreground uppercase tracking-widest">
+                  <h3 className="text-[14px] font-bold text-foreground uppercase tracking-wider">
                     All Employees
                   </h3>
                 </div>
-                <span className="text-[11px] font-black text-muted-foreground bg-secondary px-3 py-1 rounded-full uppercase tracking-wider border border-border">
+                <span className="text-[11px] font-bold text-muted-foreground bg-secondary px-3 py-1 rounded-full uppercase tracking-wider border border-border">
                   {otherEmployees.length} Colleagues
                 </span>
               </div>
@@ -593,11 +593,11 @@ export function ManagerTeamDirectory() {
               className="relative bg-card w-full max-w-[480px] rounded-[32px] shadow-2xl p-8 border border-border flex flex-col"
             >
               <div className="flex items-center gap-3 pb-4 border-b border-border">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-[#00B87C] font-black text-xs">
+                <div className="w-9 h-9 rounded-[10px] bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-[#00B87C] font-bold text-xs">
                   {targetColleague.initials}
                 </div>
                 <div>
-                  <h3 className="text-[16px] font-black text-foreground leading-none">
+                  <h3 className="text-[16px] font-bold text-foreground leading-none">
                     Send Quick Message
                   </h3>
                   <p className="text-[12px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
@@ -625,14 +625,14 @@ export function ManagerTeamDirectory() {
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() => setShowMessageModal(false)}
-                  className="flex-1 py-4 border border-border text-[12px] font-black uppercase tracking-widest rounded-2xl hover:bg-secondary transition-all"
+                  className="flex-1 py-4 border border-border text-[12px] font-bold uppercase tracking-wider rounded-2xl hover:bg-secondary transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSendMessage}
                   disabled={!messageText.trim()}
-                  className="flex-1 py-4 bg-[#00B87C] text-white text-[12px] font-black uppercase tracking-widest rounded-2xl hover:opacity-90 disabled:opacity-50 transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2"
+                  className="flex-1 py-4 bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-wider rounded-2xl hover:opacity-90 disabled:opacity-50 transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2"
                 >
                   <Send size={14} /> Send Message
                 </button>
@@ -667,14 +667,14 @@ function ColleagueCard({
       }`}
     >
       {colleague.isDirectReport && (
-        <div className="absolute top-0 left-0 bg-emerald-500 text-white text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-br-xl border-r border-b border-emerald-500/30">
+        <div className="absolute top-0 left-0 bg-emerald-500 text-white text-[8px] font-bold uppercase tracking-wider px-3 py-1 rounded-br-xl border-r border-b border-emerald-500/30">
           Direct
         </div>
       )}
 
       {/* Avatar */}
       <div className="relative mb-5 mt-2">
-        <div className="w-18 h-18 rounded-3xl bg-emerald-500/5 flex items-center justify-center text-xl font-black text-[#00B87C] border-2 border-card shadow-sm overflow-hidden group-hover:border-[#00B87C] transition-all">
+        <div className="w-18 h-18 rounded-3xl bg-emerald-500/5 flex items-center justify-center text-xl font-bold text-[#00B87C] border-2 border-card shadow-sm overflow-hidden group-hover:border-[#00B87C] transition-all">
           {colleague.avatar ? (
             <img src={colleague.avatar} alt={colleague.name} className="w-full h-full object-cover" />
           ) : (
@@ -696,7 +696,7 @@ function ColleagueCard({
 
       {/* Info */}
       <div className="mb-4">
-        <h4 className="text-[16px] font-black text-foreground group-hover:text-[#00B87C] transition-colors leading-tight">
+        <h4 className="text-[16px] font-bold text-foreground group-hover:text-[#00B87C] transition-colors leading-tight">
           {colleague.name}
         </h4>
         <p className="text-[12px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
@@ -705,7 +705,7 @@ function ColleagueCard({
       </div>
 
       <div className="flex flex-col items-center gap-2 mb-5">
-        <span className="px-2.5 py-0.5 rounded-md bg-secondary text-[#00B87C] text-[9px] font-black uppercase tracking-widest border border-border">
+        <span className="px-2.5 py-0.5 rounded-md bg-secondary text-[#00B87C] text-[9px] font-bold uppercase tracking-wider border border-border">
           {colleague.department}
         </span>
         <StatusBadge status={colleague.status} />
@@ -740,7 +740,7 @@ function ColleagueCard({
             e.stopPropagation();
             onMessage();
           }}
-          className="w-full py-2.5 bg-emerald-500/10 text-[#00B87C] hover:text-white text-[12px] font-black uppercase tracking-widest rounded-xl hover:bg-[#00B87C] transition-all border border-emerald-500/20"
+          className="w-full py-2.5 bg-emerald-500/10 text-[#00B87C] hover:text-white text-[12px] font-bold uppercase tracking-wider rounded-xl hover:bg-[#00B87C] transition-all border border-emerald-500/20"
         >
           Message
         </button>
@@ -769,22 +769,22 @@ function ColleagueTable({
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-secondary/50 border-b border-border">
-              <th className="py-4 px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <th className="py-4 px-6 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 Employee
               </th>
-              <th className="py-4 px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <th className="py-4 px-6 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 Role & Department
               </th>
-              <th className="py-4 px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <th className="py-4 px-6 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 Status
               </th>
-              <th className="py-4 px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <th className="py-4 px-6 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 Availability
               </th>
-              <th className="py-4 px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <th className="py-4 px-6 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 Location
               </th>
-              <th className="py-4 px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-right">
+              <th className="py-4 px-6 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">
                 Actions
               </th>
             </tr>
@@ -799,7 +799,7 @@ function ColleagueTable({
                 <td className="py-4 px-6">
                   <div className="flex items-center gap-3">
                     <div className="relative flex-shrink-0">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-500/5 flex items-center justify-center text-[12px] font-black text-[#00B87C] border border-border shadow-sm overflow-hidden group-hover:border-[#00B87C] transition-all">
+                      <div className="w-9 h-9 rounded-[10px] bg-emerald-500/5 flex items-center justify-center text-[12px] font-bold text-[#00B87C] border border-border shadow-sm overflow-hidden group-hover:border-[#00B87C] transition-all">
                         {c.avatar ? (
                           <img src={c.avatar} alt={c.name} className="w-full h-full object-cover" />
                         ) : (
@@ -819,10 +819,10 @@ function ColleagueTable({
                       />
                     </div>
                     <div>
-                      <p className="text-[14px] font-black text-foreground group-hover:text-[#00B87C] transition-colors leading-none flex items-center gap-2">
+                      <p className="text-[14px] font-bold text-foreground group-hover:text-[#00B87C] transition-colors leading-none flex items-center gap-2">
                         {c.name}
                         {c.isDirectReport && (
-                          <span className="bg-emerald-500/10 text-[#00B87C] text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border border-emerald-500/20">
+                          <span className="bg-emerald-500/10 text-[#00B87C] text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border border-emerald-500/20">
                             Direct
                           </span>
                         )}
@@ -838,7 +838,7 @@ function ColleagueTable({
                     <p className="text-[13px] font-bold text-foreground">
                       {c.designation}
                     </p>
-                    <p className="text-[11px] font-black text-[#00B87C] uppercase tracking-wider mt-0.5">
+                    <p className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider mt-0.5">
                       {c.department}
                     </p>
                   </div>
@@ -931,7 +931,7 @@ function ColleagueSlidePanel({
         {/* Profile Details Header */}
         <div className="flex flex-col items-center text-center mt-12 pb-8 border-b border-border">
           <div className="relative mb-6">
-            <div className="w-24 h-24 rounded-[32px] bg-emerald-500/5 flex items-center justify-center text-3xl font-black text-[#00B87C] border-2 border-border shadow-sm overflow-hidden">
+            <div className="w-24 h-24 rounded-[32px] bg-emerald-500/5 flex items-center justify-center text-3xl font-bold text-[#00B87C] border-2 border-border shadow-sm overflow-hidden">
               {colleague.avatar ? (
                 <img src={colleague.avatar} alt={colleague.name} className="w-full h-full object-cover" />
               ) : (
@@ -951,7 +951,7 @@ function ColleagueSlidePanel({
             />
           </div>
 
-          <h2 className="text-[22px] font-black text-foreground leading-tight">
+          <h2 className="text-[22px] font-bold text-foreground leading-tight">
             {colleague.name}
           </h2>
           <p className="text-[14px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
@@ -959,12 +959,12 @@ function ColleagueSlidePanel({
           </p>
 
           <div className="flex flex-wrap justify-center gap-2 mt-4">
-            <span className="px-3 py-0.5 rounded-md bg-secondary text-[#00B87C] text-[10px] font-black uppercase tracking-widest border border-border">
+            <span className="px-3 py-0.5 rounded-md bg-secondary text-[#00B87C] text-[11px] font-bold uppercase tracking-wider border border-border">
               {colleague.department}
             </span>
             <StatusBadge status={colleague.status} />
             {colleague.isDirectReport && (
-              <span className="px-3 py-0.5 rounded-md bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest">
+              <span className="px-3 py-0.5 rounded-md bg-emerald-500 text-white text-[11px] font-bold uppercase tracking-wider">
                 Direct Report
               </span>
             )}
@@ -975,40 +975,40 @@ function ColleagueSlidePanel({
         <div className="py-8 space-y-6 flex-1">
           {/* Section: General Info */}
           <div className="space-y-4">
-            <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+            <h3 className="text-[12px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
               <Briefcase size={14} className="text-muted-foreground/60" /> Job Information
             </h3>
             <div className="bg-secondary/30 p-5 rounded-2xl border border-border/50 space-y-4">
               <div className="flex justify-between items-center text-[13px]">
                 <span className="font-bold text-muted-foreground">Employee ID</span>
-                <span className="font-black text-foreground">{colleague.id}</span>
+                <span className="font-bold text-foreground">{colleague.id}</span>
               </div>
               <div className="flex justify-between items-center text-[13px]">
                 <span className="font-bold text-muted-foreground">Manager</span>
-                <span className="font-black text-foreground">{colleague.manager}</span>
+                <span className="font-bold text-foreground">{colleague.manager}</span>
               </div>
               <div className="flex justify-between items-center text-[13px]">
                 <span className="font-bold text-muted-foreground">Date Joined</span>
-                <span className="font-black text-foreground flex items-center gap-1">
+                <span className="font-bold text-foreground flex items-center gap-1">
                   <Calendar size={13} className="text-[#00B87C]" /> {colleague.joinedDate}
                 </span>
               </div>
               <div className="flex justify-between items-center text-[13px]">
                 <span className="font-bold text-muted-foreground">Timezone</span>
-                <span className="font-black text-foreground flex items-center gap-1">
+                <span className="font-bold text-foreground flex items-center gap-1">
                   <Clock size={13} className="text-blue-500" /> {colleague.timezone}
                 </span>
               </div>
               <div className="flex justify-between items-center text-[13px]">
                 <span className="font-bold text-muted-foreground">Work Hours</span>
-                <span className="font-black text-foreground">{colleague.workSchedule}</span>
+                <span className="font-bold text-foreground">{colleague.workSchedule}</span>
               </div>
             </div>
           </div>
 
           {/* Section: Contact & Social */}
           <div className="space-y-4">
-            <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+            <h3 className="text-[12px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
               <UserCheck size={14} className="text-muted-foreground/60" /> Contact Details
             </h3>
             <div className="space-y-3">
@@ -1019,7 +1019,7 @@ function ColleagueSlidePanel({
                     <Mail size={16} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Business Email
                     </p>
                     <p className="text-[13px] font-bold text-foreground truncate mt-0.5">
@@ -1043,7 +1043,7 @@ function ColleagueSlidePanel({
                     <Phone size={16} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Contact Number
                     </p>
                     <p className="text-[13px] font-bold text-foreground truncate mt-0.5">
@@ -1067,7 +1067,7 @@ function ColleagueSlidePanel({
                     <Linkedin size={16} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       LinkedIn Profile
                     </p>
                     <p className="text-[13px] font-bold text-foreground truncate mt-0.5">
@@ -1092,14 +1092,14 @@ function ColleagueSlidePanel({
 
           {/* Section: Skills & Competencies */}
           <div className="space-y-4">
-            <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+            <h3 className="text-[12px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
               <CheckCircle size={14} className="text-muted-foreground/60" /> Skills & Competencies
             </h3>
             <div className="flex flex-wrap gap-2">
               {colleague.skills.map((skill) => (
                 <span
                   key={skill}
-                  className="px-3 py-1.5 bg-secondary text-foreground text-[11px] font-black rounded-lg border border-border uppercase tracking-wide"
+                  className="px-3 py-1.5 bg-secondary text-foreground text-[11px] font-bold rounded-lg border border-border uppercase tracking-wide"
                 >
                   {skill}
                 </span>
@@ -1112,7 +1112,7 @@ function ColleagueSlidePanel({
         <div className="border-t border-border pt-6 mt-auto">
           <button
             onClick={onMessage}
-            className="w-full py-4 bg-[#00B87C] text-white text-[13px] font-black uppercase tracking-widest rounded-2xl hover:opacity-90 transition-all shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2"
+            className="w-full py-4 bg-[#00B87C] text-white text-[13px] font-bold uppercase tracking-wider rounded-2xl hover:opacity-90 transition-all shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2"
           >
             <MessageSquare size={16} /> Send Message
           </button>

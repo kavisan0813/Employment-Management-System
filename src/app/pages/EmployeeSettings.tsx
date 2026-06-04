@@ -1,6 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Settings,
   User,
@@ -15,19 +16,25 @@ import {
   HelpCircle,
   Headphones,
   ChevronRight,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Camera,
   X,
   Eye,
   EyeOff,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Shield,
   AlertTriangle,
   Sun,
   Monitor,
   Search,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Phone,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Mail,
   Smartphone,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   MapPin,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Linkedin,
   Clock,
   Calendar,
@@ -42,6 +49,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useAuth } from "../context/AuthContext";
 
 type SectionKey =
@@ -78,7 +86,7 @@ function Label({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 mb-4">
       <div className="w-1.5 h-5 bg-primary rounded-full shrink-0" />
-      <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
+      <h3 className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider">
         {children}
       </h3>
     </div>
@@ -102,6 +110,7 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Modal({ open, onClose, title, children }: ModalProps) {
   return (
     <AnimatePresence>
@@ -151,6 +160,7 @@ function Toggle({ on, onChange, disabled }: { on: boolean; onChange: (v: boolean
 
 export default function EmployeeSettings() {
   const [activeSection, setActiveSection] = useState<SectionKey>("security");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -171,10 +181,10 @@ export default function EmployeeSettings() {
       <div className="flex gap-6 items-start">
         {/* Left: Sub-navigation */}
         <div className="w-[220px] shrink-0 sticky top-[80px]">
-          <div className="bg-card rounded-[24px] border border-border shadow-sm p-3">
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-3">
             {["ACCOUNT", "PREFERENCES", "DEVICES & DATA", "SUPPORT"].map((group) => (
               <div key={group} className="mb-1">
-                <p className="px-3 py-2 text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest">
+                <p className="px-3 py-2 text-[11px] font-semibold text-[#94A3B8]/50 uppercase tracking-widest">
                   {group}
                 </p>
                 {SUB_NAV_ITEMS.filter((i) => i.group === group).map((item) => {
@@ -199,7 +209,7 @@ export default function EmployeeSettings() {
 
         {/* Right: Content Panel */}
         <div className="flex-1 min-w-0 space-y-6">
-          <div className="bg-card rounded-[24px] border border-border shadow-sm p-8">
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-8">
             {activeSection === "security" && <AccountSecurity onModal={setActiveModal} />}
             {activeSection === "privacy" && <PrivacySettings onModal={setActiveModal} />}
             {activeSection === "notifications" && <NotificationSettings onModal={setActiveModal} />}
@@ -219,6 +229,7 @@ export default function EmployeeSettings() {
 /* ═══════════════════════════════════════════
    SECTION: ACCOUNT & SECURITY
    ═══════════════════════════════════════════ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function AccountSecurity({ onModal }: { onModal: (m: string | null) => void }) {
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
@@ -254,7 +265,7 @@ function AccountSecurity({ onModal }: { onModal: (m: string | null) => void }) {
       <h2 className="text-[22px] font-black text-foreground mb-6">Account & Security</h2>
 
       {/* Change Password */}
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-8">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-8">
         <Label>UPDATE YOUR PASSWORD</Label>
         <div className="space-y-5 max-w-lg">
           <PasswordField label="Current Password" value={currentPw} onChange={setCurrentPw} show={showPw.current} onToggle={() => setShowPw({ ...showPw, current: !showPw.current })} />
@@ -284,17 +295,17 @@ function AccountSecurity({ onModal }: { onModal: (m: string | null) => void }) {
         </ul>
         <button
           onClick={() => showToast("Password Updated", "success", "Password updated successfully!")}
-          className="mt-6 w-full max-w-lg py-3.5 rounded-xl bg-primary text-white font-black text-[14px] shadow-lg shadow-emerald-500/20 hover:opacity-90 active:scale-[0.98] transition-all"
+          className="mt-6 w-full max-w-lg py-3.5 rounded-xl bg-primary text-white font-black text-[14px] shadow-lg shadow-[#00B87C]/20 hover:opacity-90 active:scale-[0.98] transition-all"
         >
           Update Password
         </button>
       </div>
 
       {/* Two-Factor Authentication */}
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-8">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-8">
         <div className="flex items-center justify-between mb-5">
           <Label>TWO-FACTOR AUTHENTICATION (2FA)</Label>
-          <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
+          <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-semibold uppercase tracking-wider border border-primary/20">
             {twoFA ? "ENABLED" : "DISABLED"}
           </span>
         </div>
@@ -324,7 +335,7 @@ function AccountSecurity({ onModal }: { onModal: (m: string | null) => void }) {
       </div>
 
       {/* Active Sessions */}
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8">
         <Label>YOUR ACTIVE LOGIN SESSIONS</Label>
         <div className="space-y-1">
           {sessions.map((s) => {
@@ -339,7 +350,7 @@ function AccountSecurity({ onModal }: { onModal: (m: string | null) => void }) {
                   <p className="text-[12px] font-bold text-muted-foreground truncate">{s.location} · {s.time}</p>
                 </div>
                 {s.current ? (
-                  <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20 shrink-0">
+                  <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-semibold uppercase tracking-wider border border-primary/20 shrink-0">
                     This device
                   </span>
                 ) : (
@@ -377,7 +388,7 @@ function PrivacySettings({ onModal }: { onModal: (m: string | null) => void }) {
       <Breadcrumb active="Privacy" />
       <h2 className="text-[22px] font-black text-foreground mb-6">Privacy Settings</h2>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <Label>PROFILE VISIBILITY</Label>
         <p className="text-[13px] font-bold text-muted-foreground mb-5">Control what information colleagues can see in the Team Directory</p>
         <div className="space-y-1 max-w-lg">
@@ -390,7 +401,7 @@ function PrivacySettings({ onModal }: { onModal: (m: string | null) => void }) {
         </div>
       </div>
 
-      <div className="bg-amber-500/5 border border-amber-500/20 rounded-[24px] p-8 mb-6">
+      <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-8 mb-6">
         <Label><span className="text-amber-500">SALARY PRIVACY</span></Label>
         <div className="space-y-3 max-w-lg">
           <ToggleRow label="Show my salary to my manager" desc="Managers can always see their team's salary (company policy)" on={toggles.salaryManager} onChange={() => {}} disabled />
@@ -400,7 +411,7 @@ function PrivacySettings({ onModal }: { onModal: (m: string | null) => void }) {
         </div>
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <Label>ACTIVITY & DATA VISIBILITY</Label>
         <div className="space-y-1 max-w-lg">
           <ToggleRow label="Show my online status (green dot)" desc="Colleagues see when you're active in the system" on={toggles.showOnline} onChange={() => toggle("showOnline")} />
@@ -413,7 +424,7 @@ function PrivacySettings({ onModal }: { onModal: (m: string | null) => void }) {
 
       <Label>DATA REQUESTS</Label>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-card rounded-[24px] border border-border shadow-sm p-8">
+        <div className="bg-card rounded-2xl border border-border shadow-sm p-8">
           <p className="text-[15px] font-black text-foreground mb-1">Request a copy of my data</p>
           <p className="text-[12px] font-bold text-muted-foreground mb-5">Download all your personal data stored in NexusHR</p>
           <button className="px-5 py-2.5 rounded-xl border border-primary text-primary text-[12px] font-black hover:bg-primary/10 transition-all active:scale-95"
@@ -421,7 +432,7 @@ function PrivacySettings({ onModal }: { onModal: (m: string | null) => void }) {
             Request Download
           </button>
         </div>
-        <div className="bg-rose-500/5 border border-rose-500/20 rounded-[24px] shadow-sm p-8">
+        <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl shadow-sm p-8">
           <p className="text-[15px] font-black text-rose-500 mb-1">Request data deletion</p>
           <p className="text-[12px] font-bold text-muted-foreground mb-5">Request removal of personal data (subject to HR policy)</p>
           <button className="px-5 py-2.5 rounded-xl bg-rose-500 text-white text-[12px] font-black hover:bg-rose-600 transition-all active:scale-95"
@@ -475,17 +486,17 @@ function NotificationSettings({ onModal }: { onModal: (m: string | null) => void
       <Breadcrumb active="Notifications" />
       <h2 className="text-[22px] font-black text-foreground mb-6">Notification Preferences</h2>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <Label>NOTIFICATION CHANNELS</Label>
         <div className="overflow-hidden rounded-2xl border border-border">
-          <div className="grid grid-cols-[1fr_52px_52px_52px] gap-2 px-5 py-3 border-b border-border bg-secondary/50 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+          <div className="grid grid-cols-[1fr_52px_52px_52px] gap-2 px-5 py-3 border-b border-border bg-secondary/50 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
             <span>Category</span>
             <span className="text-center">Email</span>
             <span className="text-center">Push</span>
             <span className="text-center">SMS</span>
           </div>
           {channelRows.map((row) => (
-            <div key={row.key} className="grid grid-cols-[1fr_52px_52px_52px] gap-2 px-5 py-4 border-b last:border-b-0 border-border/50 hover:bg-secondary/30 transition-colors items-center">
+            <div key={row.key} className="grid grid-cols-[1fr_52px_52px_52px] gap-2 px-5 py-4 border-b last:border-b-0 border-border/50 hover:bg-[#00B87C]/[0.08] transition-colors items-center">
               <div>
                 <p className="text-[14px] font-black text-foreground">{row.label}</p>
                 <p className="text-[12px] font-bold text-muted-foreground">{row.desc}</p>
@@ -500,7 +511,7 @@ function NotificationSettings({ onModal }: { onModal: (m: string | null) => void
         </div>
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <Label>NOTIFICATION TIMING</Label>
         <div className="space-y-5 max-w-lg">
           <div className="flex items-center justify-between">
@@ -539,7 +550,7 @@ function NotificationSettings({ onModal }: { onModal: (m: string | null) => void
         </div>
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8">
         <Label>EMAIL PREFERENCES</Label>
         <button className="px-5 py-2.5 rounded-xl border border-rose-500 text-rose-500 text-[12px] font-black hover:bg-rose-500/10 transition-all active:scale-95"
           onClick={() => onModal("unsubscribe")}>
@@ -572,7 +583,7 @@ function AppearanceSettings() {
       <Breadcrumb active="Appearance" />
       <h2 className="text-[22px] font-black text-foreground mb-6">Appearance</h2>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <Label>THEME</Label>
         <div className="grid grid-cols-3 gap-4">
           {[
@@ -586,7 +597,7 @@ function AppearanceSettings() {
               <div
                 key={t.key}
                 onClick={() => applyTheme(t.key)}
-                className={`rounded-2xl border p-5 cursor-pointer transition-all hover:shadow-md ${active ? "border-primary" : "border-border"}`}
+                className={`rounded-2xl border p-5 cursor-pointer transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] ${active ? "border-primary" : "border-border"}`}
                 style={{ backgroundColor: "var(--card)" }}
               >
                 <div className="flex justify-between items-start mb-4">
@@ -594,7 +605,7 @@ function AppearanceSettings() {
                     <div className="h-3 w-full" style={{ backgroundColor: "var(--primary)" }} />
                   </div>
                   {active && (
-                    <span className="px-2 py-0.5 rounded-full bg-primary text-white text-[9px] font-black uppercase tracking-widest ml-2 shrink-0">
+                    <span className="px-2 py-0.5 rounded-full bg-primary text-white text-[9px] font-semibold uppercase tracking-wider ml-2 shrink-0">
                       Active
                     </span>
                   )}
@@ -612,7 +623,7 @@ function AppearanceSettings() {
         </div>
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <Label>SIDEBAR</Label>
         <div className="flex gap-3">
           {[
@@ -622,7 +633,7 @@ function AppearanceSettings() {
             const active = sidebarStyle === s.key;
             return (
               <button key={s.key} onClick={() => { setSidebarStyle(s.key); showToast("Sidebar Updated", "success", `Sidebar: ${s.label}`); }}
-                className={`px-5 py-2.5 rounded-xl text-[13px] font-black transition-all ${active ? "bg-primary text-white shadow-lg shadow-emerald-500/20" : "border border-border text-muted-foreground hover:bg-secondary"}`}>
+                className={`px-5 py-2.5 rounded-xl text-[13px] font-black transition-all ${active ? "bg-primary text-white shadow-lg shadow-[#00B87C]/20" : "border border-border text-muted-foreground hover:bg-secondary"}`}>
                 {s.label}
               </button>
             );
@@ -630,7 +641,7 @@ function AppearanceSettings() {
         </div>
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <Label>DENSITY</Label>
         <div className="flex gap-3">
           {[
@@ -641,7 +652,7 @@ function AppearanceSettings() {
             const active = density === d.key;
             return (
               <button key={d.key} onClick={() => { setDensity(d.key); showToast("Density Updated", "success", `Density: ${d.label}`); }}
-                className={`px-5 py-2.5 rounded-xl text-[13px] font-black transition-all ${active ? "bg-primary text-white shadow-lg shadow-emerald-500/20" : "border border-border text-muted-foreground hover:bg-secondary"}`}>
+                className={`px-5 py-2.5 rounded-xl text-[13px] font-black transition-all ${active ? "bg-primary text-white shadow-lg shadow-[#00B87C]/20" : "border border-border text-muted-foreground hover:bg-secondary"}`}>
                 {d.label}
               </button>
             );
@@ -649,7 +660,7 @@ function AppearanceSettings() {
         </div>
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <Label>FONT SIZE</Label>
         <div className="flex justify-between items-center mb-3">
           <span className="text-[13px] font-black text-foreground">Font Size</span>
@@ -663,7 +674,7 @@ function AppearanceSettings() {
         </div>
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8">
         <Label>COLOR ACCENT</Label>
         <p className="text-[13px] font-bold text-muted-foreground mb-4">The green accent color matches your company branding.</p>
         <div className="flex items-center gap-5">
@@ -696,7 +707,7 @@ function LanguageRegion({ onModal }: { onModal: (m: string | null) => void }) {
       <Breadcrumb active="Language & Region" />
       <h2 className="text-[22px] font-black text-foreground mb-6">Language & Region</h2>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <Label>DISPLAY LANGUAGE</Label>
         <div className="max-w-md relative">
           <select value={lang} onChange={(e) => setLang(e.target.value)}
@@ -709,11 +720,11 @@ function LanguageRegion({ onModal }: { onModal: (m: string | null) => void }) {
         </div>
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <Label>REGION & FORMATS</Label>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1 mb-2 block">Timezone</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1 mb-2 block">Timezone</label>
             <div className="relative">
               <select value={tz} onChange={(e) => setTz(e.target.value)}
                 className="w-full h-12 bg-background border border-border rounded-xl px-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary appearance-none">
@@ -725,7 +736,7 @@ function LanguageRegion({ onModal }: { onModal: (m: string | null) => void }) {
             </div>
           </div>
           <div>
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1 mb-2 block">Date Format</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1 mb-2 block">Date Format</label>
             <div className="relative">
               <select value={dateFmt} onChange={(e) => setDateFmt(e.target.value)}
                 className="w-full h-12 bg-background border border-border rounded-xl px-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary appearance-none">
@@ -737,13 +748,13 @@ function LanguageRegion({ onModal }: { onModal: (m: string | null) => void }) {
             </div>
           </div>
           <div>
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1 mb-2 block">Time Format</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1 mb-2 block">Time Format</label>
             <div className="flex gap-3">
               {[{ key: "12h" as const, label: "12-hour (1:30 PM)" }, { key: "24h" as const, label: "24-hour (13:30)" }].map((t) => {
                 const active = timeFmt === t.key;
                 return (
                   <button key={t.key} onClick={() => setTimeFmt(t.key)}
-                    className={`flex-1 h-12 rounded-xl text-[13px] font-black transition-all ${active ? "bg-primary text-white shadow-lg shadow-emerald-500/20" : "border border-border text-muted-foreground hover:bg-secondary"}`}>
+                    className={`flex-1 h-12 rounded-xl text-[13px] font-black transition-all ${active ? "bg-primary text-white shadow-lg shadow-[#00B87C]/20" : "border border-border text-muted-foreground hover:bg-secondary"}`}>
                     {t.label}
                   </button>
                 );
@@ -751,7 +762,7 @@ function LanguageRegion({ onModal }: { onModal: (m: string | null) => void }) {
             </div>
           </div>
           <div>
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1 mb-2 block">Currency Display</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1 mb-2 block">Currency Display</label>
             <div className="relative">
               <select value={currency} onChange={(e) => setCurrency(e.target.value)}
                 className="w-full h-12 bg-background border border-border rounded-xl px-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary appearance-none">
@@ -764,7 +775,7 @@ function LanguageRegion({ onModal }: { onModal: (m: string | null) => void }) {
           </div>
         </div>
         <div className="p-5 rounded-2xl bg-background border border-border">
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-3">Preview with current settings:</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">Preview with current settings:</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-[13px] font-black text-foreground">
             <span>Date: {dateFmt === "DD-MM-YYYY" ? "06-04-2026" : dateFmt === "MM/DD/YYYY" ? "04/06/2026" : "2026-04-06"}</span>
             <span>Time: {timeFmt === "12h" ? "9:30 AM" : "09:30"}</span>
@@ -774,14 +785,14 @@ function LanguageRegion({ onModal }: { onModal: (m: string | null) => void }) {
         </div>
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <Label>FIRST DAY OF WEEK</Label>
         <div className="flex gap-3">
           {(["sunday", "monday", "saturday"] as const).map((day) => {
             const active = firstDay === day;
             return (
               <button key={day} onClick={() => setFirstDay(day)}
-                className={`px-6 py-2.5 rounded-xl text-[13px] font-black capitalize transition-all ${active ? "bg-primary text-white shadow-lg shadow-emerald-500/20" : "border border-border text-muted-foreground hover:bg-secondary"}`}>
+                className={`px-6 py-2.5 rounded-xl text-[13px] font-black capitalize transition-all ${active ? "bg-primary text-white shadow-lg shadow-[#00B87C]/20" : "border border-border text-muted-foreground hover:bg-secondary"}`}>
                 {day}
               </button>
             );
@@ -790,11 +801,11 @@ function LanguageRegion({ onModal }: { onModal: (m: string | null) => void }) {
       </div>
 
       <div className="flex items-center justify-between pt-4 border-t border-border">
-        <button className="text-[13px] font-black text-muted-foreground hover:text-foreground transition-all"
+        <button className="text-[13px] font-semibold text-[#94A3B8] hover:text-foreground transition-all"
           onClick={() => onModal("reset")}>
           Reset to System Default
         </button>
-        <button className="px-6 py-3 rounded-xl bg-primary text-white font-black text-[14px] shadow-lg shadow-emerald-500/20 hover:opacity-90 active:scale-[0.98] transition-all"
+        <button className="px-6 py-3 rounded-xl bg-primary text-white font-black text-[14px] shadow-lg shadow-[#00B87C]/20 hover:opacity-90 active:scale-[0.98] transition-all"
           onClick={() => showToast("Region Saved", "success", "Region settings saved.")}>
           Save Region Settings
         </button>
@@ -818,7 +829,7 @@ function ConnectedDevices({ onModal }: { onModal: (m: string | null) => void }) 
         </button>
       </div>
 
-      <div className="bg-primary/5 border border-primary/20 rounded-[24px] p-8 mb-6 relative overflow-hidden">
+      <div className="bg-primary/5 border border-primary/20 rounded-2xl p-8 mb-6 relative overflow-hidden">
         <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary rounded-r-full" />
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-4">
@@ -830,7 +841,7 @@ function ConnectedDevices({ onModal }: { onModal: (m: string | null) => void }) 
               <p className="text-[13px] font-bold text-muted-foreground">Chrome 124 · macOS 14</p>
             </div>
           </div>
-          <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
+          <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-semibold uppercase tracking-wider border border-primary/20">
             Current Device
           </span>
         </div>
@@ -847,7 +858,7 @@ function ConnectedDevices({ onModal }: { onModal: (m: string | null) => void }) 
       ].map((s, i) => {
         const Icon = s.icon;
         return (
-          <div key={i} className="bg-card rounded-[24px] border border-border shadow-sm p-6 mb-4 flex items-start justify-between">
+          <div key={i} className="bg-card rounded-2xl border border-border shadow-sm p-6 mb-4 flex items-start justify-between">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: s.bg }}>
                 <Icon size={20} style={{ color: s.color }} />
@@ -866,14 +877,14 @@ function ConnectedDevices({ onModal }: { onModal: (m: string | null) => void }) 
         );
       })}
 
-      <div className="p-6 rounded-[24px] border border-amber-500/20 bg-amber-500/5 mb-6">
+      <div className="p-6 rounded-2xl border border-amber-500/20 bg-amber-500/5 mb-6">
         <div className="flex items-center gap-2 mb-2">
           <AlertTriangle size={18} className="text-amber-500" />
           <p className="text-[14px] font-black text-amber-500">Unusual activity detected</p>
         </div>
         <p className="text-[13px] font-bold text-muted-foreground mb-4">Login from new location: Mumbai on Mar 28. Was this you?</p>
         <div className="flex gap-3">
-          <button className="px-5 py-2.5 rounded-xl bg-primary text-white text-[12px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
+          <button className="px-5 py-2.5 rounded-xl bg-primary text-white text-[12px] font-black shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all"
             onClick={() => showToast("Alert Dismissed", "info", "Unusual activity alert dismissed.")}>
             Yes, that was me
           </button>
@@ -885,7 +896,7 @@ function ConnectedDevices({ onModal }: { onModal: (m: string | null) => void }) 
       </div>
 
       <Label>MOBILE APP</Label>
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-6 flex items-center justify-between">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
             <Smartphone size={22} className="text-primary" />
@@ -923,7 +934,7 @@ function DataDownloads({ onModal }: { onModal: (m: string | null) => void }) {
       <Breadcrumb active="My Data & Downloads" />
       <h2 className="text-[22px] font-black text-foreground mb-5">My Data & Downloads</h2>
 
-      <div className="p-6 rounded-[24px] bg-blue-500/5 border border-blue-500/20 flex items-start gap-4 mb-6">
+      <div className="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20 flex items-start gap-4 mb-6">
         <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
           <Info size={20} className="text-blue-500" />
         </div>
@@ -937,7 +948,7 @@ function DataDownloads({ onModal }: { onModal: (m: string | null) => void }) {
         {cards.map((card, i) => {
           const Icon = card.icon;
           return (
-            <div key={i} className="bg-card rounded-[24px] border border-border shadow-sm p-6">
+            <div key={i} className="bg-card rounded-2xl border border-border shadow-sm p-6">
               <div className="flex items-start gap-4 mb-4">
                 <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: card.bg }}>
                   <Icon size={20} style={{ color: card.color }} />
@@ -950,7 +961,7 @@ function DataDownloads({ onModal }: { onModal: (m: string | null) => void }) {
               </div>
               <button
                 onClick={() => showToast("Download Started", "success", `Downloading ${card.title}...`)}
-                className={`w-full py-2.5 rounded-xl text-[12px] font-black transition-all active:scale-95 ${card.primary ? "bg-primary text-white shadow-lg shadow-emerald-500/20 hover:opacity-90" : "border border-primary text-primary hover:bg-primary/10"}`}>
+                className={`w-full py-2.5 rounded-xl text-[12px] font-black transition-all active:scale-95 ${card.primary ? "bg-primary text-white shadow-lg shadow-[#00B87C]/20 hover:opacity-90" : "border border-primary text-primary hover:bg-primary/10"}`}>
                 ⬇ Download {card.btn}
               </button>
             </div>
@@ -958,7 +969,7 @@ function DataDownloads({ onModal }: { onModal: (m: string | null) => void }) {
         })}
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 mb-6">
         <div className="flex items-center gap-4 mb-4">
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
             <Download size={22} className="text-primary" />
@@ -968,7 +979,7 @@ function DataDownloads({ onModal }: { onModal: (m: string | null) => void }) {
             <p className="text-[13px] font-bold text-muted-foreground">Complete export of all your NexusHR data in one ZIP file</p>
           </div>
         </div>
-        <button className="w-full py-3 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-90 active:scale-[0.98] transition-all"
+        <button className="w-full py-3 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-[#00B87C]/20 hover:opacity-90 active:scale-[0.98] transition-all"
           onClick={() => onModal("export")}>
           Request Full Export
         </button>
@@ -976,7 +987,7 @@ function DataDownloads({ onModal }: { onModal: (m: string | null) => void }) {
 
       <Label>ACCOUNT MANAGEMENT</Label>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-rose-500/5 border border-rose-500/20 rounded-[24px] p-6">
+        <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-6">
           <p className="text-[15px] font-black text-rose-500 mb-1">Deactivate Account</p>
           <p className="text-[12px] font-bold text-muted-foreground">Temporarily disable your account. HR will be notified.</p>
           <p className="text-[11px] font-bold text-muted-foreground/60 mt-1">Contact HR to reactivate when ready</p>
@@ -985,7 +996,7 @@ function DataDownloads({ onModal }: { onModal: (m: string | null) => void }) {
             Request Deactivation
           </button>
         </div>
-        <div className="bg-rose-500/5 border border-rose-500/20 rounded-[24px] p-6">
+        <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-6">
           <p className="text-[15px] font-black text-rose-500 mb-1">Delete Personal Data</p>
           <p className="text-[12px] font-bold text-muted-foreground">Request permanent deletion of non-essential personal data.</p>
           <p className="text-[11px] font-bold text-muted-foreground/60 mt-1">Subject to legal and HR policy requirements</p>
@@ -1028,7 +1039,7 @@ function HelpFAQ({ navigate }: { navigate: (p: string) => void }) {
       <Breadcrumb active="Help & FAQ" />
       <h2 className="text-[22px] font-black text-foreground mb-5">Help & Frequently Asked Questions</h2>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-1.5 flex items-center mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-1.5 flex items-center mb-6">
         <Search size={18} className="text-muted-foreground ml-4" />
         <input value={search} onChange={(e) => setSearch(e.target.value)}
           placeholder="Search help articles..."
@@ -1046,21 +1057,21 @@ function HelpFAQ({ navigate }: { navigate: (p: string) => void }) {
         ].map((cat, i) => {
           const Icon = cat.icon;
           return (
-            <div key={i} className="bg-card rounded-[24px] border border-border shadow-sm p-5 cursor-pointer hover:shadow-md transition-all">
+            <div key={i} className="bg-card rounded-2xl border border-border shadow-sm p-5 cursor-pointer hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: cat.bg }}>
                   <Icon size={18} style={{ color: cat.color }} />
                 </div>
                 <p className="text-[14px] font-black text-foreground">{cat.label}</p>
               </div>
-              <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border" style={{ backgroundColor: cat.bg, color: cat.color, borderColor: `${cat.color}20` }}>{cat.count}</span>
+              <span className="px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border" style={{ backgroundColor: cat.bg, color: cat.color, borderColor: `${cat.color}20` }}>{cat.count}</span>
             </div>
           );
         })}
       </div>
 
       <Label>FREQUENTLY ASKED QUESTIONS</Label>
-      <div className="bg-card rounded-[24px] border border-border shadow-sm mb-6 overflow-hidden">
+      <div className="bg-card rounded-2xl border border-border shadow-sm mb-6 overflow-hidden">
         {filtered.map((faq, i) => {
           const expanded = expandedFaq === i;
           return (
@@ -1086,7 +1097,7 @@ function HelpFAQ({ navigate }: { navigate: (p: string) => void }) {
         })}
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 text-center">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-8 text-center">
         <p className="text-[14px] font-bold text-muted-foreground mb-4">Was this page helpful?</p>
         {helpful === null ? (
           <div className="flex justify-center gap-4">
@@ -1102,7 +1113,7 @@ function HelpFAQ({ navigate }: { navigate: (p: string) => void }) {
               rows={2}
               className="w-full bg-background border border-border rounded-xl px-4 py-3 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all min-h-[80px] resize-none mb-3" />
             <button onClick={() => { showToast("Feedback Submitted", "success", "Thank you!"); setHelpful(null); setFeedback(""); }}
-              className="px-6 py-2.5 rounded-xl bg-primary text-white text-[13px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all">
+              className="px-6 py-2.5 rounded-xl bg-primary text-white text-[13px] font-black shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all">
               Submit
             </button>
           </div>
@@ -1130,7 +1141,7 @@ function ContactSupport({ onModal, navigate }: { onModal: (m: string | null) => 
         ].map((card, i) => {
           const Icon = card.icon;
           return (
-            <div key={i} className="bg-card rounded-[24px] border border-border shadow-sm p-6">
+            <div key={i} className="bg-card rounded-2xl border border-border shadow-sm p-6">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: card.bg }}>
                 <Icon size={22} style={{ color: card.color }} />
               </div>
@@ -1154,7 +1165,7 @@ function ContactSupport({ onModal, navigate }: { onModal: (m: string | null) => 
               )}
               {card.btn && (
                 <button onClick={card.onClick}
-                  className="w-full mt-3 py-2.5 rounded-xl bg-primary text-white text-[12px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-90 active:scale-[0.98] transition-all">
+                  className="w-full mt-3 py-2.5 rounded-xl bg-primary text-white text-[12px] font-black shadow-lg shadow-[#00B87C]/20 hover:opacity-90 active:scale-[0.98] transition-all">
                   {card.btn}
                 </button>
               )}
@@ -1170,14 +1181,14 @@ function ContactSupport({ onModal, navigate }: { onModal: (m: string | null) => 
       </div>
 
       <Label>YOUR DEDICATED CONTACTS</Label>
-      <div className="bg-card rounded-[24px] border border-border shadow-sm mb-6 overflow-hidden">
+      <div className="bg-card rounded-2xl border border-border shadow-sm mb-6 overflow-hidden">
         {[
           { initials: "RP", gradient: "linear-gradient(135deg, #00B87C, #059669)", name: "Ryan Park", role: "HR Administrator", email: "ryan@nexushr.com" },
           { initials: "SI", gradient: "linear-gradient(135deg, #F59E0B, #D97706)", name: "Suresh Iyer", role: "Engineering Manager", email: "suresh@nexushr.com" },
           { initials: "IT", gradient: "linear-gradient(135deg, #0EA5E9, #0284C7)", name: "IT Support Team", role: "Information Technology", email: "it@nexushr.com" },
           { initials: "AD", gradient: "linear-gradient(135deg, #00B87C, #059669)", name: "Ananya Das", role: "Finance Officer", email: "ananya@nexushr.com" },
         ].map((contact, i) => (
-          <div key={i} className="flex items-center justify-between px-6 py-4 border-b border-border/50 last:border-b-0 hover:bg-secondary/30 transition-colors">
+          <div key={i} className="flex items-center justify-between px-6 py-4 border-b border-border/50 last:border-b-0 hover:bg-[#00B87C]/[0.08] transition-colors">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-[13px] font-black shrink-0 shadow-sm" style={{ background: contact.gradient }}>
                 {contact.initials}
@@ -1189,7 +1200,7 @@ function ContactSupport({ onModal, navigate }: { onModal: (m: string | null) => 
               </div>
             </div>
             <button onClick={() => onModal("message")}
-              className="px-5 py-2.5 rounded-xl bg-primary text-white text-[12px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all shrink-0">
+              className="px-5 py-2.5 rounded-xl bg-primary text-white text-[12px] font-black shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all shrink-0">
               {contact.name === "IT Support Team" ? "Raise Ticket" : "Message"}
             </button>
           </div>
@@ -1197,7 +1208,7 @@ function ContactSupport({ onModal, navigate }: { onModal: (m: string | null) => 
       </div>
 
       <Label>SUPPORT AVAILABILITY</Label>
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
         <div className="space-y-3 mb-5">
           {[
             { label: "HR Team", hours: "Monday–Friday, 9:00 AM – 6:00 PM IST" },
@@ -1228,7 +1239,7 @@ function PasswordField({ label, value, onChange, show, onToggle }: {
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">{label}</label>
+      <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">{label}</label>
       <div className="relative group">
         <input type={show ? "text" : "password"} value={value} onChange={(e) => onChange(e.target.value)}
           className="w-full h-12 bg-background border border-border rounded-xl px-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all pr-12" />

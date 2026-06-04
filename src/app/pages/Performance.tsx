@@ -153,7 +153,7 @@ function StatusBadge({ status }: { status: ReviewStatus }) {
         backgroundColor: cfg.bg,
         color: cfg.text,
         fontSize: "11px",
-        fontWeight: 700,
+        fontWeight: 600,
         padding: "3px 10px",
         borderRadius: "20px",
       }}
@@ -379,10 +379,10 @@ export function Performance() {
             <ChevronRight size={12} />
             <span className="text-emerald-600">Performance Review</span>
           </div>
-          <h1 className="text-2xl font-black text-foreground mb-1">
+          <h1 className="text-[26px] font-bold text-foreground mb-1">
             Performance Review
           </h1>
-          <p className="text-sm font-bold text-muted-foreground">
+          <p className="text-[13px] text-[#6B7280]">
             Track employee performance, appraisal scores, and review history
           </p>
         </div>
@@ -395,7 +395,7 @@ export function Performance() {
           </button>
           <button
             onClick={handleStartReview}
-            className="px-5 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-black flex items-center gap-2 hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-40"
+            className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-sm font-black flex items-center gap-2 hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-40 h-10"
           >
             <Plus size={18} /> Start Review
           </button>
@@ -407,27 +407,24 @@ export function Performance() {
         {stats.map((s, i) => (
           <div
             key={i}
-            className="bg-card p-5 rounded-[20px] border border-border shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all"
+            className="bg-card p-5 rounded-2xl border border-border shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all"
           >
             <div className="flex items-center justify-between mb-4">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
+                className="w-9 h-9 rounded-[10px] flex items-center justify-center transition-transform group-hover:scale-110"
                 style={{ backgroundColor: s.bg, color: s.color }}
               >
                 {s.icon}
               </div>
             </div>
             <div>
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
                 {s.label}
               </p>
-              <h3
-                className="text-2xl font-black text-foreground mb-1"
-                style={{ color: s.color }}
-              >
+              <h3 className="text-[28px] font-bold text-foreground mb-1">
                 {s.val}
               </h3>
-              <p className="text-[10px] font-bold text-muted-foreground">
+              <p className="text-[12px] text-[#6B7280]">
                 {s.sub}
               </p>
             </div>
@@ -436,10 +433,10 @@ export function Performance() {
       </div>
 
       {/* ── Filter Section ── */}
-      <div className="bg-card p-5 rounded-[24px] border border-border shadow-sm mb-6">
+      <div className="bg-card p-5 rounded-2xl border border-border shadow-sm mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Department
             </label>
             <div className="relative">
@@ -466,7 +463,7 @@ export function Performance() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Employee
             </label>
             <div className="relative">
@@ -490,7 +487,7 @@ export function Performance() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Year
             </label>
             <div className="relative">
@@ -511,7 +508,7 @@ export function Performance() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Period
             </label>
             <div className="relative">
@@ -533,7 +530,7 @@ export function Performance() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Status
             </label>
             <div className="relative">
@@ -555,7 +552,7 @@ export function Performance() {
           </div>
 
           <div className="space-y-1.5 lg:col-span-2">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Search
             </label>
             <div className="relative">
@@ -589,13 +586,13 @@ export function Performance() {
       </div>
 
       {/* ── Performance Table ── */}
-      <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden mb-6">
+      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden mb-6">
         <div className="p-6 border-b border-border flex items-center justify-between">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-widest">
+          <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
             Review History
           </h3>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Recent 5 records
             </span>
           </div>
@@ -603,39 +600,39 @@ export function Performance() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-muted border-b border-border">
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <tr className="bg-[#F9FAFB] dark:bg-white/5 border-b border-[#F3F4F6]">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Employee
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Dept
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Period
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Att. Score
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Perf. Score
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Rating
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Recommendation
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody>
               {filteredHistory.map((r) => (
-                <tr key={r.id} className="hover:bg-muted/50 transition-colors">
+                <tr key={r.id} className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center font-black text-muted-foreground text-xs uppercase">
@@ -648,7 +645,7 @@ export function Performance() {
                         <p className="text-sm font-black text-foreground">
                           {r.employeeName}
                         </p>
-                        <p className="text-[10px] font-bold text-muted-foreground">
+                        <p className="text-[11px] font-bold text-muted-foreground">
                           {r.employeeId}
                         </p>
                       </div>
@@ -740,10 +737,10 @@ export function Performance() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Employee Performance Summary Card (Always Visible) */}
         <div className="lg:col-span-12">
-          <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
             <div className="flex items-center justify-between border-b border-border pb-6 mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-[20px] bg-muted overflow-hidden border-2 border-emerald-50 dark:border-emerald-500/20 shrink-0">
+                <div className="w-16 h-16 rounded-2xl bg-muted overflow-hidden border-2 border-emerald-50 dark:border-emerald-500/20 shrink-0">
                   {selectedEmployee?.avatar ? (
                     <img
                       src={selectedEmployee.avatar}
@@ -766,11 +763,11 @@ export function Performance() {
                 </div>
               </div>
               <div className="flex flex-col items-end">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
                   Overall Performance Score
                 </p>
                 <div className="flex items-center gap-3">
-                  <h4 className="text-3xl font-black text-emerald-600">88.5</h4>
+                  <h4 className="text-[28px] font-bold text-emerald-600">88.5</h4>
                   <div className="flex items-center gap-1 text-amber-500">
                     <Star size={16} fill="currentColor" />
                     <Star size={16} fill="currentColor" />
@@ -793,38 +790,38 @@ export function Performance() {
       </div>
 
       {/* ── Appraisal Eligibility Panel ── */}
-      <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-        <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">
+      <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+        <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6 border-l-4 border-emerald-500 pl-3">
           Appraisal Eligibility
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
               Attendance %
             </p>
             <p className="text-xl font-black text-foreground">96.8%</p>
           </div>
           <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
               Late Count
             </p>
             <p className="text-xl font-black text-amber-600">02</p>
           </div>
           <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
               Leave Count
             </p>
             <p className="text-xl font-black text-foreground">04</p>
           </div>
           <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
               Perf. Score
             </p>
             <p className="text-xl font-black text-emerald-600">92/100</p>
           </div>
           <div className="p-4 rounded-2xl bg-muted border border-border lg:col-span-2">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                 Eligibility
               </p>
               <span className="text-[9px] font-black px-2 py-0.5 rounded bg-emerald-500 text-white">
@@ -843,8 +840,8 @@ export function Performance() {
 
       {/* ── Charts Section ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+          <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6 border-l-4 border-emerald-500 pl-3">
             Performance Trend
           </h3>
           <div className="h-64">
@@ -911,8 +908,8 @@ export function Performance() {
           </div>
         </div>
 
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+          <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6 border-l-4 border-emerald-500 pl-3">
             Dept Avg Performance
           </h3>
           <div className="h-64">
@@ -964,8 +961,8 @@ export function Performance() {
           </div>
         </div>
 
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+          <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6 border-l-4 border-emerald-500 pl-3">
             Rating Distribution
           </h3>
           <div className="h-64">
@@ -1003,7 +1000,7 @@ export function Performance() {
                   className="w-2 h-2 rounded-full"
                   style={{ backgroundColor: d.color }}
                 />
-                <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                <span className="text-[11px] font-bold text-muted-foreground uppercase">
                   {d.name}
                 </span>
               </div>
@@ -1083,7 +1080,7 @@ export function Performance() {
                 <div className="lg:col-span-7 space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                      <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
                         Review Period
                       </label>
                       <input
@@ -1094,7 +1091,7 @@ export function Performance() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                      <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
                         Reviewer
                       </label>
                       <input
@@ -1107,7 +1104,7 @@ export function Performance() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                    <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
                       Strengths
                     </label>
                     <textarea
@@ -1124,7 +1121,7 @@ export function Performance() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                    <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
                       Improvement Areas
                     </label>
                     <textarea
@@ -1141,7 +1138,7 @@ export function Performance() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                    <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
                       Recommendation
                     </label>
                     <div className="relative">

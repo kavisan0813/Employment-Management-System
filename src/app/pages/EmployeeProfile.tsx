@@ -206,7 +206,7 @@ export function EmployeeProfile() {
     highlighted?: boolean;
   }) => (
     <div
-      className={`flex items-center gap-3 p-3 rounded-xl min-w-[200px] shrink-0 transition-all hover:shadow-md cursor-pointer border ${highlighted ? "bg-secondary border-primary" : "bg-background border-border"}`}
+      className={`flex items-center gap-3 p-3 rounded-xl min-w-[200px] shrink-0 transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] cursor-pointer border ${highlighted ? "bg-secondary border-primary" : "bg-background border-border"}`}
       onClick={() => (highlighted ? null : navigate(`/employees`))}
     >
       <img
@@ -517,7 +517,7 @@ export function EmployeeProfile() {
                       </p>
                       <div className="mt-2 h-[40px] flex items-center">
                         {isSalaryVisible ? (
-                          <p className="text-3xl font-black text-foreground animate-in fade-in duration-300">
+                          <p className="text-[28px] font-bold animate-in fade-in duration-300">
                             ₹
                             {employee.salary
                               ? employee.salary.toLocaleString()
@@ -528,7 +528,7 @@ export function EmployeeProfile() {
                           </p>
                         ) : (
                           <div className="flex items-center gap-2">
-                            <span className="text-3xl font-black tracking-widest text-foreground blur-md select-none">
+                            <span className="text-[28px] font-bold tracking-widest text-foreground blur-md select-none">
                               ₹18,00,000 / year
                             </span>
                           </div>
@@ -679,7 +679,7 @@ export function EmployeeProfile() {
                       key={stat.label}
                       className={`p-6 rounded-xl flex flex-col items-center justify-center border border-border ${stat.bg}`}
                     >
-                      <p className={`text-3xl font-black mb-1 ${stat.color}`}>
+                      <p className={`text-[28px] font-bold mb-1 ${stat.color}`}>
                         {stat.value}
                       </p>
                       <p className="text-[12px] font-bold uppercase tracking-wider text-muted-foreground">

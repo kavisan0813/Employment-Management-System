@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Package,
   Download,
-  IndianRupee,
-  Clock,
   CheckCircle2,
   AlertCircle,
   RefreshCcw,
@@ -14,13 +12,9 @@ import {
   Smartphone,
   Monitor,
   Printer,
-  Wrench,
   Search,
-  AlertTriangle,
   Send,
-  User,
   Calendar,
-  FileText,
 } from "lucide-react";
 
 type AssetStatus = "Assigned" | "Pending Return" | "Overdue" | "Available" | "Maintenance";
@@ -166,28 +160,28 @@ function getStatusBadge(status: AssetStatus) {
       return (
         <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0]">
           <CheckCircle2 size={12} strokeWidth={3} />
-          <span className="text-[11px] font-black uppercase tracking-wider">Assigned</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider">Assigned</span>
         </div>
       );
     case "Pending Return":
       return (
         <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]">
           <RefreshCcw size={12} strokeWidth={3} />
-          <span className="text-[11px] font-black uppercase tracking-wider">Pending Return</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider">Pending Return</span>
         </div>
       );
     case "Overdue":
       return (
         <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]">
           <AlertCircle size={12} strokeWidth={3} />
-          <span className="text-[11px] font-black uppercase tracking-wider">Overdue</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider">Overdue</span>
         </div>
       );
     default:
       return (
         <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
           <Package size={12} strokeWidth={3} />
-          <span className="text-[11px] font-black uppercase tracking-wider">{status}</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider">{status}</span>
         </div>
       );
   }
@@ -257,12 +251,12 @@ export function ManagerTeamAssets() {
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#E0F2FE] flex items-center justify-center text-[#0EA5E9] shadow-sm border border-[#0EA5E9]/10">
-            <Package size={28} />
+          <div className="w-11 h-11 rounded-[10px] bg-[#E0F2FE] flex items-center justify-center text-[#0EA5E9] shadow-sm border border-[#0EA5E9]/10">
+            <Package size={22} />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight">Team Assets</h1>
-            <p className="text-[13px] font-bold text-muted-foreground flex items-center gap-2">
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">Team Assets</h1>
+            <p className="text-[13px] text-[#6B7280] flex items-center gap-2">
               Engineering team asset overview
             </p>
           </div>
@@ -270,12 +264,12 @@ export function ManagerTeamAssets() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleTeamRequest}
-            className="px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-black text-foreground hover:bg-secondary transition-all shadow-sm flex items-center gap-2"
+            className="px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-bold text-foreground hover:bg-secondary transition-all shadow-sm flex items-center gap-2"
           >
             <Package size={16} />
             Request for Team
           </button>
-          <button className="px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-black text-foreground hover:bg-secondary transition-all shadow-sm flex items-center gap-2">
+          <button className="px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-bold text-foreground hover:bg-secondary transition-all shadow-sm flex items-center gap-2">
             <Download size={16} />
             Export
           </button>
@@ -301,23 +295,23 @@ export function ManagerTeamAssets() {
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-3">Team Assets</p>
+          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">Team Assets</p>
           <div className="flex items-end gap-3">
-            <p className="text-[28px] font-black text-[#0EA5E9] leading-none">{assetCount}</p>
+            <p className="text-[28px] font-bold text-[#0EA5E9] leading-none">{assetCount}</p>
             <p className="text-[13px] font-bold text-[#0EA5E9]/70 mb-1">total assets</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-3">Total Value</p>
+          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">Total Value</p>
           <div className="flex items-end gap-3">
-            <p className="text-[28px] font-black text-[#8B5CF6] leading-none">{formatValue(totalValue)}</p>
+            <p className="text-[28px] font-bold text-[#8B5CF6] leading-none">{formatValue(totalValue)}</p>
             <p className="text-[13px] font-bold text-[#8B5CF6]/70 mb-1">total worth</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-3">Pending Requests</p>
+          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">Pending Requests</p>
           <div className="flex items-end gap-3">
-            <p className="text-[28px] font-black text-[#F59E0B] leading-none">{pendingRequests.length}</p>
+            <p className="text-[28px] font-bold text-[#F59E0B] leading-none">{pendingRequests.length}</p>
             <p className="text-[13px] font-bold text-[#F59E0B]/70 mb-1">awaiting review</p>
           </div>
         </div>
@@ -338,36 +332,36 @@ export function ManagerTeamAssets() {
       </div>
 
       {/* TEAM ASSETS TABLE */}
-      <div className="bg-card border border-border rounded-[24px] shadow-sm overflow-hidden mb-8">
+      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden mb-8">
         <div className="px-6 py-4 border-b border-border bg-secondary/10">
-          <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">Team Assets Inventory</h3>
+          <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Team Assets Inventory</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[1000px]">
             <thead>
               <tr className="bg-secondary/20">
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Employee</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Asset Name</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Category</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Serial No</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">Value</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Status</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Employee</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Asset Name</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Category</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Serial No</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">Value</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {filteredAssets.map((item) => {
                 const catColor = getCategoryColor(item.category);
                 return (
-                  <tr key={item.id} className="hover:bg-secondary/30 transition-colors h-16 group">
+                  <tr key={item.id} className="hover:bg-[#00B87C]/[0.08] transition-colors h-16 group">
                     <td className="px-6 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 border border-border">
                           <img src={item.member.avatar} alt="" className="w-full h-full object-cover" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[14px] font-black text-foreground truncate">{item.member.name}</p>
-                          <p className="text-[10px] font-bold text-muted-foreground">#{item.member.id}</p>
+                          <p className="text-[14px] font-bold text-foreground truncate">{item.member.name}</p>
+                          <p className="text-[11px] font-bold text-muted-foreground">#{item.member.id}</p>
                         </div>
                       </div>
                     </td>
@@ -395,7 +389,7 @@ export function ManagerTeamAssets() {
                       <span className="text-[13px] font-mono font-bold text-foreground">{item.serialNo}</span>
                     </td>
                     <td className="px-6 py-3 text-right">
-                      <span className="text-[13px] font-black text-foreground">{item.value}</span>
+                      <span className="text-[13px] font-bold text-foreground">{item.value}</span>
                     </td>
                     <td className="px-6 py-3">
                       {getStatusBadge(item.status)}
@@ -403,7 +397,7 @@ export function ManagerTeamAssets() {
                     <td className="px-6 py-3 text-right">
                       <button
                         onClick={() => setSelectedAsset({ member: item.member, asset: item })}
-                        className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest flex items-center gap-1 ml-auto hover:gap-2 transition-all"
+                        className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider flex items-center gap-1 ml-auto hover:gap-2 transition-all"
                       >
                         View <ChevronRight size={14} />
                       </button>
@@ -430,7 +424,7 @@ export function ManagerTeamAssets() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-lg font-black text-foreground">Pending Asset Requests</h2>
+            <h2 className="text-lg font-bold text-foreground">Pending Asset Requests</h2>
             <p className="text-[13px] font-bold text-muted-foreground mt-1">Review and approve team asset requests</p>
           </div>
         </div>
@@ -448,7 +442,7 @@ export function ManagerTeamAssets() {
             {pendingRequests.map((req) => (
               <div
                 key={req.id}
-                className="bg-card border border-border rounded-xl p-5 shadow-sm border-l-4 border-l-[#0EA5E9] flex flex-col hover:shadow-md transition-shadow"
+                className="bg-card border border-border rounded-xl p-5 shadow-sm border-l-4 border-l-[#0EA5E9] flex flex-col hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-shadow"
               >
                 {/* Top Row */}
                 <div className="flex items-center justify-between mb-4">
@@ -460,13 +454,13 @@ export function ManagerTeamAssets() {
                     />
                     <div>
                       <p className="text-[14px] font-bold text-foreground">{req.employeeName}</p>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-[#E0F2FE] text-[#0EA5E9] border border-[#BAE6FD]">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-[#E0F2FE] text-[#0EA5E9] border border-[#BAE6FD]">
                         <Package size={10} /> {req.assetType}
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
+                    <span className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${
                       req.urgency === "High"
                         ? "bg-red-50 text-red-600 border border-red-200"
                         : "bg-amber-50 text-amber-600 border border-amber-200"
@@ -527,7 +521,7 @@ export function ManagerTeamAssets() {
             >
               {/* Header */}
               <div className="p-6 border-b border-border flex items-center justify-between">
-                <h2 className="text-base font-black text-foreground uppercase tracking-widest">Asset Details</h2>
+                <h2 className="text-base font-bold text-foreground uppercase tracking-wider">Asset Details</h2>
                 <button
                   onClick={() => setSelectedAsset(null)}
                   className="p-2 rounded-xl hover:bg-secondary text-muted-foreground transition-all"
@@ -539,7 +533,7 @@ export function ManagerTeamAssets() {
               {/* Asset Icon */}
               <div className="p-8 pb-0 text-center flex flex-col items-center">
                 <div
-                  className="w-20 h-20 rounded-[24px] flex items-center justify-center border-4 border-[#00B87C]/10 mb-4"
+                  className="w-20 h-20 rounded-2xl flex items-center justify-center border-4 border-[#00B87C]/10 mb-4"
                   style={{
                     backgroundColor: getCategoryColor(selectedAsset.asset.category).bg,
                     color: getCategoryColor(selectedAsset.asset.category).text,
@@ -548,9 +542,9 @@ export function ManagerTeamAssets() {
                 >
                   {getCategoryIcon(selectedAsset.asset.category, 36)}
                 </div>
-                <h3 className="text-xl font-black text-foreground">{selectedAsset.asset.name}</h3>
-                <p className="text-sm font-black text-[#00B87C] uppercase tracking-wider mt-1">{selectedAsset.asset.assetId}</p>
-                <div className="flex items-center gap-3 mt-4 text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                <h3 className="text-xl font-bold text-foreground">{selectedAsset.asset.name}</h3>
+                <p className="text-sm font-bold text-[#00B87C] uppercase tracking-wider mt-1">{selectedAsset.asset.assetId}</p>
+                <div className="flex items-center gap-3 mt-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                   <span>{selectedAsset.asset.category}</span>
                   <span className="w-1 h-1 rounded-full bg-border" />
                   <span>{selectedAsset.member.department}</span>
@@ -567,7 +561,7 @@ export function ManagerTeamAssets() {
                     <img src={selectedAsset.member.avatar} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <p className="text-sm font-black text-foreground">Assigned to</p>
+                    <p className="text-sm font-bold text-foreground">Assigned to</p>
                     <p className="text-[13px] font-bold text-muted-foreground">{selectedAsset.member.name}</p>
                     <p className="text-[11px] font-medium text-muted-foreground">{selectedAsset.member.designation}</p>
                   </div>
@@ -579,47 +573,47 @@ export function ManagerTeamAssets() {
                 <div className="space-y-5">
                   <div className="grid grid-cols-2 gap-y-5 gap-x-4">
                     <div>
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Serial Number</p>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Serial Number</p>
                       <p className="text-sm font-mono font-bold text-foreground">{selectedAsset.asset.serialNo}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Value</p>
-                      <p className="text-sm font-black text-foreground">{selectedAsset.asset.value}</p>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Value</p>
+                      <p className="text-sm font-bold text-foreground">{selectedAsset.asset.value}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Assigned Since</p>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Assigned Since</p>
                       <p className="text-sm font-bold text-foreground">{selectedAsset.asset.assignedDate}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Condition</p>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Condition</p>
                       <p className="text-sm font-bold text-foreground">{selectedAsset.asset.condition}</p>
                     </div>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-secondary/30 border border-border">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">Notes</p>
+                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Notes</p>
                     <p className="text-sm font-bold text-foreground">{selectedAsset.asset.notes}</p>
                   </div>
 
                   <div>
-                    <h4 className="text-[11px] font-black text-foreground uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <h4 className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
                       <Calendar size={14} className="text-[#00B87C]" /> Assignment Timeline
                     </h4>
                     <div className="space-y-4 ml-2 border-l border-border pl-4">
                       <div className="relative">
                         <div className="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-[#00B87C] ring-4 ring-card" />
                         <p className="text-xs font-bold text-foreground">Assigned to {selectedAsset.member.name}</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">{selectedAsset.asset.assignedDate}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">{selectedAsset.asset.assignedDate}</p>
                       </div>
                       <div className="relative">
                         <div className="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-muted-foreground/30 ring-4 ring-card" />
                         <p className="text-xs font-bold text-muted-foreground">Previous: IT Department</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">15 Dec 2024 — 14 Jan 2025</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">15 Dec 2024 — 14 Jan 2025</p>
                       </div>
                       <div className="relative">
                         <div className="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-muted-foreground/30 ring-4 ring-card" />
                         <p className="text-xs font-bold text-muted-foreground">Procured</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">01 Dec 2024</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">01 Dec 2024</p>
                       </div>
                     </div>
                   </div>
@@ -630,7 +624,7 @@ export function ManagerTeamAssets() {
               <div className="p-6 border-t border-border bg-secondary/5">
                 <button
                   onClick={() => setSelectedAsset(null)}
-                  className="w-full py-3.5 rounded-2xl bg-[#00B87C] text-white text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20"
+                  className="w-full py-3.5 rounded-2xl bg-[#00B87C] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20"
                 >
                   Close Details <X size={16} />
                 </button>
@@ -664,11 +658,11 @@ export function ManagerTeamAssets() {
                 {/* Header */}
                 <div className="px-6 py-5 border-b border-border flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#E0F2FE] flex items-center justify-center text-[#0EA5E9]">
+                    <div className="w-9 h-9 rounded-[10px] bg-[#E0F2FE] flex items-center justify-center text-[#0EA5E9]">
                       <Package size={20} />
                     </div>
                     <div>
-                      <h3 className="text-base font-black text-foreground">Request Asset for Team</h3>
+                      <h3 className="text-base font-bold text-foreground">Request Asset for Team</h3>
                       <p className="text-[11px] font-bold text-muted-foreground">Submit a new asset request</p>
                     </div>
                   </div>
@@ -683,7 +677,7 @@ export function ManagerTeamAssets() {
                 {/* Body */}
                 <div className="p-6 space-y-5">
                   <div>
-                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
                       Asset Type
                     </label>
                     <select
@@ -701,7 +695,7 @@ export function ManagerTeamAssets() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
                       Urgency
                     </label>
                     <div className="flex gap-2">
@@ -726,7 +720,7 @@ export function ManagerTeamAssets() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
                       Reason for Request
                     </label>
                     <textarea

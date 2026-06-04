@@ -17,7 +17,7 @@ import {
   BookOpen
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 type NotificationCategory = "All" | "Unread" | "Approvals" | "System";
 type NotificationType = "Leave" | "Expense" | "HR" | "Attendance" | "Performance" | "Training";
@@ -159,15 +159,15 @@ export function ManagerNotifications() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-xl border border-border bg-card flex items-center justify-center hover:bg-secondary/50 transition-colors"
+            className="w-9 h-9 rounded-[10px] border border-border bg-card flex items-center justify-center hover:bg-[#00B87C]/[0.08] transition-colors"
           >
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-[28px] font-black text-foreground leading-none">
+            <h1 className="text-[26px] font-bold text-foreground leading-none">
               Notifications
             </h1>
-            <p className="text-[14px] font-bold text-muted-foreground mt-1">
+            <p className="text-[13px] text-[#6B7280] mt-1">
               Manage your manager updates, team requests and system alerts
             </p>
           </div>
@@ -176,7 +176,7 @@ export function ManagerNotifications() {
         <div className="flex items-center gap-3">
           <button
             onClick={markAllRead}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#00B87C] text-[#00B87C] text-[13px] font-black uppercase tracking-widest hover:bg-[#00B87C]/5 transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#00B87C] text-[#00B87C] text-[13px] font-bold uppercase tracking-wider hover:bg-[#00B87C]/5 transition-all"
           >
             <CheckCheck size={16} /> Mark All Read
           </button>
@@ -192,7 +192,7 @@ export function ManagerNotifications() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2 rounded-xl text-[13px] font-black transition-all ${
+                className={`px-6 py-2 rounded-xl text-[13px] font-bold transition-all ${
                   activeTab === tab
                     ? "bg-card text-[#00B87C] shadow-sm ring-1 ring-border"
                     : "text-muted-foreground hover:text-foreground"
@@ -201,7 +201,7 @@ export function ManagerNotifications() {
                 {tab}
                 {tab === "Unread" &&
                   notifications.filter((n) => !n.isRead).length > 0 && (
-                    <span className="ml-2 px-1.5 py-0.5 bg-[#00B87C] text-white text-[10px] rounded-full">
+                    <span className="ml-2 px-1.5 py-0.5 bg-[#00B87C] text-white text-[11px] rounded-full">
                       {notifications.filter((n) => !n.isRead).length}
                     </span>
                   )}
@@ -283,18 +283,18 @@ export function ManagerNotifications() {
                   <div className="flex-1 min-w-0 text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
                       <span
-                        className="text-[10px] font-black uppercase tracking-[2px]"
+                        className="text-[11px] font-bold uppercase tracking-[2px]"
                         style={{ color: iconData.color }}
                       >
                         {notification.type}
                       </span>
                       {notification.isImportant && (
-                        <div className="flex items-center gap-1 px-2 py-0.5 bg-rose-500/10 text-rose-500 rounded-lg text-[9px] font-black uppercase tracking-widest border border-rose-500/20">
+                        <div className="flex items-center gap-1 px-2 py-0.5 bg-rose-500/10 text-rose-500 rounded-lg text-[9px] font-bold uppercase tracking-wider border border-rose-500/20">
                           <AlertCircle size={10} /> Urgent
                         </div>
                       )}
                     </div>
-                    <h3 className="text-[17px] font-black text-foreground group-hover:text-[#00B87C] transition-colors leading-tight">
+                    <h3 className="text-[17px] font-bold text-foreground group-hover:text-[#00B87C] transition-colors leading-tight">
                       {notification.title}
                     </h3>
                     <p className="text-[14px] font-bold text-muted-foreground/80 mt-1.5 leading-relaxed line-clamp-2">
@@ -306,7 +306,7 @@ export function ManagerNotifications() {
                   <div className="flex flex-col items-center md:items-end gap-4 min-w-[140px]">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Clock size={14} />
-                      <span className="text-[12px] font-black uppercase tracking-widest">
+                      <span className="text-[12px] font-bold uppercase tracking-wider">
                         {notification.timestamp}
                       </span>
                     </div>
@@ -330,7 +330,7 @@ export function ManagerNotifications() {
                       </button>
                       <button
                         onClick={() => navigate(notification.path)}
-                        className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#00B87C] text-white text-[12px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/25 hover:opacity-90 active:scale-95 transition-all"
+                        className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-wider shadow-lg shadow-emerald-500/25 hover:opacity-90 active:scale-95 transition-all"
                       >
                         View <ChevronRight size={16} />
                       </button>
@@ -352,7 +352,7 @@ export function ManagerNotifications() {
               <div className="w-20 h-20 rounded-[32px] bg-secondary flex items-center justify-center text-muted-foreground/30 mb-6">
                 <Bell size={40} />
               </div>
-              <h3 className="text-[20px] font-black text-foreground uppercase tracking-tight">
+              <h3 className="text-[20px] font-bold text-foreground uppercase tracking-tight">
                 No notifications found
               </h3>
               <p className="text-[14px] font-bold text-muted-foreground mt-2 max-w-[300px]">
@@ -364,7 +364,7 @@ export function ManagerNotifications() {
                   setTypeFilter("All");
                   setSearchQuery("");
                 }}
-                className="mt-6 text-[#00B87C] text-[13px] font-black uppercase tracking-widest hover:underline"
+                className="mt-6 text-[#00B87C] text-[13px] font-bold uppercase tracking-wider hover:underline"
               >
                 Clear all filters
               </button>

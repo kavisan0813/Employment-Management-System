@@ -5,8 +5,10 @@ import {
   ChevronRight,
   X,
   Calendar,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CalendarX,
   MessageSquare,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Edit2
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -23,6 +25,7 @@ interface ShiftCell {
   hasOt?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SHIFT_SCHEDULE: ShiftCell[] = [
   { day: "Mon", date: "Apr 6", type: "Morning", time: "06:00 – 14:00" },
   { day: "Tue", date: "Apr 7", type: "Morning", time: "06:00 – 14:00", hasOt: true },
@@ -39,6 +42,7 @@ export function FinanceSchedule() {
   const [showShiftDetails, setShowShiftDetails] = useState<ShiftCell | null>(null);
 
   // Stateful Swap Requests
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [swapRequests, setSwapRequests] = useState<any[]>([]);
   const [colleagueName, setColleagueName] = useState("");
   const [theirShift, setTheirShift] = useState("Evening Shift (14:00 - 22:00)");
@@ -76,12 +80,12 @@ export function FinanceSchedule() {
       {/* ═══════ PAGE HEADER ═══════ */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-[12px] bg-[#DCFCE7] flex items-center justify-center text-[#00B87C] shrink-0">
+          <div className="w-11 h-11 rounded-[10px] bg-[#DCFCE7] flex items-center justify-center text-[#00B87C] shrink-0">
             <Clock size={22} />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight m-0 leading-none">My Schedule</h1>
-            <p className="text-[13px] font-bold text-muted-foreground mt-1">Your personal shift schedule</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight m-0 leading-none">My Schedule</h1>
+            <p className="text-[13px] text-[#6B7280] mt-1">Your personal shift schedule</p>
           </div>
         </div>
         <div>
@@ -131,28 +135,28 @@ export function FinanceSchedule() {
       {/* ═══════ PERSONAL KPI CARDS ═══════ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:border-[#00B87C]/30 transition-all min-h-[120px]">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">SHIFTS THIS WEEK</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">SHIFTS THIS WEEK</p>
           <div className="flex items-baseline gap-2 mt-4">
             <span className="text-3xl font-black text-foreground">4</span>
             <span className="text-[14px] font-bold text-muted-foreground">/ 5 days</span>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:border-[#00B87C]/30 transition-all min-h-[120px]">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">WEEKLY HOURS</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">WEEKLY HOURS</p>
           <div className="flex items-baseline gap-2 mt-4">
             <span className="text-3xl font-black text-[#00B87C]">32</span>
             <span className="text-[14px] font-bold text-muted-foreground">/ 40 hrs</span>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:border-[#00B87C]/30 transition-all min-h-[120px]">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">OVERTIME HOURS</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">OVERTIME HOURS</p>
           <div className="flex items-baseline gap-2 mt-4">
             <span className="text-3xl font-black text-amber-500">2.5</span>
             <span className="text-[14px] font-bold text-muted-foreground">hrs approved</span>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:border-[#00B87C]/30 transition-all min-h-[120px]">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">SHIFT TYPE</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">SHIFT TYPE</p>
           <div className="flex items-baseline gap-2 mt-4">
             <span className="text-lg font-black text-foreground uppercase tracking-wider">Morning Standard</span>
           </div>
@@ -164,17 +168,17 @@ export function FinanceSchedule() {
         
         {/* Left: Schedule Table (2 cols on lg) */}
         <div className="lg:col-span-2 space-y-4">
-          <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest ml-2">WEEKLY GRID</h3>
+          <h3 className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-2">WEEKLY GRID</h3>
           <div className="bg-card border border-border rounded-[32px] overflow-hidden shadow-sm">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-border bg-muted/20">
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Date</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Day</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Shift Type</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Scheduled Hours</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Overtime</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Location</th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Day</th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Shift Type</th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Scheduled Hours</th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Overtime</th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Location</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -182,7 +186,7 @@ export function FinanceSchedule() {
                   <td className="px-6 py-4 text-[13px] font-black text-foreground whitespace-nowrap">Apr 6</td>
                   <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">Monday</td>
                   <td className="px-6 py-4">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/10 text-[#00B87C] uppercase tracking-widest border border-emerald-500/20">MORNING</span>
+                    <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-[#00B87C] uppercase tracking-widest border border-emerald-500/20">MORNING</span>
                   </td>
                   <td className="px-6 py-4 text-[13px] font-bold text-foreground whitespace-nowrap">06:00 – 14:00</td>
                   <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">—</td>
@@ -192,11 +196,11 @@ export function FinanceSchedule() {
                   <td className="px-6 py-4 text-[13px] font-black text-foreground whitespace-nowrap">Apr 7</td>
                   <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">Tuesday</td>
                   <td className="px-6 py-4">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/10 text-[#00B87C] uppercase tracking-widest border border-emerald-500/20">MORNING</span>
+                    <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-[#00B87C] uppercase tracking-widest border border-emerald-500/20">MORNING</span>
                   </td>
                   <td className="px-6 py-4 text-[13px] font-bold text-foreground whitespace-nowrap">06:00 – 14:00</td>
                   <td className="px-6 py-4">
-                    <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 text-[10px] font-black uppercase">2.5 hrs OT</span>
+                    <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 text-[11px] font-semibold uppercase">2.5 hrs OT</span>
                   </td>
                   <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground whitespace-nowrap">HQ Office</td>
                 </tr>
@@ -214,7 +218,7 @@ export function FinanceSchedule() {
                   <td className="px-6 py-4 text-[13px] font-black text-foreground whitespace-nowrap">Apr 9</td>
                   <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">Thursday</td>
                   <td className="px-6 py-4">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/10 text-[#F59E0B] uppercase tracking-widest border border-amber-500/20">EVENING</span>
+                    <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/10 text-[#F59E0B] uppercase tracking-widest border border-amber-500/20">EVENING</span>
                   </td>
                   <td className="px-6 py-4 text-[13px] font-bold text-foreground whitespace-nowrap">14:00 – 22:00</td>
                   <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">8h</td>
@@ -227,10 +231,10 @@ export function FinanceSchedule() {
 
         {/* My Swap Requests Panel */}
         <div className="space-y-4">
-          <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest ml-2">MY SWAP REQUESTS</h3>
+          <h3 className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-2">MY SWAP REQUESTS</h3>
           
           {swapRequests.length === 0 ? (
-            <div className="bg-card rounded-[24px] border border-border shadow-sm p-8 flex flex-col items-center justify-center text-center min-h-[200px]">
+            <div className="bg-card rounded-2xl border border-border shadow-sm p-8 flex flex-col items-center justify-center text-center min-h-[200px]">
               <p className="text-[13px] font-bold text-muted-foreground italic">No active swap requests</p>
             </div>
           ) : (
@@ -239,14 +243,14 @@ export function FinanceSchedule() {
                 <div key={req.id} className="bg-card border border-border rounded-2xl p-5 shadow-sm space-y-3 relative hover:border-[#00B87C]/30 transition-all">
                   <div className="flex justify-between items-center">
                     <span className="text-[12px] font-black text-[#00B87C] tracking-wider bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10">{req.id}</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-black bg-amber-500/10 text-amber-600 uppercase border border-amber-500/20">{req.status}</span>
+                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 text-amber-600 uppercase border border-amber-500/20">{req.status}</span>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">My Shift</p>
+                    <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">My Shift</p>
                     <p className="text-[13px] font-bold text-foreground">{req.myShift}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Swap Colleague</p>
+                    <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Swap Colleague</p>
                     <p className="text-[13px] font-bold text-foreground">{req.colleague}</p>
                     <p className="text-[11px] font-bold text-muted-foreground">Colleague's Shift: {req.theirShift}</p>
                   </div>
@@ -254,7 +258,7 @@ export function FinanceSchedule() {
                     <span className="text-[11px] font-bold text-muted-foreground italic">"{req.reason}"</span>
                     <button 
                       onClick={() => handleCancelSwap(req.id)}
-                      className="px-3 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-600 text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer"
+                      className="px-3 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-600 text-[11px] font-semibold uppercase tracking-wider transition-colors cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -282,7 +286,7 @@ export function FinanceSchedule() {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-[460px] bg-card border border-border rounded-[24px] shadow-2xl flex flex-col"
+              className="relative w-full max-w-[460px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col"
             >
               <div className="p-6 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -296,15 +300,15 @@ export function FinanceSchedule() {
 
               <form onSubmit={handleRequestSwap} className="p-6 space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">My shift to swap</label>
+                  <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">My shift to swap</label>
                   <div className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border flex items-center gap-3">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/10 text-[#00B87C] uppercase border border-emerald-500/20">MORNING</span>
+                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-[#00B87C] uppercase border border-emerald-500/20">MORNING</span>
                     <span className="text-[13px] font-bold text-foreground">Apr 7 (Tue) · 06:00 – 14:00</span>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Swap with colleague</label>
+                  <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">Swap with colleague</label>
                   <input 
                     type="text" 
                     value={colleagueName}
@@ -315,7 +319,7 @@ export function FinanceSchedule() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Their shift to receive</label>
+                  <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">Their shift to receive</label>
                   <select 
                     value={theirShift}
                     onChange={(e) => setTheirShift(e.target.value)}
@@ -328,7 +332,7 @@ export function FinanceSchedule() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Reason for swap</label>
+                  <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">Reason for swap</label>
                   <textarea 
                     value={swapReason}
                     onChange={(e) => setSwapReason(e.target.value)}
@@ -346,13 +350,13 @@ export function FinanceSchedule() {
                   <button 
                     type="button"
                     onClick={() => setIsSwapModalOpen(false)}
-                    className="px-6 py-3 text-[12px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors bg-transparent border-0"
+                    className="px-6 py-3 text-[12px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors bg-transparent border-0"
                   >
                     Cancel
                   </button>
                   <button 
                     type="submit"
-                    className="flex-1 px-6 py-3 rounded-2xl bg-[#00B87C] text-white text-[12px] font-black uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20 text-center border-0 cursor-pointer"
+                    className="flex-1 px-6 py-3 rounded-2xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20 text-center border-0 cursor-pointer"
                   >
                     Submit Swap Request
                   </button>

@@ -1,742 +1,730 @@
-import { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router";
 import {
-  Calendar as CalendarIcon,
+  CalendarX,
   Plus,
   X,
-  Paperclip,
-  CalendarX,
-  Clock,
-  CheckCircle2,
+  CalendarDays,
   FileText,
-  User,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  AlertCircle,
   MoreVertical,
-  History,
+  CheckCircle2,
+  Calendar,
   Info,
+  Clock,
+  Users,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
-import { showToast } from "../../components/workflow/ToastNotification";
-import { StatusBadge } from "../../components/workflow/StatusBadge";
-import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../../context/AuthContext";
+import { motion, AnimatePresence } from "motion/react";
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isToday } from "date-fns";
 
-const TABS = ["My Requests", "History", "Policy"];
+// Types
+type LeaveTab = "My Requests" | "Calendar" | "History" | "Policy";
+type LeaveType = "CL" | "EL" | "SL" | "CO";
+type ApprovalStatus = "Pending" | "Approved" | "Rejected" | "Cancelled";
 
-const LEAVE_TYPES = [
-  {
-    id: "CL",
-    name: "Casual Leave",
-    total: 12,
-    used: 4,
-    color: "#00B87C",
-    bg: "rgba(0, 184, 124, 0.1)",
-  },
-  {
-    id: "EL",
-    name: "Earned Leave",
-    total: 24,
-    used: 4,
-    color: "#00B87C",
-    bg: "rgba(0, 184, 124, 0.1)",
-  },
-  {
-    id: "SL",
-    name: "Sick Leave",
-    total: 12,
-    used: 2,
-    color: "#14B8A6",
-    bg: "rgba(20, 184, 166, 0.1)",
-  },
-  {
-    id: "CO",
-    name: "Comp Off",
-    total: 5,
-    used: 2,
-    color: "#8B5CF6",
-    bg: "rgba(139, 92, 246, 0.1)",
-  },
-];
-
-interface LeaveRequest {
+interface LeaveRecord {
   id: string;
-  type: string;
+  type: LeaveType;
+  typeFull: string;
   from: string;
   to: string;
   days: number;
   reason: string;
-  status: string;
+  status: ApprovalStatus;
   appliedOn: string;
+  approvedBy?: string;
+  startsIn?: string;
 }
 
 export function ManagerPersonalLeaves() {
-  const [activeTab, setActiveTab] = useState("My Requests");
-  const [showApplyModal, setShowApplyModal] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(
-    null,
-  );
-  const [requests, setRequests] = useState<LeaveRequest[]>([
+  const navigate = useNavigate();
+  const location = useLocation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { user } = useAuth();
+  
+  const [activeTab, setActiveTab] = useState<LeaveTab>("My Requests");
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState<string | null>(null);
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  // Initialize from navigation state if present
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab as LeaveTab);
+    }
+    if (location.state?.openApplyModal) {
+      setIsApplyModalOpen(true);
+      // Clear state so it doesn't reopen on refresh
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location, navigate]);
+
+  // Mock Data
+  const pendingRequests: LeaveRecord[] = [
     {
-      id: "LR-4012",
-      type: "CL",
-      from: "2026-04-10",
-      to: "2026-04-11",
-      days: 2,
-      reason: "Personal work at registrar office",
+      id: "LR-1002",
+      type: "SL",
+      typeFull: "Sick Leave",
+      from: "Apr 18, 2026",
+      to: "Apr 20, 2026",
+      days: 3,
+      reason: "Viral fever, resting at home",
+      status: "Pending",
+      appliedOn: "Apr 17, 2026",
+    }
+  ];
+
+  const approvedLeaves: LeaveRecord[] = [
+    {
+      id: "LR-0945",
+      type: "EL",
+      typeFull: "Earned Leave",
+      from: "May 10, 2026",
+      to: "May 14, 2026",
+      days: 5,
+      reason: "Family trip",
       status: "Approved",
       appliedOn: "Apr 05, 2026",
-    },
-  ]);
+      approvedBy: "Ryan Park",
+      startsIn: "Starts in 12 days",
+    }
+  ];
 
-  const handleApplyLeave = (newLeave: Partial<LeaveRequest>) => {
-    const leaveEntry: LeaveRequest = {
-      id: `LR-${Math.floor(1000 + Math.random() * 9000)}`,
-      type: newLeave.type || "CL",
-      from: newLeave.from || "",
-      to: newLeave.to || "",
-      days: newLeave.days || 0,
-      reason: newLeave.reason || "",
-      status: "Pending",
-      appliedOn: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "2-digit",
-        year: "numeric",
-      }),
-    };
-    setRequests([leaveEntry, ...requests]);
+  const historyLeaves: LeaveRecord[] = [
+    {
+      id: "LR-0812",
+      type: "CL",
+      typeFull: "Casual Leave",
+      from: "Mar 12, 2026",
+      to: "Mar 12, 2026",
+      days: 1,
+      reason: "Personal errands",
+      status: "Approved",
+      appliedOn: "Mar 08, 2026",
+    },
+    {
+      id: "LR-0790",
+      type: "CO",
+      typeFull: "Comp Off",
+      from: "Feb 20, 2026",
+      to: "Feb 21, 2026",
+      days: 2,
+      reason: "Rest after weekend deployment",
+      status: "Approved",
+      appliedOn: "Feb 18, 2026",
+    },
+    {
+      id: "LR-0705",
+      type: "EL",
+      typeFull: "Earned Leave",
+      from: "Jan 05, 2026",
+      to: "Jan 10, 2026",
+      days: 6,
+      reason: "Winter vacation",
+      status: "Approved",
+      appliedOn: "Dec 15, 2025",
+    }
+  ];
+
+  const handleCancelRequest = (id: string) => {
+    // In a real app this would call an API
+    console.log("Canceling request", id);
+    setShowCancelConfirm(null);
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-10 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent">
-      {/* ─── Page Header ─────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-4 border-b border-emerald-500/10 pb-6">
+    <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6 animate-in fade-in duration-500">
+      
+      {/* ═══════ PAGE HEADER ═══════ */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-            <CalendarX size={24} className="text-[#00B87C]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#FEF3C7] flex items-center justify-center text-[#F59E0B]">
+            <CalendarX size={22} />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground leading-none mb-1">
-              My Leaves
-            </h1>
-            <p className="text-[13px] font-bold text-muted-foreground uppercase tracking-widest">
-              Manage your absences and track balance
-            </p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight m-0 leading-tight">My Leaves</h1>
+            <p className="text-[13px] text-[#6B7280]">Manage your leave requests and balance</p>
+          </div>
+          <div>
+            <h1 className="text-[26px] font-black text-foreground tracking-tight m-0 leading-tight">My Leaves</h1>
+            <p className="text-[13px] font-bold text-muted-foreground mt-1">Leave balance, requests and history</p>
           </div>
         </div>
-        <button
-          onClick={() => setShowApplyModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all bg-[#00B87C] text-white shadow-lg shadow-emerald-500/20 hover:opacity-95 active:scale-[0.98]"
-        >
-          <Plus size={18} /> Apply Leave
-        </button>
+        <div>
+          <button 
+            onClick={() => setIsApplyModalOpen(true)}
+            className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20 flex items-center gap-2"
+          >
+            <Plus size={16} /> Apply Leave
+          </button>
+        </div>
       </div>
 
-      {/* ─── Leave Balance Cards ──────────────────────────────────── */}
+      {/* ═══════ LEAVE BALANCE CARDS ═══════ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {LEAVE_TYPES.map((type, i) => (
-          <div
-            key={i}
-            className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col items-center group hover:border-[#00B87C] transition-all duration-300"
-          >
-            <div className="w-full flex items-center justify-between mb-4">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center border border-border shadow-inner"
-                style={{ backgroundColor: type.bg }}
-              >
-                <span
-                  className="text-[14px] font-black"
-                  style={{ color: type.color }}
-                >
-                  {type.id}
-                </span>
+        {/* Card 1 */}
+        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group hover:border-[#00B87C]/30 transition-all">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] flex items-center justify-center text-[#00B87C]">
+              <Calendar size={18} />
+            </div>
+            <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">CASUAL LEAVE</span>
+          </div>
+          <div className="flex items-end gap-2">
+            <span className="text-[32px] font-black tracking-tight text-[#00B87C] leading-none">6</span>
+            <span className="text-[16px] font-bold text-muted-foreground mb-1">/ 12 days</span>
+          </div>
+          <div className="mt-4">
+            <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
+              <div className="h-full bg-[#00B87C] rounded-full" style={{ width: "50%" }} />
+            </div>
+            <p className="text-[12px] font-bold text-muted-foreground mt-2">6 days used this year</p>
+          </div>
+        </div>
+
+        {/* Card 2 */}
+        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group hover:border-[#00B87C]/30 transition-all">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] flex items-center justify-center text-[#00B87C]">
+              <CalendarDays size={18} />
+            </div>
+            <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">EARNED LEAVE</span>
+          </div>
+          <div className="flex items-end gap-2">
+            <span className="text-[32px] font-black tracking-tight text-[#00B87C] leading-none">18</span>
+            <span className="text-[16px] font-bold text-muted-foreground mb-1">/ 24 days</span>
+          </div>
+          <div className="mt-4">
+            <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
+              <div className="h-full bg-[#00B87C] rounded-full" style={{ width: "75%" }} />
+            </div>
+            <p className="text-[12px] font-bold text-muted-foreground mt-2">6 days used this year</p>
+          </div>
+        </div>
+
+        {/* Card 3 */}
+        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group hover:border-[#0EA5E9]/30 transition-all">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-9 h-9 rounded-xl bg-sky-500/10 flex items-center justify-center text-[#0EA5E9] font-black text-xs">
+              SL
+            </div>
+            <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">SICK LEAVE</span>
+          </div>
+          <div className="flex items-end gap-2">
+            <span className="text-[32px] font-black tracking-tight text-[#0EA5E9] leading-none">8</span>
+            <span className="text-[16px] font-bold text-muted-foreground mb-1">/ 12 days</span>
+          </div>
+          <div className="mt-4">
+            <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
+              <div className="h-full bg-[#0EA5E9] rounded-full" style={{ width: "66%" }} />
+            </div>
+            <p className="text-[12px] font-bold text-muted-foreground mt-2">4 days used this year</p>
+          </div>
+        </div>
+
+        {/* Card 4 */}
+        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group hover:border-[#8B5CF6]/30 transition-all">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-9 h-9 rounded-xl bg-violet-500/10 flex items-center justify-center text-[#8B5CF6] font-black text-xs">
+              CO
+            </div>
+            <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">COMP OFF</span>
+          </div>
+          <div className="flex items-end gap-2">
+            <span className="text-[32px] font-black tracking-tight text-[#8B5CF6] leading-none">2</span>
+            <span className="text-[16px] font-bold text-muted-foreground mb-1">/ 5 days</span>
+          </div>
+          <div className="mt-4">
+            <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
+              <div className="h-full bg-[#8B5CF6] rounded-full" style={{ width: "40%" }} />
+            </div>
+            <p className="text-[12px] font-bold text-muted-foreground mt-2">3 days used this year</p>
+          </div>
+        </div>
+      </div>
+
+      {/* ═══════ MAIN CONTENT AREA ═══════ */}
+      <div className="bg-card border border-border rounded-[32px] p-2 md:p-6 shadow-sm min-h-[500px]">
+        
+        {/* TABS */}
+        <div className="flex items-center gap-6 border-b border-border px-4 mb-6 overflow-x-auto no-scrollbar">
+          {(["My Requests", "Calendar", "History", "Policy"] as LeaveTab[]).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`pb-4 text-[13px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${
+                activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {tab}
+              {activeTab === tab && (
+                <motion.div 
+                  layoutId="activeLeaveTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00B87C]"
+                />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* TAB CONTENTS */}
+        <div className="px-2">
+          {activeTab === "My Requests" && (
+            <div className="space-y-8 animate-in fade-in duration-300">
+              {/* Pending Requests */}
+              <div>
+                <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4 ml-2">Pending Requests</h3>
+                <div className="space-y-3">
+                  {pendingRequests.map(req => (
+                    <div key={req.id} className="relative bg-card border border-border rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#00B87C]/[0.08] transition-colors group overflow-hidden">
+                      <div className={`absolute left-0 top-0 bottom-0 w-1 ${
+                        req.type === 'CL' ? 'bg-[#00B87C]' : 
+                        req.type === 'EL' ? 'bg-[#0EA5E9]' : 
+                        req.type === 'SL' ? 'bg-[#EF4444]' : 'bg-[#8B5CF6]'
+                      }`} />
+                      
+                      <div className="flex items-start md:items-center gap-4 pl-2">
+                        <div className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border ${
+                          req.type === 'CL' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 
+                          req.type === 'EL' ? 'bg-sky-500/10 text-sky-600 border-sky-500/20' : 
+                          req.type === 'SL' ? 'bg-rose-500/10 text-rose-600 border-rose-500/20' : 
+                          'bg-violet-500/10 text-violet-600 border-violet-500/20'
+                        }`}>
+                          {req.type}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-[15px] font-black text-foreground">{req.from} – {req.to}</h4>
+                            <span className="text-[12px] font-bold text-muted-foreground">• {req.days} days</span>
+                          </div>
+                          <p className="text-[13px] font-bold text-muted-foreground italic mt-0.5">{req.reason}</p>
+                          <p className="text-[11px] font-bold text-muted-foreground/60 mt-1 uppercase tracking-widest">Applied on {req.appliedOn}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between md:justify-end gap-4 pl-2 md:pl-0 border-t md:border-0 border-border pt-3 md:pt-0">
+                        <span className="px-3 py-1 rounded-full bg-amber-500/10 text-[#F59E0B] text-[11px] font-bold uppercase tracking-widest flex items-center gap-1.5">
+                          <Clock size={12} /> Pending
+                        </span>
+                        <button 
+                          onClick={() => setShowCancelConfirm(req.id)}
+                          className="px-4 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-[11px] font-bold uppercase tracking-widest transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+
+                      {/* Cancel Confirmation overlay inline */}
+                      {showCancelConfirm === req.id && (
+                        <div className="absolute inset-0 bg-card/95 backdrop-blur-sm flex items-center justify-between px-6 z-10 animate-in fade-in duration-200">
+                          <span className="text-[13px] font-bold text-foreground">Are you sure you want to cancel this request?</span>
+                          <div className="flex items-center gap-2">
+                            <button onClick={() => setShowCancelConfirm(null)} className="px-4 py-1.5 rounded-lg text-muted-foreground hover:bg-muted text-[11px] font-bold uppercase tracking-widest transition-colors">No, Keep</button>
+                            <button onClick={() => handleCancelRequest(req.id)} className="px-4 py-1.5 rounded-lg bg-red-600 text-white text-[11px] font-bold uppercase tracking-widest hover:bg-red-700 transition-colors">Yes, Cancel</button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {pendingRequests.length === 0 && (
+                    <div className="bg-card border border-border border-dashed rounded-2xl p-8 text-center">
+                      <p className="text-[13px] font-bold text-muted-foreground">No pending requests</p>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">
-                  {type.name}
-                </p>
-                <div className="flex items-center gap-1 justify-end">
-                  <span className="text-[20px] font-black text-foreground">
-                    {type.total - type.used}
-                  </span>
-                  <span className="text-[12px] font-bold text-muted-foreground">
-                    / {type.total}
-                  </span>
+
+              {/* Upcoming Approved Leaves */}
+              <div>
+                <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4 ml-2">Upcoming Approved Leaves</h3>
+                <div className="space-y-3">
+                  {approvedLeaves.map(req => (
+                    <div key={req.id} className="relative bg-card border border-border rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 overflow-hidden">
+                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#00B87C]" />
+                      
+                      <div className="flex items-start md:items-center gap-4 pl-2">
+                        <div className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border ${
+                          req.type === 'CL' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 
+                          req.type === 'EL' ? 'bg-sky-500/10 text-sky-600 border-sky-500/20' : 
+                          req.type === 'SL' ? 'bg-rose-500/10 text-rose-600 border-rose-500/20' : 
+                          'bg-violet-500/10 text-violet-600 border-violet-500/20'
+                        }`}>
+                          {req.type}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-[15px] font-black text-foreground">{req.from} – {req.to}</h4>
+                            <span className="text-[12px] font-bold text-muted-foreground">• {req.days} days</span>
+                          </div>
+                          <p className="text-[13px] font-bold text-muted-foreground mt-0.5">Approved by {req.approvedBy}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center pl-2 md:pl-0">
+                        <span className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-[#00B87C] text-[11px] font-bold uppercase tracking-widest flex items-center gap-1.5 border border-emerald-500/20">
+                          {req.startsIn}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  {approvedLeaves.length === 0 && (
+                    <div className="bg-card border border-border border-dashed rounded-2xl p-8 text-center">
+                      <p className="text-[13px] font-bold text-muted-foreground">No upcoming approved leaves</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
+          )}
 
-            <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden mt-2">
-              <div
-                className="h-full rounded-full transition-all duration-1000"
-                style={{
-                  backgroundColor: type.color,
-                  width: `${((type.total - type.used) / type.total) * 100}%`,
-                }}
-              />
-            </div>
-            <div className="w-full flex justify-between mt-2">
-              <span className="text-[10px] font-bold text-muted-foreground">
-                REMAINING
-              </span>
-              <span className="text-[10px] font-bold text-muted-foreground">
-                {(((type.total - type.used) / type.total) * 100).toFixed(0)}%
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+          {activeTab === "Calendar" && (
+            <div className="animate-in fade-in duration-300">
+              <div className="bg-card border border-border rounded-2xl p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-[16px] font-black text-foreground">
+                    {format(currentDate, 'MMMM yyyy')}
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => setCurrentDate(subMonths(currentDate, 1))}
+                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted text-muted-foreground"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button 
+                      onClick={() => setCurrentDate(new Date())}
+                      className="px-3 py-1.5 rounded-lg border border-border text-[12px] font-bold uppercase hover:bg-muted text-foreground tracking-widest"
+                    >
+                      Today
+                    </button>
+                    <button 
+                      onClick={() => setCurrentDate(addMonths(currentDate, 1))}
+                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted text-muted-foreground"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
 
-      {/* ─── Tab Bar ─────────────────────────────────────────────── */}
-      <div className="bg-card rounded-[16px] border border-border shadow-sm p-1 flex items-center gap-1 w-fit">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-8 py-3 rounded-[12px] text-[14px] transition-all whitespace-nowrap ${
-              activeTab === tab
-                ? "bg-[#00B87C] text-white font-black shadow-md shadow-emerald-500/20"
-                : "text-muted-foreground font-bold hover:bg-secondary"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+                <div className="grid grid-cols-7 gap-2 mb-2">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                    <div key={day} className="text-center text-[11px] font-black text-muted-foreground uppercase tracking-widest py-2">
+                      {day}
+                    </div>
+                  ))}
+                </div>
 
-      {/* ─── Tab Content ──────────────────────────────────────────── */}
-      <div className="min-h-[400px]">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            {activeTab === "My Requests" && (
-              <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="bg-secondary/30">
-                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        Request ID
-                      </th>
-                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        Leave Type
-                      </th>
-                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        Duration
-                      </th>
-                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        Days
-                      </th>
-                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        Status
-                      </th>
-                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {requests.map((req, i) => (
-                      <tr
-                        key={i}
-                        className="hover:bg-secondary/50 transition-colors cursor-pointer"
-                        onClick={() => setSelectedRequest(req)}
-                      >
-                        <td className="px-6 py-4 text-[13px] font-black text-foreground">
-                          {req.id}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-[#00B87C] text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
-                            {req.type}
+                <div className="grid grid-cols-7 gap-2">
+                  {(() => {
+                    const monthStart = startOfMonth(currentDate);
+                    const monthEnd = endOfMonth(monthStart);
+                    const startDate = startOfWeek(monthStart);
+                    const endDate = endOfWeek(monthEnd);
+                    const dateFormat = "d";
+                    const rows = [];
+
+                    let days = [];
+                    let day = startDate;
+                    let formattedDate = "";
+
+                    const calendarDays = eachDayOfInterval({
+                      start: startDate,
+                      end: endDate
+                    });
+
+                    return calendarDays.map((calDay, i) => {
+                      formattedDate = format(calDay, dateFormat);
+                      const isCurrentMonth = isSameMonth(calDay, monthStart);
+                      const isCurrentDay = isToday(calDay);
+                      const dateNum = parseInt(formattedDate);
+                      
+                      let bgClass = "bg-card border-border hover:border-[#00B87C]/50 cursor-pointer";
+                      let content = null;
+                      
+                      if (!isCurrentMonth) {
+                        return (
+                          <div key={i} className="min-h-[80px] p-2 rounded-xl border border-border/50 bg-muted/10 flex flex-col">
+                            <span className="text-muted-foreground/40 text-[12px] font-bold">{formattedDate}</span>
+                          </div>
+                        );
+                      }
+
+                      // Dummy logic for leaves based on the day number to show UI
+                      if (dateNum === 5) {
+                        bgClass = "bg-[#0EA5E9]/5 border-[#0EA5E9]/20";
+                        content = <div className="mt-1 px-1.5 py-0.5 bg-[#0EA5E9] text-white text-[10px] font-bold rounded uppercase tracking-wider truncate text-center">Holiday</div>;
+                      } else if (dateNum >= 18 && dateNum <= 20) {
+                        bgClass = "bg-amber-500/5 border-amber-500/20";
+                        content = <div className="mt-1 px-1.5 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded uppercase tracking-wider truncate text-center">SL (Pend)</div>;
+                      } else if (dateNum >= 10 && dateNum <= 14) {
+                        bgClass = "bg-[#00B87C]/5 border-[#00B87C]/20";
+                        content = <div className="mt-1 px-1.5 py-0.5 bg-[#00B87C] text-white text-[10px] font-bold rounded uppercase tracking-wider truncate text-center">EL (Appr)</div>;
+                      }
+
+                      return (
+                        <div key={i} className={`min-h-[80px] p-2 rounded-xl border transition-colors flex flex-col ${bgClass}`}>
+                          <span className={`text-[12px] font-bold ${isCurrentDay ? 'w-6 h-6 bg-[#00B87C] text-white rounded-full flex items-center justify-center' : 'text-foreground'}`}>
+                            {formattedDate}
                           </span>
-                        </td>
-                        <td className="px-6 py-4 flex flex-col">
-                          <span className="text-[13px] font-bold text-foreground">
-                            {new Date(req.from).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })}{" "}
-                            –{" "}
-                            {new Date(req.to).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
-                          <span className="text-[11px] text-muted-foreground">
-                            Applied {req.appliedOn}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-[13px] font-black text-foreground">
-                          {req.days} days
-                        </td>
-                        <td className="px-6 py-4">
-                          <StatusBadge status={req.status} />
-                        </td>
-                        <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                          <button className="p-2 hover:bg-card rounded-lg transition-colors text-muted-foreground">
-                            <MoreVertical size={16} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          <div className="flex-1" />
+                          {content}
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
+                
+                <div className="flex flex-wrap gap-4 mt-6 pt-6 border-t border-border">
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#F59E0B]" /><span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Pending</span></div>
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#00B87C]" /><span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Approved</span></div>
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#EF4444]" /><span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Rejected</span></div>
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#0EA5E9]" /><span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Holiday</span></div>
+                </div>
               </div>
-            )}
-            {activeTab === "History" && <HistoryTab />}
-            {activeTab === "Policy" && <PolicyTab />}
-          </motion.div>
-        </AnimatePresence>
+            </div>
+          )}
+
+          {activeTab === "History" && (
+            <div className="animate-in fade-in duration-300 overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">LEAVE TYPE</th>
+                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">FROM</th>
+                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">TO</th>
+                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">DAYS</th>
+                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest hidden md:table-cell">REASON</th>
+                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">STATUS</th>
+                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest hidden md:table-cell">APPLIED ON</th>
+                    <th className="py-4 px-4 w-10"></th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {historyLeaves.map(leave => (
+                    <tr key={leave.id} className="hover:bg-muted/50 transition-colors cursor-pointer group">
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2 h-2 rounded-full ${leave.type === 'CL' ? 'bg-[#00B87C]' : leave.type === 'EL' ? 'bg-[#0EA5E9]' : leave.type === 'SL' ? 'bg-[#EF4444]' : 'bg-[#8B5CF6]'}`} />
+                          <span className="text-[13px] font-bold text-foreground">{leave.typeFull}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-[13px] font-bold text-foreground">{leave.from}</td>
+                      <td className="py-4 px-4 text-[13px] font-bold text-foreground">{leave.to}</td>
+                      <td className="py-4 px-4 text-[13px] font-bold text-muted-foreground">{leave.days}</td>
+                      <td className="py-4 px-4 text-[13px] font-bold text-muted-foreground truncate max-w-[150px] hidden md:table-cell">{leave.reason}</td>
+                      <td className="py-4 px-4">
+                        <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 w-fit ${
+                          leave.status === 'Approved' ? 'bg-emerald-500/10 text-[#00B87C]' : 
+                          leave.status === 'Rejected' ? 'bg-rose-500/10 text-rose-600' : 
+                          'bg-muted text-muted-foreground'
+                        }`}>
+                          {leave.status === 'Approved' && <CheckCircle2 size={12} />}
+                          {leave.status === 'Rejected' && <X size={12} />}
+                          {leave.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-[12px] font-bold text-muted-foreground hidden md:table-cell">{leave.appliedOn}</td>
+                      <td className="py-4 px-4 text-right">
+                        <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground opacity-0 group-hover:opacity-100 transition-all">
+                          <MoreVertical size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {activeTab === "Policy" && (
+            <div className="animate-in fade-in duration-300 space-y-6">
+              <div className="bg-[#F0FDF4] border border-[#00B87C]/30 rounded-2xl p-6 dark:bg-[#00B87C]/5">
+                <div className="flex items-center gap-2 mb-4">
+                  <Info size={18} className="text-[#00B87C]" />
+                  <h3 className="text-[14px] font-black text-foreground">Leave Types & Entitlements</h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left bg-white dark:bg-zinc-900 rounded-xl overflow-hidden border border-border">
+                    <thead className="bg-muted/50">
+                      <tr>
+                        <th className="py-3 px-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Type</th>
+                        <th className="py-3 px-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Days/Year</th>
+                        <th className="py-3 px-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Accrual</th>
+                        <th className="py-3 px-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Carryforward</th>
+                        <th className="py-3 px-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Encashable</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      <tr>
+                        <td className="py-3 px-4 text-[13px] font-bold">Casual Leave (CL)</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">12</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">Monthly (1/mo)</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
+                      </tr>
+                      <tr>
+                        <td className="py-3 px-4 text-[13px] font-bold">Earned Leave (EL)</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">24</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">Monthly (2/mo)</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">Yes (max 45)</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-[#00B87C]">Yes</td>
+                      </tr>
+                      <tr>
+                        <td className="py-3 px-4 text-[13px] font-bold">Sick Leave (SL)</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">12</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">Annual Frontload</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              
+              <div className="bg-[#F0FDF4] border border-[#00B87C]/30 rounded-2xl p-6 dark:bg-[#00B87C]/5">
+                <div className="flex items-center gap-2 mb-4">
+                  <FileText size={18} className="text-[#00B87C]" />
+                  <h3 className="text-[14px] font-black text-foreground">General Rules</h3>
+                </div>
+                <ul className="space-y-3 text-[13px] font-bold text-muted-foreground list-disc pl-5">
+                  <li>Sick leave of more than 2 consecutive days requires a medical certificate.</li>
+                  <li>Earned leave must be applied at least 14 days in advance for requests longer than 5 days.</li>
+                  <li>Clubbing of Casual Leave and Earned Leave is not permitted.</li>
+                  <li>Comp-off must be availed within 45 days of the worked holiday/weekend.</li>
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* ─── Modals & Drawers ─────────────────────────────────────── */}
-      <ApplyLeaveModal
-        isOpen={showApplyModal}
-        onClose={() => setShowApplyModal(false)}
-        onSubmit={handleApplyLeave}
-      />
-
-      <LeaveDetailDrawer
-        request={selectedRequest}
-        onClose={() => setSelectedRequest(null)}
-      />
-    </div>
-  );
-}
-
-/* ─── Components ─────────────────────────────────────────────────── */
-
-function HistoryTab() {
-  return (
-    <div className="bg-card rounded-[24px] border border-border shadow-sm p-12 text-center">
-      <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-        <History size={32} className="text-muted-foreground" />
-      </div>
-      <h3 className="text-lg font-black text-foreground">Leave History</h3>
-      <p className="text-[14px] font-medium text-muted-foreground max-w-sm mx-auto mt-2">
-        Historical leave records will be archived here after the current
-        financial year ends.
-      </p>
-    </div>
-  );
-}
-
-function PolicyTab() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {[
-        { title: "Annual Leave Policy", icon: Info, color: "#00B87C" },
-        { title: "Medical Leave Policy", icon: Info, color: "#14B8A6" },
-      ].map((p, i) => (
-        <div
-          key={i}
-          className="bg-card rounded-[24px] p-8 border border-border shadow-sm hover:border-[#00B87C] transition-all group"
-        >
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-secondary">
-              <p.icon size={24} style={{ color: p.color }} />
-            </div>
-            <h4 className="text-[16px] font-black text-foreground">
-              {p.title}
-            </h4>
-          </div>
-          <p className="text-[13px] font-medium text-muted-foreground leading-relaxed mb-6">
-            Employees are eligible for 24 days of annual leave per year, accrued
-            at 2 days per month. Leave must be applied at least 7 days in
-            advance for durations exceeding 3 days.
-          </p>
-          <button className="text-[12px] font-black text-[#00B87C] uppercase tracking-widest hover:underline">
-            Download PDF
-          </button>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export function ApplyLeaveModal({
-  isOpen,
-  onClose,
-  onSubmit,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: Partial<LeaveRequest>) => void;
-}) {
-  const [formData, setFormData] = useState({
-    type: "CL",
-    from: "",
-    to: "",
-    reason: "",
-  });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const calculateDays = useMemo(() => {
-    if (!formData.from || !formData.to) return 0;
-    const start = new Date(formData.from);
-    const end = new Date(formData.to);
-    if (end < start) return 0;
-
-    let count = 0;
-    const curDate = new Date(start);
-    while (curDate <= end) {
-      const dayOfWeek = curDate.getDay();
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) count++;
-      curDate.setDate(curDate.getDate() + 1);
-    }
-    return count;
-  }, [formData.from, formData.to]);
-
-  const handleSubmit = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.from) newErrors.from = "Start date is required";
-    if (!formData.to) newErrors.to = "End date is required";
-    if (!formData.reason) newErrors.reason = "Reason is required";
-    if (new Date(formData.to) < new Date(formData.from))
-      newErrors.to = "End date cannot be before start date";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    onSubmit({
-      type: formData.type,
-      from: formData.from,
-      to: formData.to,
-      days: calculateDays,
-      reason: formData.reason,
-    });
-
-    showToast(
-      "Request Submitted",
-      "success",
-      "Your leave request is pending approval.",
-    );
-    onClose();
-    setFormData({ type: "CL", from: "", to: "", reason: "" });
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="absolute inset-0 bg-background/40"
-      />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative bg-card w-full max-w-[500px] rounded-[32px] shadow-2xl overflow-hidden flex flex-col border border-border"
-      >
-        <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/20">
-              <CalendarIcon size={20} />
-            </div>
-            <h3 className="text-[18px] font-black text-foreground">
-              Apply Leave
-            </h3>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-card rounded-xl transition-colors text-muted-foreground"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto no-scrollbar">
-          <div className="space-y-2">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-              Leave Type
-            </label>
-            <div className="grid grid-cols-4 gap-2">
-              {["CL", "EL", "SL", "CO"].map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setFormData({ ...formData, type: t })}
-                  className={`py-3 rounded-xl text-[13px] font-black transition-all border ${formData.type === t ? "bg-[#00B87C] text-white border-primary shadow-lg shadow-emerald-500/20" : "bg-background text-muted-foreground border-border hover:border-emerald-500/40"}`}
-                >
-                  {t}
+      {/* ═══════ APPLY LEAVE MODAL ═══════ */}
+      <AnimatePresence>
+        {isApplyModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsApplyModalOpen(false)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-[480px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col"
+            >
+              {/* Header */}
+              <div className="p-6 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-[#F59E0B]">
+                    <CalendarX size={20} />
+                  </div>
+                  <h2 className="text-[18px] font-black text-foreground tracking-tight">Apply for Leave</h2>
+                </div>
+                <button onClick={() => setIsApplyModalOpen(false)} className="p-2 rounded-xl hover:bg-muted text-muted-foreground">
+                  <X size={20} />
                 </button>
-              ))}
-            </div>
+              </div>
+
+              {/* Form Body */}
+              <div className="p-6 space-y-6 overflow-y-auto max-h-[70vh]">
+                
+                {/* Leave Type Selector */}
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Leave Type</label>
+                  <div className="flex gap-2 p-1 rounded-xl bg-muted border border-border">
+                    {["CL", "EL", "SL", "CO"].map((type) => (
+                      <button 
+                        key={type}
+                        className={`flex-1 py-2 rounded-lg text-[12px] font-bold uppercase tracking-widest transition-all ${
+                          type === "CL" ? "bg-[#00B87C] text-white shadow-sm" : "text-muted-foreground hover:bg-card/50"
+                        }`}
+                      >
+                        {type}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Dates */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">From Date</label>
+                    <input type="date" className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">To Date</label>
+                    <input type="date" className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground" />
+                  </div>
+                </div>
+
+                {/* Auto Duration & Balance */}
+                <div className="bg-[#F0FDF4] border border-[#00B87C]/30 rounded-xl p-4 flex flex-col items-center justify-center text-center dark:bg-[#00B87C]/5">
+                  <span className="text-[18px] font-black text-[#00B87C]">3 Working Days</span>
+                  <span className="text-[11px] font-bold text-muted-foreground">Excludes weekends & holidays</span>
+                  <div className="mt-3 pt-3 border-t border-[#00B87C]/20 w-full text-[12px] font-bold text-[#00B87C]">
+                    CL Balance: 6 days → <span className="font-black">After this: 3 days remaining</span>
+                  </div>
+                </div>
+
+                {/* Team Overlap */}
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-[#F0FDF4] border border-[#00B87C]/30 dark:bg-[#00B87C]/5">
+                  <div className="mt-0.5 text-[#00B87C]"><Users size={16} /></div>
+                  <div>
+                    <p className="text-[12px] font-black text-[#00B87C]">No team members on leave in this period</p>
+                    <p className="text-[11px] font-bold text-muted-foreground mt-0.5">Your coverage looks good.</p>
+                  </div>
+                </div>
+
+                {/* Reason */}
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Reason (Optional)</label>
+                  <textarea 
+                    placeholder="Brief reason for your leave..." 
+                    className="w-full h-20 px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground resize-none"
+                  />
+                </div>
+
+                {/* Toggles */}
+                <div className="flex items-center justify-between p-1">
+                  <span className="text-[13px] font-bold text-foreground">Notify Manager</span>
+                  <div className="w-10 h-6 rounded-full bg-[#00B87C] relative cursor-pointer">
+                    <div className="absolute right-1 top-1 bottom-1 w-4 bg-white rounded-full shadow-sm" />
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Footer */}
+              <div className="p-6 border-t border-border bg-muted/20 flex items-center justify-between gap-4">
+                <button 
+                  onClick={() => setIsApplyModalOpen(false)}
+                  className="px-6 py-3 text-[12px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => {
+                    alert("Leave request submitted!");
+                    setIsApplyModalOpen(false);
+                  }}
+                  className="flex-1 px-6 py-3 rounded-2xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20"
+                >
+                  Submit Request
+                </button>
+              </div>
+
+            </motion.div>
           </div>
+        )}
+      </AnimatePresence>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-                From Date
-              </label>
-              <input
-                type="date"
-                value={formData.from}
-                onChange={(e) =>
-                  setFormData({ ...formData, from: e.target.value })
-                }
-                className={`w-full bg-background border rounded-2xl px-5 py-3 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary transition-all shadow-inner ${errors.from ? "border-rose-500" : "border-border"}`}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-                To Date
-              </label>
-              <input
-                type="date"
-                value={formData.to}
-                onChange={(e) =>
-                  setFormData({ ...formData, to: e.target.value })
-                }
-                className={`w-full bg-background border rounded-2xl px-5 py-3 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary transition-all shadow-inner ${errors.to ? "border-rose-500" : "border-border"}`}
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-4 bg-emerald-500/5 rounded-2xl border border-emerald-500/20">
-            <div className="flex items-center gap-3">
-              <Clock size={18} className="text-[#00B87C]" />
-              <span className="text-[14px] font-black text-[#00B87C]">
-                {calculateDays} Working Days
-              </span>
-            </div>
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-              Excl. Weekends
-            </span>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-              Reason
-            </label>
-            <textarea
-              value={formData.reason}
-              onChange={(e) =>
-                setFormData({ ...formData, reason: e.target.value })
-              }
-              placeholder="Why are you taking this leave?"
-              className={`w-full bg-background border rounded-2xl px-5 py-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary transition-all h-28 resize-none shadow-inner ${errors.reason ? "border-rose-500" : "border-border"}`}
-            />
-          </div>
-
-          <div className="flex items-center justify-between p-4 border-2 border-dashed border-border rounded-2xl group hover:border-[#00B87C]/40 cursor-pointer transition-all">
-            <div className="flex items-center gap-3">
-              <Paperclip
-                size={18}
-                className="text-muted-foreground group-hover:text-[#00B87C] transition-colors"
-              />
-              <span className="text-[13px] font-bold text-muted-foreground">
-                Attach Document (Optional)
-              </span>
-            </div>
-            <span className="text-[11px] font-bold text-muted-foreground/40">
-              PDF, JPG
-            </span>
-          </div>
-        </div>
-
-        <div className="p-6 bg-secondary/30 flex items-center gap-4 border-t border-border">
-          <button
-            onClick={onClose}
-            className="flex-1 py-4 text-[13px] font-black text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="flex-[2] py-4 bg-[#00B87C] text-white rounded-2xl text-[14px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all"
-          >
-            Submit Leave Request
-          </button>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-function LeaveDetailDrawer({
-  request,
-  onClose,
-}: {
-  request: LeaveRequest | null;
-  onClose: () => void;
-}) {
-  if (!request) return null;
-
-  return (
-    <div className="fixed inset-0 z-[2000] flex justify-end">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="absolute inset-0 bg-background/40"
-      />
-      <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="relative bg-card w-full max-w-[450px] h-full shadow-2xl border-l border-border flex flex-col"
-      >
-        <div className="p-8 border-b border-border flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/20">
-              <FileText size={24} />
-            </div>
-            <div>
-              <h3 className="text-lg font-black text-foreground">
-                {request.id}
-              </h3>
-              <p className="text-[12px] font-bold text-muted-foreground">
-                Applied on {request.appliedOn}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-secondary rounded-xl transition-colors"
-          >
-            <X size={24} />
-          </button>
-        </div>
-
-        <div className="p-8 space-y-8 overflow-y-auto no-scrollbar flex-1">
-          <div className="grid grid-cols-2 gap-6">
-            <DetailItem label="Leave Type" value={request.type} />
-            <DetailItem
-              label="Status"
-              value={<StatusBadge status={request.status} />}
-            />
-            <DetailItem
-              label="From Date"
-              value={new Date(request.from).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
-            />
-            <DetailItem
-              label="To Date"
-              value={new Date(request.to).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
-            />
-            <DetailItem
-              label="Total Days"
-              value={`${request.days} Working Days`}
-            />
-          </div>
-
-          <div className="space-y-3">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-              Reason
-            </label>
-            <p className="text-[14px] font-medium text-foreground bg-secondary/50 p-6 rounded-2xl border border-border leading-relaxed italic">
-              "{request.reason}"
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-              Approval Timeline
-            </label>
-            <div className="space-y-6 relative ml-2">
-              <div className="absolute top-0 bottom-0 left-3 w-[1px] bg-border"></div>
-
-              <TimelineItem
-                icon={<Plus size={14} />}
-                title="Leave Applied"
-                subtitle={`by Suresh Iyer on ${request.appliedOn}`}
-                status="completed"
-              />
-              <TimelineItem
-                icon={<User size={14} />}
-                title="HR Review"
-                subtitle="Awaiting review from Sathish Kumar"
-                status={request.status === "Pending" ? "current" : "completed"}
-              />
-              <TimelineItem
-                icon={<CheckCircle2 size={14} />}
-                title="Final Approval"
-                subtitle="HR Department validation"
-                status="upcoming"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="p-8 bg-secondary/30 border-t border-border flex gap-4">
-          <button className="flex-1 py-4 bg-background border border-border rounded-2xl text-[13px] font-black text-rose-500 hover:bg-rose-50 transition-all">
-            Cancel Request
-          </button>
-          <button className="flex-1 py-4 bg-background border border-border rounded-2xl text-[13px] font-black text-foreground hover:bg-secondary transition-all">
-            Download Receipt
-          </button>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-function DetailItem({
-  label,
-  value,
-}: {
-  label: string;
-  value: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-1">
-      <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-        {label}
-      </p>
-      <div className="text-[14px] font-bold text-foreground">{value}</div>
-    </div>
-  );
-}
-
-function TimelineItem({
-  icon,
-  title,
-  subtitle,
-  status,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  subtitle: string;
-  status: "completed" | "current" | "upcoming";
-}) {
-  const colors = {
-    completed: "bg-[#00B87C] text-white border-[#00B87C]",
-    current: "bg-amber-500 text-white border-amber-500 animate-pulse",
-    upcoming: "bg-secondary text-muted-foreground border-border",
-  };
-
-  return (
-    <div className="flex gap-4 relative z-10">
-      <div
-        className={`w-6 h-6 rounded-full flex items-center justify-center border ${colors[status]} shadow-sm`}
-      >
-        {icon}
-      </div>
-      <div>
-        <h4
-          className={`text-[13px] font-black ${status === "upcoming" ? "text-muted-foreground" : "text-foreground"}`}
-        >
-          {title}
-        </h4>
-        <p className="text-[11px] font-medium text-muted-foreground">
-          {subtitle}
-        </p>
-      </div>
     </div>
   );
 }

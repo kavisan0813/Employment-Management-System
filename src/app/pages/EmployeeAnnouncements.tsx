@@ -21,7 +21,7 @@ import {
   Clock,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { useLocation } from "react-router";
 
 /* ─────────────────────────────────────────────────────────────── */
@@ -206,7 +206,7 @@ function PriorityBadge({ priority }: { priority: Priority }) {
   };
   return (
     <span
-      className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${styles[priority]}`}
+      className={`px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider border ${styles[priority]}`}
     >
       {priority}
     </span>
@@ -230,7 +230,7 @@ function CategoryBadge({ category }: { category: Category }) {
   };
   return (
     <span
-      className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${styles[category]}`}
+      className={`px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider border ${styles[category]}`}
     >
       {category}
     </span>
@@ -411,8 +411,8 @@ export function EmployeeAnnouncements() {
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center shadow-sm">
-            <Megaphone size={24} className="text-amber-500" />
+          <div className="w-11 h-11 rounded-[10px] bg-amber-500/10 flex items-center justify-center shadow-sm">
+            <Megaphone size={22} className="text-amber-500" />
           </div>
           <div>
             <h1 className="text-[28px] font-black text-foreground leading-none">
@@ -623,7 +623,7 @@ export function EmployeeAnnouncements() {
                       handleArchive(showConfirmModal.id);
                     else handleAcknowledge(showConfirmModal.id);
                   }}
-                  className={`w-full py-4 rounded-2xl text-[14px] font-black uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] ${
+                  className={`w-full py-4 rounded-2xl text-[14px] font-semibold uppercase tracking-wider shadow-xl transition-all active:scale-[0.98] ${
                     showConfirmModal.type === "archive"
                       ? "bg-rose-500 text-white shadow-rose-500/25"
                       : "bg-primary text-white shadow-primary/25"
@@ -674,7 +674,7 @@ function AnnouncementCard({
     >
       {!announcement.isRead && (
         <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
-          <div className="absolute top-0 right-0 bg-primary text-white text-[8px] font-black uppercase tracking-widest py-1 px-8 rotate-45 translate-x-4 translate-y-[-4px] shadow-sm">
+          <div className="absolute top-0 right-0 bg-primary text-white text-[8px] font-semibold uppercase tracking-wider py-1 px-8 rotate-45 translate-x-4 translate-y-[-4px] shadow-sm">
             New
           </div>
         </div>
@@ -727,13 +727,13 @@ function AnnouncementCard({
 
         <div className="flex flex-wrap gap-2 mb-6">
           {announcement.attachments.length > 0 && (
-            <div className="px-2.5 py-1 bg-secondary/50 rounded-lg flex items-center gap-1.5 text-[10px] font-black text-muted-foreground uppercase tracking-widest border border-border/50">
+            <div className="px-2.5 py-1 bg-secondary/50 rounded-lg flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border border-border/50">
               <Paperclip size={12} /> {announcement.attachments.length} File
             </div>
           )}
           {announcement.needsAcknowledgement && (
             <div
-              className={`px-2.5 py-1 rounded-lg flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest border ${
+              className={`px-2.5 py-1 rounded-lg flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest border ${
                 announcement.isAcknowledged
                   ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
                   : "bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]"
@@ -750,7 +750,7 @@ function AnnouncementCard({
 
       <div className="flex items-center justify-between pt-5 border-t border-border/50 mt-auto">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black text-[10px] border border-primary/20">
+          <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black text-[11px] border border-primary/20">
             {announcement.author.name
               .split(" ")
               .map((n) => n[0])
@@ -760,7 +760,7 @@ function AnnouncementCard({
             <p className="text-[12px] font-black text-foreground leading-none">
               {announcement.author.name}
             </p>
-            <p className="text-[10px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
+            <p className="text-[11px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
               {announcement.author.role}
             </p>
           </div>
@@ -840,7 +840,7 @@ function AnnouncementDetailModal({
               </div>
               <div className="h-8 w-[1px] bg-border hidden sm:block" />
               <div className="flex flex-col">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                   Posted On
                 </span>
                 <div className="flex items-center gap-2 text-[13px] font-black text-foreground">
@@ -853,7 +853,7 @@ function AnnouncementDetailModal({
               </div>
               {announcement.expiryDate && (
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                     Expires On
                   </span>
                   <div className="flex items-center gap-2 text-[13px] font-black text-rose-500">
@@ -952,7 +952,7 @@ function AnnouncementDetailModal({
               !announcement.isAcknowledged && (
                 <button
                   onClick={onAcknowledge}
-                  className="px-8 py-3 bg-primary text-white rounded-xl text-[13px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:opacity-95 active:scale-95 transition-all"
+                  className="px-8 py-3 bg-primary text-white rounded-xl text-[13px] font-semibold uppercase tracking-wider shadow-xl shadow-primary/20 hover:opacity-95 active:scale-95 transition-all"
                 >
                   Acknowledge Now
                 </button>
@@ -985,14 +985,14 @@ function AnnouncementDetailModal({
             {!announcement.isRead && (
               <button
                 onClick={onMarkRead}
-                className="flex-1 sm:flex-none px-6 py-3 border border-primary text-primary hover:bg-primary/5 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all"
+                className="flex-1 sm:flex-none px-6 py-3 border border-primary text-primary hover:bg-primary/5 rounded-xl text-[12px] font-semibold uppercase tracking-wider transition-all"
               >
                 Mark as Read
               </button>
             )}
             <button
               onClick={onClose}
-              className="flex-1 sm:flex-none px-10 py-3 bg-secondary text-foreground hover:bg-border rounded-xl text-[12px] font-black uppercase tracking-widest transition-all"
+              className="flex-1 sm:flex-none px-10 py-3 bg-secondary text-foreground hover:bg-border rounded-xl text-[12px] font-semibold uppercase tracking-wider transition-all"
             >
               Close
             </button>

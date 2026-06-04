@@ -15,7 +15,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 
 type DocStatus = "uploaded" | "expiring" | "not-uploaded" | "pending";
 
@@ -233,27 +233,27 @@ function StatusChip({
 }) {
   if (status === "uploaded") {
     return (
-      <span className="flex items-center gap-1 text-[11px] font-black text-[#00B87C]">
+      <span className="flex items-center gap-1 text-[11px] font-bold text-[#00B87C]">
         <CheckCircle2 size={13} /> Uploaded
       </span>
     );
   }
   if (status === "pending") {
     return (
-      <span className="flex items-center gap-1 text-[11px] font-black text-amber-500">
+      <span className="flex items-center gap-1 text-[11px] font-bold text-amber-500">
         <AlertTriangle size={13} /> Pending
       </span>
     );
   }
   if (status === "expiring") {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-black border border-amber-500/20 whitespace-nowrap">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-[11px] font-bold border border-amber-500/20 whitespace-nowrap">
         <AlertTriangle size={11} /> {expiryLabel || "Expiring Soon"}
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-500 text-[10px] font-black border border-rose-500/20 whitespace-nowrap">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-500 text-[11px] font-bold border border-rose-500/20 whitespace-nowrap">
       <XCircle size={11} /> Not Uploaded
     </span>
   );
@@ -276,7 +276,7 @@ function CategoryCard({
     cat.items.some((i) => i.status === "not-uploaded");
 
   return (
-    <div className="bg-card rounded-[24px] border border-border shadow-sm hover:shadow-md transition-all overflow-hidden">
+    <div className="bg-card rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden">
       <div className="p-5 border-b border-border flex items-center gap-4">
         <div
           className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${cat.iconBg}`}
@@ -284,7 +284,7 @@ function CategoryCard({
           <cat.icon size={20} className={cat.iconColor} />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-[15px] font-black text-foreground leading-tight truncate">
+          <h3 className="text-[15px] font-bold text-foreground leading-tight truncate">
             {cat.title}
           </h3>
           <p className="text-[11px] font-bold text-muted-foreground mt-0.5">
@@ -292,7 +292,7 @@ function CategoryCard({
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-[#00B87C] text-[10px] font-black border border-emerald-500/20">
+          <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-[#00B87C] text-[11px] font-bold border border-emerald-500/20">
             {uploadedCount}/{cat.items.length}
           </span>
           {hasIssues && (
@@ -305,14 +305,14 @@ function CategoryCard({
         {cat.items.map((doc, i) => (
           <div
             key={i}
-            className="px-5 py-3.5 flex items-center gap-4 group hover:bg-secondary/30 transition-colors"
+            className="px-5 py-3.5 flex items-center gap-4 group hover:bg-[#00B87C]/[0.08] transition-colors"
           >
             <div className="w-9 h-9 rounded-lg bg-secondary border border-border flex items-center justify-center flex-shrink-0">
               <FileText size={16} className="text-muted-foreground" />
             </div>
 
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-black text-foreground truncate leading-tight">
+              <p className="text-[13px] font-bold text-foreground truncate leading-tight">
                 {doc.name}
               </p>
               {doc.status === "uploaded" && (
@@ -330,7 +330,7 @@ function CategoryCard({
               {doc.actions.includes("view") && (
                 <button
                   onClick={() => onViewClick(doc.name)}
-                  className="text-[12px] font-black text-[#00B87C] hover:underline"
+                  className="text-[12px] font-bold text-[#00B87C] hover:underline"
                 >
                   View
                 </button>
@@ -338,7 +338,7 @@ function CategoryCard({
               {doc.actions.includes("upload") && (
                 <button
                   onClick={() => onUploadClick(doc.name)}
-                  className="text-[12px] font-black text-[#00B87C] hover:underline"
+                  className="text-[12px] font-bold text-[#00B87C] hover:underline"
                 >
                   Upload
                 </button>
@@ -387,21 +387,21 @@ export function ManagerPersonalDocuments() {
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-500/10 pb-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 flex-shrink-0">
-            <Folder size={24} className="text-[#00B87C]" />
+          <div className="w-11 h-11 rounded-[10px] bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 flex-shrink-0">
+            <Folder size={22} className="text-[#00B87C]" />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground leading-none mb-1">
+            <h1 className="text-[26px] font-bold text-foreground leading-none mb-1">
               My Documents
             </h1>
-            <p className="text-[13px] font-bold text-muted-foreground uppercase tracking-widest">
+            <p className="text-[13px] text-[#6B7280]">
               Securely store and manage your personal documents
             </p>
           </div>
         </div>
         <button
           onClick={() => openUploadModal()}
-          className="flex items-center gap-2 px-6 py-3 bg-[#00B87C] text-white rounded-2xl font-black shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
+          className="flex items-center gap-2 px-6 py-3 bg-[#00B87C] text-white rounded-2xl font-bold shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
         >
           <UploadCloud size={18} />
           Upload Document
@@ -409,17 +409,17 @@ export function ManagerPersonalDocuments() {
       </div>
 
       {/* ─── Status Banner ───────────────────────────────────────── */}
-      <div className="w-full bg-emerald-500/10 rounded-[20px] border border-primary/20 px-6 py-4 flex flex-wrap items-center gap-x-8 gap-y-3 dark:bg-emerald-500/5">
+      <div className="w-full bg-emerald-500/10 rounded-2xl border border-primary/20 px-6 py-4 flex flex-wrap items-center gap-x-8 gap-y-3 dark:bg-emerald-500/5">
         <div className="flex items-center gap-3">
           <div className="w-2 h-2 rounded-full bg-[#00B87C] animate-pulse" />
-          <span className="text-[14px] font-black text-[#00B87C]">
+          <span className="text-[14px] font-bold text-[#00B87C]">
             2 documents pending upload
           </span>
         </div>
         <div className="w-px h-5 bg-[#00B87C]/20 hidden md:block" />
         <div className="flex items-center gap-3">
           <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-          <span className="text-[14px] font-black text-amber-600 dark:text-amber-500">
+          <span className="text-[14px] font-bold text-amber-600 dark:text-amber-500">
             1 document expiring soon{" "}
             <span className="font-bold opacity-80">(Passport)</span>
           </span>
@@ -457,11 +457,11 @@ export function ManagerPersonalDocuments() {
             >
               <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/20">
+                  <div className="w-9 h-9 rounded-[10px] bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/20">
                     <UploadCloud size={22} />
                   </div>
                   <div>
-                    <h3 className="text-[18px] font-black text-foreground">
+                    <h3 className="text-[18px] font-bold text-foreground">
                       Upload Document
                     </h3>
                     <p className="text-[12px] font-bold text-muted-foreground">
@@ -480,7 +480,7 @@ export function ManagerPersonalDocuments() {
               <form onSubmit={handleUploadSubmit} className="p-6 space-y-6">
                 <div className="grid grid-cols-1 gap-5">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       DOCUMENT TYPE
                     </label>
                     <select
@@ -501,7 +501,7 @@ export function ManagerPersonalDocuments() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       DOCUMENT NAME
                     </label>
                     <input
@@ -517,14 +517,14 @@ export function ManagerPersonalDocuments() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       FILE UPLOAD
                     </label>
                     <div className="border-2 border-dashed border-border rounded-2xl p-8 bg-secondary/50 flex flex-col items-center justify-center gap-2 hover:border-[#00B87C] transition-all cursor-pointer group">
                       <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-[#00B87C] group-hover:scale-110 transition-transform">
                         <UploadCloud size={20} />
                       </div>
-                      <p className="text-[13px] font-black text-foreground">
+                      <p className="text-[13px] font-bold text-foreground">
                         Browse Files
                       </p>
                       <p className="text-[11px] font-bold text-muted-foreground">
@@ -535,7 +535,7 @@ export function ManagerPersonalDocuments() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                         EXPIRY DATE (OPTIONAL)
                       </label>
                       <input
@@ -548,7 +548,7 @@ export function ManagerPersonalDocuments() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                         NOTES (OPTIONAL)
                       </label>
                       <input
@@ -568,13 +568,13 @@ export function ManagerPersonalDocuments() {
                   <button
                     type="button"
                     onClick={() => setShowUploadModal(false)}
-                    className="flex-1 px-6 py-3.5 border border-border rounded-xl text-[13px] font-black text-muted-foreground hover:bg-secondary transition-all"
+                    className="flex-1 px-6 py-3.5 border border-border rounded-xl text-[13px] font-bold text-muted-foreground hover:bg-secondary transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-6 py-3.5 bg-[#00B87C] text-white rounded-xl font-black text-[13px] shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
+                    className="flex-1 px-6 py-3.5 bg-[#00B87C] text-white rounded-xl font-bold text-[13px] shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
                   >
                     Upload Document
                   </button>
@@ -591,14 +591,14 @@ export function ManagerPersonalDocuments() {
             className="absolute inset-0 bg-background/40"
             onClick={() => setViewingDoc(null)}
           />
-          <div className="relative bg-card w-full max-w-[420px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border">
+          <div className="relative bg-card w-full max-w-[420px] rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border">
             <div className="p-6 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-[10px] bg-emerald-500/10 flex items-center justify-center">
                   <FileText size={20} className="text-[#00B87C]" />
                 </div>
                 <div>
-                  <h3 className="text-[15px] font-black text-foreground">
+                  <h3 className="text-[15px] font-bold text-foreground">
                     {viewingDoc}
                   </h3>
                   <p className="text-[11px] font-bold text-[#00B87C]">Preview</p>
@@ -623,7 +623,7 @@ export function ManagerPersonalDocuments() {
                   showToast("Downloading", "info", "File download started.");
                   setViewingDoc(null);
                 }}
-                className="w-full py-4 bg-[#00B87C] text-white text-[14px] font-black rounded-2xl shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all"
+                className="w-full py-4 bg-[#00B87C] text-white text-[14px] font-bold rounded-2xl shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all"
               >
                 Download File
               </button>

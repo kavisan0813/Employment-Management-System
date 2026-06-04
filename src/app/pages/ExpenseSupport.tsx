@@ -55,12 +55,12 @@ export function ExpenseSupport() {
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+          className="p-2 hover:bg-[#00B87C]/[0.08] rounded-xl transition-colors"
         >
           <ArrowLeft size={20} className="text-slate-600" />
         </button>
         <div>
-          <h1 className="text-3xl font-black text-[#111827] tracking-tight">
+          <h1 className="text-[26px] font-bold text-[#111827]">
             Expense Support
           </h1>
           <p className="text-slate-500 font-medium">
@@ -74,7 +74,7 @@ export function ExpenseSupport() {
         <div className="lg:col-span-2">
           <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm">
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <div className="w-10 h-10 rounded-xl bg-[#00B87C] flex items-center justify-center shadow-lg shadow-[#00B87C]/20">
                 <HelpCircle size={20} color="white" />
               </div>
               <div>
@@ -140,7 +140,7 @@ export function ExpenseSupport() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-5 bg-emerald-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-emerald-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-2"
+                className="w-full py-5 bg-[#00B87C] text-white rounded-2xl font-bold text-sm uppercase tracking-wider shadow-lg shadow-[#00B87C]/30 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-70 disabled:scale-100 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   "Sending..."
@@ -196,7 +196,7 @@ export function ExpenseSupport() {
             <p className="text-indigo-50/80 text-sm font-medium mb-6 leading-relaxed">
               Need instant help? Chat with our HR bot or a live agent now.
             </p>
-            <button className="w-full py-4 bg-white text-indigo-600 rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-black/5 hover:scale-[1.02] transition-all">
+            <button className="w-full py-4 bg-white text-indigo-600 rounded-2xl text-xs font-semibold uppercase tracking-wider shadow-lg shadow-black/5 hover:scale-[1.02] transition-all">
               Start Conversation
             </button>
           </div>

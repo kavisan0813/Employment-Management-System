@@ -14,18 +14,31 @@ import {
   BarChart as BarChartIcon,
   Settings,
   Database,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Package,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Laptop,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Smartphone,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Monitor,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Printer,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Wifi,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Watch,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Car,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   IndianRupee,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   AlertTriangle,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   TrendingUp,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Search,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CheckCircle2,
   RefreshCw,
   Building2,
@@ -51,6 +64,7 @@ import {
   Legend
 } from "recharts";
 import { motion, AnimatePresence } from "motion/react";
+import { showToast } from "../components/workflow/ToastNotification";
 
 /* ─── Mock Data ─── */
 const PAYROLL_TREND_DATA = [
@@ -99,6 +113,7 @@ const YOY_GROWTH_DATA = [
   { month: "Apr", lastYear: 24.8, currentYear: 28.4 }
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ASSET_COST_BY_CATEGORY = [
   { id: "cat1", category: "Laptops", count: 142, totalValue: 18500000, annualDepreciation: 3700000, bookValue: 14800000, icon: "Laptop", status: "Active" },
   { id: "cat2", category: "Smartphones", count: 85, totalValue: 4250000, annualDepreciation: 850000, bookValue: 3400000, icon: "Smartphone", status: "Active" },
@@ -109,6 +124,7 @@ const ASSET_COST_BY_CATEGORY = [
   { id: "cat7", category: "Vehicles", count: 12, totalValue: 7200000, annualDepreciation: 1200000, bookValue: 6000000, icon: "Car", status: "Depreciating" },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DEPT_ASSET_DIST_DATA = [
   { department: "Engineering", value: 35, color: "#00B87C" },
   { department: "Sales", value: 18, color: "#8B5CF6" },
@@ -119,6 +135,7 @@ const DEPT_ASSET_DIST_DATA = [
   { department: "Legal", value: 4, color: "#14B8A6" },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ASSET_VALUE_BY_DEPT = [
   { department: "Engineering", total: 85, depreciated: 32, current: 53 },
   { department: "Sales", total: 42, depreciated: 15, current: 27 },
@@ -136,29 +153,64 @@ export function FinanceReports() {
   const [activeTab, setActiveTab] = useState<ReportTab>(
     location.state?.activeTab || "Dashboards"
   );
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const executeExport = () => {
+    setIsExporting(true);
+    setTimeout(() => {
+      let headers = "";
+      let csvContent = "";
+      
+      if (activeTab === "Dashboards") {
+        headers = "Month,Payroll Cost (L),Last Year (L)\n";
+        csvContent = headers + YOY_GROWTH_DATA.map(d => `${d.month},${d.currentYear},${d.lastYear}`).join("\n");
+      } else {
+        headers = "Report Name,Category,Status\n";
+        csvContent = headers + `Generated ${activeTab} Report,${activeTab},Ready\n`;
+      }
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `finance_${activeTab.toLowerCase().replace(" ", "_")}_report.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      setIsExporting(false);
+      setShowExportModal(false);
+      showToast(`${activeTab} report exported successfully.`, "success");
+    }, 1500);
+  };
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#E0F2FE] dark:bg-sky-500/10 flex items-center justify-center shadow-inner border border-sky-100 dark:border-sky-500/20">
-            <BarChart3 size={28} className="text-[#0EA5E9]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#E0F2FE] dark:bg-sky-500/10 flex items-center justify-center shadow-inner border border-sky-100 dark:border-sky-500/20">
+            <BarChart3 size={22} className="text-[#0EA5E9]" />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight">Reports & Analytics</h1>
-            <p className="text-[13px] font-semibold text-muted-foreground">Strategic financial insights and reporting suite</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">Reports & Analytics</h1>
+            <p className="text-[13px] text-[#6B7280]">Strategic financial insights and reporting suite</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <button 
-            onClick={() => window.print()}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20"
+            onClick={() => setShowExportModal(true)}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-bold text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20"
           >
             <Download size={18} />
             Export Report
           </button>
-          <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all">
+          <button 
+            onClick={() => showToast("Schedule Configured", "success", "Weekly report schedule has been activated.")}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all"
+          >
             <Calendar size={18} />
             Schedule
             <ChevronDown size={14} />
@@ -169,10 +221,13 @@ export function FinanceReports() {
       {/* DATE FILTER BAR */}
       <div className="bg-card border border-border rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
-          <FilterSelect label="This Month" icon={Calendar} />
-          <FilterSelect label="All Departments" />
-          <FilterSelect label="All Pay Bands" />
-          <button className="flex items-center gap-2 px-4 py-2.5 text-xs font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest">
+          <FilterSelect label="This Month" icon={Calendar} options={["This Month", "Last Month", "This Quarter", "This Year"]} />
+          <FilterSelect label="All Departments" options={["All Departments", "Engineering", "Sales", "Marketing"]} />
+          <FilterSelect label="All Pay Bands" options={["All Pay Bands", "Band A", "Band B", "Band C"]} />
+          <button 
+            onClick={() => showToast("Filters Reset", "success", "All dashboard filters cleared.")}
+            className="flex items-center gap-2 px-4 py-2.5 text-xs font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest"
+          >
             <RotateCcw size={16} />
             Reset
           </button>
@@ -199,7 +254,7 @@ export function FinanceReports() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as ReportTab)}
-                className={`px-6 py-4 text-[13px] font-black tracking-widest uppercase transition-all relative whitespace-nowrap ${
+                className={`px-6 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap ${
                   isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -230,11 +285,73 @@ export function FinanceReports() {
               {activeTab === "Expense Reports" && <ReportCatalogTab section="EXPENSE REPORTS" type="expense" />}
               {activeTab === "Tax Reports" && <ReportCatalogTab section="TAX REPORTS" type="tax" />}
               {activeTab === "Asset Reports" && <AssetReportsTab />}
-              {activeTab === "Custom Builder" && <CustomBuilderTab />}
+              {activeTab === "Custom Builder" && <CustomBuilderTab onExport={() => setShowExportModal(true)} />}
             </motion.div>
           </AnimatePresence>
         </div>
       </div>
+
+      {/* EXPORT MODAL */}
+      <AnimatePresence>
+        {showExportModal && (
+          <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+              onClick={() => !isExporting && setShowExportModal(false)}
+            ></motion.div>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-card w-full max-w-[420px] rounded-[32px] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 pb-0 flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-3xl bg-[#F0FDF4] dark:bg-emerald-500/10 flex items-center justify-center mb-6 shadow-inner border border-[#00B87C]/20">
+                  <Download size={32} className="text-[#00B87C]" />
+                </div>
+                <h3 className="text-xl font-black text-foreground tracking-tight">Export {activeTab}</h3>
+                <p className="text-[13px] text-muted-foreground mt-2 max-w-[280px]">
+                  Generating a comprehensive CSV export for {activeTab}.
+                </p>
+                
+                {isExporting && (
+                  <div className="w-full mt-6 space-y-2 text-left">
+                    <p className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest text-center">Processing Data...</p>
+                    <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 1.5, ease: "linear" }}
+                        className="h-full bg-[#00B87C] rounded-full" 
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className="p-8 flex items-center gap-3">
+                <button 
+                  onClick={() => setShowExportModal(false)}
+                  disabled={isExporting}
+                  className="flex-1 py-3.5 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={executeExport}
+                  disabled={isExporting}
+                  className="flex-1 py-3.5 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                >
+                  {isExporting ? 'Exporting...' : 'Download CSV'}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -253,8 +370,8 @@ function DashboardsTab() {
               <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Last 12 Months Financial Performance</p>
             </div>
             <div className="flex bg-muted/30 p-1 rounded-xl border border-border">
-              <button className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg bg-[#00B87C] text-white">1Y</button>
-              <button className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-muted-foreground hover:text-foreground transition-all">6M</button>
+              <button className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg bg-[#00B87C] text-white">1Y</button>
+              <button className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg text-muted-foreground hover:text-foreground transition-all">6M</button>
             </div>
           </div>
           <div className="h-[300px] w-full">
@@ -318,7 +435,7 @@ function DashboardsTab() {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Total cost</span>
+              <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Total cost</span>
               <span className="text-xl font-black text-foreground tracking-tighter">₹28.4L</span>
             </div>
           </div>
@@ -426,7 +543,7 @@ function ReportCatalogTab({ section, type }: { section: string, type: 'payroll' 
   );
 }
 
-function CustomBuilderTab() {
+function CustomBuilderTab({ onExport }: { onExport?: () => void }) {
   return (
     <div className="flex flex-col lg:flex-row gap-6 h-full min-h-[600px]">
       {/* Field Picker */}
@@ -445,13 +562,28 @@ function CustomBuilderTab() {
       <div className="flex-1 bg-card border border-border rounded-[32px] overflow-hidden shadow-sm flex flex-col">
         <div className="p-6 border-b border-border flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4 bg-muted/30 p-1 rounded-xl border border-border">
-            <button className="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg bg-card shadow-sm text-foreground">Table Preview</button>
-            <button className="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg text-muted-foreground hover:text-foreground transition-all">Chart Preview</button>
+            <button className="px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg bg-card shadow-sm text-foreground">Table Preview</button>
+            <button className="px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg text-muted-foreground hover:text-foreground transition-all">Chart Preview</button>
           </div>
           <div className="flex items-center gap-2">
-            <button className="px-5 py-2 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-md">Generate</button>
-            <button className="px-4 py-2 rounded-xl border border-border text-foreground font-black text-[11px] uppercase tracking-widest hover:bg-muted transition-all">Save Report</button>
-            <button className="p-2 rounded-xl border border-border text-foreground hover:bg-muted transition-all"><Download size={18} /></button>
+            <button 
+              onClick={() => showToast("Report Generated", "success", "Custom report generated successfully.")}
+              className="px-5 py-2 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-md"
+            >
+              Generate
+            </button>
+            <button 
+              onClick={() => showToast("Report Saved", "success", "Custom report saved to your catalog.")}
+              className="px-4 py-2 rounded-xl border border-border text-foreground font-black text-[11px] uppercase tracking-widest hover:bg-muted transition-all"
+            >
+              Save Report
+            </button>
+            <button 
+              onClick={() => onExport ? onExport() : showToast("Download Started", "info", "Downloading custom report data...")}
+              className="p-2 rounded-xl border border-border text-foreground hover:bg-muted transition-all"
+            >
+              <Download size={18} />
+            </button>
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center p-12 bg-muted/10">
@@ -547,7 +679,7 @@ function AssetReportsTab() {
           <motion.div
             key={i}
             whileHover={{ y: -4 }}
-            className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col h-full group"
+            className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all flex flex-col h-full group"
           >
             <div className="flex items-start justify-between mb-4">
               <div
@@ -558,14 +690,14 @@ function AssetReportsTab() {
               </div>
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() => { alert(`Scheduling ${report.name}...`); }}
+                  onClick={() => showToast("Schedule Created", "success", `Scheduled ${report.name}`)}
                   className="p-2 hover:bg-muted rounded-xl transition-all text-muted-foreground"
                   title="Schedule"
                 >
                   <Clock size={16} />
                 </button>
                 <button
-                  onClick={() => { alert(`Settings for ${report.name}...`); }}
+                  onClick={() => showToast("Settings Opened", "info", `Settings for ${report.name}`)}
                   className="p-2 hover:bg-muted rounded-xl transition-all text-muted-foreground"
                   title="Settings"
                 >
@@ -580,7 +712,7 @@ function AssetReportsTab() {
             <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   {i === 0 ? "Updated 2h ago" : i === 1 ? "Updated 1d ago" : `Last run: ${["Apr 2", "Mar 28", "Apr 5", "Apr 1", "Mar 30"][i - 2]}`}
                 </span>
               </div>
@@ -589,7 +721,7 @@ function AssetReportsTab() {
                   if (report.path !== "#") {
                     navigate(report.path);
                   } else {
-                    alert(`Opening ${report.name}...`);
+                    showToast("Report Opening", "info", `Opening ${report.name}...`);
                   }
                 }}
                 className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest flex items-center gap-1 hover:underline"
@@ -616,20 +748,42 @@ function MiniKPICard({ title, value, color }: { title: string, value: string, co
   };
 
   return (
-    <div className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-all">
+    <div className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all">
       <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[1.5px] mb-1">{title}</p>
       <h3 className={`text-lg font-black tracking-tighter ${colorMap[color] || "text-foreground"}`}>{value}</h3>
     </div>
   );
 }
 
-function FilterSelect({ label, icon: Icon }: { label: string, icon?: React.ElementType }) {
+function FilterSelect({ label, icon: Icon, options = ["Option 1", "Option 2"] }: { label: string, icon?: React.ElementType, options?: string[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(label);
+  
   return (
-    <button className="flex items-center gap-2.5 px-4 py-2 bg-card border border-border rounded-xl text-[12px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm">
-      {Icon && <Icon size={14} className="text-muted-foreground" />}
-      {label}
-      <ChevronDown size={14} className="text-muted-foreground ml-1" />
-    </button>
+    <div className="relative">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+        className="flex items-center gap-2.5 px-4 py-2 bg-card border border-border rounded-xl text-[12px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm"
+      >
+        {Icon && <Icon size={14} className="text-muted-foreground" />}
+        {selected}
+        <ChevronDown size={14} className={`text-muted-foreground ml-1 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+      </button>
+      {isOpen && (
+        <div className="absolute top-full mt-2 w-full min-w-[160px] bg-card border border-border rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
+          {options.map((opt, i) => (
+            <button
+              key={i}
+              onClick={() => { setSelected(opt); setIsOpen(false); }}
+              className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-muted transition-all ${selected === opt ? 'text-[#00B87C]' : 'text-foreground'}`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -659,14 +813,14 @@ function ReportCard({ name, desc, last }: { name: string, desc: string, last: st
     } else if (name.includes("Department")) {
       navigate("/departments");
     } else {
-      alert(`Generating ${name} report...`);
+      showToast("Report Generated", "success", `Generating ${name} report...`);
     }
   };
 
   return (
     <motion.div 
       whileHover={{ y: -4 }}
-      className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col h-full group"
+      className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all flex flex-col h-full group"
     >
       <div className="flex items-start justify-between mb-4">
         <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center border border-border group-hover:bg-[#00B87C]/10 group-hover:border-[#00B87C]/20 transition-all">
@@ -688,7 +842,7 @@ function ReportCard({ name, desc, last }: { name: string, desc: string, last: st
       <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Last run: {last}</span>
+          <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Last run: {last}</span>
         </div>
         <button 
           onClick={handleGenerate}
@@ -708,7 +862,7 @@ function FieldGroup({ title, items, color }: { title: string, items: string[], c
 
   return (
     <div className="space-y-3">
-      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest px-2">{title}</p>
+      <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider px-2">{title}</p>
       <div className="space-y-2">
         {items.map((item, i) => (
           <div 

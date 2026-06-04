@@ -19,7 +19,7 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 interface TimelineEntry {
   id: string;
@@ -255,14 +255,14 @@ export function ManagerSupportTicket() {
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-500/10 pb-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-sm flex-shrink-0">
-            <Headphones size={24} className="text-[#00B87C]" />
+          <div className="w-11 h-11 rounded-[10px] bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-sm flex-shrink-0">
+            <Headphones size={22} className="text-[#00B87C]" />
           </div>
           <div>
-            <h1 className="text-[28px] font-black text-foreground leading-none">
+            <h1 className="text-[26px] font-bold text-foreground leading-none">
               Support & Helpdesk
             </h1>
-            <p className="text-[14px] font-bold text-muted-foreground mt-1.5 uppercase tracking-widest">
+            <p className="text-[13px] text-[#6B7280]">
               Raise requests to HR, Payroll, and IT Admin
             </p>
           </div>
@@ -270,7 +270,7 @@ export function ManagerSupportTicket() {
 
         <button
           onClick={() => setShowNewTicketModal(true)}
-          className="flex items-center gap-2 px-5 py-3 rounded-2xl font-black text-white text-[13px] uppercase tracking-widest bg-[#00B87C] hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-emerald-500/25"
+          className="flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-white text-[13px] uppercase tracking-wider bg-[#00B87C] hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-emerald-500/25"
         >
           <Plus size={18} /> Raise New Ticket
         </button>
@@ -280,16 +280,16 @@ export function ManagerSupportTicket() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Card 1 */}
         <div
-          className="bg-card p-6 rounded-[28px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
+          className="bg-card p-6 rounded-[28px] border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
           onClick={() => {
             setActiveTab("My Tickets");
             setTicketStatusTab("Open");
           }}
         >
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
             Open Requests
           </p>
-          <p className="text-[32px] font-black text-amber-500">{openCount}</p>
+          <p className="text-[28px] font-bold text-amber-500">{openCount}</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3 uppercase tracking-wider">
             In Progress / New
           </p>
@@ -297,27 +297,27 @@ export function ManagerSupportTicket() {
 
         {/* Card 2 */}
         <div
-          className="bg-card p-6 rounded-[28px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
+          className="bg-card p-6 rounded-[28px] border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
           onClick={() => {
             setActiveTab("My Tickets");
             setTicketStatusTab("Resolved");
           }}
         >
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
             Resolved Requests
           </p>
-          <p className="text-[32px] font-black text-[#00B87C]">{resolvedCount}</p>
+          <p className="text-[28px] font-bold text-[#00B87C]">{resolvedCount}</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3 uppercase tracking-wider">
             total resolved
           </p>
         </div>
 
         {/* Card 3 */}
-        <div className="bg-card p-6 rounded-[28px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative">
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+        <div className="bg-card p-6 rounded-[28px] border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative">
+          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
             Avg. Resolution Time
           </p>
-          <p className="text-[32px] font-black text-foreground">1.5 Days</p>
+          <p className="text-[28px] font-bold text-foreground">1.5 Days</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3 uppercase tracking-wider">
             SLA Standard: 2 days
           </p>
@@ -330,9 +330,9 @@ export function ManagerSupportTicket() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 rounded-xl text-[13px] transition-all whitespace-nowrap uppercase tracking-widest ${
+            className={`px-6 py-3 rounded-xl text-[13px] transition-all whitespace-nowrap uppercase tracking-wider ${
               activeTab === tab
-                ? "bg-[#00B87C] text-white font-black shadow-md shadow-emerald-500/20"
+                ? "bg-[#00B87C] text-white font-bold shadow-md shadow-emerald-500/20"
                 : "text-muted-foreground font-bold hover:bg-secondary"
             }`}
           >
@@ -429,7 +429,7 @@ function MyTicketsTab({
               onClick={() => setTicketStatusTab(tab)}
               className={`px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all whitespace-nowrap ${
                 ticketStatusTab === tab
-                  ? "bg-secondary text-foreground font-black shadow-sm"
+                  ? "bg-secondary text-foreground font-bold shadow-sm"
                   : "text-muted-foreground hover:bg-secondary/50"
               }`}
             >
@@ -484,7 +484,7 @@ function MyTicketsTab({
         {tickets.length === 0 ? (
           <div className="p-16 text-center text-muted-foreground flex flex-col items-center justify-center">
             <Search size={48} className="opacity-20 mb-4 text-emerald-500" />
-            <p className="font-black text-foreground">No requests found</p>
+            <p className="font-bold text-foreground">No requests found</p>
             <p className="text-[13px] font-bold text-muted-foreground mt-1 max-w-[280px]">
               Try adjusting your filters or search to locate your ticket.
             </p>
@@ -494,25 +494,25 @@ function MyTicketsTab({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-secondary/40 border-b border-border">
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider whitespace-nowrap">
                     TICKET ID
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     SUBJECT
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     CATEGORY
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     PRIORITY
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     STATUS
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     CREATED
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">
                     ACTION
                   </th>
                 </tr>
@@ -534,7 +534,7 @@ function MyTicketsTab({
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className="px-2.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border"
+                        className="px-2.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border"
                         style={{
                           backgroundColor: row.catBg,
                           color: row.catColor,
@@ -546,7 +546,7 @@ function MyTicketsTab({
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className="px-2.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border"
+                        className="px-2.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border"
                         style={{
                           backgroundColor: row.priorityBg,
                           color: row.priorityColor,
@@ -558,7 +558,7 @@ function MyTicketsTab({
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className="px-2.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border"
+                        className="px-2.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border"
                         style={{
                           backgroundColor: row.statusBg,
                           color: row.statusColor,
@@ -572,7 +572,7 @@ function MyTicketsTab({
                       {row.created}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="text-[#00B87C] text-[13px] font-black hover:underline whitespace-nowrap">
+                      <button className="text-[#00B87C] text-[13px] font-bold hover:underline whitespace-nowrap">
                         View ›
                       </button>
                     </td>
@@ -614,7 +614,7 @@ function KnowledgeBaseTab() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* FAQ categories grid */}
       <div className="lg:col-span-1 space-y-4">
-        <h3 className="text-[13px] font-black text-foreground uppercase tracking-widest mb-3">
+        <h3 className="text-[13px] font-bold text-foreground uppercase tracking-wider mb-3">
           Support Categories
         </h3>
         <div className="grid grid-cols-1 gap-3">
@@ -623,17 +623,17 @@ function KnowledgeBaseTab() {
             return (
               <div
                 key={idx}
-                className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:border-[#00B87C]/30 hover:shadow-md transition-all flex items-center justify-between cursor-pointer group"
+                className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:border-[#00B87C]/30 hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all flex items-center justify-between cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-emerald-500/5 group-hover:bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/10">
                     <Icon size={16} />
                   </div>
                   <div>
-                    <p className="text-[13px] font-black text-foreground group-hover:text-[#00B87C] transition-colors leading-none">
+                    <p className="text-[13px] font-bold text-foreground group-hover:text-[#00B87C] transition-colors leading-none">
                       {cat.name}
                     </p>
-                    <p className="text-[10px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
+                    <p className="text-[11px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
                       {cat.count} Articles
                     </p>
                   </div>
@@ -647,16 +647,16 @@ function KnowledgeBaseTab() {
 
       {/* FAQ details grid */}
       <div className="lg:col-span-2 space-y-4">
-        <h3 className="text-[13px] font-black text-foreground uppercase tracking-widest mb-3">
+        <h3 className="text-[13px] font-bold text-foreground uppercase tracking-wider mb-3">
           Frequently Answered Topics
         </h3>
         <div className="space-y-4">
           {faqs.map((faq, idx) => (
             <div
               key={idx}
-              className="bg-card p-6 rounded-[24px] border border-border shadow-sm space-y-3"
+              className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-3"
             >
-              <h4 className="text-[15px] font-black text-foreground flex items-center gap-2">
+              <h4 className="text-[15px] font-bold text-foreground flex items-center gap-2">
                 <AlertCircle size={16} className="text-[#00B87C]" /> {faq.q}
               </h4>
               <p className="text-[13px] font-medium text-muted-foreground leading-relaxed">
@@ -773,7 +773,7 @@ function NewTicketModal({
               <Plus size={24} />
             </div>
             <div>
-              <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">
+              <h3 className="text-[18px] font-bold text-foreground uppercase tracking-tight">
                 RAISE NEW TICKET
               </h3>
               <p className="text-[12px] font-bold text-muted-foreground">
@@ -792,7 +792,7 @@ function NewTicketModal({
         <div className="p-8 overflow-y-auto custom-scrollbar flex-1 bg-white dark:bg-card">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="flex flex-col gap-2">
-              <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+              <label className="text-[12px] font-bold text-slate-500 uppercase tracking-wider ml-1">
                 CATEGORY
               </label>
               <div className="relative">
@@ -815,7 +815,7 @@ function NewTicketModal({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+              <label className="text-[12px] font-bold text-slate-500 uppercase tracking-wider ml-1">
                 SUBJECT
               </label>
               <input
@@ -829,7 +829,7 @@ function NewTicketModal({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+              <label className="text-[12px] font-bold text-slate-500 uppercase tracking-wider ml-1">
                 PRIORITY LEVEL
               </label>
               <div className="grid grid-cols-4 gap-3">
@@ -838,7 +838,7 @@ function NewTicketModal({
                     key={level}
                     type="button"
                     onClick={() => setPriority(level)}
-                    className={`py-3.5 rounded-2xl text-[13px] font-black transition-all border-2 ${
+                    className={`py-3.5 rounded-2xl text-[13px] font-bold transition-all border-2 ${
                       priority === level
                         ? "bg-[#00B87C] text-white border-[#00B87C] shadow-lg shadow-emerald-500/20 scale-[1.02]"
                         : "bg-[#F0FDF4]/50 dark:bg-emerald-500/5 text-slate-500 border-transparent hover:border-emerald-500/20"
@@ -851,7 +851,7 @@ function NewTicketModal({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+              <label className="text-[12px] font-bold text-slate-500 uppercase tracking-wider ml-1">
                 DESCRIPTION
               </label>
               <textarea
@@ -865,7 +865,7 @@ function NewTicketModal({
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[12px] font-black text-slate-500 uppercase tracking-widest ml-1">
+              <label className="text-[12px] font-bold text-slate-500 uppercase tracking-wider ml-1">
                 ATTACH FILES
               </label>
               <div className="border-2 border-dashed border-emerald-500/20 bg-[#F0FDF4]/30 dark:bg-emerald-500/[0.02] p-5 rounded-2xl text-center flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-500/5 transition-all relative">
@@ -875,10 +875,10 @@ function NewTicketModal({
                   className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                 />
                 <Paperclip size={24} className="text-[#00B87C] mb-2" />
-                <p className="text-[12px] font-black text-foreground">
+                <p className="text-[12px] font-bold text-foreground">
                   {file ? file.name : "Click to select a file"}
                 </p>
-                <p className="text-[10px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
+                <p className="text-[11px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
                   Supports PDF, PNG, JPG up to 10MB
                 </p>
               </div>
@@ -886,7 +886,7 @@ function NewTicketModal({
 
             <button
               type="submit"
-              className="w-full py-4.5 bg-[#00B87C] text-white text-[13px] font-black uppercase tracking-widest rounded-2xl hover:opacity-90 transition-all shadow-xl shadow-emerald-500/25 mt-4"
+              className="w-full py-4.5 bg-[#00B87C] text-white text-[13px] font-bold uppercase tracking-wider rounded-2xl hover:opacity-90 transition-all shadow-xl shadow-emerald-500/25 mt-4"
             >
               Raise Support Ticket
             </button>
@@ -952,12 +952,12 @@ function TicketDetailModal({
         {/* Drawer Header Detail */}
         <div className="mt-12 pb-6 border-b border-border space-y-3">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-[13px] font-black text-muted-foreground">
+            <span className="font-mono text-[13px] font-bold text-muted-foreground">
               {ticket.id}
             </span>
             <div className="flex items-center gap-2">
               <span
-                className="px-2.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border"
+                className="px-2.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border"
                 style={{
                   backgroundColor: ticket.priorityBg,
                   color: ticket.priorityColor,
@@ -967,7 +967,7 @@ function TicketDetailModal({
                 {ticket.priority}
               </span>
               <span
-                className="px-2.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border"
+                className="px-2.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border"
                 style={{
                   backgroundColor: ticket.statusBg,
                   color: ticket.statusColor,
@@ -978,10 +978,10 @@ function TicketDetailModal({
               </span>
             </div>
           </div>
-          <h2 className="text-[20px] font-black text-foreground leading-tight">
+          <h2 className="text-[20px] font-bold text-foreground leading-tight">
             {ticket.subject}
           </h2>
-          <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-widest">
+          <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-wider">
             Category: {ticket.category}
           </p>
         </div>
@@ -990,7 +990,7 @@ function TicketDetailModal({
         <div className="py-6 flex-1 overflow-y-auto custom-scrollbar space-y-8 pr-1">
           {/* Main Description */}
           <div className="bg-secondary/20 p-5 rounded-2xl border border-border/50 space-y-3">
-            <p className="text-[13px] font-black text-foreground uppercase tracking-widest flex items-center gap-2">
+            <p className="text-[13px] font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
               <FileText size={14} className="text-[#00B87C]" /> Issue Description
             </p>
             <p className="text-[13.5px] font-medium text-muted-foreground leading-relaxed whitespace-pre-wrap">
@@ -1001,7 +1001,7 @@ function TicketDetailModal({
           {/* Attachments */}
           {ticket.attachments.length > 0 && (
             <div className="space-y-3">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                 ATTACHMENTS ({ticket.attachments.length})
               </p>
               <div className="grid grid-cols-1 gap-2">
@@ -1013,10 +1013,10 @@ function TicketDetailModal({
                     <div className="flex items-center gap-2 min-w-0">
                       <Paperclip size={14} className="text-[#00B87C] flex-shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-[12px] font-black text-foreground truncate">
+                        <p className="text-[12px] font-bold text-foreground truncate">
                           {file.name}
                         </p>
-                        <p className="text-[10px] font-bold text-muted-foreground">
+                        <p className="text-[11px] font-bold text-muted-foreground">
                           {file.size}
                         </p>
                       </div>
@@ -1037,7 +1037,7 @@ function TicketDetailModal({
 
           {/* Timeline Feed */}
           <div className="space-y-4">
-            <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
               TICKET HISTORY & ACTIVITY
             </p>
             <div className="relative pl-4 border-l-2 border-border/50 ml-2 space-y-6">
@@ -1046,7 +1046,7 @@ function TicketDetailModal({
                   {/* Indicator bullet */}
                   <div className="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full bg-card border-2 border-border shadow-sm" />
                   
-                  <div className="flex justify-between items-center text-[12px] font-black text-muted-foreground uppercase tracking-widest">
+                  <div className="flex justify-between items-center text-[12px] font-bold text-muted-foreground uppercase tracking-wider">
                     <span>{event.user}</span>
                     <span className="flex items-center gap-1">
                       <Clock size={11} /> {event.timestamp}
@@ -1065,7 +1065,7 @@ function TicketDetailModal({
                   )}
                   {event.type === "resolved" && (
                     <div className="p-4 bg-emerald-500/5 border border-emerald-500/15 rounded-xl mt-1 space-y-1.5">
-                      <p className="text-[13px] font-black text-[#00B87C] flex items-center gap-1.5 uppercase tracking-wide">
+                      <p className="text-[13px] font-bold text-[#00B87C] flex items-center gap-1.5 uppercase tracking-wide">
                         <CheckCircle2 size={14} /> Resolved Action
                       </p>
                       <p className="text-[13px] font-medium text-muted-foreground">
@@ -1101,7 +1101,7 @@ function TicketDetailModal({
             />
             <button
               type="submit"
-              className="w-full py-3.5 bg-[#00B87C] text-white text-[12px] font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20"
+              className="w-full py-3.5 bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-wider rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20"
             >
               Post Message
             </button>

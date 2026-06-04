@@ -10,7 +10,7 @@ import {
   Paperclip,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router";
 import { StatusBadge } from "../components/workflow/StatusBadge";
 
@@ -274,7 +274,7 @@ function RegularizationModal({
                 Upload Proof (Optional)
               </span>
             </div>
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
               PDF, JPG
             </span>
           </div>
@@ -283,13 +283,13 @@ function RegularizationModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-4 text-[14px] font-black text-slate-500 hover:bg-secondary rounded-[20px] transition-all uppercase tracking-widest"
+              className="flex-1 py-4 text-[14px] font-black text-slate-500 hover:bg-secondary rounded-2xl transition-all uppercase tracking-widest"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-[1.8] py-4 bg-[#00B87C] text-white rounded-[20px] text-[14px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/25 hover:opacity-95 active:scale-[0.98] transition-all"
+              className="flex-[1.8] py-4 bg-[#00B87C] text-white rounded-2xl text-[14px] font-bold uppercase tracking-wider shadow-xl shadow-[#00B87C]/25 hover:opacity-95 active:scale-[0.98] transition-all"
             >
               Submit Request
             </button>
@@ -347,13 +347,13 @@ function RequestDetailPopup({
         <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
           <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/30 border border-border">
             <div className="flex flex-col gap-1">
-              <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                 Status
               </span>
               <StatusBadge status={request.status} />
             </div>
             <div className="flex flex-col gap-1 items-end">
-              <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                 Applied On
               </span>
               <span className="text-[14px] font-black text-foreground">
@@ -364,7 +364,7 @@ function RequestDetailPopup({
 
           <div className="grid grid-cols-2 gap-8">
             <div className="space-y-1">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider flex items-center gap-2">
                 <Calendar size={12} className="text-primary" /> Date
               </p>
               <p className="text-[15px] font-black text-foreground">
@@ -372,7 +372,7 @@ function RequestDetailPopup({
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider flex items-center gap-2">
                 <FileText size={12} className="text-primary" /> Type
               </p>
               <p className="text-[15px] font-black text-foreground">
@@ -380,7 +380,7 @@ function RequestDetailPopup({
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider flex items-center gap-2">
                 <Clock size={12} className="text-emerald-500" /> Check-in
               </p>
               <p className="text-[15px] font-black text-emerald-600 dark:text-emerald-400">
@@ -388,7 +388,7 @@ function RequestDetailPopup({
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider flex items-center gap-2">
                 <Clock size={12} className="text-slate-400" /> Check-out
               </p>
               <p className="text-[15px] font-black text-foreground">
@@ -398,7 +398,7 @@ function RequestDetailPopup({
           </div>
 
           <div className="space-y-3">
-            <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
               Reason
             </p>
             <div className="p-4 rounded-2xl bg-background border border-border text-[14px] font-medium text-foreground/80 leading-relaxed italic">
@@ -411,7 +411,7 @@ function RequestDetailPopup({
               AR
             </div>
             <div className="flex-1">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                 Reporting Manager
               </p>
               <p className="text-[14px] font-black text-foreground">
@@ -420,7 +420,7 @@ function RequestDetailPopup({
             </div>
             {request.status === "Approved" && (
               <div className="text-right">
-                <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Approved On
                 </p>
                 <p className="text-[14px] font-black text-primary">
@@ -445,7 +445,7 @@ function RequestDetailPopup({
         <div className="p-6 bg-secondary/30 border-t border-border">
           <button
             onClick={onClose}
-            className="w-full py-4 bg-primary text-white rounded-2xl text-[14px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:opacity-95 transition-all"
+            className="w-full py-4 bg-primary text-white rounded-2xl text-[14px] font-semibold uppercase tracking-wider shadow-xl shadow-primary/20 hover:opacity-95 transition-all"
           >
             Close Details
           </button>
@@ -587,7 +587,7 @@ export function EmployeeAttendance() {
             className={`p-6 rounded-2xl border border-border shadow-sm flex flex-col items-center justify-center text-center group hover:border-primary transition-colors ${card.bg}`}
           >
             <p
-              className="text-3xl font-black mb-1"
+              className="text-[28px] font-bold mb-1"
               style={{ color: card.color }}
             >
               {card.value}
@@ -603,7 +603,7 @@ export function EmployeeAttendance() {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
         {/* LEFT PANEL: Calendar (7/12) */}
         <div className="xl:col-span-7 flex flex-col gap-5">
-          <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm relative overflow-hidden">
+          <div className="bg-card rounded-2xl p-8 border border-border shadow-sm relative overflow-hidden">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-[16px] font-black text-foreground">
                 Attendance Calendar
@@ -620,7 +620,7 @@ export function EmployeeAttendance() {
                       className="w-2 h-2 rounded-full"
                       style={{ backgroundColor: item.color }}
                     />
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                    <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                       {item.label}
                     </span>
                   </div>
@@ -632,7 +632,7 @@ export function EmployeeAttendance() {
               {DAYS_OF_WEEK.map((day) => (
                 <div
                   key={day}
-                  className="text-center text-[11px] font-black uppercase tracking-widest text-muted-foreground/40"
+                  className="text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/40"
                 >
                   {day}
                 </div>
@@ -710,7 +710,7 @@ export function EmployeeAttendance() {
                 <p className={`text-lg font-black mb-1 ${stat.color}`}>
                   {stat.value}
                 </p>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
                   {stat.label}
                 </p>
               </div>
@@ -720,13 +720,13 @@ export function EmployeeAttendance() {
 
         {/* RIGHT PANEL: Daily Log & Regularization (5/12) */}
         <div className="xl:col-span-5 flex flex-col gap-6">
-          <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden flex flex-col">
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
             <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
               <div className="flex items-center gap-2">
                 <h3 className="text-[16px] font-black text-foreground">
                   Daily Log
                 </h3>
-                <span className="px-2.5 py-0.5 rounded-md bg-background border border-border text-[10px] font-bold text-muted-foreground">
+                <span className="px-2.5 py-0.5 rounded-md bg-background border border-border text-[11px] font-bold text-muted-foreground">
                   April 2026
                 </span>
               </div>
@@ -742,16 +742,16 @@ export function EmployeeAttendance() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-background border-b border-border">
-                    <th className="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <th className="px-6 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Date
                     </th>
-                    <th className="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <th className="px-6 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       In
                     </th>
-                    <th className="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <th className="px-6 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Out
                     </th>
-                    <th className="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <th className="px-6 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Status
                     </th>
                   </tr>
@@ -794,7 +794,7 @@ export function EmployeeAttendance() {
           </div>
 
           {/* Regularization Requests Section */}
-          <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[15px] font-black text-foreground">
                 Regularization

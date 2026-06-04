@@ -13,7 +13,7 @@ import {
   ArrowDownCircle,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types & Data                                                    */
@@ -327,7 +327,7 @@ function PayslipModal({
 
           <div className="p-6 bg-primary rounded-2xl flex items-center justify-between shadow-xl shadow-primary/20">
             <div>
-              <p className="text-white/70 text-[11px] font-black uppercase tracking-widest mb-1">
+              <p className="text-white/70 text-[11px] font-semibold uppercase tracking-wider mb-1">
                 Net Take-Home Pay
               </p>
               <p className="text-[28px] font-black text-white">
@@ -356,7 +356,7 @@ function PayslipModal({
                 `${payslip.month} ${payslip.year} payslip PDF downloaded.`,
               )
             }
-            className="flex-[2] py-3.5 bg-primary text-white rounded-2xl text-[13px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
+            className="flex-[2] py-3.5 bg-primary text-white rounded-2xl text-[13px] font-semibold uppercase tracking-wider shadow-xl shadow-primary/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
           >
             <Download size={16} /> Download PDF
           </button>
@@ -415,12 +415,12 @@ export function EmployeePayslips() {
 
       {/* ─── KPI Cards ───────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
               <Wallet size={20} className="text-indigo-500" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Current CTC
             </p>
           </div>
@@ -429,12 +429,12 @@ export function EmployeePayslips() {
             Annual package · Revised Apr 2025
           </p>
         </div>
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
               <TrendingUp size={20} className="text-primary" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Monthly Net Pay
             </p>
           </div>
@@ -443,12 +443,12 @@ export function EmployeePayslips() {
             After all deductions · April 2026
           </p>
         </div>
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center">
               <ArrowDownCircle size={20} className="text-rose-500" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Monthly Deductions
             </p>
           </div>
@@ -460,7 +460,7 @@ export function EmployeePayslips() {
       </div>
 
       {/* ─── Table Card ──────────────────────────────────────────── */}
-      <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
         <div className="p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-1 h-4 bg-primary rounded-full" />
@@ -537,25 +537,25 @@ export function EmployeePayslips() {
           <table className="w-full text-left min-w-[720px]">
             <thead>
               <tr className="bg-secondary/50 border-b border-border">
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   Month
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-right">
                   Gross Pay
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-right">
                   Deductions
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-right">
                   Net Pay
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   Paid Date
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   Status
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-right">
                   Actions
                 </th>
               </tr>
@@ -616,11 +616,11 @@ export function EmployeePayslips() {
                     </td>
                     <td className="px-6 py-4">
                       {p.status === "Paid" ? (
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/10 text-primary border border-primary/20 flex items-center gap-1.5 w-fit uppercase tracking-wider">
+                        <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-primary border border-primary/20 flex items-center gap-1.5 w-fit uppercase tracking-wider">
                           <CheckCircle2 size={11} /> Paid
                         </span>
                       ) : (
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1.5 w-fit uppercase tracking-wider">
+                        <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1.5 w-fit uppercase tracking-wider">
                           <Clock size={11} /> {p.status}
                         </span>
                       )}

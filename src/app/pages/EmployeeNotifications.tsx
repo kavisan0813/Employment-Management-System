@@ -16,7 +16,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types & Mock Data                                               */
@@ -189,7 +189,7 @@ export default function EmployeeNotifications() {
         <div className="flex items-center gap-3">
           <button
             onClick={markAllRead}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-primary text-primary text-[13px] font-black uppercase tracking-widest hover:bg-primary/5 transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-primary text-primary text-[13px] font-semibold uppercase tracking-wider hover:bg-primary/5 transition-all"
           >
             <CheckCheck size={16} /> Mark All Read
           </button>
@@ -214,7 +214,7 @@ export default function EmployeeNotifications() {
                 {tab}
                 {tab === "Unread" &&
                   notifications.filter((n) => !n.isRead).length > 0 && (
-                    <span className="ml-2 px-1.5 py-0.5 bg-primary text-white text-[10px] rounded-full">
+                    <span className="ml-2 px-1.5 py-0.5 bg-primary text-white text-[11px] rounded-full">
                       {notifications.filter((n) => !n.isRead).length}
                     </span>
                   )}
@@ -282,7 +282,7 @@ export default function EmployeeNotifications() {
                 >
                   {/* Left: Icon */}
                   <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border border-transparent group-hover:scale-110 transition-transform"
+                    className="w-11 h-11 rounded-[10px] flex items-center justify-center shrink-0 border border-transparent group-hover:scale-110 transition-transform"
                     style={{
                       backgroundColor: iconData.bg,
                       color: iconData.color,
@@ -295,13 +295,13 @@ export default function EmployeeNotifications() {
                   <div className="flex-1 min-w-0 text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
                       <span
-                        className="text-[10px] font-black uppercase tracking-[2px]"
+                        className="text-[11px] font-semibold uppercase tracking-[2px]"
                         style={{ color: iconData.color }}
                       >
                         {notification.type}
                       </span>
                       {notification.isImportant && (
-                        <div className="flex items-center gap-1 px-2 py-0.5 bg-rose-500/10 text-rose-500 rounded-lg text-[9px] font-black uppercase tracking-widest border border-rose-500/20">
+                        <div className="flex items-center gap-1 px-2 py-0.5 bg-rose-500/10 text-rose-500 rounded-lg text-[9px] font-semibold uppercase tracking-wider border border-rose-500/20">
                           <AlertCircle size={10} /> Important
                         </div>
                       )}
@@ -318,7 +318,7 @@ export default function EmployeeNotifications() {
                   <div className="flex flex-col items-center md:items-end gap-4 min-w-[140px]">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Clock size={14} />
-                      <span className="text-[12px] font-black uppercase tracking-widest">
+                      <span className="text-[12px] font-semibold uppercase tracking-wider">
                         {notification.timestamp}
                       </span>
                     </div>
@@ -342,7 +342,7 @@ export default function EmployeeNotifications() {
                       </button>
                       <button
                         onClick={() => navigate(notification.path)}
-                        className="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white text-[12px] font-black uppercase tracking-widest shadow-lg shadow-primary/25 hover:opacity-90 active:scale-95 transition-all"
+                        className="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white text-[12px] font-semibold uppercase tracking-wider shadow-lg shadow-primary/25 hover:opacity-90 active:scale-95 transition-all"
                       >
                         View <ChevronRight size={16} />
                       </button>
@@ -377,7 +377,7 @@ export default function EmployeeNotifications() {
                   setTypeFilter("All");
                   setSearchQuery("");
                 }}
-                className="mt-6 text-primary text-[13px] font-black uppercase tracking-widest hover:underline"
+                className="mt-6 text-primary text-[13px] font-semibold uppercase tracking-wider hover:underline"
               >
                 Clear all filters
               </button>

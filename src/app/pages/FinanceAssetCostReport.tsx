@@ -25,15 +25,22 @@ import {
   RefreshCw,
   X,
   Eye,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   XCircle,
   PieChart,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   FileText,
   Shield,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DollarSign,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Percent,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Home,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Trash2,
-  ExternalLink
+  ExternalLink,
+  TrendingDown
 } from "lucide-react";
 import {
   BarChart as RechartsBarChart,
@@ -43,13 +50,19 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Legend,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Cell,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   PieChart as RechartsPieChart,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Pie,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Sector
 } from "recharts";
 import { motion, AnimatePresence } from "motion/react";
+import { showToast } from "../components/workflow/ToastNotification";
 
 /* ─── Adjusted Mock Data to match user KPIs: ₹2.4Cr, ₹42L, ₹8L, 14 ─── */
 const ASSET_COST_BY_CATEGORY = [
@@ -156,14 +169,14 @@ const getCategoryIcon = (iconName: string, size: number = 16) => {
 
 const getCatColor = (iconName: string) => {
   switch (iconName) {
-    case "Laptop": return { bg: "#DCFCE7", text: "#00B87C", border: "#A7F3D0" };
-    case "Smartphone": return { bg: "#EDE9FE", text: "#8B5CF6", border: "#DDD6FE" };
-    case "Monitor": return { bg: "#E0F2FE", text: "#0EA5E9", border: "#BAE6FD" };
-    case "Printer": return { bg: "#FEF3C7", text: "#F59E0B", border: "#FDE68A" };
-    case "Wifi": return { bg: "#CCFBF1", text: "#14B8A6", border: "#99F6E4" };
-    case "Watch": return { bg: "#FCE7F3", text: "#EC4899", border: "#FBCFE8" };
-    case "Car": return { bg: "#FEE2E2", text: "#EF4444", border: "#FECACA" };
-    default: return { bg: "#F3F4F6", text: "#6B7280", border: "#E5E7EB" };
+    case "Laptop": return "bg-[#DCFCE7] dark:bg-emerald-500/10 text-[#00B87C] dark:text-emerald-400 border-[#A7F3D0] dark:border-emerald-500/20";
+    case "Smartphone": return "bg-[#EDE9FE] dark:bg-purple-500/10 text-[#8B5CF6] dark:text-purple-400 border-[#DDD6FE] dark:border-purple-500/20";
+    case "Monitor": return "bg-[#E0F2FE] dark:bg-sky-500/10 text-[#0EA5E9] dark:text-sky-400 border-[#BAE6FD] dark:border-sky-500/20";
+    case "Printer": return "bg-[#FEF3C7] dark:bg-amber-500/10 text-[#F59E0B] dark:text-amber-400 border-[#FDE68A] dark:border-amber-500/20";
+    case "Wifi": return "bg-[#CCFBF1] dark:bg-teal-500/10 text-[#14B8A6] dark:text-teal-400 border-[#99F6E4] dark:border-teal-500/20";
+    case "Watch": return "bg-[#FCE7F3] dark:bg-pink-500/10 text-[#EC4899] dark:text-pink-400 border-[#FBCFE8] dark:border-pink-500/20";
+    case "Car": return "bg-[#FEE2E2] dark:bg-rose-500/10 text-[#EF4444] dark:text-rose-400 border-[#FECACA] dark:border-rose-500/20";
+    default: return "bg-[#F3F4F6] dark:bg-gray-500/10 text-[#6B7280] dark:text-gray-400 border-[#E5E7EB] dark:border-gray-500/20";
   }
 };
 
@@ -171,21 +184,21 @@ const getStatusBadge = (status: string) => {
   switch (status) {
     case "Active":
       return (
-        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0]">
+        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#DCFCE7] dark:bg-emerald-500/10 text-[#00B87C] dark:text-emerald-400 border border-[#A7F3D0] dark:border-emerald-500/20">
           <CheckCircle2 size={12} strokeWidth={3} />
           <span className="text-[11px] font-black uppercase tracking-wider">Active</span>
         </div>
       );
     case "Depreciating":
       return (
-        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]">
+        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEF3C7] dark:bg-amber-500/10 text-[#D97706] dark:text-amber-400 border border-[#FDE68A] dark:border-amber-500/20">
           <TrendingUp size={12} strokeWidth={3} />
           <span className="text-[11px] font-black uppercase tracking-wider">Depreciating</span>
         </div>
       );
     case "Critical":
       return (
-        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]">
+        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEE2E2] dark:bg-rose-500/10 text-[#DC2626] dark:text-rose-400 border border-[#FECACA] dark:border-rose-500/20">
           <AlertTriangle size={12} strokeWidth={3} />
           <span className="text-[11px] font-black uppercase tracking-wider">Critical</span>
         </div>
@@ -208,12 +221,14 @@ export function FinanceAssetCostReport() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedDept, setSelectedDept] = useState<string | null>(null);
   const [activeKPIModal, setActiveKPIModal] = useState<KPIModalType>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeChartIndex, setActiveChartIndex] = useState<number | null>(null);
   const [exportLoading, setExportLoading] = useState<"pdf" | "csv" | null>(null);
   const [selectedFY, setSelectedFY] = useState("FY 2025-26");
   const [selectedCatFilter, setSelectedCatFilter] = useState("All Categories");
   const [showFYDropdown, setShowFYDropdown] = useState(false);
   const [showCatDropdown, setShowCatDropdown] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const csvRef = useRef<HTMLAnchorElement>(null);
 
   const totalAssetValue = ASSET_COST_BY_CATEGORY.reduce((s, c) => s + c.totalValue, 0);
@@ -234,6 +249,7 @@ export function FinanceAssetCostReport() {
     .filter(c => c.category.toLowerCase().includes(searchQuery.toLowerCase()))
     .filter(c => selectedCatFilter === "All Categories" || c.category === selectedCatFilter)
     .sort((a, b) => {
+      // eslint-disable-next-line no-useless-assignment
       let cmp = 0;
       switch (sortField) {
         case "category": cmp = a.category.localeCompare(b.category); break;
@@ -260,6 +276,7 @@ export function FinanceAssetCostReport() {
 
   const handleExportPDF = async () => {
     setExportLoading("pdf");
+    showToast("Preparing PDF", "info", "Generating Asset Cost Report...");
     await new Promise(r => setTimeout(r, 800));
     const reportTitle = "Asset Cost Report - NexusHR EMS";
     const content = [
@@ -293,10 +310,12 @@ export function FinanceAssetCostReport() {
     a.click();
     URL.revokeObjectURL(url);
     setExportLoading(null);
+    showToast("Export Complete", "success", "PDF report downloaded successfully.");
   };
 
   const handleExportCSV = async () => {
     setExportLoading("csv");
+    showToast("Preparing CSV", "info", "Generating Asset Cost Data...");
     await new Promise(r => setTimeout(r, 600));
     const headers = "Category,Count,Total Value,Annual Depreciation,Book Value,Status";
     const rows = ASSET_COST_BY_CATEGORY.map(c =>
@@ -311,6 +330,7 @@ export function FinanceAssetCostReport() {
     a.click();
     URL.revokeObjectURL(url);
     setExportLoading(null);
+    showToast("Export Complete", "success", "CSV report downloaded successfully.");
   };
 
   const KPI_MODAL_CONTENT: Record<NonNullable<KPIModalType>, { title: string; icon: React.ElementType; color: string; bg: string; data: { label: string; value: string; color: string }[] }> = {
@@ -362,8 +382,8 @@ export function FinanceAssetCostReport() {
   };
 
   return (
-    <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
-      {/* PAGE HEADER */}
+    <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500 min-h-screen bg-background">
+      {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <button
@@ -372,8 +392,8 @@ export function FinanceAssetCostReport() {
           >
             <ArrowLeft size={20} className="text-muted-foreground" />
           </button>
-          <div className="w-14 h-14 rounded-2xl bg-[#EDE9FE] dark:bg-purple-500/10 flex items-center justify-center shadow-inner border border-purple-100 dark:border-purple-500/20">
-            <BarChart3 size={28} className="text-[#8B5CF6]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#EDE9FE] dark:bg-purple-500/10 flex items-center justify-center shadow-inner border border-purple-100 dark:border-purple-500/20">
+            <BarChart3 size={22} className="text-[#8B5CF6] dark:text-purple-400" />
           </div>
           <div>
             <h1 className="text-[26px] font-black text-foreground tracking-tight">Asset Cost Report</h1>
@@ -409,18 +429,18 @@ export function FinanceAssetCostReport() {
       </div>
 
       {/* VIEW ONLY BANNER */}
-      <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-[#EDE9FE]/60 border border-[#8B5CF6]/20">
-        <div className="w-8 h-8 rounded-lg bg-[#EDE9FE] flex items-center justify-center shrink-0">
-          <Eye size={16} className="text-[#8B5CF6]" />
+      <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-[#EDE9FE]/60 dark:bg-purple-500/10 border border-[#8B5CF6]/20 dark:border-purple-500/20">
+        <div className="w-8 h-8 rounded-lg bg-[#EDE9FE] dark:bg-purple-500/20 flex items-center justify-center shrink-0">
+          <Eye size={16} className="text-[#8B5CF6] dark:text-purple-400" />
         </div>
         <div className="flex-1">
-          <p className="text-[12px] font-black text-[#7C3AED] uppercase tracking-wider flex items-center gap-2">
+          <p className="text-[12px] font-black text-[#7C3AED] dark:text-purple-400 uppercase tracking-wider flex items-center gap-2">
             View Only Mode
-            <span className="text-[10px] font-bold text-muted-foreground normal-case tracking-normal">— Finance role has read-only access to asset cost data</span>
+            <span className="text-[11px] font-bold text-muted-foreground normal-case tracking-normal">— Finance role has read-only access to asset cost data</span>
           </p>
         </div>
-        <div className="px-3 py-1 rounded-full bg-[#8B5CF6]/10 border border-[#8B5CF6]/30">
-          <span className="text-[10px] font-black text-[#8B5CF6] uppercase tracking-widest">Finance</span>
+        <div className="px-3 py-1 rounded-full bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 dark:border-purple-500/30">
+          <span className="text-[11px] font-semibold text-[#8B5CF6] dark:text-purple-400 uppercase tracking-widest">Finance</span>
         </div>
       </div>
 
@@ -439,18 +459,18 @@ export function FinanceAssetCostReport() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0 }}
           onClick={() => setActiveKPIModal("totalValue")}
-          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-purple-300 hover:-translate-y-0.5 transition-all cursor-pointer"
+          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:border-purple-300 hover:-translate-y-0.5 transition-all cursor-pointer"
         >
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[1.5px]">Total Asset Value</p>
-            <div className="w-8 h-8 rounded-lg bg-[#EDE9FE] flex items-center justify-center">
-              <IndianRupee size={16} className="text-[#8B5CF6]" />
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[1.5px]">Total Asset Value</p>
+            <div className="w-8 h-8 rounded-lg bg-[#EDE9FE] dark:bg-purple-500/10 flex items-center justify-center">
+              <IndianRupee size={16} className="text-[#8B5CF6] dark:text-purple-400" />
             </div>
           </div>
           <h3 className="text-2xl font-black text-[#8B5CF6] tracking-tighter">{formatCurrency(totalAssetValue)}</h3>
           <div className="flex items-center gap-1.5 mt-2">
             <div className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6]" />
-            <span className="text-[10px] font-bold text-muted-foreground">Across all categories</span>
+            <span className="text-[11px] font-bold text-muted-foreground">Across all categories</span>
           </div>
         </motion.div>
 
@@ -459,18 +479,18 @@ export function FinanceAssetCostReport() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
           onClick={() => setActiveKPIModal("depreciation")}
-          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-rose-300 hover:-translate-y-0.5 transition-all cursor-pointer"
+          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:border-rose-300 hover:-translate-y-0.5 transition-all cursor-pointer"
         >
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[1.5px]">Annual Depreciation</p>
-            <div className="w-8 h-8 rounded-lg bg-[#FEE2E2] flex items-center justify-center">
-              <TrendingUp size={16} className="text-rose-500" />
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[1.5px]">Annual Depreciation</p>
+            <div className="w-8 h-8 rounded-lg bg-[#FEE2E2] dark:bg-rose-500/10 flex items-center justify-center">
+              <TrendingDown size={16} className="text-[#EF4444] dark:text-rose-400" />
             </div>
           </div>
           <h3 className="text-2xl font-black text-rose-500 tracking-tighter">{formatCurrency(totalDepreciation)}</h3>
           <div className="flex items-center gap-1.5 mt-2">
             <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-            <span className="text-[10px] font-bold text-muted-foreground">{formatNumber(Math.round(totalDepreciation / totalAssetValue * 100))}% of total value</span>
+            <span className="text-[11px] font-bold text-muted-foreground">{formatNumber(Math.round(totalDepreciation / totalAssetValue * 100))}% of total value</span>
           </div>
         </motion.div>
 
@@ -479,18 +499,18 @@ export function FinanceAssetCostReport() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
           onClick={() => setActiveKPIModal("maintenance")}
-          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-amber-300 hover:-translate-y-0.5 transition-all cursor-pointer"
+          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:border-amber-300 hover:-translate-y-0.5 transition-all cursor-pointer"
         >
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[1.5px]">Maintenance Cost</p>
-            <div className="w-8 h-8 rounded-lg bg-[#FEF3C7] flex items-center justify-center">
-              <Wrench size={16} className="text-amber-500" />
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[1.5px]">Maintenance Cost</p>
+            <div className="w-8 h-8 rounded-lg bg-[#FEF3C7] dark:bg-amber-500/10 flex items-center justify-center">
+              <Wrench size={16} className="text-[#F59E0B] dark:text-amber-400" />
             </div>
           </div>
           <h3 className="text-2xl font-black text-amber-500 tracking-tighter">{formatCurrency(totalMaintenance)}</h3>
           <div className="flex items-center gap-1.5 mt-2">
             <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-            <span className="text-[10px] font-bold text-muted-foreground">YTD spend on repairs</span>
+            <span className="text-[11px] font-bold text-muted-foreground">YTD spend on repairs</span>
           </div>
         </motion.div>
 
@@ -499,18 +519,18 @@ export function FinanceAssetCostReport() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
           onClick={() => setActiveKPIModal("replacement")}
-          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-orange-300 hover:-translate-y-0.5 transition-all cursor-pointer"
+          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:border-orange-300 hover:-translate-y-0.5 transition-all cursor-pointer"
         >
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[1.5px]">Replacement Due</p>
-            <div className="w-8 h-8 rounded-lg bg-[#FFF7ED] flex items-center justify-center">
-              <RefreshCw size={16} className="text-orange-500" />
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[1.5px]">Replacement Due</p>
+            <div className="w-8 h-8 rounded-lg bg-[#FFF7ED] dark:bg-orange-500/10 flex items-center justify-center">
+              <RefreshCw size={16} className="text-[#F97316] dark:text-orange-400" />
             </div>
           </div>
           <h3 className="text-2xl font-black text-orange-500 tracking-tighter">{replacementDue}</h3>
           <div className="flex items-center gap-1.5 mt-2">
             <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-            <span className="text-[10px] font-bold text-muted-foreground">Assets past useful life</span>
+            <span className="text-[11px] font-bold text-muted-foreground">Assets past useful life</span>
           </div>
         </motion.div>
       </div>
@@ -535,7 +555,7 @@ export function FinanceAssetCostReport() {
                     key={fy}
                     onClick={() => { setSelectedFY(fy); setShowFYDropdown(false); }}
                     className={`w-full text-left px-4 py-3 text-[12px] font-bold transition-all hover:bg-muted flex items-center gap-2 ${
-                      selectedFY === fy ? "text-[#8B5CF6] bg-[#EDE9FE]/30" : "text-foreground"
+                      selectedFY === fy ? "text-[#8B5CF6] dark:text-purple-400 bg-[#EDE9FE]/30 dark:bg-purple-500/10" : "text-foreground"
                     }`}
                   >
                     <Calendar size={14} className={selectedFY === fy ? "text-[#8B5CF6]" : "text-muted-foreground"} />
@@ -564,7 +584,7 @@ export function FinanceAssetCostReport() {
                     key={cat}
                     onClick={() => { setSelectedCatFilter(cat); setShowCatDropdown(false); }}
                     className={`w-full text-left px-4 py-3 text-[12px] font-bold transition-all hover:bg-muted flex items-center gap-2 ${
-                      selectedCatFilter === cat ? "text-[#8B5CF6] bg-[#EDE9FE]/30" : "text-foreground"
+                      selectedCatFilter === cat ? "text-[#8B5CF6] dark:text-purple-400 bg-[#EDE9FE]/30 dark:bg-purple-500/10" : "text-foreground"
                     }`}
                   >
                     <Package size={14} className={selectedCatFilter === cat ? "text-[#8B5CF6]" : "text-muted-foreground"} />
@@ -608,39 +628,40 @@ export function FinanceAssetCostReport() {
       )}
 
       {/* ASSET COST TABLE */}
-      <div className="bg-card border border-border rounded-[24px] shadow-sm overflow-hidden">
+      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-border bg-secondary/10 flex items-center justify-between">
           <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">Asset Cost Breakdown by Category</h3>
-          <span className="text-[10px] font-bold text-muted-foreground">{filteredData.length} categories</span>
+          <span className="text-[11px] font-bold text-muted-foreground">{filteredData.length} categories</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[900px]">
             <thead>
               <tr className="bg-secondary/20">
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest cursor-pointer select-none" onClick={() => handleSort("category")}>
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest cursor-pointer select-none" onClick={() => handleSort("category")}>
                   <div className="flex items-center">Category <SortIcon field="category" /></div>
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right cursor-pointer select-none" onClick={() => handleSort("count")}>
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-right cursor-pointer select-none" onClick={() => handleSort("count")}>
                   <div className="flex items-center justify-end">Count <SortIcon field="count" /></div>
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right cursor-pointer select-none" onClick={() => handleSort("totalValue")}>
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-right cursor-pointer select-none" onClick={() => handleSort("totalValue")}>
                   <div className="flex items-center justify-end">Total Value <SortIcon field="totalValue" /></div>
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right cursor-pointer select-none" onClick={() => handleSort("annualDepreciation")}>
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-right cursor-pointer select-none" onClick={() => handleSort("annualDepreciation")}>
                   <div className="flex items-center justify-end">Annual Depreciation <SortIcon field="annualDepreciation" /></div>
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right cursor-pointer select-none" onClick={() => handleSort("bookValue")}>
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-right cursor-pointer select-none" onClick={() => handleSort("bookValue")}>
                   <div className="flex items-center justify-end">Book Value <SortIcon field="bookValue" /></div>
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center cursor-pointer select-none" onClick={() => handleSort("status")}>
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center cursor-pointer select-none" onClick={() => handleSort("status")}>
                   <div className="flex items-center justify-center">Status <SortIcon field="status" /></div>
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center">Details</th>
+                <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center">Details</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {filteredData.map((row, idx) => {
                 const catColor = getCatColor(row.icon);
+
                 return (
                   <motion.tr
                     key={row.id}
@@ -652,7 +673,7 @@ export function FinanceAssetCostReport() {
                   >
                     <td className="px-6 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border" style={{ backgroundColor: catColor.bg, color: catColor.text, borderColor: catColor.border }}>
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${catColor}`}>
                           {getCategoryIcon(row.icon, 16)}
                         </div>
                         <span className="text-[13px] font-bold text-foreground">{row.category}</span>
@@ -674,9 +695,9 @@ export function FinanceAssetCostReport() {
                       {getStatusBadge(row.status)}
                     </td>
                     <td className="px-6 py-3 text-center">
-                      <button
+                      <button 
                         onClick={(e) => { e.stopPropagation(); setSelectedCategory(row.id); }}
-                        className="px-3 py-1.5 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[10px] font-black uppercase tracking-wider hover:bg-[#DDD6FE] transition-all flex items-center gap-1.5 mx-auto"
+                        className="px-3 py-1.5 rounded-lg bg-[#EDE9FE] dark:bg-purple-500/10 text-[#8B5CF6] dark:text-purple-400 text-[11px] font-semibold uppercase tracking-wider hover:bg-[#DDD6FE] dark:hover:bg-purple-500/20 transition-all flex items-center gap-1.5 mx-auto"
                       >
                         <Eye size={12} />
                         View
@@ -697,7 +718,7 @@ export function FinanceAssetCostReport() {
               )}
             </tbody>
             {filteredData.length > 0 && (
-              <tfoot className="bg-[#EDE9FE]/20 border-t-2 border-[#8B5CF6]/20">
+              <tfoot className="bg-[#EDE9FE]/20 dark:bg-purple-500/5 border-t-2 border-[#8B5CF6]/20 dark:border-purple-500/20">
                 <tr>
                   <td className="px-6 py-4">
                     <span className="text-[13px] font-black text-[#8B5CF6] uppercase tracking-wider">Total</span>
@@ -715,7 +736,7 @@ export function FinanceAssetCostReport() {
                     <span className="text-[13px] font-black text-[#00B87C]">{formatCurrency(filteredData.reduce((s, r) => s + r.bookValue, 0))}</span>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="text-[10px] font-bold text-muted-foreground">{filteredData.length} categories</span>
+                    <span className="text-[11px] font-bold text-muted-foreground">{filteredData.length} categories</span>
                   </td>
                   <td className="px-6 py-4" />
                 </tr>
@@ -729,8 +750,8 @@ export function FinanceAssetCostReport() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-4 bg-card border border-border rounded-2xl shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#EDE9FE] flex items-center justify-center shrink-0">
-              <Package size={16} className="text-[#8B5CF6]" />
+            <div className="w-9 h-9 rounded-xl bg-[#EDE9FE] dark:bg-purple-500/10 flex items-center justify-center shrink-0">
+              <Package size={16} className="text-[#8B5CF6] dark:text-purple-400" />
             </div>
             <div>
               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Total Categories</p>
@@ -740,7 +761,7 @@ export function FinanceAssetCostReport() {
         </div>
         <div className="p-4 bg-card border border-border rounded-2xl shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] dark:bg-[#00B87C]/10 flex items-center justify-center shrink-0">
               <CheckCircle2 size={16} className="text-[#00B87C]" />
             </div>
             <div>
@@ -751,8 +772,8 @@ export function FinanceAssetCostReport() {
         </div>
         <div className="p-4 bg-card border border-border rounded-2xl shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center shrink-0">
-              <TrendingUp size={16} className="text-amber-500" />
+            <div className="w-9 h-9 rounded-xl bg-[#FEF3C7] dark:bg-amber-500/10 flex items-center justify-center shrink-0">
+              <TrendingUp size={16} className="text-[#F59E0B] dark:text-amber-400" />
             </div>
             <div>
               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Avg Depreciation Rate</p>
@@ -762,8 +783,8 @@ export function FinanceAssetCostReport() {
         </div>
         <div className="p-4 bg-card border border-border rounded-2xl shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#FEE2E2] flex items-center justify-center shrink-0">
-              <AlertTriangle size={16} className="text-rose-500" />
+            <div className="w-9 h-9 rounded-xl bg-[#FEE2E2] dark:bg-rose-500/10 flex items-center justify-center shrink-0">
+              <AlertTriangle size={16} className="text-[#EF4444] dark:text-rose-400" />
             </div>
             <div>
               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Departments Served</p>
@@ -780,7 +801,7 @@ export function FinanceAssetCostReport() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-[13px] font-black text-foreground tracking-tight uppercase">Dept Asset Cost Distribution</h3>
-              <p className="text-[10px] font-bold text-muted-foreground mt-1">Click bars to view department details</p>
+              <p className="text-[11px] font-bold text-muted-foreground mt-1">Click bars to view department details</p>
             </div>
             <button
               onClick={() => {
@@ -788,7 +809,7 @@ export function FinanceAssetCostReport() {
                 const data = ASSET_VALUE_BY_DEPT.map(d => ({ name: d.department, value: Math.round(d.total / total * 100) }));
                 alert(`Department Distribution:\n${data.map(d => `${d.name}: ${d.value}%`).join("\n")}`);
               }}
-              className="p-2 rounded-xl hover:bg-[#EDE9FE] transition-all text-[#8B5CF6]"
+              className="p-2 rounded-xl hover:bg-[#EDE9FE] dark:hover:bg-purple-500/10 transition-all text-[#8B5CF6] dark:text-purple-400"
               title="View distribution summary"
             >
               <PieChart size={18} />
@@ -798,11 +819,11 @@ export function FinanceAssetCostReport() {
             <div className="flex items-center gap-4 mb-4 flex-wrap">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded bg-[#00B87C]" />
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">Asset Value</span>
+                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Asset Value</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded bg-[#8B5CF6]" />
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">Depreciation</span>
+                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Depreciation</span>
               </div>
             </div>
             <div className="space-y-4">
@@ -827,7 +848,7 @@ export function FinanceAssetCostReport() {
                             className="h-full bg-[#00B87C] rounded-full group-hover:opacity-80 transition-opacity"
                           />
                         </div>
-                        <span className="text-[10px] font-black text-foreground w-16 text-right">₹{dept.total}L</span>
+                        <span className="text-[11px] font-semibold text-foreground w-16 text-right">₹{dept.total}L</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
@@ -838,7 +859,7 @@ export function FinanceAssetCostReport() {
                             className="h-full bg-[#8B5CF6] rounded-full group-hover:opacity-80 transition-opacity"
                           />
                         </div>
-                        <span className="text-[10px] font-bold text-muted-foreground w-16 text-right">₹{dept.depreciated}L</span>
+                        <span className="text-[11px] font-bold text-muted-foreground w-16 text-right">₹{dept.depreciated}L</span>
                       </div>
                     </div>
                     <ExternalLink size={12} className="text-muted-foreground/0 group-hover:text-muted-foreground/60 transition-all shrink-0" />
@@ -854,9 +875,9 @@ export function FinanceAssetCostReport() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-[13px] font-black text-foreground tracking-tight uppercase">Book Value vs Depreciation</h3>
-              <p className="text-[10px] font-bold text-muted-foreground mt-1">Current value and accumulated depreciation</p>
+              <p className="text-[11px] font-bold text-muted-foreground mt-1">Current value and accumulated depreciation</p>
             </div>
-            <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
+            <div className="flex items-center gap-2 text-[11px] font-bold text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-sm bg-[#00B87C]" />
                 Book Value
@@ -953,7 +974,7 @@ export function FinanceAssetCostReport() {
                   ))}
                 </div>
                 <div className="px-8 py-4 border-t border-border flex items-center justify-between">
-                  <p className="text-[10px] font-bold text-muted-foreground">View Only — Read-only data</p>
+                  <p className="text-[11px] font-bold text-muted-foreground">View Only — Read-only data</p>
                   <button
                     onClick={() => {
                       setActiveKPIModal(null);
@@ -961,7 +982,7 @@ export function FinanceAssetCostReport() {
                         navigate("/asset-management");
                       }
                     }}
-                    className="px-5 py-2 rounded-xl bg-[#8B5CF6] text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#7C3AED] transition-all shadow-lg shadow-purple-500/20"
+                    className="px-5 py-2 rounded-xl bg-[#8B5CF6] text-white text-[11px] font-bold uppercase tracking-widest hover:bg-[#7C3AED] transition-all shadow-lg shadow-purple-500/20"
                   >
                     {activeKPIModal === "replacement" ? "View Asset Management" : "Close"}
                   </button>
@@ -997,7 +1018,7 @@ export function FinanceAssetCostReport() {
                   {(() => {
                     const catColor = getCatColor(selectedCategoryData.icon);
                     return (
-                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center border-2" style={{ backgroundColor: catColor.bg, color: catColor.text, borderColor: catColor.border }}>
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 ${catColor}`}>
                         {getCategoryIcon(selectedCategoryData.icon, 24)}
                       </div>
                     );
@@ -1035,7 +1056,7 @@ export function FinanceAssetCostReport() {
               </div>
 
               <div className="px-8 py-4 overflow-y-auto max-h-[400px]">
-                <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-4">Assigned Assets</h4>
+                <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-4">Assigned Assets</h4>
                 <div className="space-y-3">
                   {selectedDetails.items.map((item, idx) => (
                     <div
@@ -1044,8 +1065,8 @@ export function FinanceAssetCostReport() {
                       className="flex items-center justify-between p-4 rounded-2xl bg-muted/20 border border-border hover:bg-secondary/30 hover:border-[#8B5CF6]/30 transition-all cursor-pointer group"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-[#EDE9FE] flex items-center justify-center group-hover:scale-105 transition-transform">
-                          <Package size={18} className="text-[#8B5CF6]" />
+                        <div className="w-10 h-10 rounded-xl bg-[#EDE9FE] dark:bg-purple-500/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Package size={18} className="text-[#8B5CF6] dark:text-purple-400" />
                         </div>
                         <div>
                           <p className="text-[13px] font-bold text-foreground">{item.name}</p>
@@ -1058,7 +1079,7 @@ export function FinanceAssetCostReport() {
                       </div>
                       <div className="text-right">
                         <p className="text-[13px] font-black text-foreground">{formatCurrency(item.value)}</p>
-                        <p className="text-[10px] font-bold text-muted-foreground">Since {item.purchaseDate}</p>
+                        <p className="text-[11px] font-bold text-muted-foreground">Since {item.purchaseDate}</p>
                       </div>
                     </div>
                   ))}
@@ -1066,13 +1087,13 @@ export function FinanceAssetCostReport() {
               </div>
 
               <div className="px-8 py-4 border-t border-border flex items-center justify-between">
-                <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-2">
+                <p className="text-[11px] font-bold text-muted-foreground flex items-center gap-2">
                   <Eye size={12} />
                   View Only — No modifications allowed
                 </p>
                 <button
                   onClick={() => { setSelectedCategory(null); navigate("/asset-management"); }}
-                  className="px-5 py-2 rounded-xl bg-[#8B5CF6] text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#7C3AED] transition-all shadow-lg shadow-purple-500/20"
+                  className="px-5 py-2 rounded-xl bg-[#8B5CF6] text-white text-[11px] font-bold uppercase tracking-widest hover:bg-[#7C3AED] transition-all shadow-lg shadow-purple-500/20"
                 >
                   View All Assets
                 </button>
@@ -1104,8 +1125,8 @@ export function FinanceAssetCostReport() {
             >
               <div className="px-8 py-6 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#EDE9FE] flex items-center justify-center border-2 border-purple-200">
-                    <Building2 size={24} className="text-[#8B5CF6]" />
+                  <div className="w-12 h-12 rounded-2xl bg-[#EDE9FE] dark:bg-purple-500/10 flex items-center justify-center border-2 border-purple-200 dark:border-purple-500/20">
+                    <Building2 size={24} className="text-[#8B5CF6] dark:text-purple-400" />
                   </div>
                   <div>
                     <h2 className="text-lg font-black text-foreground tracking-tight">{selectedDept}</h2>
@@ -1130,9 +1151,9 @@ export function FinanceAssetCostReport() {
                     <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Total Assets</p>
                     <p className="text-xl font-black text-foreground">{formatNumber(selectedDeptData.totalAssets)}</p>
                   </div>
-                  <div className="p-4 rounded-2xl bg-[#EDE9FE]/30 border border-[#8B5CF6]/20">
+                  <div className="p-4 rounded-2xl bg-[#EDE9FE]/30 dark:bg-purple-500/10 border border-[#8B5CF6]/20 dark:border-purple-500/20">
                     <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Total Asset Value</p>
-                    <p className="text-xl font-black text-[#8B5CF6]">{formatCurrency(selectedDeptData.totalValue)}</p>
+                    <p className="text-xl font-black text-[#8B5CF6] dark:text-purple-400">{formatCurrency(selectedDeptData.totalValue)}</p>
                   </div>
                   <div className="p-4 rounded-2xl bg-muted/20 border border-border">
                     <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Avg Asset Age</p>
@@ -1141,7 +1162,7 @@ export function FinanceAssetCostReport() {
                 </div>
 
                 <div className="p-4 rounded-2xl border border-border bg-muted/10">
-                  <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">Assets per Employee</h4>
+                  <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-3">Assets per Employee</h4>
                   <div className="flex items-center gap-4">
                     <div className="flex-1 h-3 bg-secondary rounded-full overflow-hidden">
                       <motion.div
@@ -1158,13 +1179,13 @@ export function FinanceAssetCostReport() {
               </div>
 
               <div className="px-8 py-4 border-t border-border flex items-center justify-between">
-                <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-2">
+                <p className="text-[11px] font-bold text-muted-foreground flex items-center gap-2">
                   <Eye size={12} />
                   View Only
                 </p>
                 <button
                   onClick={() => { setSelectedDept(null); navigate("/departments"); }}
-                  className="px-5 py-2 rounded-xl bg-[#8B5CF6] text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#7C3AED] transition-all shadow-lg shadow-purple-500/20"
+                  className="px-5 py-2 rounded-xl bg-[#8B5CF6] text-white text-[11px] font-bold uppercase tracking-widest hover:bg-[#7C3AED] transition-all shadow-lg shadow-purple-500/20"
                 >
                   View Department
                 </button>

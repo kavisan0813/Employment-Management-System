@@ -31,19 +31,18 @@ export function ManagerTeamSchedule() {
       {/* Page Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#DCFCE7] flex items-center justify-center shrink-0">
-            <Clock size={24} className="text-[#10B981]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#DCFCE7] flex items-center justify-center shrink-0">
+            <Clock size={22} className="text-[#10B981]" />
           </div>
           <div>
-            <h2
-              className="text-[26px] font-extrabold tracking-tight leading-none"
+            <h1
+              className="text-[26px] font-bold tracking-tight leading-none"
               style={{ color: "var(--foreground)" }}
             >
               Team Schedule
-            </h2>
+            </h1>
             <p
-              className="text-[13px] font-semibold mt-1"
-              style={{ color: "var(--muted-foreground)" }}
+              className="text-[13px] text-[#6B7280] mt-1"
             >
               Efficiently manage workforce rotations and coverage.
             </p>
@@ -76,11 +75,11 @@ export function ManagerTeamSchedule() {
       {/* COVERAGE + STATUS BAR */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div className="flex items-center gap-4 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/30 p-4 rounded-2xl">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+          <div className="w-9 h-9 rounded-[10px] bg-emerald-500/10 flex items-center justify-center text-emerald-600">
             <CheckSquare size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase text-emerald-700 dark:text-emerald-400 tracking-widest">
+            <p className="text-[11px] font-bold uppercase text-emerald-700 dark:text-emerald-400 tracking-widest">
               Coverage Status
             </p>
             <p className="text-sm font-bold text-foreground">
@@ -89,11 +88,11 @@ export function ManagerTeamSchedule() {
           </div>
         </div>
         <div className="flex items-center gap-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/30 p-4 rounded-2xl">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
+          <div className="w-9 h-9 rounded-[10px] bg-amber-500/10 flex items-center justify-center text-amber-600">
             <AlertTriangle size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase text-amber-700 dark:text-amber-400 tracking-widest">
+            <p className="text-[11px] font-bold uppercase text-amber-700 dark:text-amber-400 tracking-widest">
               System Alerts
             </p>
             <p className="text-sm font-bold text-foreground">
@@ -102,11 +101,11 @@ export function ManagerTeamSchedule() {
           </div>
         </div>
         <div className="flex items-center gap-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 p-4 rounded-2xl">
-          <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600">
+          <div className="w-9 h-9 rounded-[10px] bg-blue-500/10 flex items-center justify-center text-blue-600">
             <Activity size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase text-blue-700 dark:text-blue-400 tracking-widest">
+            <p className="text-[11px] font-bold uppercase text-blue-700 dark:text-blue-400 tracking-widest">
               Pending Swaps
             </p>
             <p className="text-sm font-bold text-foreground">
@@ -120,13 +119,13 @@ export function ManagerTeamSchedule() {
       <div className="bg-card p-4 rounded-2xl border border-border shadow-sm flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 p-1 bg-secondary rounded-xl">
-            <button className="p-1.5 rounded-lg hover:bg-white transition-colors text-muted-foreground hover:text-primary active:scale-90">
+            <button className="p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] transition-colors text-muted-foreground hover:text-primary active:scale-90">
               <ChevronLeft size={18} />
             </button>
             <span className="text-sm font-bold px-3 text-foreground min-w-[180px] text-center">
               Apr 6 - Apr 12, 2026
             </span>
-            <button className="p-1.5 rounded-lg hover:bg-white transition-colors text-muted-foreground hover:text-primary active:scale-90">
+            <button className="p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] transition-colors text-muted-foreground hover:text-primary active:scale-90">
               <ChevronRight size={18} />
             </button>
           </div>
@@ -174,7 +173,7 @@ export function ManagerTeamSchedule() {
               <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "var(--muted-foreground)" }}>
                 Team Shifts
               </p>
-              <p className="text-3xl font-extrabold tracking-tight text-emerald-600">
+              <p className="text-3xl font-bold tracking-tight text-emerald-600">
                 38
               </p>
             </div>
@@ -190,7 +189,7 @@ export function ManagerTeamSchedule() {
               <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "var(--muted-foreground)" }}>
                 Coverage Target
               </p>
-              <p className="text-3xl font-extrabold tracking-tight text-emerald-600">
+              <p className="text-3xl font-bold tracking-tight text-emerald-600">
                 91%
               </p>
               <div className="w-28 h-1.5 bg-secondary rounded-full mt-3 overflow-hidden">
@@ -209,7 +208,7 @@ export function ManagerTeamSchedule() {
               <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "var(--muted-foreground)" }}>
                 Overtime
               </p>
-              <p className="text-3xl font-extrabold tracking-tight text-amber-600">
+              <p className="text-3xl font-bold tracking-tight text-amber-600">
                 42<span className="text-sm ml-1 font-bold">h</span>
               </p>
             </div>
@@ -225,7 +224,7 @@ export function ManagerTeamSchedule() {
               <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "var(--muted-foreground)" }}>
                 Swap Requests
               </p>
-              <p className="text-3xl font-extrabold tracking-tight text-teal-600">
+              <p className="text-3xl font-bold tracking-tight text-teal-600">
                 2
               </p>
             </div>
@@ -240,14 +239,14 @@ export function ManagerTeamSchedule() {
       <div className="bg-white dark:bg-zinc-900 border border-border rounded-2xl p-4 mb-6 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-[#00B87C]">
+            <div className="w-9 h-9 rounded-[10px] bg-secondary flex items-center justify-center text-[#00B87C]">
               <CalendarPlus size={20} />
             </div>
             <div>
-              <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest leading-none mb-1">
+              <p className="text-[9px] font-bold uppercase text-slate-500 tracking-widest leading-none mb-1">
                 Quick Tool
               </p>
-              <p className="text-xs font-black text-slate-900 dark:text-slate-100 leading-none">
+              <p className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-none">
                 Shift Painter
               </p>
             </div>
@@ -267,17 +266,17 @@ export function ManagerTeamSchedule() {
                   activeBrush === type.type ? "bg-[#E8F5E9] dark:bg-emerald-900/20 border border-[#00B87C]/20" : ""
                 }`}
               >
-                <div className={`w-7 h-7 rounded-full ${type.color} flex items-center justify-center text-white text-[9px] font-black shadow-sm`}>
+                <div className={`w-7 h-7 rounded-full ${type.color} flex items-center justify-center text-white text-[9px] font-bold shadow-sm`}>
                   {type.label}
                 </div>
-                <span className="text-xs font-extrabold text-foreground pr-1">{type.type}</span>
+                <span className="text-xs font-bold text-foreground pr-1">{type.type}</span>
               </div>
             ))}
           </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest leading-none mb-1">
+            <p className="text-[11px] font-bold uppercase text-emerald-600 tracking-widest leading-none mb-1">
               Staffing Level
             </p>
             <p className="text-sm font-bold text-foreground leading-none">
@@ -291,7 +290,7 @@ export function ManagerTeamSchedule() {
       {/* SCHEDULE GRID */}
       <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8 bg-white dark:bg-zinc-900">
         <div className="grid grid-cols-[240px_repeat(7,1fr)] bg-secondary/50 border-b border-border">
-          <div className="px-4 py-3 text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center">
+          <div className="px-4 py-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center">
             Employee
           </div>
           {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => (
@@ -299,10 +298,10 @@ export function ManagerTeamSchedule() {
               key={day}
               className={`px-3 py-3 text-center border-l border-border flex flex-col justify-center ${day === "Mon" ? "bg-primary/5" : ""}`}
             >
-              <span className={`text-xs font-extrabold ${day === "Mon" ? "text-primary border-b-2 border-[#00B87C] pb-0.5 inline-block mx-auto" : "text-foreground"}`}>
+              <span className={`text-xs font-bold ${day === "Mon" ? "text-primary border-b-2 border-[#00B87C] pb-0.5 inline-block mx-auto" : "text-foreground"}`}>
                 {day}
               </span>
-              <span className="text-[10px] text-muted-foreground font-bold mt-1">
+              <span className="text-[11px] text-muted-foreground font-bold mt-1">
                 Apr {6 + i}
               </span>
             </div>
@@ -350,7 +349,7 @@ export function ManagerTeamSchedule() {
           <div className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
             <EmployeeCell name="Priya Sharma" dept="Engineering" avatar="https://i.pravatar.cc/150?u=Priya" />
             <div className="col-span-5 border-l border-border/50 p-1">
-              <div className="w-full h-full rounded-xl flex items-center justify-center text-[11px] font-black tracking-widest text-[#F59E0B] border-l-4 border-l-[#F59E0B]" style={{ backgroundColor: "#FEF3C7" }}>
+              <div className="w-full h-full rounded-xl flex items-center justify-center text-[11px] font-bold tracking-widest text-[#F59E0B] border-l-4 border-l-[#F59E0B]" style={{ backgroundColor: "#FEF3C7" }}>
                 ON APPROVED LEAVE Apr 6-10
               </div>
             </div>
@@ -363,7 +362,7 @@ export function ManagerTeamSchedule() {
       {/* BOTTOM PANELS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
         {/* Swap Requests */}
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-[400px] transition-all hover:shadow-md overflow-hidden">
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-[400px] transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] overflow-hidden">
           <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-card rounded-t-2xl flex-shrink-0">
             <div className="flex items-center gap-3">
               <ArrowLeftRight color="#00B87C" size={18} />
@@ -381,8 +380,8 @@ export function ManagerTeamSchedule() {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center -space-x-2">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm bg-[#059669]">AM</div>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm bg-[#2563EB]">DP</div>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#059669]">AM</div>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#2563EB]">DP</div>
                   </div>
                   <div>
                     <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
@@ -416,8 +415,8 @@ export function ManagerTeamSchedule() {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center -space-x-2">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm bg-[#7C3AED]">SR</div>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm bg-[#DB2777]">PS</div>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#7C3AED]">SR</div>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#DB2777]">PS</div>
                   </div>
                   <div>
                     <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
@@ -450,7 +449,7 @@ export function ManagerTeamSchedule() {
         </div>
 
         {/* Overtime Summary */}
-        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-full transition-all hover:shadow-md">
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-full transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]">
           <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-card rounded-t-2xl">
             <div className="flex items-center gap-3">
               <Clock color="#F59E0B" size={18} />
@@ -458,7 +457,7 @@ export function ManagerTeamSchedule() {
                 Overtime Monitoring
               </h3>
             </div>
-            <span className="px-2.5 py-1 bg-secondary text-primary text-[10px] font-bold rounded-full border border-primary/20">
+            <span className="px-2.5 py-1 bg-secondary text-primary text-[11px] font-bold rounded-full border border-primary/20">
               42 TOTAL HRS
             </span>
           </div>
@@ -476,8 +475,8 @@ export function ManagerTeamSchedule() {
                     </div>
                     <span className="text-xs font-bold text-foreground">{item.name}</span>
                   </div>
-                  <span className="text-xs font-black" style={{ color: item.color }}>
-                    {item.hrs}h <span className="text-[10px] font-medium text-muted-foreground ml-1">/ {item.limit}h</span>
+                  <span className="text-xs font-bold" style={{ color: item.color }}>
+                    {item.hrs}h <span className="text-[11px] font-medium text-muted-foreground ml-1">/ {item.limit}h</span>
                   </span>
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden">
@@ -500,10 +499,10 @@ export function ManagerTeamSchedule() {
           <div className="w-full max-w-[460px] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border animate-in zoom-in-95" style={{ borderColor: "var(--border)" }}>
             <div className="p-6 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-primary">
+                <div className="w-9 h-9 rounded-[10px] bg-secondary flex items-center justify-center text-primary">
                   <CalendarPlus size={20} />
                 </div>
-                <h3 className="text-[16px] font-extrabold text-foreground">Assign New Shift</h3>
+                <h3 className="text-[16px] font-bold text-foreground">Assign New Shift</h3>
               </div>
               <button onClick={() => setShowAddModal(false)} className="text-muted-foreground hover:text-foreground">
                 <X size={20} />
@@ -511,7 +510,7 @@ export function ManagerTeamSchedule() {
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-2">Employee</label>
+                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Employee</label>
                 <input
                   type="text"
                   placeholder="Search team member..."
@@ -520,7 +519,7 @@ export function ManagerTeamSchedule() {
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-2">Shift Type</label>
+                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Shift Type</label>
                 <select
                   className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none"
                   style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
@@ -532,7 +531,7 @@ export function ManagerTeamSchedule() {
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-2">Department</label>
+                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Department</label>
                 <select
                   className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none"
                   style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
@@ -541,7 +540,7 @@ export function ManagerTeamSchedule() {
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-2">Shift Date</label>
+                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Shift Date</label>
                 <input
                   type="date"
                   className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors"
@@ -549,7 +548,7 @@ export function ManagerTeamSchedule() {
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-2">Notes</label>
+                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Notes</label>
                 <textarea
                   placeholder="Optional notes..."
                   className="w-full h-20 p-4 rounded-xl border bg-transparent text-[13px] outline-none focus:border-[#00B87C] transition-colors resize-none"
@@ -560,7 +559,7 @@ export function ManagerTeamSchedule() {
             <div className="p-6 border-t flex items-center justify-end gap-3 bg-neutral-50 dark:bg-zinc-800/50 rounded-b-2xl" style={{ borderColor: "var(--border)" }}>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="px-5 py-2.5 rounded-xl border text-[13px] font-bold transition-colors hover:bg-white dark:hover:bg-zinc-900"
+                className="px-5 py-2.5 rounded-xl border text-[13px] font-bold transition-colors hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-900"
                 style={{ borderColor: "var(--border)", color: "var(--muted-foreground)" }}
               >
                 Cancel
@@ -589,8 +588,8 @@ function EmployeeCell({ name, dept, avatar }: { name: string; dept: string; avat
         <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full"></div>
       </div>
       <div className="flex flex-col min-w-0">
-        <span className="text-sm font-extrabold text-foreground leading-tight">{name}</span>
-        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-tight mt-0.5">{dept}</span>
+        <span className="text-sm font-bold text-foreground leading-tight">{name}</span>
+        <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-tight mt-0.5">{dept}</span>
       </div>
     </div>
   );
@@ -618,10 +617,10 @@ function ShiftCell({ type, time, isOT }: { type: string; time: string; isOT?: bo
     <div className="border-l border-border/50 p-1 flex items-stretch">
       <div className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group border-l-4 ${styleClass}`}>
         <div className="flex items-center justify-between mb-0.5">
-          <span className="text-[10px] font-black uppercase tracking-tight">{type}</span>
-          {isOT && <span className="text-[8px] bg-red-500 text-white px-1.5 rounded-full font-black animate-pulse">OT</span>}
+          <span className="text-[11px] font-bold uppercase tracking-tight">{type}</span>
+          {isOT && <span className="text-[8px] bg-red-500 text-white px-1.5 rounded-full font-bold animate-pulse">OT</span>}
         </div>
-        <span className="text-[10px] font-bold opacity-80">{time}</span>
+        <span className="text-[11px] font-bold opacity-80">{time}</span>
         <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <MoreIcon size={12} className="text-current opacity-70 hover:opacity-100" />
         </div>

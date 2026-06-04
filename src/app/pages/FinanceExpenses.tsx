@@ -21,7 +21,8 @@ import {
   Briefcase,
   MapPin,
   MessageSquare,
-  Paperclip
+  Paperclip,
+  Send
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -107,6 +108,51 @@ export function FinanceExpenses() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [viewingExpense, setViewingExpense] = useState<ExpenseClaim | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [rejectingExpense, setRejectingExpense] = useState<ExpenseClaim | null>(null);
+  const [clarifyingExpense, setClarifyingExpense] = useState<ExpenseClaim | null>(null);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportMode, setExportMode] = useState<"all" | "selected">("all");
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleExport = (mode: "all" | "selected") => {
+    setExportMode(mode);
+    setShowExportModal(true);
+  };
+
+  const executeExport = () => {
+    setIsExporting(true);
+    setTimeout(() => {
+      const expensesToExport = exportMode === "selected" 
+        ? MOCK_EXPENSES.filter(exp => selectedRows.includes(exp.id))
+        : MOCK_EXPENSES;
+        
+      const headers = ["ID,Employee,Department,Category,Description,Amount,Receipt Status,Submitted On,Status"];
+      const rows = expensesToExport.map(exp => 
+        `${exp.id},"${exp.employee.name}",${exp.employee.department},${exp.category},"${exp.description}",${exp.amount},${exp.receiptStatus},"${exp.submittedOn}",${exp.status}`
+      );
+      
+      const csvContent = headers.concat(rows).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `expenses_report_${exportMode}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      setIsExporting(false);
+      setShowExportModal(false);
+      showToast(`Exported ${expensesToExport.length} expense claims successfully.`);
+    }, 1500);
+  };
 
   const filteredExpenses = MOCK_EXPENSES.filter(exp => {
     const matchesTab = activeTab === "All" || exp.status === activeTab;
@@ -132,17 +178,20 @@ export function FinanceExpenses() {
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#FEF3C7] dark:bg-amber-500/10 flex items-center justify-center shadow-inner">
-            <Receipt size={28} className="text-[#D97706]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#FEF3C7] dark:bg-amber-500/10 flex items-center justify-center shadow-inner">
+            <Receipt size={22} className="text-[#D97706]" />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight">Expense Approvals</h1>
-            <p className="text-[13px] font-semibold text-muted-foreground">Review and approve all employee expense claims</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">Expense Approvals</h1>
+            <p className="text-[13px] text-[#6B7280]">Review and approve all employee expense claims</p>
           </div>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-bold text-sm hover:bg-muted/50 transition-all">
+        <button 
+          onClick={() => handleExport("all")}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-bold text-sm hover:bg-muted/50 transition-all"
+        >
           <Download size={18} />
-          Export
+          Export All
         </button>
       </div>
 
@@ -165,7 +214,7 @@ export function FinanceExpenses() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as typeof activeTab)}
-                className={`px-8 py-4 text-[14px] font-black tracking-widest uppercase transition-all relative ${
+                className={`px-8 py-4 text-[14px] font-semibold tracking-wider uppercase transition-all relative ${
                   isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -193,11 +242,17 @@ export function FinanceExpenses() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <FilterSelect label="All Categories" />
-          <FilterSelect label="This Month" />
-          <FilterSelect label="All Departments" />
-          <FilterSelect label="₹ Amount Range" />
-          <button className="flex items-center gap-2 px-4 py-2.5 text-sm font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest">
+          <FilterSelect label="All Categories" options={["All Categories", "Travel", "Food", "Equipment"]} />
+          <FilterSelect label="This Month" options={["This Month", "Last Month", "This Quarter", "This Year"]} />
+          <FilterSelect label="All Departments" options={["All Departments", "Engineering", "Sales", "Marketing"]} />
+          <FilterSelect label="₹ Amount Range" options={["Any Amount", "< ₹1000", "₹1000 - ₹5000", "> ₹5000"]} />
+          <button 
+            onClick={() => {
+              setSearchQuery("");
+              showToast("Filters Reset");
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest"
+          >
             <RotateCcw size={16} />
             Reset
           </button>
@@ -221,9 +276,27 @@ export function FinanceExpenses() {
                 <button onClick={() => setSelectedRows([])} className="text-[11px] font-black text-muted-foreground hover:text-foreground uppercase tracking-widest">Deselect All</button>
               </div>
               <div className="flex items-center gap-3">
-                <button className="px-5 py-2 rounded-xl bg-[#00B87C] text-white text-[12px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-md shadow-emerald-500/20">Approve All</button>
-                <button className="px-5 py-2 rounded-xl bg-rose-500 text-white text-[12px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-md shadow-rose-500/20">Reject All</button>
-                <button className="px-5 py-2 rounded-xl border border-border text-foreground text-[12px] font-black uppercase tracking-widest hover:bg-muted transition-all">Export Selected</button>
+                <button 
+                  onClick={() => {
+                    showToast(`${selectedRows.length} claims approved successfully!`);
+                    setSelectedRows([]);
+                  }}
+                  className="px-5 py-2 rounded-xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-md shadow-emerald-500/20"
+                >
+                  Approve All
+                </button>
+                <button 
+                  onClick={() => showToast(`Rejected ${selectedRows.length} claims.`)}
+                  className="px-5 py-2 rounded-xl bg-rose-500 text-white text-[12px] font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-md shadow-rose-500/20"
+                >
+                  Reject All
+                </button>
+                <button 
+                  onClick={() => handleExport("selected")}
+                  className="px-5 py-2 rounded-xl border border-border text-foreground text-[12px] font-bold uppercase tracking-widest hover:bg-muted transition-all"
+                >
+                  Export Selected
+                </button>
               </div>
             </motion.div>
           )}
@@ -236,28 +309,30 @@ export function FinanceExpenses() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#F9FAFB] dark:bg-muted/10 border-b border-border">
+              <tr className="bg-[#F9FAFB] dark:bg-white/5 dark:bg-muted/10 border-b border-border">
                 <th className="px-6 py-4 w-12">
                   <Checkbox checked={selectedRows.length === filteredExpenses.length && filteredExpenses.length > 0} onChange={toggleAll} />
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">EMPLOYEE</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">CATEGORY</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">DESCRIPTION</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">AMOUNT</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">RECEIPT</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">SUBMITTED</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">STATUS</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] text-center">ACTION</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">EMPLOYEE</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">CATEGORY</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">DESCRIPTION</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">AMOUNT</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">RECEIPT</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">SUBMITTED</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">STATUS</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8] text-center">ACTION</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {filteredExpenses.map((exp, i) => (
-                <motion.tr 
+                <motion.tr
                   key={exp.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className={`group hover:bg-muted/30 transition-all cursor-pointer h-[64px] ${selectedRows.includes(exp.id) ? 'bg-[#F0FDF4] dark:bg-emerald-500/5' : ''}`}
+                  className={`group hover:bg-muted/50 dark:hover:bg-accent/50 transition-all cursor-pointer h-[64px] border-b border-border/50 last:border-0 ${
+                    selectedRows.includes(exp.id) ? 'bg-[#F0FDF4] dark:bg-emerald-500/5' : ''
+                  }`}
                   onClick={() => setViewingExpense(exp)}
                 >
                   <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
@@ -265,7 +340,7 @@ export function FinanceExpenses() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-black" style={{ backgroundColor: exp.employee.avatarColor }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-semibold" style={{ backgroundColor: exp.employee.avatarColor }}>
                         {exp.employee.name.split(' ').map(n => n[0]).join('')}
                       </div>
                       <div>
@@ -298,6 +373,7 @@ export function FinanceExpenses() {
                         <>
                           <button 
                             disabled={exp.receiptStatus === 'Missing'}
+                            onClick={() => showToast(`Expense ${exp.id} Approved!`)}
                             className={`p-1.5 rounded-lg border transition-all ${
                               exp.receiptStatus === 'Missing' 
                                 ? 'bg-muted border-border text-muted-foreground cursor-not-allowed opacity-50' 
@@ -307,12 +383,16 @@ export function FinanceExpenses() {
                           >
                             <Check size={16} strokeWidth={3} />
                           </button>
-                          <button className="p-1.5 rounded-lg bg-rose-500 border border-rose-500 text-white hover:bg-rose-600 shadow-sm transition-all" title="Reject">
+                          <button 
+                            onClick={() => setRejectingExpense(exp)}
+                            className="p-1.5 rounded-lg bg-rose-500 border border-rose-500 text-white hover:bg-rose-600 shadow-sm transition-all" 
+                            title="Reject"
+                          >
                             <X size={16} strokeWidth={3} />
                           </button>
                         </>
                       ) : (
-                        <button className={`text-[11px] font-black uppercase tracking-widest flex items-center gap-1 hover:underline ${exp.status === 'Rejected' ? 'text-rose-500' : 'text-[#00B87C]'}`}>
+                        <button className={`text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 hover:underline ${exp.status === 'Rejected' ? 'text-rose-500' : 'text-[#00B87C]'}`}>
                           {exp.status === 'Approved' ? 'View ›' : 'View Reason ›'}
                         </button>
                       )}
@@ -370,18 +450,18 @@ export function FinanceExpenses() {
                 {viewingExpense.status === 'Approved' ? <CheckCircle2 size={14} /> : 
                  viewingExpense.status === 'Pending' ? <Clock size={14} /> : 
                  <XCircle size={14} />}
-                <span className="text-[11px] font-black uppercase tracking-widest">{viewingExpense.status} Claim</span>
+                <span className="text-[11px] font-bold uppercase tracking-widest">{viewingExpense.status} Claim</span>
               </div>
 
               <div className="flex-1 overflow-y-auto p-6 space-y-8">
                 {/* Mini Stat Cards */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 rounded-[20px] bg-muted/30 border border-border text-center">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Amount</p>
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">Amount</p>
                     <p className="text-xl font-black text-foreground">₹{viewingExpense.amount.toLocaleString()}</p>
                   </div>
                   <div className="p-4 rounded-[20px] bg-muted/30 border border-border text-center">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Category</p>
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">Category</p>
                     <p className="text-sm font-black text-foreground uppercase tracking-widest">{viewingExpense.category}</p>
                   </div>
                 </div>
@@ -427,7 +507,7 @@ export function FinanceExpenses() {
                     <div className="p-6 rounded-2xl bg-rose-500/5 border border-dashed border-rose-500/30 text-center space-y-2">
                       <AlertCircle size={32} className="text-rose-500 mx-auto" />
                       <p className="text-[12px] font-bold text-rose-600">No receipt attached to this claim</p>
-                      <p className="text-[10px] text-rose-500/60 uppercase font-black tracking-widest leading-tight">Employee must provide proof for reimbursement</p>
+                      <p className="text-[11px] text-rose-500/60 uppercase font-semibold tracking-wider leading-tight">Employee must provide proof for reimbursement</p>
                     </div>
                   )}
                 </div>
@@ -461,6 +541,10 @@ export function FinanceExpenses() {
                 <div className="grid grid-cols-2 gap-3">
                   <button 
                     disabled={viewingExpense.receiptStatus === 'Missing' || viewingExpense.status !== 'Pending'}
+                    onClick={() => {
+                      showToast(`Expense ${viewingExpense.id} Approved!`);
+                      setViewingExpense(null);
+                    }}
                     className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <CheckCircle2 size={16} />
@@ -468,14 +552,222 @@ export function FinanceExpenses() {
                   </button>
                   <button 
                     disabled={viewingExpense.status !== 'Pending'}
+                    onClick={() => setRejectingExpense(viewingExpense)}
                     className="flex items-center justify-center gap-2 py-3 rounded-xl bg-rose-500 text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-rose-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <XCircle size={16} />
                     Reject
                   </button>
                 </div>
-                <button className="w-full py-3 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all active:scale-95">
+                <button 
+                  onClick={() => setClarifyingExpense(viewingExpense)}
+                  className="w-full py-3 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all active:scale-95"
+                >
                   Request More Info
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* REJECT MODAL */}
+      <AnimatePresence>
+        {rejectingExpense && (
+          <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+              onClick={() => setRejectingExpense(null)}
+            ></motion.div>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-card w-full max-w-[460px] rounded-[32px] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 pb-0 flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-3xl bg-[#FEE2E2] dark:bg-rose-500/10 flex items-center justify-center mb-6 shadow-inner border border-rose-500/20">
+                  <XCircle size={32} className="text-[#EF4444]" />
+                </div>
+                <h3 className="text-xl font-black text-foreground tracking-tight">Reject Expense</h3>
+                <p className="text-[13px] text-muted-foreground mt-2 max-w-[280px]">
+                  Please provide a reason for rejecting the expense claim <strong className="text-foreground">{rejectingExpense.id}</strong>.
+                </p>
+                
+                <div className="w-full mt-6 space-y-4 text-left">
+                  <div>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Rejection Reason</label>
+                    <textarea 
+                      placeholder="e.g. Receipt is unreadable, out of policy limit..."
+                      className="w-full bg-muted/20 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition-all font-medium min-h-[100px] resize-none"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-8 flex items-center gap-3">
+                <button 
+                  onClick={() => setRejectingExpense(null)}
+                  className="flex-1 py-3.5 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => {
+                    showToast(`Expense ${rejectingExpense.id} rejected.`);
+                    setRejectingExpense(null);
+                    setViewingExpense(null);
+                  }}
+                  className="flex-1 py-3.5 rounded-2xl bg-rose-500 text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-rose-500/20"
+                >
+                  Confirm Reject
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* REQUEST CLARIFICATION MODAL */}
+      <AnimatePresence>
+        {clarifyingExpense && (
+          <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+              onClick={() => setClarifyingExpense(null)}
+            ></motion.div>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-card w-full max-w-[460px] rounded-[32px] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 pb-0 flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-3xl bg-[#FEF3C7] dark:bg-amber-500/10 flex items-center justify-center mb-6 shadow-inner border border-amber-500/20">
+                  <MessageSquare size={32} className="text-[#D97706]" />
+                </div>
+                <h3 className="text-xl font-black text-foreground tracking-tight">Request Clarification</h3>
+                <p className="text-[13px] text-muted-foreground mt-2 max-w-[280px]">
+                  Send a message to <strong>{clarifyingExpense.employee.name}</strong> regarding expense <strong className="text-foreground">{clarifyingExpense.id}</strong>.
+                </p>
+                
+                <div className="w-full mt-6 space-y-4 text-left">
+                  <div>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Message</label>
+                    <textarea 
+                      placeholder="What do you need clarification on?"
+                      className="w-full bg-muted/20 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all font-medium min-h-[100px] resize-none"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-8 flex items-center gap-3">
+                <button 
+                  onClick={() => setClarifyingExpense(null)}
+                  className="flex-1 py-3.5 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => {
+                    showToast(`Clarification request sent to ${clarifyingExpense.employee.name}.`);
+                    setClarifyingExpense(null);
+                  }}
+                  className="flex-1 flex justify-center items-center gap-2 py-3.5 rounded-2xl bg-amber-500 text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-amber-500/20"
+                >
+                  <Send size={16} />
+                  Send Query
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* TOAST */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-6 right-6 z-[3000] bg-card border border-border shadow-2xl rounded-2xl p-4 flex items-center gap-3"
+          >
+            <div className="w-8 h-8 rounded-full bg-[#00B87C]/10 flex items-center justify-center">
+              <Check size={16} className="text-[#00B87C]" />
+            </div>
+            <p className="text-[13px] font-bold text-foreground pr-4">{toastMessage}</p>
+            <button onClick={() => setToastMessage(null)} className="text-muted-foreground hover:text-foreground">
+              <X size={16} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* EXPORT MODAL */}
+      <AnimatePresence>
+        {showExportModal && (
+          <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+              onClick={() => !isExporting && setShowExportModal(false)}
+            ></motion.div>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-card w-full max-w-[420px] rounded-[32px] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 pb-0 flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-3xl bg-[#F0FDF4] dark:bg-emerald-500/10 flex items-center justify-center mb-6 shadow-inner border border-[#00B87C]/20">
+                  <Download size={32} className="text-[#00B87C]" />
+                </div>
+                <h3 className="text-xl font-black text-foreground tracking-tight">Export Expense Claims</h3>
+                <p className="text-[13px] text-muted-foreground mt-2 max-w-[280px]">
+                  {exportMode === "selected" 
+                    ? `Generating a CSV report for the ${selectedRows.length} selected expense claims.` 
+                    : "Generating a CSV report for all expense claims matching current filters."}
+                </p>
+                
+                {isExporting && (
+                  <div className="w-full mt-6 space-y-2 text-left">
+                    <p className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest text-center">Processing File...</p>
+                    <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 1.5, ease: "linear" }}
+                        className="h-full bg-[#00B87C] rounded-full" 
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className="p-8 flex items-center gap-3">
+                <button 
+                  onClick={() => setShowExportModal(false)}
+                  disabled={isExporting}
+                  className="flex-1 py-3.5 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={executeExport}
+                  disabled={isExporting}
+                  className="flex-1 py-3.5 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                >
+                  {isExporting ? 'Exporting...' : 'Download CSV'}
                 </button>
               </div>
             </motion.div>
@@ -497,27 +789,47 @@ function KPICard({ title, value, subValue, color, icon: Icon }: { title: string,
   return (
     <motion.div 
       whileHover={{ y: -5 }}
-      className="p-6 bg-card border border-border rounded-[32px] shadow-sm hover:shadow-md transition-all group"
+      className="p-6 bg-card border border-border rounded-[32px] shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group"
     >
-      <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110" style={{ backgroundColor: colors[color].bg }}>
-        <Icon size={24} style={{ color: colors[color].iconColor }} />
+      <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-4 transition-transform group-hover:scale-110" style={{ backgroundColor: colors[color].bg }}>
+        <Icon size={18} style={{ color: colors[color].iconColor }} />
       </div>
-      <p className="text-[11px] font-black text-muted-foreground uppercase tracking-[1.8px] mb-2">{title}</p>
+      <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">{title}</p>
       <div className="flex items-end gap-2">
-        <h3 className="text-3xl font-black tracking-tighter" style={{ color: colors[color].text }}>{value}</h3>
+        <h3 className="text-[28px] font-bold tracking-tighter" style={{ color: colors[color].text }}>{value}</h3>
         {subValue && <span className="text-[12px] font-bold text-[#00B87C] mb-1.5">{subValue}</span>}
       </div>
     </motion.div>
   );
 }
 
-function FilterSelect({ label }: { label: string }) {
+function FilterSelect({ label, options = ["Option 1", "Option 2"] }: { label: string, options?: string[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(label);
+  
   return (
     <div className="relative">
-      <button className="flex items-center gap-2.5 px-5 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm">
-        {label}
-        <ChevronDown size={16} className="text-muted-foreground" />
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+        className="flex items-center gap-2.5 px-5 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm"
+      >
+        {selected}
+        <ChevronDown size={16} className={`text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
+      {isOpen && (
+        <div className="absolute top-full mt-2 w-full min-w-[180px] bg-card border border-border rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
+          {options.map((opt, i) => (
+            <button
+              key={i}
+              onClick={() => { setSelected(opt); setIsOpen(false); }}
+              className={`w-full text-left px-4 py-2.5 text-[13px] font-bold hover:bg-muted transition-all ${selected === opt ? 'text-[#00B87C]' : 'text-foreground'}`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -532,7 +844,7 @@ function CategoryChip({ category }: { category: ExpenseClaim['category'] }) {
   };
   
   return (
-    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${styles[category]}`}>
+    <span className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wider border ${styles[category]}`}>
       {category}
     </span>
   );
@@ -540,7 +852,7 @@ function CategoryChip({ category }: { category: ExpenseClaim['category'] }) {
 
 function ReceiptStatus({ status }: { status: ExpenseClaim['receiptStatus'] }) {
   return (
-    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border flex items-center gap-1 w-fit ${
+    <span className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wider border flex items-center gap-1 w-fit ${
       status === 'Attached' ? 'bg-[#F0FDF4] text-[#00B87C] border-[#00B87C]/20' : 'bg-[#FEF2F2] text-[#EF4444] border-[#EF4444]/20'
     }`}>
       {status === 'Attached' ? <Check size={10} strokeWidth={4} /> : <X size={10} strokeWidth={4} />}
@@ -557,7 +869,7 @@ function StatusChip({ status }: { status: ExpenseClaim['status'] }) {
   };
   
   return (
-    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border flex items-center justify-center w-fit gap-1.5 ${styles[status]}`}>
+    <span className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border flex items-center justify-center w-fit gap-1.5 ${styles[status]}`}>
       {status === "Approved" ? "✓ Approved" : status === "Pending" ? "⏳ Pending" : "✗ Rejected"}
     </span>
   );
@@ -583,7 +895,7 @@ function DetailItem({ icon: Icon, label, value }: { icon: React.ElementType, lab
         <Icon size={14} className="text-muted-foreground" />
       </div>
       <div>
-        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-tight">{label}</p>
+        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest leading-tight">{label}</p>
         <p className="text-[13px] font-bold text-foreground">{value}</p>
       </div>
     </div>
@@ -603,7 +915,7 @@ function TimelineStep({ label, date, status }: { label: string, date: string, st
         <div className={`w-[1px] flex-1 bg-border group-last:hidden ${status === 'success' ? 'bg-[#00B87C]/30' : ''}`} />
       </div>
       <div className="pb-4">
-        <p className={`text-[12px] font-black uppercase tracking-widest leading-none ${
+        <p className={`text-[12px] font-bold uppercase tracking-widest leading-none ${
           status === 'success' ? 'text-[#00B87C]' : 
           status === 'active' ? 'text-[#00B87C]' : 
           status === 'error' ? 'text-rose-500' :

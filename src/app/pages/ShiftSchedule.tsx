@@ -363,7 +363,7 @@ export const ShiftSchedule: React.FC = () => {
             <CheckSquare size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase text-emerald-700 dark:text-emerald-400 tracking-widest">
+            <p className="text-[11px] font-semibold uppercase text-emerald-700 dark:text-emerald-400 tracking-widest">
               Coverage Status
             </p>
             <p className="text-sm font-bold text-foreground">
@@ -376,7 +376,7 @@ export const ShiftSchedule: React.FC = () => {
             <AlertTriangle size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase text-amber-700 dark:text-amber-400 tracking-widest">
+            <p className="text-[11px] font-semibold uppercase text-amber-700 dark:text-amber-400 tracking-widest">
               System Alerts
             </p>
             <p className="text-sm font-bold text-foreground">
@@ -389,7 +389,7 @@ export const ShiftSchedule: React.FC = () => {
             <Activity size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase text-blue-700 dark:text-blue-400 tracking-widest">
+            <p className="text-[11px] font-semibold uppercase text-blue-700 dark:text-blue-400 tracking-widest">
               Ongoing Swaps
             </p>
             <p className="text-sm font-bold text-foreground">
@@ -404,7 +404,7 @@ export const ShiftSchedule: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 p-1 bg-secondary rounded-xl">
             <button
-              className="p-1.5 rounded-lg hover:bg-white transition-colors text-muted-foreground hover:text-primary active:scale-90"
+              className="p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] transition-colors text-muted-foreground hover:text-primary active:scale-90"
               onClick={() => setWeekOffset((prev) => prev - 1)}
             >
               <ChevronLeft size={18} />
@@ -413,7 +413,7 @@ export const ShiftSchedule: React.FC = () => {
               {weekLabel}
             </span>
             <button
-              className="p-1.5 rounded-lg hover:bg-white transition-colors text-muted-foreground hover:text-primary active:scale-90"
+              className="p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] transition-colors text-muted-foreground hover:text-primary active:scale-90"
               onClick={() => setWeekOffset((prev) => prev + 1)}
             >
               <ChevronRight size={18} />
@@ -464,7 +464,7 @@ export const ShiftSchedule: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div
-          className="rounded-2xl p-5 border shadow-sm transition-all hover:shadow-md bg-white dark:bg-zinc-900 group"
+          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-white dark:bg-zinc-900 group"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex items-start justify-between">
@@ -481,7 +481,7 @@ export const ShiftSchedule: React.FC = () => {
               >
                 248
               </p>
-              <span className="text-[10px] font-bold text-emerald-600 mt-2 inline-block">
+              <span className="text-[11px] font-bold text-emerald-600 mt-2 inline-block">
                 ↑ 4 from last week
               </span>
             </div>
@@ -491,7 +491,7 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
         <div
-          className="rounded-2xl p-5 border shadow-sm transition-all hover:shadow-md bg-white dark:bg-zinc-900 group"
+          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-white dark:bg-zinc-900 group"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex items-start justify-between">
@@ -506,7 +506,7 @@ export const ShiftSchedule: React.FC = () => {
                 <p className="text-3xl font-extrabold tracking-tight text-emerald-600 group-hover:scale-105 transition-transform">
                   94.2%
                 </p>
-                <span className="text-[10px] font-extrabold text-muted-foreground">
+                <span className="text-[11px] font-extrabold text-muted-foreground">
                   / 90%
                 </span>
               </div>
@@ -523,7 +523,7 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
         <div
-          className="rounded-2xl p-5 border shadow-sm transition-all hover:shadow-md bg-white dark:bg-zinc-900 group"
+          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-white dark:bg-zinc-900 group"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex items-start justify-between">
@@ -537,7 +537,7 @@ export const ShiftSchedule: React.FC = () => {
               <p className="text-3xl font-extrabold tracking-tight text-amber-600">
                 142<span className="text-sm ml-1 font-bold">h</span>
               </p>
-              <span className="text-[10px] font-bold text-amber-600 mt-2 inline-block">
+              <span className="text-[11px] font-bold text-amber-600 mt-2 inline-block">
                 ↑ 12h vs last week
               </span>
             </div>
@@ -547,7 +547,7 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
         <div
-          className="rounded-2xl p-5 border shadow-sm transition-all hover:shadow-md bg-white dark:bg-zinc-900 group"
+          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-white dark:bg-zinc-900 group"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex items-start justify-between">
@@ -562,7 +562,7 @@ export const ShiftSchedule: React.FC = () => {
                 8
               </p>
               <button
-                className="text-[10px] font-black text-teal-700 hover:text-teal-500 hover:underline mt-2 inline-flex items-center gap-1 cursor-pointer transition-colors"
+                className="text-[11px] font-semibold text-teal-700 hover:text-teal-500 hover:underline mt-2 inline-flex items-center gap-1 cursor-pointer transition-colors"
                 onClick={() =>
                   document
                     .getElementById("swaps-panel")
@@ -628,7 +628,7 @@ export const ShiftSchedule: React.FC = () => {
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest leading-none mb-1">
+            <p className="text-[11px] font-semibold uppercase text-emerald-600 tracking-widest leading-none mb-1">
               Staffing Level
             </p>
             <p className="text-sm font-bold text-foreground leading-none">
@@ -655,7 +655,7 @@ export const ShiftSchedule: React.FC = () => {
               >
                 {day}
               </span>
-              <span className="text-[10px] text-muted-foreground font-bold">
+              <span className="text-[11px] text-muted-foreground font-bold">
                 {dates[i]}
               </span>
             </div>
@@ -680,7 +680,7 @@ export const ShiftSchedule: React.FC = () => {
                   <span className="text-sm font-extrabold text-foreground leading-tight">
                     {emp.name}
                   </span>
-                  <span className="text-[10px] font-black text-emerald-600 uppercase tracking-tight mt-0.5">
+                  <span className="text-[11px] font-semibold text-emerald-600 uppercase tracking-tight mt-0.5">
                     {emp.dept}
                   </span>
                 </div>
@@ -720,7 +720,7 @@ export const ShiftSchedule: React.FC = () => {
                         }`}
                       >
                         <div className="flex items-center justify-between mb-0.5">
-                          <span className="text-[10px] font-black uppercase tracking-tight">
+                          <span className="text-[11px] font-semibold uppercase tracking-tight">
                             {shift.type}
                           </span>
                           {shift.isOT && (
@@ -729,7 +729,7 @@ export const ShiftSchedule: React.FC = () => {
                             </span>
                           )}
                         </div>
-                        <span className="text-[10px] font-bold opacity-80">
+                        <span className="text-[11px] font-bold opacity-80">
                           {shift.time}
                         </span>
                         <div
@@ -764,7 +764,7 @@ export const ShiftSchedule: React.FC = () => {
         {/* Swap Requests */}
         <div
           id="swaps-panel"
-          className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-[400px] transition-all hover:shadow-md overflow-hidden"
+          className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-[400px] transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] overflow-hidden"
         >
           {/* Header */}
           <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-card rounded-t-2xl flex-shrink-0">
@@ -796,13 +796,13 @@ export const ShiftSchedule: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <div className="flex items-center -space-x-2">
                       <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm"
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm"
                         style={{ backgroundColor: swap.p1Color }}
                       >
                         {swap.p1Init}
                       </div>
                       <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm"
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm"
                         style={{ backgroundColor: swap.p2Color }}
                       >
                         {swap.p2Init}
@@ -877,7 +877,7 @@ export const ShiftSchedule: React.FC = () => {
         {/* Overtime Summary */}
         <div
           id="overtime-panel"
-          className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-full transition-all hover:shadow-md"
+          className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-full transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
         >
           <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-card rounded-t-2xl">
             <div className="flex items-center gap-3">
@@ -889,7 +889,7 @@ export const ShiftSchedule: React.FC = () => {
                 Overtime Monitoring
               </h3>
             </div>
-            <span className="px-2.5 py-1 bg-secondary text-primary text-[10px] font-bold rounded-full border border-primary/20">
+            <span className="px-2.5 py-1 bg-secondary text-primary text-[11px] font-bold rounded-full border border-primary/20">
               142 TOTAL HRS
             </span>
           </div>
@@ -946,7 +946,7 @@ export const ShiftSchedule: React.FC = () => {
                     style={{ color: item.color }}
                   >
                     {item.hrs}h{" "}
-                    <span className="text-[10px] font-medium text-muted-foreground ml-1">
+                    <span className="text-[11px] font-medium text-muted-foreground ml-1">
                       / {item.limit}h
                     </span>
                   </span>
@@ -1028,11 +1028,11 @@ export const ShiftSchedule: React.FC = () => {
           {templates.map((tmpl) => (
             <div
               key={tmpl.id}
-              className="bg-white dark:bg-zinc-900 rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-all relative flex flex-col justify-between group"
+              className="bg-white dark:bg-zinc-900 rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
             >
               {tmpl.badge && (
                 <span
-                  className="absolute top-4 right-12 px-2.5 py-0.5 text-[10px] font-black rounded-full border uppercase tracking-wide"
+                  className="absolute top-4 right-12 px-2.5 py-0.5 text-[11px] font-semibold rounded-full border uppercase tracking-wide"
                   style={{
                     backgroundColor: tmpl.badgeBg,
                     color: tmpl.badgeColor,
@@ -1147,7 +1147,7 @@ export const ShiftSchedule: React.FC = () => {
                       return (
                         <span
                           key={shiftName}
-                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black tracking-tight uppercase ${colors.bg} ${colors.text}`}
+                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-tight uppercase ${colors.bg} ${colors.text}`}
                         >
                           <span
                             className="w-1.5 h-1.5 rounded-full flex-shrink-0"
@@ -1325,7 +1325,7 @@ export const ShiftSchedule: React.FC = () => {
                           Select Employees
                         </label>
                         <button
-                          className="text-[10px] font-black text-[#00B87C] hover:underline uppercase tracking-wider"
+                          className="text-[11px] font-semibold text-[#00B87C] hover:underline uppercase tracking-wider"
                           onClick={() => {
                             const allDeptEmps = globalEmployees
                               .filter(
@@ -1364,7 +1364,7 @@ export const ShiftSchedule: React.FC = () => {
                           .map((emp) => (
                             <label
                               key={emp.id}
-                              className="flex items-center gap-3 p-1.5 rounded-lg hover:bg-white dark:hover:bg-zinc-700/40 transition-colors cursor-pointer"
+                              className="flex items-center gap-3 p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-700/40 transition-colors cursor-pointer"
                             >
                               <input
                                 type="checkbox"
@@ -1458,7 +1458,7 @@ export const ShiftSchedule: React.FC = () => {
                 {/* Live Preview & Warnings Panel */}
                 <div className="bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-2xl p-4 grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
                   <div>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                       Employees
                     </p>
                     <p className="text-xl font-extrabold text-slate-800 dark:text-slate-200 mt-0.5">
@@ -1466,7 +1466,7 @@ export const ShiftSchedule: React.FC = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                       Shifts
                     </p>
                     <p className="text-xl font-extrabold text-[#00B87C] mt-0.5">
@@ -1474,7 +1474,7 @@ export const ShiftSchedule: React.FC = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                       Conflicts
                     </p>
                     <p className="text-xl font-extrabold text-amber-500 mt-0.5">
@@ -1482,7 +1482,7 @@ export const ShiftSchedule: React.FC = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                       On Leave
                     </p>
                     <p className="text-xl font-extrabold text-rose-500 mt-0.5">
@@ -1490,7 +1490,7 @@ export const ShiftSchedule: React.FC = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                       OT Risks
                     </p>
                     <p className="text-xl font-extrabold text-indigo-600 mt-0.5">
@@ -1799,11 +1799,11 @@ export const ShiftSchedule: React.FC = () => {
                   {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
                     (day) => (
                       <div key={day}>
-                        <span className="text-[10px] font-black uppercase tracking-tight text-muted-foreground block mb-1.5">
+                        <span className="text-[11px] font-semibold uppercase tracking-tight text-muted-foreground block mb-1.5">
                           {day}
                         </span>
                         <select
-                          className="w-full p-1.5 text-[10px] font-black bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-lg focus:ring-1 focus:ring-[#00B87C] outline-none appearance-none text-center uppercase cursor-pointer"
+                          className="w-full p-1.5 text-[11px] font-semibold bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-lg focus:ring-1 focus:ring-[#00B87C] outline-none appearance-none text-center uppercase cursor-pointer"
                           value={newTSchedule[day]}
                           onChange={(e) =>
                             setNewTSchedule((prev) => ({
@@ -1969,11 +1969,11 @@ export const ShiftSchedule: React.FC = () => {
                   {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
                     (day) => (
                       <div key={day}>
-                        <span className="text-[10px] font-black uppercase tracking-tight text-muted-foreground block mb-1.5">
+                        <span className="text-[11px] font-semibold uppercase tracking-tight text-muted-foreground block mb-1.5">
                           {day}
                         </span>
                         <select
-                          className="w-full p-1.5 text-[10px] font-black bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-lg focus:ring-1 focus:ring-[#00B87C] outline-none appearance-none text-center uppercase cursor-pointer"
+                          className="w-full p-1.5 text-[11px] font-semibold bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-lg focus:ring-1 focus:ring-[#00B87C] outline-none appearance-none text-center uppercase cursor-pointer"
                           value={editTemplate.weeklySchedule[day]}
                           onChange={(e) =>
                             setEditTemplate({
@@ -2301,7 +2301,7 @@ export const ShiftSchedule: React.FC = () => {
 
             <div className="space-y-4 mb-8">
               <div>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   Shift Transition
                 </p>
                 <p className="text-sm font-extrabold text-foreground mt-1">
@@ -2310,7 +2310,7 @@ export const ShiftSchedule: React.FC = () => {
               </div>
 
               <div>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   Reason For Swap
                 </p>
                 <p className="text-sm font-medium text-muted-foreground mt-1">

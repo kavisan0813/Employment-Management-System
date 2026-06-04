@@ -19,6 +19,7 @@ import {
   ChevronDown,
   Linkedin,
   X,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CheckCircle2
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -28,6 +29,7 @@ import { showToast } from "../components/workflow/ToastNotification";
 type ProfileTab = "Personal Info" | "Employment" | "Documents" | "Emergency Contact" | "Settings";
 
 export function FinanceProfile() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<ProfileTab>("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
@@ -106,7 +108,7 @@ export function FinanceProfile() {
               <div className="text-center md:text-left pb-2">
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-1">
                   <h1 className="text-2xl font-black text-foreground tracking-tight">{"Ananya Sharma"}</h1>
-                  <span className="px-2.5 py-1 rounded-lg bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)] text-[10px] font-black uppercase tracking-widest text-white">
+                  <span className="px-2.5 py-1 rounded-lg bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)] text-[11px] font-semibold uppercase tracking-widest text-white">
                     ● Active
                   </span>
                 </div>
@@ -211,7 +213,7 @@ export function FinanceProfile() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab as ProfileTab)}
-              className={`px-8 py-4 text-[13px] font-black tracking-widest uppercase transition-all relative whitespace-nowrap bg-transparent border-0 ${
+              className={`px-8 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap bg-transparent border-0 ${
                 isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -259,7 +261,7 @@ export function FinanceProfile() {
             initial={{ y: 100 }}
             animate={{ y: 0 }}
             exit={{ y: 100 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-6 py-4 rounded-[24px] bg-card border border-border shadow-2xl ring-1 ring-black/5"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-6 py-4 rounded-2xl bg-card border border-border shadow-2xl ring-1 ring-black/5"
           >
             <button 
               onClick={() => setIsEditing(false)}
@@ -292,7 +294,7 @@ export function FinanceProfile() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-[360px] bg-card border border-border rounded-[24px] shadow-2xl p-6"
+              className="relative w-full max-w-[360px] bg-card border border-border rounded-2xl shadow-2xl p-6"
             >
               <h3 className="text-[16px] font-black text-foreground mb-4">Add Custom Skill</h3>
               <form onSubmit={handleAddSkillSubmit} className="space-y-4">
@@ -340,7 +342,7 @@ export function FinanceProfile() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-[440px] bg-card border border-border rounded-[24px] shadow-2xl p-6"
+              className="relative w-full max-w-[440px] bg-card border border-border rounded-2xl shadow-2xl p-6"
             >
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-[16px] font-black text-foreground">Send Message to VP Finance</h3>
@@ -452,7 +454,7 @@ function PersonalInfoTab({ isEditing, skills, onAddSkillClick }: { isEditing: bo
         <div className="bg-gradient-to-br from-[#00B87C]/10 to-[#0EA5E9]/10 border border-emerald-500/20 rounded-[32px] p-6">
           <div className="flex items-center gap-3 mb-3 text-emerald-600">
             <ShieldCheck size={20} />
-            <span className="text-[12px] font-black uppercase tracking-widest">Enterprise Access</span>
+            <span className="text-[12px] font-semibold uppercase tracking-wider">Enterprise Access</span>
           </div>
           <p className="text-[13px] font-bold text-foreground/80 leading-relaxed">
             Your profile is secured with enterprise-grade MFA. Certain employment details are managed exclusively by HR.
@@ -470,7 +472,7 @@ function EmploymentTab() {
         <SectionTitle title="Employment Record" />
         <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/5 border border-blue-500/20 text-blue-600">
           <Info size={16} />
-          <span className="text-[11px] font-black uppercase tracking-widest">Managed by HR</span>
+          <span className="text-[11px] font-semibold uppercase tracking-wider">Managed by HR</span>
         </div>
       </div>
 
@@ -518,7 +520,7 @@ function EmergencyContactTab({ isEditing }: { isEditing: boolean }) {
       <SectionTitle title="Emergency Contact" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         <div className="space-y-6">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Primary Contact</p>
+          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Primary Contact</p>
           <div className="grid grid-cols-1 gap-6">
             <EditField label="Contact Name" value="Rajat Sharma" disabled={!isEditing} />
             <EditField label="Relationship" value="Spouse" disabled={!isEditing} />
@@ -526,7 +528,7 @@ function EmergencyContactTab({ isEditing }: { isEditing: boolean }) {
           </div>
         </div>
         <div className="space-y-6">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Secondary Contact</p>
+          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Secondary Contact</p>
           <div className="grid grid-cols-1 gap-6">
             <EditField label="Contact Name" value="Suman Sharma" disabled={!isEditing} />
             <EditField label="Relationship" value="Father" disabled={!isEditing} />
@@ -538,6 +540,7 @@ function EmergencyContactTab({ isEditing }: { isEditing: boolean }) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function SettingsTab({ onTabChange }: { onTabChange: (tab: ProfileTab) => void }) {
   return (
     <div className="space-y-6">
@@ -625,7 +628,7 @@ function SelectField({ label, value, options, disabled }: { label: string, value
 function ReadOnlyField({ label, value }: { label: string, value: string }) {
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">{label}</label>
+      <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest ml-1">{label}</label>
       <p className="text-[14px] font-bold text-foreground tracking-tight ml-1">{value}</p>
     </div>
   );
@@ -651,7 +654,7 @@ function LanguageRow({ label, level }: { label: string, level: string }) {
   return (
     <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/10">
       <span className="text-sm font-bold text-foreground">{label}</span>
-      <span className="text-[10px] font-black text-[#00B87C] uppercase tracking-widest">{level}</span>
+      <span className="text-[11px] font-semibold text-[#00B87C] uppercase tracking-widest">{level}</span>
     </div>
   );
 }
@@ -678,7 +681,7 @@ function DocCard({ name, size, date }: { name: string, size: string, date: strin
         <Download size={20} className="text-muted-foreground group-hover:text-[#00B87C]" />
       </div>
       <p className="text-[13px] font-bold text-foreground line-clamp-1 mb-1">{name}</p>
-      <p className="text-[10px] font-bold text-muted-foreground">{size} • {date}</p>
+      <p className="text-[11px] font-bold text-muted-foreground">{size} • {date}</p>
     </div>
   );
 }

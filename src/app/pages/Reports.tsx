@@ -489,7 +489,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   : "Monthly Overtime Trend"}
               </h3>
               <span
-                className="px-2.5 py-1 rounded-full text-[10px] font-bold"
+                className="px-2.5 py-1 rounded-full text-[11px] font-bold"
                 style={{ backgroundColor: "#ECFDF5", color: "#059669" }}
               >
                 Last {trendTab === "6 Weeks" ? "6 weeks" : "4 months"}
@@ -501,13 +501,13 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             >
               <button
                 onClick={() => setTrendTab("6 Weeks")}
-                className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${trendTab === "6 Weeks" ? "text-white bg-[#059669]" : "text-[#6B7280] hover:text-[#059669]"}`}
+                className={`px-3 py-1 text-[11px] font-bold rounded-full transition-all ${trendTab === "6 Weeks" ? "text-white bg-[#059669]" : "text-[#6B7280] hover:text-[#059669]"}`}
               >
                 6 Weeks
               </button>
               <button
                 onClick={() => setTrendTab("3 Months")}
-                className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${trendTab === "3 Months" ? "text-white bg-[#059669]" : "text-[#6B7280] hover:text-[#059669]"}`}
+                className={`px-3 py-1 text-[11px] font-bold rounded-full transition-all ${trendTab === "3 Months" ? "text-white bg-[#059669]" : "text-[#6B7280] hover:text-[#059669]"}`}
               >
                 3 Months
               </button>
@@ -634,7 +634,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                       {d.hours} hrs
                     </span>
                     <span
-                      className="px-2 py-0.5 rounded-full text-[10px] font-bold"
+                      className="px-2 py-0.5 rounded-full text-[11px] font-bold"
                       style={{
                         backgroundColor:
                           d.status === "High"
@@ -691,7 +691,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             <div className="relative">
               <Search
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]"
               />
               <input
                 type="text"
@@ -708,7 +708,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             </div>
             <div className="relative">
               <button
-                className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-gray-50 flex items-center gap-2"
+                className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-[#00B87C]/[0.08] flex items-center gap-2"
                 style={{
                   backgroundColor: "var(--card)",
                   borderColor: "var(--border)",
@@ -907,7 +907,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   </td>
                   <td className="px-6 py-2">
                     <span
-                      className="px-3 py-1 rounded-full text-[10px] font-bold"
+                      className="px-3 py-1 rounded-full text-[11px] font-bold"
                       style={{
                         backgroundColor:
                           e.status === "Exceeded"
@@ -1051,7 +1051,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                       {s.hours}h
                     </span>
                     <span
-                      className="px-2 py-0.5 rounded-full text-[10px] font-bold"
+                      className="px-2 py-0.5 rounded-full text-[11px] font-bold"
                       style={{ backgroundColor: "#ECFDF5", color: "#059669" }}
                     >
                       {s.value}%
@@ -1320,13 +1320,13 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
             <div className="flex bg-[#F1FEF2] p-1 rounded-full">
               <button
                 onClick={() => setChartTab("Week")}
-                className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${chartTab === "Week" ? "text-white bg-[#059669]" : "text-[#6B7280] hover:text-[#059669]"}`}
+                className={`px-3 py-1 text-[11px] font-bold rounded-full transition-all ${chartTab === "Week" ? "text-white bg-[#059669]" : "text-[#6B7280] hover:text-[#059669]"}`}
               >
                 Week
               </button>
               <button
                 onClick={() => setChartTab("Month")}
-                className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all ${chartTab === "Month" ? "text-white bg-[#059669]" : "text-[#6B7280] hover:text-[#059669]"}`}
+                className={`px-3 py-1 text-[11px] font-bold rounded-full transition-all ${chartTab === "Month" ? "text-white bg-[#059669]" : "text-[#6B7280] hover:text-[#059669]"}`}
               >
                 Month
               </button>
@@ -1473,7 +1473,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
             <div className="relative">
               <Search
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]"
               />
               <input
                 type="text"
@@ -1490,7 +1490,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
             </div>
             <div className="relative">
               <button
-                className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-gray-50 flex items-center gap-2"
+                className="px-3 py-1.5 text-xs font-semibold border rounded-lg transition-colors hover:bg-[#00B87C]/[0.08] flex items-center gap-2"
                 style={{
                   backgroundColor: "var(--card)",
                   borderColor: "var(--border)",
@@ -1599,7 +1599,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm"
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm"
                           style={{
                             background:
                               "linear-gradient(135deg, #059669 0%, #10B981 100%)",
@@ -1645,7 +1645,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
                         <span
-                          className="px-2 py-0.5 rounded text-[10px] font-bold inline-block w-fit"
+                          className="px-2 py-0.5 rounded text-[11px] font-bold inline-block w-fit"
                           style={{
                             backgroundColor: "var(--secondary)",
                             color: "var(--primary)",
@@ -1677,7 +1677,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className="px-3 py-1 rounded-full text-[10px] font-bold"
+                        className="px-3 py-1 rounded-full text-[11px] font-bold"
                         style={{
                           backgroundColor:
                             req.status === "Approved"
@@ -1699,7 +1699,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                     <td className="px-6 py-4">
                       <div className="flex gap-2">
                         <button
-                          className="p-1.5 rounded-lg transition-colors hover:bg-gray-100"
+                          className="p-1.5 rounded-lg transition-colors hover:bg-[#00B87C]/[0.08]"
                           style={{ color: "var(--muted-foreground)" }}
                           onClick={() => navigate("/schedule")}
                         >
@@ -1822,7 +1822,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                     style={{ backgroundColor: "var(--background)" }}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#E8FDF0] text-[#059669]">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold bg-[#E8FDF0] text-[#059669]">
                         {r.from[0]}
                       </div>
                       <p
@@ -2543,7 +2543,7 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
                           <div
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-bold"
                             style={{ background: EMERALD_SHADES[i % 6] }}
                           >
                             {emp.initials}
@@ -2595,7 +2595,7 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
                       </td>
                       <td className="px-4 py-3">
                         <span
-                          className="px-2.5 py-1 rounded-full text-[10px] font-bold"
+                          className="px-2.5 py-1 rounded-full text-[11px] font-bold"
                           style={{
                             backgroundColor:
                               emp.status === "Active"
@@ -3103,7 +3103,7 @@ function PayrollSummary({ onBack }: { onBack: () => void }) {
                 </td>
                 <td className="px-4 py-3">
                   <span
-                    className="px-2.5 py-1 rounded-full text-[10px] font-bold"
+                    className="px-2.5 py-1 rounded-full text-[11px] font-bold"
                     style={{
                       backgroundColor:
                         emp.status === "Paid" ? "#ECFDF5" : "#FFFBEB",
@@ -3723,7 +3723,7 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
             {topPerformers.map((p, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-emerald-500/5"
+                className="flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-[#00B87C]/[0.08]"
                 style={{
                   backgroundColor: i === 0 ? "var(--secondary)" : "transparent",
                 }}
@@ -3946,7 +3946,7 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
                 </td>
                 <td className="px-4 py-3">
                   <span
-                    className="px-2.5 py-1 rounded-full text-[10px] font-bold"
+                    className="px-2.5 py-1 rounded-full text-[11px] font-bold"
                     style={{
                       backgroundColor:
                         emp.status === "Completed" ? "#ECFDF5" : "#FFFBEB",
@@ -4328,7 +4328,7 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
                 </td>
                 <td className="px-4 py-3">
                   <span
-                    className="px-2.5 py-1 rounded-full text-[10px] font-bold"
+                    className="px-2.5 py-1 rounded-full text-[11px] font-bold"
                     style={{
                       backgroundColor: stageColor[c.stage]?.bg,
                       color: stageColor[c.stage]?.color,
@@ -4793,7 +4793,7 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
           >
             Exited Employees — Annual Log
           </h4>
-          <span className="text-[10px] font-bold px-2 py-1 rounded bg-[var(--secondary)] text-[var(--primary)] uppercase">
+          <span className="text-[11px] font-bold px-2 py-1 rounded bg-[var(--secondary)] text-[var(--primary)] uppercase">
             Detailed Summary 2026
           </span>
         </div>
@@ -4859,11 +4859,11 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
                   <td className="px-6 py-4 text-foreground">{emp.reason}</td>
                   <td className="px-6 py-4">
                     {emp.interview ? (
-                      <div className="flex items-center gap-1 text-emerald-600 font-bold text-[10px]">
+                      <div className="flex items-center gap-1 text-emerald-600 font-bold text-[11px]">
                         <CheckCircle size={14} /> Completed
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-amber-500 font-bold text-[10px]">
+                      <div className="flex items-center gap-1 text-amber-500 font-bold text-[11px]">
                         <Clock size={14} /> Pending
                       </div>
                     )}

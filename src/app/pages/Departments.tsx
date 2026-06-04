@@ -251,7 +251,7 @@ function DepartmentFormModal({
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
             {errors.name && (
-              <span className="text-[10px] font-bold text-rose-600 mt-1 block">
+              <span className="text-[11px] font-bold text-rose-600 mt-1 block">
                 {errors.name}
               </span>
             )}
@@ -271,7 +271,7 @@ function DepartmentFormModal({
               onChange={(e) => setForm({ ...form, code: e.target.value })}
             />
             {errors.code && (
-              <span className="text-[10px] font-bold text-rose-600 mt-1 block">
+              <span className="text-[11px] font-bold text-rose-600 mt-1 block">
                 {errors.code}
               </span>
             )}
@@ -290,7 +290,7 @@ function DepartmentFormModal({
               onChange={(e) => setForm({ ...form, head: e.target.value })}
             />
             {errors.head && (
-              <span className="text-[10px] font-bold text-rose-600 mt-1 block">
+              <span className="text-[11px] font-bold text-rose-600 mt-1 block">
                 {errors.head}
               </span>
             )}
@@ -309,7 +309,7 @@ function DepartmentFormModal({
               onChange={(e) => setForm({ ...form, budget: e.target.value })}
             />
             {errors.budget && (
-              <span className="text-[10px] font-bold text-rose-600 mt-1 block">
+              <span className="text-[11px] font-bold text-rose-600 mt-1 block">
                 {errors.budget}
               </span>
             )}
@@ -428,7 +428,7 @@ function DepartmentDetailModal({
           {/* Stat Grid */}
           <div className="grid grid-cols-3 gap-3">
             <div className="p-3 rounded-2xl border border-border bg-background text-center">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wide">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
                 Staff
               </p>
               <p className="text-lg font-extrabold text-foreground mt-1">
@@ -436,7 +436,7 @@ function DepartmentDetailModal({
               </p>
             </div>
             <div className="p-3 rounded-2xl border border-border bg-background text-center">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wide">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
                 Active
               </p>
               <p className="text-lg font-extrabold text-emerald-600 mt-1">
@@ -444,7 +444,7 @@ function DepartmentDetailModal({
               </p>
             </div>
             <div className="p-3 rounded-2xl border border-border bg-background text-center">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wide">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
                 On Leave
               </p>
               <p className="text-lg font-extrabold text-rose-500 mt-1">
@@ -456,7 +456,7 @@ function DepartmentDetailModal({
           {/* Budget Stat Grid */}
           <div className="grid grid-cols-3 gap-3">
             <div className="p-3 rounded-2xl border border-border bg-background text-center">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wide">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
                 Allocated
               </p>
               <p className="text-base font-extrabold text-foreground mt-1">
@@ -464,7 +464,7 @@ function DepartmentDetailModal({
               </p>
             </div>
             <div className="p-3 rounded-2xl border border-border bg-background text-center">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wide">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
                 Used
               </p>
               <p className="text-base font-extrabold text-[#F59E0B] mt-1">
@@ -472,7 +472,7 @@ function DepartmentDetailModal({
               </p>
             </div>
             <div className="p-3 rounded-2xl border border-border bg-background text-center">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wide">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
                 Remaining
               </p>
               <p className="text-base font-extrabold text-emerald-600 mt-1">
@@ -501,7 +501,7 @@ function DepartmentDetailModal({
             </div>
             <div className="flex gap-6 border-t border-border pt-3">
               <div>
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block">
+                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
                   Created Date
                 </span>
                 <span className="text-xs font-bold text-foreground">
@@ -509,7 +509,7 @@ function DepartmentDetailModal({
                 </span>
               </div>
               <div>
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block">
+                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
                   Last Updated
                 </span>
                 <span className="text-xs font-bold text-foreground">
@@ -538,13 +538,13 @@ function DepartmentDetailModal({
               ].map((emp, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between p-2 hover:bg-white dark:hover:bg-zinc-700/40 rounded-xl transition-colors"
+                  className="flex items-center justify-between p-2 hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-700/40 rounded-xl transition-colors"
                 >
                   <div>
                     <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
                       {emp.name}
                     </p>
-                    <p className="text-[10px] text-muted-foreground font-medium">
+                    <p className="text-[11px] text-muted-foreground font-medium">
                       {emp.role}
                     </p>
                   </div>
@@ -704,7 +704,7 @@ export function Departments() {
           return (
             <div
               key={dept.id}
-              className="bg-white dark:bg-zinc-900 rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-all relative flex flex-col justify-between group"
+              className="bg-white dark:bg-zinc-900 rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
             >
               {/* Status / Actions */}
               <div className="absolute top-4 right-4 flex items-center gap-2">
@@ -772,7 +772,7 @@ export function Departments() {
                     <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                       {dept.name}
                     </h3>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
                       {dept.code}
                     </p>
                   </div>
@@ -808,7 +808,7 @@ export function Departments() {
 
                 {/* Budget Progress */}
                 <div className="mb-5">
-                  <div className="flex items-center justify-between text-[10px] font-bold text-muted-foreground mb-1.5">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-muted-foreground mb-1.5">
                     <span>Budget Used</span>
                     <span className="font-black text-foreground">
                       {formatCurrency(dept.budgetUsed)} /{" "}
@@ -831,7 +831,7 @@ export function Departments() {
                   <span>{dept.head}</span>
                 </div>
 
-                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-[10px] font-bold">
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-[11px] font-bold">
                   <TrendingUp size={12} color="var(--primary)" />
                   <span color="var(--primary)">+{dept.growth}%</span>
                 </div>
@@ -1033,7 +1033,7 @@ export function Departments() {
               ].map((emp, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between p-3 bg-white dark:bg-zinc-800 rounded-2xl border border-border shadow-sm hover:shadow-md transition-all"
+                  className="flex items-center justify-between p-3 bg-white dark:bg-zinc-800 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-[#00B87C]/10 text-[#00B87C] flex items-center justify-center text-xs font-black">
@@ -1046,7 +1046,7 @@ export function Departments() {
                       <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
                         {emp.name}
                       </p>
-                      <p className="text-[10px] text-muted-foreground font-medium">
+                      <p className="text-[11px] text-muted-foreground font-medium">
                         {emp.role} • {emp.email}
                       </p>
                     </div>

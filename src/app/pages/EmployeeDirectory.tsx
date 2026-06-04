@@ -181,7 +181,7 @@ const Modal = ({
     <div className="fixed inset-0 z-[4000] flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="absolute inset-0 bg-slate-950/40" onClick={onClose} />
       <div
-        className={`relative bg-card w-full ${maxWidth} rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border flex flex-col max-h-[90vh]`}
+        className={`relative bg-card w-full ${maxWidth} rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border flex flex-col max-h-[90vh]`}
       >
         <div className="p-6 border-b border-border flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
@@ -214,7 +214,7 @@ const StatusBadge = ({ status }: { status: Colleague["status"] }) => {
   };
   return (
     <span
-      className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${styles[status]}`}
+      className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider border ${styles[status]}`}
     >
       {status}
     </span>
@@ -256,7 +256,7 @@ function ColleagueCard({
   return (
     <div
       onClick={onClick}
-      className="bg-card p-5 rounded-[24px] border border-border shadow-sm transition-all hover:shadow-md hover:-translate-y-1 cursor-pointer group flex flex-col items-center text-center h-full"
+      className="bg-card p-5 rounded-2xl border border-border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:-translate-y-1 cursor-pointer group flex flex-col items-center text-center h-full"
     >
       {/* Avatar */}
       <div className="relative mb-4">
@@ -295,7 +295,7 @@ function ColleagueCard({
       </div>
 
       <div className="flex flex-col items-center gap-2 mb-4">
-        <span className="px-2 py-0.5 rounded-full bg-secondary text-primary text-[10px] font-black uppercase tracking-wider">
+        <span className="px-2 py-0.5 rounded-full bg-secondary text-primary text-[11px] font-semibold uppercase tracking-wider">
           {colleague.department}
         </span>
         <StatusBadge status={colleague.status} />
@@ -626,7 +626,7 @@ export function EmployeeDirectory() {
       </div>
 
       {/* ─── Search + Filter Bar ──────────────────────────────────── */}
-      <div className="bg-card p-5 rounded-[24px] border border-border shadow-sm space-y-4">
+      <div className="bg-card p-5 rounded-2xl border border-border shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row items-center gap-4">
           <div className="relative flex-1 w-full">
             <Search
@@ -752,7 +752,7 @@ export function EmployeeDirectory() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-card border border-border rounded-[24px] overflow-hidden shadow-sm">
+                <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
                   <div className="overflow-x-auto custom-scrollbar">
                     <table className="w-full text-left border-collapse">
                       <thead>
@@ -823,7 +823,7 @@ export function EmployeeDirectory() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-card border border-border rounded-[24px] overflow-hidden shadow-sm">
+                <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
                   <div className="overflow-x-auto custom-scrollbar">
                     <table className="w-full text-left border-collapse">
                       <thead>
@@ -880,7 +880,7 @@ export function EmployeeDirectory() {
           <div className="space-y-6">
             <div className="flex flex-col items-center text-center pb-6 border-b border-border">
               <div className="relative mb-4">
-                <div className="w-24 h-24 rounded-[32px] bg-secondary flex items-center justify-center text-3xl font-black text-primary border-4 border-card shadow-xl overflow-hidden">
+                <div className="w-24 h-24 rounded-[32px] bg-secondary flex items-center justify-center text-[26px] font-bold text-primary border-4 border-card shadow-xl overflow-hidden">
                   {selectedColleague.avatar ? (
                     <img
                       src={selectedColleague.avatar}
@@ -979,7 +979,7 @@ export function EmployeeDirectory() {
                   setShowProfileModal(false);
                   handleOpenMessage(selectedColleague);
                 }}
-                className="flex-1 py-3.5 bg-primary text-white rounded-2xl font-black text-[13px] shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3.5 bg-primary text-white rounded-2xl font-black text-[13px] shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
               >
                 <MessageSquare size={18} /> Message
               </button>
@@ -1071,7 +1071,7 @@ export function EmployeeDirectory() {
                   );
                   setShowMessageModal(false);
                 }}
-                className="flex-1 py-3.5 bg-primary text-white rounded-xl font-black text-[13px] shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3.5 bg-primary text-white rounded-xl font-black text-[13px] shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
               >
                 Send Message
               </button>
@@ -1094,7 +1094,7 @@ export function EmployeeDirectory() {
                 To
               </label>
               <div className="w-full p-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-card flex items-center justify-center text-[10px] font-black text-primary border border-border">
+                <div className="w-6 h-6 rounded-full bg-card flex items-center justify-center text-[11px] font-semibold text-primary border border-border">
                   {targetColleague.initials}
                 </div>
                 {targetColleague.email}
@@ -1139,7 +1139,7 @@ export function EmployeeDirectory() {
                   );
                   setShowEmailModal(false);
                 }}
-                className="flex-1 py-3.5 bg-primary text-white rounded-xl font-black text-[13px] shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3.5 bg-primary text-white rounded-xl font-black text-[13px] shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
               >
                 Send Email
               </button>
@@ -1160,7 +1160,7 @@ export function EmployeeDirectory() {
           <div className="space-y-8 py-4">
             {/* Manager */}
             <div className="flex flex-col items-center">
-              <div className="p-4 bg-card border border-border rounded-[20px] shadow-sm flex items-center gap-3 min-w-[240px]">
+              <div className="p-4 bg-card border border-border rounded-2xl shadow-sm flex items-center gap-3 min-w-[240px]">
                 <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center font-black text-muted-foreground">
                   {selectedColleague.manager.split(" ").map(n => n[0]).join("")}
                 </div>
@@ -1175,7 +1175,7 @@ export function EmployeeDirectory() {
             {/* Selected Employee */}
             <div className="flex flex-col items-center relative">
               <div className="w-full h-px bg-border absolute top-0 left-0 right-0" />
-              <div className="p-4 bg-primary/5 border-2 border-primary rounded-[20px] shadow-lg flex items-center gap-3 min-w-[260px] relative z-10">
+              <div className="p-4 bg-primary/5 border-2 border-primary rounded-2xl shadow-lg flex items-center gap-3 min-w-[260px] relative z-10">
                 <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-black">
                   {selectedColleague.initials}
                 </div>
@@ -1191,17 +1191,17 @@ export function EmployeeDirectory() {
             <div className="grid grid-cols-2 gap-4">
               {filteredTeam.filter(c => c.id !== selectedColleague.id).slice(0, 2).map(peer => (
                 <div key={peer.id} className="p-3 bg-secondary border border-border rounded-xl flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-card flex items-center justify-center text-[10px] font-black text-muted-foreground">
+                  <div className="w-8 h-8 rounded-full bg-card flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
                     {peer.initials}
                   </div>
                   <div>
                     <p className="text-[12px] font-black text-foreground">{peer.name}</p>
-                    <p className="text-[10px] font-bold text-muted-foreground">{peer.designation}</p>
+                    <p className="text-[11px] font-bold text-muted-foreground">{peer.designation}</p>
                   </div>
                 </div>
               ))}
               <div className="p-3 bg-secondary border border-border rounded-xl flex items-center justify-center">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">+ {filteredTeam.length - 1} Team Members</p>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">+ {filteredTeam.length - 1} Team Members</p>
               </div>
             </div>
           </div>

@@ -21,9 +21,11 @@ import {
   Gauge,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { AnimatePresence, motion } from "framer-motion";
 
-type ExpenseStatus = "Approved" | "Pending L1" | "Pending L2" | "Rejected" | "Draft";
+/* ─────────────────────────────────────────────────────────────── */
+/* Types                                                           */
+/* ─────────────────────────────────────────────────────────────── */
+type ExpenseStatus = "Approved" | "Pending" | "Rejected" | "Draft";
 type ExpenseCategory =
   | "Travel"
   | "Food"
@@ -49,95 +51,113 @@ interface Expense {
   paymentMode: string;
 }
 
+/* ─────────────────────────────────────────────────────────────── */
+/* Static Data                                                     */
+/* ─────────────────────────────────────────────────────────────── */
 const MOCK_EXPENSES: Expense[] = [
   {
-    id: "EXP-0501",
-    title: "Client Dinner — Acme Corp",
-    vendor: "Taj Coromandel · 4 attendees",
-    category: "Food",
-    date: "May 8, 2026",
-    amount: 5400,
-    receiptStatus: "Attached",
-    status: "Pending L2",
-    description: "Business dinner with Acme Corp leadership team.",
-    project: "Sales & Strategy",
-    paymentMode: "Personal Card",
-  },
-  {
-    id: "EXP-0502",
-    title: "AWS Advanced Workshop Certification",
-    vendor: "Amazon Web Services",
-    category: "Training",
-    date: "May 5, 2026",
-    amount: 12000,
-    receiptStatus: "Attached",
-    status: "Approved",
-    description: "Advanced Cloud Practitioner Training for Engineering division.",
-    project: "NexusHR Infrastructure",
-    paymentMode: "Company Card",
-  },
-  {
-    id: "EXP-0503",
-    title: "Flight to Mumbai — Leadership Summit",
-    vendor: "Air India · Booking #AI8839",
+    id: "EXP-0421",
+    title: "Flight to Delhi — Client Meeting",
+    vendor: "Indigo Airlines · Booking #IND2891",
     category: "Travel",
-    date: "Apr 28, 2026",
-    amount: 6800,
+    date: "Apr 3, 2026",
+    amount: 4200,
     receiptStatus: "Attached",
     status: "Approved",
-    description: "Flight to attend the Q1 Leadership Summit.",
-    project: "Operations",
+    description:
+      "Business trip for client acquisition meeting at Acme Corp HQ.",
+    project: "Sales — North Region",
     paymentMode: "Personal Card",
   },
   {
-    id: "EXP-0504",
-    title: "Home Office Keyboard & Trackpad",
-    vendor: "Apple India · Order #APL9942",
-    category: "Equipment",
-    date: "Apr 25, 2026",
-    amount: 14500,
-    receiptStatus: "Attached",
-    status: "Pending L1",
-    description: "Replacement peripherals for active remote work setup.",
-    project: "NexusHR Development",
-    paymentMode: "Personal Card",
-  },
-  {
-    id: "EXP-0505",
-    title: "Team Retrospective Lunch",
-    vendor: "Sigree Chennai · 6 attendees",
+    id: "EXP-0422",
+    title: "Team Lunch — Sprint Retrospective",
+    vendor: "ITC Hotel, Chennai · 8 attendees",
     category: "Food",
-    date: "Apr 15, 2026",
-    amount: 3200,
+    date: "Apr 5, 2026",
+    amount: 2150,
     receiptStatus: "Attached",
-    status: "Approved",
-    description: "Monthly sprint retrospective lunch with core reports.",
-    project: "NexusHR Development",
+    status: "Pending",
+    description: "Quarterly team bonding and retrospective session.",
+    project: "NexusHR Internal",
     paymentMode: "Cash",
   },
   {
-    id: "EXP-0506",
-    title: "Cab rides — Weekly Commute",
-    vendor: "Uber · Monthly Statement",
-    category: "Transport",
-    date: "Apr 12, 2026",
-    amount: 2400,
-    receiptStatus: "Missing",
-    status: "Rejected",
-    description: "Weekly commute allowance for office visit weeks.",
+    id: "EXP-0423",
+    title: "USB-C Hub & Keyboard",
+    vendor: "Amazon India · Order #AMZ9942",
+    category: "Equipment",
+    date: "Apr 4, 2026",
+    amount: 1400,
+    receiptStatus: "Attached",
+    status: "Pending",
+    description: "Peripherals required for the new development laptop.",
     project: "Operations",
     paymentMode: "Personal Card",
   },
   {
-    id: "EXP-0507",
-    title: "Udemy Leadership Certification Course",
-    vendor: "Udemy · Draft",
+    id: "EXP-0424",
+    title: "Hotel Stay — Bengaluru Conference",
+    vendor: "Marriott Bengaluru · 2 nights",
+    category: "Accommodation",
+    date: "Mar 28, 2026",
+    amount: 7800,
+    receiptStatus: "Attached",
+    status: "Approved",
+    description: "Accommodation for the annual developer conference.",
+    project: "R&D",
+    paymentMode: "Company Card",
+  },
+  {
+    id: "EXP-0425",
+    title: "Cab rides — Client visits (Mar)",
+    vendor: "Uber · 12 rides",
+    category: "Transport",
+    date: "Mar 31, 2026",
+    amount: 1850,
+    receiptStatus: "Missing",
+    status: "Rejected",
+    description: "Multiple cab rides for client visits throughout March.",
+    project: "Client — Acme Corp",
+    paymentMode: "Personal Card",
+  },
+  {
+    id: "EXP-0426",
+    title: "Udemy Course — Advanced React",
+    vendor: "Draft · Not yet submitted",
     category: "Training",
     date: "—",
-    amount: 3899,
+    amount: 1999,
     receiptStatus: "Pending",
     status: "Draft",
-    description: "Continuous professional development for managerial effectiveness.",
+    description:
+      "Professional development course for frontend engineering team.",
+    project: "NexusHR Internal",
+    paymentMode: "Online Transfer",
+  },
+  {
+    id: "EXP-0427",
+    title: "Medical Consultation + Medicines",
+    vendor: "Apollo Hospital, Chennai",
+    category: "Medical",
+    date: "Mar 20, 2026",
+    amount: 850,
+    receiptStatus: "Attached",
+    status: "Approved",
+    description: "Annual health checkup reimbursement.",
+    project: "Operations",
+    paymentMode: "Cash",
+  },
+  {
+    id: "EXP-0428",
+    title: "Internet Reimbursement — March",
+    vendor: "Jio Fiber · Monthly plan",
+    category: "Communication",
+    date: "Apr 1, 2026",
+    amount: 999,
+    receiptStatus: "Attached",
+    status: "Pending",
+    description: "Monthly WFH internet allowance.",
     project: "Operations",
     paymentMode: "Online Transfer",
   },
@@ -168,8 +188,8 @@ const CATEGORY_CONFIG: Record<
   Accommodation: {
     icon: Bed,
     bg: "bg-emerald-500/10",
-    color: "text-[#00B87C]",
-    chip: "bg-emerald-500/10 text-[#00B87C] border-emerald-500/20",
+    color: "text-emerald-500",
+    chip: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
   },
   Transport: {
     icon: Car,
@@ -203,18 +223,20 @@ const CATEGORY_CONFIG: Record<
   },
 };
 
+/* ─────────────────────────────────────────────────────────────── */
+/* Components                                                      */
+/* ─────────────────────────────────────────────────────────────── */
+
 function StatusBadge({ status }: { status: ExpenseStatus }) {
   const cfg: Record<ExpenseStatus, string> = {
-    Approved: "bg-emerald-500/10 text-[#00B87C] border-emerald-500/20",
-    "Pending L1": "bg-amber-500/10 text-amber-500 border-amber-500/20",
-    "Pending L2": "bg-sky-500/10 text-sky-500 border-sky-500/20",
+    Approved: "bg-emerald-500/10 text-primary border-primary/20",
+    Pending: "bg-amber-500/10 text-amber-500 border-amber-500/20",
     Rejected: "bg-rose-500/10 text-rose-500 border-rose-500/20",
     Draft: "bg-secondary text-muted-foreground border-border",
   };
   const icons: Record<ExpenseStatus, React.ElementType> = {
     Approved: CheckCircle2,
-    "Pending L1": Clock,
-    "Pending L2": Clock,
+    Pending: Clock,
     Rejected: X,
     Draft: Edit3,
   };
@@ -222,7 +244,7 @@ function StatusBadge({ status }: { status: ExpenseStatus }) {
 
   return (
     <span
-      className={`px-2.5 py-1 rounded-full text-[10px] font-black border flex items-center gap-1.5 w-fit uppercase tracking-wider ${cfg[status]}`}
+      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border flex items-center gap-1.5 w-fit uppercase tracking-wider ${cfg[status]}`}
     >
       <Icon size={12} />
       {status}
@@ -237,18 +259,18 @@ function ReceiptBadge({
 }) {
   if (status === "Attached")
     return (
-      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/10 text-[#00B87C] border border-emerald-500/20 flex items-center gap-1.5 uppercase tracking-wider">
+      <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-primary border border-primary/20 flex items-center gap-1.5 uppercase tracking-wider">
         <FileText size={12} /> Attached
       </span>
     );
   if (status === "Missing")
     return (
-      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center gap-1.5 uppercase tracking-wider">
+      <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center gap-1.5 uppercase tracking-wider">
         <X size={12} /> Missing
       </span>
     );
   return (
-    <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1.5 uppercase tracking-wider">
+    <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1.5 uppercase tracking-wider">
       <UploadCloud size={12} /> Upload
     </span>
   );
@@ -278,7 +300,7 @@ function SummaryCard({
   progress,
 }: SummaryCardProps) {
   return (
-    <div className="bg-card p-5 rounded-[24px] border border-border shadow-sm relative group hover:shadow-md transition-all">
+    <div className="bg-card p-5 rounded-2xl border border-border shadow-sm relative group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all">
       <div className="flex items-start justify-between mb-4">
         <div
           className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center ${color}`}
@@ -296,7 +318,7 @@ function SummaryCard({
           </svg>
         </div>
       </div>
-      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
         {label}
       </p>
       <div className="flex items-center justify-between">
@@ -307,7 +329,7 @@ function SummaryCard({
           <span
             className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${
               chipColor === "green"
-                ? "bg-emerald-500/10 text-[#00B87C] border-emerald-500/20"
+                ? "bg-emerald-500/10 text-primary border-primary/20"
                 : chipColor === "amber"
                   ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
                   : chipColor === "purple"
@@ -336,6 +358,27 @@ function SummaryCard({
   );
 }
 
+function SectionHeader({ title, count }: { title: string; count?: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        <div className="w-1 h-4 bg-primary rounded-full" />
+        <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[1.5px]">
+          {title}
+        </h3>
+      </div>
+      {count && (
+        <span className="text-[11px] font-bold text-muted-foreground/60">
+          {count}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* Main Page Component                                             */
+/* ─────────────────────────────────────────────────────────────── */
 const MONTHS = [
   "All Months",
   "January",
@@ -343,8 +386,14 @@ const MONTHS = [
   "March",
   "April",
   "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
-
 const CATEGORIES_ALL = [
   "All Categories",
   "Travel",
@@ -357,9 +406,7 @@ const CATEGORIES_ALL = [
   "Communication",
   "Other",
 ];
-
-const STATUSES_ALL = ["All Status", "Approved", "Pending L1", "Pending L2", "Rejected", "Draft"];
-
+const STATUSES_ALL = ["All Status", "Approved", "Pending", "Rejected", "Draft"];
 const MONTH_DATE_MAP: Record<string, string> = {
   March: "Mar",
   April: "Apr",
@@ -378,16 +425,8 @@ export function ManagerPersonalExpenses() {
   const [showCatDrop, setShowCatDrop] = useState(false);
   const [showMonthDrop, setShowMonthDrop] = useState(false);
   const [showStatusDrop, setShowStatusDrop] = useState(false);
-  
-  const [newExpense, setNewExpense] = useState({
-    title: "",
-    vendor: "",
-    amount: "",
-    category: "Travel" as ExpenseCategory,
-    description: "",
-    project: "",
-    paymentMode: "Personal Card",
-  });
+  const [newExpenseDesc, setNewExpenseDesc] = useState("");
+  const [newExpenseCat, setNewExpenseCat] = useState("Travel");
 
   const handleExport = () => {
     const rows = filteredExpenses.map((e) =>
@@ -409,7 +448,7 @@ export function ManagerPersonalExpenses() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "manager_expenses_export.csv";
+    a.download = "expenses_export.csv";
     a.click();
     URL.revokeObjectURL(url);
     showToast("Exported!", "success", "Expense report downloaded as CSV.");
@@ -417,13 +456,7 @@ export function ManagerPersonalExpenses() {
 
   const filteredExpenses = useMemo(() => {
     return MOCK_EXPENSES.filter((e) => {
-      const tabMatch =
-        activeTab === "All"
-          ? true
-          : activeTab === "Pending"
-            ? e.status.includes("Pending")
-            : e.status === activeTab;
-
+      const tabMatch = activeTab === "All" || e.status === activeTab;
       const catMatch =
         selectedCategory === "All Categories" ||
         e.category === selectedCategory;
@@ -438,25 +471,19 @@ export function ManagerPersonalExpenses() {
     });
   }, [activeTab, selectedCategory, selectedMonth, selectedStatus]);
 
-  const handleAddSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    showToast("Submitted!", "success", "Your expense claim has been successfully submitted.");
-    setShowAddModal(false);
-  };
-
   return (
-    <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent">
+    <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
       {/* ─── Page Header ─────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-emerald-500/10 pb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 flex-shrink-0">
-            <Receipt size={24} className="text-[#00B87C]" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-1">
+        <div className="flex items-center gap-5">
+          <div className="w-[52px] h-[52px] rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 shadow-sm border border-amber-500/20">
+            <Receipt size={28} />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground leading-none mb-1">
+            <h1 className="text-[26px] font-black text-foreground leading-tight tracking-tight">
               My Expenses
             </h1>
-            <p className="text-[13px] font-bold text-muted-foreground uppercase tracking-widest">
+            <p className="text-[13px] font-bold text-muted-foreground">
               Manage and track your reimbursement claims
             </p>
           </div>
@@ -470,9 +497,9 @@ export function ManagerPersonalExpenses() {
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-[#00B87C] text-white rounded-xl font-black hover:opacity-95 transition-all text-[13px] shadow-lg shadow-emerald-500/20"
+            className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-black hover:opacity-95 transition-all text-[13px] shadow-lg shadow-[#00B87C]/20"
           >
-            <Plus size={18} /> New Expense
+            <Receipt size={18} /> + New Expense
           </button>
         </div>
       </div>
@@ -480,15 +507,18 @@ export function ManagerPersonalExpenses() {
       {/* ─── Info Bar ────────────────────────────────────────────── */}
       <div className="bg-card p-4 px-6 rounded-2xl border border-border shadow-sm flex flex-wrap items-center gap-8">
         <div className="flex items-center gap-2 text-[12px] font-bold text-foreground">
-          <span className="w-2 h-2 rounded-full bg-[#00B87C]" /> ₹8,200 approved — added to next payroll
+          <span className="w-2 h-2 rounded-full bg-primary" /> ₹4,200 approved —
+          added to next payroll
         </div>
         <div className="hidden md:block w-[1px] h-4 bg-border" />
         <div className="flex items-center gap-2 text-[12px] font-bold text-foreground">
-          <span className="w-2 h-2 rounded-full bg-amber-500" /> 2 claims pending approval
+          <span className="w-2 h-2 rounded-full bg-amber-500" /> 2 claims
+          pending approval
         </div>
         <div className="hidden md:block w-[1px] h-4 bg-border" />
         <div className="flex items-center gap-2 text-[12px] font-bold text-foreground">
-          <span className="w-2 h-2 rounded-full bg-purple-500" /> Monthly limit: ₹30,000 | Used: ₹12,400 (41%)
+          <span className="w-2 h-2 rounded-full bg-sky-500" /> Monthly limit:
+          ₹15,000 | Used: ₹8,750 (58%)
         </div>
       </div>
 
@@ -499,19 +529,19 @@ export function ManagerPersonalExpenses() {
           color="text-amber-500"
           bg="bg-amber-500/10"
           label="CLAIMED THIS MONTH"
-          value="₹12,400"
-          subValue="3 expense claims"
-          chip="↑ ₹3,650 vs last month"
+          value="₹8,750"
+          subValue="4 expense claims"
+          chip="↑ ₹1,200 vs last month"
           chipColor="amber"
         />
         <SummaryCard
           icon={CheckCircle2}
-          color="text-[#00B87C]"
+          color="text-primary"
           bg="bg-emerald-500/10"
           label="APPROVED"
-          value="₹8,200"
+          value="₹4,200"
           subValue="2 claims approved"
-          chip="Credited May 1"
+          chip="Credited Apr 1"
           chipColor="green"
         />
         <SummaryCard
@@ -519,9 +549,9 @@ export function ManagerPersonalExpenses() {
           color="text-sky-500"
           bg="bg-sky-500/10"
           label="PENDING REVIEW"
-          value="₹4,200"
-          subValue="1 claim in final review"
-          chip="L2 Finance status"
+          value="₹3,550"
+          subValue="2 claims in review"
+          chip="Avg 2 days response"
           chipColor="sky"
         />
         <SummaryCard
@@ -529,11 +559,11 @@ export function ManagerPersonalExpenses() {
           color="text-purple-500"
           bg="bg-purple-500/10"
           label="MONTHLY LIMIT"
-          value="₹30,000"
-          subValue="₹17,600 remaining"
-          progress={41}
-          chip="41% used"
-          chipColor="purple"
+          value="₹15,000"
+          subValue="₹6,250 remaining"
+          progress={58}
+          chip="58% used"
+          chipColor="amber"
         />
       </div>
 
@@ -541,19 +571,11 @@ export function ManagerPersonalExpenses() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
         {/* Left Column — Table */}
         <div className="space-y-6">
-          <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden flex flex-col">
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
             {/* Table Header Row */}
-            <div className="p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-secondary/10">
+            <div className="p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <SectionHeader title="EXPENSE CLAIMS" count="8 total" />
               <div className="flex items-center gap-2">
-                <div className="w-1 h-4 bg-[#00B87C] rounded-full" />
-                <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[1.5px]">
-                  EXPENSE CLAIMS
-                </h3>
-                <span className="text-[11px] font-bold text-muted-foreground/60 ml-1">
-                  {filteredExpenses.length} total
-                </span>
-              </div>
-              <div className="flex items-center gap-2 flex-wrap">
                 {/* Category Dropdown */}
                 <div className="relative">
                   <div
@@ -568,7 +590,7 @@ export function ManagerPersonalExpenses() {
                     <ChevronDown size={14} className="text-muted-foreground" />
                   </div>
                   {showCatDrop && (
-                    <div className="absolute top-full mt-1 right-0 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden min-w-[160px]">
+                    <div className="absolute top-full mt-1 left-0 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden min-w-[160px]">
                       {CATEGORIES_ALL.map((c) => (
                         <button
                           key={c}
@@ -576,7 +598,7 @@ export function ManagerPersonalExpenses() {
                             setSelectedCategory(c);
                             setShowCatDrop(false);
                           }}
-                          className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedCategory === c ? "text-[#00B87C] font-black" : "text-foreground"}`}
+                          className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedCategory === c ? "text-primary font-black" : "text-foreground"}`}
                         >
                           {c}
                         </button>
@@ -598,7 +620,7 @@ export function ManagerPersonalExpenses() {
                     <ChevronDown size={14} className="text-muted-foreground" />
                   </div>
                   {showMonthDrop && (
-                    <div className="absolute top-full mt-1 right-0 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden min-w-[160px] max-h-[220px] overflow-y-auto">
+                    <div className="absolute top-full mt-1 left-0 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden min-w-[160px] max-h-[220px] overflow-y-auto">
                       {MONTHS.map((m) => (
                         <button
                           key={m}
@@ -606,7 +628,7 @@ export function ManagerPersonalExpenses() {
                             setSelectedMonth(m);
                             setShowMonthDrop(false);
                           }}
-                          className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedMonth === m ? "text-[#00B87C] font-black" : "text-foreground"}`}
+                          className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedMonth === m ? "text-primary font-black" : "text-foreground"}`}
                         >
                           {m}
                         </button>
@@ -628,7 +650,7 @@ export function ManagerPersonalExpenses() {
                     <ChevronDown size={14} className="text-muted-foreground" />
                   </div>
                   {showStatusDrop && (
-                    <div className="absolute top-full mt-1 right-0 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden min-w-[140px]">
+                    <div className="absolute top-full mt-1 left-0 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden min-w-[140px]">
                       {STATUSES_ALL.map((s) => (
                         <button
                           key={s}
@@ -636,7 +658,7 @@ export function ManagerPersonalExpenses() {
                             setSelectedStatus(s);
                             setShowStatusDrop(false);
                           }}
-                          className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedStatus === s ? "text-[#00B87C] font-black" : "text-foreground"}`}
+                          className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedStatus === s ? "text-primary font-black" : "text-foreground"}`}
                         >
                           {s}
                         </button>
@@ -659,13 +681,13 @@ export function ManagerPersonalExpenses() {
                   }
                   className={`py-4 text-[13px] font-black relative transition-all ${
                     activeTab === tab
-                      ? "text-[#00B87C]"
+                      ? "text-primary"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {tab}
                   {activeTab === tab && (
-                    <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#00B87C] rounded-t-full" />
+                    <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary rounded-t-full" />
                   )}
                 </button>
               ))}
@@ -676,22 +698,22 @@ export function ManagerPersonalExpenses() {
               <table className="w-full text-left min-w-[750px] table-fixed">
                 <thead>
                   <tr className="bg-secondary/50 border-b border-border">
-                    <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest w-[30%]">
+                    <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest w-[30%]">
                       EXPENSE
                     </th>
-                    <th className="px-4 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center w-[15%]">
+                    <th className="px-4 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center w-[15%]">
                       CATEGORY
                     </th>
-                    <th className="px-4 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center w-[12%]">
+                    <th className="px-4 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center w-[12%]">
                       DATE
                     </th>
-                    <th className="px-4 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center w-[15%]">
+                    <th className="px-4 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center w-[15%]">
                       AMOUNT
                     </th>
-                    <th className="px-4 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center w-[13%]">
+                    <th className="px-4 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center w-[13%]">
                       RECEIPT
                     </th>
-                    <th className="px-4 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center w-[15%]">
+                    <th className="px-4 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center w-[15%]">
                       STATUS
                     </th>
                   </tr>
@@ -714,7 +736,7 @@ export function ManagerPersonalExpenses() {
                               <Icon size={16} />
                             </div>
                             <div className="min-w-0">
-                              <p className="text-[13px] font-black text-foreground group-hover:text-[#00B87C] transition-colors leading-tight truncate">
+                              <p className="text-[13px] font-black text-foreground group-hover:text-primary transition-colors leading-tight truncate">
                                 {expense.title}
                               </p>
                               <p className="text-[11px] font-bold text-muted-foreground mt-0.5 truncate">
@@ -762,13 +784,14 @@ export function ManagerPersonalExpenses() {
             {/* Pagination */}
             <div className="p-4 px-6 border-t border-border flex items-center justify-between bg-secondary/10">
               <p className="text-[12px] font-bold text-muted-foreground">
-                Showing 1–{filteredExpenses.length} of {filteredExpenses.length} claims
+                Showing 1–{filteredExpenses.length} of {filteredExpenses.length}{" "}
+                claims
               </p>
               <div className="flex items-center gap-2">
                 <button className="px-4 py-2 bg-card border border-border rounded-xl text-[12px] font-black text-muted-foreground hover:bg-secondary transition-all">
                   {"<"} Prev
                 </button>
-                <div className="w-8 h-8 flex items-center justify-center bg-[#00B87C] text-white rounded-lg font-black text-[12px]">
+                <div className="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-lg font-black text-[12px]">
                   1
                 </div>
                 <button className="px-4 py-2 bg-card border border-border rounded-xl text-[12px] font-black text-muted-foreground hover:bg-secondary transition-all">
@@ -779,395 +802,439 @@ export function ManagerPersonalExpenses() {
           </div>
         </div>
 
-        {/* Right Column — Budget Tracker */}
+        {/* Right Column — Widgets */}
         <div className="space-y-6">
-          <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col gap-5">
-            <h4 className="text-[12px] font-black text-foreground uppercase tracking-widest">
-              Budget Breakdown
-            </h4>
-            
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between text-[12px] font-black text-foreground mb-1.5">
-                  <span>Travel & Lodging</span>
-                  <span>₹6,800 / ₹15,000</span>
+          {/* Widget 1 — Budget Tracker */}
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+            <SectionHeader title="BUDGET TRACKER" />
+            <p className="text-[11px] font-bold text-muted-foreground mt-1 mb-6 uppercase tracking-wider">
+              April 2026 · ₹15,000 LIMIT
+            </p>
+            <div className="space-y-5">
+              {[
+                {
+                  label: "Travel",
+                  val: 4200,
+                  limit: 15000,
+                  color: "text-sky-500",
+                  bar: "bg-sky-500",
+                },
+                {
+                  label: "Food",
+                  val: 2150,
+                  limit: 15000,
+                  color: "text-amber-500",
+                  bar: "bg-amber-500",
+                },
+                {
+                  label: "Equipment",
+                  val: 1400,
+                  limit: 15000,
+                  color: "text-purple-500",
+                  bar: "bg-purple-500",
+                },
+                {
+                  label: "Transport",
+                  val: 1000,
+                  limit: 15000,
+                  color: "text-rose-500",
+                  bar: "bg-rose-500",
+                },
+              ].map((item) => (
+                <div key={item.label} className="space-y-2">
+                  <div className="flex items-center justify-between text-[12px] font-black">
+                    <span className="text-muted-foreground">{item.label}</span>
+                    <span className={item.color}>
+                      ₹{item.val.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${item.bar}`}
+                      style={{ width: `${(item.val / item.limit) * 100}%` }}
+                    />
+                  </div>
+                  <p className="text-[11px] font-bold text-muted-foreground/60 text-right uppercase tracking-tighter">
+                    ₹{(item.limit - item.val).toLocaleString()} remaining
+                  </p>
                 </div>
-                <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-sky-500" style={{ width: "45%" }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between text-[12px] font-black text-foreground mb-1.5">
-                  <span>Food & Client Meals</span>
-                  <span>₹5,400 / ₹8,000</span>
-                </div>
-                <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-amber-500" style={{ width: "67%" }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between text-[12px] font-black text-foreground mb-1.5">
-                  <span>Equipment & Tech</span>
-                  <span>₹0 / ₹5,000</span>
-                </div>
-                <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-500" style={{ width: "0%" }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between text-[12px] font-black text-foreground mb-1.5">
-                  <span>Other / Miscellaneous</span>
-                  <span>₹200 / ₹2,000</span>
-                </div>
-                <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-slate-500" style={{ width: "10%" }} />
-                </div>
-              </div>
+              ))}
             </div>
+            <div className="mt-8 pt-6 border-t border-border">
+              <div className="flex items-center justify-between mb-3 text-[13px] font-semibold uppercase tracking-wider">
+                <span className="text-foreground">Used: ₹8,750</span>
+                <span className="text-primary">Left: ₹6,250</span>
+              </div>
+              <div className="h-2 w-full bg-secondary rounded-full overflow-hidden mb-2">
+                <div
+                  className="h-full bg-amber-500 rounded-full"
+                  style={{ width: "58%" }}
+                />
+              </div>
+              <p className="text-[11px] font-black text-amber-500 text-right">
+                58% OF BUDGET EXPENDED
+              </p>
+            </div>
+          </div>
 
-            <div className="bg-secondary/40 border border-border p-4 rounded-2xl text-[12px] font-bold text-muted-foreground leading-relaxed">
-              ⚠️ Expense submissions for the current month close on <strong className="text-foreground">May 25</strong>. Ensure all valid receipts are attached before submitting.
+          {/* Widget 2 — Quick Submit */}
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+            <SectionHeader title="QUICK SUBMIT" />
+            <div className="grid grid-cols-3 gap-2 mt-5">
+              {[
+                {
+                  label: "Travel",
+                  icon: Plane,
+                  color: "text-sky-500",
+                  bg: "bg-sky-500/10",
+                },
+                {
+                  label: "Food",
+                  icon: Utensils,
+                  color: "text-amber-500",
+                  bg: "bg-amber-500/10",
+                },
+                {
+                  label: "Equip.",
+                  icon: Monitor,
+                  color: "text-purple-500",
+                  bg: "bg-purple-500/10",
+                },
+                {
+                  label: "Stay",
+                  icon: Bed,
+                  color: "text-emerald-500",
+                  bg: "bg-emerald-500/10",
+                },
+                {
+                  label: "Transp.",
+                  icon: Car,
+                  color: "text-rose-500",
+                  bg: "bg-rose-500/10",
+                },
+                {
+                  label: "Other",
+                  icon: Plus,
+                  color: "text-muted-foreground",
+                  bg: "bg-secondary",
+                },
+              ].map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => setShowAddModal(true)}
+                  className="flex flex-col items-center justify-center p-2 h-[72px] bg-secondary/50 border border-border rounded-xl hover:border-primary hover:bg-primary/5 transition-all group"
+                >
+                  <item.icon
+                    size={16}
+                    className={`${item.color} mb-1.5 group-hover:scale-110 transition-transform`}
+                  />
+                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-tighter">
+                    {item.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Widget 3 — Timeline */}
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+            <SectionHeader title="TIMELINE" />
+            <div className="mt-6 space-y-6">
+              {[
+                { label: "Submitted", sub: "Apr 5, 2026", status: "completed" },
+                {
+                  label: "Approved",
+                  sub: "Apr 6, 2026 · Rajan K.",
+                  status: "completed",
+                },
+                { label: "Finance", sub: "In Progress", status: "active" },
+                { label: "Payroll", sub: "Est. Apr 25", status: "pending" },
+              ].map((step, i, arr) => (
+                <div key={step.label} className="relative flex gap-4">
+                  {i !== arr.length - 1 && (
+                    <div
+                      className={`absolute left-[9px] top-5 w-[2px] h-8 ${step.status === "completed" ? "bg-primary" : "bg-border"}`}
+                    />
+                  )}
+                  <div
+                    className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 z-10 border ${
+                      step.status === "completed"
+                        ? "bg-primary text-white border-primary"
+                        : step.status === "active"
+                          ? "border-sky-500 bg-sky-500/10 animate-pulse"
+                          : "border-border bg-secondary"
+                    }`}
+                  >
+                    {step.status === "completed" && <CheckCircle2 size={12} />}
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-black text-foreground leading-none">
+                      {step.label}
+                    </p>
+                    <p className="text-[11px] font-bold text-muted-foreground mt-1.5">
+                      {step.sub}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* ─── Detail Modal ────────────────────────────────────────── */}
-      <AnimatePresence>
-        {selectedExpense && (
-          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedExpense(null)}
-              className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative bg-card w-full max-w-[500px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col"
-            >
-              <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/20">
-                    <Receipt size={22} />
-                  </div>
-                  <div>
-                    <h3 className="text-[18px] font-black text-foreground leading-none mb-1">
-                      {selectedExpense.id}
-                    </h3>
-                    <p className="text-[12px] font-bold text-muted-foreground">
-                      Expense Claim Details
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setSelectedExpense(null)}
-                  className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
+      {/* ─────────────────────────────────────────────────────────────── */
+      /* MODALS                                                          */
+      /* ─────────────────────────────────────────────────────────────── */}
 
-              <div className="p-6 space-y-6">
+      {/* 1. New Expense Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div
+            className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
+            onClick={() => setShowAddModal(false)}
+          />
+          <div className="relative bg-card w-full max-w-[520px] rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-border">
+            <div className="p-6 border-b border-border flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
+                  <Receipt size={22} />
+                </div>
                 <div>
-                  <h4 className="text-[15px] font-black text-foreground mb-1 leading-tight">
-                    {selectedExpense.title}
-                  </h4>
-                  <p className="text-[12px] font-bold text-muted-foreground">
-                    {selectedExpense.vendor}
+                  <h3 className="text-[18px] font-black text-foreground">
+                    New Expense Claim
+                  </h3>
+                  <p className="text-[13px] font-bold text-muted-foreground">
+                    Complete the details below
                   </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="p-2 hover:bg-secondary rounded-full text-muted-foreground transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-secondary/10">
+              <div className="space-y-4">
+                <SectionHeader title="EXPENSE DETAILS" />
+
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                    CATEGORY
+                  </label>
+                  <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    {[
+                      "Travel",
+                      "Food",
+                      "Equipment",
+                      "Stay",
+                      "Medical",
+                      "Training",
+                      "Other",
+                    ].map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setNewExpenseCat(cat)}
+                        className={`px-4 py-2 rounded-xl text-[11px] font-black whitespace-nowrap transition-all border ${
+                          newExpenseCat === cat
+                            ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
+                            : "bg-card border-border text-foreground hover:border-primary/50"
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-secondary/40 border border-border p-3.5 rounded-2xl">
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1">
-                      Category
-                    </span>
-                    <span className="text-[13px] font-black text-foreground uppercase">
-                      {selectedExpense.category}
-                    </span>
-                  </div>
-                  <div className="bg-secondary/40 border border-border p-3.5 rounded-2xl">
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1">
-                      Amount
-                    </span>
-                    <span className="text-[13px] font-black text-foreground">
-                      ₹{selectedExpense.amount.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="bg-secondary/40 border border-border p-3.5 rounded-2xl">
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1">
-                      Date
-                    </span>
-                    <span className="text-[13px] font-black text-foreground">
-                      {selectedExpense.date}
-                    </span>
-                  </div>
-                  <div className="bg-secondary/40 border border-border p-3.5 rounded-2xl">
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1">
-                      Status
-                    </span>
-                    <StatusBadge status={selectedExpense.status} />
-                  </div>
-                </div>
-
-                <div className="bg-secondary/30 p-4 rounded-2xl border border-border space-y-2.5">
-                  <div className="flex justify-between text-[12px] font-bold text-muted-foreground">
-                    <span>Project:</span>
-                    <span className="text-foreground font-black">{selectedExpense.project}</span>
-                  </div>
-                  <div className="flex justify-between text-[12px] font-bold text-muted-foreground">
-                    <span>Payment Mode:</span>
-                    <span className="text-foreground font-black">{selectedExpense.paymentMode}</span>
-                  </div>
-                  <div className="flex justify-between text-[12px] font-bold text-muted-foreground">
-                    <span>Receipt:</span>
-                    <ReceiptBadge status={selectedExpense.receiptStatus} />
-                  </div>
-                </div>
-
-                {selectedExpense.description && (
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
-                      Description
-                    </label>
-                    <p className="text-[13px] font-bold text-foreground leading-relaxed bg-secondary/20 border border-border p-3.5 rounded-2xl">
-                      {selectedExpense.description}
-                    </p>
-                  </div>
-                )}
-
-                <div className="flex gap-4 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedExpense(null)}
-                    className="flex-1 px-6 py-3.5 border border-border rounded-xl text-[13px] font-black text-muted-foreground hover:bg-secondary transition-all"
-                  >
-                    Close Details
-                  </button>
-                  {selectedExpense.receiptStatus === "Attached" && (
-                    <button
-                      onClick={() => {
-                        showToast("Downloading", "info", "Downloading expense receipt.");
-                        setSelectedExpense(null);
-                      }}
-                      className="flex-1 px-6 py-3.5 bg-[#00B87C] text-white rounded-xl font-black text-[13px] shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
-                    >
-                      <Download size={16} /> Receipt
-                    </button>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* ─── Add Expense Modal ───────────────────────────────────── */}
-      <AnimatePresence>
-        {showAddModal && (
-          <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowAddModal(false)}
-              className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative bg-card w-full max-w-[500px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col"
-            >
-              <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/20">
-                    <Plus size={22} />
-                  </div>
-                  <div>
-                    <h3 className="text-[18px] font-black text-foreground">
-                      New Expense Claim
-                    </h3>
-                    <p className="text-[12px] font-bold text-muted-foreground">
-                      Submit reimbursement requests
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowAddModal(false)}
-                  className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <form onSubmit={handleAddSubmit} className="p-6 space-y-5">
-                <div className="space-y-4 max-h-[420px] overflow-y-auto pr-1">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        CATEGORY
-                      </label>
-                      <select
-                        required
-                        value={newExpense.category}
-                        onChange={(e) =>
-                          setNewExpense({ ...newExpense, category: e.target.value as ExpenseCategory })
-                        }
-                        className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all appearance-none"
-                      >
-                        {CATEGORIES_ALL.filter(c => c !== "All Categories").map((t) => (
-                          <option key={t} value={t}>
-                            {t}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        AMOUNT (₹)
-                      </label>
-                      <input
-                        required
-                        type="number"
-                        placeholder="e.g. 1500"
-                        value={newExpense.amount}
-                        onChange={(e) =>
-                          setNewExpense({ ...newExpense, amount: e.target.value })
-                        }
-                        className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       TITLE
                     </label>
                     <input
-                      required
                       type="text"
-                      placeholder="e.g. Flight to Delhi — Client Meeting"
-                      value={newExpense.title}
-                      onChange={(e) =>
-                        setNewExpense({ ...newExpense, title: e.target.value })
-                      }
-                      className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
+                      placeholder="e.g. Flight to Delhi"
+                      className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
                     />
                   </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                      VENDOR & DETAILS
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                      AMOUNT (₹)
                     </label>
                     <input
-                      required
-                      type="text"
-                      placeholder="e.g. Air India · Booking #AI8839"
-                      value={newExpense.vendor}
-                      onChange={(e) =>
-                        setNewExpense({ ...newExpense, vendor: e.target.value })
-                      }
-                      className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
+                      type="number"
+                      placeholder="0.00"
+                      className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-black text-foreground outline-none focus:border-primary transition-colors"
                     />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        PROJECT
-                      </label>
-                      <input
-                        required
-                        type="text"
-                        placeholder="e.g. Sales"
-                        value={newExpense.project}
-                        onChange={(e) =>
-                          setNewExpense({ ...newExpense, project: e.target.value })
-                        }
-                        className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                        PAYMENT MODE
-                      </label>
-                      <select
-                        required
-                        value={newExpense.paymentMode}
-                        onChange={(e) =>
-                          setNewExpense({ ...newExpense, paymentMode: e.target.value })
-                        }
-                        className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all appearance-none"
-                      >
-                        <option value="Personal Card">Personal Card</option>
-                        <option value="Company Card">Company Card</option>
-                        <option value="Cash">Cash</option>
-                        <option value="Online Transfer">Online Transfer</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                      DESCRIPTION
-                    </label>
-                    <textarea
-                      placeholder="Enter detailed description of the expense..."
-                      value={newExpense.description}
-                      onChange={(e) =>
-                        setNewExpense({ ...newExpense, description: e.target.value })
-                      }
-                      rows={3}
-                      className="w-full p-4 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all resize-none"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                      RECEIPT ATTACHMENT
-                    </label>
-                    <div className="border-2 border-dashed border-border rounded-2xl p-6 bg-secondary/50 flex flex-col items-center justify-center gap-1 hover:border-[#00B87C] transition-all cursor-pointer group">
-                      <div className="w-9 h-9 rounded-full bg-emerald-500/10 flex items-center justify-center text-[#00B87C] group-hover:scale-110 transition-transform">
-                        <UploadCloud size={18} />
-                      </div>
-                      <p className="text-[12px] font-black text-foreground">
-                        Browse Files
-                      </p>
-                      <p className="text-[10px] font-bold text-muted-foreground">
-                        PDF, JPG, PNG (Max 10MB)
-                      </p>
-                    </div>
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-2 border-t border-border mt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddModal(false)}
-                    className="flex-1 px-6 py-3.5 border border-border rounded-xl text-[13px] font-black text-muted-foreground hover:bg-secondary transition-all"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 px-6 py-3.5 bg-[#00B87C] text-white rounded-xl font-black text-[13px] shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
-                  >
-                    Submit Claim
-                  </button>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                      DATE
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                      PAYMENT MODE
+                    </label>
+                    <select className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none appearance-none focus:border-primary transition-colors">
+                      <option>Personal Card</option>
+                      <option>Cash</option>
+                      <option>UPI / Bank Transfer</option>
+                      <option>Corporate Card</option>
+                    </select>
+                  </div>
                 </div>
-              </form>
-            </motion.div>
+
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                    DESCRIPTION
+                  </label>
+                  <textarea
+                    value={newExpenseDesc}
+                    onChange={(e) => setNewExpenseDesc(e.target.value)}
+                    placeholder="Provide a brief description of this expense..."
+                    rows={3}
+                    className="w-full px-4 py-3 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors resize-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <SectionHeader title="RECEIPT (OPTIONAL)" />
+                <div className="border-2 border-dashed border-border rounded-2xl p-8 bg-card flex flex-col items-center justify-center hover:border-primary transition-all cursor-pointer group">
+                  <UploadCloud
+                    size={28}
+                    className="text-primary mb-3 group-hover:scale-110 transition-transform"
+                  />
+                  <p className="text-[13px] font-black text-foreground">
+                    Click to upload receipt
+                  </p>
+                  <p className="text-[11px] font-bold text-muted-foreground mt-1 uppercase tracking-tighter">
+                    JPG, PNG, PDF · MAX 10MB
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-border flex items-center justify-end gap-3 bg-card shrink-0">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="px-6 py-3 border border-border rounded-xl text-[13px] font-black text-muted-foreground hover:bg-secondary transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  showToast(
+                    "Expense Submitted",
+                    "success",
+                    "Your expense claim has been submitted for review.",
+                  );
+                  setShowAddModal(false);
+                  setNewExpenseDesc("");
+                  setNewExpenseCat("Travel");
+                }}
+                className="px-6 py-3 bg-primary text-white rounded-xl font-black hover:opacity-95 transition-all text-[13px] shadow-lg shadow-[#00B87C]/20"
+              >
+                Submit Expense
+              </button>
+            </div>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
+
+      {/* 2. Expense Detail Panel */}
+      {selectedExpense && (
+        <div className="fixed inset-0 z-[4000] flex justify-end animate-in fade-in duration-300">
+          <div
+            className="absolute inset-0 bg-slate-950/20"
+            onClick={() => setSelectedExpense(null)}
+          />
+          <div className="relative w-full max-w-[400px] bg-card h-screen shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 border-l border-border">
+            <div className="p-6 border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div
+                  className={`w-10 h-10 rounded-xl ${CATEGORY_CONFIG[selectedExpense.category].bg} flex items-center justify-center ${CATEGORY_CONFIG[selectedExpense.category].color} border border-current/10`}
+                >
+                  {(() => {
+                    const Icon = CATEGORY_CONFIG[selectedExpense.category].icon;
+                    return <Icon size={22} />;
+                  })()}
+                </div>
+                <div>
+                  <h3 className="text-[16px] font-black text-foreground truncate max-w-[200px]">
+                    {selectedExpense.title}
+                  </h3>
+                  <p className="text-[12px] font-bold text-muted-foreground">
+                    ID: {selectedExpense.id}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedExpense(null)}
+                className="p-2 hover:bg-secondary rounded-full text-muted-foreground"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+              <div className="p-4 bg-secondary/50 border border-border rounded-2xl flex items-center justify-between">
+                <div>
+                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
+                    AMOUNT
+                  </p>
+                  <p className="text-[22px] font-black text-foreground">
+                    ₹{selectedExpense.amount.toLocaleString()}
+                  </p>
+                </div>
+                <StatusBadge status={selectedExpense.status} />
+              </div>
+
+              <div className="space-y-6">
+                <SectionHeader title="DETAILS" />
+                <div className="grid grid-cols-2 gap-y-6">
+                  {[
+                    { label: "Date", val: selectedExpense.date },
+                    { label: "Vendor", val: selectedExpense.vendor },
+                    { label: "Project", val: selectedExpense.project },
+                    { label: "Payment", val: selectedExpense.paymentMode },
+                  ].map((d) => (
+                    <div key={d.label}>
+                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
+                        {d.label}
+                      </p>
+                      <p className="text-[13px] font-bold text-foreground">
+                        {d.val}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-border mt-auto">
+              <button
+                onClick={() => setSelectedExpense(null)}
+                className="w-full py-4 border border-primary text-primary rounded-xl font-black text-[14px] hover:bg-primary/5 transition-all"
+              >
+                Close Details
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

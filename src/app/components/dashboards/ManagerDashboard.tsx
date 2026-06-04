@@ -94,12 +94,12 @@ export function ManagerDashboard() {
       {/* ═══ PAGE HEADER ═══ */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#FEF3C7] flex items-center justify-center shadow-inner">
+          <div className="w-11 h-11 rounded-[10px] bg-[#FEF3C7] flex items-center justify-center shadow-inner">
             <Users size={28} className="text-[#F59E0B]" />
           </div>
           <div>
-            <h2 className="text-[26px] font-black text-foreground tracking-tight">Team Dashboard</h2>
-            <p className="text-[13px] font-semibold text-muted-foreground">Engineering Team · 12 direct reports</p>
+            <h2 className="text-[26px] font-bold text-[#111827]">Team Dashboard</h2>
+            <p className="text-[13px] text-[#6B7280]">Engineering Team · 12 direct reports</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -155,21 +155,21 @@ export function ManagerDashboard() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="bg-card p-5 rounded-[20px] border border-border shadow-sm hover:shadow-md transition-all group cursor-pointer"
+            className="bg-card p-5 rounded-[20px] border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: kpi.bg }}>
+              <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0" style={{ backgroundColor: kpi.bg }}>
                 <Users size={20} style={{ color: kpi.color }} />
               </div>
               {kpi.change && (
-                <div className={`px-2 py-0.5 rounded text-[10px] font-black tracking-widest ${kpi.isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
+                <div className={`px-2 py-0.5 rounded text-[11px] font-black tracking-widest ${kpi.isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
                   {kpi.change}
                 </div>
               )}
             </div>
-            <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">{kpi.label}</p>
-            <p className="text-2xl font-black text-foreground tracking-tighter mb-1">{kpi.value}</p>
-            <p className="text-[11px] font-bold text-muted-foreground">{kpi.sub}</p>
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">{kpi.label}</p>
+            <p className="text-[28px] font-bold text-[#111827] mb-1">{kpi.value}</p>
+            <p className="text-[12px] text-[#6B7280]">{kpi.sub}</p>
           </motion.div>
         ))}
       </div>
@@ -177,10 +177,10 @@ export function ManagerDashboard() {
       {/* ═══ CHARTS ROW ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Attendance Trend (70%) */}
-        <div className="lg:col-span-8 bg-card p-6 rounded-[24px] border border-border shadow-sm">
+        <div className="lg:col-span-8 bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Team Attendance Trend</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Team Attendance Trend</h3>
               <p className="text-[11px] font-bold text-muted-foreground mt-1">Average daily attendance rate</p>
             </div>
             <div className="flex gap-1 bg-secondary/50 p-1 rounded-full">
@@ -188,7 +188,7 @@ export function ManagerDashboard() {
                 <button 
                   key={f} 
                   onClick={() => setActiveRange(f)}
-                  className={`px-4 py-1 rounded-full text-[10px] font-black tracking-widest transition-all ${activeRange === f ? 'bg-white text-black shadow-sm' : 'text-muted-foreground hover:bg-secondary'}`}
+                  className={`px-4 py-1 rounded-full text-[11px] font-black tracking-widest transition-all ${activeRange === f ? 'bg-white text-black shadow-sm' : 'text-muted-foreground hover:bg-secondary'}`}
                 >
                   {f}
                 </button>
@@ -230,8 +230,8 @@ export function ManagerDashboard() {
         </div>
 
         {/* Team Composition (30%) */}
-        <div className="lg:col-span-4 bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-8">Team Composition</h3>
+        <div className="lg:col-span-4 bg-card p-6 rounded-2xl border border-border shadow-sm flex flex-col">
+          <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-8">Team Composition</h3>
           <div className="flex-1 flex flex-col items-center justify-center">
             <div className="h-[200px] w-full relative">
               <ResponsiveContainer width="100%" height="100%">
@@ -246,7 +246,7 @@ export function ManagerDashboard() {
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <span className="text-2xl font-black text-foreground">12</span>
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Total</span>
+                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Total</span>
               </div>
             </div>
             <div className="w-full mt-8 space-y-3">
@@ -267,9 +267,9 @@ export function ManagerDashboard() {
       {/* ═══ MAIN CONTENT GRID ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Team Members (7/12 span) */}
-        <div className="lg:col-span-7 bg-card rounded-[24px] border border-border shadow-sm overflow-hidden flex flex-col">
+        <div className="lg:col-span-7 bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
           <div className="p-6 border-b border-border flex items-center justify-between">
-            <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Team Members</h3>
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Team Members</h3>
             <button 
               onClick={() => navigate("/employees")}
               className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest hover:underline"
@@ -280,24 +280,24 @@ export function ManagerDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-secondary/20">
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Employee</th>
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center">Attendance</th>
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Shift Today</th>
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Status</th>
+                <tr className="bg-[#F9FAFB] dark:bg-white/5">
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Employee</th>
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-center">Attendance</th>
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Shift Today</th>
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {TEAM_MEMBERS.map((emp, i) => (
-                  <tr key={i} className="hover:bg-secondary/30 transition-colors">
+                  <tr key={i} className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08]">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-[#00B87C] font-black text-[10px] shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-[#00B87C] font-black text-[11px] shrink-0">
                           {emp.avatar}
                         </div>
                         <div className="min-w-0">
                           <p className="text-[13px] font-bold text-foreground truncate">{emp.name}</p>
-                          <p className="text-[10px] text-muted-foreground truncate">{emp.dept}</p>
+                          <p className="text-[11px] text-muted-foreground truncate">{emp.dept}</p>
                         </div>
                       </div>
                     </td>
@@ -306,7 +306,7 @@ export function ManagerDashboard() {
                     </td>
                     <td className="px-6 py-4">
                       <span 
-                        className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest whitespace-nowrap"
+                        className="px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-widest whitespace-nowrap"
                         style={{ backgroundColor: emp.shiftColor, color: emp.shiftText }}
                       >
                         {emp.shift}
@@ -329,8 +329,8 @@ export function ManagerDashboard() {
         </div>
 
         {/* Right: Quick Manager Actions (5/12 span) */}
-        <div className="lg:col-span-5 bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-8">Quick Manager Actions</h3>
+        <div className="lg:col-span-5 bg-card p-6 rounded-2xl border border-border shadow-sm flex flex-col">
+          <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-8">Quick Manager Actions</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1">
             {[
               { icon: CalendarDays, label: "Approve Leaves", color: "#F59E0B", bg: "#FEF3C7" },
@@ -411,13 +411,13 @@ export function ManagerDashboard() {
             </div>
             <div className="p-6 space-y-4">
               <div className="space-y-2">
-                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Select Employee</label>
+                <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Select Employee</label>
                 <select className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-sm focus:ring-2 focus:ring-[#00B87C] outline-none">
                   {TEAM_MEMBERS.map(e => <option key={e.name}>{e.name}</option>)}
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Shift Type</label>
+                <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Shift Type</label>
                 <div className="grid grid-cols-2 gap-2">
                   <button className="p-3 rounded-xl border-2 border-[#00B87C] bg-emerald-50 dark:bg-emerald-500/10 text-[#00B87C] text-xs font-black uppercase tracking-widest">Day Shift</button>
                   <button className="p-3 rounded-xl border border-border hover:bg-secondary text-foreground text-xs font-black uppercase tracking-widest transition-all">Night Shift</button>
@@ -434,20 +434,20 @@ export function ManagerDashboard() {
       {/* ═══ SECOND ROW — PERFORMANCE & Pending Approvals & Team Today's Attendance  ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: Department Performance (55%) */}
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Department Performance</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Department Performance</h3>
               <p className="text-[11px] font-bold text-muted-foreground mt-1">Team average vs. company average</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-sm bg-[#00B87C]" />
-                <span className="text-[10px] font-bold text-muted-foreground">Team</span>
+                <span className="text-[11px] font-bold text-muted-foreground">Team</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-sm bg-[#F3F4F6] dark:bg-zinc-800" />
-                <span className="text-[10px] font-bold text-muted-foreground">Company</span>
+                <span className="text-[11px] font-bold text-muted-foreground">Company</span>
               </div>
             </div>
           </div>
@@ -478,9 +478,9 @@ export function ManagerDashboard() {
         {/* Pending Approvals & Team Today */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:col-span-1">
           {/* Center: Pending Approvals */}
-          <div className="bg-card rounded-[24px] border border-border shadow-sm flex flex-col">
+          <div className="bg-card rounded-2xl border border-border shadow-sm flex flex-col">
             <div className="p-6 border-b border-border flex items-center justify-between">
-              <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Pending Approvals</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Pending Approvals</h3>
               <button 
                 onClick={() => navigate("/leave")}
                 className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest hover:underline"
@@ -523,9 +523,9 @@ export function ManagerDashboard() {
           </div>
 
           {/* Right: Team Today */}
-          <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col">
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm flex flex-col">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Team Today</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Team Today</h3>
               <span className="text-[11px] font-black text-[#00B87C]">10 / 12</span>
             </div>
             <div className="grid grid-cols-3 gap-y-6 gap-x-2">
@@ -550,15 +550,15 @@ export function ManagerDashboard() {
             <div className="mt-auto pt-8 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-[#00B87C]" />
-                <span className="text-[10px] font-bold text-muted-foreground">Present</span>
+                <span className="text-[11px] font-bold text-muted-foreground">Present</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-red-500" />
-                <span className="text-[10px] font-bold text-muted-foreground">Leave</span>
+                <span className="text-[11px] font-bold text-muted-foreground">Leave</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-[#0EA5E9]" />
-                <span className="text-[10px] font-bold text-muted-foreground">WFH</span>
+                <span className="text-[11px] font-bold text-muted-foreground">WFH</span>
               </div>
             </div>
           </div>

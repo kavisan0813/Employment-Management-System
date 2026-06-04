@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "react-router";
+import { showToast } from "../components/workflow/ToastNotification";
 import { 
   BarChart3, 
   Download, 
@@ -136,6 +137,55 @@ export function FinanceIncrement() {
     }
     return null;
   });
+  const [rejectingEmployee, setRejectingEmployee] = useState<AppraisalEmployee | null>(null);
+  const [detailedEmployee, setDetailedEmployee] = useState<AppraisalEmployee | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleApprove = () => {
+    if (approvingEmployee) {
+      showToast("Increment Approved", "success", `Increment approved for ${approvingEmployee.name}. Payroll updated.`);
+      setApprovingEmployee(null);
+    }
+  };
+
+  const handleReject = () => {
+    if (rejectingEmployee) {
+      showToast("Increment Rejected", "success", `Increment for ${rejectingEmployee.name} has been rejected.`);
+      setRejectingEmployee(null);
+      setRejectReason("");
+    }
+  };
+
+  const handleExport = () => {
+    setShowExportModal(true);
+  };
+
+  const executeExport = () => {
+    setIsExporting(true);
+    // Simulate network delay
+    setTimeout(() => {
+      const headers = ["Employee ID,Name,Department,Current Salary,Increment %,Revised Salary,Status"];
+      const rows = MOCK_APPRAISALS.map(emp => 
+        `${emp.id},"${emp.name}",${emp.department},${emp.currentSalary},${emp.recommendedIncrement},${emp.revisedSalary},${emp.status}`
+      );
+      const csvContent = headers.concat(rows).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", "increment_appraisals_export.csv");
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      setIsExporting(false);
+      setShowExportModal(false);
+      showToast("Export Successful", "success", "Increment & Appraisal report has been downloaded.");
+    }, 1500);
+  };
 
   const filteredAppraisals = MOCK_APPRAISALS.filter(emp => 
     emp.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -147,15 +197,15 @@ export function FinanceIncrement() {
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#EDE9FE] dark:bg-purple-500/10 flex items-center justify-center shadow-inner border border-purple-100 dark:border-purple-500/20">
-            <BarChart3 size={28} className="text-[#8B5CF6]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#EDE9FE] dark:bg-purple-500/10 flex items-center justify-center shadow-inner border border-purple-100 dark:border-purple-500/20">
+            <BarChart3 size={22} className="text-[#8B5CF6]" />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight">Increment & Appraisal</h1>
-            <p className="text-[13px] font-semibold text-muted-foreground">Manage salary increments and performance appraisals</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">Increment & Appraisal</h1>
+            <p className="text-[13px] text-[#6B7280]">Manage salary increments and performance appraisals</p>
           </div>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-bold text-sm hover:bg-muted/50 transition-all">
+        <button onClick={handleExport} className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-bold text-sm hover:bg-muted/50 transition-all">
           <Download size={18} />
           Export CSV
         </button>
@@ -199,15 +249,20 @@ export function FinanceIncrement() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <FilterSelect label="2025-2026" />
-        <FilterSelect label="All Departments" />
-        <FilterSelect label="Status: All" />
-        <FilterSelect label="Band: All" />
-        <button className="flex items-center gap-2 px-4 py-2.5 text-sm font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest">
+        <FilterSelect label="All Departments" options={["All Departments", "Engineering", "Sales", "Design", "Product"]} />
+        <FilterSelect label="Increment %" options={["Any Increment", "> 10%", "5% - 10%", "< 5%"]} />
+        <FilterSelect label="Performance Rating" options={["Any Rating", "> 4.5", "4.0 - 4.5", "< 4.0"]} />
+        <button 
+          onClick={() => {
+            setSearchQuery("");
+            showToast("Filters Reset", "success", "All search filters have been cleared.");
+          }}
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest"
+        >
           <RotateCcw size={16} />
-          Reset
+          Reset Filters
         </button>
-        <button className="ml-auto flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">
+        <button onClick={handleExport} className="ml-auto flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">
           <Download size={16} />
           Export CSV
         </button>
@@ -226,20 +281,20 @@ export function FinanceIncrement() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#F9FAFB] dark:bg-muted/10 border-b border-border">
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">EMPLOYEE</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">DEPARTMENT</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">ATTENDANCE</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">LEAVES</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">LATE</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">PERF SCORE</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">KPI</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">MGR RATING</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">INCREMENT %</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">CURRENT</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">REVISED</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">STATUS</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] text-center">ACTION</th>
+              <tr className="bg-[#F9FAFB] dark:bg-white/5 dark:bg-muted/10 border-b border-border">
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">EMPLOYEE</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">DEPARTMENT</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">ATTENDANCE</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">LEAVES</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">LATE</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">PERF SCORE</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">KPI</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">MGR RATING</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">INCREMENT %</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">CURRENT</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">REVISED</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">STATUS</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8] text-center">ACTION</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -249,11 +304,12 @@ export function FinanceIncrement() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="group hover:bg-muted/30 transition-all h-[72px]"
+                  className="group hover:bg-muted/30 transition-all h-[72px] cursor-pointer"
+                  onClick={() => setDetailedEmployee(emp)}
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-black" style={{ backgroundColor: emp.avatarColor }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-semibold" style={{ backgroundColor: emp.avatarColor }}>
                         {emp.name.split(' ').map(n => n[0]).join('')}
                       </div>
                       <p className="text-[14px] font-bold text-foreground leading-tight">{emp.name}</p>
@@ -303,18 +359,22 @@ export function FinanceIncrement() {
                       {emp.status === 'Pending' ? (
                         <>
                           <button 
-                            onClick={() => setApprovingEmployee(emp)}
+                            onClick={(e) => { e.stopPropagation(); setApprovingEmployee(emp); }}
                             className="p-1.5 rounded-lg bg-[#00B87C] border border-[#00B87C] text-white hover:bg-emerald-600 shadow-sm transition-all" 
                             title="Approve"
                           >
                             <Check size={16} strokeWidth={3} />
                           </button>
-                          <button className="p-1.5 rounded-lg bg-rose-500 border border-rose-500 text-white hover:bg-rose-600 shadow-sm transition-all" title="Reject">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setRejectingEmployee(emp); }}
+                            className="p-1.5 rounded-lg bg-rose-500 border border-rose-500 text-white hover:bg-rose-600 shadow-sm transition-all" 
+                            title="Reject"
+                          >
                             <X size={16} strokeWidth={3} />
                           </button>
                         </>
                       ) : (
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-[11px] font-black uppercase tracking-widest text-muted-foreground hover:bg-muted transition-all">
+                        <button onClick={(e) => { e.stopPropagation(); showToast("Redirecting", "info", "Opening Payroll records..."); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hover:bg-muted transition-all">
                           ₹ Payroll <ChevronRight size={14} />
                         </button>
                       )}
@@ -369,20 +429,20 @@ export function FinanceIncrement() {
                   <div className="p-5 rounded-2xl bg-[#F0FDF4] dark:bg-emerald-500/5 border border-emerald-500/20">
                     <div className="grid grid-cols-2 gap-y-3 gap-x-4">
                       <div>
-                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Current CTC</p>
+                        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">Current CTC</p>
                         <p className="text-[15px] font-bold text-foreground">₹{approvingEmployee.currentSalary.toLocaleString()}/mo</p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Increment</p>
+                        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">Increment</p>
                         <p className="text-[15px] font-black text-emerald-600">+{approvingEmployee.recommendedIncrement}%</p>
                       </div>
                       <div className="col-span-2 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
                         <div>
-                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Revised CTC</p>
+                          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">Revised CTC</p>
                           <p className="text-xl font-black text-[#00B87C]">₹{approvingEmployee.revisedSalary.toLocaleString()}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Annual Increase</p>
+                          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">Annual Increase</p>
                           <p className="text-[13px] font-black text-foreground">₹{((approvingEmployee.revisedSalary - approvingEmployee.currentSalary) * 12).toLocaleString()}</p>
                         </div>
                       </div>
@@ -422,8 +482,193 @@ export function FinanceIncrement() {
                 >
                   Cancel
                 </button>
-                <button className="flex-1 py-3.5 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">
+                <button onClick={handleApprove} className="flex-1 py-3.5 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">
                   Confirm & Approve
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* REJECT MODAL */}
+      <AnimatePresence>
+        {rejectingEmployee && (
+          <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+              onClick={() => setRejectingEmployee(null)}
+            ></motion.div>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-card w-full max-w-[460px] rounded-[32px] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 pb-0 flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-3xl bg-red-500/10 flex items-center justify-center mb-6 shadow-inner">
+                  <X size={32} className="text-red-500" />
+                </div>
+                <h3 className="text-xl font-black text-foreground tracking-tight">Reject Increment</h3>
+                <p className="text-[13px] font-bold text-muted-foreground mt-2 mb-6">Are you sure you want to reject the increment for {rejectingEmployee.name}?</p>
+                
+                <div className="w-full text-left space-y-4">
+                  <div>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Rejection Reason</label>
+                    <div className="relative">
+                      <MessageSquare className="absolute left-3.5 top-3 text-muted-foreground" size={16} />
+                      <textarea 
+                        value={rejectReason}
+                        onChange={e => setRejectReason(e.target.value)}
+                        placeholder="Provide a reason for rejection..."
+                        className="w-full bg-card border border-border rounded-xl pl-11 pr-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 h-24 resize-none"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8 flex items-center gap-3">
+                <button 
+                  onClick={() => setRejectingEmployee(null)}
+                  className="flex-1 py-3.5 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleReject} 
+                  disabled={!rejectReason.trim()}
+                  className="flex-1 py-3.5 rounded-2xl bg-red-500 text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-red-500/20 disabled:opacity-50"
+                >
+                  Reject
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* DETAILED SLIDE PANEL */}
+      <AnimatePresence>
+        {detailedEmployee && (
+          <div className="fixed inset-0 z-[5000] flex justify-end">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={() => setDetailedEmployee(null)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+            <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="relative w-full max-w-[440px] bg-card h-full shadow-2xl border-l border-border flex flex-col">
+              <div className="p-6 border-b border-border flex items-center justify-between bg-muted/5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-[14px] font-black text-white" style={{ backgroundColor: detailedEmployee.avatarColor }}>
+                    {detailedEmployee.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div>
+                    <h2 className="text-[16px] font-black text-foreground">{detailedEmployee.name}</h2>
+                    <p className="text-[12px] font-bold text-muted-foreground">{detailedEmployee.designation}</p>
+                  </div>
+                </div>
+                <button onClick={() => setDetailedEmployee(null)} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-all">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <div>
+                  <h3 className="text-[11px] font-black text-[#94A3B8] uppercase tracking-wider mb-3">Performance Metrics</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between p-3 rounded-xl bg-secondary/50 border border-border">
+                      <span className="text-[12px] font-bold text-muted-foreground">Manager Rating</span>
+                      <span className="text-[12px] font-black text-foreground flex items-center gap-1"><Star size={12} className="text-amber-500 fill-amber-500"/> {detailedEmployee.managerRating}/5</span>
+                    </div>
+                    <div className="flex justify-between p-3 rounded-xl bg-secondary/50 border border-border">
+                      <span className="text-[12px] font-bold text-muted-foreground">Performance Score</span>
+                      <span className="text-[12px] font-black text-foreground">{detailedEmployee.performanceScore}%</span>
+                    </div>
+                    <div className="flex justify-between p-3 rounded-xl bg-secondary/50 border border-border">
+                      <span className="text-[12px] font-bold text-muted-foreground">KPI Score</span>
+                      <span className="text-[12px] font-black text-foreground">{detailedEmployee.kpiScore}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-[11px] font-black text-[#94A3B8] uppercase tracking-wider mb-3">Increment Details</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between p-3 rounded-xl bg-secondary/50 border border-border">
+                      <span className="text-[12px] font-bold text-muted-foreground">Current CTC</span>
+                      <span className="text-[12px] font-black text-foreground">₹{detailedEmployee.currentSalary.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between p-3 rounded-xl bg-secondary/50 border border-border">
+                      <span className="text-[12px] font-bold text-muted-foreground">Recommended Increment</span>
+                      <span className="text-[12px] font-black text-[#00B87C]">+{detailedEmployee.recommendedIncrement}%</span>
+                    </div>
+                    <div className="flex justify-between p-3 rounded-xl bg-[#F0FDF4] dark:bg-emerald-500/5 border border-[#00B87C]/20">
+                      <span className="text-[12px] font-bold text-[#00B87C]">Revised CTC</span>
+                      <span className="text-[12px] font-black text-[#00B87C]">₹{detailedEmployee.revisedSalary.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* EXPORT MODAL */}
+      <AnimatePresence>
+        {showExportModal && (
+          <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+              onClick={() => !isExporting && setShowExportModal(false)}
+            ></motion.div>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-card w-full max-w-[420px] rounded-[32px] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 pb-0 flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-3xl bg-[#F0FDF4] dark:bg-emerald-500/10 flex items-center justify-center mb-6 shadow-inner border border-[#00B87C]/20">
+                  <Download size={32} className="text-[#00B87C]" />
+                </div>
+                <h3 className="text-xl font-black text-foreground tracking-tight">Export Appraisals</h3>
+                <p className="text-[13px] text-muted-foreground mt-2 max-w-[280px]">
+                  Generate a CSV report of all increment and appraisal data.
+                </p>
+                
+                {isExporting && (
+                  <div className="w-full mt-6 space-y-2 text-left">
+                    <p className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest text-center">Generating File...</p>
+                    <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 1.5, ease: "linear" }}
+                        className="h-full bg-[#00B87C] rounded-full" 
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className="p-8 flex items-center gap-3">
+                <button 
+                  onClick={() => setShowExportModal(false)}
+                  disabled={isExporting}
+                  className="flex-1 py-3.5 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={executeExport}
+                  disabled={isExporting}
+                  className="flex-1 py-3.5 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                >
+                  {isExporting ? 'Exporting...' : 'Download CSV'}
                 </button>
               </div>
             </motion.div>
@@ -445,7 +690,7 @@ function KPICard({ title, value, color, icon: Icon }: { title: string, value: st
   return (
     <motion.div 
       whileHover={{ y: -5 }}
-      className="p-5 bg-card border border-border rounded-[24px] shadow-sm hover:shadow-md transition-all group"
+      className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group"
     >
       <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110" style={{ backgroundColor: colors[color].bg }}>
         <Icon size={20} style={{ color: colors[color].iconColor }} />
@@ -456,13 +701,33 @@ function KPICard({ title, value, color, icon: Icon }: { title: string, value: st
   );
 }
 
-function FilterSelect({ label }: { label: string }) {
+function FilterSelect({ label, options = ["Option 1", "Option 2"] }: { label: string, options?: string[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(label);
+  
   return (
     <div className="relative">
-      <button className="flex items-center gap-2.5 px-5 py-2.5 bg-muted/20 border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm">
-        {label}
-        <ChevronDown size={16} className="text-muted-foreground" />
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+        className="flex items-center gap-2.5 px-5 py-2.5 bg-muted/20 border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm"
+      >
+        {selected}
+        <ChevronDown size={16} className={`text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
+      {isOpen && (
+        <div className="absolute top-full mt-2 w-full min-w-[180px] bg-card border border-border rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
+          {options.map((opt, i) => (
+            <button
+              key={i}
+              onClick={() => { setSelected(opt); setIsOpen(false); }}
+              className={`w-full text-left px-4 py-2.5 text-[13px] font-bold hover:bg-muted transition-all ${selected === opt ? 'text-[#00B87C]' : 'text-foreground'}`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -475,7 +740,7 @@ function StatusChip({ status }: { status: AppraisalEmployee['status'] }) {
   };
   
   return (
-    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border flex items-center justify-center w-fit gap-1.5 ${styles[status]}`}>
+    <span className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border flex items-center justify-center w-fit gap-1.5 ${styles[status]}`}>
       {status === "Approved" ? "✓ Approved" : status === "Pending" ? "⏳ Pending" : "✗ Rejected"}
     </span>
   );

@@ -279,7 +279,7 @@ export function Login() {
                   style={{ backgroundColor: ROLE_CONFIG[selectedRole].bg }}
                 >
                   <span
-                    className="text-[11px] font-black uppercase tracking-widest"
+                    className="text-[11px] font-semibold uppercase tracking-wider"
                     style={{ color: ROLE_CONFIG[selectedRole].color }}
                   >
                     {ROLE_CONFIG[selectedRole].label} access level selected

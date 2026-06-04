@@ -260,7 +260,7 @@ export function AssetManagement() {
       <div className="px-8 pt-8 pb-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-xl bg-[#E0F2FE] flex items-center justify-center border border-[#BAE6FD]">
+            <div className="w-11 h-11 rounded-[10px] bg-[#E0F2FE] flex items-center justify-center border border-[#BAE6FD]">
               <Package size={22} className="text-[#0EA5E9]" />
             </div>
             <div>
@@ -375,19 +375,19 @@ export function AssetManagement() {
             <div key={idx} className="bg-card rounded-2xl p-4 border border-border shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
               <div className="flex items-start justify-between mb-3">
                 <div 
-                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  className="w-9 h-9 rounded-[10px] flex items-center justify-center"
                   style={{ backgroundColor: kpi.bg, color: kpi.color }}
                 >
                   <kpi.icon size={20} />
                 </div>
               </div>
-              <p className="text-[11px] font-black text-muted-foreground tracking-wider mb-1">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
                 {kpi.label}
               </p>
-              <p className="text-2xl font-black mb-1" style={{ color: kpi.valColor }}>
+              <p className="text-[28px] font-black mb-1" style={{ color: kpi.valColor }}>
                 {kpi.value}
               </p>
-              <p className="text-[11px] font-bold text-muted-foreground">
+              <p className="text-[12px] font-bold text-[#6B7280]">
                 {kpi.subtext}
               </p>
             </div>
@@ -459,31 +459,31 @@ export function AssetManagement() {
         {/* Asset Table */}
         <div className="bg-card border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden">
           <div className="px-6 py-4 border-b border-border bg-muted/50">
-            <h3 className="text-[11px] font-black text-muted-foreground tracking-wider">ALL ASSETS</h3>
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] tracking-wider">ALL ASSETS</h3>
           </div>
           
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-border bg-muted">
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Asset</th>
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Category</th>
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Serial No.</th>
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Assigned To</th>
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Dept</th>
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Value</th>
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Assigned Date</th>
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Status</th>
-                  <th className="px-6 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Action</th>
+                <tr className="border-b border-border bg-[#F9FAFB] dark:bg-white/5">
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Asset</th>
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Category</th>
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Serial No.</th>
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Assigned To</th>
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Dept</th>
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Value</th>
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Assigned Date</th>
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Status</th>
+                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredAssets.map((asset, i) => {
+                {filteredAssets.map((asset) => {
                   const catColor = getCategoryColor(asset.category);
                   return (
                     <tr 
                       key={asset.id} 
-                      className={`group hover:bg-secondary transition-colors border-b border-border last:border-0 h-[64px]`}
+                      className={`group hover:bg-[#00B87C]/[0.08] transition-colors border-b border-border last:border-0 h-14`}
                     >
                       <td className="px-6 py-3 cursor-pointer" onClick={() => openDetailPanel(asset)}>
                         <div className="flex items-center gap-3">
@@ -519,7 +519,7 @@ export function AssetManagement() {
                       <td className="px-6 py-3 cursor-pointer" onClick={() => openDetailPanel(asset)}>
                         {asset.assignedTo ? (
                           <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-full bg-[#E0F2FE] flex items-center justify-center text-[#0369A1] text-[10px] font-bold shrink-0">
+                            <div className="w-7 h-7 rounded-full bg-[#E0F2FE] flex items-center justify-center text-[#0369A1] text-[11px] font-bold shrink-0">
                               {asset.assignedTo.split(' ').map(n => n[0]).join('')}
                             </div>
                             <span className={`text-[12px] font-bold ${asset.assignedToResigned ? "text-red-500" : "text-foreground"}`}>
@@ -549,31 +549,31 @@ export function AssetManagement() {
                         {asset.status === "Assigned" && (
                           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0]">
                             <CheckCircle2 size={12} strokeWidth={3} />
-                            <span className="text-[11px] font-black uppercase tracking-wider">Assigned</span>
+                            <span className="text-[11px] font-semibold uppercase tracking-wider">Assigned</span>
                           </div>
                         )}
                         {asset.status === "Pending Return" && (
                           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]">
                             <RefreshCcw size={12} strokeWidth={3} />
-                            <span className="text-[11px] font-black uppercase tracking-wider">Pending Return</span>
+                            <span className="text-[11px] font-semibold uppercase tracking-wider">Pending Return</span>
                           </div>
                         )}
                         {asset.status === "Overdue" && (
                           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]">
                             <AlertCircle size={12} strokeWidth={3} />
-                            <span className="text-[11px] font-black uppercase tracking-wider">Overdue</span>
+                            <span className="text-[11px] font-semibold uppercase tracking-wider">Overdue</span>
                           </div>
                         )}
                         {asset.status === "Available" && (
                           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
                             <Package size={12} strokeWidth={3} />
-                            <span className="text-[11px] font-black uppercase tracking-wider">Available</span>
+                            <span className="text-[11px] font-semibold uppercase tracking-wider">Available</span>
                           </div>
                         )}
                         {asset.status === "Maintenance" && (
                           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0F766E] border border-[#99F6E4]">
                             <Wrench size={12} strokeWidth={3} />
-                            <span className="text-[11px] font-black uppercase tracking-wider">In Maintenance</span>
+                            <span className="text-[11px] font-semibold uppercase tracking-wider">In Maintenance</span>
                           </div>
                         )}
                       </td>
@@ -680,11 +680,11 @@ export function AssetManagement() {
               <form onSubmit={handleAddAsset} className="p-6">
                 <div className="grid grid-cols-2 gap-5 mb-6">
                   <div className="col-span-2">
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">ASSET NAME</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">ASSET NAME</label>
                     <input type="text" placeholder="e.g. Dell XPS 15 (2024)" className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" required />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">CATEGORY</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">CATEGORY</label>
                     <select className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none appearance-none" required>
                       <option value="">Select Category</option>
                       <option>Laptop</option>
@@ -697,60 +697,60 @@ export function AssetManagement() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">SERIAL NUMBER</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">SERIAL NUMBER</label>
                     <input type="text" placeholder="e.g. SN-XYZ-123" className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-mono focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" required />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">BRAND / MODEL</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">BRAND / MODEL</label>
                     <input type="text" className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">PURCHASE DATE</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">PURCHASE DATE</label>
                     <input type="date" className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">PURCHASE VALUE (₹)</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">PURCHASE VALUE (₹)</label>
                     <input type="number" placeholder="0.00" className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">WARRANTY EXPIRY</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">WARRANTY EXPIRY</label>
                     <input type="date" className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">VENDOR / SUPPLIER</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">VENDOR / SUPPLIER</label>
                     <input type="text" className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">LOCATION / WAREHOUSE</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">LOCATION / WAREHOUSE</label>
                     <input type="text" className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" />
                   </div>
                   <div className="col-span-2">
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">Asset Tag / ID</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">Asset Tag / ID</label>
                     <input type="text" placeholder="AST-XXXX" disabled className="w-full px-3 py-2.5 bg-muted border border-border rounded-xl text-[13px] font-mono text-muted-foreground cursor-not-allowed" />
                   </div>
                 </div>
 
                 <div className="border-t border-border pt-6 mb-6">
-                  <h3 className="text-[11px] font-black text-muted-foreground tracking-wider mb-4 uppercase">Assign To Employee (Optional)</h3>
+                  <h3 className="text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-4 uppercase">Assign To Employee (Optional)</h3>
                   <div className="grid grid-cols-2 gap-5">
                     <div className="col-span-2 relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                       <input type="text" placeholder="Search employee name or ID..." className="w-full pl-9 pr-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">ASSIGN DATE</label>
+                      <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">ASSIGN DATE</label>
                       <input type="date" defaultValue={new Date().toISOString().split('T')[0]} className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" />
                     </div>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">NOTES / DESCRIPTION</label>
+                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">NOTES / DESCRIPTION</label>
                   <textarea rows={3} className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none resize-none"></textarea>
                 </div>
 
                 <div className="mb-8">
-                  <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">ATTACH INVOICE / RECEIPT</label>
+                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">ATTACH INVOICE / RECEIPT</label>
                   <div className="border-2 border-dashed border-[#A7F3D0] bg-secondary rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-accent transition-colors">
                     <UploadCloud size={24} className="text-[#00B87C] mb-2" />
                     <p className="text-[13px] font-semibold text-[#065F46]">Drag invoice here or Browse</p>
@@ -818,7 +818,7 @@ export function AssetManagement() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">ASSIGN TO</label>
+                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">ASSIGN TO</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                     <input type="text" placeholder="Search employee name or ID..." className="w-full pl-9 pr-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" required />
@@ -827,17 +827,17 @@ export function AssetManagement() {
 
                 <div className="grid grid-cols-2 gap-5 mb-6">
                   <div>
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">ASSIGN DATE</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">ASSIGN DATE</label>
                     <input type="date" defaultValue={new Date().toISOString().split('T')[0]} className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" required />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">EXPECTED RETURN (OPTIONAL)</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">EXPECTED RETURN (OPTIONAL)</label>
                     <input type="date" className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" />
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">CONDITION AT ASSIGN</label>
+                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">CONDITION AT ASSIGN</label>
                   <div className="flex bg-muted p-1 rounded-xl">
                     {["New", "Good", "Fair", "Refurbished"].map(cond => (
                       <button
@@ -857,7 +857,7 @@ export function AssetManagement() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">NOTES</label>
+                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">NOTES</label>
                   <textarea rows={2} className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none resize-none"></textarea>
                 </div>
 
@@ -931,7 +931,7 @@ export function AssetManagement() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">CONDITION ON RETURN</label>
+                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">CONDITION ON RETURN</label>
                   <div className="flex bg-muted p-1 rounded-xl">
                     {["Excellent", "Good", "Damaged", "Lost"].map(cond => (
                       <button
@@ -951,12 +951,12 @@ export function AssetManagement() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">ACTUAL RETURN DATE</label>
+                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">ACTUAL RETURN DATE</label>
                   <input type="date" defaultValue={new Date().toISOString().split('T')[0]} className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" required />
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-[11px] font-black text-muted-foreground tracking-wider mb-2">
+                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
                     RECOVERY NOTES {["Damaged", "Lost"].includes(recoverCondition) && <span className="text-red-500">*</span>}
                   </label>
                   <textarea 
@@ -1167,12 +1167,12 @@ export function AssetManagement() {
                   <div className="space-y-6">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
-                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Current Value</p>
+                        <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Current Value</p>
                         <p className="text-[18px] font-black text-foreground">₹98,000</p>
                         <p className="text-[11px] font-bold text-[#DC2626]">-18% depr.</p>
                       </div>
                       <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
-                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Days Assigned</p>
+                        <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">Days Assigned</p>
                         <p className="text-[18px] font-black text-foreground">312 <span className="text-[12px] text-muted-foreground font-bold">days</span></p>
                         <p className="text-[11px] font-bold text-muted-foreground">Since Mar 2021</p>
                       </div>
@@ -1190,7 +1190,7 @@ export function AssetManagement() {
                         { label: "Location", value: "Mumbai HQ" },
                       ].map((item, i) => (
                         <div key={i} className={`flex items-center justify-between p-3 ${i !== 0 ? "border-t border-muted" : ""}`}>
-                          <span className="text-[11px] font-black text-muted-foreground uppercase tracking-wider">{item.label}</span>
+                          <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">{item.label}</span>
                           <span className={`text-[13px] font-bold text-foreground ${item.isMono ? "font-mono" : ""}`}>{item.value}</span>
                         </div>
                       ))}

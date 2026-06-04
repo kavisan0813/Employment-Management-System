@@ -111,14 +111,14 @@ export function ManagerLeaveApprovals() {
       {/* PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#FEF3C7] flex items-center justify-center shrink-0">
-            <CalendarOff size={24} className="text-[#F59E0B]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#FEF3C7] flex items-center justify-center shrink-0">
+            <CalendarOff size={22} className="text-[#F59E0B]" />
           </div>
           <div>
-            <h2 className="text-[26px] font-extrabold tracking-tight leading-none text-foreground">
+            <h1 className="text-[26px] font-bold tracking-tight leading-none text-foreground">
               Leave Approvals
-            </h2>
-            <p className="text-[13px] font-semibold mt-1 text-muted-foreground">
+            </h1>
+            <p className="text-[13px] text-[#6B7280] mt-1">
               Review and manage time-off requests for your team
             </p>
           </div>
@@ -138,21 +138,21 @@ export function ManagerLeaveApprovals() {
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Pending Approval</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-amber-500 leading-none">{pendingRequests.length}</p>
+            <p className="text-3xl font-bold text-amber-500 leading-none">{pendingRequests.length}</p>
             <p className="text-sm font-bold text-amber-600/70 mb-0.5">requests</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Approved This Month</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-emerald-500 leading-none">8</p>
+            <p className="text-3xl font-bold text-emerald-500 leading-none">8</p>
             <p className="text-sm font-bold text-emerald-600/70 mb-0.5">requests</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">On Leave Today</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-amber-500 leading-none">1</p>
+            <p className="text-3xl font-bold text-amber-500 leading-none">1</p>
             <p className="text-sm font-bold text-amber-600/70 mb-0.5">employee</p>
           </div>
         </div>
@@ -181,7 +181,7 @@ export function ManagerLeaveApprovals() {
       {/* TAB CONTENT */}
       {activeTab === "Pending" && (
         <div className="space-y-4">
-          <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4">Pending Leave Requests</h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">Pending Leave Requests</h3>
           {pendingRequests.length === 0 ? (
             <div className="bg-card border border-dashed border-border rounded-2xl p-10 flex flex-col items-center justify-center text-center">
               <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 mb-4">
@@ -195,14 +195,14 @@ export function ManagerLeaveApprovals() {
               {pendingRequests.map((req) => {
                 const styles = getTypeStyles(req.type);
                 return (
-                  <div key={req.id} className={`bg-card border border-border rounded-xl p-5 shadow-sm border-l-4 ${styles.border} flex flex-col hover:shadow-md transition-shadow`}>
+                  <div key={req.id} className={`bg-card border border-border rounded-xl p-5 shadow-sm border-l-4 ${styles.border} flex flex-col hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-shadow`}>
                     {/* Top Row */}
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <img src={req.avatar} alt={req.name} className="w-9 h-9 rounded-full border border-border object-cover" />
                         <div>
                           <p className="text-[14px] font-bold text-foreground">{req.name}</p>
-                          <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider mt-0.5 ${styles.bg}`}>
+                          <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider mt-0.5 ${styles.bg}`}>
                             {req.type} • {req.typeLabel}
                           </span>
                         </div>
@@ -273,7 +273,7 @@ export function ManagerLeaveApprovals() {
       {activeTab === "Calendar" && (
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-extrabold text-foreground">April 2026</h3>
+            <h3 className="text-lg font-bold text-foreground">April 2026</h3>
             <div className="flex items-center gap-2">
               <button className="p-2 border border-border rounded-lg hover:bg-secondary transition-colors"><ChevronLeft size={16}/></button>
               <button className="px-3 py-1.5 text-sm font-bold border border-border rounded-lg hover:bg-secondary transition-colors">Today</button>
@@ -284,7 +284,7 @@ export function ManagerLeaveApprovals() {
           <div className="grid grid-cols-7 gap-[1px] bg-border border border-border rounded-xl overflow-hidden">
             {/* Days Header */}
             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-              <div key={day} className="bg-secondary p-3 text-center text-xs font-black uppercase text-muted-foreground">
+              <div key={day} className="bg-secondary p-3 text-center text-xs font-bold uppercase text-muted-foreground">
                 {day}
               </div>
             ))}
@@ -296,7 +296,7 @@ export function ManagerLeaveApprovals() {
               const hasLeave = [6, 7, 8, 9, 10, 25].includes(date);
               
               return (
-                <div key={i} className={`bg-card min-h-[100px] p-2 hover:bg-secondary/50 transition-colors cursor-pointer group relative ${isToday ? "ring-2 ring-primary inset-0 z-10" : ""}`}>
+                <div key={i} className={`bg-card min-h-[100px] p-2 hover:bg-[#00B87C]/[0.08] transition-colors cursor-pointer group relative ${isToday ? "ring-2 ring-primary inset-0 z-10" : ""}`}>
                   <div className="flex justify-between items-start">
                     <span className={`text-sm font-bold w-6 h-6 flex items-center justify-center rounded-full ${isToday ? "bg-primary text-white" : "text-foreground group-hover:bg-secondary"}`}>
                       {date}
@@ -306,22 +306,22 @@ export function ManagerLeaveApprovals() {
                   {hasLeave && (
                     <div className="mt-2 space-y-1">
                       {date >= 6 && date <= 10 && (
-                        <div className="px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded truncate border border-emerald-200 dark:border-emerald-800/50">
+                        <div className="px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[11px] font-bold rounded truncate border border-emerald-200 dark:border-emerald-800/50">
                           Priya S. (AL)
                         </div>
                       )}
                       {date === 7 && (
-                        <div className="px-1.5 py-0.5 bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 text-[10px] font-bold rounded truncate border border-rose-200 dark:border-rose-800/50">
+                        <div className="px-1.5 py-0.5 bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 text-[11px] font-bold rounded truncate border border-rose-200 dark:border-rose-800/50">
                           Leo M. (SL)
                         </div>
                       )}
                       {date === 8 && (
-                        <div className="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-[10px] font-bold rounded truncate border border-purple-200 dark:border-purple-800/50">
+                        <div className="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-[11px] font-bold rounded truncate border border-purple-200 dark:border-purple-800/50">
                           Dev P. (WFH)
                         </div>
                       )}
                       {date === 10 && (
-                        <div className="px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded truncate border border-emerald-200 dark:border-emerald-800/50">
+                        <div className="px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[11px] font-bold rounded truncate border border-emerald-200 dark:border-emerald-800/50">
                           Arjun M. (CL)
                         </div>
                       )}
@@ -356,7 +356,7 @@ export function ManagerLeaveApprovals() {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-secondary/50 text-muted-foreground text-xs font-black uppercase tracking-wider">
+              <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
                 <tr>
                   <th className="px-4 py-3 border-b border-border">Employee</th>
                   <th className="px-4 py-3 border-b border-border">Type</th>
@@ -370,10 +370,10 @@ export function ManagerLeaveApprovals() {
               </thead>
               <tbody className="divide-y divide-border">
                 {MOCK_HISTORY.map((row) => (
-                  <tr key={row.id} className="hover:bg-secondary/30 transition-colors group">
+                  <tr key={row.id} className="hover:bg-[#00B87C]/[0.08] transition-colors group">
                     <td className="px-4 py-3 font-bold text-foreground">{row.emp}</td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${getTypeStyles(row.type).bg}`}>{row.type}</span>
+                      <span className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase ${getTypeStyles(row.type).bg}`}>{row.type}</span>
                     </td>
                     <td className="px-4 py-3 font-medium">{row.from}</td>
                     <td className="px-4 py-3 font-medium">{row.to}</td>
@@ -399,7 +399,7 @@ export function ManagerLeaveApprovals() {
           <div className="w-full max-w-[400px] bg-card rounded-2xl shadow-2xl border border-border animate-in zoom-in-95">
             <div className="p-6 border-b border-border flex justify-between items-start">
               <div>
-                <h3 className="text-lg font-extrabold text-foreground">Reject Leave Request</h3>
+                <h3 className="text-lg font-bold text-foreground">Reject Leave Request</h3>
                 <p className="text-sm font-semibold text-muted-foreground mt-1">
                   For <span className="text-foreground">{rejectingRequest.name}</span> ({rejectingRequest.type})
                 </p>
@@ -414,7 +414,7 @@ export function ManagerLeaveApprovals() {
             
             <div className="p-6 space-y-5">
               <div>
-                <label className="block text-xs font-black uppercase text-muted-foreground tracking-wider mb-3">
+                <label className="block text-xs font-bold uppercase text-muted-foreground tracking-wider mb-3">
                   Reason for rejection
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -435,7 +435,7 @@ export function ManagerLeaveApprovals() {
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase text-muted-foreground tracking-wider mb-2">
+                <label className="block text-xs font-bold uppercase text-muted-foreground tracking-wider mb-2">
                   Additional Comments (Optional)
                 </label>
                 <textarea

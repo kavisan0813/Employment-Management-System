@@ -38,12 +38,12 @@ export function FinancePerformance() {
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#EDE9FE] flex items-center justify-center text-[#7C3AED]">
-            <TrendingUp size={24} />
+          <div className="w-11 h-11 rounded-[10px] bg-[#EDE9FE] flex items-center justify-center text-[#7C3AED]">
+            <TrendingUp size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-foreground tracking-tight">My Performance</h1>
-            <p className="text-[13px] font-bold text-muted-foreground">Track your progress and appraisal status</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">My Performance</h1>
+            <p className="text-[13px] text-[#6B7280]">Track your progress and appraisal status</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -53,7 +53,7 @@ export function FinancePerformance() {
           </div>
           <button 
             onClick={() => setActiveTab("Self Review")}
-            className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20"
+            className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-bold text-[12px] uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20"
           >
             Start Self-Review
           </button>
@@ -74,7 +74,7 @@ export function FinancePerformance() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-4 text-[13px] font-black uppercase tracking-widest transition-all relative whitespace-nowrap ${
+            className={`pb-4 text-[13px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${
               activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -103,7 +103,7 @@ export function FinancePerformance() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <SectionTitle title="FY 2025-26 GOALS" />
-                  <span className="px-2 py-0.5 rounded-md bg-muted text-[10px] font-black text-muted-foreground uppercase tracking-widest">10 goals</span>
+                  <span className="px-2 py-0.5 rounded-md bg-muted text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">10 goals</span>
                 </div>
                 <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[#00B87C] text-[#00B87C] font-black text-[11px] uppercase tracking-widest hover:bg-[#00B87C]/5 transition-all">
                   <Plus size={14} /> Request Add Goal
@@ -204,12 +204,12 @@ export function FinancePerformance() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-muted/50 border-b border-border">
-                    <th className="px-8 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Review Period</th>
-                    <th className="px-8 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Rating</th>
-                    <th className="px-8 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Band</th>
-                    <th className="px-8 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Reviewer</th>
-                    <th className="px-8 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Date</th>
-                    <th className="px-8 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-right">Action</th>
+                    <th className="px-8 py-5 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Review Period</th>
+                    <th className="px-8 py-5 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Rating</th>
+                    <th className="px-8 py-5 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Band</th>
+                    <th className="px-8 py-5 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Reviewer</th>
+                    <th className="px-8 py-5 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Date</th>
+                    <th className="px-8 py-5 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -237,7 +237,7 @@ function KPICard({ label, value, suffix, color }: { label: string, value: string
 
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm group hover:border-[#00B87C]/30 transition-all">
-      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">{label}</p>
+      <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">{label}</p>
       <div className="flex items-baseline gap-1">
         <h3 className={`text-2xl font-black tracking-tight ${colorMap[color].split(' ')[0]}`}>{value}</h3>
         <span className="text-sm font-bold text-muted-foreground">{suffix}</span>
@@ -260,7 +260,7 @@ function GoalRow({ title, category, progress, status, isComplete }: { title: str
                      status === "Completed" ? "text-emerald-600 bg-emerald-500/10" : "text-rose-600 bg-rose-500/10";
   
   return (
-    <div className="flex items-center justify-between p-6 h-[72px] hover:bg-[#F0FDF4] dark:hover:bg-emerald-500/5 transition-all group border-b border-border last:border-0 cursor-pointer">
+    <div className="flex items-center justify-between p-6 h-[72px] hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all group border-b border-border last:border-0 cursor-pointer">
       <div className="flex items-center gap-4 flex-1">
         <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isComplete ? 'bg-[#00B87C] border-[#00B87C]' : 'border-border group-hover:border-[#00B87C]'}`}>
           {isComplete && <CheckCircle2 size={14} className="text-white" />}
@@ -268,14 +268,14 @@ function GoalRow({ title, category, progress, status, isComplete }: { title: str
         <div className="flex flex-col">
           <div className="flex items-center gap-3">
             <span className="text-[14px] font-bold text-foreground">{title}</span>
-            <span className="px-2 py-0.5 rounded-md bg-muted text-[9px] font-black text-muted-foreground uppercase tracking-widest">{category}</span>
+            <span className="px-2 py-0.5 rounded-md bg-muted text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider">{category}</span>
           </div>
         </div>
       </div>
       
       <div className="flex items-center gap-8 w-[300px]">
         <div className="flex-1 space-y-1">
-          <div className="flex justify-between items-center text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+          <div className="flex justify-between items-center text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
             <span>Progress</span>
             <span>{progress}%</span>
           </div>
@@ -288,7 +288,7 @@ function GoalRow({ title, category, progress, status, isComplete }: { title: str
           </div>
         </div>
         <div className="flex items-center gap-3 min-w-[120px] justify-end">
-          <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${statusColor}`}>
+          <span className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest ${statusColor}`}>
             {status} {status === "Completed" && "✅"} {status === "At risk" && "⚠"}
           </span>
           <ChevronRight size={16} className="text-muted-foreground group-hover:text-[#00B87C] transition-all" />
@@ -301,7 +301,7 @@ function GoalRow({ title, category, progress, status, isComplete }: { title: str
 function RatingSection({ label }: { label: string }) {
   const [rating, setRating] = useState(0);
   return (
-    <div className="space-y-4 bg-muted/10 border border-border p-6 rounded-[24px]">
+    <div className="space-y-4 bg-muted/10 border border-border p-6 rounded-2xl">
       <p className="text-[15px] font-black text-foreground">{label}</p>
       <div className="flex gap-2">
         {[1, 2, 3, 4, 5].map((num) => (
@@ -328,7 +328,7 @@ function RatingSection({ label }: { label: string }) {
 
 function FeedbackCard({ role, name, comment, date }: { role: string, name: string, comment: string, date: string }) {
   return (
-    <div className="p-5 rounded-[24px] bg-card border border-border shadow-sm hover:border-[#00B87C]/30 transition-all">
+    <div className="p-5 rounded-2xl bg-card border border-border shadow-sm hover:border-[#00B87C]/30 transition-all">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black ${role === 'Manager' ? 'bg-blue-500/10 text-blue-600' : 'bg-purple-500/10 text-purple-600'}`}>
@@ -336,10 +336,10 @@ function FeedbackCard({ role, name, comment, date }: { role: string, name: strin
           </div>
           <div>
             <p className="text-[13px] font-black text-foreground">{name}</p>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{role}</p>
+            <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">{role}</p>
           </div>
         </div>
-        <span className="text-[10px] font-bold text-muted-foreground">{date}</span>
+        <span className="text-[11px] font-bold text-muted-foreground">{date}</span>
       </div>
       <p className="text-[13px] font-medium text-foreground leading-relaxed italic">"{comment}"</p>
     </div>

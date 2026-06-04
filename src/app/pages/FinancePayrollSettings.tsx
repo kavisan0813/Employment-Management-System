@@ -48,12 +48,12 @@ export function FinancePayrollSettings() {
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-            <Settings size={24} className="text-emerald-600" />
+          <div className="w-11 h-11 rounded-[10px] bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+            <Settings size={22} className="text-emerald-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-foreground tracking-tight">Payroll Settings</h1>
-            <p className="text-[13px] font-medium text-muted-foreground">Configure pay cycles, components, and statutory compliance</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">Payroll Settings</h1>
+            <p className="text-[13px] text-[#6B7280]">Configure pay cycles, components, and statutory compliance</p>
           </div>
         </div>
       </div>
@@ -61,7 +61,7 @@ export function FinancePayrollSettings() {
       <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6 items-start">
         
         {/* LEFT SUB-NAV */}
-        <aside className="bg-card border border-border rounded-[24px] p-2 shadow-sm space-y-4">
+        <aside className="bg-card border border-border rounded-2xl p-2 shadow-sm space-y-4">
           <NavSection title="PAYROLL" items={NAV_ITEMS.filter(i => i.section === "PAYROLL")} activeId={activeTab} onSelect={setActiveTab} />
           <NavSection title="STATUTORY" items={NAV_ITEMS.filter(i => i.section === "STATUTORY")} activeId={activeTab} onSelect={setActiveTab} />
           <NavSection title="PROCESSING" items={NAV_ITEMS.filter(i => i.section === "PROCESSING")} activeId={activeTab} onSelect={setActiveTab} />
@@ -105,12 +105,12 @@ export function FinancePayrollSettings() {
               <table className="w-full text-left">
                 <thead className="bg-muted/30 border-b border-border">
                   <tr>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Component</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Type</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Calculation</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Taxable</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-center">PF Applicable</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">Action</th>
+                    <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">Component</th>
+                    <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">Type</th>
+                    <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">Calculation</th>
+                    <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">Taxable</th>
+                    <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8] text-center">PF Applicable</th>
+                    <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8] text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -192,7 +192,7 @@ export function FinancePayrollSettings() {
 function NavSection({ title, items, activeId, onSelect }: { title: string, items: NavItem[], activeId: string, onSelect: (id: string) => void }) {
   return (
     <div className="space-y-1">
-      <p className="px-4 py-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">{title}</p>
+      <p className="px-4 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest opacity-60">{title}</p>
       {items.map((item) => (
         <button
           key={item.id}
@@ -233,7 +233,7 @@ function ComponentRow({ name, type, calc, taxable, pf }: { name: string, type: '
     <tr className="hover:bg-muted/10 transition-colors group">
       <td className="px-6 py-4 text-sm font-black text-foreground">{name}</td>
       <td className="px-6 py-4">
-        <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest border ${
+        <span className={`px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-widest border ${
           type === 'Fixed' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600" : "bg-purple-500/10 border-purple-500/20 text-purple-600"
         }`}>
           {type}
@@ -241,14 +241,14 @@ function ComponentRow({ name, type, calc, taxable, pf }: { name: string, type: '
       </td>
       <td className="px-6 py-4 text-sm font-bold text-muted-foreground">{calc}</td>
       <td className="px-6 py-4">
-        <span className={`text-[11px] font-black uppercase tracking-widest ${
+        <span className={`text-[11px] font-bold uppercase tracking-widest ${
           taxable === 'Yes' ? "text-red-500" : taxable === 'No' ? "text-slate-400" : "text-amber-500"
         }`}>
           {taxable}
         </span>
       </td>
       <td className="px-6 py-4 text-center">
-        <span className={`text-[11px] font-black uppercase tracking-widest ${
+        <span className={`text-[11px] font-bold uppercase tracking-widest ${
           pf === 'Yes' ? "text-emerald-500" : "text-slate-400 opacity-60"
         }`}>
           {pf}

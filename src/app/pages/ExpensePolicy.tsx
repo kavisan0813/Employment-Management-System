@@ -67,12 +67,12 @@ export function ExpensePolicy() {
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+          className="p-2 hover:bg-[#00B87C]/[0.08] rounded-xl transition-colors"
         >
           <ArrowLeft size={20} className="text-slate-600" />
         </button>
         <div>
-          <h1 className="text-3xl font-black text-[#111827] tracking-tight">
+          <h1 className="text-[26px] font-bold text-[#111827]">
             Expense Policy
           </h1>
           <p className="text-slate-500 font-medium">
@@ -102,7 +102,7 @@ export function ExpensePolicy() {
         {policies.map((p, i) => (
           <div
             key={i}
-            className="bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm hover:shadow-md transition-all group"
+            className="bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group"
           >
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110"
@@ -133,16 +133,16 @@ export function ExpensePolicy() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <th className="px-8 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                   Category
                 </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <th className="px-8 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                   Limit
                 </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <th className="px-8 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                   Receipt Required
                 </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <th className="px-8 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                   Approval Required
                 </th>
               </tr>
@@ -151,7 +151,7 @@ export function ExpensePolicy() {
               {policies.map((p, i) => (
                 <tr
                   key={i}
-                  className="group hover:bg-slate-50/50 transition-colors"
+                  className="group hover:bg-[#00B87C]/[0.08]/50 transition-colors"
                 >
                   <td className="px-8 py-5 flex items-center gap-3">
                     <div

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import {
   Building2,
   Download,
@@ -12,7 +13,10 @@ import {
   AlertTriangle,
   ChevronRight,
   X,
+  TrendingUp,
+  User,
 } from "lucide-react";
+import { showToast } from "../components/workflow/ToastNotification";
 
 interface Department {
   id: string;
@@ -109,8 +113,28 @@ const DEPARTMENTS: Department[] = [
 ];
 
 export function FinanceDepartments() {
+  const navigate = useNavigate();
   const [selectedDept, setSelectedDept] = useState<Department | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState("Sort: Budget");
+  const [statusFilter, setStatusFilter] = useState("Status: Active");
+  const [alertModalOpen, setAlertModalOpen] = useState(false);
+  const [genericModalTitle, setGenericModalTitle] = useState("");
+
+  const filteredAndSortedDepts = DEPARTMENTS.filter(d => {
+    const matchesSearch = d.name.toLowerCase().includes(searchQuery.toLowerCase()) || d.head.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "Status: All" ? true : statusFilter === "Status: Active" ? true : false;
+    return matchesSearch && matchesStatus;
+  }).sort((a, b) => {
+    if (sortOption === "Sort: Budget") {
+      const parseAmount = (s: string) => s.includes("Cr") ? parseFloat(s.replace(/[^0-9.]/g, '')) * 10000000 : parseFloat(s.replace(/[^0-9.]/g, '')) * 100000;
+      return parseAmount(b.budgetAmount) - parseAmount(a.budgetAmount);
+    }
+    if (sortOption === "Sort: Name") return a.name.localeCompare(b.name);
+    if (sortOption === "Sort: Utilization") return b.budgetUsedPct - a.budgetUsedPct;
+    return 0;
+  });
 
   const getStatusColor = (status: Department["status"]) => {
     switch (status) {
@@ -130,24 +154,27 @@ export function FinanceDepartments() {
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex items-center justify-between border-b border-emerald-500/10 pb-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#DCFCE7] dark:bg-[#00B87C]/20 flex items-center justify-center border border-emerald-500/20 flex-shrink-0">
-            <Building2 size={24} className="text-[#00B87C]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#DCFCE7] dark:bg-[#00B87C]/20 flex items-center justify-center border border-emerald-500/20 flex-shrink-0">
+            <Building2 size={22} className="text-[#00B87C]" />
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-[26px] font-black text-foreground leading-none">
+              <h1 className="text-[26px] font-bold text-foreground leading-none">
                 Departments
               </h1>
               <span className="px-2 py-0.5 rounded-md bg-secondary text-muted-foreground text-[11px] font-bold border border-border">
                 View Only
               </span>
             </div>
-            <p className="text-[13px] font-bold text-muted-foreground uppercase tracking-widest">
+            <p className="text-[13px] text-[#6B7280]">
               Budget & cost data
             </p>
           </div>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-card hover:bg-secondary border border-border text-foreground rounded-xl text-[13px] font-black transition-all shadow-sm">
+        <button 
+          onClick={() => showToast("Exporting", "info", "Downloading Department Cost Report CSV")}
+          className="flex items-center gap-2 px-5 py-2.5 bg-card hover:bg-secondary border border-border text-foreground rounded-xl text-[13px] font-black transition-all shadow-sm"
+        >
           <Download size={16} className="text-muted-foreground" />
           Export Cost Report
         </button>
@@ -161,23 +188,29 @@ export function FinanceDepartments() {
         </p>
       </div>
 
-      {/* ─── Global Budget Summary Bar ───────────────────────────── */}
-      <div className="bg-card rounded-[24px] border border-border p-5 flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-border shadow-sm">
+      {/* ─── ROW 1 — KPI CARDS ─── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {[
-          { label: "TOTAL DEPARTMENTS", value: "7", color: "text-[#111827] dark:text-white" },
-          { label: "TOTAL HEADCOUNT", value: "2,847", color: "text-[#00B87C]" },
-          { label: "TOTAL ANNUAL BUDGET", value: "₹4.35Cr", color: "text-[#8B5CF6]" },
-          { label: "AVG BUDGET UTILIZATION", value: "74%", color: "text-[#F59E0B]" },
-          { label: "OVER-BUDGET DEPTS", value: "1", color: "text-[#EF4444]" },
-          { label: "PAYROLL THIS MONTH", value: "₹28.4L", color: "text-[#8B5CF6]" },
-        ].map((stat, idx) => (
-          <div key={idx} className="flex-1 px-4 py-3 md:py-0 text-center first:pl-2 last:pr-2 flex flex-col justify-center">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
-              {stat.label}
-            </p>
-            <p className={`text-[22px] font-black leading-none ${stat.color}`}>
-              {stat.value}
-            </p>
+          { icon: Building2, label: "DEPARTMENTS", value: "7", sub: "All active", color: "#64748B", bg: "rgba(100,116,139,0.1)" },
+          { icon: Users, label: "HEADCOUNT", value: "2,847", sub: "+26 this month", color: "#00B87C", bg: "rgba(0,184,124,0.1)", onClick: () => navigate("/employees") },
+          { icon: IndianRupee, label: "ANNUAL BUDGET", value: "₹4.35Cr", sub: "FY 2026-27", color: "#8B5CF6", bg: "rgba(139,92,246,0.1)", onClick: () => setGenericModalTitle("Annual Budget Details") },
+          { icon: PieChart, label: "AVG UTILIZATION", value: "74%", sub: "Healthy range", color: "#F59E0B", bg: "rgba(245,158,11,0.1)", onClick: () => setGenericModalTitle("Average Utilization Details") },
+          { icon: AlertTriangle, label: "OVER-BUDGET", value: "1", sub: "Finance Dept", color: "#EF4444", bg: "rgba(239,68,68,0.1)" },
+          { icon: IndianRupee, label: "MONTHLY PAYROLL", value: "₹28.4L", sub: "March 2026", color: "#8B5CF6", bg: "rgba(139,92,246,0.1)", onClick: () => navigate("/payroll") },
+        ].map((kpi, i) => (
+          <div 
+            key={i}
+            onClick={kpi.onClick}
+            className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all cursor-pointer group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-9 h-9 rounded-[10px] mb-3 flex items-center justify-center transition-transform group-hover:scale-110" style={{ backgroundColor: kpi.bg }}>
+                <kpi.icon size={20} style={{ color: kpi.color }} />
+              </div>
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1 leading-tight">{kpi.label}</p>
+              <p className="text-[24px] font-bold text-foreground mb-1 leading-none">{kpi.value}</p>
+            </div>
+            <p className="text-[12px] text-muted-foreground mt-2 font-medium">{kpi.sub}</p>
           </div>
         ))}
       </div>
@@ -189,16 +222,18 @@ export function FinanceDepartments() {
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
             <input
               type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search departments..."
               className="pl-10 pr-4 py-2.5 bg-card border border-border rounded-full text-[13px] font-bold text-foreground focus:outline-none focus:border-[#00B87C] w-[260px] shadow-sm transition-colors"
             />
           </div>
-          <select className="bg-card border border-border text-foreground text-[13px] font-bold rounded-xl px-4 py-2.5 outline-none focus:border-[#00B87C] shadow-sm cursor-pointer appearance-none pr-8 relative">
+          <select value={sortOption} onChange={e => setSortOption(e.target.value)} className="bg-card border border-border text-foreground text-[13px] font-bold rounded-xl px-4 py-2.5 outline-none focus:border-[#00B87C] shadow-sm cursor-pointer appearance-none pr-8 relative">
             <option>Sort: Budget</option>
             <option>Sort: Name</option>
             <option>Sort: Utilization</option>
           </select>
-          <select className="bg-card border border-border text-foreground text-[13px] font-bold rounded-xl px-4 py-2.5 outline-none focus:border-[#00B87C] shadow-sm cursor-pointer appearance-none pr-8 relative">
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-card border border-border text-foreground text-[13px] font-bold rounded-xl px-4 py-2.5 outline-none focus:border-[#00B87C] shadow-sm cursor-pointer appearance-none pr-8 relative">
             <option>Status: Active</option>
             <option>Status: All</option>
           </select>
@@ -225,82 +260,104 @@ export function FinanceDepartments() {
 
       {/* ─── Department Cards Grid ─────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {DEPARTMENTS.map((dept) => (
-          <div
-            key={dept.id}
-            onClick={() => setSelectedDept(dept)}
-            className="bg-card rounded-2xl p-5 border border-border shadow-sm hover:shadow-md hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col gap-5 relative overflow-hidden"
-          >
-            {/* Top row: Icon and Growth */}
-            <div className="flex items-start justify-between">
-              <div className="w-10 h-10 rounded-xl bg-[#DCFCE7] dark:bg-[#00B87C]/20 flex items-center justify-center border border-emerald-500/20">
-                <Building2 size={20} className="text-[#00B87C]" />
-              </div>
-              <div className="px-2 py-1 rounded-md bg-[#DCFCE7] text-[#00B87C] text-[11px] font-black border border-[#00B87C]/20">
-                {dept.growth}
-              </div>
-            </div>
-
-            {/* Title */}
-            <div>
-              <h3 className="text-[22px] font-black text-foreground mb-0.5">{dept.name}</h3>
-              <p className="text-[13px] font-bold text-muted-foreground">Head: {dept.head}</p>
-            </div>
-
-            {/* Quick Stats (Finance Specific) */}
-            <div className="flex items-center divide-x divide-border bg-secondary/50 rounded-xl border border-border p-3">
-              <div className="flex-1 flex flex-col gap-1 items-center justify-center">
-                <div className="flex items-center gap-1.5">
-                  <IndianRupee size={12} className="text-[#8B5CF6]" />
-                  <span className="text-[14px] font-black text-[#8B5CF6] leading-none">{dept.budgetAmount}</span>
-                </div>
-                <span className="text-[11px] font-bold text-muted-foreground">Annual Budget</span>
-              </div>
-              <div className="flex-1 flex flex-col gap-1 items-center justify-center">
-                <div className="flex items-center gap-1.5">
-                  <PieChart size={12} className="text-[#F59E0B]" />
-                  <span className="text-[14px] font-black text-[#F59E0B] leading-none">{dept.budgetUsedPct}%</span>
-                </div>
-                <span className="text-[11px] font-bold text-muted-foreground">Budget Used</span>
-              </div>
-              <div className="flex-1 flex flex-col gap-1 items-center justify-center">
-                <div className="flex items-center gap-1.5">
-                  <Users size={12} className="text-[#00B87C]" />
-                  <span className="text-[14px] font-black text-[#00B87C] leading-none">{dept.employees}</span>
-                </div>
-                <span className="text-[11px] font-bold text-muted-foreground">Employees</span>
-              </div>
-            </div>
-
-            {/* Budget Progress Bar */}
-            <div className="flex flex-col gap-2">
-              <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{ width: `${dept.budgetUsedPct}%`, backgroundColor: getStatusColor(dept.status) }}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                {dept.nearLimit ? (
-                  <div className="flex items-center gap-1 px-1.5 py-0.5 bg-rose-500/10 text-rose-500 rounded text-[10px] font-black border border-rose-500/20">
-                    <AlertTriangle size={10} /> ⚠ Near limit
-                  </div>
-                ) : (
-                  <div />
-                )}
-                <span className="text-[11px] font-bold text-muted-foreground">
-                  {dept.budgetUsedAmount} used of {dept.budgetAmount}
+        {filteredAndSortedDepts.map((dept) => (
+            <div
+              key={dept.id}
+              className="bg-white dark:bg-zinc-900 rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
+            >
+              {/* Status / Actions */}
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                <span
+                  className={`px-2 py-0.5 text-[9px] font-black rounded-full border uppercase tracking-wider ${dept.status === "green" ? "bg-[#E6F4EA] text-[#00B87C] border-[#00B87C]/20" : dept.status === "amber" ? "bg-amber-50 text-amber-600 border-amber-500/20" : "bg-rose-50 text-rose-600 border-rose-500/20"}`}
+                >
+                  {dept.status === "green" ? "Healthy" : dept.status === "amber" ? "Warning" : "Critical"}
                 </span>
-              </div>
-            </div>
 
-            {/* Expand chevron */}
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0">
-              <div className="w-8 h-8 bg-card rounded-full shadow-md border border-border flex items-center justify-center">
-                <ChevronRight size={18} className="text-[#00B87C]" />
+                <div className="relative">
+                  <button
+                    className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedDept(dept);
+                    }}
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+
+              <div
+                onClick={() => setSelectedDept(dept)}
+                className="cursor-pointer"
+              >
+                {/* Dept Title */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-secondary">
+                    <Building2 size={20} color="var(--primary)" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                      {dept.name}
+                    </h3>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                      {dept.id}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Quick Stats (Finance Specific) */}
+                <div className="grid grid-cols-3 gap-2 mb-4 text-center bg-neutral-50 dark:bg-zinc-800/40 p-2 rounded-xl border border-border">
+                  <div>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block">Employees</span>
+                    <span className="text-xs font-extrabold text-foreground">{dept.employees}</span>
+                  </div>
+                  <div>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block">Used %</span>
+                    <span className="text-xs font-extrabold text-[#F59E0B]">{dept.budgetUsedPct}%</span>
+                  </div>
+                  <div>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block">Budget</span>
+                    <span className="text-xs font-extrabold text-[#8B5CF6]">{dept.budgetAmount}</span>
+                  </div>
+                </div>
+
+                {/* Budget Progress */}
+                <div className="mb-5">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-muted-foreground mb-1.5">
+                    <div className="flex items-center gap-1">
+                      <span>Budget Used</span>
+                      {dept.nearLimit && (
+                        <span className="text-rose-500 flex items-center gap-1 bg-rose-500/10 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider">
+                          <AlertTriangle size={10} /> Near limit
+                        </span>
+                      )}
+                    </div>
+                    <span className="font-black text-foreground">
+                      {dept.budgetUsedAmount} / {dept.budgetAmount}
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${dept.budgetUsedPct}%`, backgroundColor: getStatusColor(dept.status) }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-between pt-3 border-t border-border">
+                <div className="flex items-center gap-1 text-xs font-bold text-slate-600 dark:text-slate-300">
+                  <User size={14} className="text-slate-400" />
+                  <span>{dept.head}</span>
+                </div>
+
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-[11px] font-bold">
+                  <TrendingUp size={12} color="var(--primary)" />
+                  <span style={{ color: "var(--primary)" }}>{dept.growth}%</span>
+                </div>
               </div>
             </div>
-          </div>
         ))}
       </div>
 
@@ -343,13 +400,13 @@ export function FinanceDepartments() {
                   <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Budget Used</p>
                   <p className="text-[18px] font-black text-foreground">{selectedDept.budgetUsedAmount}</p>
                 </div>
-                <div className="bg-secondary/40 border border-border rounded-xl p-4 flex flex-col justify-center items-center text-center">
+                <div onClick={() => navigate("/employees")} className="bg-secondary/40 border border-border rounded-xl p-4 flex flex-col justify-center items-center text-center cursor-pointer hover:bg-[#00B87C]/10 transition-colors">
                   <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Employees</p>
-                  <p className="text-[18px] font-black text-foreground">{selectedDept.employees}</p>
+                  <p className="text-[18px] font-black text-[#00B87C] underline decoration-[#00B87C]/30 underline-offset-4">{selectedDept.employees}</p>
                 </div>
-                <div className="bg-secondary/40 border border-border rounded-xl p-4 flex flex-col justify-center items-center text-center">
+                <div onClick={() => navigate("/payroll")} className="bg-secondary/40 border border-border rounded-xl p-4 flex flex-col justify-center items-center text-center cursor-pointer hover:bg-[#8B5CF6]/10 transition-colors">
                   <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Payroll Cost</p>
-                  <p className="text-[18px] font-black text-[#8B5CF6]">₹12.4L/month</p>
+                  <p className="text-[18px] font-black text-[#8B5CF6] underline decoration-[#8B5CF6]/30 underline-offset-4">₹12.4L/m</p>
                 </div>
               </div>
 
@@ -433,10 +490,62 @@ export function FinanceDepartments() {
             </div>
 
             {/* Bottom Note */}
-            <div className="p-4 border-t border-border bg-amber-500/5">
+            <div className="p-4 border-t border-border bg-amber-500/5 cursor-pointer hover:bg-amber-500/10 transition-colors" onClick={() => window.location.href = "mailto:hr@nexushr.com"}>
               <p className="text-center text-[12px] font-bold text-amber-600 dark:text-amber-500">
                 ⚠ No edit permissions — contact HR Manager to modify
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Finance Department Budget Alert Modal ─── */}
+      {alertModalOpen && (
+        <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={() => setAlertModalOpen(false)} />
+          <div className="relative bg-card w-full max-w-[420px] rounded-2xl shadow-2xl border border-border overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="flex items-center gap-3 text-rose-500 mb-4">
+                <div className="p-2 rounded-xl bg-rose-500/10">
+                  <AlertTriangle size={24} />
+                </div>
+                <h3 className="text-lg font-black">Budget Alert</h3>
+              </div>
+              <p className="text-[13px] text-muted-foreground font-semibold leading-relaxed mb-6">
+                The Finance department has reached <strong className="text-foreground">91%</strong> of its annual budget (₹50.05L used out of ₹55L). 
+                Please review upcoming expenditures or request a budget expansion.
+              </p>
+              <div className="flex gap-3">
+                <button onClick={() => setAlertModalOpen(false)} className="flex-1 py-2.5 rounded-xl border border-border font-bold text-[13px] hover:bg-muted transition-colors">
+                  Dismiss
+                </button>
+                <button onClick={() => setAlertModalOpen(false)} className="flex-1 py-2.5 rounded-xl bg-rose-500 text-white font-bold text-[13px] hover:bg-rose-600 transition-colors shadow-lg shadow-rose-500/20">
+                  Review Budget
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Generic KPI Modal ─── */}
+      {genericModalTitle && (
+        <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={() => setGenericModalTitle("")} />
+          <div className="relative bg-card w-full max-w-[420px] rounded-2xl shadow-2xl border border-border overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-black text-foreground">{genericModalTitle}</h3>
+                <button onClick={() => setGenericModalTitle("")} className="text-muted-foreground hover:text-foreground">
+                  <X size={18} />
+                </button>
+              </div>
+              <p className="text-[13px] text-muted-foreground font-semibold mb-6">
+                Detailed view for {genericModalTitle.toLowerCase()} is not available in the current preview mode. Please check back later.
+              </p>
+              <button onClick={() => setGenericModalTitle("")} className="w-full py-2.5 rounded-xl border border-border font-bold text-[13px] hover:bg-muted transition-colors">
+                Close
+              </button>
             </div>
           </div>
         </div>

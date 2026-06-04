@@ -19,7 +19,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types                                                           */
@@ -235,12 +235,12 @@ interface StatsCardProps {
 
 function StatsCard({ icon: Icon, color, label, value, subValue, bg }: StatsCardProps) {
   return (
-    <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex items-center gap-4 transition-all hover:shadow-md">
+    <div className="bg-card p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4 transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]">
       <div className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center`}>
         <Icon size={24} className={color.startsWith("#") ? "" : color} style={color.startsWith("#") ? { color } : {}} />
       </div>
       <div>
-        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{label}</p>
+        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">{label}</p>
         <p className="text-2xl font-black text-foreground leading-none mb-1">{value}</p>
         <p className="text-[12px] font-bold text-muted-foreground">{subValue}</p>
       </div>
@@ -412,7 +412,7 @@ export function EmployeeTraining() {
                   setSelectedCourse(course);
                   setShowDetailModal(true);
                 }}
-                className="w-[220px] h-[320px] bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col flex-shrink-0 transition-all hover:-translate-y-1 hover:shadow-md cursor-pointer group"
+                className="w-[220px] h-[320px] bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col flex-shrink-0 transition-all hover:-translate-y-1 hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] cursor-pointer group"
               >
                 <div className={`h-[130px] bg-gradient-to-br ${course.gradient} p-4 relative flex flex-col justify-between`}>
                   <span className="px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-white text-[9px] font-black tracking-wide uppercase self-start border border-white/20">
@@ -431,7 +431,7 @@ export function EmployeeTraining() {
                   </div>
                   <div className="space-y-3">
                     <div className="space-y-1">
-                      <div className="flex items-center justify-between text-[10px] font-black">
+                      <div className="flex items-center justify-between text-[11px] font-semibold">
                         <span className="text-muted-foreground uppercase">Progress</span>
                         <span className="text-primary">{course.progress}%</span>
                       </div>
@@ -465,7 +465,7 @@ export function EmployeeTraining() {
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">MANDATORY TRAINING</h3>
-          <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-500 text-[10px] font-black border border-rose-100 dark:bg-rose-500/10">
+          <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-500 text-[11px] font-semibold border border-rose-100 dark:bg-rose-500/10">
             {courses.filter((c) => c.isMandatory && c.status !== "Completed").length} pending
           </span>
         </div>
@@ -475,9 +475,9 @@ export function EmployeeTraining() {
             .map((item) => (
               <div
                 key={item.id}
-                className={`bg-card p-5 rounded-[20px] border border-border shadow-sm flex items-center justify-between gap-4 border-l-[3px] ${
+                className={`bg-card p-5 rounded-2xl border border-border shadow-sm flex items-center justify-between gap-4 border-l-[3px] ${
                   item.status === "Overdue" ? "border-l-rose-500" : item.status === "Completed" ? "border-l-primary" : "border-l-amber-500"
-                } transition-all hover:shadow-md group`}
+                } transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] group`}
               >
                 <div className="flex items-center gap-4">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.status === "Overdue" ? "bg-rose-50 text-rose-500" : "bg-emerald-500/10 text-primary"}`}>
@@ -489,7 +489,7 @@ export function EmployeeTraining() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${item.status === "Overdue" ? "bg-rose-50 text-rose-500 border border-rose-100" : "bg-emerald-500/10 text-primary border border-primary/20"}`}>
+                  <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider ${item.status === "Overdue" ? "bg-rose-50 text-rose-500 border border-rose-100" : "bg-emerald-500/10 text-primary border border-primary/20"}`}>
                     {item.status}
                   </span>
                   {item.status !== "Completed" ? (
@@ -513,14 +513,14 @@ export function EmployeeTraining() {
             <Plus size={14} /> Add External Certification
           </button>
         </div>
-        <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-secondary">
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">CERTIFICATION</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">ISSUED BY</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">ISSUE DATE</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">STATUS</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">CERTIFICATION</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">ISSUED BY</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">ISSUE DATE</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">STATUS</th>
                 <th className="px-6 py-4"></th>
               </tr>
             </thead>
@@ -531,7 +531,7 @@ export function EmployeeTraining() {
                   <td className="px-6 py-4 text-[13px] font-bold text-muted-foreground">{cert.issuedBy}</td>
                   <td className="px-6 py-4 text-[12px] font-bold text-muted-foreground">{cert.issueDate}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${cert.status === "Active" ? "bg-emerald-500/10 text-primary border-primary/20" : cert.status === "Pending Verification" ? "bg-blue-50 text-blue-600 border-blue-100" : "bg-rose-50 text-rose-500 border-rose-100"}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${cert.status === "Active" ? "bg-emerald-500/10 text-primary border-primary/20" : cert.status === "Pending Verification" ? "bg-blue-50 text-blue-600 border-blue-100" : "bg-rose-50 text-rose-500 border-rose-100"}`}>
                       {cert.status}
                     </span>
                   </td>
@@ -646,7 +646,7 @@ export function EmployeeTraining() {
             >
               <div className={`h-[160px] bg-gradient-to-br ${course.gradient} p-6 relative flex flex-col justify-between`}>
                 <div className="flex items-center justify-between">
-                  <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[10px] font-black tracking-wide uppercase border border-white/20">
+                  <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] font-semibold tracking-wide uppercase border border-white/20">
                     {course.category}
                   </span>
                   <div className="flex items-center gap-1 text-white text-[11px] font-black">
@@ -673,7 +673,7 @@ export function EmployeeTraining() {
                         setSelectedCourse(course);
                         setShowEnrollConfirm(true);
                       }}
-                      className="w-full py-3.5 bg-primary text-white font-black text-[12px] uppercase tracking-widest rounded-2xl shadow-lg shadow-emerald-500/10 hover:opacity-95 transition-all"
+                      className="w-full py-3.5 bg-primary text-white font-black text-[12px] uppercase tracking-widest rounded-2xl shadow-lg shadow-[#00B87C]/10 hover:opacity-95 transition-all"
                     >
                       Enroll Now
                     </button>
@@ -712,10 +712,10 @@ export function EmployeeTraining() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-secondary">
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">COURSE</th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-center">PROGRESS</th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">STATUS</th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">LAST ACCESSED</th>
+                <th className="px-8 py-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">COURSE</th>
+                <th className="px-8 py-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-center">PROGRESS</th>
+                <th className="px-8 py-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">STATUS</th>
+                <th className="px-8 py-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">LAST ACCESSED</th>
                 <th className="px-8 py-5"></th>
               </tr>
             </thead>
@@ -744,7 +744,7 @@ export function EmployeeTraining() {
                       </div>
                     </td>
                     <td className="px-8 py-6">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${c.status === "Completed" ? "bg-emerald-500/10 text-primary border-primary/20" : "bg-blue-50 text-blue-600 border-blue-100"}`}>
+                      <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${c.status === "Completed" ? "bg-emerald-500/10 text-primary border-primary/20" : "bg-blue-50 text-blue-600 border-blue-100"}`}>
                         {c.status}
                       </span>
                     </td>
@@ -755,7 +755,7 @@ export function EmployeeTraining() {
                           <Download size={14} /> Certificate
                         </button>
                       ) : (
-                        <button onClick={() => { setActiveCourseId(c.id); setView("learning"); }} className="px-4 py-2 bg-primary text-white rounded-xl font-black text-[11px] uppercase tracking-widest shadow-lg shadow-emerald-500/10 hover:opacity-90 transition-all ml-auto">
+                        <button onClick={() => { setActiveCourseId(c.id); setView("learning"); }} className="px-4 py-2 bg-primary text-white rounded-xl font-black text-[11px] uppercase tracking-widest shadow-lg shadow-[#00B87C]/10 hover:opacity-90 transition-all ml-auto">
                           Continue
                         </button>
                       )}
@@ -780,13 +780,13 @@ export function EmployeeTraining() {
               <ChevronLeft size={20} className="text-primary" />
             </button>
             <div>
-              <p className="text-[10px] font-black text-primary uppercase tracking-widest">{activeCourse.category}</p>
+              <p className="text-[11px] font-semibold text-primary uppercase tracking-widest">{activeCourse.category}</p>
               <h2 className="text-2xl font-black text-foreground">{activeCourse.title}</h2>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-6">
             <div className="text-right">
-              <p className="text-[10px] font-black text-muted-foreground uppercase">Progress</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase">Progress</p>
               <p className="text-lg font-black text-primary">{activeCourse.progress}%</p>
             </div>
             <div className="w-40 h-2 bg-secondary rounded-full overflow-hidden">
@@ -817,7 +817,7 @@ export function EmployeeTraining() {
               </p>
               <div className="flex flex-wrap gap-3 mt-8">
                 {["Video Lesson", "Hands-on Exercise", "Quiz"].map((tag) => (
-                  <span key={tag} className="px-3 py-1.5 rounded-full bg-secondary text-foreground text-[10px] font-black uppercase tracking-wider border border-border">
+                  <span key={tag} className="px-3 py-1.5 rounded-full bg-secondary text-foreground text-[11px] font-semibold uppercase tracking-wider border border-border">
                     {tag}
                   </span>
                 ))}
@@ -836,7 +836,7 @@ export function EmployeeTraining() {
                   <div
                     key={lesson.id}
                     onClick={() => handleLessonToggle(activeCourse.id, lesson.id)}
-                    className={`p-4 rounded-[20px] flex items-center justify-between gap-4 cursor-pointer transition-all ${
+                    className={`p-4 rounded-2xl flex items-center justify-between gap-4 cursor-pointer transition-all ${
                       lesson.completed ? "bg-emerald-500/5 hover:bg-emerald-500/10" : "hover:bg-secondary"
                     }`}
                   >
@@ -846,7 +846,7 @@ export function EmployeeTraining() {
                       </div>
                       <div>
                         <p className={`text-sm font-black ${lesson.completed ? "text-primary" : "text-foreground"}`}>{lesson.title}</p>
-                        <p className="text-[10px] font-bold text-muted-foreground">{lesson.duration}</p>
+                        <p className="text-[11px] font-bold text-muted-foreground">{lesson.duration}</p>
                       </div>
                     </div>
                     {!lesson.completed && <Play size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100" />}
@@ -855,7 +855,7 @@ export function EmployeeTraining() {
               </div>
               <div className="p-6 border-t border-border mt-auto">
                 {activeCourse.progress === 100 ? (
-                  <button onClick={() => handleDownloadCert(activeCourse.title, "Active")} className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2">
+                  <button onClick={() => handleDownloadCert(activeCourse.title, "Active")} className="w-full py-4 bg-[#00B87C] text-white rounded-2xl font-bold text-xs uppercase tracking-wider shadow-lg shadow-[#00B87C]/20 hover:opacity-95 transition-all flex items-center justify-center gap-2">
                     <Award size={16} /> Claim Certificate
                   </button>
                 ) : (
@@ -866,7 +866,7 @@ export function EmployeeTraining() {
               </div>
             </div>
 
-            <div className="bg-emerald-500/5 border border-emerald-500/20 p-6 rounded-[24px]">
+            <div className="bg-emerald-500/5 border border-emerald-500/20 p-6 rounded-2xl">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white">
                   <Award size={16} />
@@ -902,19 +902,19 @@ export function EmployeeTraining() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-secondary p-4 rounded-2xl text-center">
-                <p className="text-[10px] font-black text-muted-foreground uppercase">Duration</p>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase">Duration</p>
                 <p className="text-sm font-black">{selectedCourse.duration}</p>
               </div>
               <div className="bg-secondary p-4 rounded-2xl text-center">
-                <p className="text-[10px] font-black text-muted-foreground uppercase">Level</p>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase">Level</p>
                 <p className="text-sm font-black">{selectedCourse.difficulty}</p>
               </div>
               <div className="bg-secondary p-4 rounded-2xl text-center">
-                <p className="text-[10px] font-black text-muted-foreground uppercase">Rating</p>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase">Rating</p>
                 <p className="text-sm font-black">{selectedCourse.rating} / 5</p>
               </div>
               <div className="bg-secondary p-4 rounded-2xl text-center">
-                <p className="text-[10px] font-black text-muted-foreground uppercase">Modules</p>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase">Modules</p>
                 <p className="text-sm font-black">{selectedCourse.lessons.length}</p>
               </div>
             </div>
@@ -924,9 +924,9 @@ export function EmployeeTraining() {
             </div>
             <div className="pt-4 flex gap-4">
               {selectedCourse.status === "Not Enrolled" ? (
-                <button onClick={() => setShowEnrollConfirm(true)} className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg shadow-emerald-500/10">Enroll for Free</button>
+                <button onClick={() => setShowEnrollConfirm(true)} className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg shadow-[#00B87C]/10">Enroll for Free</button>
               ) : (
-                <button onClick={() => { setShowDetailModal(false); setActiveCourseId(selectedCourse.id); setView("learning"); }} className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg shadow-emerald-500/10">Continue Learning</button>
+                <button onClick={() => { setShowDetailModal(false); setActiveCourseId(selectedCourse.id); setView("learning"); }} className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg shadow-[#00B87C]/10">Continue Learning</button>
               )}
               <button className="flex-1 py-4 bg-secondary text-foreground font-black rounded-2xl">View Syllabus</button>
             </div>
@@ -955,41 +955,41 @@ export function EmployeeTraining() {
       <Modal isOpen={showAddCertModal} onClose={() => setShowAddCertModal(false)} title="Add External Certificate">
         <form onSubmit={handleAddCert} className="space-y-5">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Certificate Name</label>
+            <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">Certificate Name</label>
             <input required type="text" className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none focus:ring-2 focus:ring-primary/20" placeholder="e.g. Google Cloud Professional" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Issuing Organization</label>
+              <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">Issuing Organization</label>
               <input required type="text" className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none" placeholder="e.g. Google" />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Credential ID</label>
+              <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">Credential ID</label>
               <input type="text" className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none" placeholder="Optional" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Issue Date</label>
+              <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">Issue Date</label>
               <div className="relative">
                 <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                 <input required type="date" className="w-full pl-12 pr-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none" />
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Expiry Date</label>
+              <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">Expiry Date</label>
               <div className="relative">
                 <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                 <input type="date" className="w-full pl-12 pr-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none" />
               </div>
             </div>
           </div>
-          <div className="p-6 border-2 border-dashed border-border rounded-[24px] text-center space-y-2 hover:bg-secondary/50 transition-all cursor-pointer">
+          <div className="p-6 border-2 border-dashed border-border rounded-2xl text-center space-y-2 hover:bg-secondary/50 transition-all cursor-pointer">
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto text-primary">
               <Upload size={20} />
             </div>
             <p className="text-xs font-black text-foreground">Upload Certificate File</p>
-            <p className="text-[10px] font-bold text-muted-foreground">PDF, JPG, or PNG (Max 5MB)</p>
+            <p className="text-[11px] font-bold text-muted-foreground">PDF, JPG, or PNG (Max 5MB)</p>
           </div>
           <div className="flex gap-4 pt-4">
             <button type="button" onClick={() => setShowAddCertModal(false)} className="flex-1 py-4 bg-secondary text-foreground font-black rounded-2xl">Cancel</button>

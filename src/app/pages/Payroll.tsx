@@ -178,7 +178,7 @@ function PayslipModal({
           {/* Employee Info Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 rounded-xl bg-muted/30 border border-border mb-6">
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
+              <p className="text-[11px] uppercase font-bold text-muted-foreground mb-1">
                 Employee Name
               </p>
               <p className="text-sm font-bold text-foreground">
@@ -186,7 +186,7 @@ function PayslipModal({
               </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
+              <p className="text-[11px] uppercase font-bold text-muted-foreground mb-1">
                 Designation
               </p>
               <p className="text-sm font-bold text-foreground">
@@ -194,7 +194,7 @@ function PayslipModal({
               </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
+              <p className="text-[11px] uppercase font-bold text-muted-foreground mb-1">
                 Department
               </p>
               <p className="text-sm font-bold text-foreground">
@@ -202,7 +202,7 @@ function PayslipModal({
               </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">
+              <p className="text-[11px] uppercase font-bold text-muted-foreground mb-1">
                 Pay Period
               </p>
               <p className="text-sm font-bold text-foreground">
@@ -269,7 +269,7 @@ function PayslipModal({
           </div>
 
           {/* Net Pay Highlight */}
-          <div className="mt-10 p-8 rounded-3xl bg-emerald-600 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-emerald-500/20">
+          <div className="mt-10 p-8 rounded-2xl bg-[#00B87C] text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-[#00B87C]/20">
             <div>
               <p className="text-emerald-100 text-xs font-bold uppercase tracking-widest mb-1">
                 Net Payable Amount
@@ -277,7 +277,7 @@ function PayslipModal({
               <h2 className="text-4xl font-black">
                 ₹{employee.net.toLocaleString()}
               </h2>
-              <p className="text-emerald-200 text-[10px] mt-2 italic">
+              <p className="text-emerald-200 text-[11px] mt-2 italic">
                 Amount in words: Eight Thousand Three Hundred Sixty Rupees Only
               </p>
             </div>
@@ -286,7 +286,7 @@ function PayslipModal({
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t border-border flex flex-col md:flex-row justify-between gap-4 text-[10px] text-muted-foreground text-center md:text-left">
+          <div className="mt-8 pt-8 border-t border-border flex flex-col md:flex-row justify-between gap-4 text-[11px] text-muted-foreground text-center md:text-left">
             <p>
               This is a computer generated payslip and does not require a
               signature.
@@ -305,7 +305,7 @@ function PayslipModal({
           </button>
           <button
             onClick={handlePrint}
-            className="px-6 py-2 rounded-xl text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors flex items-center gap-2"
+            className="px-6 py-2 rounded-xl text-sm font-bold text-white bg-[#00B87C] hover:bg-emerald-700 transition-colors flex items-center gap-2"
           >
             <Download size={16} />
             Download PDF
@@ -355,9 +355,9 @@ function RunPayrollModal({
           <>
             <div className="px-8 py-8">
               <div className="flex items-center justify-between mb-6">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-emerald-500/10">
+                <div className="w-11 h-11 rounded-[10px] flex items-center justify-center bg-emerald-500/10">
                   <Play
-                    size={28}
+                    size={22}
                     className="text-emerald-500 fill-emerald-500"
                   />
                 </div>
@@ -431,7 +431,7 @@ function RunPayrollModal({
               </button>
               <button
                 onClick={() => setStep("processing")}
-                className="flex-1 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 shadow-lg shadow-emerald-500/20 bg-emerald-600"
+                className="flex-1 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 shadow-lg shadow-[#00B87C]/20 bg-[#00B87C]"
               >
                 Confirm & Disburse
               </button>
@@ -472,7 +472,7 @@ function RunPayrollModal({
             </p>
             <button
               onClick={onClose}
-              className="mt-10 w-full py-4 rounded-xl text-sm font-bold text-white transition-all shadow-xl bg-emerald-600 shadow-emerald-500/20"
+              className="mt-10 w-full py-4 rounded-xl text-sm font-bold text-white transition-all shadow-xl bg-[#00B87C] shadow-[#00B87C]/20"
             >
               Back to Dashboard
             </button>
@@ -595,7 +595,7 @@ function EditPayrollModal({
           </button>
           <button
             onClick={handleSave}
-            className="w-1/2 py-3 bg-emerald-600 text-white font-bold rounded-xl text-sm hover:bg-emerald-700 transition-colors"
+            className="w-1/2 py-3 bg-[#00B87C] text-white font-bold rounded-xl text-sm hover:bg-emerald-700 transition-colors"
           >
             Save Changes
           </button>
@@ -616,7 +616,7 @@ function ActionSuccessModal({
 }) {
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="w-full max-w-sm bg-white dark:bg-[#06211C] rounded-3xl p-8 shadow-2xl text-center animate-in zoom-in-95 duration-300">
+      <div className="w-full max-w-sm bg-white dark:bg-[#06211C] rounded-2xl p-8 shadow-2xl text-center animate-in zoom-in-95 duration-300">
         <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6">
           <CheckCircle2 size={40} className="text-emerald-500" />
         </div>
@@ -626,7 +626,7 @@ function ActionSuccessModal({
         </p>
         <button
           onClick={onClose}
-          className="w-full py-4 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+          className="w-full py-4 bg-[#00B87C] text-white font-bold rounded-2xl hover:bg-emerald-700 shadow-lg shadow-[#00B87C]/20 transition-all active:scale-95"
         >
           Got it
         </button>
@@ -722,11 +722,13 @@ export function Payroll() {
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
-            <Wallet className="text-emerald-500" size={32} />
+          <h1 className="text-[26px] font-bold text-foreground tracking-tight flex items-center gap-3">
+            <div className="w-11 h-11 rounded-[10px] bg-emerald-500/10 flex items-center justify-center">
+              <Wallet className="text-emerald-500" size={22} />
+            </div>
             Payroll Management
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm font-medium">
+          <p className="text-[13px] text-[#6B7280] mt-1">
             {" "}
             Manage disbursements, taxes, and payslips effortlessly.
           </p>
@@ -798,7 +800,7 @@ export function Payroll() {
 
           <button
             onClick={() => setShowRunModal(true)}
-            className="flex items-center gap-2.5 rounded-xl px-6 py-2.5 bg-emerald-600 text-white text-sm font-bold shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 active:scale-95 transition-all"
+            className="flex items-center gap-2.5 rounded-xl px-6 py-2.5 bg-[#00B87C] text-white text-sm font-bold shadow-lg shadow-[#00B87C]/20 hover:bg-emerald-700 active:scale-95 transition-all"
           >
             <Play size={16} className="fill-white" />
             Run Payroll
@@ -855,7 +857,7 @@ export function Payroll() {
         ].map((stat, i) => (
           <div
             key={i}
-            className="relative group bg-card border border-border rounded-3xl p-6 overflow-hidden hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300"
+            className="relative group bg-card border border-border rounded-2xl p-6 overflow-hidden hover:shadow-xl hover:shadow-[#00B87C]/5 transition-all duration-300"
           >
             <div
               className={`absolute -right-4 -top-4 w-24 h-24 rounded-full bg-${stat.color}-500/5 group-hover:scale-150 transition-transform duration-500`}
@@ -863,7 +865,7 @@ export function Payroll() {
 
             <div className="relative">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   {stat.label}
                 </span>
                 <div
@@ -874,11 +876,11 @@ export function Payroll() {
               </div>
 
               <div className="flex items-baseline gap-2">
-                <h3 className="text-3xl font-black text-foreground tracking-tight">
+                <h3 className="text-[28px] font-bold">
                   {stat.value}
                 </h3>
               </div>
-              <p className="text-xs text-muted-foreground mt-2 font-medium">
+              <p className="text-[12px] text-[#6B7280] mt-2">
                 {stat.desc}
               </p>
 
@@ -894,7 +896,7 @@ export function Payroll() {
       </div>
 
       {/* Filters & Search */}
-      <div className="bg-card border border-border rounded-3xl p-2 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-card border border-border rounded-2xl p-2 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-1 p-1 bg-muted/50 rounded-2xl w-full md:w-auto">
           {["All", "Paid", "Pending"].map((status) => (
             <button
@@ -980,12 +982,12 @@ export function Payroll() {
       {/* Expanded Filter Panel */}
       {isFilterOpen && (
         <div
-          className="bg-card border border-border rounded-3xl p-5 mb-6 shadow-sm animate-in slide-in-from-top-2"
+          className="bg-card border border-border rounded-2xl p-5 mb-6 shadow-sm animate-in slide-in-from-top-2"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="text-[10px] font-bold text-muted-foreground mb-1.5 block uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">
                 Department
               </label>
               <select className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-foreground">
@@ -996,7 +998,7 @@ export function Payroll() {
               </select>
             </div>
             <div>
-              <label className="text-[10px] font-bold text-muted-foreground mb-1.5 block uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">
                 Pay Range
               </label>
               <select className="w-full bg-muted/30 border border-border rounded-xl px-4 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-foreground">
@@ -1009,7 +1011,7 @@ export function Payroll() {
             <div className="flex items-end gap-3">
               <button
                 onClick={() => setIsFilterOpen(false)}
-                className="px-6 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-sm hover:opacity-90 transition-all flex-1"
+                className="px-6 py-2.5 bg-[#00B87C] text-white font-bold rounded-xl text-sm hover:opacity-90 transition-all flex-1"
               >
                 Apply Filters
               </button>
@@ -1025,44 +1027,44 @@ export function Payroll() {
       )}
 
       {/* Table Container */}
-      <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
+      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-emerald-500/20 scrollbar-track-transparent">
           <table className="w-full text-left border-collapse min-w-[1000px]">
             <thead>
-              <tr className="bg-muted/30 border-b border-border">
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              <tr className="bg-[#F9FAFB] dark:bg-white/5 border-b border-[#F3F4F6]">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Employee
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Department
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-right">
                   Base Salary
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-right">
                   Leave Impact
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-right">
                   Deductions
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-right">
                   Net Pay
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-center">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-center">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/50">
+            <tbody>
               {paginatedEmployees.map((emp) => {
                 const impact = getLeaveImpact(emp.id);
                 return (
                   <tr
                     key={emp.id}
-                    className="hover:bg-emerald-500/5 transition-colors group"
+                    className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors group"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -1080,7 +1082,7 @@ export function Payroll() {
                           <p className="text-sm font-bold text-foreground group-hover:text-emerald-500 transition-colors">
                             {emp.name}
                           </p>
-                          <p className="text-[10px] text-muted-foreground font-medium uppercase">
+                          <p className="text-[11px] text-muted-foreground font-medium uppercase">
                             {emp.id} • {emp.designation}
                           </p>
                         </div>
@@ -1131,7 +1133,7 @@ export function Payroll() {
                     </td>
                     <td className="px-6 py-4">
                       <div
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider ${
                           emp.status === "Paid"
                             ? "bg-emerald-500/10 text-emerald-600"
                             : "bg-amber-500/10 text-amber-600"
@@ -1302,7 +1304,7 @@ export function Payroll() {
                     onClick={() => setCurrentPage(page)}
                     className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
                       currentPage === page
-                        ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
+                        ? "bg-[#00B87C] text-white shadow-lg shadow-[#00B87C]/20"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                   >
@@ -1325,8 +1327,8 @@ export function Payroll() {
       </div>
 
       {/* Process Timeline */}
-      <div className="mt-6 bg-card border border-border rounded-3xl p-8 shadow-sm overflow-x-auto">
-        <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground mb-10">
+      <div className="mt-6 bg-card border border-border rounded-2xl p-8 shadow-sm overflow-x-auto">
+        <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-10">
           Process Timeline
         </h3>
 
@@ -1349,7 +1351,7 @@ export function Payroll() {
             >
               <div className="bg-card px-2 pb-1">
                 {step.status === "completed" && (
-                  <div className="w-6 h-6 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/20"></div>
+                  <div className="w-6 h-6 rounded-full bg-emerald-500 shadow-sm shadow-[#00B87C]/20"></div>
                 )}
                 {step.status === "active" && (
                   <div className="w-6 h-6 rounded-full bg-card border-2 border-emerald-400 ring-4 ring-emerald-400/20"></div>
@@ -1421,7 +1423,7 @@ export function Payroll() {
       <div className="fixed bottom-8 right-8 z-[2000]">
         <button
           onClick={() => setShowRunModal(true)}
-          className="group relative flex items-center justify-center w-16 h-16 bg-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all duration-300"
+          className="group relative flex items-center justify-center w-16 h-16 bg-[#00B87C] text-white rounded-2xl shadow-2xl shadow-[#00B87C]/40 hover:scale-110 active:scale-95 transition-all duration-300"
         >
           <Play size={24} className="fill-white translate-x-0.5" />
           <div className="absolute right-full mr-4 px-4 py-2 bg-foreground text-background text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">

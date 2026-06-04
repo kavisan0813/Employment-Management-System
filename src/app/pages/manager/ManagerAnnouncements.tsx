@@ -20,7 +20,7 @@ import {
   Clock,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { useLocation } from "react-router";
 
 type Category =
@@ -197,7 +197,7 @@ function PriorityBadge({ priority }: { priority: Priority }) {
   };
   return (
     <span
-      className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${styles[priority]}`}
+      className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border ${styles[priority]}`}
     >
       {priority}
     </span>
@@ -221,7 +221,7 @@ function CategoryBadge({ category }: { category: Category }) {
   };
   return (
     <span
-      className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${styles[category]}`}
+      className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border ${styles[category]}`}
     >
       {category}
     </span>
@@ -396,14 +396,14 @@ export function ManagerAnnouncements() {
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-emerald-500/10 pb-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shadow-sm">
-            <Megaphone size={24} className="text-amber-500" />
+          <div className="w-11 h-11 rounded-[10px] bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shadow-sm">
+            <Megaphone size={22} className="text-amber-500" />
           </div>
           <div>
-            <h1 className="text-[28px] font-black text-foreground leading-none">
+            <h1 className="text-[26px] font-bold text-foreground leading-none">
               Announcements
             </h1>
-            <p className="text-[14px] font-bold text-muted-foreground mt-1.5 uppercase tracking-widest">
+            <p className="text-[13px] text-[#6B7280]">
               Stay updated with company announcements and guidelines
             </p>
           </div>
@@ -411,7 +411,7 @@ export function ManagerAnnouncements() {
         <div className="flex items-center gap-3">
           <div className="px-4 py-2 bg-emerald-500/10 rounded-xl flex items-center gap-2 border border-emerald-500/20">
             <Bell size={16} className="text-[#00B87C]" />
-            <span className="text-[13px] font-black text-[#00B87C]">
+            <span className="text-[13px] font-bold text-[#00B87C]">
               {announcements.filter((a) => !a.isRead).length} New
             </span>
           </div>
@@ -501,7 +501,7 @@ export function ManagerAnnouncements() {
           </p>
           <button
             onClick={resetFilters}
-            className="flex items-center gap-2 text-[#00B87C] text-[13px] font-black hover:underline px-4 py-1.5 hover:bg-emerald-500/10 rounded-lg transition-all"
+            className="flex items-center gap-2 text-[#00B87C] text-[13px] font-bold hover:underline px-4 py-1.5 hover:bg-emerald-500/10 rounded-lg transition-all"
           >
             <RefreshCcw size={14} /> Reset Filters
           </button>
@@ -532,7 +532,7 @@ export function ManagerAnnouncements() {
             <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center text-muted-foreground mb-4">
               <Megaphone size={32} />
             </div>
-            <h3 className="text-[18px] font-black text-foreground">
+            <h3 className="text-[18px] font-bold text-foreground">
               No announcements found
             </h3>
             <p className="text-[14px] font-bold text-muted-foreground mt-1 max-w-[300px]">
@@ -590,7 +590,7 @@ export function ManagerAnnouncements() {
                   <CheckCircle size={32} />
                 )}
               </div>
-              <h3 className="text-[20px] font-black text-foreground uppercase tracking-tight">
+              <h3 className="text-[20px] font-bold text-foreground uppercase tracking-tight">
                 {showConfirmModal.type === "archive"
                   ? "Archive Announcement?"
                   : "Confirm Acknowledgement?"}
@@ -607,7 +607,7 @@ export function ManagerAnnouncements() {
                       handleArchive(showConfirmModal.id);
                     else handleAcknowledge(showConfirmModal.id);
                   }}
-                  className={`w-full py-4 rounded-2xl text-[14px] font-black uppercase tracking-widest shadow-xl transition-all active:scale-[0.98] ${
+                  className={`w-full py-4 rounded-2xl text-[14px] font-bold uppercase tracking-wider shadow-xl transition-all active:scale-[0.98] ${
                     showConfirmModal.type === "archive"
                       ? "bg-rose-500 text-white shadow-rose-500/25"
                       : "bg-[#00B87C] text-white shadow-emerald-500/25"
@@ -619,7 +619,7 @@ export function ManagerAnnouncements() {
                 </button>
                 <button
                   onClick={() => setShowConfirmModal(null)}
-                  className="w-full py-4 text-[13px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-colors"
+                  className="w-full py-4 text-[13px] font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
                 >
                   Cancel
                 </button>
@@ -664,7 +664,7 @@ function AnnouncementCard({
     >
       {!announcement.isRead && (
         <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
-          <div className="absolute top-0 right-0 bg-[#00B87C] text-white text-[8px] font-black uppercase tracking-widest py-1 px-8 rotate-45 translate-x-4 translate-y-[-4px] shadow-sm">
+          <div className="absolute top-0 right-0 bg-[#00B87C] text-white text-[8px] font-bold uppercase tracking-wider py-1 px-8 rotate-45 translate-x-4 translate-y-[-4px] shadow-sm">
             New
           </div>
         </div>
@@ -712,7 +712,7 @@ function AnnouncementCard({
         </div>
 
         <div className="cursor-pointer" onClick={onView}>
-          <h3 className="text-[17px] font-black text-foreground mb-2 group-hover:text-[#00B87C] transition-colors leading-tight">
+          <h3 className="text-[17px] font-bold text-foreground mb-2 group-hover:text-[#00B87C] transition-colors leading-tight">
             {announcement.title}
           </h3>
           <p className="text-[13px] font-medium text-muted-foreground leading-relaxed line-clamp-3 mb-4">
@@ -722,13 +722,13 @@ function AnnouncementCard({
 
         <div className="flex flex-wrap gap-2 mb-6">
           {announcement.attachments.length > 0 && (
-            <div className="px-2.5 py-1 bg-secondary/50 rounded-lg flex items-center gap-1.5 text-[10px] font-black text-muted-foreground uppercase tracking-widest border border-border/50">
+            <div className="px-2.5 py-1 bg-secondary/50 rounded-lg flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider border border-border/50">
               <Paperclip size={12} /> {announcement.attachments.length} File
             </div>
           )}
           {announcement.needsAcknowledgement && (
             <div
-              className={`px-2.5 py-1 rounded-lg flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest border ${
+              className={`px-2.5 py-1 rounded-lg flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider border ${
                 announcement.isAcknowledged
                   ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
                   : "bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]"
@@ -745,24 +745,24 @@ function AnnouncementCard({
 
       <div className="flex items-center justify-between pt-5 border-t border-border/50 mt-auto">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] font-black text-[10px] border border-emerald-500/20">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] font-bold text-[11px] border border-emerald-500/20">
             {announcement.author.name
               .split(" ")
               .map((n) => n[0])
               .join("")}
           </div>
           <div>
-            <p className="text-[12px] font-black text-foreground leading-none">
+            <p className="text-[12px] font-bold text-foreground leading-none">
               {announcement.author.name}
             </p>
-            <p className="text-[10px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
+            <p className="text-[11px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
               {announcement.author.role}
             </p>
           </div>
         </div>
         
         {/* Engagement counters */}
-        <div className="flex items-center gap-3 text-muted-foreground text-[12px] font-black uppercase tracking-wider">
+        <div className="flex items-center gap-3 text-muted-foreground text-[12px] font-bold uppercase tracking-wider">
           <span className="flex items-center gap-1"><ThumbsUp size={12} /> {announcement.likes}</span>
           <span className="flex items-center gap-1"><MessageSquare size={12} /> {announcement.comments}</span>
           <span className="flex items-center gap-1"><Eye size={12} /> {announcement.views}</span>
@@ -811,7 +811,7 @@ function AnnouncementDetailModal({
               <CategoryBadge category={announcement.category} />
               <PriorityBadge priority={announcement.priority} />
             </div>
-            <h2 className="text-[20px] md:text-[24px] font-black text-foreground leading-tight tracking-tight">
+            <h2 className="text-[20px] md:text-[24px] font-bold text-foreground leading-tight tracking-tight">
               {announcement.title}
             </h2>
             <div className="flex items-center gap-4 text-muted-foreground text-[12px] font-bold">
@@ -844,7 +844,7 @@ function AnnouncementDetailModal({
           {/* Attachments */}
           {announcement.attachments.length > 0 && (
             <div className="space-y-3 border-t border-border pt-6">
-              <h4 className="text-[12px] font-black text-muted-foreground uppercase tracking-wider">
+              <h4 className="text-[12px] font-bold text-muted-foreground uppercase tracking-wider">
                 Attachments ({announcement.attachments.length})
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -858,10 +858,10 @@ function AnnouncementDetailModal({
                         <Paperclip size={16} />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[12px] font-black text-foreground truncate">
+                        <p className="text-[12px] font-bold text-foreground truncate">
                           {file.name}
                         </p>
-                        <p className="text-[10px] font-bold text-muted-foreground">
+                        <p className="text-[11px] font-bold text-muted-foreground">
                           {file.size}
                         </p>
                       </div>
@@ -880,17 +880,17 @@ function AnnouncementDetailModal({
 
           {/* Author footer */}
           <div className="flex items-center gap-4 border-t border-border pt-6 mt-6">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-[#00B87C] font-black text-sm">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-[#00B87C] font-bold text-sm">
               {announcement.author.name
                 .split(" ")
                 .map((n) => n[0])
                 .join("")}
             </div>
             <div>
-              <p className="text-[14px] font-black text-foreground leading-none">
+              <p className="text-[14px] font-bold text-foreground leading-none">
                 {announcement.author.name}
               </p>
-              <p className="text-[12px] font-bold text-muted-foreground mt-1 uppercase tracking-widest">
+              <p className="text-[12px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
                 {announcement.author.role}
               </p>
             </div>
@@ -899,7 +899,7 @@ function AnnouncementDetailModal({
 
         {/* Action footer */}
         <div className="p-6 bg-secondary/20 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4 text-muted-foreground text-[12px] font-black uppercase tracking-wider">
+          <div className="flex items-center gap-4 text-muted-foreground text-[12px] font-bold uppercase tracking-wider">
             <span className="flex items-center gap-1.5"><ThumbsUp size={14} /> {announcement.likes} Likes</span>
             <span className="flex items-center gap-1.5"><MessageSquare size={14} /> {announcement.comments} Comments</span>
             <span className="flex items-center gap-1.5"><Eye size={14} /> {announcement.views} Views</span>
@@ -909,20 +909,20 @@ function AnnouncementDetailModal({
             {announcement.needsAcknowledgement && !announcement.isAcknowledged ? (
               <button
                 onClick={onAcknowledge}
-                className="w-full sm:w-auto px-6 py-3 bg-[#00B87C] text-white text-[12px] font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-6 py-3 bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-wider rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2"
               >
                 <CheckCircle size={16} /> Acknowledge Receipt
               </button>
             ) : (
               announcement.needsAcknowledgement && (
-                <div className="flex items-center gap-1.5 text-emerald-600 font-black text-[11px] uppercase tracking-widest bg-emerald-500/10 px-4 py-2 border border-emerald-500/20 rounded-xl">
+                <div className="flex items-center gap-1.5 text-emerald-600 font-bold text-[11px] uppercase tracking-wider bg-emerald-500/10 px-4 py-2 border border-emerald-500/20 rounded-xl">
                   <CheckCircle size={14} /> Acknowledged at {announcement.acknowledgedAt}
                 </div>
               )
             )}
             <button
               onClick={onClose}
-              className="w-full sm:w-auto px-6 py-3 border border-border text-[12px] font-black uppercase tracking-widest rounded-xl hover:bg-secondary transition-all"
+              className="w-full sm:w-auto px-6 py-3 border border-border text-[12px] font-bold uppercase tracking-wider rounded-xl hover:bg-secondary transition-all"
             >
               Close
             </button>

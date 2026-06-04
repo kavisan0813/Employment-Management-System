@@ -366,7 +366,23 @@ export function Topbar({
                   </button>
                 </div>
                 <div className="max-h-[300px] overflow-y-auto">
-                  {[
+                  {(user?.role === "Finance" ? [
+                    {
+                      text: "Alex John submitted expense ₹2,100",
+                      time: "2h ago",
+                      color: "#F59E0B",
+                    },
+                    {
+                      text: "TDS Filing Reminder",
+                      time: "4h ago",
+                      color: "#EF4444",
+                    },
+                    {
+                      text: "March Payroll Report Generated",
+                      time: "1d ago",
+                      color: "#22C55E",
+                    },
+                  ] : [
                     {
                       text: "MFA Verification Required",
                       time: "2h ago",
@@ -382,7 +398,7 @@ export function Topbar({
                       time: "5h ago",
                       color: "#8B5CF6",
                     },
-                  ].map((n, i) => (
+                  ]).map((n, i) => (
                     <div
                       key={i}
                       className="px-4 py-3 flex items-start gap-3 transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800 cursor-pointer"
@@ -828,7 +844,7 @@ function EmployeeNotificationPanel({
 
   return (
     <div
-      className="absolute right-0 top-full mt-2 rounded-[24px] overflow-hidden z-[1001] shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200"
+      className="absolute right-0 top-full mt-2 rounded-2xl overflow-hidden z-[1001] shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200"
       style={{
         width: "360px",
         backgroundColor: "var(--card)",

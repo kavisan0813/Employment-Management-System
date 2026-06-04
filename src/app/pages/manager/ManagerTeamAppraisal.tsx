@@ -282,7 +282,7 @@ export function ManagerTeamAppraisal() {
             <Star size={24} fill="#F59E0B" />
           </div>
           <div>
-            <h1 className="text-[26px] font-black tracking-tight leading-tight">Team Appraisal</h1>
+            <h1 className="text-[26px] font-bold tracking-tight leading-tight">Team Appraisal</h1>
             <p className="text-[13px] text-muted-foreground mt-0.5">FY 2025-26 — Increment recommendations for your team</p>
           </div>
         </div>
@@ -299,7 +299,7 @@ export function ManagerTeamAppraisal() {
       >
         <Info size={20} className="text-[#F59E0B] shrink-0 mt-0.5" />
         <div className="flex-1">
-          <p className="text-[14px] font-black text-[#B45309] leading-snug">Increment Approval & Rating Policy Notice</p>
+          <p className="text-[14px] font-bold text-[#B45309] leading-snug">Increment Approval & Rating Policy Notice</p>
           <p className="text-[12px] text-muted-foreground mt-1 leading-relaxed">
             Increment approval is handled strictly by <strong className="text-foreground">Finance</strong>. As an Engineering Manager, you can:
           </p>
@@ -343,84 +343,84 @@ export function ManagerTeamAppraisal() {
         {/* Card 1 */}
         <div className="bg-card border border-border rounded-2xl p-4 flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Eligible for Increment</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Eligible for Increment</span>
             <div className="w-7 h-7 rounded-lg bg-[#DCFCE7] flex items-center justify-center text-[#10B981]">
               <Users size={14} />
             </div>
           </div>
           <div>
-            <h3 className="text-2xl font-black text-[#10B981]">9</h3>
-            <p className="text-[10px] text-muted-foreground mt-1">of 12 team members</p>
+            <h3 className="text-2xl font-bold text-[#10B981]">9</h3>
+            <p className="text-[11px] text-muted-foreground mt-1">of 12 team members</p>
           </div>
         </div>
 
         {/* Card 2 */}
         <div className="bg-card border border-border rounded-2xl p-4 flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Pending Finance</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Pending Finance</span>
             <div className="w-7 h-7 rounded-lg bg-[#FEF3C7] flex items-center justify-center text-[#F59E0B]">
               <Clock size={14} />
             </div>
           </div>
           <div>
-            <h3 className="text-2xl font-black text-[#F59E0B]">3</h3>
-            <p className="text-[10px] text-muted-foreground mt-1">awaiting Finance</p>
+            <h3 className="text-2xl font-bold text-[#F59E0B]">3</h3>
+            <p className="text-[11px] text-muted-foreground mt-1">awaiting Finance</p>
           </div>
         </div>
 
         {/* Card 3 */}
         <div className="bg-card border border-border rounded-2xl p-4 flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Approved by Finance</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Approved by Finance</span>
             <div className="w-7 h-7 rounded-lg bg-[#DCFCE7] flex items-center justify-center text-[#10B981]">
               <CheckCircle2 size={14} />
             </div>
           </div>
           <div>
-            <h3 className="text-2xl font-black text-[#10B981]">5</h3>
-            <p className="text-[10px] text-muted-foreground mt-1">increments processed</p>
+            <h3 className="text-2xl font-bold text-[#10B981]">5</h3>
+            <p className="text-[11px] text-muted-foreground mt-1">increments processed</p>
           </div>
         </div>
 
         {/* Card 4 */}
         <div className="bg-card border border-border rounded-2xl p-4 flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Avg Attendance</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Avg Attendance</span>
             <div className="w-7 h-7 rounded-lg bg-[#DCFCE7] flex items-center justify-center text-[#10B981]">
               <CalendarCheck size={14} />
             </div>
           </div>
           <div>
-            <h3 className="text-2xl font-black text-[#10B981]">91%</h3>
-            <p className="text-[10px] text-muted-foreground mt-1">yearly avg</p>
+            <h3 className="text-2xl font-bold text-[#10B981]">91%</h3>
+            <p className="text-[11px] text-muted-foreground mt-1">yearly avg</p>
           </div>
         </div>
 
         {/* Card 5 */}
         <div className="bg-card border border-border rounded-2xl p-4 flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Avg Perf Score</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Avg Perf Score</span>
             <div className="w-7 h-7 rounded-lg bg-[#EDE9FE] flex items-center justify-center text-[#8B5CF6]">
               <TrendingUp size={14} />
             </div>
           </div>
           <div>
-            <h3 className="text-2xl font-black text-[#8B5CF6]">4.2</h3>
-            <p className="text-[10px] text-muted-foreground mt-1">team average</p>
+            <h3 className="text-2xl font-bold text-[#8B5CF6]">4.2</h3>
+            <p className="text-[11px] text-muted-foreground mt-1">team average</p>
           </div>
         </div>
 
         {/* Card 6 */}
         <div className="bg-card border border-border rounded-2xl p-4 flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Payroll Impact</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Payroll Impact</span>
             <div className="w-7 h-7 rounded-lg bg-[#EDE9FE] flex items-center justify-center text-[#8B5CF6]">
               <IndianRupee size={14} />
             </div>
           </div>
           <div>
-            <h3 className="text-2xl font-black text-[#8B5CF6]">₹87K</h3>
-            <p className="text-[10px] text-muted-foreground mt-1">annual increase</p>
+            <h3 className="text-2xl font-bold text-[#8B5CF6]">₹87K</h3>
+            <p className="text-[11px] text-muted-foreground mt-1">annual increase</p>
           </div>
         </div>
       </div>
@@ -506,7 +506,7 @@ export function ManagerTeamAppraisal() {
         {/* Table Title Block */}
         <div className="px-5 py-4 border-b border-border flex items-center justify-between bg-muted/5">
           <div>
-            <h2 className="text-base font-black text-foreground">Team Increment Appraisal</h2>
+            <h2 className="text-base font-bold text-foreground">Team Increment Appraisal</h2>
             <p className="text-[12px] text-muted-foreground mt-0.5">12 team members · Click row for details · Manager ratings editable</p>
           </div>
           <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
@@ -521,19 +521,19 @@ export function ManagerTeamAppraisal() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-border bg-muted/10">
-                <th className="px-5 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Employee</th>
-                <th className="px-4 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Department</th>
-                <th className="px-4 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Attendance</th>
-                <th className="px-3 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Leaves</th>
-                <th className="px-3 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Late</th>
-                <th className="px-4 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Perf Score</th>
-                <th className="px-4 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">KPI</th>
-                <th className="px-4 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-center">Mgr Rating</th>
-                <th className="px-4 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-center">Increment %</th>
-                <th className="px-4 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-right">Current Salary</th>
-                <th className="px-4 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-right">Revised Salary</th>
-                <th className="px-4 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-center">Status</th>
-                <th className="px-5 py-3.5 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-center">Action</th>
+                <th className="px-5 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Employee</th>
+                <th className="px-4 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Department</th>
+                <th className="px-4 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Attendance</th>
+                <th className="px-3 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Leaves</th>
+                <th className="px-3 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Late</th>
+                <th className="px-4 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Perf Score</th>
+                <th className="px-4 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">KPI</th>
+                <th className="px-4 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">Mgr Rating</th>
+                <th className="px-4 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">Increment %</th>
+                <th className="px-4 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">Current Salary</th>
+                <th className="px-4 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">Revised Salary</th>
+                <th className="px-4 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">Status</th>
+                <th className="px-5 py-3.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -553,13 +553,13 @@ export function ManagerTeamAppraisal() {
                     <td className="px-5 py-4 min-w-[200px]">
                       <div className="flex items-center gap-3">
                         <div 
-                          className="w-9 h-9 rounded-full flex items-center justify-center font-black text-sm shrink-0"
+                          className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
                           style={{ backgroundColor: m.avatarBg, color: m.status === "Approved" ? "#059669" : "#4B5563" }}
                         >
                           {m.initials}
                         </div>
                         <div className="leading-tight">
-                          <p className="text-[14px] font-black text-foreground">{m.name}</p>
+                          <p className="text-[14px] font-bold text-foreground">{m.name}</p>
                           <p className="text-[11px] text-muted-foreground mt-0.5">{m.designation}</p>
                         </div>
                       </div>
@@ -571,7 +571,7 @@ export function ManagerTeamAppraisal() {
                     {/* Attendance */}
                     <td className="px-4 py-4">
                       <span 
-                        className={`text-[11px] font-black px-2.5 py-1 rounded-full whitespace-nowrap`}
+                        className={`text-[11px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap`}
                         style={{
                           backgroundColor: m.attendancePct >= 90 ? "rgba(16, 185, 129, 0.1)" : "rgba(245, 158, 11, 0.1)",
                           color: m.attendancePct >= 90 ? "#10B981" : "#F59E0B",
@@ -596,12 +596,12 @@ export function ManagerTeamAppraisal() {
                             style={{ width: `${m.performanceScore}%` }}
                           />
                         </div>
-                        <span className="text-xs font-black text-foreground">{m.performanceScore}%</span>
+                        <span className="text-xs font-bold text-foreground">{m.performanceScore}%</span>
                       </div>
                     </td>
 
                     {/* KPI */}
-                    <td className="px-4 py-4 text-xs font-black text-foreground/80">{m.kpiScore}%</td>
+                    <td className="px-4 py-4 text-xs font-bold text-foreground/80">{m.kpiScore}%</td>
 
                     {/* Manager Rating */}
                     <td className="px-4 py-4 text-center">
@@ -615,7 +615,7 @@ export function ManagerTeamAppraisal() {
                           <span>{m.managerRating}</span>
                         </button>
                       ) : (
-                        <div className="inline-flex items-center gap-1 text-xs font-black text-foreground/80">
+                        <div className="inline-flex items-center gap-1 text-xs font-bold text-foreground/80">
                           <Star size={13} fill="#F59E0B" className="text-[#F59E0B]" />
                           <span>{m.managerRating}</span>
                         </div>
@@ -625,11 +625,11 @@ export function ManagerTeamAppraisal() {
                     {/* Increment Recommendation */}
                     <td className="px-4 py-4 text-center">
                       {typeof m.recommendedIncrement === "number" ? (
-                        <span className="text-xs font-black text-[#10B981]">
+                        <span className="text-xs font-bold text-[#10B981]">
                           +{m.recommendedIncrement}%
                         </span>
                       ) : (
-                        <span className="text-[10px] font-black px-2 py-0.5 bg-red-500/10 text-red-500 rounded-md uppercase tracking-wider">
+                        <span className="text-[11px] font-bold px-2 py-0.5 bg-red-500/10 text-red-500 rounded-md uppercase tracking-wider">
                           {m.recommendedIncrement}
                         </span>
                       )}
@@ -641,14 +641,14 @@ export function ManagerTeamAppraisal() {
                     </td>
 
                     {/* Revised Salary */}
-                    <td className="px-4 py-4 text-right text-xs font-black text-[#10B981]">
+                    <td className="px-4 py-4 text-right text-xs font-bold text-[#10B981]">
                       ₹{Math.round(m.revisedSalary).toLocaleString()}
                     </td>
 
                     {/* Status Chip */}
                     <td className="px-4 py-4 text-center">
                       <span 
-                        className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full whitespace-nowrap"
+                        className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full whitespace-nowrap"
                         style={{
                           backgroundColor: m.status === "Approved" 
                             ? "rgba(16, 185, 129, 0.1)" 
@@ -676,7 +676,7 @@ export function ManagerTeamAppraisal() {
                         {m.status === "Manual Review" ? (
                           <button 
                             onClick={() => alert(`A justification report is required for ${m.name} due to attendance (${m.attendancePct}%). Complete this form to submit justification to Finance.`)}
-                            className="px-2.5 py-1 border border-red-500/30 text-red-500 text-[11px] font-black rounded-lg hover:bg-red-500/5 transition-colors"
+                            className="px-2.5 py-1 border border-red-500/30 text-red-500 text-[11px] font-bold rounded-lg hover:bg-red-500/5 transition-colors"
                           >
                             Justify →
                           </button>
@@ -714,7 +714,7 @@ export function ManagerTeamAppraisal() {
             {/* Modal Box */}
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[440px] max-w-[90vw] bg-card border border-border rounded-2xl p-6 shadow-2xl z-[3001] animate-in fade-in zoom-in-95 duration-200">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-[18px] font-black tracking-tight text-foreground">Update Manager Rating</h3>
+                <h3 className="text-[18px] font-bold tracking-tight text-foreground">Update Manager Rating</h3>
                 <button onClick={() => setRatingModalOpen(false)} className="p-1 hover:bg-muted rounded-lg transition-colors text-muted-foreground">
                   <X size={18} />
                 </button>
@@ -722,18 +722,18 @@ export function ManagerTeamAppraisal() {
 
               {/* Employee Quick Info card */}
               <div className="flex items-center gap-3 p-3 bg-muted/20 border border-border rounded-xl mb-5">
-                <div className="w-10 h-10 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center font-black text-sm shrink-0">
+                <div className="w-10 h-10 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center font-bold text-sm shrink-0">
                   {targetMember.initials}
                 </div>
                 <div>
-                  <h4 className="text-sm font-black text-foreground">{targetMember.name}</h4>
+                  <h4 className="text-sm font-bold text-foreground">{targetMember.name}</h4>
                   <p className="text-[11px] text-muted-foreground mt-0.5">{targetMember.designation} · <span className="text-[#00B87C] font-semibold">{targetMember.department}</span></p>
                 </div>
               </div>
 
               {/* Star Rating Section */}
               <div className="mb-5">
-                <label className="block text-[10px] font-black uppercase tracking-wider text-muted-foreground mb-2">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
                   Manager Performance Rating
                 </label>
                 <div className="flex flex-col items-center py-4 bg-muted/10 border border-border/80 rounded-xl">
@@ -752,7 +752,7 @@ export function ManagerTeamAppraisal() {
                       );
                     })}
                   </div>
-                  <span className="text-sm font-black text-foreground">
+                  <span className="text-sm font-bold text-foreground">
                     {tempRating.toFixed(1)} — {getRatingLabel(tempRating)}
                   </span>
                 </div>
@@ -760,7 +760,7 @@ export function ManagerTeamAppraisal() {
 
               {/* Rating Justification Textarea */}
               <div className="mb-5">
-                <label className="block text-[10px] font-black uppercase tracking-wider text-muted-foreground mb-1.5">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
                   Rating Justification <span className="text-red-500 font-bold">*</span>
                 </label>
                 <textarea 
@@ -773,7 +773,7 @@ export function ManagerTeamAppraisal() {
               </div>
 
               {/* Rating Guide List */}
-              <div className="p-3 bg-muted/10 rounded-xl border border-border/50 text-[10px] text-muted-foreground leading-relaxed mb-5">
+              <div className="p-3 bg-muted/10 rounded-xl border border-border/50 text-[11px] text-muted-foreground leading-relaxed mb-5">
                 <div className="font-bold text-foreground uppercase tracking-wider mb-1">Appraisal Rating Scale Guide:</div>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-1">
                   <div>⭐5 Exceptional / Outstanding</div>
@@ -795,14 +795,14 @@ export function ManagerTeamAppraisal() {
                 <button 
                   onClick={saveRating}
                   disabled={!tempJustification.trim()}
-                  className="px-5 py-2.5 bg-[#00B87C] hover:bg-[#00a36c] disabled:opacity-40 disabled:hover:bg-[#00B87C] text-white text-xs font-black rounded-xl shadow-md transition-all"
+                  className="px-5 py-2.5 bg-[#00B87C] hover:bg-[#00a36c] disabled:opacity-40 disabled:hover:bg-[#00B87C] text-white text-xs font-bold rounded-xl shadow-md transition-all"
                 >
                   Update Rating
                 </button>
               </div>
 
               {/* Notification note badge */}
-              <div className="mt-4 p-2.5 bg-[#F0FDF4] border border-[#DCFCE7] rounded-xl flex items-center gap-2 text-[10px] text-[#15803D] font-bold">
+              <div className="mt-4 p-2.5 bg-[#F0FDF4] border border-[#DCFCE7] rounded-xl flex items-center gap-2 text-[11px] text-[#15803D] font-bold">
                 <Info size={12} className="shrink-0" />
                 <span>Note: Rating change sends notification to Finance for appraisal processing.</span>
               </div>
@@ -824,7 +824,7 @@ export function ManagerTeamAppraisal() {
             <div>
               {/* Header Info */}
               <div className="flex items-center justify-between pb-4 border-b border-border mb-5">
-                <h3 className="text-sm font-black text-muted-foreground uppercase tracking-widest">Appraisal Details</h3>
+                <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Appraisal Details</h3>
                 <button onClick={() => setSelectedMemberId(null)} className="p-1 hover:bg-muted rounded-lg text-muted-foreground transition-colors">
                   <X size={18} />
                 </button>
@@ -833,15 +833,15 @@ export function ManagerTeamAppraisal() {
               {/* Employee Header */}
               <div className="flex items-center gap-3.5 mb-6">
                 <div 
-                  className="w-12 h-12 rounded-full flex items-center justify-center font-black text-base shrink-0"
+                  className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-base shrink-0"
                   style={{ backgroundColor: selectedMember.avatarBg, color: "#4B5563" }}
                 >
                   {selectedMember.initials}
                 </div>
                 <div>
-                  <h4 className="text-base font-black text-foreground">{selectedMember.name}</h4>
+                  <h4 className="text-base font-bold text-foreground">{selectedMember.name}</h4>
                   <p className="text-xs text-muted-foreground mt-0.5">{selectedMember.designation}</p>
-                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-muted/65 text-[#00B87C] text-[10px] font-black rounded-md">
+                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-muted/65 text-[#00B87C] text-[11px] font-bold rounded-md">
                     {selectedMember.department}
                   </span>
                 </div>
@@ -850,20 +850,20 @@ export function ManagerTeamAppraisal() {
               {/* 4 Mini stats Grid */}
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <div className="bg-muted/10 border border-border p-3 rounded-xl">
-                  <span className="text-[10px] font-bold text-muted-foreground block uppercase">Attendance</span>
-                  <span className="text-sm font-black text-foreground mt-1 block">{selectedMember.attendancePct}%</span>
+                  <span className="text-[11px] font-bold text-muted-foreground block uppercase">Attendance</span>
+                  <span className="text-sm font-bold text-foreground mt-1 block">{selectedMember.attendancePct}%</span>
                 </div>
                 <div className="bg-muted/10 border border-border p-3 rounded-xl">
-                  <span className="text-[10px] font-bold text-muted-foreground block uppercase">Performance Score</span>
-                  <span className="text-sm font-black text-foreground mt-1 block">{selectedMember.performanceScore}%</span>
+                  <span className="text-[11px] font-bold text-muted-foreground block uppercase">Performance Score</span>
+                  <span className="text-sm font-bold text-foreground mt-1 block">{selectedMember.performanceScore}%</span>
                 </div>
                 <div className="bg-muted/10 border border-border p-3 rounded-xl">
-                  <span className="text-[10px] font-bold text-muted-foreground block uppercase">Manager Rating</span>
-                  <span className="text-sm font-black text-foreground mt-1 block">{selectedMember.managerRating.toFixed(1)}★</span>
+                  <span className="text-[11px] font-bold text-muted-foreground block uppercase">Manager Rating</span>
+                  <span className="text-sm font-bold text-foreground mt-1 block">{selectedMember.managerRating.toFixed(1)}★</span>
                 </div>
                 <div className="bg-muted/10 border border-border p-3 rounded-xl">
-                  <span className="text-[10px] font-bold text-muted-foreground block uppercase">Increment Recommendation</span>
-                  <span className="text-sm font-black text-[#10B981] mt-1 block">
+                  <span className="text-[11px] font-bold text-muted-foreground block uppercase">Increment Recommendation</span>
+                  <span className="text-sm font-bold text-[#10B981] mt-1 block">
                     {typeof selectedMember.recommendedIncrement === "number" ? `+${selectedMember.recommendedIncrement}%` : selectedMember.recommendedIncrement}
                   </span>
                 </div>
@@ -871,7 +871,7 @@ export function ManagerTeamAppraisal() {
 
               {/* Vertical Timeline Approval Journey */}
               <div className="mb-6">
-                <h5 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">Approval Journey</h5>
+                <h5 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">Approval Journey</h5>
                 <div className="space-y-4 relative pl-5 border-l-2 border-border/60 ml-2">
                   
                   {/* Step 1 */}
@@ -880,8 +880,8 @@ export function ManagerTeamAppraisal() {
                       <Check size={8} className="text-white" />
                     </div>
                     <div>
-                      <p className="text-xs font-black text-foreground">Manager Review</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">Rating {selectedMember.managerRating} submitted by Suresh Iyer</p>
+                      <p className="text-xs font-bold text-foreground">Manager Review</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">Rating {selectedMember.managerRating} submitted by Suresh Iyer</p>
                     </div>
                   </div>
 
@@ -891,8 +891,8 @@ export function ManagerTeamAppraisal() {
                       <Check size={8} className="text-white" />
                     </div>
                     <div>
-                      <p className="text-xs font-black text-foreground">HR Verification</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">Eligibility confirmed and verified</p>
+                      <p className="text-xs font-bold text-foreground">HR Verification</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">Eligibility confirmed and verified</p>
                     </div>
                   </div>
 
@@ -909,8 +909,8 @@ export function ManagerTeamAppraisal() {
                       )}
                     </div>
                     <div>
-                      <p className="text-xs font-black text-foreground">Finance Approval</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                      <p className="text-xs font-bold text-foreground">Finance Approval</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
                         {selectedMember.status === "Approved" ? "Approved by Ananya Das" : "Under review (Ananya Das)"}
                       </p>
                     </div>
@@ -923,7 +923,7 @@ export function ManagerTeamAppraisal() {
                     </div>
                     <div>
                       <p className="text-xs font-bold text-muted-foreground">Payroll Processing</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">Pending final processing by Finance</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">Pending final processing by Finance</p>
                     </div>
                   </div>
 
@@ -934,7 +934,7 @@ export function ManagerTeamAppraisal() {
                     </div>
                     <div>
                       <p className="text-xs font-bold text-muted-foreground">Increment Effective</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">Scheduled for May 1, 2026</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">Scheduled for May 1, 2026</p>
                     </div>
                   </div>
                 </div>
@@ -942,7 +942,7 @@ export function ManagerTeamAppraisal() {
 
               {/* Salary Breakdown Block */}
               <div className="bg-muted/10 border border-border/80 rounded-xl p-4 mb-6">
-                <h5 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-3">Salary Breakdown</h5>
+                <h5 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">Salary Breakdown</h5>
                 
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
@@ -956,7 +956,7 @@ export function ManagerTeamAppraisal() {
                     </span>
                   </div>
                   <div className="w-full h-px bg-border my-2" />
-                  <div className="flex justify-between text-sm font-black">
+                  <div className="flex justify-between text-sm font-bold">
                     <span className="text-foreground">Revised Monthly Salary:</span>
                     <span className="text-[#10B981]">₹{Math.round(selectedMember.revisedSalary).toLocaleString()}</span>
                   </div>
@@ -971,7 +971,7 @@ export function ManagerTeamAppraisal() {
 
               {/* Performance Summary block */}
               <div className="bg-muted/10 border border-border/80 rounded-xl p-4">
-                <h5 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-3">Performance &amp; Goals</h5>
+                <h5 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">Performance &amp; Goals</h5>
                 
                 <div className="space-y-3">
                   <div>
@@ -1006,7 +1006,7 @@ export function ManagerTeamAppraisal() {
             <div className="pt-4 border-t border-border mt-6">
               <button 
                 onClick={() => setSelectedMemberId(null)}
-                className="w-full py-2.5 bg-muted hover:bg-muted/80 text-foreground text-xs font-black rounded-xl transition-all"
+                className="w-full py-2.5 bg-muted hover:bg-muted/80 text-foreground text-xs font-bold rounded-xl transition-all"
               >
                 Close Details Panel
               </button>

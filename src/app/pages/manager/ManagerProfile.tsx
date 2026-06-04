@@ -194,6 +194,7 @@ export function ManagerProfile() {
     const root = window.document.documentElement;
     localStorage.setItem("theme", selectedTheme);
     
+    // eslint-disable-next-line no-useless-assignment
     let isDarkTheme = false;
     if (selectedTheme === "system") {
       isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -215,19 +216,19 @@ export function ManagerProfile() {
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#DCFCE7] dark:bg-emerald-950/40 flex items-center justify-center shadow-sm">
-            <User size={24} className="text-[#00B87C]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#DCFCE7] dark:bg-emerald-950/40 flex items-center justify-center shadow-sm">
+            <User size={22} className="text-[#00B87C]" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-foreground tracking-tight">My Profile</h1>
-            <p className="text-[13px] font-bold text-muted-foreground">View and manage your personal information</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">My Profile</h1>
+            <p className="text-[13px] text-[#6B7280]">View and manage your personal information</p>
           </div>
         </div>
         <div>
           <button 
             onClick={() => setIsEditing(true)}
             disabled={isEditing}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border font-black text-[12px] uppercase tracking-widest transition-all shadow-sm ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border font-bold text-[12px] uppercase tracking-wider transition-all shadow-sm ${
               isEditing 
                 ? "bg-muted border-border text-muted-foreground cursor-not-allowed" 
                 : "border-[#00B87C] text-[#00B87C] hover:bg-[#00B87C]/5 active:scale-95"
@@ -256,7 +257,7 @@ export function ManagerProfile() {
               {/* Avatar Section */}
               <div className="relative group shrink-0">
                 <div 
-                  className="w-24 h-24 rounded-full border-[4px] border-card flex items-center justify-center font-black text-3xl text-white shadow-xl overflow-hidden"
+                  className="w-24 h-24 rounded-full border-[4px] border-card flex items-center justify-center font-bold text-3xl text-white shadow-xl overflow-hidden"
                   style={{ backgroundColor: "#F59E0B" }}
                 >
                   {avatarPreview ? (
@@ -283,16 +284,16 @@ export function ManagerProfile() {
               {/* Name & Title Content */}
               <div className="pb-1">
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3.5 mb-1.5">
-                  <h2 className="text-2xl font-black text-foreground tracking-tight">{fullName}</h2>
+                  <h2 className="text-2xl font-bold text-foreground tracking-tight">{fullName}</h2>
                   <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Active</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider">Active</span>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-muted/60 border border-border text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  <span className="px-3 py-1 rounded-full bg-muted/60 border border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     Full-time
                   </span>
                 </div>
-                <p className="text-[#00B87C] font-extrabold text-sm mb-3">Engineering Manager</p>
+                <p className="text-[#00B87C] font-bold text-sm mb-3">Engineering Manager</p>
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
                   <span className="px-3 py-1 rounded-full bg-muted/50 border border-border text-[11px] font-bold text-muted-foreground">
                     #EMP-0042
@@ -314,13 +315,13 @@ export function ManagerProfile() {
             <div className="flex items-center justify-center gap-2.5 mb-1">
               <button 
                 onClick={() => showToast("Message System", "info", "Routing to HR correspondence desk...")}
-                className="px-5 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all shadow-sm active:scale-95"
+                className="px-5 py-2.5 rounded-xl border border-border text-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all shadow-sm active:scale-95"
               >
                 Message HR
               </button>
               <button 
                 onClick={() => showToast("Quick Actions", "info", "Profile settings options details loading...")}
-                className="px-4 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all shadow-sm active:scale-95"
+                className="px-4 py-2.5 rounded-xl border border-border text-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all shadow-sm active:scale-95"
               >
                 More ▾
               </button>
@@ -334,8 +335,8 @@ export function ManagerProfile() {
                 <Calendar size={20} />
               </div>
               <div>
-                <p className="text-xl font-black text-foreground tracking-tight">7.2 yrs</p>
-                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Tenure</p>
+                <p className="text-xl font-bold text-foreground tracking-tight">7.2 yrs</p>
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Tenure</p>
               </div>
             </div>
             <div className="flex items-center justify-center sm:justify-start gap-4 px-4 py-2 border-y sm:border-y-0 sm:border-x border-border">
@@ -343,8 +344,8 @@ export function ManagerProfile() {
                 <Sparkles size={20} />
               </div>
               <div>
-                <p className="text-xl font-black text-[#00B87C] tracking-tight">94%</p>
-                <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Attendance</p>
+                <p className="text-xl font-bold text-[#00B87C] tracking-tight">94%</p>
+                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Attendance</p>
               </div>
             </div>
             <div className="flex items-center justify-center sm:justify-start gap-4 px-4 py-2">
@@ -352,8 +353,8 @@ export function ManagerProfile() {
                 <Star size={20} fill="currentColor" />
               </div>
               <div>
-                <p className="text-xl font-black text-amber-500 tracking-tight">4.6★</p>
-                <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">My Rating</p>
+                <p className="text-xl font-bold text-amber-500 tracking-tight">4.6★</p>
+                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">My Rating</p>
               </div>
             </div>
           </div>
@@ -368,9 +369,9 @@ export function ManagerProfile() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-3 rounded-xl text-[13px] font-black tracking-widest uppercase transition-all whitespace-nowrap flex items-center gap-2 ${
+              className={`px-6 py-3 rounded-xl text-[13px] font-bold tracking-widest uppercase transition-all whitespace-nowrap flex items-center gap-2 ${
                 active 
-                  ? "bg-[#00B87C] text-white font-black shadow-md shadow-emerald-500/15" 
+                  ? "bg-[#00B87C] text-white font-bold shadow-md shadow-emerald-500/15" 
                   : "text-[#6B7280] hover:text-[#374151] hover:bg-muted/50"
               }`}
             >
@@ -508,7 +509,7 @@ export function ManagerProfile() {
                       {skills.map((skill) => (
                         <span 
                           key={skill.id} 
-                          className="px-3.5 py-1.5 rounded-xl border border-emerald-500/10 bg-[#DCFCE7] dark:bg-emerald-950/20 text-[#00B87C] text-[12px] font-black tracking-wide"
+                          className="px-3.5 py-1.5 rounded-xl border border-emerald-500/10 bg-[#DCFCE7] dark:bg-emerald-950/20 text-[#00B87C] text-[12px] font-bold tracking-wide"
                         >
                           {skill.name}
                         </span>
@@ -551,16 +552,16 @@ export function ManagerProfile() {
                     <SectionLabel>Languages</SectionLabel>
                     <div className="space-y-3 mt-5">
                       <div className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-[#DCFCE7] dark:bg-emerald-950/20">
-                        <span className="text-[13px] font-extrabold text-foreground">English</span>
-                        <span className="text-[10px] font-black text-[#00B87C] uppercase tracking-widest">Native</span>
+                        <span className="text-[13px] font-bold text-foreground">English</span>
+                        <span className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider">Native</span>
                       </div>
                       <div className="flex items-center justify-between p-3.5 rounded-xl border border-teal-500/10 bg-teal-500/5">
-                        <span className="text-[13px] font-extrabold text-foreground">Hindi</span>
-                        <span className="text-[10px] font-black text-teal-600 dark:text-teal-400 uppercase tracking-widest">Fluent</span>
+                        <span className="text-[13px] font-bold text-foreground">Hindi</span>
+                        <span className="text-[11px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider">Fluent</span>
                       </div>
                       <div className="flex items-center justify-between p-3.5 rounded-xl border border-amber-500/10 bg-amber-500/5">
-                        <span className="text-[13px] font-extrabold text-foreground">Tamil</span>
-                        <span className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest">Conversational</span>
+                        <span className="text-[13px] font-bold text-foreground">Tamil</span>
+                        <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Conversational</span>
                       </div>
                     </div>
                   </div>
@@ -576,7 +577,7 @@ export function ManagerProfile() {
                         maxLength={500}
                         className="w-full h-36 bg-muted/30 border border-border rounded-2xl p-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-[#00B87C] focus:ring-2 focus:ring-[#00B87C]/10 transition-all resize-none disabled:opacity-75 custom-scrollbar"
                       />
-                      <p className="text-right text-[11px] font-bold text-muted-foreground uppercase tracking-widest pr-1">
+                      <p className="text-right text-[11px] font-bold text-muted-foreground uppercase tracking-wider pr-1">
                         {bio.length} / 500
                       </p>
                     </div>
@@ -590,7 +591,7 @@ export function ManagerProfile() {
               <div className="bg-card border border-border rounded-3xl p-6 md:p-8 shadow-sm space-y-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border">
                   <SectionLabel>HR Managed Information</SectionLabel>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-emerald-600 text-[11px] font-black uppercase tracking-wider shadow-inner">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-emerald-600 text-[11px] font-bold uppercase tracking-wider shadow-inner">
                     <Info size={14} /> HR Admin Secure
                   </div>
                 </div>
@@ -601,7 +602,7 @@ export function ManagerProfile() {
                     <Check size={20} />
                   </div>
                   <div>
-                    <p className="text-[14px] font-black text-emerald-800 dark:text-emerald-300 leading-snug">HR Administration Policy</p>
+                    <p className="text-[14px] font-bold text-emerald-800 dark:text-emerald-300 leading-snug">HR Administration Policy</p>
                     <p className="text-[12px] font-bold text-emerald-700/80 dark:text-emerald-400/80 mt-0.5 leading-relaxed">
                       These details are managed by HR. Contact HR to request changes or file structural modifications.
                     </p>
@@ -626,12 +627,12 @@ export function ManagerProfile() {
 
                 {/* Reporting Structure Mini Org Chart */}
                 <div className="pt-8 border-t border-border mt-10">
-                  <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-6">Reporting Structure</p>
+                  <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-6">Reporting Structure</p>
                   <div className="flex flex-col items-center py-4 bg-muted/10 rounded-3xl border border-border/40 max-w-lg mx-auto">
                     {/* VP */}
                     <div className="px-5 py-3 rounded-2xl bg-card border border-border shadow-sm text-center min-w-[220px]">
-                      <p className="text-[13px] font-black text-foreground">Robert Chen</p>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">VP Engineering</p>
+                      <p className="text-[13px] font-bold text-foreground">Robert Chen</p>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">VP Engineering</p>
                     </div>
 
                     {/* Line Down */}
@@ -639,8 +640,8 @@ export function ManagerProfile() {
 
                     {/* Suresh Iyer */}
                     <div className="px-5 py-3 rounded-2xl bg-[#00B87C] border border-[#00B87C] shadow-lg shadow-emerald-500/10 text-center min-w-[220px] relative">
-                      <p className="text-[13px] font-black text-white">Suresh Iyer</p>
-                      <p className="text-[10px] font-bold text-emerald-100/90 uppercase tracking-widest mt-0.5">Engineering Manager</p>
+                      <p className="text-[13px] font-bold text-white">Suresh Iyer</p>
+                      <p className="text-[11px] font-bold text-emerald-100/90 uppercase tracking-wider mt-0.5">Engineering Manager</p>
                       <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white" />
                     </div>
 
@@ -649,8 +650,8 @@ export function ManagerProfile() {
 
                     {/* Direct Reports */}
                     <div className="px-5 py-3 rounded-2xl bg-muted border border-border text-center min-w-[220px]">
-                      <p className="text-[13px] font-black text-muted-foreground">12 Direct Reports</p>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Engineering Division</p>
+                      <p className="text-[13px] font-bold text-muted-foreground">12 Direct Reports</p>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Engineering Division</p>
                     </div>
                   </div>
                 </div>
@@ -667,7 +668,7 @@ export function ManagerProfile() {
                 <div className="space-y-6 mt-4">
                   {/* Identity */}
                   <div>
-                    <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">Identity Documents</h4>
+                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">Identity Documents</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       <DocCard name="Aadhar_Card_Verified.pdf" category="Aadhar Verified" size="1.2 MB" />
                       <DocCard name="PAN_Card_Verified.pdf" category="PAN Verified" size="0.9 MB" />
@@ -677,7 +678,7 @@ export function ManagerProfile() {
 
                   {/* Employment */}
                   <div className="pt-4">
-                    <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">Employment Records</h4>
+                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">Employment Records</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       <DocCard name="Offer_Letter_Signed.pdf" category="Offer Letter" size="3.1 MB" />
                       <DocCard name="Appointment_Letter.pdf" category="Appointment" size="4.2 MB" />
@@ -688,7 +689,7 @@ export function ManagerProfile() {
 
                   {/* Educational */}
                   <div className="pt-4">
-                    <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">Educational Certificates</h4>
+                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">Educational Certificates</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       <DocCard name="BTech_Degree_Certificate.pdf" category="B.Tech Degree" size="5.5 MB" />
                       <DocCard name="MBA_Degree_Certificate.pdf" category="MBA Degree" size="6.2 MB" />
@@ -697,7 +698,7 @@ export function ManagerProfile() {
 
                   {/* Financial */}
                   <div className="pt-4">
-                    <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">Financial Certificates</h4>
+                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">Financial Certificates</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       <DocCard name="Bank_Passbook_Copy.pdf" category="Bank Passbook" size="1.4 MB" />
                       <DocCard name="Form_16_FY24-25.pdf" category="Form 16" size="2.8 MB" />
@@ -738,7 +739,7 @@ export function ManagerProfile() {
                     <div key={index} className="p-5 md:p-6 rounded-2xl border border-border/80 bg-muted/10 relative">
                       <div className="flex items-center gap-2 mb-6">
                         <span className="w-1.5 h-3.5 rounded-full bg-[#00B87C]" />
-                        <h4 className="text-[11px] font-black text-foreground uppercase tracking-wider">
+                        <h4 className="text-[11px] font-bold text-foreground uppercase tracking-wider">
                           {index === 0 ? "Primary Contact" : `Emergency Contact #${index + 1}`}
                         </h4>
                       </div>
@@ -783,7 +784,7 @@ export function ManagerProfile() {
 
                 <button 
                   onClick={handleAddContact}
-                  className="flex items-center gap-2 text-[#00B87C] hover:underline font-black text-[13px] uppercase tracking-wider pl-1 mt-2 active:scale-95 transition-all outline-none"
+                  className="flex items-center gap-2 text-[#00B87C] hover:underline font-bold text-[13px] uppercase tracking-wider pl-1 mt-2 active:scale-95 transition-all outline-none"
                 >
                   + Add Another Contact
                 </button>
@@ -845,13 +846,13 @@ export function ManagerProfile() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                     {/* Theme Selector */}
                     <div className="space-y-2.5">
-                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Theme Mode</label>
+                      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Theme Mode</label>
                       <div className="p-1.5 rounded-2xl bg-muted/40 border border-border flex items-center max-w-[320px]">
                         {(["light", "dark", "system"] as const).map((t) => (
                           <button
                             key={t}
                             onClick={() => handleThemeChange(t)}
-                            className={`flex-1 py-2 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all ${
+                            className={`flex-1 py-2 rounded-xl text-[12px] font-bold uppercase tracking-wider transition-all ${
                               theme === t 
                                 ? "bg-card text-foreground shadow-sm" 
                                 : "text-muted-foreground hover:text-foreground"
@@ -891,13 +892,13 @@ export function ManagerProfile() {
                         <Lock size={20} />
                       </div>
                       <div>
-                        <p className="text-[15px] font-black text-foreground tracking-tight">Security Credentials</p>
+                        <p className="text-[15px] font-bold text-foreground tracking-tight">Security Credentials</p>
                         <p className="text-[12px] font-bold text-muted-foreground">Keep your password robust and updated regularly</p>
                       </div>
                     </div>
                     <button 
                       onClick={() => setShowPasswordModal(true)}
-                      className="px-6 py-3 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all shadow-sm active:scale-95"
+                      className="px-6 py-3 rounded-xl border border-border text-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all shadow-sm active:scale-95"
                     >
                       Change Password
                     </button>
@@ -905,14 +906,14 @@ export function ManagerProfile() {
 
                   <div className="pt-6 border-t border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div>
-                      <p className="text-[14px] font-black text-foreground">Deactivate Profile Account</p>
+                      <p className="text-[14px] font-bold text-foreground">Deactivate Profile Account</p>
                       <p className="text-[12px] font-medium text-muted-foreground leading-relaxed max-w-md mt-0.5">
                         This action will lock your access and notify HR. Profile files will remain archived under compliance rules.
                       </p>
                     </div>
                     <button 
                       onClick={() => setShowDeactivateModal(true)}
-                      className="text-red-500 hover:text-red-600 hover:underline font-black text-[12px] uppercase tracking-widest active:scale-95 pl-1 transition-all outline-none shrink-0"
+                      className="text-red-500 hover:text-red-600 hover:underline font-bold text-[12px] uppercase tracking-wider active:scale-95 pl-1 transition-all outline-none shrink-0"
                     >
                       Deactivate Account
                     </button>
@@ -931,21 +932,21 @@ export function ManagerProfile() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center justify-between gap-6 px-6 py-4 rounded-[24px] bg-card border border-border shadow-2xl ring-1 ring-black/5 min-w-[340px] md:min-w-[480px]"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center justify-between gap-6 px-6 py-4 rounded-2xl bg-card border border-border shadow-2xl ring-1 ring-black/5 min-w-[340px] md:min-w-[480px]"
           >
-            <span className="text-[13px] font-black text-foreground uppercase tracking-widest hidden md:inline-block pl-2">
+            <span className="text-[13px] font-bold text-foreground uppercase tracking-wider hidden md:inline-block pl-2">
               Unsaved Changes!
             </span>
             <div className="flex items-center gap-3 ml-auto">
               <button 
                 onClick={handleCancelChanges}
-                className="px-6 py-2.5 rounded-xl border border-border text-muted-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all active:scale-95"
+                className="px-6 py-2.5 rounded-xl border border-border text-muted-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all active:scale-95"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSaveAllChanges}
-                className="px-8 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-95 transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
+                className="px-8 py-2.5 rounded-xl bg-[#00B87C] text-white font-bold text-[12px] uppercase tracking-wider hover:opacity-95 transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
               >
                 Save Changes
               </button>
@@ -972,15 +973,15 @@ export function ManagerProfile() {
               </button>
 
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C]">
+                <div className="w-9 h-9 rounded-[10px] bg-emerald-500/10 flex items-center justify-center text-[#00B87C]">
                   <Lock size={20} />
                 </div>
-                <h3 className="text-[18px] font-black text-foreground tracking-tight">Change Password</h3>
+                <h3 className="text-[18px] font-bold text-foreground tracking-tight">Change Password</h3>
               </div>
 
               <form onSubmit={handlePasswordUpdate} className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Current Password</label>
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Current Password</label>
                   <input 
                     type="password"
                     required
@@ -991,7 +992,7 @@ export function ManagerProfile() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">New Password</label>
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">New Password</label>
                   <input 
                     type="password"
                     required
@@ -1002,7 +1003,7 @@ export function ManagerProfile() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Confirm New Password</label>
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Confirm New Password</label>
                   <input 
                     type="password"
                     required
@@ -1017,13 +1018,13 @@ export function ManagerProfile() {
                   <button 
                     type="button"
                     onClick={() => setShowPasswordModal(false)}
-                    className="flex-1 py-3 rounded-xl border border-border text-muted-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all"
+                    className="flex-1 py-3 rounded-xl border border-border text-muted-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all"
                   >
                     Cancel
                   </button>
                   <button 
                     type="submit"
-                    className="flex-1 py-3 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-95 transition-all shadow-md shadow-emerald-500/20"
+                    className="flex-1 py-3 rounded-xl bg-[#00B87C] text-white font-bold text-[12px] uppercase tracking-wider hover:opacity-95 transition-all shadow-md shadow-emerald-500/20"
                   >
                     Update Password
                   </button>
@@ -1053,7 +1054,7 @@ export function ManagerProfile() {
 
               <div className="flex items-center gap-3 mb-4 text-red-500">
                 <AlertTriangle size={24} />
-                <h3 className="text-[18px] font-black text-foreground tracking-tight">Confirm Deactivation</h3>
+                <h3 className="text-[18px] font-bold text-foreground tracking-tight">Confirm Deactivation</h3>
               </div>
 
               <p className="text-[13px] font-bold text-muted-foreground leading-relaxed mb-6">
@@ -1063,13 +1064,13 @@ export function ManagerProfile() {
               <div className="flex gap-3">
                 <button 
                   onClick={() => setShowDeactivateModal(false)}
-                  className="flex-1 py-3 rounded-xl border border-border text-muted-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all"
+                  className="flex-1 py-3 rounded-xl border border-border text-muted-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all"
                 >
                   Cancel
                 </button>
                 <button 
                   onClick={handleDeactivateConfirm}
-                  className="flex-1 py-3 rounded-xl bg-red-500 text-white font-black text-[12px] uppercase tracking-widest hover:bg-red-600 transition-all shadow-md shadow-red-500/20"
+                  className="flex-1 py-3 rounded-xl bg-red-500 text-white font-bold text-[12px] uppercase tracking-wider hover:bg-red-600 transition-all shadow-md shadow-red-500/20"
                 >
                   Confirm Request
                 </button>
@@ -1089,7 +1090,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-2">
       <div className="w-1 h-5 rounded-full bg-[#00B87C]" />
-      <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">{children}</h3>
+      <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">{children}</h3>
     </div>
   );
 }
@@ -1106,7 +1107,7 @@ interface InputFieldProps {
 function InputField({ label, value, onChange, type = "text", icon, disabled }: InputFieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">{label}</label>
+      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">{label}</label>
       <div className={`flex items-center gap-2.5 px-4 h-11 rounded-2xl border transition-all ${
         disabled 
           ? "bg-muted/10 border-border opacity-75" 
@@ -1136,7 +1137,7 @@ interface DropdownFieldProps {
 function DropdownField({ label, value, onChange, options, disabled }: DropdownFieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">{label}</label>
+      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">{label}</label>
       <div className="relative">
         <select
           value={value}
@@ -1159,8 +1160,8 @@ function DropdownField({ label, value, onChange, options, disabled }: DropdownFi
 function ReadOnlyField({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1">
-      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">{label}</p>
-      <p className="text-[15px] font-black text-foreground tracking-tight ml-1">{value}</p>
+      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">{label}</p>
+      <p className="text-[15px] font-bold text-foreground tracking-tight ml-1">{value}</p>
     </div>
   );
 }
@@ -1172,7 +1173,7 @@ function DocCard({ name, category, size }: { name: string; category: string; siz
       className="p-4 rounded-2xl border border-border bg-muted/10 flex items-center justify-between gap-4 hover:border-[#00B87C]/40 hover:bg-[#00B87C]/5 transition-all cursor-pointer group shadow-sm"
     >
       <div className="min-w-0">
-        <p className="text-[13px] font-extrabold text-foreground truncate group-hover:text-[#00B87C] transition-colors">{category}</p>
+        <p className="text-[13px] font-bold text-foreground truncate group-hover:text-[#00B87C] transition-colors">{category}</p>
         <p className="text-[11px] font-bold text-muted-foreground truncate mt-0.5">{name} • {size}</p>
       </div>
       <div className="w-9 h-9 rounded-xl bg-card border border-border flex items-center justify-center text-muted-foreground group-hover:bg-[#00B87C]/15 group-hover:text-[#00B87C] transition-all shadow-sm">

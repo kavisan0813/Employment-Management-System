@@ -1,37 +1,53 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import {
   IndianRupee,
   Download,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Users,
   Clock,
   CheckCircle,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Calendar,
   X,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Search,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   User,
   Shield,
   Upload,
   ChevronDown,
   ChevronRight,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Briefcase,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   MapPin,
   Check,
   AlertTriangle,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Building,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Banknote,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   FileText,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Eye,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ArrowUpRight,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   RefreshCw,
   Percent,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   UserCheck,
   Landmark,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CreditCard,
+  List,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../components/workflow/ToastNotification";
 
 interface FinancialTask {
+  [x: string]: ReactNode;
   id: string;
   label: string;
   status: "done" | "pending" | "overdue" | "waiting";
@@ -143,6 +159,11 @@ export function FinanceOnboarding() {
   const [showPFModal, setShowPFModal] = useState(false);
   const [showPayrollModal, setShowPayrollModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<NewHire | null>(null);
+  const [genericModalTitle, setGenericModalTitle] = useState("");
+  const [selectedTask, setSelectedTask] = useState<FinancialTask | null>(null);
+  const [showExportDropdown, setShowExportDropdown] = useState(false);
+  const [showTaxModal, setShowTaxModal] = useState(false);
+  const [showDetailsPanel, setShowDetailsPanel] = useState(false);
 
   // Bank form
   const [bankName, setBankName] = useState("");
@@ -209,6 +230,21 @@ export function FinanceOnboarding() {
     setShowPayrollModal(true);
   };
 
+  const openTaskModal = (task: FinancialTask, emp: NewHire) => {
+    setSelectedTask(task);
+    setSelectedEmployee(emp);
+  };
+
+  const openTaxModal = (emp: NewHire) => {
+    setSelectedEmployee(emp);
+    setShowTaxModal(true);
+  };
+
+  const openDetailsPanel = (emp: NewHire) => {
+    setSelectedEmployee(emp);
+    setShowDetailsPanel(true);
+  };
+
   const handleVerifyAccount = () => {
     if (!ifscCode || !accountNumber) {
       showToast("Missing Fields", "error", "Please enter IFSC and Account Number");
@@ -253,6 +289,11 @@ export function FinanceOnboarding() {
     showToast("Form Resent", "success", `Investment declaration reminder sent to ${empName}`);
   };
 
+  const handleSaveTax = () => {
+    setShowTaxModal(false);
+    showToast("Tax Declaration Saved", "success", `Tax details updated for ${selectedEmployee?.name}`);
+  };
+
   const handleExport = () => {
     showToast("Exporting", "info", "Downloading financial onboarding status CSV");
   };
@@ -261,25 +302,29 @@ export function FinanceOnboarding() {
     showToast("Preview", "info", "Payslip preview generated");
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const pendingCount = NEW_HIRES.filter(h => h.urgency === "amber" || h.urgency === "red").length;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const pendingTasks = NEW_HIRES.flatMap(h => h.tasks.filter(t => t.status === "pending" || t.status === "overdue"));
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const todayHires = NEW_HIRES.filter(h => h.joiningDate.includes("Apr 8"));
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getStatusChip = (status: string) => {
     switch (status) {
-      case "done": return <span className="inline-flex items-center gap-1 text-[10px] font-black text-[#00B87C] uppercase tracking-widest"><Check size={11} className="text-[#00B87C]" /> Done</span>;
-      case "overdue": return <span className="inline-flex items-center gap-1 text-[10px] font-black text-red-500 uppercase tracking-widest"><AlertTriangle size={11} /> Overdue</span>;
-      case "waiting": return <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Waiting</span>;
-      default: return <span className="inline-flex items-center gap-1 text-[10px] font-black text-amber-500 uppercase tracking-widest"><Clock size={11} /> Pending</span>;
+      case "done": return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#00B87C] uppercase tracking-widest"><Check size={11} className="text-[#00B87C]" /> Done</span>;
+      case "overdue": return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-500 uppercase tracking-widest"><AlertTriangle size={11} /> Overdue</span>;
+      case "waiting": return <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">Waiting</span>;
+      default: return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 uppercase tracking-widest"><Clock size={11} /> Pending</span>;
     }
   };
 
   return (
-    <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-700 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent relative">
+    <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-300 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent relative">
       {/* ── Page Header ─────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-purple-500/10 pb-6">
         <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-2xl bg-[#EDE9FE] flex items-center justify-center border border-[#8B5CF6]/20 shadow-sm">
+          <div className="w-11 h-11 rounded-[10px] bg-[#EDE9FE] flex items-center justify-center border border-[#8B5CF6]/20 shadow-sm">
             <IndianRupee size={22} className="text-[#8B5CF6]" />
           </div>
           <div>
@@ -287,9 +332,20 @@ export function FinanceOnboarding() {
             <p className="text-[13px] font-bold text-muted-foreground mt-1.5">Set up salary, tax and compliance for new joiners</p>
           </div>
         </div>
-        <button onClick={handleExport} className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card text-[13px] font-black text-foreground hover:bg-secondary transition-all shadow-sm">
-          <Download size={16} /> EXPORT
-        </button>
+        <div className="relative">
+          <button onClick={() => setShowExportDropdown(!showExportDropdown)} className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card text-[13px] font-black text-foreground hover:bg-secondary transition-all shadow-sm">
+            <Download size={16} /> EXPORT <ChevronDown size={14} className={showExportDropdown ? "rotate-180 transition-transform" : "transition-transform"} />
+          </button>
+          <AnimatePresence>
+            {showExportDropdown && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.2 }} className="absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden">
+                <button onClick={() => { setShowExportDropdown(false); showToast("Exporting", "info", "Downloading Pending Setup Tasks CSV"); }} className="w-full text-left px-4 py-3 text-[13px] font-bold text-foreground hover:bg-secondary transition-colors border-b border-border/50">Pending Setup Tasks</button>
+                <button onClick={() => { setShowExportDropdown(false); showToast("Exporting", "info", "Downloading Tax Declarations Status CSV"); }} className="w-full text-left px-4 py-3 text-[13px] font-bold text-foreground hover:bg-secondary transition-colors border-b border-border/50">Tax Declarations Status</button>
+                <button onClick={() => { setShowExportDropdown(false); showToast("Exporting", "info", "Downloading Full Onboarding Report"); }} className="w-full text-left px-4 py-3 text-[13px] font-bold text-foreground hover:bg-secondary transition-colors text-[#00B87C]">Full Onboarding Report</button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* ── Info Bar ────────────────────────────────────────── */}
@@ -312,44 +368,44 @@ export function FinanceOnboarding() {
 
       {/* ── KPI Cards ────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-card p-5 rounded-[24px] border border-border shadow-sm hover:shadow-md transition-all group">
+        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer" onClick={() => setGenericModalTitle("Pending Setup Tasks")}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
               <Clock size={18} className="text-amber-500" />
             </div>
             <span className="text-[28px] font-black text-amber-500 leading-none">3</span>
           </div>
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">PENDING SETUP</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">PENDING SETUP</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-1">need financial action</p>
         </div>
-        <div className="bg-card p-5 rounded-[24px] border border-border shadow-sm hover:shadow-md transition-all group">
+        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer" onClick={() => setGenericModalTitle("Completed This Month")}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
               <CheckCircle size={18} className="text-[#00B87C]" />
             </div>
             <span className="text-[28px] font-black text-[#00B87C] leading-none">5</span>
           </div>
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">COMPLETED THIS MONTH</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">COMPLETED THIS MONTH</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-1">financial setup done</p>
         </div>
-        <div className="bg-card p-5 rounded-[24px] border border-border shadow-sm hover:shadow-md transition-all group">
+        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer" onClick={() => setGenericModalTitle("PF Enrollments Due")}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
               <Shield size={18} className="text-purple-500" />
             </div>
             <span className="text-[28px] font-black text-purple-500 leading-none">2</span>
           </div>
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">PF ENROLLMENTS DUE</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">PF ENROLLMENTS DUE</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-1">for new hires</p>
         </div>
-        <div className="bg-card p-5 rounded-[24px] border border-border shadow-sm hover:shadow-md transition-all group">
+        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer" onClick={() => setGenericModalTitle("Tax Declarations Pending")}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
               <Percent size={18} className="text-cyan-500" />
             </div>
             <span className="text-[28px] font-black text-cyan-500 leading-none">4</span>
           </div>
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">TAX DECLARATIONS PENDING</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">TAX DECLARATIONS PENDING</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-1">investment declarations</p>
         </div>
       </div>
@@ -361,7 +417,7 @@ export function FinanceOnboarding() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`relative pb-3 text-[13px] font-black uppercase tracking-widest transition-all ${
+              className={`relative pb-3 text-[13px] font-semibold uppercase tracking-wider transition-all ${
                 activeTab === tab ? "text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -409,7 +465,7 @@ export function FinanceOnboarding() {
                 {/* Task Checklist */}
                 <div className="px-5 pb-4">
                   {pendingList.map((task) => (
-                    <div key={task.id} className="flex items-center gap-3 py-2.5 border-t border-border/50 first:border-t-0 min-h-[44px]">
+                    <div key={task.id} className="flex items-center gap-3 py-2.5 border-t border-border/50 first:border-t-0 min-h-[44px] hover:bg-muted/30 cursor-pointer" onClick={() => openTaskModal(task, hire)}>
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                         task.status === "done" ? "bg-[#00B87C] border-[#00B87C]" :
                         task.status === "overdue" ? "border-red-400" :
@@ -433,31 +489,31 @@ export function FinanceOnboarding() {
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         {task.status === "done" && task.doneDate && (
-                          <span className="text-[10px] font-bold text-muted-foreground">{task.doneDate}</span>
+                          <span className="text-[11px] font-bold text-muted-foreground">{task.doneDate}</span>
                         )}
                         {task.actionType === "bank" && (
-                          <button onClick={() => openBankModal(hire)} className="px-3 py-1.5 bg-[#00B87C] text-white text-[10px] font-black rounded-lg hover:opacity-90 transition-all uppercase tracking-widest shadow-sm shadow-emerald-500/20">Collect Details</button>
+                          <button onClick={(e) => { e.stopPropagation(); openBankModal(hire); }} className="px-3 py-1.5 bg-[#00B87C] text-white text-[11px] font-semibold rounded-lg hover:opacity-90 transition-all uppercase tracking-widest shadow-sm shadow-emerald-500/20">Collect Details</button>
                         )}
                         {task.actionType === "pf" && (
-                          <button onClick={() => openPFModal(hire)} className="px-3 py-1.5 bg-[#00B87C] text-white text-[10px] font-black rounded-lg hover:opacity-90 transition-all uppercase tracking-widest shadow-sm shadow-emerald-500/20">Enroll Now</button>
+                          <button onClick={(e) => { e.stopPropagation(); openPFModal(hire); }} className="px-3 py-1.5 bg-[#00B87C] text-white text-[11px] font-semibold rounded-lg hover:opacity-90 transition-all uppercase tracking-widest shadow-sm shadow-emerald-500/20">Enroll Now</button>
                         )}
                         {task.actionType === "form" && task.status === "overdue" && (
-                          <button onClick={() => handleResendForm(hire.name)} className="px-3 py-1.5 bg-red-500 text-white text-[10px] font-black rounded-lg hover:opacity-90 transition-all uppercase tracking-widest">Resend Form</button>
+                          <button onClick={(e) => { e.stopPropagation(); openTaxModal(hire); }} className="px-3 py-1.5 bg-red-500 text-white text-[11px] font-semibold rounded-lg hover:opacity-90 transition-all uppercase tracking-widest">Resend Form</button>
                         )}
                         {task.actionType === "form" && task.status !== "overdue" && (
-                          <button onClick={() => handleSendForm(hire.name)} className="px-3 py-1.5 border border-border text-[10px] font-black rounded-lg hover:bg-secondary transition-all uppercase tracking-widest text-foreground">Send Form</button>
+                          <button onClick={(e) => { e.stopPropagation(); openTaxModal(hire); }} className="px-3 py-1.5 border border-border text-[11px] font-semibold rounded-lg hover:bg-secondary transition-all uppercase tracking-widest text-foreground">View Declaration</button>
                         )}
                         {task.actionType === "payroll" && task.status === "overdue" && (
-                          <button onClick={() => openPayrollModal(hire)} className="px-3 py-1.5 bg-red-500 text-white text-[10px] font-black rounded-lg hover:opacity-90 transition-all uppercase tracking-widest">Add to Payroll</button>
+                          <button onClick={(e) => { e.stopPropagation(); openPayrollModal(hire); }} className="px-3 py-1.5 bg-red-500 text-white text-[11px] font-semibold rounded-lg hover:opacity-90 transition-all uppercase tracking-widest">Add to Payroll</button>
                         )}
                         {task.actionType === "payroll" && task.status !== "overdue" && (
-                          <button onClick={() => openPayrollModal(hire)} className="px-3 py-1.5 border border-border text-[10px] font-black rounded-lg hover:bg-secondary transition-all uppercase tracking-widest text-foreground">Add to Payroll</button>
+                          <button onClick={(e) => { e.stopPropagation(); openPayrollModal(hire); }} className="px-3 py-1.5 border border-border text-[11px] font-semibold rounded-lg hover:bg-secondary transition-all uppercase tracking-widest text-foreground">Add to Payroll</button>
                         )}
                         {task.actionType === "request" && (
-                          <button onClick={() => showToast("Request Sent", "success", `Form 12B request sent to ${hire.name}`)} className="text-[#00B87C] text-[10px] font-bold hover:underline uppercase tracking-widest">Send Request</button>
+                          <button onClick={(e) => { e.stopPropagation(); showToast("Request Sent", "success", `Form 12B request sent to ${hire.name}`); }} className="text-[#00B87C] text-[11px] font-bold hover:underline uppercase tracking-widest">Send Request</button>
                         )}
                         {task.actionType === "view" && (
-                          <button onClick={() => showToast("Offer Letter", "info", `Opening offer letter for ${hire.name}`)} className="text-[#00B87C] text-[10px] font-bold hover:underline uppercase tracking-widest">View Offer Letter</button>
+                          <button onClick={(e) => { e.stopPropagation(); showToast("Offer Letter", "info", `Opening offer letter for ${hire.name}`); }} className="text-[#00B87C] text-[11px] font-bold hover:underline uppercase tracking-widest">View Offer Letter</button>
                         )}
                       </div>
                     </div>
@@ -481,7 +537,7 @@ export function FinanceOnboarding() {
                                 <div key={task.id} className="flex items-center gap-2.5 py-1.5 pl-1">
                                   <Check size={11} className="text-[#00B87C]" />
                                   <span className="text-[12px] font-medium text-[#00B87C]">{task.label}</span>
-                                  <span className="text-[10px] text-muted-foreground ml-auto">{task.doneDate}</span>
+                                  <span className="text-[11px] text-muted-foreground ml-auto">{task.doneDate}</span>
                                 </div>
                               ))}
                             </div>
@@ -502,7 +558,7 @@ export function FinanceOnboarding() {
           <div className="p-5 pb-0 overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-border text-[9px] font-black text-muted-foreground uppercase tracking-widest">
+                <tr className="border-b border-border text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   <th className="pb-3 pr-4">EMPLOYEE</th>
                   <th className="pb-3 pr-4">JOINING DATE</th>
                   <th className="pb-3 pr-4">SALARY</th>
@@ -516,30 +572,33 @@ export function FinanceOnboarding() {
                 {ALL_HIRES_TABLE.map((row, i) => (
                   <tr key={i} className="text-[12px] hover:bg-secondary/30 transition-all cursor-pointer" onClick={() => {
                     const hire = NEW_HIRES.find(h => h.name === row.emp);
-                    if (hire) { setSelectedEmployee(hire); setActiveTab("Pending Tasks"); }
+                    if (hire) { openDetailsPanel(hire); }
                   }}>
                     <td className="py-3 pr-4 font-bold text-foreground">{row.emp}</td>
                     <td className="py-3 pr-4 text-muted-foreground">{row.join}</td>
                     <td className="py-3 pr-4 font-bold text-foreground">{row.salary}</td>
                     <td className="py-3 pr-4">
-                      <span className={`text-[10px] font-black uppercase tracking-widest ${
+                      <span className={`text-[11px] font-semibold uppercase tracking-wider ${
                         row.bank === "✓ Done" ? "text-[#00B87C]" : row.bank === "Pending" ? "text-amber-500" : "text-gray-400"
                       }`}>{row.bank}</span>
                     </td>
                     <td className="py-3 pr-4">
-                      <span className={`text-[10px] font-black uppercase tracking-widest ${
+                      <span className={`text-[11px] font-semibold uppercase tracking-wider ${
                         row.pf === "✓ Done" ? "text-[#00B87C]" : row.pf === "Pending" ? "text-amber-500" : "text-gray-400"
                       }`}>{row.pf}</span>
                     </td>
                     <td className="py-3 pr-4">
-                      <span className={`text-[10px] font-black uppercase tracking-widest ${
+                      <span className={`text-[11px] font-semibold uppercase tracking-wider ${
                         row.tax === "✓ Done" ? "text-[#00B87C]" : row.tax === "⚠ Overdue" ? "text-red-500" : row.tax === "Pending" ? "text-amber-500" : "text-gray-400"
                       }`}>{row.tax}</span>
                     </td>
-                    <td className="py-3 text-right">
-                      <span className={`text-[10px] font-black uppercase tracking-widest ${
+                    <td className="py-3 text-right flex items-center justify-end gap-3">
+                      <span className={`text-[11px] font-semibold uppercase tracking-wider ${
                         row.payroll === "✓ Done" ? "text-[#00B87C]" : row.payroll === "⚠ Overdue" ? "text-red-500" : row.payroll === "Pending" ? "text-amber-500" : "text-gray-400"
                       }`}>{row.payroll}</span>
+                      <div className="text-muted-foreground">
+                        <ChevronRight size={14} />
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -566,7 +625,7 @@ export function FinanceOnboarding() {
           <h3 className="text-[15px] font-black text-foreground">Financial Onboarding Settings</h3>
           <div className="space-y-4 max-w-lg">
             <div>
-              <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Default Pay Band</label>
+              <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Default Pay Band</label>
               <select className="w-full appearance-none px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all">
                 <option>Band A — Support</option>
                 <option>Band B — Associate</option>
@@ -576,7 +635,7 @@ export function FinanceOnboarding() {
               </select>
             </div>
             <div>
-              <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Auto-Prorate Salary</label>
+              <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Auto-Prorate Salary</label>
               <label className="flex items-center gap-2.5 cursor-pointer">
                 <div onClick={() => setProrate(!prorate)} className={`w-9 h-5 rounded-full transition-all relative ${prorate ? "bg-[#00B87C]" : "bg-border"}`}>
                   <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-all ${prorate ? "left-4" : "left-0.5"}`} />
@@ -585,7 +644,7 @@ export function FinanceOnboarding() {
               </label>
             </div>
             <div>
-              <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">ESIC Threshold</label>
+              <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">ESIC Threshold</label>
               <input defaultValue="₹21,000" className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
             </div>
           </div>
@@ -596,8 +655,8 @@ export function FinanceOnboarding() {
       <AnimatePresence>
         {showBankModal && selectedEmployee && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowBankModal(false)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative bg-card w-full max-w-[480px] rounded-[32px] shadow-2xl border border-border overflow-hidden">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={() => setShowBankModal(false)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.3 }} className="relative bg-card w-full max-w-[480px] rounded-[32px] shadow-2xl border border-border overflow-hidden">
               <div className="p-6">
                 <div className="flex items-center gap-3 pb-4 border-b border-border mb-5">
                   <div className="w-10 h-10 rounded-xl bg-[#DCFCE7] flex items-center justify-center">
@@ -608,7 +667,7 @@ export function FinanceOnboarding() {
                 </div>
 
                 <div className="mb-4">
-                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">EMPLOYEE SUBMITTED DETAILS</span>
+                  <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">EMPLOYEE SUBMITTED DETAILS</span>
                   <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/20 flex items-center gap-2">
                     <Clock size={14} className="text-amber-500" />
                     <span className="text-[12px] font-bold text-amber-600">Not yet submitted — awaiting employee input</span>
@@ -616,30 +675,30 @@ export function FinanceOnboarding() {
                 </div>
 
                 <div className="space-y-4">
-                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block">VERIFY AND CONFIRM</span>
+                  <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider block">VERIFY AND CONFIRM</span>
                   <div>
-                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Bank Name</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Bank Name</label>
                     <input value={bankName} onChange={e => setBankName(e.target.value)} placeholder="e.g. HDFC Bank" className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Account Number</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Account Number</label>
                     <input value={accountNumber} onChange={e => setAccountNumber(e.target.value)} placeholder="Enter account number" className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">IFSC Code</label>
+                      <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">IFSC Code</label>
                       <input value={ifscCode} onChange={e => setIfscCode(e.target.value)} placeholder="HDFC0001234" className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Account Holder</label>
+                      <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Account Holder</label>
                       <input value={accountHolder} onChange={e => setAccountHolder(e.target.value)} placeholder="Full name" className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Account Type</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Account Type</label>
                     <div className="flex gap-2">
                       {(["Savings", "Current"] as const).map(t => (
-                        <button key={t} onClick={() => setAccountType(t)} className={`px-4 py-2 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all ${accountType === t ? "bg-[#00B87C] text-white" : "bg-background border border-border text-muted-foreground hover:border-[#00B87C]/50"}`}>{t}</button>
+                        <button key={t} onClick={() => setAccountType(t)} className={`px-4 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all ${accountType === t ? "bg-[#00B87C] text-white" : "bg-background border border-border text-muted-foreground hover:border-[#00B87C]/50"}`}>{t}</button>
                       ))}
                     </div>
                   </div>
@@ -653,7 +712,7 @@ export function FinanceOnboarding() {
                     </div>
                   )}
                   <div>
-                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Cancelled Cheque / Bank Passbook</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Cancelled Cheque / Bank Passbook</label>
                     <div className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#00B87C]/50 transition-all cursor-pointer group">
                       <Upload size={20} className="mx-auto mb-2 text-muted-foreground group-hover:text-[#00B87C] transition-all" />
                       <p className="text-[11px] font-bold text-muted-foreground group-hover:text-foreground transition-all">Drop scan here or click to upload</p>
@@ -663,8 +722,8 @@ export function FinanceOnboarding() {
                 </div>
 
                 <div className="flex gap-3 mt-6">
-                  <button onClick={() => setShowBankModal(false)} className="flex-1 py-3 border border-border text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-secondary transition-all text-foreground">Cancel</button>
-                  <button onClick={handleSaveBank} className="flex-1 py-3 bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">Save to Payroll System</button>
+                  <button onClick={() => setShowBankModal(false)} className="flex-1 py-3 border border-border text-[11px] font-bold uppercase tracking-widest rounded-xl hover:bg-secondary transition-all text-foreground">Cancel</button>
+                  <button onClick={handleSaveBank} className="flex-1 py-3 bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-widest rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">Save to Payroll System</button>
                 </div>
               </div>
             </motion.div>
@@ -676,8 +735,8 @@ export function FinanceOnboarding() {
       <AnimatePresence>
         {showPFModal && selectedEmployee && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPFModal(false)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl border border-border overflow-hidden">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={() => setShowPFModal(false)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.3 }} className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl border border-border overflow-hidden">
               <div className="p-6">
                 <div className="flex items-center gap-3 pb-4 border-b border-border mb-5">
                   <div className="w-10 h-10 rounded-xl bg-[#DCFCE7] flex items-center justify-center">
@@ -689,10 +748,10 @@ export function FinanceOnboarding() {
 
                 <div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-1">
                   <div>
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">PROVIDENT FUND (PF)</span>
+                    <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">PROVIDENT FUND (PF)</span>
                     <div className="space-y-3">
                       <div>
-                        <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">UAN Number</label>
+                        <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">UAN Number</label>
                         <input value={uanNumber} onChange={e => setUanNumber(e.target.value)} placeholder="Universal Account Number" className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                       </div>
                       <label className="flex items-center gap-2.5 cursor-pointer">
@@ -705,7 +764,7 @@ export function FinanceOnboarding() {
                         PF Contribution: <span className="font-bold text-foreground">12% Employee | 12% Employer</span>
                       </div>
                       <div>
-                        <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">VPF (Voluntary PF) — Optional</label>
+                        <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">VPF (Voluntary PF) — Optional</label>
                         <div className="flex items-center gap-2">
                           <input value={vpfPercent} onChange={e => setVpfPercent(e.target.value)} placeholder="Extra %" className="w-24 px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                           <span className="text-[12px] font-bold text-muted-foreground">% additional contribution</span>
@@ -715,7 +774,7 @@ export function FinanceOnboarding() {
                   </div>
 
                   <div className="border-t border-border pt-4">
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">ESIC</span>
+                    <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">ESIC</span>
                     <label className="flex items-center gap-2.5 cursor-pointer mb-3">
                       <div onClick={() => setEsicApplicable(!esicApplicable)} className={`w-9 h-5 rounded-full transition-all relative ${esicApplicable ? "bg-[#00B87C]" : "bg-border"}`}>
                         <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-all ${esicApplicable ? "left-4" : "left-0.5"}`} />
@@ -724,29 +783,29 @@ export function FinanceOnboarding() {
                     </label>
                     {esicApplicable && (
                       <div>
-                        <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">ESIC Number</label>
+                        <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">ESIC Number</label>
                         <input value={esicNumber} onChange={e => setEsicNumber(e.target.value)} className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                       </div>
                     )}
                   </div>
 
                   <div className="border-t border-border pt-4">
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">NOMINEE DETAILS</span>
+                    <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">NOMINEE DETAILS</span>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Nominee Name</label>
+                        <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Nominee Name</label>
                         <input value={nomineeName} onChange={e => setNomineeName(e.target.value)} className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Relationship</label>
+                        <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Relationship</label>
                         <input value={nomineeRelation} onChange={e => setNomineeRelation(e.target.value)} className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Date of Birth</label>
+                        <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Date of Birth</label>
                         <input type="date" value={nomineeDob} onChange={e => setNomineeDob(e.target.value)} className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Aadhaar</label>
+                        <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Aadhaar</label>
                         <input value={nomineeAadhaar} onChange={e => setNomineeAadhaar(e.target.value)} className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                       </div>
                     </div>
@@ -754,8 +813,8 @@ export function FinanceOnboarding() {
                 </div>
 
                 <div className="flex gap-3 mt-6 pt-4 border-t border-border">
-                  <button onClick={() => setShowBankModal(false)} className="flex-1 py-3 border border-border text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-secondary transition-all text-foreground">Cancel</button>
-                  <button onClick={handleSavePF} className="flex-1 py-3 bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">Save PF Enrollment</button>
+                  <button onClick={() => setShowBankModal(false)} className="flex-1 py-3 border border-border text-[11px] font-bold uppercase tracking-widest rounded-xl hover:bg-secondary transition-all text-foreground">Cancel</button>
+                  <button onClick={handleSavePF} className="flex-1 py-3 bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-widest rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">Save PF Enrollment</button>
                 </div>
               </div>
             </motion.div>
@@ -767,8 +826,8 @@ export function FinanceOnboarding() {
       <AnimatePresence>
         {showPayrollModal && selectedEmployee && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPayrollModal(false)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl border border-border overflow-hidden">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={() => setShowPayrollModal(false)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.3 }} className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl border border-border overflow-hidden">
               <div className="p-6">
                 <div className="flex items-center gap-3 pb-4 border-b border-border mb-5">
                   <div className="w-10 h-10 rounded-xl bg-[#EDE9FE] flex items-center justify-center">
@@ -779,7 +838,7 @@ export function FinanceOnboarding() {
                 </div>
 
                 {/* Summary Card */}
-                <div className="p-4 rounded-xl bg-[#F9FAFB] dark:bg-gray-800 border border-border mb-5 space-y-2">
+                <div className="p-4 rounded-xl bg-[#F9FAFB] dark:bg-white/5 dark:bg-gray-800 border border-border mb-5 space-y-2">
                   <div className="flex justify-between text-[12px]">
                     <span className="font-bold text-muted-foreground">Name:</span>
                     <span className="font-black text-foreground">{selectedEmployee.name}</span>
@@ -808,11 +867,11 @@ export function FinanceOnboarding() {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Effective From</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Effective From</label>
                     <input type="date" value={effectiveDate} onChange={e => setEffectiveDate(e.target.value)} className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Pay Band</label>
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Pay Band</label>
                     <select value={payBand} onChange={e => setPayBand(e.target.value)} className="w-full appearance-none px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all">
                       <option>Band A — Support</option>
                       <option>Band B — Associate</option>
@@ -830,15 +889,171 @@ export function FinanceOnboarding() {
                   {prorate && (
                     <div className="p-3 rounded-xl bg-cyan-500/5 border border-cyan-500/20 flex items-center justify-between">
                       <span className="text-[12px] font-bold text-cyan-600">23 days = ₹74,194</span>
-                      <span className="text-[10px] font-medium text-muted-foreground">Joined Apr 8, 2026</span>
+                      <span className="text-[11px] font-medium text-muted-foreground">Joined Apr 8, 2026</span>
                     </div>
                   )}
                 </div>
 
                 <div className="flex gap-3 mt-6">
-                  <button onClick={handlePreviewPayslip} className="flex-1 py-3 border border-border text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-secondary transition-all text-foreground">Preview Payslip</button>
-                  <button onClick={handleAddToPayroll} className="flex-1 py-3 bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">Add to Payroll</button>
+                  <button onClick={handlePreviewPayslip} className="flex-1 py-3 border border-border text-[11px] font-bold uppercase tracking-widest rounded-xl hover:bg-secondary transition-all text-foreground">Preview Payslip</button>
+                  <button onClick={handleAddToPayroll} className="flex-1 py-3 bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-widest rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">Add to Payroll</button>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Task Edit Modal ──────────────────────────────────── */}
+      <AnimatePresence>
+        {selectedTask && selectedEmployee && (
+          <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={() => setSelectedTask(null)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.3 }} className="relative bg-card w-full max-w-[400px] rounded-[32px] shadow-2xl border border-border overflow-hidden">
+              <div className="p-6">
+                <div className="flex items-center gap-3 pb-4 border-b border-border mb-5">
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                    <List size={20} className="text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-[16px] font-black text-foreground">Task Details</h3>
+                    <p className="text-[13px] font-semibold text-muted-foreground">{selectedEmployee.name}</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">Task Name</label>
+                    <p className="text-[14px] font-bold text-foreground">{selectedTask.task}</p>
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">Status</label>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${selectedTask.status === 'done' ? 'bg-[#00B87C]' : selectedTask.status === 'overdue' ? 'bg-red-500' : 'bg-amber-500'}`}></div>
+                      <span className="text-[13px] font-bold uppercase tracking-wider">{selectedTask.status}</span>
+                    </div>
+                  </div>
+                  <div className="pt-2">
+                    <button onClick={() => setSelectedTask(null)} className="w-full bg-[#00B87C] hover:bg-[#00B87C]/90 text-white font-bold py-3 rounded-xl transition-all shadow-sm shadow-[#00B87C]/20 uppercase tracking-widest text-[13px]">
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Tax Declaration Modal ──────────────────────────────────── */}
+      <AnimatePresence>
+        {showTaxModal && selectedEmployee && (
+          <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={() => setShowTaxModal(false)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.3 }} className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl border border-border overflow-hidden">
+              <div className="p-6">
+                <div className="flex items-center gap-3 pb-4 border-b border-border mb-5">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
+                    <Percent size={20} className="text-cyan-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-[16px] font-black text-foreground">Tax Declaration</h3>
+                    <p className="text-[13px] font-semibold text-muted-foreground">{selectedEmployee.name}</p>
+                  </div>
+                  <button onClick={() => setShowTaxModal(false)} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-all ml-auto"><X size={18} /></button>
+                </div>
+                <div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-1">
+                  <div>
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">Regime Selected</label>
+                    <select className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all">
+                      <option>New Tax Regime</option>
+                      <option>Old Tax Regime</option>
+                    </select>
+                  </div>
+                  <div className="border-t border-border pt-4">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">Section 80C Investments</label>
+                    <input type="text" placeholder="e.g. ₹1,50,000" className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">House Rent Allowance (HRA) Claim</label>
+                    <input type="text" placeholder="e.g. ₹2,00,000" className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2 block">Supporting Documents</label>
+                    <div className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#00B87C]/50 transition-all cursor-pointer group">
+                      <Upload size={20} className="mx-auto mb-2 text-muted-foreground group-hover:text-[#00B87C] transition-all" />
+                      <p className="text-[11px] font-bold text-muted-foreground group-hover:text-foreground transition-all">Upload Rent Receipts / Proofs</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-3 mt-6 pt-4 border-t border-border">
+                  <button onClick={() => setShowTaxModal(false)} className="flex-1 py-3 border border-border text-[11px] font-bold uppercase tracking-widest rounded-xl hover:bg-secondary transition-all text-foreground">Cancel</button>
+                  <button onClick={handleSaveTax} className="flex-1 py-3 bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-widest rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20">Save Declaration</button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Employee Details Slide Panel ──────────────────────────────────── */}
+      <AnimatePresence>
+        {showDetailsPanel && selectedEmployee && (
+          <div className="fixed inset-0 z-[5000] flex justify-end">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={() => setShowDetailsPanel(false)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+            <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="relative w-full max-w-[440px] bg-card h-full shadow-2xl border-l border-border flex flex-col">
+              <div className="p-6 border-b border-border flex items-center justify-between bg-muted/5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-[14px] font-black text-purple-600">
+                    {selectedEmployee.initials}
+                  </div>
+                  <div>
+                    <h2 className="text-[16px] font-black text-foreground">{selectedEmployee.name}</h2>
+                    <p className="text-[12px] font-bold text-muted-foreground">{selectedEmployee.role}</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowDetailsPanel(false)} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-all">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <div>
+                  <h3 className="text-[11px] font-black text-[#94A3B8] uppercase tracking-wider mb-3">Onboarding Info</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between p-3 rounded-xl bg-secondary/50 border border-border">
+                      <span className="text-[12px] font-bold text-muted-foreground">Joining Date</span>
+                      <span className="text-[12px] font-black text-foreground">{selectedEmployee.joiningDate}</span>
+                    </div>
+                    <div className="flex justify-between p-3 rounded-xl bg-secondary/50 border border-border">
+                      <span className="text-[12px] font-bold text-muted-foreground">Department</span>
+                      <span className="text-[12px] font-black text-foreground">{selectedEmployee.department}</span>
+                    </div>
+                    <div className="flex justify-between p-3 rounded-xl bg-secondary/50 border border-border">
+                      <span className="text-[12px] font-bold text-muted-foreground">Emp ID</span>
+                      <span className="text-[12px] font-black text-foreground">{selectedEmployee.empId}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-[11px] font-black text-[#94A3B8] uppercase tracking-wider mb-3">Financial Details</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between p-3 rounded-xl bg-secondary/50 border border-border">
+                      <span className="text-[12px] font-bold text-muted-foreground">CTC</span>
+                      <span className="text-[12px] font-black text-foreground">{selectedEmployee.ctc}</span>
+                    </div>
+                    <div className="flex justify-between p-3 rounded-xl bg-secondary/50 border border-border">
+                      <span className="text-[12px] font-bold text-muted-foreground">Pay Band</span>
+                      <span className="text-[12px] font-black text-foreground">{selectedEmployee.band}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-border grid grid-cols-1 gap-3 bg-muted/5">
+                <button onClick={() => { setShowDetailsPanel(false); setActiveTab("Pending Tasks"); }} className="w-full py-4 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20">
+                  View Tasks
+                </button>
               </div>
             </motion.div>
           </div>

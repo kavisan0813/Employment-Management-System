@@ -10,7 +10,7 @@ import {
   FileText,
 } from "lucide-react";
 import { useNavigate } from "react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { StatusBadge } from "../components/workflow/StatusBadge";
 
 interface RegularizationRequest {
@@ -156,7 +156,7 @@ export default function EmployeeRegularizationHistory() {
         ].map((card, i) => (
           <div
             key={i}
-            className="p-6 rounded-[24px] border border-border bg-card shadow-sm flex flex-col items-center justify-center text-center group hover:border-primary transition-colors"
+            className="p-6 rounded-2xl border border-border bg-card shadow-sm flex flex-col items-center justify-center text-center group hover:border-primary transition-colors"
           >
             <p
               className="text-[32px] font-black mb-1"
@@ -172,26 +172,26 @@ export default function EmployeeRegularizationHistory() {
       </div>
 
       {/* ─── Table ────────────────────────────────────────────────── */}
-      <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden overflow-x-auto">
+      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden overflow-x-auto">
         <table className="w-full text-left">
           <thead>
             <tr className="bg-secondary/30 border-b border-border">
-              <th className="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-muted-foreground">
+              <th className="px-6 py-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Date & Type
               </th>
-              <th className="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-muted-foreground">
+              <th className="px-6 py-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Times
               </th>
-              <th className="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-muted-foreground">
+              <th className="px-6 py-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Reason
               </th>
-              <th className="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-muted-foreground">
+              <th className="px-6 py-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Manager
               </th>
-              <th className="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-muted-foreground">
+              <th className="px-6 py-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Status
               </th>
-              <th className="px-6 py-5 text-[11px] font-black uppercase tracking-widest text-muted-foreground text-right">
+              <th className="px-6 py-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">
                 Action
               </th>
             </tr>
@@ -238,7 +238,7 @@ export default function EmployeeRegularizationHistory() {
                 </td>
                 <td className="px-6 py-5">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-[10px]">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-[11px]">
                       AR
                     </div>
                     <span className="text-[13px] font-black text-foreground">
@@ -422,7 +422,7 @@ function RequestDetailPopup({
         <div className="p-6 bg-secondary/30 border-t border-border">
           <button
             onClick={onClose}
-            className="w-full py-4 bg-primary text-white rounded-2xl text-[14px] font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:opacity-95 transition-all"
+            className="w-full py-4 bg-primary text-white rounded-2xl text-[14px] font-semibold uppercase tracking-wider shadow-xl shadow-primary/20 hover:opacity-95 transition-all"
           >
             Close Details
           </button>

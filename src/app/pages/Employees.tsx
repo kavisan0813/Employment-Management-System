@@ -841,7 +841,7 @@ function DeleteConfirmModal({
               </p>
             </div>
             <span
-              className="ml-auto px-2.5 py-1 rounded-full text-[10px] font-bold"
+              className="ml-auto px-2.5 py-1 rounded-full text-[11px] font-bold"
               style={{
                 backgroundColor:
                   employee.status === "Active"
@@ -1881,7 +1881,7 @@ export function Employees() {
             >
               <div className="absolute top-4 right-4 z-10">
                 <span
-                  className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold"
+                  className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold"
                   style={{
                     backgroundColor: statusConfig[emp.status]?.bg,
                     color: statusConfig[emp.status]?.color,
@@ -2070,7 +2070,7 @@ export function Employees() {
                     .map((emp) => (
                       <div
                         key={emp.id}
-                        className="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:shadow-md cursor-pointer group"
+                        className="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] cursor-pointer group"
                         style={{
                           border: "1px solid var(--border)",
                           backgroundColor: "var(--background)",

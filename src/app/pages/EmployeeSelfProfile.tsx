@@ -15,7 +15,7 @@ import {
   Paperclip,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 const TABS = [
   "Personal Info",
@@ -92,7 +92,7 @@ export function EmployeeSelfProfile() {
       </AnimatePresence>
 
       {/* ─── Profile Hero Card ────────────────────────────────────── */}
-      <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
         {/* Top Gradient Strip */}
         <div
           className="h-[100px] w-full"
@@ -160,7 +160,7 @@ export function EmployeeSelfProfile() {
                       Active
                     </span>
                   </div>
-                  <span className="px-4 py-1 rounded-full bg-secondary text-muted-foreground text-[11px] font-black uppercase tracking-widest border border-border shadow-sm">
+                  <span className="px-4 py-1 rounded-full bg-secondary text-muted-foreground text-[11px] font-semibold uppercase tracking-wider border border-border shadow-sm">
                     Full-time
                   </span>
                 </div>
@@ -172,7 +172,7 @@ export function EmployeeSelfProfile() {
                   <p className="text-[24px] font-black text-foreground tracking-tight">
                     4.2 yrs
                   </p>
-                  <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                  <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                     Tenure
                   </p>
                 </div>
@@ -181,7 +181,7 @@ export function EmployeeSelfProfile() {
                   <p className="text-[24px] font-black text-foreground tracking-tight">
                     92%
                   </p>
-                  <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                  <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                     Attendance
                   </p>
                 </div>
@@ -190,7 +190,7 @@ export function EmployeeSelfProfile() {
                   <p className="text-[24px] font-black text-foreground tracking-tight">
                     4.5 ★
                   </p>
-                  <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                  <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                     Rating
                   </p>
                 </div>
@@ -201,7 +201,7 @@ export function EmployeeSelfProfile() {
       </div>
 
       {/* ─── Tab Bar ──────────────────────────────────────────────── */}
-      <div className="bg-card rounded-[20px] border border-border shadow-sm p-1.5 flex items-center overflow-x-auto no-scrollbar">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-1.5 flex items-center overflow-x-auto no-scrollbar">
         {TABS.map((tab) => (
           <button
             key={tab}
@@ -259,7 +259,7 @@ export function EmployeeSelfProfile() {
             </button>
             <button
               onClick={handleSave}
-              className="px-10 py-3 rounded-xl bg-primary text-white font-black shadow-xl shadow-emerald-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="px-10 py-3 rounded-xl bg-primary text-white font-black shadow-xl shadow-[#00B87C]/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               Save Changes
             </button>
@@ -276,7 +276,7 @@ function Label({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 mb-6">
       <div className="w-1.5 h-5 bg-primary rounded-full"></div>
-      <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
+      <h3 className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider">
         {children}
       </h3>
     </div>
@@ -302,7 +302,7 @@ function InputField({
 }: InputFieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+      <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
         {label}
       </label>
       {isTextarea ? (
@@ -342,7 +342,7 @@ function DropdownField({
 }: DropdownFieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+      <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
         {label}
       </label>
       <div className="relative">
@@ -384,7 +384,7 @@ function PersonalTab({ isEditing }: { isEditing: boolean }) {
     <div className="flex flex-col lg:flex-row gap-8">
       {/* LEFT (65%) */}
       <div className="lg:w-[65%] space-y-8">
-        <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
+        <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
           <Label>PERSONAL DETAILS</Label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
@@ -424,7 +424,7 @@ function PersonalTab({ isEditing }: { isEditing: boolean }) {
           </div>
         </div>
 
-        <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
+        <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
           <Label>CONTACT INFORMATION</Label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
@@ -462,7 +462,7 @@ function PersonalTab({ isEditing }: { isEditing: boolean }) {
 
       {/* RIGHT (35%) */}
       <div className="lg:w-[35%] space-y-8">
-        <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
+        <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
           <Label>SKILLS & EXPERTISE</Label>
           <div className="flex flex-wrap gap-2.5">
             {[
@@ -488,7 +488,7 @@ function PersonalTab({ isEditing }: { isEditing: boolean }) {
           </div>
         </div>
 
-        <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
+        <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
           <Label>LANGUAGES</Label>
           <div className="space-y-4">
             {[
@@ -511,7 +511,7 @@ function PersonalTab({ isEditing }: { isEditing: boolean }) {
           </div>
         </div>
 
-        <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
+        <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
           <Label>BIO / ABOUT</Label>
           <InputField
             label="Tell about yourself"
@@ -541,7 +541,7 @@ function EmploymentTab() {
   ];
 
   return (
-    <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
+    <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
       <div className="flex items-center gap-4 mb-10 p-5 bg-primary/10 rounded-2xl border border-primary/20">
         <div className="w-11 h-11 rounded-full bg-card flex items-center justify-center text-primary shadow-sm shrink-0">
           <AlertCircle size={24} />
@@ -555,7 +555,7 @@ function EmploymentTab() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-12">
         {fields.map((f) => (
           <div key={f.label} className="group">
-            <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 group-hover:text-primary transition-colors">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 group-hover:text-primary transition-colors">
               {f.label}
             </p>
             <p className="text-[16px] font-black text-foreground tracking-tight">
@@ -613,14 +613,14 @@ function DocumentsTab() {
       {docs.map((doc) => (
         <div
           key={doc.name}
-          className="bg-card rounded-[24px] p-7 border border-border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group"
+          className="bg-card rounded-2xl p-7 border border-border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group"
         >
           <div className="flex items-start justify-between mb-5">
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-background group-hover:bg-primary/10 transition-colors shadow-inner">
-              <FileText size={28} style={{ color: doc.color }} />
+            <div className="w-11 h-11 rounded-[10px] flex items-center justify-center bg-background group-hover:bg-primary/10 transition-colors shadow-inner">
+              <FileText size={22} style={{ color: doc.color }} />
             </div>
             <span
-              className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+              className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
                 doc.status === "Verified"
                   ? "bg-primary/10 text-primary border-primary/20"
                   : doc.status === "Pending"
@@ -654,7 +654,7 @@ function DocumentsTab() {
 
 function EmergencyTab({ isEditing }: { isEditing: boolean }) {
   return (
-    <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
+    <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
       <Label>PRIMARY EMERGENCY CONTACT</Label>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
         <InputField
@@ -730,13 +730,13 @@ function SettingsTab() {
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       <div className="lg:w-[60%] space-y-6">
-        <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
+        <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
           <Label>ACCOUNT PREFERENCES</Label>
 
           <div className="space-y-10">
             {/* Delivery Channels */}
             <div>
-              <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">
+              <h4 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-4">
                 Delivery Channels
               </h4>
               <div className="space-y-1 divide-y divide-border/50">
@@ -760,7 +760,7 @@ function SettingsTab() {
 
             {/* Alert Types */}
             <div>
-              <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">
+              <h4 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-4">
                 Alert Types
               </h4>
               <div className="space-y-1 divide-y divide-border/50">
@@ -806,7 +806,7 @@ function SettingsTab() {
       </div>
 
       <div className="lg:w-[40%] space-y-6">
-        <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm">
+        <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
           <Label>SECURITY</Label>
           <button className="w-full py-4 rounded-2xl border border-border text-foreground font-black text-[14px] flex items-center justify-center gap-3 hover:bg-secondary transition-all shadow-sm">
             <Shield size={18} className="text-primary" /> Change Password
@@ -986,13 +986,13 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-4.5 px-8 border border-slate-200 dark:border-border rounded-[20px] text-[15px] font-black text-slate-500 hover:bg-secondary transition-all uppercase tracking-widest"
+                className="flex-1 py-4.5 px-8 border border-slate-200 dark:border-border rounded-2xl text-[15px] font-black text-slate-500 hover:bg-secondary transition-all uppercase tracking-widest"
               >
                 CANCEL
               </button>
               <button
                 type="submit"
-                className="flex-[1.5] py-4.5 px-8 bg-[#00B87C] text-white rounded-[20px] text-[15px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/25 hover:opacity-95 active:scale-[0.98] transition-all"
+                className="flex-[1.5] py-4.5 px-8 bg-[#00B87C] text-white rounded-2xl text-[15px] font-bold uppercase tracking-wider shadow-xl shadow-[#00B87C]/25 hover:opacity-95 active:scale-[0.98] transition-all"
               >
                 SUBMIT REQUEST
               </button>

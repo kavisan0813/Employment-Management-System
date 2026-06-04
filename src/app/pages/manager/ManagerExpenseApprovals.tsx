@@ -95,14 +95,14 @@ export function ManagerExpenseApprovals() {
       {/* PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#FEF3C7] flex items-center justify-center shrink-0">
-            <Receipt size={24} className="text-amber-600" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#FEF3C7] flex items-center justify-center shrink-0">
+            <Receipt size={22} className="text-amber-600" />
           </div>
           <div>
-            <h2 className="text-[26px] font-extrabold tracking-tight leading-none text-foreground">
+            <h1 className="text-[26px] font-bold tracking-tight leading-none text-foreground">
               Expense Approvals
-            </h2>
-            <p className="text-[13px] font-semibold mt-1 text-muted-foreground">
+            </h1>
+            <p className="text-[13px] text-[#6B7280] mt-1">
               Team expense claims — Level 1 approval
             </p>
           </div>
@@ -128,21 +128,21 @@ export function ManagerExpenseApprovals() {
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Pending My Approval</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-amber-500 leading-none">4</p>
+            <p className="text-3xl font-bold text-amber-500 leading-none">4</p>
             <p className="text-sm font-bold text-amber-600/70 mb-0.5">need your action</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Approved This Month</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-emerald-600 leading-none">₹12,400</p>
+            <p className="text-3xl font-bold text-emerald-600 leading-none">₹12,400</p>
             <p className="text-sm font-bold text-emerald-600/70 mb-0.5">sent to Finance</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Sent to Finance</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-teal-600 leading-none">6</p>
+            <p className="text-3xl font-bold text-teal-600 leading-none">6</p>
             <p className="text-sm font-bold text-teal-600/70 mb-0.5">awaiting Finance L2</p>
           </div>
         </div>
@@ -173,7 +173,7 @@ export function ManagerExpenseApprovals() {
         <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-secondary/50 text-muted-foreground text-xs font-black uppercase tracking-wider">
+              <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
                 <tr>
                   <th className="px-6 py-4 border-b border-border">Employee</th>
                   <th className="px-6 py-4 border-b border-border">Description</th>
@@ -187,7 +187,7 @@ export function ManagerExpenseApprovals() {
               </thead>
               <tbody className="divide-y divide-border">
                 {MOCK_PENDING_EXPENSES.map((row) => (
-                  <tr key={row.id} className="hover:bg-secondary/30 transition-colors h-[64px]">
+                  <tr key={row.id} className="hover:bg-[#00B87C]/[0.08] transition-colors h-[64px]">
                     <td className="px-6 py-2">
                       <div className="flex items-center gap-3">
                         <img src={row.avatar} className="w-9 h-9 rounded-full border border-border" />
@@ -205,7 +205,7 @@ export function ManagerExpenseApprovals() {
                         {row.category}
                       </span>
                     </td>
-                    <td className="px-6 py-2 font-extrabold text-foreground">{row.amount}</td>
+                    <td className="px-6 py-2 font-bold text-foreground">{row.amount}</td>
                     <td className="px-6 py-2">
                       {row.receiptStatus === "Attached" ? (
                         <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600">
@@ -256,7 +256,7 @@ export function ManagerExpenseApprovals() {
           <div className="w-full max-w-[420px] bg-card rounded-2xl shadow-2xl border border-border flex flex-col animate-in zoom-in-95">
             {/* Header */}
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-secondary/30 rounded-t-2xl">
-              <h3 className="text-lg font-extrabold text-foreground">
+              <h3 className="text-lg font-bold text-foreground">
                 Approve Expense Claim
               </h3>
               <button 
@@ -282,11 +282,11 @@ export function ManagerExpenseApprovals() {
               {/* Expense Summary */}
               <div className="bg-secondary/50 rounded-xl border border-border p-4 space-y-3">
                 <div className="flex items-center justify-between border-b border-border/50 pb-3">
-                  <span className={`px-2 py-1 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest border ${getCategoryColor(selectedExpense.category)}`}>
+                  <span className={`px-2 py-1 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider border ${getCategoryColor(selectedExpense.category)}`}>
                     {getCategoryIcon(selectedExpense.category)}
                     {selectedExpense.category}
                   </span>
-                  <span className="text-xl font-black text-foreground">{selectedExpense.amount}</span>
+                  <span className="text-xl font-bold text-foreground">{selectedExpense.amount}</span>
                 </div>
                 <div>
                   <p className="text-xs font-bold text-muted-foreground mb-1">Description</p>
@@ -298,7 +298,7 @@ export function ManagerExpenseApprovals() {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-foreground">receipt.pdf</p>
-                    <p className="text-[10px] text-muted-foreground">Attached by {selectedExpense.empName}</p>
+                    <p className="text-[11px] text-muted-foreground">Attached by {selectedExpense.empName}</p>
                   </div>
                 </div>
               </div>

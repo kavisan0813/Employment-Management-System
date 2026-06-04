@@ -252,7 +252,7 @@ const SmartSearch = () => {
           className="text-center space-y-2"
         >
           <h1 className="text-3xl font-bold text-[#022C22] dark:text-[#ECFDF5] flex items-center justify-center gap-3">
-            <div className="p-2 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20">
+            <div className="p-2 bg-emerald-500 rounded-xl shadow-lg shadow-[#00B87C]/20">
               <Sparkles className="text-white" size={24} />
             </div>
             Smart AI Search
@@ -284,7 +284,7 @@ const SmartSearch = () => {
             <div className="absolute inset-y-0 right-3 flex items-center gap-2">
               <Button
                 type="submit"
-                className="h-11 px-6 rounded-xl bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-semibold transition-transform active:scale-95 shadow-lg shadow-emerald-500/20"
+                className="h-11 px-6 rounded-xl bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-semibold transition-transform active:scale-95 shadow-lg shadow-[#00B87C]/20"
               >
                 Search
               </Button>
@@ -359,7 +359,7 @@ const SmartSearch = () => {
                           Employees
                           <Badge
                             variant="secondary"
-                            className="ml-auto bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                            className="ml-auto bg-emerald-500/10 text-emerald-500 dark:bg-emerald-900/40 dark:text-emerald-300"
                           >
                             {results.employees.length} matched
                           </Badge>
@@ -398,7 +398,7 @@ const SmartSearch = () => {
                                   >
                                     {emp.status}
                                   </Badge>
-                                  <p className="text-[10px] mt-1 text-[#064E3B]/50 font-medium">
+                                  <p className="text-[11px] mt-1 text-[#064E3B]/50 font-medium">
                                     Att: {emp.attendance}
                                   </p>
                                 </div>
@@ -543,7 +543,7 @@ const SmartSearch = () => {
                                   <div className="flex items-center gap-2">
                                     <Button
                                       size="sm"
-                                      className="bg-emerald-500 hover:bg-emerald-600 text-white h-8 px-4 rounded-lg border-none"
+                                      className="bg-[#00B87C] hover:bg-[#059669] text-white h-8 px-4 rounded-lg border-none"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         handleAction(leave.id, "Approve");

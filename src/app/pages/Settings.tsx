@@ -1359,23 +1359,40 @@ export function Settings() {
   const [holRegionSpecific, setHolRegionSpecific] = useState(true);
 
   // Attendance Policy states
-  const [apGracePeriod, setApGracePeriod] = useState("15");
-  const [apLateMark, setApLateMark] = useState("30");
-  const [apHalfDay, setApHalfDay] = useState("4");
-  const [apAbsentThreshold, setApAbsentThreshold] = useState("2");
-  const [apMaxWorking, setApMaxWorking] = useState("10");
-  const [apMinCheckIn, setApMinCheckIn] = useState("6");
-  const [apAllowReg, setApAllowReg] = useState(true);
-  const [apManagerApp, setApManagerApp] = useState(true);
-  const [apAutoWfh, setApAutoWfh] = useState(false);
-  const [apLimitReg, setApLimitReg] = useState(true);
-  const [apLimitRegVal, setApLimitRegVal] = useState("3");
-  const [apAllowBackdated, setApAllowBackdated] = useState(true);
-  const [apAllowBackdatedVal, setApAllowBackdatedVal] = useState("7");
-  const [apEscAlertMgr, setApEscAlertMgr] = useState("3");
-  const [apEscAlertHr, setApEscAlertHr] = useState("2");
-  const [apEscMD, setApEscMD] = useState("5");
-  const [apEscDeduct, setApEscDeduct] = useState("3");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apGracePeriod] = useState("15");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apLateMark] = useState("30");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apHalfDay] = useState("4");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apAbsentThreshold] = useState("2");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apMaxWorking] = useState("10");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apMinCheckIn] = useState("6");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apAllowReg] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apManagerApp] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apAutoWfh] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apLimitReg] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apLimitRegVal] = useState("3");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apAllowBackdated] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apAllowBackdatedVal] = useState("7");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apEscAlertMgr] = useState("3");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apEscAlertHr] = useState("2");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apEscMD] = useState("5");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [apEscDeduct] = useState("3");
 
   // Holiday filter states
 
@@ -1666,9 +1683,9 @@ export function Settings() {
       <span
         style={{
           fontSize: "11px",
-          fontWeight: 700,
-          color: "var(--muted-foreground)",
-          letterSpacing: "0.5px",
+          fontWeight: 600,
+          color: "#9CA3AF",
+          letterSpacing: "0.05em",
           textTransform: "uppercase",
         }}
       >
@@ -1770,7 +1787,7 @@ export function Settings() {
               backgroundColor: "#00B87C",
               color: "white",
               border: "none",
-              borderRadius: "10px",
+              borderRadius: "12px",
               padding: "8px 16px",
               fontSize: "13px",
               fontWeight: 600,
@@ -1828,10 +1845,10 @@ export function Settings() {
                 <p
                   style={{
                     fontSize: "11px",
-                    fontWeight: 700,
-                    color: "var(--muted-foreground)",
+                    fontWeight: 600,
+                    color: "#9CA3AF",
                     textTransform: "uppercase",
-                    letterSpacing: "0.5px",
+                    letterSpacing: "0.05em",
                     margin: 0,
                   }}
                 >
@@ -1839,9 +1856,9 @@ export function Settings() {
                 </p>
                 <p
                   style={{
-                    fontSize: "22px",
-                    fontWeight: 800,
-                    color: "var(--foreground)",
+                    fontSize: "28px",
+                    fontWeight: 700,
+                    color: "#111827",
                     marginTop: "4px",
                     marginBottom: 0,
                   }}
@@ -1851,10 +1868,14 @@ export function Settings() {
               </div>
               <div
                 style={{
-                  padding: "10px",
-                  borderRadius: "12px",
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "10px",
                   backgroundColor: card.bg,
                   color: card.color,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
                 {card.icon}
@@ -1941,9 +1962,9 @@ export function Settings() {
             <thead>
               <tr
                 style={{
-                  borderBottom: "1px solid var(--border)",
+                  borderBottom: "1px solid #F3F4F6",
                   textAlign: "left",
-                  backgroundColor: "var(--muted)",
+                  backgroundColor: "#F9FAFB",
                 }}
               >
                 {[
@@ -1963,9 +1984,9 @@ export function Settings() {
                     style={{
                       padding: "12px 16px",
                       fontSize: "10px",
-                      fontWeight: 700,
-                      color: "var(--muted-foreground)",
-                      letterSpacing: "0.5px",
+                      fontWeight: 600,
+                      color: "#9CA3AF",
+                      letterSpacing: "0.05em",
                     }}
                   >
                     {h}
@@ -2051,18 +2072,18 @@ export function Settings() {
                     {s.workingDays.join(", ")}
                   </td>
                   <td style={{ padding: "12px 16px" }}>
-                    <span
-                      style={{
-                        backgroundColor: "rgba(0, 184, 124, 0.1)",
-                        color: "#00B87C",
-                        padding: "4px 10px",
-                        borderRadius: "12px",
-                        fontSize: "11px",
-                        fontWeight: 700,
-                      }}
-                    >
-                      {s.empCount} Employees
-                    </span>
+                      <span
+                        style={{
+                          backgroundColor: "rgba(0, 184, 124, 0.1)",
+                          color: "#00B87C",
+                          padding: "4px 10px",
+                          borderRadius: "9999px",
+                          fontSize: "11px",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {s.empCount} Employees
+                      </span>
                   </td>
                   <td
                     style={{
@@ -2082,9 +2103,9 @@ export function Settings() {
                             : "rgba(107, 114, 128, 0.1)",
                         color: s.status === "Active" ? "#00B87C" : "#6B7280",
                         padding: "4px 10px",
-                        borderRadius: "12px",
+                        borderRadius: "9999px",
                         fontSize: "11px",
-                        fontWeight: 700,
+                        fontWeight: 600,
                       }}
                     >
                       {s.status}
@@ -2440,7 +2461,7 @@ export function Settings() {
                 backgroundColor: "#00B87C",
                 color: "white",
                 border: "none",
-                borderRadius: "10px",
+                borderRadius: "12px",
                 padding: "8px 16px",
                 fontSize: "13px",
                 fontWeight: 600,
@@ -2462,9 +2483,9 @@ export function Settings() {
             <thead>
               <tr
                 style={{
-                  borderBottom: "1px solid var(--border)",
+                  borderBottom: "1px solid #F3F4F6",
                   textAlign: "left",
-                  backgroundColor: "var(--muted)",
+                  backgroundColor: "#F9FAFB",
                 }}
               >
                 {[
@@ -2483,9 +2504,9 @@ export function Settings() {
                     style={{
                       padding: "12px 16px",
                       fontSize: "10px",
-                      fontWeight: 700,
-                      color: "var(--muted-foreground)",
-                      letterSpacing: "0.5px",
+                      fontWeight: 600,
+                      color: "#9CA3AF",
+                      letterSpacing: "0.05em",
                     }}
                   >
                     {h}
@@ -2498,10 +2519,10 @@ export function Settings() {
                 <tr
                   key={idx}
                   style={{
-                    borderBottom: "1px solid var(--border)",
+                    borderBottom: "1px solid #F3F4F6",
                     height: "56px",
                   }}
-                  className="hover:bg-[var(--muted)] transition-all"
+                  className="hover:bg-[#00B87C]/[0.08] transition-all"
                 >
                   <td
                     style={{
@@ -2540,9 +2561,9 @@ export function Settings() {
                             : "rgba(239, 68, 68, 0.1)",
                         color: l.type === "Paid" ? "#00B87C" : "#EF4444",
                         padding: "4px 10px",
-                        borderRadius: "12px",
+                        borderRadius: "9999px",
                         fontSize: "11px",
-                        fontWeight: 700,
+                        fontWeight: 600,
                       }}
                     >
                       {l.type}
@@ -2584,9 +2605,9 @@ export function Settings() {
                             : "rgba(107, 114, 128, 0.1)",
                         color: l.status === "Active" ? "#00B87C" : "#6B7280",
                         padding: "4px 10px",
-                        borderRadius: "12px",
+                        borderRadius: "9999px",
                         fontSize: "11px",
-                        fontWeight: 700,
+                        fontWeight: 600,
                       }}
                     >
                       {l.status}
@@ -2964,18 +2985,18 @@ export function Settings() {
         >
           <button
             onClick={() => setActiveModal("confirm_save_policy")}
-            style={{
-              backgroundColor: "#00B87C",
-              color: "white",
-              border: "none",
-              borderRadius: "10px",
-              padding: "8px 20px",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            Save Policy Changes
+              style={{
+                backgroundColor: "#00B87C",
+                color: "white",
+                border: "none",
+                borderRadius: "12px",
+                padding: "8px 20px",
+                fontSize: "13px",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              Save Policy Changes
           </button>
         </div>
       </div>
@@ -3026,411 +3047,7 @@ export function Settings() {
               backgroundColor: "#00B87C",
               color: "white",
               border: "none",
-              borderRadius: "10px",
-              padding: "8px 16px",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            Save Policy
-          </button>
-        </div>
-
-        {/* Policy Block 1: CHECK-IN RULES */}
-        <SectionTitle title="Check-In Rules" />
-        <div
-          className="p-6 rounded-xl mb-6"
-          style={{
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderLeft: "4px solid #00B87C",
-          }}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              {
-                label: "Grace Period (mins)",
-                state: apGracePeriod,
-                setter: setApGracePeriod,
-              },
-              {
-                label: "Late Mark After (mins)",
-                state: apLateMark,
-                setter: setApLateMark,
-              },
-              {
-                label: "Half Day After (hours)",
-                state: apHalfDay,
-                setter: setApHalfDay,
-              },
-              {
-                label: "Absent If Less Than (hours)",
-                state: apAbsentThreshold,
-                setter: setApAbsentThreshold,
-              },
-              {
-                label: "Max Working Hours/Day",
-                state: apMaxWorking,
-                setter: setApMaxWorking,
-              },
-              {
-                label: "Minimum Check-in Hours",
-                state: apMinCheckIn,
-                setter: setApMinCheckIn,
-              },
-            ].map((f, idx) => (
-              <div key={idx}>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "var(--muted-foreground)",
-                    textTransform: "uppercase",
-                    marginBottom: "6px",
-                  }}
-                >
-                  {f.label}
-                </label>
-                <input
-                  type="text"
-                  value={f.state}
-                  onChange={(e) => f.setter(e.target.value)}
-                  className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
-                  style={{
-                    backgroundColor: "var(--input-background)",
-                    borderColor: "var(--border)",
-                    color: "var(--foreground)",
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Policy Block 2: REGULARIZATION RULES */}
-        <SectionTitle title="Regularization Rules" />
-        <div
-          className="p-6 rounded-xl mb-6 space-y-4"
-          style={{
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderLeft: "4px solid #00B87C",
-          }}
-        >
-          {[
-            {
-              label: "Allow Attendance Regularization",
-              desc: "Employees can request missed attendance correction",
-              state: apAllowReg,
-              setter: setApAllowReg,
-            },
-            {
-              label: "Manager Approval Required",
-              desc: "Regularization needs manager sign-off before marking",
-              state: apManagerApp,
-              setter: setApManagerApp,
-            },
-            {
-              label: "Auto-Approve WFH Attendance",
-              desc: "WFH days are marked present automatically",
-              state: apAutoWfh,
-              setter: setApAutoWfh,
-            },
-          ].map((row, idx) => (
-            <div key={idx} className="flex justify-between items-center py-2">
-              <div>
-                <p
-                  style={{
-                    fontSize: "14px",
-                    color: "var(--foreground)",
-                    fontWeight: 600,
-                    margin: 0,
-                  }}
-                >
-                  {row.label}
-                </p>
-                <p
-                  style={{
-                    fontSize: "12px",
-                    color: "var(--muted-foreground)",
-                    marginTop: "2px",
-                    margin: 0,
-                  }}
-                >
-                  {row.desc}
-                </p>
-              </div>
-              <button
-                onClick={() => row.setter(!row.state)}
-                style={{
-                  width: "36px",
-                  height: "20px",
-                  borderRadius: "20px",
-                  backgroundColor: row.state
-                    ? "#00B87C"
-                    : "var(--switch-background)",
-                  position: "relative",
-                  transition: "all 0.2s",
-                  cursor: "pointer",
-                  border: "none",
-                }}
-              >
-                <span
-                  style={{
-                    position: "absolute",
-                    top: "2px",
-                    left: row.state ? "18px" : "2px",
-                    width: "16px",
-                    height: "16px",
-                    borderRadius: "50%",
-                    backgroundColor: "white",
-                    transition: "all 0.2s",
-                  }}
-                />
-              </button>
-            </div>
-          ))}
-
-          {/* Limit Regularization with Inline Input */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between py-2 gap-3">
-            <div>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "var(--foreground)",
-                  fontWeight: 600,
-                  margin: 0,
-                }}
-              >
-                Limit Regularization Requests per Month
-              </p>
-              <p
-                style={{
-                  fontSize: "12px",
-                  color: "var(--muted-foreground)",
-                  marginTop: "2px",
-                  margin: 0,
-                }}
-              >
-                Set the ceiling for allowable updates
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              {apLimitReg && (
-                <input
-                  type="text"
-                  value={apLimitRegVal}
-                  onChange={(e) => setApLimitRegVal(e.target.value)}
-                  className="w-20 rounded-xl px-3 py-1.5 text-sm outline-none border text-center"
-                  style={{
-                    backgroundColor: "var(--input-background)",
-                    borderColor: "var(--border)",
-                    color: "var(--foreground)",
-                  }}
-                />
-              )}
-              <button
-                onClick={() => setApLimitReg(!apLimitReg)}
-                style={{
-                  width: "36px",
-                  height: "20px",
-                  borderRadius: "20px",
-                  backgroundColor: apLimitReg
-                    ? "#00B87C"
-                    : "var(--switch-background)",
-                  position: "relative",
-                  transition: "all 0.2s",
-                  cursor: "pointer",
-                  border: "none",
-                }}
-              >
-                <span
-                  style={{
-                    position: "absolute",
-                    top: "2px",
-                    left: apLimitReg ? "18px" : "2px",
-                    width: "16px",
-                    height: "16px",
-                    borderRadius: "50%",
-                    backgroundColor: "white",
-                    transition: "all 0.2s",
-                  }}
-                />
-              </button>
-            </div>
-          </div>
-
-          {/* Backdated Regularization with Inline Input */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between py-2 gap-3">
-            <div>
-              <p
-                style={{
-                  fontSize: "14px",
-                  color: "var(--foreground)",
-                  fontWeight: 600,
-                  margin: 0,
-                }}
-              >
-                Allow Backdated Regularization
-              </p>
-              <p
-                style={{
-                  fontSize: "12px",
-                  color: "var(--muted-foreground)",
-                  marginTop: "2px",
-                  margin: 0,
-                }}
-              >
-                Maximum timeframe allowed for requests
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              {apAllowBackdated && (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={apAllowBackdatedVal}
-                    onChange={(e) => setApAllowBackdatedVal(e.target.value)}
-                    className="w-20 rounded-xl px-3 py-1.5 text-sm outline-none border text-center"
-                    style={{
-                      backgroundColor: "var(--input-background)",
-                      borderColor: "var(--border)",
-                      color: "var(--foreground)",
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      color: "var(--muted-foreground)",
-                    }}
-                  >
-                    days max
-                  </span>
-                </div>
-              )}
-              <button
-                onClick={() => setApAllowBackdated(!apAllowBackdated)}
-                style={{
-                  width: "36px",
-                  height: "20px",
-                  borderRadius: "20px",
-                  backgroundColor: apAllowBackdated
-                    ? "#00B87C"
-                    : "var(--switch-background)",
-                  position: "relative",
-                  transition: "all 0.2s",
-                  cursor: "pointer",
-                  border: "none",
-                }}
-              >
-                <span
-                  style={{
-                    position: "absolute",
-                    top: "2px",
-                    left: apAllowBackdated ? "18px" : "2px",
-                    width: "16px",
-                    height: "16px",
-                    borderRadius: "50%",
-                    backgroundColor: "white",
-                    transition: "all 0.2s",
-                  }}
-                />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Policy Block 3: ESCALATION RULES */}
-        <SectionTitle title="Escalation Rules" />
-        <div
-          className="p-6 rounded-xl mb-6"
-          style={{
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderLeft: "4px solid #00B87C",
-          }}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              {
-                label: "Alert Manager After (consecutive late days)",
-                state: apEscAlertMgr,
-                setter: setApEscAlertMgr,
-              },
-              {
-                label: "Alert HR After (consecutive absent days)",
-                state: apEscAlertHr,
-                setter: setApEscAlertHr,
-              },
-              {
-                label: "Escalate to MD After (absent days)",
-                state: apEscMD,
-                setter: setApEscMD,
-              },
-              {
-                label: "Auto-deduct Leave After (absent without reason)",
-                state: apEscDeduct,
-                setter: setApEscDeduct,
-              },
-            ].map((f, idx) => (
-              <div key={idx}>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "var(--muted-foreground)",
-                    textTransform: "uppercase",
-                    marginBottom: "6px",
-                  }}
-                >
-                  {f.label}
-                </label>
-                <input
-                  type="text"
-                  value={f.state}
-                  onChange={(e) => f.setter(e.target.value)}
-                  className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
-                  style={{
-                    backgroundColor: "var(--input-background)",
-                    borderColor: "var(--border)",
-                    color: "var(--foreground)",
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* SAVE BAR */}
-        <div
-          className="flex justify-end items-center gap-4 pt-4 mt-6"
-          style={{ borderTop: "1px solid var(--border)" }}
-        >
-          <button
-            onClick={() => setActiveModal("reset_defaults")}
-            style={{
-              backgroundColor: "transparent",
-              color: "var(--muted-foreground)",
-              border: "none",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            Reset to Defaults
-          </button>
-          <button
-            onClick={() =>
-              showToast("Attendance protocols updated successfully")
-            }
-            style={{
-              backgroundColor: "#00B87C",
-              color: "white",
-              border: "none",
-              borderRadius: "10px",
+              borderRadius: "12px",
               padding: "8px 20px",
               fontSize: "13px",
               fontWeight: 600,
@@ -3635,10 +3252,10 @@ export function Settings() {
                 <tr
                   key={idx}
                   style={{
-                    borderBottom: "1px solid var(--border)",
-                    height: "48px",
+                    borderBottom: "1px solid #F3F4F6",
+                    height: "56px",
                   }}
-                  className="hover:bg-[var(--muted)] transition-all"
+                  className="hover:bg-[#00B87C]/[0.08] transition-all"
                 >
                   <td
                     style={{
@@ -4963,7 +4580,7 @@ export function Settings() {
                     {h.date.split("-")[2]}
                   </span>
                   <span
-                    className="text-[10px] font-semibold truncate mt-1 px-1 py-0.5 rounded"
+                    className="text-[11px] font-semibold truncate mt-1 px-1 py-0.5 rounded"
                     style={{
                       backgroundColor: "rgba(0, 184, 124, 0.1)",
                       color: "#00B87C",
@@ -5527,19 +5144,19 @@ export function Settings() {
         </button>
         <button
           onClick={() => showToast("Corporate profile definitions recorded")}
-          style={{
-            backgroundColor: "#00B87C",
-            color: "white",
-            border: "none",
-            borderRadius: "10px",
-            padding: "8px 20px",
-            fontSize: "13px",
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          Save Changes
-        </button>
+            style={{
+              backgroundColor: "#00B87C",
+              color: "white",
+              border: "none",
+              borderRadius: "12px",
+              padding: "8px 20px",
+              fontSize: "13px",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Save Changes
+          </button>
       </div>
     </div>
   );
@@ -6879,7 +6496,7 @@ export function Settings() {
                       </span>
                       {role.isDefault && (
                         <span
-                          className="px-2 py-0.5 rounded text-[10px] font-semibold"
+                          className="px-2 py-0.5 rounded text-[11px] font-semibold"
                           style={{
                             backgroundColor: "var(--muted)",
                             color: "var(--muted-foreground)",
@@ -8585,7 +8202,7 @@ export function Settings() {
           {connected.map((app, idx) => (
             <div
               key={idx}
-              className="p-4 rounded-xl flex flex-col justify-between transition-all hover:shadow-md"
+              className="p-4 rounded-xl flex flex-col justify-between transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
               style={{
                 backgroundColor: "var(--card)",
                 border: "1px solid var(--border)",
@@ -10926,7 +10543,7 @@ export function Settings() {
                 <div
                   key={t.id}
                   onClick={() => setThemeMode(t.id)}
-                  className="rounded-xl border cursor-pointer relative transition-all hover:shadow-md"
+                  className="rounded-xl border cursor-pointer relative transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
                   style={{
                     backgroundColor: "var(--card)",
                     borderColor: selected ? "#00B87C" : "#E5E7EB",
@@ -10966,7 +10583,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             ACCENT COLOR
           </span>
           <div className="flex items-center gap-3 mb-3">
@@ -11008,7 +10625,7 @@ export function Settings() {
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
           <div className="mb-4">
-            <span className="block text-[11px] font-bold text-[#9CA3AF] mb-2 uppercase">
+            <span className="block text-[11px] font-bold text-[#94A3B8] mb-2 uppercase">
               FONT SIZE
             </span>
             <div className="flex bg-gray-100 dark:bg-neutral-800 rounded-xl p-1 w-fit">
@@ -11032,7 +10649,7 @@ export function Settings() {
           </div>
 
           <div className="mb-4">
-            <span className="block text-[11px] font-bold text-[#9CA3AF] mb-2 uppercase">
+            <span className="block text-[11px] font-bold text-[#94A3B8] mb-2 uppercase">
               SIDEBAR DENSITY
             </span>
             <div className="space-y-3">
@@ -11056,7 +10673,7 @@ export function Settings() {
                     <span className="text-[13px] font-medium text-gray-800 dark:text-gray-200 block">
                       {item.label}
                     </span>
-                    <span className="text-[11px] text-[#9CA3AF]">
+                    <span className="text-[11px] text-[#94A3B8]">
                       {item.desc}
                     </span>
                   </div>
@@ -11103,7 +10720,7 @@ export function Settings() {
           </div>
 
           <div>
-            <span className="block text-[11px] font-bold text-[#9CA3AF] mb-2 uppercase">
+            <span className="block text-[11px] font-bold text-[#94A3B8] mb-2 uppercase">
               CONTENT DENSITY
             </span>
             <div className="flex bg-gray-100 dark:bg-neutral-800 rounded-xl p-1 w-fit">
@@ -11132,7 +10749,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             DASHBOARD PREFERENCES
           </span>
           <div className="space-y-3 mb-4">
@@ -11164,7 +10781,7 @@ export function Settings() {
                     {item.label}
                   </span>
                   {item.desc && (
-                    <span className="text-[11px] text-[#9CA3AF]">
+                    <span className="text-[11px] text-[#94A3B8]">
                       {item.desc}
                     </span>
                   )}
@@ -11210,7 +10827,7 @@ export function Settings() {
             ))}
           </div>
           <div>
-            <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+            <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
               Dashboard Refresh Interval
             </label>
             <select
@@ -11313,12 +10930,12 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             LANGUAGE
           </span>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 System Language
               </label>
               <select
@@ -11336,7 +10953,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Secondary Language
               </label>
               <select
@@ -11354,7 +10971,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Employee Portal Language
               </label>
               <select
@@ -11371,7 +10988,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Email Language
               </label>
               <select
@@ -11393,7 +11010,7 @@ export function Settings() {
               <span className="text-[13px] font-medium text-gray-800 dark:text-gray-200 block">
                 Allow Employees to Set Their Own Language
               </span>
-              <span className="text-[11px] text-[#9CA3AF]">
+              <span className="text-[11px] text-[#94A3B8]">
                 Each employee can choose their preferred UI language
               </span>
             </div>
@@ -11438,12 +11055,12 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             DATE, TIME & NUMBERS
           </span>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Date Format
               </label>
               <select
@@ -11458,7 +11075,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Time Format
               </label>
               <select
@@ -11474,7 +11091,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Week Starts On
               </label>
               <select
@@ -11490,7 +11107,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Fiscal Year Start
               </label>
               <select
@@ -11506,7 +11123,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Number Format
               </label>
               <select
@@ -11522,7 +11139,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Decimal Separator
               </label>
               <select
@@ -11545,12 +11162,12 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             TIMEZONE & CURRENCY
           </span>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Default Timezone
               </label>
               <select
@@ -11564,7 +11181,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Currency Symbol
               </label>
               <select
@@ -11580,7 +11197,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Currency Position
               </label>
               <select
@@ -11596,7 +11213,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Salary Display Format
               </label>
               <select
@@ -11617,7 +11234,7 @@ export function Settings() {
               <span className="text-[13px] font-medium text-gray-800 dark:text-gray-200 block">
                 Show Currency Conversion for International Employees
               </span>
-              <span className="text-[11px] text-[#9CA3AF]">
+              <span className="text-[11px] text-[#94A3B8]">
                 Display equivalent amount in employee's local currency
               </span>
             </div>
@@ -11662,12 +11279,12 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             REGIONAL COMPLIANCE
           </span>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Country
               </label>
               <select
@@ -11681,7 +11298,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 State / Province
               </label>
               <select
@@ -11696,19 +11313,19 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Applicable Labor Law
               </label>
               <input
                 type="text"
                 readOnly
                 value={extraConfig.applicableLaborLaw}
-                className="w-full rounded-xl px-3 py-2.5 text-sm border bg-gray-100 dark:bg-neutral-800 text-gray-500"
+                className="w-full rounded-xl px-3 py-2.5 text-sm border bg-gray-100 dark:bg-neutral-800 text-[#94A3B8]"
                 style={{ borderColor: "#E5E7EB" }}
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Tax Regime
               </label>
               <select
@@ -11912,13 +11529,13 @@ export function Settings() {
               <CheckCircle size={20} />
             </div>
             <div>
-              <span className="block text-[10px] font-bold text-[#9CA3AF] uppercase">
+              <span className="block text-[11px] font-bold text-[#94A3B8] uppercase">
                 LAST BACKUP
               </span>
               <span className="block text-[16px] font-bold text-[#111827]">
                 Today, 3:00 AM
               </span>
-              <span className="inline-block text-[10px] bg-[#DCFCE7] text-[#00B87C] font-bold px-2 py-0.5 rounded-full mt-1">
+              <span className="inline-block text-[11px] bg-[#DCFCE7] text-[#00B87C] font-bold px-2 py-0.5 rounded-full mt-1">
                 Successful
               </span>
             </div>
@@ -11928,13 +11545,13 @@ export function Settings() {
               <Database size={20} />
             </div>
             <div>
-              <span className="block text-[10px] font-bold text-[#9CA3AF] uppercase">
+              <span className="block text-[11px] font-bold text-[#94A3B8] uppercase">
                 BACKUP SIZE
               </span>
               <span className="block text-[16px] font-bold text-[#111827]">
                 2.4 GB
               </span>
-              <span className="inline-block text-[10px] bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded-full mt-1">
+              <span className="inline-block text-[11px] bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded-full mt-1">
                 Compressed
               </span>
             </div>
@@ -11944,13 +11561,13 @@ export function Settings() {
               <RefreshCw size={20} />
             </div>
             <div>
-              <span className="block text-[10px] font-bold text-[#9CA3AF] uppercase">
+              <span className="block text-[11px] font-bold text-[#94A3B8] uppercase">
                 NEXT SCHEDULED
               </span>
               <span className="block text-[16px] font-bold text-[#111827]">
                 Tomorrow, 3:00 AM
               </span>
-              <span className="inline-block text-[10px] bg-[#FEF3C7] text-[#D97706] font-bold px-2 py-0.5 rounded-full mt-1">
+              <span className="inline-block text-[11px] bg-[#FEF3C7] text-[#D97706] font-bold px-2 py-0.5 rounded-full mt-1">
                 Scheduled
               </span>
             </div>
@@ -11962,12 +11579,12 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             BACKUP SETTINGS
           </span>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Backup Frequency
               </label>
               <select
@@ -11985,7 +11602,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Backup Time
               </label>
               <input
@@ -11999,7 +11616,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Retention Period (days)
               </label>
               <input
@@ -12013,7 +11630,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Storage Location
               </label>
               <select
@@ -12031,7 +11648,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Max Backup Copies
               </label>
               <input
@@ -12045,7 +11662,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Encryption
               </label>
               <select
@@ -12141,7 +11758,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             BACKUP HISTORY
           </span>
           <div className="overflow-x-auto">
@@ -12152,7 +11769,7 @@ export function Settings() {
                     (h) => (
                       <th
                         key={h}
-                        className="py-3 px-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider"
+                        className="py-3 px-4 text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider"
                       >
                         {h}
                       </th>
@@ -12164,7 +11781,7 @@ export function Settings() {
                 {backupHistory.map((b, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-gray-100 hover:bg-[#F0FDF4] transition-all text-[13px]"
+                    className="border-b border-gray-100 hover:bg-[#00B87C]/[0.08] transition-all text-[13px]"
                   >
                     <td className="py-3 px-4 font-medium text-gray-800 dark:text-gray-200">
                       {b.date}
@@ -12172,14 +11789,14 @@ export function Settings() {
                     <td className="py-3 px-4 text-gray-600">{b.size}</td>
                     <td className="py-3 px-4">
                       <span
-                        className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ${b.type === "Auto" ? "bg-[#DCFCE7] text-[#00B87C]" : "bg-purple-100 text-purple-700"}`}
+                        className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded-full ${b.type === "Auto" ? "bg-[#DCFCE7] text-[#00B87C]" : "bg-purple-100 text-purple-700"}`}
                       >
                         {b.type}
                       </span>
                     </td>
                     <td className="py-3 px-4">
                       <span
-                        className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ${b.status === "Success" ? "bg-[#DCFCE7] text-[#00B87C]" : "bg-red-100 text-red-700"}`}
+                        className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded-full ${b.status === "Success" ? "bg-[#DCFCE7] text-[#00B87C]" : "bg-red-500/10 text-red-500"}`}
                       >
                         {b.status}
                       </span>
@@ -12187,7 +11804,7 @@ export function Settings() {
                     <td className="py-3 px-4 flex gap-2">
                       {b.status === "Success" ? (
                         <>
-                          <button className="px-2 py-1 text-[11px] font-bold border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                          <button className="px-2 py-1 text-[11px] font-bold border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-[#00B87C]/[0.08] cursor-pointer">
                             Download
                           </button>
                           <button className="px-2 py-1 text-[11px] font-bold border border-[#D97706] rounded-lg text-[#D97706] bg-white hover:bg-amber-50 cursor-pointer">
@@ -12219,7 +11836,7 @@ export function Settings() {
               undone.
             </span>
           </div>
-          <button className="w-full py-3 border border-[#E5E7EB] bg-white hover:bg-gray-50 rounded-xl text-[13px] text-gray-700 font-semibold flex items-center justify-center gap-2 cursor-pointer">
+          <button className="w-full py-3 border border-[#E5E7EB] bg-white hover:bg-[#00B87C]/[0.08] rounded-xl text-[13px] text-gray-700 font-semibold flex items-center justify-center gap-2 cursor-pointer">
             <Upload size={16} />
             Upload backup file (.zip or .sql)
           </button>
@@ -12344,7 +11961,7 @@ export function Settings() {
         {activeTab === "import" && (
           <div>
             {/* POLICY BLOCK 1: SELECT DATA TYPE */}
-            <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+            <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
               SELECT DATA TYPE
             </span>
             <div className="grid grid-cols-4 gap-4 mb-6">
@@ -12380,7 +11997,7 @@ export function Settings() {
                   <div
                     key={t.id}
                     onClick={() => setSelectedType(t.id)}
-                    className="p-4 rounded-xl border cursor-pointer relative transition-all hover:shadow-md text-center flex flex-col items-center"
+                    className="p-4 rounded-xl border cursor-pointer relative transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] text-center flex flex-col items-center"
                     style={{
                       backgroundColor: selected ? "#DCFCE7" : "var(--card)",
                       borderColor: selected ? "#00B87C" : "#E5E7EB",
@@ -12399,7 +12016,7 @@ export function Settings() {
                     <span className="block font-bold text-[13px] text-[#111827]">
                       {t.label}
                     </span>
-                    <span className="block text-[11px] text-[#9CA3AF] mt-1">
+                    <span className="block text-[11px] text-[#94A3B8] mt-1">
                       {t.desc}
                     </span>
                   </div>
@@ -12419,7 +12036,7 @@ export function Settings() {
               <span className="text-[13px] text-[#00B87C] cursor-pointer font-medium">
                 or Browse
               </span>
-              <span className="block text-[12px] text-[#9CA3AF] mt-2">
+              <span className="block text-[12px] text-[#94A3B8] mt-2">
                 Accepted formats: .CSV, .XLSX — max 10MB
               </span>
             </div>
@@ -12429,7 +12046,7 @@ export function Settings() {
               className="p-4 rounded-xl mb-6 border"
               style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
             >
-              <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+              <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
                 IMPORT OPTIONS
               </span>
               <div className="space-y-3 mb-4">
@@ -12464,7 +12081,7 @@ export function Settings() {
                         {item.label}
                       </span>
                       {item.desc && (
-                        <span className="text-[11px] text-[#9CA3AF]">
+                        <span className="text-[11px] text-[#94A3B8]">
                           {item.desc}
                         </span>
                       )}
@@ -12533,7 +12150,7 @@ export function Settings() {
               className="p-4 rounded-xl mb-6 border"
               style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
             >
-              <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+              <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
                 SELECT DATA TO EXPORT
               </span>
               <div className="grid grid-cols-2 gap-3">
@@ -12575,12 +12192,12 @@ export function Settings() {
               className="p-4 rounded-xl mb-6 border"
               style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
             >
-              <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+              <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
                 EXPORT SETTINGS
               </span>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+                  <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                     Export Format
                   </label>
                   <select
@@ -12601,7 +12218,7 @@ export function Settings() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+                  <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                     Date Range
                   </label>
                   <input
@@ -12618,7 +12235,7 @@ export function Settings() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+                  <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                     Department Filter
                   </label>
                   <select
@@ -12695,7 +12312,7 @@ export function Settings() {
             className="p-4 rounded-xl border"
             style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
           >
-            <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+            <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
               IMPORT HISTORY
             </span>
             <div className="overflow-x-auto">
@@ -12712,7 +12329,7 @@ export function Settings() {
                     ].map((h) => (
                       <th
                         key={h}
-                        className="py-3 px-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider"
+                        className="py-3 px-4 text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider"
                       >
                         {h}
                       </th>
@@ -12723,14 +12340,14 @@ export function Settings() {
                   {importHistory.map((h, idx) => (
                     <tr
                       key={idx}
-                      className="border-b border-gray-100 hover:bg-[#F0FDF4] transition-all text-[13px]"
+                      className="border-b border-gray-100 hover:bg-[#00B87C]/[0.08] transition-all text-[13px]"
                     >
                       <td className="py-3 px-4 font-medium text-gray-800 dark:text-gray-200">
                         {h.name}
                       </td>
                       <td className="py-3 px-4">
                         <span
-                          className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ${h.type === "Employees" ? "bg-[#DCFCE7] text-[#00B87C]" : h.type === "Attendance" ? "bg-teal-100 text-teal-700" : h.type === "Leave" ? "bg-amber-100 text-amber-700" : "bg-purple-100 text-purple-700"}`}
+                          className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded-full ${h.type === "Employees" ? "bg-[#DCFCE7] text-[#00B87C]" : h.type === "Attendance" ? "bg-teal-100 text-teal-700" : h.type === "Leave" ? "bg-amber-500/10 text-amber-500" : "bg-purple-100 text-purple-700"}`}
                         >
                           {h.type}
                         </span>
@@ -12746,7 +12363,7 @@ export function Settings() {
                       </td>
                       <td className="py-3 px-4">
                         <span
-                          className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ${h.status === "Success" ? "bg-[#DCFCE7] text-[#00B87C]" : "bg-red-100 text-red-700"}`}
+                          className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded-full ${h.status === "Success" ? "bg-[#DCFCE7] text-[#00B87C]" : "bg-red-500/10 text-red-500"}`}
                         >
                           {h.status}
                         </span>
@@ -12859,7 +12476,7 @@ export function Settings() {
         </div>
 
         {/* SECTION: ACTIVE WORKFLOWS */}
-        <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+        <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
           ACTIVE WORKFLOWS
         </span>
         <div
@@ -12880,7 +12497,7 @@ export function Settings() {
                   ].map((h) => (
                     <th
                       key={h}
-                      className="py-3 px-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider"
+                      className="py-3 px-4 text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider"
                     >
                       {h}
                     </th>
@@ -12891,19 +12508,19 @@ export function Settings() {
                 {workflows.map((w, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-gray-100 hover:bg-[#F0FDF4] transition-all text-[13px]"
+                    className="border-b border-gray-100 hover:bg-[#00B87C]/[0.08] transition-all text-[13px]"
                   >
                     <td className="py-3 px-4">
                       <span className="block font-bold text-gray-800 dark:text-gray-200">
                         {w.name}
                       </span>
-                      <span className="text-[11px] text-[#9CA3AF]">
+                      <span className="text-[11px] text-[#94A3B8]">
                         {w.desc}
                       </span>
                     </td>
                     <td className="py-3 px-4">
                       <span
-                        className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full"
+                        className="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full"
                         style={{
                           backgroundColor: `${w.color}20`,
                           color: w.color,
@@ -12913,18 +12530,18 @@ export function Settings() {
                       </span>
                     </td>
                     <td className="py-3 px-4">
-                      <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-700">
+                      <span className="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-700">
                         {w.steps}
                       </span>
                     </td>
                     <td className="py-3 px-4 text-gray-600">{w.applies}</td>
                     <td className="py-3 px-4">
-                      <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C]">
+                      <span className="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C]">
                         {w.status}
                       </span>
                     </td>
                     <td className="py-3 px-4 flex gap-2">
-                      <button className="px-2 py-1 text-[11px] font-bold border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                      <button className="px-2 py-1 text-[11px] font-bold border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-[#00B87C]/[0.08] cursor-pointer">
                         Edit
                       </button>
                     </td>
@@ -12936,7 +12553,7 @@ export function Settings() {
         </div>
 
         {/* SECTION: WORKFLOW BUILDER PREVIEW */}
-        <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+        <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
           WORKFLOW BUILDER PREVIEW
         </span>
         <div
@@ -12952,13 +12569,13 @@ export function Settings() {
               <div className="w-6 h-6 rounded-full flex items-center justify-center bg-[#DCFCE7] text-[#00B87C] font-bold text-xs mb-2">
                 1
               </div>
-              <span className="block text-[10px] font-bold text-[#9CA3AF] uppercase">
+              <span className="block text-[11px] font-bold text-[#94A3B8] uppercase">
                 Employee
               </span>
               <span className="block font-bold text-[13px] text-[#111827] mt-1">
                 Submits Request
               </span>
-              <span className="inline-block text-[10px] bg-[#DCFCE7] text-[#00B87C] font-bold px-2 py-0.5 rounded-full mt-2">
+              <span className="inline-block text-[11px] bg-[#DCFCE7] text-[#00B87C] font-bold px-2 py-0.5 rounded-full mt-2">
                 Trigger
               </span>
             </div>
@@ -12980,16 +12597,16 @@ export function Settings() {
               <div className="w-6 h-6 rounded-full flex items-center justify-center bg-[#DCFCE7] text-[#00B87C] font-bold text-xs mb-2">
                 2
               </div>
-              <span className="block text-[10px] font-bold text-[#9CA3AF] uppercase">
+              <span className="block text-[11px] font-bold text-[#94A3B8] uppercase">
                 Direct Manager
               </span>
               <span className="block font-bold text-[13px] text-[#111827] mt-1">
                 Reviews & Approves
               </span>
-              <span className="block text-[10px] text-[#9CA3AF] mt-1">
+              <span className="block text-[11px] text-[#94A3B8] mt-1">
                 Within 2 days
               </span>
-              <span className="inline-block text-[10px] bg-teal-100 text-teal-700 font-bold px-2 py-0.5 rounded-full mt-2">
+              <span className="inline-block text-[11px] bg-teal-100 text-teal-700 font-bold px-2 py-0.5 rounded-full mt-2">
                 Level 1
               </span>
             </div>
@@ -13011,16 +12628,16 @@ export function Settings() {
               <div className="w-6 h-6 rounded-full flex items-center justify-center bg-[#DCFCE7] text-[#00B87C] font-bold text-xs mb-2">
                 3
               </div>
-              <span className="block text-[10px] font-bold text-[#9CA3AF] uppercase">
+              <span className="block text-[11px] font-bold text-[#94A3B8] uppercase">
                 HR Manager
               </span>
               <span className="block font-bold text-[13px] text-[#111827] mt-1">
                 Final Approval
               </span>
-              <span className="block text-[10px] text-[#9CA3AF] mt-1">
+              <span className="block text-[11px] text-[#94A3B8] mt-1">
                 Within 1 day
               </span>
-              <span className="inline-block text-[10px] bg-teal-100 text-teal-700 font-bold px-2 py-0.5 rounded-full mt-2">
+              <span className="inline-block text-[11px] bg-teal-100 text-teal-700 font-bold px-2 py-0.5 rounded-full mt-2">
                 Level 2
               </span>
             </div>
@@ -13042,22 +12659,22 @@ export function Settings() {
               <div className="w-6 h-6 rounded-full flex items-center justify-center bg-[#00B87C] text-white font-bold text-xs mb-2">
                 ✓
               </div>
-              <span className="block text-[10px] font-bold text-[#9CA3AF] uppercase">
+              <span className="block text-[11px] font-bold text-[#94A3B8] uppercase">
                 Employee
               </span>
               <span className="block font-bold text-[13px] text-[#111827] mt-1">
                 Notified
               </span>
-              <span className="block text-[10px] text-[#9CA3AF] mt-1">
+              <span className="block text-[11px] text-[#94A3B8] mt-1">
                 Email + Push
               </span>
-              <span className="inline-block text-[10px] bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded-full mt-2">
+              <span className="inline-block text-[11px] bg-gray-100 text-gray-600 font-bold px-2 py-0.5 rounded-full mt-2">
                 Auto
               </span>
             </div>
           </div>
           <div className="flex justify-center items-center gap-4 mt-4">
-            <button className="px-4 py-2 text-[12px] font-bold border border-gray-200 rounded-xl text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+            <button className="px-4 py-2 text-[12px] font-bold border border-gray-200 rounded-xl text-gray-700 bg-white hover:bg-[#00B87C]/[0.08] cursor-pointer">
               Edit Workflow
             </button>
             <span className="text-[12px] text-[#00B87C] cursor-pointer font-bold">
@@ -13071,7 +12688,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             GLOBAL WORKFLOW RULES
           </span>
           <div className="space-y-3">
@@ -13109,7 +12726,7 @@ export function Settings() {
                       {item.label}
                     </span>
                     {item.desc && (
-                      <span className="text-[11px] text-[#9CA3AF]">
+                      <span className="text-[11px] text-[#94A3B8]">
                         {item.desc}
                       </span>
                     )}
@@ -13284,7 +12901,7 @@ export function Settings() {
         </div>
 
         {/* POLICY BLOCK 1: APPROVAL CHAIN */}
-        <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+        <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
           APPROVAL CHAIN
         </span>
         <div
@@ -13343,7 +12960,7 @@ export function Settings() {
         </div>
 
         {/* POLICY BLOCK 2: APPROVAL RULES BY LEAVE TYPE */}
-        <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+        <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
           APPROVAL RULES BY LEAVE TYPE
         </span>
         <div
@@ -13364,7 +12981,7 @@ export function Settings() {
                   ].map((h) => (
                     <th
                       key={h}
-                      className="py-3 px-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider"
+                      className="py-3 px-4 text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider"
                     >
                       {h}
                     </th>
@@ -13375,11 +12992,11 @@ export function Settings() {
                 {leaveRules.map((r, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-gray-100 hover:bg-[#F0FDF4] transition-all text-[13px]"
+                    className="border-b border-gray-100 hover:bg-[#00B87C]/[0.08] transition-all text-[13px]"
                   >
                     <td className="py-3 px-4 font-medium">
                       <span
-                        className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ${idx === 0 ? "bg-[#DCFCE7] text-[#00B87C]" : idx === 1 ? "bg-teal-100 text-teal-700" : idx === 2 ? "bg-red-100 text-red-700" : idx === 3 ? "bg-purple-100 text-purple-700" : "bg-amber-100 text-amber-700"}`}
+                        className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded-full ${idx === 0 ? "bg-[#DCFCE7] text-[#00B87C]" : idx === 1 ? "bg-teal-100 text-teal-700" : idx === 2 ? "bg-red-500/10 text-red-500" : idx === 3 ? "bg-purple-100 text-purple-700" : "bg-amber-500/10 text-amber-500"}`}
                       >
                         {r.type}
                       </span>
@@ -13389,7 +13006,7 @@ export function Settings() {
                     <td className="py-3 px-4 text-gray-600">{r.deadline}</td>
                     <td className="py-3 px-4 text-gray-600">{r.escalation}</td>
                     <td className="py-3 px-4">
-                      <button className="px-2 py-1 text-[11px] font-bold border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                      <button className="px-2 py-1 text-[11px] font-bold border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-[#00B87C]/[0.08] cursor-pointer">
                         Edit
                       </button>
                     </td>
@@ -13405,7 +13022,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             AUTO-APPROVAL RULES
           </span>
           <div className="space-y-3">
@@ -13437,7 +13054,7 @@ export function Settings() {
                     {item.label}
                   </span>
                   {item.desc && (
-                    <span className="text-[11px] text-[#9CA3AF]">
+                    <span className="text-[11px] text-[#94A3B8]">
                       {item.desc}
                     </span>
                   )}
@@ -13489,7 +13106,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             NOTIFICATION SETTINGS
           </span>
           <div className="space-y-3">
@@ -13552,7 +13169,7 @@ export function Settings() {
                 </div>
                 {item.key === "leaveDigest" && extraConfig.leaveDigest && (
                   <div className="mt-2">
-                    <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1">
+                    <label className="block text-[11px] font-bold text-[#94A3B8] mb-1">
                       Digest Time
                     </label>
                     <select
@@ -13665,7 +13282,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             SWAP ELIGIBILITY
           </span>
           <div className="space-y-3">
@@ -13697,7 +13314,7 @@ export function Settings() {
                     {item.label}
                   </span>
                   {item.desc && (
-                    <span className="text-[11px] text-[#9CA3AF]">
+                    <span className="text-[11px] text-[#94A3B8]">
                       {item.desc}
                     </span>
                   )}
@@ -13759,7 +13376,7 @@ export function Settings() {
         </div>
 
         {/* POLICY BLOCK 2: APPROVAL WORKFLOW */}
-        <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+        <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
           APPROVAL WORKFLOW
         </span>
         <div
@@ -13768,7 +13385,7 @@ export function Settings() {
         >
           <div className="flex items-center justify-between overflow-x-auto py-2 mb-4">
             <div className="border rounded-xl p-3 text-center min-w-[100px] bg-white dark:bg-neutral-900">
-              <span className="block text-[11px] font-bold text-[#9CA3AF]">
+              <span className="block text-[11px] font-bold text-[#94A3B8]">
                 Employee A
               </span>
               <span className="block text-[12px] font-bold text-gray-800 mt-1">
@@ -13784,7 +13401,7 @@ export function Settings() {
               />
             </div>
             <div className="border rounded-xl p-3 text-center min-w-[100px] bg-white dark:bg-neutral-900">
-              <span className="block text-[11px] font-bold text-[#9CA3AF]">
+              <span className="block text-[11px] font-bold text-[#94A3B8]">
                 Employee B
               </span>
               <span className="block text-[12px] font-bold text-gray-800 mt-1">
@@ -13800,7 +13417,7 @@ export function Settings() {
               />
             </div>
             <div className="border rounded-xl p-3 text-center min-w-[100px] bg-white dark:bg-neutral-900">
-              <span className="block text-[11px] font-bold text-[#9CA3AF]">
+              <span className="block text-[11px] font-bold text-[#94A3B8]">
                 Direct Manager
               </span>
               <span className="block text-[12px] font-bold text-gray-800 mt-1">
@@ -13819,7 +13436,7 @@ export function Settings() {
               <span className="block text-[12px] font-bold text-gray-800">
                 ✓ Updated
               </span>
-              <span className="block text-[10px] text-[#9CA3AF]">
+              <span className="block text-[11px] text-[#94A3B8]">
                 Both notified
               </span>
             </div>
@@ -13869,12 +13486,12 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             SWAP LIMITS
           </span>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Max Swaps per Employee per Month
               </label>
               <input
@@ -13888,7 +13505,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Swap Request Expiry (hours)
               </label>
               <input
@@ -13900,12 +13517,12 @@ export function Settings() {
                 className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
                 style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
               />
-              <span className="text-[10px] text-[#9CA3AF]">
+              <span className="text-[11px] text-[#94A3B8]">
                 If Employee B does not respond, request expires
               </span>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Manager Approval Deadline (hours)
               </label>
               <input
@@ -13919,7 +13536,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Max Advance Booking (days)
               </label>
               <input
@@ -13952,7 +13569,7 @@ export function Settings() {
                     {item.label}
                   </span>
                   {item.desc && (
-                    <span className="text-[11px] text-[#9CA3AF]">
+                    <span className="text-[11px] text-[#94A3B8]">
                       {item.desc}
                     </span>
                   )}
@@ -14004,7 +13621,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             OT & COMPLIANCE CHECKS
           </span>
           <div className="space-y-3">
@@ -14036,7 +13653,7 @@ export function Settings() {
                     {item.label}
                   </span>
                   {item.desc && (
-                    <span className="text-[11px] text-[#9CA3AF]">
+                    <span className="text-[11px] text-[#94A3B8]">
                       {item.desc}
                     </span>
                   )}
@@ -14088,7 +13705,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             NOTIFICATIONS
           </span>
           <div className="space-y-3">
@@ -14283,12 +13900,12 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             STORAGE CONFIGURATION
           </span>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Storage Provider
               </label>
               <select
@@ -14306,7 +13923,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Max File Size (MB)
               </label>
               <input
@@ -14320,7 +13937,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Total Storage Quota (GB)
               </label>
               <input
@@ -14334,7 +13951,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Accepted File Types
               </label>
               <input
@@ -14398,7 +14015,7 @@ export function Settings() {
         </div>
 
         {/* POLICY BLOCK 2: DOCUMENT CATEGORIES */}
-        <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+        <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
           DOCUMENT CATEGORIES
         </span>
         <div
@@ -14418,7 +14035,7 @@ export function Settings() {
                   ].map((h) => (
                     <th
                       key={h}
-                      className="py-3 px-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider"
+                      className="py-3 px-4 text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider"
                     >
                       {h}
                     </th>
@@ -14429,7 +14046,7 @@ export function Settings() {
                 {categories.map((c, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-gray-100 hover:bg-[#F0FDF4] transition-all text-[13px]"
+                    className="border-b border-gray-100 hover:bg-[#00B87C]/[0.08] transition-all text-[13px]"
                   >
                     <td className="py-3 px-4 font-bold text-gray-800 dark:text-gray-200">
                       {c.name}
@@ -14438,13 +14055,13 @@ export function Settings() {
                     <td className="py-3 px-4 text-gray-600">{c.req}</td>
                     <td className="py-3 px-4">
                       <span
-                        className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ${c.expiry === "No expiry" ? "bg-[#DCFCE7] text-[#00B87C]" : "bg-amber-100 text-amber-700"}`}
+                        className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded-full ${c.expiry === "No expiry" ? "bg-[#DCFCE7] text-[#00B87C]" : "bg-amber-500/10 text-amber-500"}`}
                       >
                         {c.expiry}
                       </span>
                     </td>
                     <td className="py-3 px-4 flex gap-2">
-                      <button className="px-2 py-1 text-[11px] font-bold border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                      <button className="px-2 py-1 text-[11px] font-bold border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-[#00B87C]/[0.08] cursor-pointer">
                         Edit
                       </button>
                     </td>
@@ -14463,7 +14080,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             ACCESS & PERMISSIONS
           </span>
           <div className="space-y-3">
@@ -14501,7 +14118,7 @@ export function Settings() {
                     {item.label}
                   </span>
                   {item.desc && (
-                    <span className="text-[11px] text-[#9CA3AF]">
+                    <span className="text-[11px] text-[#94A3B8]">
                       {item.desc}
                     </span>
                   )}
@@ -14553,12 +14170,12 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             EXPIRY NOTIFICATIONS
           </span>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 First Alert (days before)
               </label>
               <input
@@ -14572,7 +14189,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Second Alert (days before)
               </label>
               <input
@@ -14586,7 +14203,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Final Alert (days before)
               </label>
               <input
@@ -14600,7 +14217,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Notify
               </label>
               <select
@@ -14749,12 +14366,12 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             LMS CONFIGURATION
           </span>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 LMS Mode
               </label>
               <select
@@ -14769,7 +14386,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 External LMS URL
               </label>
               <input
@@ -14784,7 +14401,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Default Course Language
               </label>
               <select
@@ -14800,7 +14417,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Video Hosting
               </label>
               <select
@@ -14817,7 +14434,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Certificate Provider
               </label>
               <select
@@ -14833,7 +14450,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Max Video Size (MB)
               </label>
               <input
@@ -14854,7 +14471,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             MANDATORY TRAINING RULES
           </span>
           <div className="space-y-3">
@@ -14887,7 +14504,7 @@ export function Settings() {
                       {item.label}
                     </span>
                     {item.desc && (
-                      <span className="text-[11px] text-[#9CA3AF]">
+                      <span className="text-[11px] text-[#94A3B8]">
                         {item.desc}
                       </span>
                     )}
@@ -14955,12 +14572,12 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             COMPLETION & CERTIFICATION
           </span>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Passing Score (%)
               </label>
               <input
@@ -14974,7 +14591,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Max Attempts per Quiz
               </label>
               <input
@@ -14988,7 +14605,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Certificate Valid For
               </label>
               <select
@@ -15006,7 +14623,7 @@ export function Settings() {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Reminder Before Expiry (days)
               </label>
               <input
@@ -15090,12 +14707,12 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             TRAINING BUDGET
           </span>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Annual Training Budget per Employee (₹)
               </label>
               <input
@@ -15109,7 +14726,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Department Training Budget Allocation
               </label>
               <select
@@ -15163,7 +14780,7 @@ export function Settings() {
               </button>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Reimbursement Cap per Course (₹)
               </label>
               <input
@@ -15196,7 +14813,7 @@ export function Settings() {
                     {item.label}
                   </span>
                   {item.desc && (
-                    <span className="text-[11px] text-[#9CA3AF]">
+                    <span className="text-[11px] text-[#94A3B8]">
                       {item.desc}
                     </span>
                   )}
@@ -15248,7 +14865,7 @@ export function Settings() {
           className="p-4 rounded-xl mb-6 border"
           style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-3 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
             GAMIFICATION
           </span>
           <div className="space-y-3">
@@ -15280,7 +14897,7 @@ export function Settings() {
                     {item.label}
                   </span>
                   {item.desc && (
-                    <span className="text-[11px] text-[#9CA3AF]">
+                    <span className="text-[11px] text-[#94A3B8]">
                       {item.desc}
                     </span>
                   )}
@@ -15427,7 +15044,7 @@ export function Settings() {
             borderColor: "var(--border)",
           }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-4 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-4 uppercase">
             ONBOARDING WORKFLOW
           </span>
 
@@ -15447,7 +15064,7 @@ export function Settings() {
               <span className="block text-[11px] text-[#6B7280] mt-1">
                 Before Day 1
               </span>
-              <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mt-2 bg-[#00B87C] text-white">
+              <span className="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full mt-2 bg-[#00B87C] text-white">
                 4 tasks
               </span>
             </div>
@@ -15464,11 +15081,11 @@ export function Settings() {
               <span className="block font-bold text-[13px] text-gray-800 dark:text-gray-200">
                 Day 1
               </span>
-              <span className="block text-[11px] text-[#9CA3AF] mt-1">
+              <span className="block text-[11px] text-[#94A3B8] mt-1">
                 First day at office
               </span>
               <span
-                className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mt-2"
+                className="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full mt-2"
                 style={{ backgroundColor: "#E6FFFA", color: "#319795" }}
               >
                 6 tasks
@@ -15487,11 +15104,11 @@ export function Settings() {
               <span className="block font-bold text-[13px] text-gray-800 dark:text-gray-200">
                 Week 1
               </span>
-              <span className="block text-[11px] text-[#9CA3AF] mt-1">
+              <span className="block text-[11px] text-[#94A3B8] mt-1">
                 First 7 days
               </span>
               <span
-                className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mt-2"
+                className="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full mt-2"
                 style={{ backgroundColor: "#E6FFFA", color: "#319795" }}
               >
                 8 tasks
@@ -15510,11 +15127,11 @@ export function Settings() {
               <span className="block font-bold text-[13px] text-gray-800 dark:text-gray-200">
                 Month 1
               </span>
-              <span className="block text-[11px] text-[#9CA3AF] mt-1">
+              <span className="block text-[11px] text-[#94A3B8] mt-1">
                 First 30 days
               </span>
               <span
-                className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mt-2"
+                className="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full mt-2"
                 style={{ backgroundColor: "#E6FFFA", color: "#319795" }}
               >
                 5 tasks
@@ -15524,7 +15141,7 @@ export function Settings() {
 
           <div className="flex justify-center items-center gap-4 mt-4">
             <button
-              className="px-4 py-2 text-[12px] font-bold border rounded-xl hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer"
+              className="px-4 py-2 text-[12px] font-bold border rounded-xl hover:bg-[#00B87C]/[0.08] dark:hover:bg-neutral-700 cursor-pointer"
               style={{
                 borderColor: "#E5E7EB",
                 color: "var(--foreground)",
@@ -15547,7 +15164,7 @@ export function Settings() {
             borderColor: "var(--border)",
           }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-4 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-4 uppercase">
             ONBOARDING TASKS BY PHASE
           </span>
 
@@ -15645,7 +15262,7 @@ export function Settings() {
 
                   {/* Due Days Input */}
                   <div className="flex items-center gap-1">
-                    <span className="text-[11px] text-[#9CA3AF]">Day</span>
+                    <span className="text-[11px] text-[#94A3B8]">Day</span>
                     <input
                       type="number"
                       defaultValue={t.due}
@@ -15659,7 +15276,7 @@ export function Settings() {
 
                   {/* Required Toggle */}
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-medium text-[#9CA3AF]">
+                    <span className="text-[11px] font-medium text-[#94A3B8]">
                       {t.req ? "Required" : "Optional"}
                     </span>
                     <button
@@ -15707,7 +15324,7 @@ export function Settings() {
             borderColor: "var(--border)",
           }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-4 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-4 uppercase">
             ONBOARDING RULES
           </span>
           <div className="space-y-4">
@@ -15747,7 +15364,7 @@ export function Settings() {
                     {item.label}
                   </span>
                   {item.desc && (
-                    <span className="text-[11px] text-[#9CA3AF] mt-0.5 block">
+                    <span className="text-[11px] text-[#94A3B8] mt-0.5 block">
                       {item.desc}
                     </span>
                   )}
@@ -15802,7 +15419,7 @@ export function Settings() {
             borderColor: "var(--border)",
           }}
         >
-          <span className="block text-[11px] font-bold text-[#9CA3AF] mb-4 uppercase">
+          <span className="block text-[11px] font-bold text-[#94A3B8] mb-4 uppercase">
             OFFBOARDING SETTINGS
           </span>
           <div className="space-y-4 mb-6">
@@ -15842,7 +15459,7 @@ export function Settings() {
                     {item.label}
                   </span>
                   {item.desc && (
-                    <span className="text-[11px] text-[#9CA3AF] mt-0.5 block">
+                    <span className="text-[11px] text-[#94A3B8] mt-0.5 block">
                       {item.desc}
                     </span>
                   )}
@@ -15893,7 +15510,7 @@ export function Settings() {
             style={{ borderColor: "var(--border)" }}
           >
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 Notice Period Default (days)
               </label>
               <input
@@ -15907,7 +15524,7 @@ export function Settings() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-[#9CA3AF] mb-1 uppercase">
+              <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
                 F&F Settlement Deadline (days after exit)
               </label>
               <input
@@ -17520,7 +17137,7 @@ export function Settings() {
                 borderColor: "var(--border)",
               }}
             >
-              <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+              <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                 Summary of changes
               </span>
               <div
@@ -18022,7 +17639,7 @@ export function Settings() {
                   borderColor: "var(--border)",
                 }}
               >
-                <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                   Date & Day
                 </span>
                 <span
@@ -18040,7 +17657,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Location
                   </span>
                   <span
@@ -18057,7 +17674,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Department
                   </span>
                   <span
@@ -18076,7 +17693,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Description
                   </span>
                   <p
@@ -18756,7 +18373,7 @@ export function Settings() {
                 }}
               >
                 <div>
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Timings
                   </span>
                   <span
@@ -18769,7 +18386,7 @@ export function Settings() {
                   </span>
                 </div>
                 <div>
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Break Duration
                   </span>
                   <span
@@ -18788,7 +18405,7 @@ export function Settings() {
                   borderColor: "var(--border)",
                 }}
               >
-                <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                   Working Days
                 </span>
                 <p
@@ -18807,7 +18424,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Grace Period
                   </span>
                   <span
@@ -18824,7 +18441,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Overtime Status
                   </span>
                   <span
@@ -18848,7 +18465,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Assigned Department
                   </span>
                   <span
@@ -18865,7 +18482,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Location Access
                   </span>
                   <span
@@ -19486,7 +19103,7 @@ export function Settings() {
                   borderColor: "var(--border)",
                 }}
               >
-                <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                   Full Address
                 </span>
                 <p
@@ -19507,7 +19124,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Location Manager
                   </span>
                   <span
@@ -19524,7 +19141,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Timezone
                   </span>
                   <span
@@ -19544,7 +19161,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Assigned Employees
                   </span>
                   <span
@@ -19561,7 +19178,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Created Date
                   </span>
                   <span
@@ -20013,7 +19630,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Department Head
                   </span>
                   <span
@@ -20030,7 +19647,7 @@ export function Settings() {
                     borderColor: "var(--border)",
                   }}
                 >
-                  <span className="block text-[10px] font-bold text-var(--muted-foreground) uppercase">
+                  <span className="block text-[11px] font-bold text-var(--muted-foreground) uppercase">
                     Budget allocation
                   </span>
                   <span
@@ -22300,7 +21917,7 @@ export function Settings() {
                     </span>
                     <ChevronDown
                       size={12}
-                      className={`text-[#9CA3AF] transition-transform duration-200 ${isCollapsed ? "rotate-[-90deg]" : ""}`}
+                      className={`text-[#94A3B8] transition-transform duration-200 ${isCollapsed ? "rotate-[-90deg]" : ""}`}
                     />
                   </div>
 

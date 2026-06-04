@@ -139,7 +139,7 @@ function AssetDetailModal({
         <div className="p-6 space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-secondary/50 rounded-2xl p-4 text-center border border-border">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-1">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
                 Assigned Date
               </p>
               <p className="text-[14px] font-extrabold text-foreground">
@@ -147,7 +147,7 @@ function AssetDetailModal({
               </p>
             </div>
             <div className="bg-secondary/50 rounded-2xl p-4 text-center border border-border">
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-1">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
                 Value
               </p>
               <p className="text-[14px] font-extrabold text-foreground">
@@ -166,7 +166,7 @@ function AssetDetailModal({
                 value: asset.warrantyLabel,
                 extra:
                   asset.warrantyLabel === "Expired" ? (
-                    <span className="text-[10px] font-black text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-full ml-2">
+                    <span className="text-[11px] font-semibold text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-full ml-2">
                       Expired
                     </span>
                   ) : null,
@@ -640,7 +640,7 @@ export function MyAssets() {
               return (
                 <div
                   key={asset.id}
-                  className="bg-card border border-[#E5E7EB] dark:border-border rounded-xl p-4 shadow-sm hover:shadow-md transition-all"
+                  className="bg-card border border-[#E5E7EB] dark:border-border rounded-xl p-4 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
                 >
                   <div className="flex items-start justify-between gap-4">
                     {/* Left side: icon + info */}
@@ -664,7 +664,7 @@ export function MyAssets() {
                     <div className="flex items-center gap-3 shrink-0">
                       <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                         <CheckCircle2 size={12} strokeWidth={3} />
-                        <span className="text-[10px] font-black uppercase tracking-wider">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider">
                           Assigned
                         </span>
                       </div>

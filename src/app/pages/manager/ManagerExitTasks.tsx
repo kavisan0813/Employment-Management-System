@@ -75,11 +75,11 @@ const EXIT_MEMBERS: ExitMember[] = [
 const exitTypeChip = (type: ExitType) => {
   switch (type) {
     case "Resignation":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0] text-[10px] font-black uppercase tracking-wider">Resignation</span>;
+      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0] text-[11px] font-bold uppercase tracking-wider">Resignation</span>;
     case "Termination":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] text-[10px] font-black uppercase tracking-wider">Termination</span>;
+      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] text-[11px] font-bold uppercase tracking-wider">Termination</span>;
     case "Retirement":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0D9488] border border-[#99F6E4] text-[10px] font-black uppercase tracking-wider">Retirement</span>;
+      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0D9488] border border-[#99F6E4] text-[11px] font-bold uppercase tracking-wider">Retirement</span>;
   }
 };
 
@@ -125,17 +125,17 @@ export function ManagerExitTasks() {
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#FEE2E2] flex items-center justify-center text-[#EF4444] shadow-sm border border-red-100">
-            <LogOut size={28} />
+          <div className="w-11 h-11 rounded-[10px] bg-[#FEE2E2] flex items-center justify-center text-[#EF4444] shadow-sm border border-red-100">
+            <LogOut size={22} />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight">Team Exit Tasks</h1>
-            <p className="text-[13px] font-bold text-muted-foreground">Your responsibilities for team member exits</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">Team Exit Tasks</h1>
+            <p className="text-[13px] text-[#6B7280]">Your responsibilities for team member exits</p>
           </div>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border shadow-sm w-fit">
           <div className="w-2 h-2 rounded-full bg-amber-500" />
-          <span className="text-[12px] font-black text-amber-500 uppercase tracking-widest">Manager Access</span>
+          <span className="text-[12px] font-bold text-amber-500 uppercase tracking-wider">Manager Access</span>
         </div>
       </div>
 
@@ -148,12 +148,12 @@ export function ManagerExitTasks() {
       </div>
 
       {/* ACTIVE EXIT TASKS */}
-      <div className="bg-card border border-border rounded-[24px] shadow-sm overflow-hidden">
+      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-border bg-secondary/10 flex items-center justify-between">
-          <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+          <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
             MY EXIT RESPONSIBILITIES
           </h3>
-          <span className="text-[11px] font-black text-[#00B87C]">{doneTasks}/{totalTasks} tasks completed</span>
+          <span className="text-[11px] font-bold text-[#00B87C]">{doneTasks}/{totalTasks} tasks completed</span>
         </div>
 
         <div className="divide-y divide-border">
@@ -167,7 +167,7 @@ export function ManagerExitTasks() {
                 >
                   {/* Employee Header */}
                   <div className="flex items-center gap-4 p-5 pb-3 bg-[#FFFDF5] border-b border-border">
-                    <div className="w-9 h-9 rounded-full bg-[#EDE9FE] flex items-center justify-center text-[#8B5CF6] font-black text-sm shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-[#EDE9FE] flex items-center justify-center text-[#8B5CF6] font-bold text-sm shrink-0">
                       {member.initial}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -175,7 +175,7 @@ export function ManagerExitTasks() {
                       <p className="text-[12px] font-medium text-muted-foreground">{member.designation}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[10px] font-black uppercase tracking-wider">LWD: {member.lwd}</span>
+                      <span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[11px] font-bold uppercase tracking-wider">LWD: {member.lwd}</span>
                       {exitTypeChip(member.type)}
                     </div>
                   </div>
@@ -185,7 +185,7 @@ export function ManagerExitTasks() {
                     {member.tasks.map((task) => (
                       <div
                         key={task.id}
-                        className="flex items-center gap-4 px-5 py-3 hover:bg-[#F0FDF4]/40 transition-colors cursor-pointer group"
+                        className="flex items-center gap-4 px-5 py-3 hover:bg-[#00B87C]/[0.08]/40 transition-colors cursor-pointer group"
                         style={{ minHeight: "44px" }}
                       >
                         <button
@@ -205,7 +205,7 @@ export function ManagerExitTasks() {
                           <p className="text-[11px] font-medium text-muted-foreground">{task.assignedTo}</p>
                         </div>
                         <div className="flex items-center gap-3 shrink-0">
-                          <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg ${
+                          <span className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg ${
                             task.status === "done"
                               ? "text-[#00B87C] bg-[#DCFCE7]"
                               : task.dueDate.startsWith("Due")
@@ -222,7 +222,7 @@ export function ManagerExitTasks() {
                                 else if (task.id === "t6") setShowWriteModal(member.id);
                                 else handleMarkDone(member.id, task.id);
                               }}
-                              className="text-[11px] font-black text-[#00B87C] hover:underline whitespace-nowrap"
+                              className="text-[11px] font-bold text-[#00B87C] hover:underline whitespace-nowrap"
                             >
                               {task.actionLabel} →
                             </button>
@@ -231,7 +231,7 @@ export function ManagerExitTasks() {
                           {task.status !== "done" && task.actionType === "btn" && (
                             <button
                               onClick={() => handleMarkDone(member.id, task.id)}
-                              className="px-3 py-1.5 rounded-lg border border-[#00B87C]/30 text-[#00B87C] text-[10px] font-black uppercase tracking-wider hover:bg-[#00B87C]/5 transition-all whitespace-nowrap"
+                              className="px-3 py-1.5 rounded-lg border border-[#00B87C]/30 text-[#00B87C] text-[11px] font-bold uppercase tracking-wider hover:bg-[#00B87C]/5 transition-all whitespace-nowrap"
                             >
                               {task.actionLabel}
                             </button>
@@ -240,7 +240,7 @@ export function ManagerExitTasks() {
                           {task.status !== "done" && task.actionType === "signoff" && (
                             <button
                               onClick={() => setShowSignOff(member.id)}
-                              className="px-3 py-1.5 rounded-lg bg-[#00B87C] text-white text-[10px] font-black uppercase tracking-wider hover:opacity-90 transition-all whitespace-nowrap shadow-sm"
+                              className="px-3 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all whitespace-nowrap shadow-sm"
                             >
                               {task.actionLabel}
                             </button>
@@ -251,7 +251,7 @@ export function ManagerExitTasks() {
                               {(task.id === "t3" || task.id === "t9") && (
                                 <button
                                   onClick={() => setShowKTModal(member.id)}
-                                  className="text-[11px] font-black text-[#00B87C] hover:underline whitespace-nowrap"
+                                  className="text-[11px] font-bold text-[#00B87C] hover:underline whitespace-nowrap"
                                 >
                                   View Plan →
                                 </button>
@@ -267,8 +267,8 @@ export function ManagerExitTasks() {
                   {/* Progress Bar */}
                   <div className="px-5 py-3 bg-[#F0FDF4]/30 border-t border-border">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">Overall Manager Progress</span>
-                      <span className="text-[10px] font-black text-[#00B87C]">{member.tasks.filter(t => t.status === "done").length}/{member.tasks.length} tasks</span>
+                      <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Overall Manager Progress</span>
+                      <span className="text-[11px] font-bold text-[#00B87C]">{member.tasks.filter(t => t.status === "done").length}/{member.tasks.length} tasks</span>
                     </div>
                     <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                       <div
@@ -412,7 +412,7 @@ function KTModal({ memberName, onClose, onSave, initialData }: { memberName: str
         <div className="px-6 py-5 space-y-4 max-h-[55vh] overflow-y-auto">
           {sections.map((section, i) => (
             <div key={i}>
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">{section.label}</label>
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">{section.label}</label>
               <textarea
                 rows={3}
                 value={ktForm[section.key]}
@@ -427,14 +427,14 @@ function KTModal({ memberName, onClose, onSave, initialData }: { memberName: str
         <div className="px-6 py-5 border-t border-border flex items-center justify-between">
           <button
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all"
+            className="px-4 py-2.5 rounded-xl text-[11px] font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-all"
           >
             {isViewOnly ? "Close" : "Cancel"}
           </button>
           <div className="flex items-center gap-3">
             <button
               onClick={handleDownload}
-              className="px-4 py-2.5 rounded-xl border border-border text-[11px] font-black text-foreground uppercase tracking-widest hover:bg-muted transition-all flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl border border-border text-[11px] font-bold text-foreground uppercase tracking-wider hover:bg-muted transition-all flex items-center gap-1.5"
             >
               <Download size={14} /> {isViewOnly ? "Download" : "Download PDF"}
             </button>
@@ -444,7 +444,7 @@ function KTModal({ memberName, onClose, onSave, initialData }: { memberName: str
                   if (onSave) onSave(ktForm);
                   else onClose();
                 }}
-                className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-sm"
+                className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm"
               >
                 Save Plan
               </button>
@@ -470,14 +470,14 @@ function SignOffModal({ memberName, onClose, onConfirm }: { memberName: string; 
         <div className="w-14 h-14 rounded-full bg-[#DCFCE7] flex items-center justify-center mx-auto mb-4">
           <LogOut size={24} className="text-[#00B87C]" />
         </div>
-        <h3 className="text-lg font-black text-foreground tracking-tight mb-2">Sign Manager Clearance</h3>
+        <h3 className="text-lg font-bold text-foreground tracking-tight mb-2">Sign Manager Clearance</h3>
         <p className="text-[13px] font-medium text-muted-foreground mb-1">
           Are you sure you want to sign off clearance for <strong className="text-foreground">{memberName}</strong>?
         </p>
         <p className="text-[11px] font-bold text-amber-500 mb-6">This confirms all manager-level tasks are complete.</p>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl border border-border text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all">Cancel</button>
-          <button onClick={onConfirm} className="flex-1 px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all flex items-center justify-center gap-1.5">
+          <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl border border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-all">Cancel</button>
+          <button onClick={onConfirm} className="flex-1 px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all flex items-center justify-center gap-1.5">
             <CheckCircle2 size={14} /> Sign Off
           </button>
         </div>
@@ -517,8 +517,8 @@ function WriteRecommendationModal({ memberName, onClose, onSave }: { memberName:
           />
         </div>
         <div className="px-6 py-5 border-t border-border flex items-center justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2.5 rounded-xl text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all">Cancel</button>
-          <button onClick={onSave} className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5">
+          <button onClick={onClose} className="px-4 py-2.5 rounded-xl text-[11px] font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-all">Cancel</button>
+          <button onClick={onSave} className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5">
             <Check size={14} /> Save Recommendation
           </button>
         </div>

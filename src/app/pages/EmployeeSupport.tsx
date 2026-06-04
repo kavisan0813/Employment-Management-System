@@ -22,7 +22,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 interface TimelineEntry {
   id: string;
@@ -264,14 +264,14 @@ export function EmployeeSupport() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Card 1 */}
         <div
-          className="bg-card p-6 rounded-[24px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
+          className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
           onClick={() => {
             setActiveTab("My Tickets");
             setTicketStatusTab("Open");
           }}
         >
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
             OPEN TICKETS
           </p>
           <p className="text-[32px] font-black" style={{ color: "#F59E0B" }}>
@@ -284,14 +284,14 @@ export function EmployeeSupport() {
 
         {/* Card 2 */}
         <div
-          className="bg-card p-6 rounded-[24px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
+          className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
           onClick={() => {
             setActiveTab("My Tickets");
             setTicketStatusTab("Resolved");
           }}
         >
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
             RESOLVED
           </p>
           <p className="text-[32px] font-black" style={{ color: "#00B87C" }}>
@@ -303,9 +303,9 @@ export function EmployeeSupport() {
         </div>
 
         {/* Card 3 */}
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-gray-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative">
+          <div className="absolute -right-4 -top-4 w-24 h-24 bg-gray-50 dark:bg-white/50/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
             AVG RESOLUTION
           </p>
           <p className="text-[32px] font-black" style={{ color: "#111827" }}>
@@ -420,7 +420,7 @@ function MyTicketsTab({
   return (
     <div className="space-y-4">
       {/* Filters and Tabs */}
-      <div className="bg-card rounded-[24px] border border-border shadow-sm p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
           {tabs.map((tab) => (
             <button
@@ -479,7 +479,7 @@ function MyTicketsTab({
         </div>
       </div>
 
-      <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
         {tickets.length === 0 ? (
           <div className="p-12 text-center text-muted-foreground flex flex-col items-center justify-center">
             <Search size={48} className="opacity-20 mb-4" />
@@ -493,25 +493,25 @@ function MyTicketsTab({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-secondary/30">
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
                     TICKET ID
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                     SUBJECT
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                     CATEGORY
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                     PRIORITY
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                     STATUS
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                     CREATED
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-right">
                     ACTION
                   </th>
                 </tr>
@@ -533,7 +533,7 @@ function MyTicketsTab({
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border"
+                        className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border"
                         style={{
                           backgroundColor: row.catBg,
                           color: row.catColor,
@@ -545,7 +545,7 @@ function MyTicketsTab({
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border"
+                        className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border"
                         style={{
                           backgroundColor: row.priorityBg,
                           color: row.priorityColor,
@@ -557,7 +557,7 @@ function MyTicketsTab({
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border"
+                        className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border"
                         style={{
                           backgroundColor: row.statusBg,
                           color: row.statusColor,
@@ -863,13 +863,13 @@ function NewTicketModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-4.5 px-8 border border-slate-200 dark:border-border rounded-[20px] text-[15px] font-black text-slate-500 hover:bg-secondary transition-all uppercase tracking-widest"
+                className="flex-1 py-4.5 px-8 border border-slate-200 dark:border-border rounded-2xl text-[15px] font-black text-slate-500 hover:bg-secondary transition-all uppercase tracking-widest"
               >
                 CANCEL
               </button>
               <button
                 type="submit"
-                className="flex-[1.5] py-4.5 px-8 bg-[#00B87C] text-white rounded-[20px] text-[15px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/25 hover:opacity-95 active:scale-[0.98] transition-all"
+                className="flex-[1.5] py-4.5 px-8 bg-[#00B87C] text-white rounded-2xl text-[15px] font-semibold uppercase tracking-wider shadow-xl shadow-emerald-500/25 hover:opacity-95 active:scale-[0.98] transition-all"
               >
                 SUBMIT REQUEST
               </button>
@@ -1004,12 +1004,12 @@ function TicketDetailModal({
         <div className="p-8 overflow-y-auto custom-scrollbar flex-1 space-y-8">
           <div className="grid grid-cols-2 gap-8">
             <div className="space-y-1">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                 Status
               </p>
               <div className="flex">
                 <span
-                  className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest border"
+                  className="px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border"
                   style={{
                     backgroundColor: ticket.statusBg,
                     color: ticket.statusColor,
@@ -1021,12 +1021,12 @@ function TicketDetailModal({
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                 Priority
               </p>
               <div className="flex">
                 <span
-                  className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest border"
+                  className="px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border"
                   style={{
                     backgroundColor: ticket.priorityBg,
                     color: ticket.priorityColor,
@@ -1038,7 +1038,7 @@ function TicketDetailModal({
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                 Category
               </p>
               <p className="text-[15px] font-black text-foreground">
@@ -1046,11 +1046,11 @@ function TicketDetailModal({
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                 Assigned To
               </p>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[10px] font-black text-primary">
+                <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[11px] font-semibold text-primary">
                   IT
                 </div>
                 <p className="text-[14px] font-bold text-foreground">
@@ -1061,7 +1061,7 @@ function TicketDetailModal({
           </div>
 
           <div className="space-y-3">
-            <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
               Subject
             </p>
             <h4 className="text-[18px] font-black text-foreground leading-tight">
@@ -1070,7 +1070,7 @@ function TicketDetailModal({
           </div>
 
           <div className="space-y-3">
-            <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
               Description
             </p>
             <div className="p-5 bg-secondary/30 rounded-2xl border border-border text-[14px] font-medium text-foreground leading-relaxed italic">
@@ -1080,7 +1080,7 @@ function TicketDetailModal({
 
           {ticket.attachments && ticket.attachments.length > 0 && (
             <div className="space-y-3">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                 Attachments
               </p>
               <div className="flex flex-wrap gap-3">
@@ -1121,7 +1121,7 @@ function TicketDetailModal({
           )}
 
           <div className="space-y-4">
-            <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
               Ticket Timeline
             </p>
             <div className="relative pl-6 space-y-8 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-border">
@@ -1170,7 +1170,7 @@ function TicketDetailModal({
                         <span className="text-[12px] font-bold text-foreground">
                           {entry.attachment.name}
                         </span>
-                        <span className="text-[10px] text-muted-foreground ml-2">
+                        <span className="text-[11px] text-muted-foreground ml-2">
                           {entry.attachment.size}
                         </span>
                       </div>
@@ -1259,7 +1259,7 @@ function TicketDetailModal({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative bg-card w-full max-w-[400px] rounded-[24px] p-6 border border-border shadow-2xl flex flex-col items-center text-center"
+              className="relative bg-card w-full max-w-[400px] rounded-2xl p-6 border border-border shadow-2xl flex flex-col items-center text-center"
             >
               <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-500 mb-4">
                 <AlertCircle size={32} />
@@ -1304,7 +1304,7 @@ function TicketDetailModal({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative bg-card w-full max-w-[600px] rounded-[24px] overflow-hidden border border-border shadow-2xl flex flex-col"
+              className="relative bg-card w-full max-w-[600px] rounded-2xl overflow-hidden border border-border shadow-2xl flex flex-col"
             >
               <div className="p-4 border-b border-border flex items-center justify-between bg-secondary/20">
                 <div className="flex items-center gap-3">
@@ -1392,7 +1392,7 @@ function KnowledgeBaseTab() {
           <div
             key={i}
             onClick={() => setSelectedCategory(category)}
-            className="bg-card p-6 rounded-[24px] border border-border shadow-sm group hover:border-primary transition-all cursor-pointer hover:shadow-md flex flex-col items-start"
+            className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:border-primary transition-all cursor-pointer hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] flex flex-col items-start"
           >
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 mb-5 group-hover:scale-110 transition-transform">
               <category.icon size={22} />
@@ -1400,7 +1400,7 @@ function KnowledgeBaseTab() {
             <h3 className="text-[16px] font-black text-foreground mb-2 group-hover:text-primary transition-colors">
               {category.name}
             </h3>
-            <div className="px-2.5 py-1 rounded-full bg-secondary text-muted-foreground text-[10px] font-black uppercase tracking-widest border border-border mb-4">
+            <div className="px-2.5 py-1 rounded-full bg-secondary text-muted-foreground text-[11px] font-semibold uppercase tracking-wider border border-border mb-4">
               {category.count} Articles
             </div>
             <button
@@ -1470,7 +1470,7 @@ function KnowledgeBaseTab() {
                       );
                       setSelectedCategory(null);
                     }}
-                    className="bg-white dark:bg-secondary/30 p-5 rounded-[20px] border border-border flex items-center justify-between cursor-pointer hover:border-primary/40 group transition-all shadow-sm hover:shadow-md"
+                    className="bg-white dark:bg-secondary/30 p-5 rounded-2xl border border-border flex items-center justify-between cursor-pointer hover:border-primary/40 group transition-all shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
                   >
                     <div className="flex flex-col gap-1.5">
                       <p className="text-[14px] font-bold text-slate-800 dark:text-foreground group-hover:text-primary transition-colors">

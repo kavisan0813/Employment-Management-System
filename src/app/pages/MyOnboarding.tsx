@@ -223,7 +223,7 @@ export function MyOnboarding() {
               {progressCircle(progressPct, 72, 6)}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-[20px] font-black text-primary">{progressPct}%</span>
-                <span className="text-[10px] text-muted-foreground -mt-1">Complete</span>
+                <span className="text-[11px] text-muted-foreground -mt-1">Complete</span>
               </div>
             </div>
           </div>
@@ -247,14 +247,14 @@ export function MyOnboarding() {
                 <div className="min-w-0 flex-1">
                   <p className={`text-[13px] font-bold ${task.status === "done" ? "text-muted-foreground line-through" : "text-foreground"}`}>{task.title}</p>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] text-muted-foreground flex items-center gap-1"><User size={10} /> {task.owner}</span>
+                    <span className="text-[11px] text-muted-foreground flex items-center gap-1"><User size={10} /> {task.owner}</span>
                     <span className="w-1 h-1 rounded-full bg-border" />
-                    <span className={`text-[10px] font-bold ${task.due === "Due Today" ? "text-amber-500" : "text-muted-foreground"}`}>{task.due}</span>
+                    <span className={`text-[11px] font-bold ${task.due === "Due Today" ? "text-amber-500" : "text-muted-foreground"}`}>{task.due}</span>
                   </div>
                 </div>
               </div>
               {task.actionLabel && task.actionType && (
-                <button onClick={(e) => { e.stopPropagation(); handleAction(task.actionType!); }} className={`shrink-0 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${task.actionType === "esign" || task.actionType === "form" || task.actionType === "upload" ? "bg-primary text-white hover:opacity-90 shadow-sm" : "border border-border text-foreground hover:bg-muted/50"}`}>
+                <button onClick={(e) => { e.stopPropagation(); handleAction(task.actionType!); }} className={`shrink-0 px-4 py-2 rounded-xl text-[11px] font-semibold uppercase tracking-wider transition-all ${task.actionType === "esign" || task.actionType === "form" || task.actionType === "upload" ? "bg-primary text-white hover:opacity-90 shadow-sm" : "border border-border text-foreground hover:bg-muted/50"}`}>
                   {task.actionLabel}
                 </button>
               )}
@@ -275,7 +275,7 @@ export function MyOnboarding() {
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${phase.status === "completed" ? "bg-primary border-primary" : phase.status === "in-progress" ? "border-teal-500 bg-card" : "border-border bg-card"}`}>
                   {phase.status === "completed" ? <Check size={16} className="text-white" /> : phase.status === "in-progress" ? <div className="w-3 h-3 rounded-full bg-teal-500 animate-pulse" /> : <div className="w-3 h-3 rounded-full bg-muted-foreground/30" />}
                 </div>
-                <span className={`text-[10px] font-black mt-1.5 text-center ${phase.status === "completed" ? "text-primary" : phase.status === "in-progress" ? "text-teal-500" : "text-muted-foreground"}`}>{phase.name}</span>
+                <span className={`text-[11px] font-semibold mt-1.5 text-center ${phase.status === "completed" ? "text-primary" : phase.status === "in-progress" ? "text-teal-500" : "text-muted-foreground"}`}>{phase.name}</span>
               </div>
               {i < PHASES.length - 1 && (
                 <div className={`flex-1 h-[2px] mx-2 ${phase.status === "completed" ? "bg-primary" : "border-t-2 border-dashed border-border"}`} />
@@ -317,11 +317,11 @@ export function MyOnboarding() {
                           <TaskIcon status={task.status} />
                           <div className="min-w-0 flex-1">
                             <span className={`text-[12px] font-bold ${task.status === "done" ? "text-muted-foreground line-through" : "text-foreground"}`}>{task.title}</span>
-                            <span className="text-[10px] text-muted-foreground ml-2">({task.owner})</span>
+                            <span className="text-[11px] text-muted-foreground ml-2">({task.owner})</span>
                           </div>
                         </div>
                         {task.actionLabel && task.actionType && (
-                          <button onClick={() => handleAction(task.actionType!)} className="text-[10px] font-black text-primary uppercase tracking-wider hover:underline shrink-0">{task.actionLabel}</button>
+                          <button onClick={() => handleAction(task.actionType!)} className="text-[11px] font-semibold text-primary uppercase tracking-wider hover:underline shrink-0">{task.actionLabel}</button>
                         )}
                       </div>
                     )) : (
@@ -342,7 +342,7 @@ export function MyOnboarding() {
         <h3 className="text-[11px] font-black text-foreground uppercase tracking-[0.2em] mb-5">Your Onboarding Team</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {CONTACTS.map(contact => (
-            <div key={contact.email} className="p-4 bg-card border border-border rounded-2xl hover:shadow-md transition-all group">
+            <div key={contact.email} className="p-4 bg-card border border-border rounded-2xl hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-[12px] font-black" style={{ backgroundColor: contact.color }}>{contact.avatar}</div>
                 <div className="min-w-0 flex-1">
@@ -351,7 +351,7 @@ export function MyOnboarding() {
                 </div>
               </div>
               <p className="text-[11px] text-muted-foreground mb-3 truncate">{contact.email}</p>
-              <button onClick={() => handleAction(contact.actionType)} className={`w-full py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${contact.actionType === "ticket" ? "border border-border text-foreground hover:bg-muted/50" : "bg-primary text-white hover:opacity-90 shadow-sm"}`}>
+              <button onClick={() => handleAction(contact.actionType)} className={`w-full py-2 rounded-xl text-[11px] font-semibold uppercase tracking-wider transition-all ${contact.actionType === "ticket" ? "border border-border text-foreground hover:bg-muted/50" : "bg-primary text-white hover:opacity-90 shadow-sm"}`}>
                 {contact.action}
               </button>
             </div>
@@ -364,10 +364,10 @@ export function MyOnboarding() {
         <h3 className="text-[11px] font-black text-foreground uppercase tracking-[0.2em] mb-5">Helpful Links</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {QUICK_LINKS.map(link => (
-            <button key={link.label} onClick={() => handleAction(link.action)} className="p-4 bg-card border border-border rounded-2xl hover:shadow-md hover:border-primary/30 transition-all text-left group">
+            <button key={link.label} onClick={() => handleAction(link.action)} className="p-4 bg-card border border-border rounded-2xl hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:border-primary/30 transition-all text-left group">
               <span className="text-2xl mb-2 block">{link.icon}</span>
               <p className="text-[12px] font-bold text-foreground group-hover:text-primary transition-colors">{link.label}</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">{link.desc}</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">{link.desc}</p>
             </button>
           ))}
         </div>
@@ -393,7 +393,7 @@ export function MyOnboarding() {
                 <span className="text-[13px] font-bold text-foreground">{doc.name}</span>
               </div>
               <div className="flex items-center gap-3">
-                <span className={`text-[10px] font-black uppercase tracking-wider ${doc.status === "uploaded" ? "text-primary" : doc.status === "pending" ? "text-amber-500" : "text-destructive"}`}>
+                <span className={`text-[11px] font-semibold uppercase tracking-wider ${doc.status === "uploaded" ? "text-primary" : doc.status === "pending" ? "text-amber-500" : "text-destructive"}`}>
                   {doc.status === "uploaded" ? "Uploaded" : doc.status === "pending" ? "Pending" : "Required"}
                 </span>
                 {doc.status !== "uploaded" && (
@@ -421,55 +421,55 @@ export function MyOnboarding() {
             <div className="px-6 py-5 space-y-4 max-h-[55vh] overflow-y-auto">
               {formType === "it-setup" ? (
                 <>
-                  <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Preferred Laptop OS</label>
+                  <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Preferred Laptop OS</label>
                     <div className="flex gap-2">{["Windows", "macOS", "Linux"].map(os => <button key={os} className="px-4 py-2 rounded-xl border border-border text-[11px] font-black uppercase tracking-wider hover:bg-primary hover:text-white hover:border-primary transition-all">{os}</button>)}</div>
                   </div>
-                  <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Monitor Required?</label>
+                  <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Monitor Required?</label>
                     <div className="flex gap-2">{["Yes, 1 Monitor", "Yes, 2 Monitors", "No"].map(m => <button key={m} className="px-4 py-2 rounded-xl border border-border text-[11px] font-black uppercase tracking-wider hover:bg-primary hover:text-white hover:border-primary transition-all">{m}</button>)}</div>
                   </div>
-                  <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Special Equipment / Requirements</label>
+                  <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Special Equipment / Requirements</label>
                     <textarea className="w-full px-4 py-3 rounded-2xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none" rows={3} placeholder="Any additional equipment or setup needs..." />
                   </div>
                 </>
               ) : (
                 <>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2"><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Account Holder Name</label>
+                    <div className="col-span-2"><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Account Holder Name</label>
                       <input type="text" placeholder="Priya Sharma" className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
                     </div>
-                    <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Bank Name</label>
+                    <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Bank Name</label>
                       <input type="text" placeholder="e.g. HDFC Bank" className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
                     </div>
-                    <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Account Number</label>
+                    <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Account Number</label>
                       <input type="text" placeholder="Enter account number" className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
                     </div>
-                    <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">IFSC Code</label>
+                    <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">IFSC Code</label>
                       <input type="text" placeholder="e.g. HDFC0001234" className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
                     </div>
-                    <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Branch</label>
+                    <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Branch</label>
                       <input type="text" placeholder="Branch name" className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
                     </div>
                   </div>
-                  <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Account Type</label>
+                  <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Account Type</label>
                     <div className="flex gap-2">{
                       ["Savings", "Current"].map(type => (
                         <button key={type} onClick={() => setSelectedBankAccType(type)} className={`px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all ${selectedBankAccType === type ? "bg-primary text-white shadow-sm" : "border border-border hover:bg-muted/50"}`}>{type}</button>
                       ))
                     }</div>
                   </div>
-                  <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Upload Passbook / Cheque</label>
+                  <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Upload Passbook / Cheque</label>
                     <div className="border-2 border-dashed border-border rounded-2xl p-6 text-center hover:border-primary/40 transition-all cursor-pointer">
                       <Upload size={24} className="mx-auto text-muted-foreground/60 mb-2" />
                       <p className="text-[11px] font-bold text-foreground">Drop file here or click to browse</p>
-                      <p className="text-[10px] text-muted-foreground">PDF, JPG, PNG — Max 5MB</p>
+                      <p className="text-[11px] text-muted-foreground">PDF, JPG, PNG — Max 5MB</p>
                     </div>
                   </div>
                 </>
               )}
             </div>
             <div className="px-6 py-4 border-t border-border flex items-center justify-end gap-3">
-              <button onClick={() => setActiveModal(null)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-black uppercase tracking-widest hover:bg-muted transition-all">Cancel</button>
-              <button onClick={() => { showToast(formType === "bank-account" ? "Bank Details Saved" : "Form Submitted", "success", formType === "bank-account" ? "Your bank account details have been submitted for verification." : "Your IT setup preferences have been submitted."); setActiveModal(null); }} className="px-5 py-2.5 rounded-xl bg-primary text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-md">{formType === "bank-account" ? "Save & Submit" : "Submit"}</button>
+              <button onClick={() => setActiveModal(null)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all">Cancel</button>
+              <button onClick={() => { showToast(formType === "bank-account" ? "Bank Details Saved" : "Form Submitted", "success", formType === "bank-account" ? "Your bank account details have been submitted for verification." : "Your IT setup preferences have been submitted."); setActiveModal(null); }} className="px-5 py-2.5 rounded-xl bg-primary text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md">{formType === "bank-account" ? "Save & Submit" : "Submit"}</button>
             </div>
           </motion.div>
         </motion.div>
@@ -489,15 +489,15 @@ export function MyOnboarding() {
                 <p className="text-[13px] font-bold text-foreground">Drop files here or click to browse</p>
                 <p className="text-[11px] text-muted-foreground mt-1">PDF, JPG, PNG — Max 10MB</p>
               </div>
-              <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Document Type</label>
+              <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Document Type</label>
                 <select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none">
                   <option>Passport Photo</option><option>Bank Account Details</option><option>Experience Letter</option><option>Medical Certificate</option><option>Other</option>
                 </select>
               </div>
             </div>
             <div className="px-6 py-4 border-t border-border flex items-center justify-end gap-3">
-              <button onClick={() => setActiveModal(null)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-black uppercase tracking-widest hover:bg-muted transition-all">Cancel</button>
-              <button onClick={() => { showToast("Uploaded", "success", "Document uploaded successfully."); setActiveModal(null); }} className="px-5 py-2.5 rounded-xl bg-violet-500 text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-md">Upload</button>
+              <button onClick={() => setActiveModal(null)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all">Cancel</button>
+              <button onClick={() => { showToast("Uploaded", "success", "Document uploaded successfully."); setActiveModal(null); }} className="px-5 py-2.5 rounded-xl bg-violet-500 text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md">Upload</button>
             </div>
           </motion.div>
         </motion.div>
@@ -521,10 +521,10 @@ export function MyOnboarding() {
                 <span className="text-[12px] font-bold text-foreground">I have read and agree to the terms of this NDA</span>
               </label>
               <div>
-                <label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">Your Signature</label>
+                <label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">Your Signature</label>
                 <div className="flex gap-2 mb-3">
                   {(["draw", "type", "upload"] as const).map(tab => (
-                    <button key={tab} onClick={() => setEsignStep(tab)} className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${esignStep === tab ? "bg-primary text-white" : "bg-muted text-muted-foreground"}`}>
+                    <button key={tab} onClick={() => setEsignStep(tab)} className={`px-4 py-1.5 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all ${esignStep === tab ? "bg-primary text-white" : "bg-muted text-muted-foreground"}`}>
                       {tab === "draw" ? "Draw" : tab === "type" ? "Type" : "Upload"}
                     </button>
                   ))}
@@ -540,14 +540,14 @@ export function MyOnboarding() {
                   <div className="border-2 border-dashed border-border rounded-2xl p-6 text-center hover:border-primary/40 transition-all cursor-pointer">
                     <Upload size={24} className="mx-auto text-muted-foreground/60 mb-2" />
                     <p className="text-[11px] font-bold text-foreground">Upload signature image</p>
-                    <p className="text-[10px] text-muted-foreground">PNG with transparent background preferred</p>
+                    <p className="text-[11px] text-muted-foreground">PNG with transparent background preferred</p>
                   </div>
                 )}
               </div>
             </div>
             <div className="px-6 py-4 border-t border-border flex items-center justify-end gap-3">
-              <button onClick={() => setActiveModal(null)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-black uppercase tracking-widest hover:bg-muted transition-all">Cancel</button>
-              <button disabled={!esignAgreed || (!esignSignature && esignStep === "type")} onClick={() => { showToast("NDA Signed Successfully!", "success", "Your NDA has been digitally signed and recorded."); setActiveModal(null); }} className="px-5 py-2.5 rounded-xl bg-primary text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-md disabled:opacity-40">Sign & Submit</button>
+              <button onClick={() => setActiveModal(null)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all">Cancel</button>
+              <button disabled={!esignAgreed || (!esignSignature && esignStep === "type")} onClick={() => { showToast("NDA Signed Successfully!", "success", "Your NDA has been digitally signed and recorded."); setActiveModal(null); }} className="px-5 py-2.5 rounded-xl bg-primary text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md disabled:opacity-40">Sign & Submit</button>
             </div>
           </motion.div>
         </motion.div>
@@ -568,7 +568,7 @@ export function MyOnboarding() {
               <h4 className="text-[14px] font-bold text-foreground">Welcome to NexusHR — Company Culture & Values</h4>
               <div className="flex items-center gap-3 mt-1 text-[11px] text-muted-foreground"><Clock size={12} /> 4:32 min<span className="w-1 h-1 rounded-full bg-border" />HR Team</div>
               {videoWatched && (
-                <button onClick={() => { showToast("Marked as Watched", "success", "Video marked as completed — 100% watched."); setActiveModal(null); }} className="mt-3 w-full py-2.5 rounded-xl bg-primary text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all">Mark as Watched</button>
+                <button onClick={() => { showToast("Marked as Watched", "success", "Video marked as completed — 100% watched."); setActiveModal(null); }} className="mt-3 w-full py-2.5 rounded-xl bg-primary text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all">Mark as Watched</button>
               )}
             </div>
           </motion.div>
@@ -584,16 +584,16 @@ export function MyOnboarding() {
               <button onClick={() => setCalendarModal(false)} className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-all"><X size={18} /></button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Date</label><input type="date" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all" /></div>
+              <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Date</label><input type="date" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all" /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Start Time</label><input type="time" defaultValue="10:00" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all" /></div>
-                <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Duration</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none"><option>30 min</option><option>45 min</option><option selected>1 hour</option></select></div>
+                <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Start Time</label><input type="time" defaultValue="10:00" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all" /></div>
+                <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Duration</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none"><option>30 min</option><option>45 min</option><option selected>1 hour</option></select></div>
               </div>
-              <div><label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 block">Agenda (optional)</label><textarea className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none" rows={2} placeholder="What would you like to discuss?" /></div>
+              <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Agenda (optional)</label><textarea className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none" rows={2} placeholder="What would you like to discuss?" /></div>
             </div>
             <div className="px-6 py-4 border-t border-border flex items-center justify-end gap-3">
-              <button onClick={() => setCalendarModal(false)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-black uppercase tracking-widest hover:bg-muted transition-all">Cancel</button>
-              <button onClick={() => { showToast("Meeting Scheduled", "success", "1:1 with Suresh Iyer has been scheduled. Calendar invite sent."); setCalendarModal(false); }} className="px-5 py-2.5 rounded-xl bg-sky-500 text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-md">Schedule Meeting</button>
+              <button onClick={() => setCalendarModal(false)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all">Cancel</button>
+              <button onClick={() => { showToast("Meeting Scheduled", "success", "1:1 with Suresh Iyer has been scheduled. Calendar invite sent."); setCalendarModal(false); }} className="px-5 py-2.5 rounded-xl bg-sky-500 text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md">Schedule Meeting</button>
             </div>
           </motion.div>
         </motion.div>

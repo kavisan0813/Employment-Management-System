@@ -360,7 +360,7 @@ export function Attendance() {
                     {MONTH_NAMES[selectedMonth]} {selectedDayDetail},{" "}
                     {selectedYear}
                   </h3>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
                     Daily Attendance Detail
                   </p>
                 </div>
@@ -393,7 +393,7 @@ export function Attendance() {
                     >
                       {selectedEmployee?.name || "Sarah Johnson"}
                     </p>
-                    <p className="text-[10px] text-muted-foreground font-bold">
+                    <p className="text-[11px] text-muted-foreground font-bold">
                       {selectedEmployee?.role || "Senior Developer"}
                     </p>
                   </div>
@@ -410,7 +410,7 @@ export function Attendance() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <ArrowUpRight size={16} className="text-emerald-500" />
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                    <span className="text-[11px] font-bold text-muted-foreground uppercase">
                       Punch In
                     </span>
                   </div>
@@ -433,7 +433,7 @@ export function Attendance() {
                       size={16}
                       className="text-orange-500 rotate-90"
                     />
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                    <span className="text-[11px] font-bold text-muted-foreground uppercase">
                       Punch Out
                     </span>
                   </div>
@@ -450,7 +450,7 @@ export function Attendance() {
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Log Timeline
                 </h4>
                 <div className="relative pl-6 space-y-4 before:content-[''] before:absolute before:left-2 before:top-1 before:bottom-1 before:w-0.5 before:bg-neutral-100 dark:before:bg-zinc-800">
@@ -462,7 +462,7 @@ export function Attendance() {
                     >
                       Check-in recorded
                     </span>
-                    <span className="text-[10px] font-bold text-muted-foreground">
+                    <span className="text-[11px] font-bold text-muted-foreground">
                       08:58 AM
                     </span>
                   </div>
@@ -474,7 +474,7 @@ export function Attendance() {
                     >
                       Work started
                     </span>
-                    <span className="text-[10px] font-bold text-muted-foreground">
+                    <span className="text-[11px] font-bold text-muted-foreground">
                       09:05 AM
                     </span>
                   </div>
@@ -486,7 +486,7 @@ export function Attendance() {
                     >
                       Checkout recorded
                     </span>
-                    <span className="text-[10px] font-bold text-muted-foreground">
+                    <span className="text-[11px] font-bold text-muted-foreground">
                       06:02 PM
                     </span>
                   </div>
@@ -500,7 +500,7 @@ export function Attendance() {
             >
               <button
                 onClick={() => setSelectedDayDetail(null)}
-                className="flex-1 py-3 rounded-xl border text-xs font-black uppercase tracking-widest text-muted-foreground hover:bg-white dark:hover:bg-zinc-900 transition-all"
+                className="flex-1 py-3 rounded-xl border text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-900 transition-all"
                 style={{ borderColor: "var(--border)" }}
               >
                 Close
@@ -510,7 +510,7 @@ export function Attendance() {
                   setSelectedDayDetail(null);
                   handleEmployeeRedirect(selectedEmployee?.id || "EMP001");
                 }}
-                className="flex-1 py-3 rounded-xl text-white text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
+                className="flex-1 py-3 rounded-xl text-white text-xs font-semibold uppercase tracking-wider shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
                 style={{
                   background: "linear-gradient(135deg, #10B981, #059669)",
                 }}
@@ -844,7 +844,7 @@ export function Attendance() {
         ].map((card, i) => (
           <div
             key={i}
-            className="group p-4 rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
+            className="group p-4 rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:-translate-y-0.5"
             style={{ borderColor: "var(--border)" }}
           >
             <div className="flex items-start justify-between">
@@ -917,37 +917,37 @@ export function Attendance() {
                   <thead>
                     <tr className="bg-neutral-50 dark:bg-zinc-800/50">
                       <th
-                        className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b"
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
                         style={{ borderColor: "var(--border)" }}
                       >
                         Employee
                       </th>
                       <th
-                        className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b"
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
                         style={{ borderColor: "var(--border)" }}
                       >
                         Date
                       </th>
                       <th
-                        className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b"
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
                         style={{ borderColor: "var(--border)" }}
                       >
                         Status
                       </th>
                       <th
-                        className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b"
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
                         style={{ borderColor: "var(--border)" }}
                       >
                         Punch In
                       </th>
                       <th
-                        className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b"
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
                         style={{ borderColor: "var(--border)" }}
                       >
                         Punch Out
                       </th>
                       <th
-                        className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b text-center"
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b text-center"
                         style={{ borderColor: "var(--border)" }}
                       >
                         Working Hours
@@ -1127,7 +1127,7 @@ export function Attendance() {
                     <button
                       key={i}
                       onClick={() => setCurrentPage(i + 1)}
-                      className={`w-7 h-7 rounded-lg text-[10px] font-black transition-all ${currentPage === i + 1 ? "bg-[var(--primary)] text-white shadow-lg shadow-emerald-500/20" : "border border-transparent hover:border-border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
+                      className={`w-7 h-7 rounded-lg text-[11px] font-semibold transition-all ${currentPage === i + 1 ? "bg-[var(--primary)] text-white shadow-lg shadow-emerald-500/20" : "border border-transparent hover:border-border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
                       style={{
                         borderColor:
                           currentPage !== i + 1
@@ -1203,7 +1203,7 @@ export function Attendance() {
                   {DAYS_OF_WEEK.map((day) => (
                     <div
                       key={day}
-                      className="text-center text-[11px] font-black uppercase tracking-widest text-muted-foreground"
+                      className="text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
                     >
                       {day}
                     </div>
@@ -1295,7 +1295,7 @@ export function Attendance() {
                         {status !== "Weekend" && (
                           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center bg-white/60 dark:bg-zinc-900/60 rounded-2xl pointer-events-none">
                             <span
-                              className="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md bg-white dark:bg-zinc-900 shadow-sm border"
+                              className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-md bg-white dark:bg-zinc-900 shadow-sm border"
                               style={{
                                 color: config.color,
                                 borderColor: "var(--border)",
@@ -1335,7 +1335,7 @@ export function Attendance() {
               </div>
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20">
                 <TrendingUp size={12} className="text-emerald-600" />
-                <span className="text-[10px] font-bold text-emerald-600">
+                <span className="text-[11px] font-bold text-emerald-600">
                   +4.2%
                 </span>
               </div>
@@ -1448,7 +1448,7 @@ export function Attendance() {
                   className="p-3 rounded-xl bg-neutral-50 dark:bg-zinc-800/30 border"
                   style={{ borderColor: "var(--border)" }}
                 >
-                  <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground mb-0.5">
+                  <p className="text-[8px] font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
                     {stat.label}
                   </p>
                   <p
@@ -1462,7 +1462,7 @@ export function Attendance() {
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Attendance Stability
               </h4>
               <div className="space-y-3">
@@ -1472,7 +1472,7 @@ export function Attendance() {
                   { label: "Balance", value: 72, color: "bg-emerald-500" },
                 ].map((bar, i) => (
                   <div key={i} className="space-y-1">
-                    <div className="flex justify-between text-[10px] font-bold">
+                    <div className="flex justify-between text-[11px] font-bold">
                       <span style={{ color: "var(--foreground)" }}>
                         {bar.label}
                       </span>
@@ -1543,12 +1543,12 @@ export function Attendance() {
                       className="w-2 h-2 rounded-full"
                       style={{ backgroundColor: item.color }}
                     />
-                    <span className="text-[10px] font-bold text-muted-foreground truncate">
+                    <span className="text-[11px] font-bold text-muted-foreground truncate">
                       {item.name}
                     </span>
                   </div>
                   <span
-                    className="text-[10px] font-black"
+                    className="text-[11px] font-semibold"
                     style={{ color: "var(--foreground)" }}
                   >
                     {item.value}%
@@ -1601,7 +1601,7 @@ export function Attendance() {
             </div>
             <button
               onClick={() => navigate("/reports")}
-              className="w-full mt-3 py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-all active:scale-[0.98]"
+              className="w-full mt-3 py-2.5 rounded-xl border text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-all active:scale-[0.98]"
               style={{ borderColor: "var(--border)" }}
             >
               View Detailed Analytics

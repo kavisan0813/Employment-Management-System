@@ -10,7 +10,7 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { StatusBadge } from "../components/workflow/StatusBadge";
 
 interface HRRequest {
@@ -138,13 +138,13 @@ export default function EmployeeHRRequests() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex items-center gap-5"
+            className="bg-card p-6 rounded-2xl border border-border shadow-sm flex items-center gap-5"
           >
             <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
+              className="w-11 h-11 rounded-[10px] flex items-center justify-center shadow-inner"
               style={{ backgroundColor: stat.bg }}
             >
-              <stat.icon size={24} style={{ color: stat.color }} />
+              <stat.icon size={22} style={{ color: stat.color }} />
             </div>
             <div>
               <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">
@@ -162,7 +162,7 @@ export default function EmployeeHRRequests() {
       </div>
 
       {/* ─── Requests Table ──────────────────────────────────────── */}
-      <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>

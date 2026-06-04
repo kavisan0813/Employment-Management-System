@@ -175,9 +175,9 @@ function PersonalShiftOverviewCard({
   trendColor,
 }: ShiftOverviewProps) {
   return (
-    <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col justify-between h-full">
+    <div className="bg-card p-6 rounded-2xl border border-border shadow-sm flex flex-col justify-between h-full">
       <div>
-        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
           {label}
         </p>
         <p className="text-[32px] font-black text-foreground leading-none">
@@ -190,7 +190,7 @@ function PersonalShiftOverviewCard({
         </span>
         {trend && (
           <span
-            className={`px-2 py-0.5 rounded-full text-[10px] font-black border ${
+            className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${
               trendColor === "amber"
                 ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
                 : "bg-emerald-500/10 text-primary border-primary/20"
@@ -224,7 +224,7 @@ const Modal = ({
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="absolute inset-0 bg-slate-950/40" onClick={onClose} />
-      <div className="relative bg-card w-full max-w-[480px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border flex flex-col max-h-[90vh]">
+      <div className="relative bg-card w-full max-w-[480px] rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border flex flex-col max-h-[90vh]">
         <div className="p-6 border-b border-border flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             {Icon && (
@@ -256,7 +256,7 @@ const StatusBadge = ({ status }: { status: ShiftRequest["status"] }) => {
   };
   return (
     <span
-      className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${styles[status]}`}
+      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${styles[status]}`}
     >
       {status}
     </span>
@@ -321,30 +321,30 @@ export function EmployeeSchedule() {
           </div>
           <button
             onClick={() => handleRequestSwap()}
-            className="px-5 py-2.5 bg-primary text-white text-[13px] font-black rounded-xl shadow-lg shadow-emerald-500/20 hover:opacity-90 active:scale-[0.98] transition-all"
+            className="px-5 py-2.5 bg-primary text-white text-[13px] font-black rounded-xl shadow-lg shadow-[#00B87C]/20 hover:opacity-90 active:scale-[0.98] transition-all"
           >
             + New Request
           </button>
         </div>
 
-        <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-secondary">
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border">
                     REQUEST ID
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border">
                     TYPE
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border">
                     DATE
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border">
                     STATUS
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border text-right">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border text-right">
                     ACTIONS
                   </th>
                 </tr>
@@ -367,7 +367,7 @@ export function EmployeeSchedule() {
                   requests.map((req) => (
                     <tr
                       key={req.id}
-                      className="hover:bg-secondary/30 transition-colors"
+                      className="hover:bg-[#00B87C]/[0.08] transition-colors"
                     >
                       <td className="px-6 py-5">
                         <span className="text-[13px] font-black text-foreground">
@@ -521,11 +521,11 @@ export function EmployeeSchedule() {
           <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
             MY WEEKLY SCHEDULE
           </h3>
-          <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-x-auto custom-scrollbar">
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-x-auto custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-secondary">
-                  <th className="px-6 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border min-w-[200px]">
+                  <th className="px-6 py-5 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border min-w-[200px]">
                     EMPLOYEE
                   </th>
                   {[
@@ -539,7 +539,7 @@ export function EmployeeSchedule() {
                   ].map((day) => (
                     <th
                       key={day}
-                      className="px-4 py-5 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border text-center"
+                      className="px-4 py-5 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border text-center"
                     >
                       {day}
                     </th>
@@ -547,7 +547,7 @@ export function EmployeeSchedule() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="hover:bg-secondary/30 transition-colors">
+                <tr className="hover:bg-[#00B87C]/[0.08] transition-colors">
                   <td className="px-6 py-5 border-b border-border">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white text-[12px] font-black border-2 border-card shadow-sm">
@@ -577,7 +577,7 @@ export function EmployeeSchedule() {
                           >
                             {shift.type}
                           </p>
-                          <p className="text-[10px] font-bold text-muted-foreground">
+                          <p className="text-[11px] font-bold text-muted-foreground">
                             {shift.hours}
                           </p>
                         </div>
@@ -602,14 +602,14 @@ export function EmployeeSchedule() {
                       }}
                       className="h-full min-h-[60px] rounded-xl bg-secondary flex items-center justify-center border border-dashed border-border cursor-pointer hover:bg-secondary/80 transition-all"
                     >
-                      <span className="text-[10px] font-black text-muted-foreground uppercase">
+                      <span className="text-[11px] font-semibold text-muted-foreground uppercase">
                         Off Day
                       </span>
                     </div>
                   </td>
                   <td className="p-2 border-b border-border">
                     <div className="h-full min-h-[60px] rounded-xl bg-secondary flex items-center justify-center border border-dashed border-border cursor-not-allowed">
-                      <span className="text-[10px] font-black text-muted-foreground uppercase">
+                      <span className="text-[11px] font-semibold text-muted-foreground uppercase">
                         Off Day
                       </span>
                     </div>
@@ -633,7 +633,7 @@ export function EmployeeSchedule() {
                 return (
                   <div
                     key={shift.id}
-                    className="bg-card p-5 rounded-[20px] border border-border shadow-sm flex items-center justify-between group hover:shadow-md transition-all relative"
+                    className="bg-card p-5 rounded-2xl border border-border shadow-sm flex items-center justify-between group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative"
                   >
                     <div
                       className="flex items-center gap-4 cursor-pointer"
@@ -645,7 +645,7 @@ export function EmployeeSchedule() {
                         <span className={`text-[14px] font-black ${conf.text}`}>
                           {shift.date.split(" ")[1]}
                         </span>
-                        <span className="text-[10px] font-black text-muted-foreground uppercase">
+                        <span className="text-[11px] font-semibold text-muted-foreground uppercase">
                           {shift.date.split(" ")[0]}
                         </span>
                       </div>
@@ -660,7 +660,7 @@ export function EmployeeSchedule() {
                     </div>
                     <div className="flex items-center gap-4">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border bg-emerald-500/10 text-primary border-primary/20`}
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border bg-emerald-500/10 text-primary border-primary/20`}
                       >
                         Confirmed
                       </span>
@@ -732,7 +732,7 @@ export function EmployeeSchedule() {
             <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
               SHIFT NOTES
             </h3>
-            <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm space-y-5">
+            <div className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-primary">
                   <CheckCircle2 size={20} />
@@ -788,7 +788,7 @@ export function EmployeeSchedule() {
           <div className="space-y-6">
             <div className="flex items-center justify-between p-4 bg-secondary rounded-2xl border border-border">
               <div>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   Shift Type
                 </p>
                 <p className="text-[16px] font-black text-foreground">
@@ -800,7 +800,7 @@ export function EmployeeSchedule() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 rounded-2xl border border-border">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                   Date
                 </p>
                 <p className="text-[14px] font-bold text-foreground">
@@ -808,7 +808,7 @@ export function EmployeeSchedule() {
                 </p>
               </div>
               <div className="p-4 rounded-2xl border border-border">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                   Duration
                 </p>
                 <p className="text-[14px] font-bold text-foreground">
@@ -836,7 +836,7 @@ export function EmployeeSchedule() {
             </div>
 
             <div className="p-4 bg-amber-500/5 rounded-2xl border border-amber-500/10">
-              <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">
+              <p className="text-[11px] font-semibold text-amber-600 uppercase tracking-widest mb-1">
                 Notes
               </p>
               <p className="text-[12px] font-bold text-amber-700/70 italic">
@@ -858,7 +858,7 @@ export function EmployeeSchedule() {
                     setShowDetailsModal(false);
                     handleRequestSwap(selectedShift);
                   }}
-                  className="flex-1 py-3.5 rounded-xl font-black text-[13px] bg-primary text-white shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
+                  className="flex-1 py-3.5 rounded-xl font-black text-[13px] bg-primary text-white shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all"
                 >
                   Request Swap
                 </button>
@@ -877,7 +877,7 @@ export function EmployeeSchedule() {
       >
         <div className="space-y-5">
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Your Current Shift
             </label>
             <input
@@ -892,7 +892,7 @@ export function EmployeeSchedule() {
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Swap With Employee
             </label>
             <select className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none">
@@ -903,7 +903,7 @@ export function EmployeeSchedule() {
             </select>
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Preferred Shift Date
             </label>
             <input
@@ -912,7 +912,7 @@ export function EmployeeSchedule() {
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Reason for Swap
             </label>
             <textarea
@@ -950,7 +950,7 @@ export function EmployeeSchedule() {
                 );
                 setShowSwapModal(false);
               }}
-              className="flex-1 py-3.5 rounded-xl font-black text-[13px] bg-primary text-white shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
+              className="flex-1 py-3.5 rounded-xl font-black text-[13px] bg-primary text-white shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all"
             >
               Submit Request
             </button>
@@ -968,7 +968,7 @@ export function EmployeeSchedule() {
         <div className="space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Current Start
               </label>
               <input
@@ -979,7 +979,7 @@ export function EmployeeSchedule() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Current End
               </label>
               <input
@@ -992,7 +992,7 @@ export function EmployeeSchedule() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Requested Start
               </label>
               <input
@@ -1001,7 +1001,7 @@ export function EmployeeSchedule() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Requested End
               </label>
               <input
@@ -1011,7 +1011,7 @@ export function EmployeeSchedule() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Reason
             </label>
             <textarea
@@ -1036,7 +1036,7 @@ export function EmployeeSchedule() {
                 );
                 setShowTimeChangeModal(false);
               }}
-              className="flex-1 py-3.5 rounded-xl font-black text-[13px] bg-primary text-white shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
+              className="flex-1 py-3.5 rounded-xl font-black text-[13px] bg-primary text-white shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all"
             >
               Submit Request
             </button>
@@ -1053,7 +1053,7 @@ export function EmployeeSchedule() {
       >
         <div className="space-y-5">
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Select Date
             </label>
             <input
@@ -1062,7 +1062,7 @@ export function EmployeeSchedule() {
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Status
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -1077,7 +1077,7 @@ export function EmployeeSchedule() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Notes
             </label>
             <textarea
@@ -1095,7 +1095,7 @@ export function EmployeeSchedule() {
               );
               setShowAvailabilityModal(false);
             }}
-            className="w-full py-4 bg-primary text-white text-[14px] font-black rounded-2xl shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all mt-2"
+            className="w-full py-4 bg-primary text-white text-[14px] font-black rounded-2xl shadow-xl shadow-[#00B87C]/20 hover:opacity-95 transition-all mt-2"
           >
             Save Availability
           </button>
@@ -1111,7 +1111,7 @@ export function EmployeeSchedule() {
       >
         <div className="space-y-5">
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Issue Type
             </label>
             <select className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none">
@@ -1122,7 +1122,7 @@ export function EmployeeSchedule() {
             </select>
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Description
             </label>
             <textarea
@@ -1158,7 +1158,7 @@ export function EmployeeSchedule() {
           <div className="space-y-6">
             <div className="p-4 bg-secondary rounded-2xl border border-border flex justify-between items-center">
               <div>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                   Request Type
                 </p>
                 <p className="text-[16px] font-black text-foreground">
@@ -1171,7 +1171,7 @@ export function EmployeeSchedule() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                     Current
                   </p>
                   <p className="text-[13px] font-bold text-foreground">
@@ -1179,7 +1179,7 @@ export function EmployeeSchedule() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                     Requested
                   </p>
                   <p className="text-[13px] font-bold text-primary">
@@ -1189,7 +1189,7 @@ export function EmployeeSchedule() {
               </div>
 
               <div className="pt-2">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                   Reason
                 </p>
                 <p className="text-[13px] font-bold text-foreground/80">
@@ -1199,7 +1199,7 @@ export function EmployeeSchedule() {
 
               {selectedRequest.managerComment && (
                 <div className="p-4 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
-                  <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">
+                  <p className="text-[11px] font-semibold text-primary uppercase tracking-widest mb-1">
                     Manager Comment
                   </p>
                   <p className="text-[13px] font-bold text-primary/80 italic">
@@ -1209,7 +1209,7 @@ export function EmployeeSchedule() {
               )}
 
               <div className="pt-4">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-4">
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-4">
                   Timeline
                 </p>
                 <div className="relative pl-6 space-y-6">

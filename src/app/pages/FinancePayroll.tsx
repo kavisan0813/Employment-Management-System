@@ -20,6 +20,7 @@ import {
   Printer
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { showToast } from "../components/workflow/ToastNotification";
 
 interface PayrollRecord {
   id: string;
@@ -113,30 +114,51 @@ export function FinancePayroll() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState<PayrollRecord | null>(null);
   const [showRunModal, setShowRunModal] = useState(false);
+  const [runModalStep, setRunModalStep] = useState<1 | 2>(1);
+  const [genericModalTitle, setGenericModalTitle] = useState("");
+  const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const handleExport = (type: string) => {
+    setExportDropdownOpen(false);
+    setToastMessage(`Exporting ${type} CSV...`);
+    setTimeout(() => setToastMessage(""), 3000);
+  };
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div 
-            className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner"
+          <div
+            className="w-11 h-11 rounded-[10px] flex items-center justify-center shadow-inner"
             style={{ backgroundColor: "#EDE9FE" }}
           >
-            <IndianRupee size={28} className="text-[#8B5CF6]" />
+            <IndianRupee size={22} className="text-[#8B5CF6]" />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight">Payroll Management</h1>
-            <p className="text-[13px] font-semibold text-muted-foreground">Manage salary disbursements and slips</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">Payroll Management</h1>
+            <p className="text-[13px] text-[#6B7280]">Manage salary disbursements and slips</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-bold text-sm hover:bg-muted/50 transition-all">
+        <div className="flex items-center gap-3 relative">
+          <button 
+            onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-bold text-sm hover:bg-muted/50 transition-all"
+          >
             <Download size={18} />
             Export CSV
           </button>
+          {exportDropdownOpen && (
+            <div className="absolute top-full right-40 mt-2 w-56 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden">
+              <button onClick={() => handleExport("Full Payroll")} className="w-full text-left px-4 py-3 text-[13px] font-bold text-foreground hover:bg-muted transition-colors border-b border-border">Export Full Payroll CSV</button>
+              <button onClick={() => handleExport("Deductions")} className="w-full text-left px-4 py-3 text-[13px] font-bold text-foreground hover:bg-muted transition-colors border-b border-border">Export Deductions CSV</button>
+              <button onClick={() => handleExport("Tax Withholdings")} className="w-full text-left px-4 py-3 text-[13px] font-bold text-foreground hover:bg-muted transition-colors border-b border-border">Export Tax Withholdings CSV</button>
+              <button onClick={() => handleExport("Bank Transfer Format")} className="w-full text-left px-4 py-3 text-[13px] font-bold text-foreground hover:bg-muted transition-colors">Export Bank Transfer Format</button>
+            </div>
+          )}
           <button 
-            onClick={() => setShowRunModal(true)}
+            onClick={() => { setShowRunModal(true); setRunModalStep(1); }}
             className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm transition-all hover:opacity-90 shadow-lg shadow-[#00B87C]/20"
             style={{ backgroundColor: "#00B87C" }}
           >
@@ -152,11 +174,11 @@ export function FinancePayroll() {
           <div className="w-2 h-2 rounded-full bg-[#00B87C] animate-pulse" />
           <span className="text-[12px] font-bold text-foreground tracking-tight">April 2026 Payroll In Progress</span>
         </div>
-        <div className="flex items-center gap-2 md:border-l border-emerald-200/50 dark:border-emerald-800/50 md:pl-8">
+        <div className="flex items-center gap-2 md:border-l border-emerald-200/50 dark:border-emerald-800/50 md:pl-8 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setGenericModalTitle("Payroll Lock Details")}>
           <div className="w-2 h-2 rounded-full bg-amber-500" />
           <span className="text-[12px] font-bold text-foreground/80 tracking-tight">Lock Date: <span className="text-foreground">Apr 20</span></span>
         </div>
-        <div className="flex items-center gap-2 md:border-l border-emerald-200/50 dark:border-emerald-800/50 md:pl-8">
+        <div className="flex items-center gap-2 md:border-l border-emerald-200/50 dark:border-emerald-800/50 md:pl-8 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setGenericModalTitle("Disbursement Schedule")}>
           <div className="w-2 h-2 rounded-full bg-rose-500" />
           <span className="text-[12px] font-bold text-foreground/80 tracking-tight">Payment: <span className="text-foreground">Apr 28</span></span>
         </div>
@@ -164,10 +186,10 @@ export function FinancePayroll() {
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard title="TOTAL PAYROLL" value="₹28.4L" color="purple" icon={IndianRupee} />
-        <KPICard title="EMPLOYEES PROCESSED" value="1,248" color="green" icon={CheckCircle2} />
-        <KPICard title="TOTAL DEDUCTIONS" value="₹4.2L" color="red" icon={Activity} />
-        <KPICard title="NET DISBURSEMENT" value="₹24.2L" subValue="(estimated)" color="green" icon={FileSpreadsheet} />
+        <div onClick={() => setGenericModalTitle("Total Payroll Breakdown")}><KPICard title="TOTAL PAYROLL" value="₹28.4L" color="purple" icon={IndianRupee} /></div>
+        <div onClick={() => setGenericModalTitle("Processed Employees Details")}><KPICard title="EMPLOYEES PROCESSED" value="1,248" color="green" icon={CheckCircle2} /></div>
+        <div onClick={() => setGenericModalTitle("Deductions Breakdown")}><KPICard title="TOTAL DEDUCTIONS" value="₹4.2L" color="red" icon={Activity} /></div>
+        <div onClick={() => setGenericModalTitle("Net Disbursement Details")}><KPICard title="NET DISBURSEMENT" value="₹24.2L" subValue="(estimated)" color="green" icon={FileSpreadsheet} /></div>
       </div>
 
       {/* PAYROLL PROCESSING STEPPER */}
@@ -181,17 +203,17 @@ export function FinancePayroll() {
             { label: "Approval", status: "Pending" },
             { label: "Disbursement", status: "Pending" },
           ].map((step, i) => (
-            <div key={i} className="flex flex-col items-center gap-3 relative z-10">
-              <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
+            <div key={i} className="flex flex-col items-center gap-3 relative z-10 cursor-pointer group" onClick={() => setGenericModalTitle(`Stepper Phase: ${step.label}`)}>
+              <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-500 group-hover:scale-110 ${
                 step.status === 'Done' ? 'bg-[#00B87C] border-[#00B87C] text-white' : 
                 step.status === 'Active' ? 'bg-card border-[#0D9488] text-[#0D9488] shadow-[0_0_15px_rgba(13,148,136,0.3)] animate-pulse' : 
-                'bg-card border-border text-muted-foreground'
+                'bg-card border-border text-muted-foreground group-hover:border-[#0D9488]/50 group-hover:text-[#0D9488]/50'
               }`}>
                 {step.status === 'Done' ? <CheckCircle2 size={18} strokeWidth={2.5} /> : 
                  step.status === 'Active' ? <Clock size={18} /> : 
                  <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />}
               </div>
-              <span className={`text-[10px] font-black uppercase tracking-widest text-center max-w-[100px] ${
+              <span className={`text-[11px] font-bold uppercase tracking-widest text-center max-w-[100px] transition-colors group-hover:text-foreground ${
                 step.status === 'Done' ? 'text-[#00B87C]' : 
                 step.status === 'Active' ? 'text-[#0D9488]' : 
                 'text-muted-foreground'
@@ -214,15 +236,21 @@ export function FinancePayroll() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <FilterSelect label="2025-2026" />
-        <FilterSelect label="All Departments" />
-        <FilterSelect label="Status: All" />
-        <FilterSelect label="Pay Band: All" />
-        <button className="flex items-center gap-2 px-4 py-2.5 text-sm font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest">
+        <FilterSelect label="2025-2026" options={["2025-2026", "2024-2025", "2023-2024"]} />
+        <FilterSelect label="All Departments" options={["All Departments", "Engineering", "Sales", "Marketing"]} />
+        <FilterSelect label="Status: All" options={["Status: All", "Processed", "Pending", "On Hold"]} />
+        <FilterSelect label="Pay Band: All" options={["Pay Band: All", "Band A", "Band B", "Band C"]} />
+        <button 
+          onClick={() => {
+            setSearchQuery("");
+            showToast("Filters Reset");
+          }}
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest"
+        >
           <RotateCcw size={16} />
           Reset
         </button>
-        <button className="ml-auto flex items-center gap-2 px-5 py-2.5 bg-[#00B87C]/10 text-[#00B87C] font-black text-[12px] uppercase tracking-widest rounded-xl hover:bg-[#00B87C]/20 transition-all border border-[#00B87C]/20">
+        <button className="ml-auto flex items-center gap-2 px-5 py-2.5 bg-[#00B87C]/10 text-[#00B87C] font-black text-[12px] uppercase tracking-widest rounded-xl hover:bg-[#00B87C]/20 transition-all border border-[#00B87C]/20" onClick={() => handleExport("Register")}>
           <Download size={18} />
           Export CSV
         </button>
@@ -246,17 +274,17 @@ export function FinancePayroll() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#F9FAFB] dark:bg-muted/10 border-b border-border">
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">EMPLOYEE</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">DEPARTMENT</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">BASIC</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">HRA</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">ALLOWANCES</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">GROSS</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">DEDUCTIONS</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">NET SALARY</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">STATUS</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] text-center">ACTION</th>
+              <tr className="bg-[#F9FAFB] dark:bg-white/5 dark:bg-muted/10 border-b border-border">
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">EMPLOYEE</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">DEPARTMENT</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">BASIC</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">HRA</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">ALLOWANCES</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">GROSS</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">DEDUCTIONS</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">NET SALARY</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">STATUS</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8] text-center">ACTION</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -266,13 +294,13 @@ export function FinancePayroll() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="group hover:bg-[#F0FDF4] dark:hover:bg-emerald-500/5 transition-all cursor-pointer h-[56px]"
+                  className="group hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all cursor-pointer h-[56px]"
                   onClick={() => setSelectedEmployee(rec)}
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div 
-                        className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-white text-[10px] font-black"
+                        className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-white text-[11px] font-semibold"
                         style={{ backgroundColor: rec.avatarColor }}
                       >
                         {rec.name.split(' ').map(n => n[0]).join('')}
@@ -342,7 +370,13 @@ export function FinancePayroll() {
                   >
                     <X size={20} className="text-muted-foreground" />
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-[#00B87C] text-white text-[12px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all">
+                  <button 
+                    onClick={() => {
+                      setToastMessage("Downloading Salary Slip PDF...");
+                      setTimeout(() => setToastMessage(""), 3000);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest rounded-xl shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all"
+                  >
                     <Download size={14} />
                     Download PDF
                   </button>
@@ -357,11 +391,11 @@ export function FinancePayroll() {
                   </div>
                   <div>
                     <h3 className="text-2xl font-black text-foreground tracking-tight">NexusHR</h3>
-                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Enterprise EMS Platform</p>
+                    <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-widest">Enterprise EMS Platform</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-x-4 gap-y-6 p-6 rounded-[24px] bg-muted/30 border border-border shadow-inner">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-6 p-6 rounded-2xl bg-muted/30 border border-border shadow-inner">
                   <InfoItem label="Employee Name" value={selectedEmployee.name} />
                   <InfoItem label="Employee ID" value={selectedEmployee.id} />
                   <InfoItem label="Designation" value={selectedEmployee.role} />
@@ -409,16 +443,28 @@ export function FinancePayroll() {
                 <div className="p-8 rounded-[32px] bg-gradient-to-br from-[#F0FDF4] to-[#DCFCE7] dark:from-emerald-500/10 dark:to-emerald-500/5 border border-[#00B87C]/20 text-center shadow-xl shadow-emerald-500/5">
                   <p className="text-[11px] font-black text-[#00B87C] uppercase tracking-[2px] mb-2">Net Pay Amount</p>
                   <h2 className="text-[44px] font-black text-[#00B87C] tracking-tighter">₹{selectedEmployee.net.toLocaleString()}</h2>
-                  <p className="text-[10px] font-bold text-emerald-600/60 mt-2 italic">Twelve Lakh Twenty Four Thousand Rupees Only</p>
+                  <p className="text-[11px] font-bold text-emerald-600/60 mt-2 italic">Twelve Lakh Twenty Four Thousand Rupees Only</p>
                 </div>
               </div>
 
               <div className="p-6 border-t border-border grid grid-cols-2 gap-4 bg-muted/5">
-                <button className="flex items-center justify-center gap-2 py-4 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all active:scale-95">
+                <button 
+                  onClick={() => {
+                    setToastMessage("Preparing slip for printing...");
+                    setTimeout(() => setToastMessage(""), 3000);
+                  }}
+                  className="flex items-center justify-center gap-2 py-4 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all active:scale-95"
+                >
                   <Printer size={18} />
                   Print Slip
                 </button>
-                <button className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20 active:scale-95">
+                <button 
+                  onClick={() => {
+                    setToastMessage(`Salary Slip emailed to ${selectedEmployee.name}.`);
+                    setTimeout(() => setToastMessage(""), 3000);
+                  }}
+                  className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20 active:scale-95"
+                >
                   <Mail size={18} />
                   Email Slip
                 </button>
@@ -447,62 +493,192 @@ export function FinancePayroll() {
               className="relative w-full max-w-[460px] bg-card rounded-[40px] overflow-hidden shadow-2xl"
             >
               <div className="p-8 pb-4">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-[#00B87C]/10 flex items-center justify-center text-[#00B87C] shadow-inner">
-                      <IndianRupee size={24} />
+                {runModalStep === 1 ? (
+                  <>
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-[#00B87C]/10 flex items-center justify-center text-[#00B87C] shadow-inner">
+                          <IndianRupee size={24} />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-black text-foreground tracking-tight leading-none">Run Payroll</h3>
+                          <p className="text-[12px] font-bold text-muted-foreground mt-1.5 uppercase tracking-widest">April 2026 Cycle</p>
+                        </div>
+                      </div>
+                      <button onClick={() => setShowRunModal(false)} className="p-2 hover:bg-muted rounded-2xl transition-all">
+                        <X size={24} className="text-muted-foreground" />
+                      </button>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-black text-foreground tracking-tight leading-none">Run Payroll</h3>
-                      <p className="text-[12px] font-bold text-muted-foreground mt-1.5 uppercase tracking-widest">April 2026 Cycle</p>
+
+                    <div className="grid grid-cols-1 gap-4 mb-6">
+                      <div>
+                        <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Pay Cycle / Month</label>
+                        <div className="relative">
+                          <select className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#00B87C]/20 appearance-none">
+                            <option>April 2026</option>
+                            <option>March 2026</option>
+                          </select>
+                          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Department</label>
+                          <div className="relative">
+                            <select className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#00B87C]/20 appearance-none">
+                              <option>All Departments</option>
+                              <option>Engineering</option>
+                              <option>Sales</option>
+                            </select>
+                            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Pay Group</label>
+                          <div className="relative">
+                            <select className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#00B87C]/20 appearance-none">
+                              <option>Full-Time</option>
+                              <option>Contractors</option>
+                            </select>
+                            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <button onClick={() => setShowRunModal(false)} className="p-2 hover:bg-muted rounded-2xl transition-all">
-                    <X size={24} className="text-muted-foreground" />
-                  </button>
-                </div>
 
-                <div className="space-y-3.5 mb-8">
-                  <ChecklistItem label="Attendance data locked (Apr 1–20)" status="success" />
-                  <ChecklistItem label="Leave data verified for all employees" status="success" />
-                  <ChecklistItem label="36 employees have pending expense claims" status="warning" />
-                  <ChecklistItem label="8 new increment approvals to process" status="info" />
-                </div>
+                    <div className="space-y-3.5 mb-8">
+                      <ChecklistItem label="Attendance data locked" status="success" />
+                      <ChecklistItem label="Leave data verified for all employees" status="success" />
+                      <ChecklistItem label="36 employees have pending expense claims" status="warning" />
+                    </div>
 
-                <div className="grid grid-cols-2 gap-4 p-6 rounded-[28px] bg-muted/30 border border-border mb-6 shadow-inner">
-                  <div>
-                    <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Employee Count</p>
-                    <p className="text-2xl font-black text-foreground tracking-tighter">1,284</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Est. Total Payout</p>
-                    <p className="text-2xl font-black text-[#00B87C] tracking-tighter">₹28.6L</p>
-                  </div>
-                </div>
+                    <div className="grid grid-cols-2 gap-4 p-6 rounded-[28px] bg-muted/30 border border-border mb-6 shadow-inner">
+                      <div>
+                        <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Employee Count</p>
+                        <p className="text-2xl font-black text-foreground tracking-tighter">1,284</p>
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">Est. Total Payout</p>
+                        <p className="text-2xl font-black text-[#00B87C] tracking-tighter">₹28.6L</p>
+                      </div>
+                    </div>
 
-                <div className="flex gap-4 p-5 rounded-[24px] bg-rose-500/5 border border-rose-500/20 mb-4">
-                  <AlertCircle size={24} className="text-rose-500 shrink-0" />
-                  <p className="text-[12px] text-rose-600 font-bold leading-relaxed">
-                    CRITICAL: This action is irreversible. All salary computations, deductions, and tax withholdings will be finalized upon review.
-                  </p>
-                </div>
+                    <div className="flex gap-4 p-5 rounded-2xl bg-rose-500/5 border border-rose-500/20 mb-4">
+                      <AlertCircle size={24} className="text-rose-500 shrink-0" />
+                      <p className="text-[12px] text-rose-600 font-bold leading-relaxed">
+                        CRITICAL: This action is irreversible. All salary computations, deductions, and tax withholdings will be finalized upon review.
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6] shadow-inner">
+                          <CheckCircle2 size={24} />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-black text-foreground tracking-tight leading-none">Review & Finalize</h3>
+                          <p className="text-[12px] font-bold text-muted-foreground mt-1.5 uppercase tracking-widest">April 2026 Cycle</p>
+                        </div>
+                      </div>
+                      <button onClick={() => setShowRunModal(false)} className="p-2 hover:bg-muted rounded-2xl transition-all">
+                        <X size={24} className="text-muted-foreground" />
+                      </button>
+                    </div>
+                    
+                    <div className="border border-border rounded-xl overflow-hidden mb-6">
+                      <table className="w-full text-left">
+                        <thead className="bg-muted">
+                          <tr>
+                            <th className="px-4 py-2 text-[11px] font-bold text-muted-foreground uppercase">Category</th>
+                            <th className="px-4 py-2 text-[11px] font-bold text-muted-foreground uppercase text-right">Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border">
+                          <tr>
+                            <td className="px-4 py-3 text-[13px] font-semibold text-foreground">Gross Pay</td>
+                            <td className="px-4 py-3 text-[13px] font-bold text-foreground text-right">₹32.8L</td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-3 text-[13px] font-semibold text-foreground">Total Deductions</td>
+                            <td className="px-4 py-3 text-[13px] font-bold text-rose-500 text-right">-₹4.2L</td>
+                          </tr>
+                          <tr className="bg-emerald-500/5">
+                            <td className="px-4 py-3 text-[14px] font-black text-foreground">Net Disbursement</td>
+                            <td className="px-4 py-3 text-[14px] font-black text-[#00B87C] text-right">₹28.6L</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className="p-8 pt-0 flex gap-4">
                 <button 
-                  onClick={() => setShowRunModal(false)}
+                  onClick={() => runModalStep === 2 ? setRunModalStep(1) : setShowRunModal(false)}
                   className="flex-1 py-4 rounded-[20px] border border-border text-foreground font-black text-[13px] uppercase tracking-widest hover:bg-muted transition-all active:scale-95"
                 >
-                  Cancel
+                  {runModalStep === 2 ? "Back" : "Cancel"}
                 </button>
                 <button 
-                  className="flex-1 py-4 rounded-[20px] bg-[#00B87C] text-white font-black text-[13px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20 active:scale-95"
+                  onClick={() => {
+                    if (runModalStep === 1) {
+                      setRunModalStep(2);
+                    } else {
+                      setShowRunModal(false);
+                      setToastMessage("Payroll processing started successfully.");
+                      setTimeout(() => setToastMessage(""), 3000);
+                    }
+                  }}
+                  className={`flex-1 py-4 rounded-[20px] text-white font-black text-[13px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg active:scale-95 ${runModalStep === 2 ? "bg-[#8B5CF6] shadow-[#8B5CF6]/20" : "bg-[#00B87C] shadow-[#00B87C]/20"}`}
                 >
-                  Proceed to Review
+                  {runModalStep === 2 ? "Confirm & Lock" : "Proceed to Review"}
                 </button>
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+      {/* Generic Modal */}
+      {genericModalTitle && (
+        <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={() => setGenericModalTitle("")} />
+          <div className="relative bg-card w-full max-w-[420px] rounded-2xl shadow-2xl border border-border overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-black text-foreground">{genericModalTitle}</h3>
+                <button onClick={() => setGenericModalTitle("")} className="text-muted-foreground hover:text-foreground">
+                  <X size={18} />
+                </button>
+              </div>
+              <p className="text-[13px] text-muted-foreground font-semibold mb-6">
+                Detailed view for {genericModalTitle.toLowerCase()} is not available in the current preview mode. Please check back later.
+              </p>
+              <button onClick={() => setGenericModalTitle("")} className="w-full py-2.5 rounded-xl border border-border font-bold text-[13px] hover:bg-muted transition-colors">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-6 right-6 z-[6000] bg-card text-foreground px-6 py-4 rounded-xl shadow-2xl border border-border flex items-center gap-3"
+          >
+            <CheckCircle2 size={20} className="text-[#00B87C]" />
+            <span className="text-[13px] font-bold">{toastMessage}</span>
+            <button onClick={() => setToastMessage("")} className="ml-4 text-muted-foreground hover:text-foreground">
+              <X size={16} />
+            </button>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
@@ -519,27 +695,47 @@ function KPICard({ title, value, subValue, color, icon: Icon }: { title: string,
   return (
     <motion.div 
       whileHover={{ y: -5 }}
-      className="p-6 bg-card border border-border rounded-[32px] shadow-sm hover:shadow-md transition-all group"
+      className="p-6 bg-card border border-border rounded-[32px] shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group"
     >
-      <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110" style={{ backgroundColor: colors[color].iconBg }}>
-        <Icon size={24} style={{ color: colors[color].iconColor }} />
+      <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-4 transition-transform group-hover:scale-110" style={{ backgroundColor: colors[color].iconBg }}>
+        <Icon size={18} style={{ color: colors[color].iconColor }} />
       </div>
-      <p className="text-[11px] font-black text-muted-foreground uppercase tracking-[1.8px] mb-2">{title}</p>
+      <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">{title}</p>
       <div className="flex items-end gap-2">
-        <h3 className="text-3xl font-black tracking-tighter" style={{ color: colors[color].text }}>{value}</h3>
+        <h3 className="text-[28px] font-bold tracking-tighter" style={{ color: colors[color].text }}>{value}</h3>
         {subValue && <span className="text-[12px] font-bold text-muted-foreground mb-1.5">{subValue}</span>}
       </div>
     </motion.div>
   );
 }
 
-function FilterSelect({ label }: { label: string }) {
+function FilterSelect({ label, options = ["Option 1", "Option 2"] }: { label: string, options?: string[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(label);
+  
   return (
     <div className="relative">
-      <button className="flex items-center gap-2.5 px-5 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm">
-        {label}
-        <ChevronDown size={16} className="text-muted-foreground" />
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+        className="flex items-center gap-2.5 px-5 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm"
+      >
+        {selected}
+        <ChevronDown size={16} className={`text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
+      {isOpen && (
+        <div className="absolute top-full mt-2 w-full min-w-[180px] bg-card border border-border rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
+          {options.map((opt, i) => (
+            <button
+              key={i}
+              onClick={() => { setSelected(opt); setIsOpen(false); }}
+              className={`w-full text-left px-4 py-2.5 text-[13px] font-bold hover:bg-muted transition-all ${selected === opt ? 'text-[#00B87C]' : 'text-foreground'}`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -561,7 +757,7 @@ function StatusChip({ status }: { status: PayrollRecord['status'] }) {
 function InfoItem({ label, value }: { label: string, value: string }) {
   return (
     <div>
-      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[1.5px] mb-1.5">{label}</p>
+      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[1.5px] mb-1.5">{label}</p>
       <p className="text-[14px] font-black text-foreground tracking-tight">{value}</p>
     </div>
   );
@@ -591,7 +787,7 @@ function ChecklistItem({ label, status }: { label: string, status: 'success' | '
       <span className={`text-[13px] font-bold ${status === 'success' ? 'text-foreground' : status === 'warning' ? 'text-amber-700' : 'text-teal-700'}`}>
         {label}
       </span>
-      {status === 'success' && <div className="ml-auto w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px] font-black">✓</div>}
+      {status === 'success' && <div className="ml-auto w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[11px] font-semibold">✓</div>}
     </div>
   );
 }

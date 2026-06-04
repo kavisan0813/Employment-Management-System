@@ -8,8 +8,10 @@ import {
   Download,
   Search,
   AlertCircle,
+  MessageSquare
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { showToast } from "../components/workflow/ToastNotification";
 
 /* ─── Types ─── */
 interface SettlementComponent {
@@ -138,16 +140,16 @@ function KPICard({ title, value, color, icon: Icon }: {
   return (
     <motion.div
       whileHover={{ y: -5 }}
-      className="p-6 bg-card border border-border rounded-[32px] shadow-sm hover:shadow-md transition-all group"
+      className="p-6 bg-card border border-border rounded-[32px] shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group"
     >
       <div
-        className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
+        className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
         style={{ backgroundColor: colors[color].bg }}
       >
-        <Icon size={24} style={{ color: colors[color].iconColor }} />
+        <Icon size={18} style={{ color: colors[color].iconColor }} />
       </div>
-      <p className="text-[11px] font-black text-muted-foreground uppercase tracking-[1.8px] mb-2">{title}</p>
-      <h3 className="text-3xl font-black tracking-tighter" style={{ color: colors[color].text }}>{value}</h3>
+      <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">{title}</p>
+      <h3 className="text-[28px] font-bold tracking-tighter" style={{ color: colors[color].text }}>{value}</h3>
     </motion.div>
   );
 }
@@ -165,7 +167,7 @@ function StatusChip({ status }: { status: string }) {
     Rejected: "✗ Rejected",
   };
   return (
-    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border flex items-center w-fit gap-1.5 ${styles[status] || styles.Pending}`}>
+    <span className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border flex items-center w-fit gap-1.5 ${styles[status] || styles.Pending}`}>
       {labels[status] || status}
     </span>
   );
@@ -174,7 +176,11 @@ function StatusChip({ status }: { status: string }) {
 /* ─── Main Component ─── */
 export function FinanceSettlements() {
   const [selectedSettlement, setSelectedSettlement] = useState<FFSettlement | null>(null);
+  const [rejectingSettlement, setRejectingSettlement] = useState<FFSettlement | null>(null);
+  const [processingSettlement, setProcessingSettlement] = useState<FFSettlement | null>(null);
   const [approvalLoading, setApprovalLoading] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
+  const [transferRef, setTransferRef] = useState("");
 
   const pendingCount = SETTLEMENTS.filter(s => s.status === "Pending").length;
   const approvedThisMonth = SETTLEMENTS.filter(s => s.status === "Approved").length;
@@ -183,14 +189,31 @@ export function FinanceSettlements() {
     .reduce((sum, s) => sum + s.netFF, 0);
 
   const handleApprove = () => {
-    if (!selectedSettlement) return;
+    if (!processingSettlement) return;
     setApprovalLoading(true);
     setTimeout(() => {
       setApprovalLoading(false);
+      showToast("Settlement Processed", "success", `F&F settlement for ${processingSettlement.employeeName} processed successfully. Transfer Ref: ${transferRef}`);
+      setProcessingSettlement(null);
       setSelectedSettlement(null);
+      setTransferRef("");
     }, 1000);
   };
 
+  const handleReject = () => {
+    if (rejectingSettlement) {
+      showToast("Settlement Rejected", "success", `Settlement sent back to HR for ${rejectingSettlement.employeeName}.`);
+      setRejectingSettlement(null);
+      setSelectedSettlement(null);
+      setRejectReason("");
+    }
+  };
+
+  const handleExport = () => {
+    showToast("Exporting", "info", "Downloading F&F Settlements CSV...");
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const totalPending = SETTLEMENTS.reduce((s, i) => s + (i.status === "Pending" ? i.netFF : 0), 0);
 
   return (
@@ -198,16 +221,16 @@ export function FinanceSettlements() {
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#EDE9FE] dark:bg-[#EDE9FE]/10 flex items-center justify-center shadow-inner border border-purple-100/20">
-            <IndianRupee size={28} className="text-[#8B5CF6]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#EDE9FE] dark:bg-[#EDE9FE]/10 flex items-center justify-center shadow-inner border border-purple-100/20">
+            <IndianRupee size={22} className="text-[#8B5CF6]" />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight">F&F Settlement Approvals</h1>
-            <p className="text-[13px] font-semibold text-muted-foreground">Review and approve final full and final settlement for exiting employees</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">F&F Settlement Approvals</h1>
+            <p className="text-[13px] text-[#6B7280]">Review and approve final full and final settlement for exiting employees</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-bold text-sm hover:bg-muted/50 transition-all">
+          <button onClick={handleExport} className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-bold text-sm hover:bg-muted/50 transition-all">
             <Download size={18} />
             Export
           </button>
@@ -248,14 +271,14 @@ export function FinanceSettlements() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#F9FAFB] dark:bg-muted/10 border-b border-border">
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">EMPLOYEE</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">LAST DATE</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">GROSS F&F</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">DEDUCTIONS</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">NET F&F</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">STATUS</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9CA3AF] text-center">ACTION</th>
+              <tr className="bg-[#F9FAFB] dark:bg-white/5 dark:bg-muted/10 border-b border-border">
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">EMPLOYEE</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">LAST DATE</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">GROSS F&F</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">DEDUCTIONS</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">NET F&F</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">STATUS</th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8] text-center">ACTION</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -308,7 +331,7 @@ export function FinanceSettlements() {
                       ) : (
                         <button
                           onClick={() => setSelectedSettlement(item)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-[11px] font-black uppercase tracking-widest text-muted-foreground hover:bg-muted transition-all"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:bg-muted transition-all"
                         >
                           View
                           <ChevronRight size={14} />
@@ -365,7 +388,7 @@ export function FinanceSettlements() {
               <div className="px-8 py-6 space-y-6 max-h-[55vh] overflow-y-auto">
                 {/* Components */}
                 <div>
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">Settlement Components</p>
+                  <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">Settlement Components</p>
                   <div className="space-y-2.5">
                     {selectedSettlement.components.map((comp, i) => (
                       <div key={i} className="flex items-center justify-between py-2">
@@ -382,7 +405,7 @@ export function FinanceSettlements() {
                 {selectedSettlement.deductionItems.length > 0 && (
                   <>
                     <div>
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">Deductions</p>
+                      <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">Deductions</p>
                       <div className="space-y-2.5">
                         {selectedSettlement.deductionItems.map((item, i) => (
                           <div key={i} className="flex items-center justify-between py-2">
@@ -400,8 +423,8 @@ export function FinanceSettlements() {
                 <div className="bg-[#F0FDF4] dark:bg-[#00B87C]/5 rounded-2xl p-5 border border-[#00B87C]/20">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] font-black text-[#00B87C] uppercase tracking-widest">Net F&F Amount</p>
-                      <p className="text-[10px] font-medium text-muted-foreground mt-0.5">Gross: {formatCurrency(selectedSettlement.grossFF)} · Deductions: {formatCurrency(selectedSettlement.deductions)}</p>
+                      <p className="text-[11px] font-semibold text-[#00B87C] uppercase tracking-widest">Net F&F Amount</p>
+                      <p className="text-[11px] font-medium text-muted-foreground mt-0.5">Gross: {formatCurrency(selectedSettlement.grossFF)} · Deductions: {formatCurrency(selectedSettlement.deductions)}</p>
                     </div>
                     <span className="text-[22px] font-black text-[#00B87C] tracking-tight">{formatCurrency(selectedSettlement.netFF)}</span>
                   </div>
@@ -419,30 +442,152 @@ export function FinanceSettlements() {
               <div className="px-8 py-5 border-t border-border flex items-center justify-between bg-muted/5">
                 <button
                   onClick={() => setSelectedSettlement(null)}
-                  className="px-5 py-2.5 rounded-xl text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all"
+                  className="px-5 py-2.5 rounded-xl text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider hover:text-foreground transition-all"
                 >
                   Close
                 </button>
                 <div className="flex items-center gap-3">
                   {selectedSettlement.status === "Pending" && (
                     <>
-                      <button className="px-5 py-2.5 rounded-xl border border-[#EF4444]/30 text-[#EF4444] text-[11px] font-black uppercase tracking-widest hover:bg-[#EF4444]/5 transition-all flex items-center gap-1.5">
+                      <button 
+                        onClick={() => setRejectingSettlement(selectedSettlement)}
+                        className="px-5 py-2.5 rounded-xl border border-[#EF4444]/30 text-[#EF4444] text-[11px] font-bold uppercase tracking-widest hover:bg-[#EF4444]/5 transition-all flex items-center gap-1.5"
+                      >
                         <X size={14} /> Send Back to HR
                       </button>
                       <button
-                        onClick={handleApprove}
-                        disabled={approvalLoading}
-                        className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50 flex items-center gap-1.5"
+                        onClick={() => setProcessingSettlement(selectedSettlement)}
+                        className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-1.5"
                       >
-                        {approvalLoading ? (
-                          "Processing..."
-                        ) : (
-                          <><CheckCircle2 size={14} /> Approve Settlement</>
-                        )}
+                        <CheckCircle2 size={14} /> Process Settlement
                       </button>
                     </>
                   )}
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* REJECT MODAL */}
+      <AnimatePresence>
+        {rejectingSettlement && (
+          <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+              onClick={() => setRejectingSettlement(null)}
+            ></motion.div>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-card w-full max-w-[460px] rounded-[32px] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 pb-0 flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-3xl bg-red-500/10 flex items-center justify-center mb-6 shadow-inner">
+                  <X size={32} className="text-red-500" />
+                </div>
+                <h3 className="text-xl font-black text-foreground tracking-tight">Send Back to HR</h3>
+                <p className="text-[13px] font-bold text-muted-foreground mt-2 mb-6">Are you sure you want to reject the settlement for {rejectingSettlement.employeeName}?</p>
+                
+                <div className="w-full text-left space-y-4">
+                  <div>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Rejection Reason</label>
+                    <div className="relative">
+                      <MessageSquare className="absolute left-3.5 top-3 text-muted-foreground" size={16} />
+                      <textarea 
+                        value={rejectReason}
+                        onChange={e => setRejectReason(e.target.value)}
+                        placeholder="Provide a reason for sending back..."
+                        className="w-full bg-card border border-border rounded-xl pl-11 pr-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500/20 h-24 resize-none"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8 flex items-center gap-3">
+                <button 
+                  onClick={() => setRejectingSettlement(null)}
+                  className="flex-1 py-3.5 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleReject} 
+                  disabled={!rejectReason.trim()}
+                  className="flex-1 py-3.5 rounded-2xl bg-red-500 text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-red-500/20 disabled:opacity-50"
+                >
+                  Confirm Reject
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* PROCESS MODAL */}
+      <AnimatePresence>
+        {processingSettlement && (
+          <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+              onClick={() => setProcessingSettlement(null)}
+            ></motion.div>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-card w-full max-w-[460px] rounded-[32px] overflow-hidden shadow-2xl"
+            >
+              <div className="p-8 pb-0 flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-3xl bg-emerald-500/10 flex items-center justify-center mb-6 shadow-inner">
+                  <CheckCircle2 size={32} className="text-emerald-500" />
+                </div>
+                <h3 className="text-xl font-black text-foreground tracking-tight">Process Settlement</h3>
+                <p className="text-[13px] font-bold text-muted-foreground mt-2 mb-6">Process final settlement for {processingSettlement.employeeName}</p>
+                
+                <div className="w-full text-left space-y-4">
+                  <div>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Net Amount</label>
+                    <div className="w-full bg-muted/50 border border-border rounded-xl px-4 py-3 text-sm font-black text-[#00B87C]">
+                      {formatCurrency(processingSettlement.netFF)}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Transfer Reference Number</label>
+                    <input 
+                      type="text"
+                      value={transferRef}
+                      onChange={e => setTransferRef(e.target.value)}
+                      placeholder="e.g. TRN-987654321"
+                      className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#00B87C]/20"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8 flex items-center gap-3">
+                <button 
+                  onClick={() => setProcessingSettlement(null)}
+                  className="flex-1 py-3.5 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleApprove} 
+                  disabled={!transferRef.trim() || approvalLoading}
+                  className="flex-1 py-3.5 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                >
+                  {approvalLoading ? "Processing..." : "Confirm Payment"}
+                </button>
               </div>
             </motion.div>
           </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { 
   Users, 
   Search, 
@@ -124,17 +124,17 @@ export function ManagerTeam() {
       {/* ─── PAGE HEADER ─── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#DCFCE7] flex items-center justify-center text-[#10B981] shadow-sm border border-[#10B981]/10">
-            <Users size={28} />
+          <div className="w-11 h-11 rounded-[10px] bg-[#DCFCE7] flex items-center justify-center text-[#10B981] shadow-sm border border-[#10B981]/10">
+            <Users size={22} />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight">My Team</h1>
-            <p className="text-sm font-bold text-muted-foreground flex items-center gap-2">
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">My Team</h1>
+            <p className="text-[13px] text-[#6B7280] flex items-center gap-2">
               Engineering <span className="w-1 h-1 rounded-full bg-muted-foreground/40" /> 12 direct reports
             </p>
           </div>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-black text-foreground hover:bg-secondary transition-all shadow-sm">
+        <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-bold text-foreground hover:bg-secondary transition-all shadow-sm">
           <Download size={18} />
           EXPORT
         </button>
@@ -184,35 +184,35 @@ export function ManagerTeam() {
       </div>
 
       {/* ─── TEAM TABLE ─── */}
-      <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-border bg-secondary/10">
-          <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">Direct Reports</h3>
+          <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Direct Reports</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[1000px]">
             <thead>
               <tr className="bg-secondary/20">
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Employee</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Designation</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center">Attendance</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center">Leave Bal.</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center">Performance</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">CTC</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Status</th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">Action</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Employee</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Designation</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">Attendance</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">Leave Bal.</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">Performance</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">CTC</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Status</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {filteredTeam.map((emp) => (
-                <tr key={emp.id} className="hover:bg-secondary/30 transition-colors h-16 group">
+                <tr key={emp.id} className="hover:bg-[#00B87C]/[0.08] transition-colors h-16 group">
                   <td className="px-6 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs shrink-0 shadow-sm border border-border" style={{ backgroundColor: emp.color + '15', color: emp.color }}>
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 shadow-sm border border-border" style={{ backgroundColor: emp.color + '15', color: emp.color }}>
                         <img src={emp.avatar} alt="" className="w-full h-full rounded-xl object-cover" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[14px] font-black text-foreground truncate">{emp.name}</p>
-                        <p className="text-[10px] font-bold text-muted-foreground">#{emp.id}</p>
+                        <p className="text-[14px] font-bold text-foreground truncate">{emp.name}</p>
+                        <p className="text-[11px] font-bold text-muted-foreground">#{emp.id}</p>
                       </div>
                     </div>
                   </td>
@@ -221,7 +221,7 @@ export function ManagerTeam() {
                   </td>
                   <td className="px-6 py-3 text-center">
                     <div className="flex flex-col items-center">
-                      <span className={`text-[13px] font-black ${parseInt(emp.attendance) < 85 ? 'text-amber-500' : 'text-[#00B87C]'}`}>
+                      <span className={`text-[13px] font-bold ${parseInt(emp.attendance) < 85 ? 'text-amber-500' : 'text-[#00B87C]'}`}>
                         {emp.attendance}
                       </span>
                       <div className="w-12 h-1 bg-secondary rounded-full mt-1 overflow-hidden">
@@ -230,16 +230,16 @@ export function ManagerTeam() {
                     </div>
                   </td>
                   <td className="px-6 py-3 text-center">
-                    <span className="text-[13px] font-black text-foreground">{emp.leaveBal}</span>
+                    <span className="text-[13px] font-bold text-foreground">{emp.leaveBal}</span>
                   </td>
                   <td className="px-6 py-3 text-center">
                     <div className="flex items-center justify-center gap-1">
                       <Star size={12} className="fill-amber-400 text-amber-400" />
-                      <span className="text-[13px] font-black text-foreground">{emp.performance}</span>
+                      <span className="text-[13px] font-bold text-foreground">{emp.performance}</span>
                     </div>
                   </td>
                   <td className="px-6 py-3 text-right">
-                    <span className="text-[13px] font-black text-foreground">{emp.ctc}</span>
+                    <span className="text-[13px] font-bold text-foreground">{emp.ctc}</span>
                   </td>
                   <td className="px-6 py-3">
                     <div className={`px-3 py-1 rounded-full inline-flex items-center gap-1.5 ${
@@ -251,13 +251,13 @@ export function ManagerTeam() {
                         emp.status === 'Active' ? 'bg-emerald-600' :
                         emp.status === 'WFH' ? 'bg-teal-600' : 'bg-red-600'
                       }`} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">{emp.status}</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider">{emp.status}</span>
                     </div>
                   </td>
                   <td className="px-6 py-3 text-right">
                     <button 
                       onClick={() => setSelectedEmployee(emp)}
-                      className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest flex items-center gap-1 ml-auto hover:gap-2 transition-all"
+                      className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider flex items-center gap-1 ml-auto hover:gap-2 transition-all"
                     >
                       Profile <ChevronRight size={14} />
                     </button>
@@ -291,7 +291,7 @@ export function ManagerTeam() {
             >
               {/* Header */}
               <div className="p-6 border-b border-border flex items-center justify-between">
-                <h2 className="text-base font-black text-foreground uppercase tracking-widest">Employee Profile</h2>
+                <h2 className="text-base font-bold text-foreground uppercase tracking-wider">Employee Profile</h2>
                 <button 
                   onClick={() => setSelectedEmployee(null)}
                   className="p-2 rounded-xl hover:bg-secondary text-muted-foreground transition-all"
@@ -310,9 +310,9 @@ export function ManagerTeam() {
                     <UserCheck size={16} />
                   </div>
                 </div>
-                <h3 className="text-xl font-black text-foreground">{selectedEmployee.name}</h3>
-                <p className="text-sm font-black text-[#00B87C] uppercase tracking-wider mt-1">{selectedEmployee.designation}</p>
-                <div className="flex items-center gap-3 mt-4 text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                <h3 className="text-xl font-bold text-foreground">{selectedEmployee.name}</h3>
+                <p className="text-sm font-bold text-[#00B87C] uppercase tracking-wider mt-1">{selectedEmployee.designation}</p>
+                <div className="flex items-center gap-3 mt-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                   <span>Engineering</span>
                   <span className="w-1 h-1 rounded-full bg-border" />
                   <span>{selectedEmployee.id}</span>
@@ -320,11 +320,11 @@ export function ManagerTeam() {
                   <span>Since {selectedEmployee.joinDate}</span>
                 </div>
                 <div className="flex items-center gap-3 mt-6">
-                  <div className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-[#10B981] text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5">
+                  <div className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-[#10B981] text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                     {selectedEmployee.status}
                   </div>
-                  <div className="px-3 py-1 rounded-full bg-secondary text-muted-foreground text-[10px] font-black uppercase tracking-widest">
+                  <div className="px-3 py-1 rounded-full bg-secondary text-muted-foreground text-[11px] font-bold uppercase tracking-wider">
                     Full-time
                   </div>
                 </div>
@@ -337,7 +337,7 @@ export function ManagerTeam() {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`pb-3 text-[11px] font-black uppercase tracking-widest transition-all relative ${
+                      className={`pb-3 text-[11px] font-bold uppercase tracking-wider transition-all relative ${
                         activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
@@ -356,30 +356,30 @@ export function ManagerTeam() {
                   <div className="space-y-6">
                     <div className="grid grid-cols-2 gap-y-6 gap-x-4">
                       <div>
-                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Email</p>
+                        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Email</p>
                         <p className="text-sm font-bold text-foreground truncate">{selectedEmployee.email}</p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Phone</p>
+                        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Phone</p>
                         <p className="text-sm font-bold text-foreground">{selectedEmployee.phone}</p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Location</p>
+                        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Location</p>
                         <p className="text-sm font-bold text-foreground">{selectedEmployee.location}</p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Work Mode</p>
+                        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Work Mode</p>
                         <p className="text-sm font-bold text-foreground">{selectedEmployee.workMode}</p>
                       </div>
                     </div>
 
                     <div className="p-4 rounded-2xl bg-secondary/30 border border-border">
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Current CTC</p>
-                      <p className="text-2xl font-black text-foreground">₹{parseInt(selectedEmployee.ctc.replace('₹', '').replace('L', ''))},00,000</p>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Current CTC</p>
+                      <p className="text-2xl font-bold text-foreground">₹{parseInt(selectedEmployee.ctc.replace('₹', '').replace('L', ''))},00,000</p>
                     </div>
 
                     <div>
-                      <h4 className="text-[11px] font-black text-foreground uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <h4 className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
                         <Calendar size={14} className="text-[#00B87C]" /> Upcoming Leaves
                       </h4>
                       <div className="space-y-2">
@@ -389,10 +389,10 @@ export function ManagerTeam() {
                         ].map((leave, i) => (
                           <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-border bg-card">
                             <div>
-                              <p className="text-xs font-black text-foreground">{leave.date}</p>
-                              <p className="text-[10px] font-bold text-muted-foreground">{leave.type}</p>
+                              <p className="text-xs font-bold text-foreground">{leave.date}</p>
+                              <p className="text-[11px] font-bold text-muted-foreground">{leave.type}</p>
                             </div>
-                            <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${
+                            <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
                               leave.status === "Approved" ? "text-[#00B87C] bg-emerald-50 dark:bg-emerald-500/10" : "text-amber-500 bg-amber-50"
                             }`}>
                               {leave.status}
@@ -403,7 +403,7 @@ export function ManagerTeam() {
                     </div>
 
                     <div>
-                      <h4 className="text-[11px] font-black text-foreground uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <h4 className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
                         <Clock size={14} className="text-[#00B87C]" /> Recent Activity
                       </h4>
                       <div className="space-y-4 ml-2 border-l border-border pl-4">
@@ -415,7 +415,7 @@ export function ManagerTeam() {
                           <div key={i} className="relative">
                             <div className="absolute -left-[21px] top-1 w-2 h-2 rounded-full bg-[#00B87C] ring-4 ring-card" />
                             <p className="text-xs font-bold text-foreground leading-tight">{item.text}</p>
-                            <p className="text-[10px] text-muted-foreground mt-0.5">{item.time}</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">{item.time}</p>
                           </div>
                         ))}
                       </div>
@@ -433,16 +433,16 @@ export function ManagerTeam() {
                         { label: "Leave", value: "2", color: "#0EA5E9", bg: "#E0F2FE" }
                       ].map((stat, i) => (
                         <div key={i} className="p-4 rounded-2xl border border-border bg-card flex flex-col items-center">
-                          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{stat.label}</span>
-                          <span className="text-2xl font-black text-foreground">{stat.value}</span>
+                          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">{stat.label}</span>
+                          <span className="text-2xl font-bold text-foreground">{stat.value}</span>
                         </div>
                       ))}
                     </div>
                     <div className="p-4 rounded-2xl border border-border bg-card">
-                      <h4 className="text-[11px] font-black text-foreground uppercase tracking-widest mb-4">May 2026</h4>
+                      <h4 className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-4">May 2026</h4>
                       <div className="grid grid-cols-7 gap-1 text-center">
                         {["M", "T", "W", "T", "F", "S", "S"].map(d => (
-                          <div key={d} className="text-[10px] font-black text-muted-foreground py-1">{d}</div>
+                          <div key={d} className="text-[11px] font-bold text-muted-foreground py-1">{d}</div>
                         ))}
                         {Array.from({ length: 31 }).map((_, i) => {
                           const day = i + 1;
@@ -476,8 +476,8 @@ export function ManagerTeam() {
                       ].map((bal, i) => (
                         <div key={i} className="p-4 rounded-2xl border border-border bg-card">
                           <div className="flex justify-between items-end mb-2">
-                            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{bal.label} Bal</span>
-                            <span className="text-lg font-black text-foreground">{bal.value}<span className="text-xs text-muted-foreground">/{bal.total}</span></span>
+                            <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">{bal.label} Bal</span>
+                            <span className="text-lg font-bold text-foreground">{bal.value}<span className="text-xs text-muted-foreground">/{bal.total}</span></span>
                           </div>
                           <div className="w-full h-1 bg-secondary rounded-full overflow-hidden">
                             <div className="h-full rounded-full" style={{ width: `${(parseInt(bal.value)/parseInt(bal.total))*100}%`, backgroundColor: bal.color }} />
@@ -486,7 +486,7 @@ export function ManagerTeam() {
                       ))}
                     </div>
                     <div>
-                      <h4 className="text-[11px] font-black text-foreground uppercase tracking-widest mb-4">Recent Requests</h4>
+                      <h4 className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-4">Recent Requests</h4>
                       <div className="space-y-2">
                         {[
                           { type: "Sick Leave", date: "Apr 12", status: "Approved" },
@@ -494,10 +494,10 @@ export function ManagerTeam() {
                         ].map((req, i) => (
                           <div key={i} className="p-3 rounded-xl border border-border bg-secondary/20 flex items-center justify-between">
                             <div>
-                              <p className="text-xs font-black text-foreground">{req.type}</p>
-                              <p className="text-[10px] font-bold text-muted-foreground">{req.date}</p>
+                              <p className="text-xs font-bold text-foreground">{req.type}</p>
+                              <p className="text-[11px] font-bold text-muted-foreground">{req.date}</p>
                             </div>
-                            <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10">
+                            <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10">
                               {req.status}
                             </span>
                           </div>
@@ -510,18 +510,18 @@ export function ManagerTeam() {
                 {activeTab === "Performance" && (
                   <div className="space-y-6">
                     <div className="p-6 rounded-2xl bg-card border border-border text-center shadow-sm">
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">Overall Rating</p>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Overall Rating</p>
                       <div className="flex items-center justify-center gap-1 mb-2">
                         {[1, 2, 3, 4, 5].map(s => (
                           <Star key={s} size={24} className={s <= Math.floor(parseFloat(selectedEmployee.performance)) ? "fill-amber-400 text-amber-400" : "text-border"} />
                         ))}
                       </div>
-                      <p className="text-2xl font-black text-foreground">{selectedEmployee.performance}<span className="text-sm text-muted-foreground">/5.0</span></p>
-                      <p className="text-[10px] font-bold text-muted-foreground mt-2 uppercase tracking-widest">Last Review: Dec 15, 2025</p>
+                      <p className="text-2xl font-bold text-foreground">{selectedEmployee.performance}<span className="text-sm text-muted-foreground">/5.0</span></p>
+                      <p className="text-[11px] font-bold text-muted-foreground mt-2 uppercase tracking-wider">Last Review: Dec 15, 2025</p>
                     </div>
 
                     <div>
-                      <h4 className="text-[11px] font-black text-foreground uppercase tracking-widest mb-4 flex items-center justify-between">
+                      <h4 className="text-[11px] font-bold text-foreground uppercase tracking-wider mb-4 flex items-center justify-between">
                         Goal Progress
                         <span className="text-[#00B87C] cursor-pointer hover:underline">View All</span>
                       </h4>
@@ -534,7 +534,7 @@ export function ManagerTeam() {
                           <div key={i}>
                             <div className="flex justify-between items-center mb-1.5">
                               <span className="text-[11px] font-bold text-foreground">{goal.label}</span>
-                              <span className="text-[11px] font-black text-[#00B87C]">{goal.progress}%</span>
+                              <span className="text-[11px] font-bold text-[#00B87C]">{goal.progress}%</span>
                             </div>
                             <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
                               <motion.div 
@@ -548,7 +548,7 @@ export function ManagerTeam() {
                       </div>
                     </div>
 
-                    <button className="w-full py-4 rounded-2xl bg-[#00B87C]/10 text-[#00B87C] text-[12px] font-black uppercase tracking-widest hover:bg-[#00B87C] hover:text-white transition-all flex items-center justify-center gap-2 mt-4 border border-[#00B87C]/20">
+                    <button className="w-full py-4 rounded-2xl bg-[#00B87C]/10 text-[#00B87C] text-[12px] font-bold uppercase tracking-wider hover:bg-[#00B87C] hover:text-white transition-all flex items-center justify-center gap-2 mt-4 border border-[#00B87C]/20">
                       Write Performance Review <ChevronRight size={16} />
                     </button>
                   </div>
@@ -557,12 +557,12 @@ export function ManagerTeam() {
 
               {/* Footer */}
               <div className="p-6 border-t border-border bg-secondary/5 grid grid-cols-2 gap-3">
-                <button className="py-3.5 rounded-2xl border border-border bg-card text-foreground text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-secondary transition-all">
+                <button className="py-3.5 rounded-2xl border border-border bg-card text-foreground text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-secondary transition-all">
                   <MessageSquare size={16} /> Message
                 </button>
                 <button 
                   onClick={() => navigate(`/employees/${selectedEmployee.id}`)}
-                  className="py-3.5 rounded-2xl bg-[#00B87C] text-white text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20"
+                  className="py-3.5 rounded-2xl bg-[#00B87C] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20"
                 >
                   Full Profile <ExternalLink size={16} />
                 </button>

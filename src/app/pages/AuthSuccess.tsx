@@ -10,7 +10,7 @@ import {
   Users,
   HelpCircle,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 export function AuthSuccess() {
   const location = useLocation();
@@ -127,13 +127,13 @@ export function AuthSuccess() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-            className="w-20 h-20 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 mb-8"
+            className="w-20 h-20 rounded-full bg-[#00B87C] flex items-center justify-center text-white shadow-lg shadow-[#00B87C]/20 mb-8"
           >
             <Check size={40} strokeWidth={3} />
           </motion.div>
 
           {/* Heading */}
-          <h1 className="text-3xl font-black tracking-tighter text-foreground mb-2">
+          <h1 className="text-[26px] font-bold text-[#111827] mb-2">
             Account Created! 🎉
           </h1>
           <p className="text-muted-foreground font-medium text-sm leading-relaxed mb-6">
@@ -188,7 +188,7 @@ export function AuthSuccess() {
           </div>
 
           {/* Footer */}
-          <p className="mt-10 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+          <p className="mt-10 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/40">
             v2.0 Enterprise HRMS Platform
           </p>
         </div>

@@ -1115,9 +1115,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
               style={{
-                background: currentRole === "Finance" 
-                  ? "linear-gradient(135deg, #0EA5E9, #2DD4BF)" 
-                  : "linear-gradient(135deg, #00B87C, #059669)",
+                background: "linear-gradient(135deg, #00B87C, #059669)",
               }}
             >
               <span

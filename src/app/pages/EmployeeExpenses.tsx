@@ -244,7 +244,7 @@ function StatusBadge({ status }: { status: ExpenseStatus }) {
 
   return (
     <span
-      className={`px-2.5 py-1 rounded-full text-[10px] font-black border flex items-center gap-1.5 w-fit uppercase tracking-wider ${cfg[status]}`}
+      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border flex items-center gap-1.5 w-fit uppercase tracking-wider ${cfg[status]}`}
     >
       <Icon size={12} />
       {status}
@@ -259,18 +259,18 @@ function ReceiptBadge({
 }) {
   if (status === "Attached")
     return (
-      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/10 text-primary border border-primary/20 flex items-center gap-1.5 uppercase tracking-wider">
+      <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-primary border border-primary/20 flex items-center gap-1.5 uppercase tracking-wider">
         <FileText size={12} /> Attached
       </span>
     );
   if (status === "Missing")
     return (
-      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center gap-1.5 uppercase tracking-wider">
+      <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center gap-1.5 uppercase tracking-wider">
         <X size={12} /> Missing
       </span>
     );
   return (
-    <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1.5 uppercase tracking-wider">
+    <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1.5 uppercase tracking-wider">
       <UploadCloud size={12} /> Upload
     </span>
   );
@@ -300,7 +300,7 @@ function SummaryCard({
   progress,
 }: SummaryCardProps) {
   return (
-    <div className="bg-card p-5 rounded-[24px] border border-border shadow-sm relative group hover:shadow-md transition-all">
+    <div className="bg-card p-5 rounded-2xl border border-border shadow-sm relative group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all">
       <div className="flex items-start justify-between mb-4">
         <div
           className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center ${color}`}
@@ -318,7 +318,7 @@ function SummaryCard({
           </svg>
         </div>
       </div>
-      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
         {label}
       </p>
       <div className="flex items-center justify-between">
@@ -497,7 +497,7 @@ export function EmployeeExpenses() {
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-black hover:opacity-95 transition-all text-[13px] shadow-lg shadow-emerald-500/20"
+            className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-black hover:opacity-95 transition-all text-[13px] shadow-lg shadow-[#00B87C]/20"
           >
             <Receipt size={18} /> + New Expense
           </button>
@@ -571,7 +571,7 @@ export function EmployeeExpenses() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
         {/* Left Column — Table */}
         <div className="space-y-6">
-          <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden flex flex-col">
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
             {/* Table Header Row */}
             <div className="p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <SectionHeader title="EXPENSE CLAIMS" count="8 total" />
@@ -698,22 +698,22 @@ export function EmployeeExpenses() {
               <table className="w-full text-left min-w-[750px] table-fixed">
                 <thead>
                   <tr className="bg-secondary/50 border-b border-border">
-                    <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest w-[30%]">
+                    <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest w-[30%]">
                       EXPENSE
                     </th>
-                    <th className="px-4 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center w-[15%]">
+                    <th className="px-4 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center w-[15%]">
                       CATEGORY
                     </th>
-                    <th className="px-4 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center w-[12%]">
+                    <th className="px-4 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center w-[12%]">
                       DATE
                     </th>
-                    <th className="px-4 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center w-[15%]">
+                    <th className="px-4 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center w-[15%]">
                       AMOUNT
                     </th>
-                    <th className="px-4 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center w-[13%]">
+                    <th className="px-4 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center w-[13%]">
                       RECEIPT
                     </th>
-                    <th className="px-4 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center w-[15%]">
+                    <th className="px-4 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center w-[15%]">
                       STATUS
                     </th>
                   </tr>
@@ -805,7 +805,7 @@ export function EmployeeExpenses() {
         {/* Right Column — Widgets */}
         <div className="space-y-6">
           {/* Widget 1 — Budget Tracker */}
-          <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
             <SectionHeader title="BUDGET TRACKER" />
             <p className="text-[11px] font-bold text-muted-foreground mt-1 mb-6 uppercase tracking-wider">
               April 2026 · ₹15,000 LIMIT
@@ -854,14 +854,14 @@ export function EmployeeExpenses() {
                       style={{ width: `${(item.val / item.limit) * 100}%` }}
                     />
                   </div>
-                  <p className="text-[10px] font-bold text-muted-foreground/60 text-right uppercase tracking-tighter">
+                  <p className="text-[11px] font-bold text-muted-foreground/60 text-right uppercase tracking-tighter">
                     ₹{(item.limit - item.val).toLocaleString()} remaining
                   </p>
                 </div>
               ))}
             </div>
             <div className="mt-8 pt-6 border-t border-border">
-              <div className="flex items-center justify-between mb-3 text-[13px] font-black uppercase tracking-widest">
+              <div className="flex items-center justify-between mb-3 text-[13px] font-semibold uppercase tracking-wider">
                 <span className="text-foreground">Used: ₹8,750</span>
                 <span className="text-primary">Left: ₹6,250</span>
               </div>
@@ -878,7 +878,7 @@ export function EmployeeExpenses() {
           </div>
 
           {/* Widget 2 — Quick Submit */}
-          <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
             <SectionHeader title="QUICK SUBMIT" />
             <div className="grid grid-cols-3 gap-2 mt-5">
               {[
@@ -928,7 +928,7 @@ export function EmployeeExpenses() {
                     size={16}
                     className={`${item.color} mb-1.5 group-hover:scale-110 transition-transform`}
                   />
-                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tighter">
+                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-tighter">
                     {item.label}
                   </span>
                 </button>
@@ -937,7 +937,7 @@ export function EmployeeExpenses() {
           </div>
 
           {/* Widget 3 — Timeline */}
-          <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
             <SectionHeader title="TIMELINE" />
             <div className="mt-6 space-y-6">
               {[
@@ -993,7 +993,7 @@ export function EmployeeExpenses() {
             className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
             onClick={() => setShowAddModal(false)}
           />
-          <div className="relative bg-card w-full max-w-[520px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-border">
+          <div className="relative bg-card w-full max-w-[520px] rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-border">
             <div className="p-6 border-b border-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
@@ -1021,7 +1021,7 @@ export function EmployeeExpenses() {
                 <SectionHeader title="EXPENSE DETAILS" />
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     CATEGORY
                   </label>
                   <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
@@ -1051,7 +1051,7 @@ export function EmployeeExpenses() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       TITLE
                     </label>
                     <input
@@ -1061,7 +1061,7 @@ export function EmployeeExpenses() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       AMOUNT (₹)
                     </label>
                     <input
@@ -1074,7 +1074,7 @@ export function EmployeeExpenses() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       DATE
                     </label>
                     <input
@@ -1083,7 +1083,7 @@ export function EmployeeExpenses() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       PAYMENT MODE
                     </label>
                     <select className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none appearance-none focus:border-primary transition-colors">
@@ -1096,7 +1096,7 @@ export function EmployeeExpenses() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     DESCRIPTION
                   </label>
                   <textarea
@@ -1111,7 +1111,7 @@ export function EmployeeExpenses() {
 
               <div className="space-y-4">
                 <SectionHeader title="RECEIPT (OPTIONAL)" />
-                <div className="border-2 border-dashed border-border rounded-[20px] p-8 bg-card flex flex-col items-center justify-center hover:border-primary transition-all cursor-pointer group">
+                <div className="border-2 border-dashed border-border rounded-2xl p-8 bg-card flex flex-col items-center justify-center hover:border-primary transition-all cursor-pointer group">
                   <UploadCloud
                     size={28}
                     className="text-primary mb-3 group-hover:scale-110 transition-transform"
@@ -1144,7 +1144,7 @@ export function EmployeeExpenses() {
                   setNewExpenseDesc("");
                   setNewExpenseCat("Travel");
                 }}
-                className="px-6 py-3 bg-primary text-white rounded-xl font-black hover:opacity-95 transition-all text-[13px] shadow-lg shadow-emerald-500/20"
+                className="px-6 py-3 bg-primary text-white rounded-xl font-black hover:opacity-95 transition-all text-[13px] shadow-lg shadow-[#00B87C]/20"
               >
                 Submit Expense
               </button>
@@ -1191,7 +1191,7 @@ export function EmployeeExpenses() {
             <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
               <div className="p-4 bg-secondary/50 border border-border rounded-2xl flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                     AMOUNT
                   </p>
                   <p className="text-[22px] font-black text-foreground">
@@ -1211,7 +1211,7 @@ export function EmployeeExpenses() {
                     { label: "Payment", val: selectedExpense.paymentMode },
                   ].map((d) => (
                     <div key={d.label}>
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                         {d.label}
                       </p>
                       <p className="text-[13px] font-bold text-foreground">

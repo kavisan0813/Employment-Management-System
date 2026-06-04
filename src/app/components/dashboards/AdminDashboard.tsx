@@ -65,12 +65,12 @@ export function AdminDashboard() {
       {/* ═══ PAGE HEADER ═══ */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#EDE9FE] flex items-center justify-center">
+          <div className="w-11 h-11 rounded-[10px] bg-[#EDE9FE] flex items-center justify-center">
             <Activity size={28} className="text-[#8B5CF6]" />
           </div>
           <div>
-            <h2 className="text-[26px] font-black text-foreground tracking-tight">Admin Dashboard</h2>
-            <p className="text-[13px] font-semibold text-muted-foreground">Monday, April 6, 2026</p>
+            <h2 className="text-[26px] font-bold text-[#111827]">Admin Dashboard</h2>
+            <p className="text-[13px] text-[#6B7280]">Monday, April 6, 2026</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -118,26 +118,26 @@ export function AdminDashboard() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-shadow cursor-pointer"
           >
-            <div className="w-10 h-10 rounded-xl mb-3 flex items-center justify-center" style={{ backgroundColor: kpi.bg }}>
+            <div className="w-9 h-9 rounded-[10px] mb-3 flex items-center justify-center" style={{ backgroundColor: kpi.bg }}>
               <kpi.icon size={20} style={{ color: kpi.color }} />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{kpi.label}</p>
-            <p className="text-2xl font-black text-foreground tracking-tighter mb-1">{kpi.value}</p>
-            <p className="text-[11px] font-bold text-muted-foreground">{kpi.sub}</p>
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">{kpi.label}</p>
+            <p className="text-[28px] font-bold text-[#111827] mb-1">{kpi.value}</p>
+            <p className="text-[12px] text-[#6B7280]">{kpi.sub}</p>
           </motion.div>
         ))}
       </div>
 
       {/* ═══ ROW 2 — CHARTS ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-card p-6 rounded-[24px] border border-border shadow-sm">
+        <div className="lg:col-span-2 bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Headcount Trend</h3>
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Headcount Trend</h3>
             <div className="flex gap-2">
               {['6M', '1Y', '2Y'].map(f => (
-                <button key={f} className={`px-3 py-1 rounded-full text-[10px] font-black tracking-widest ${f === '6M' ? 'bg-primary text-white' : 'bg-secondary text-muted-foreground'}`}>{f}</button>
+                <button key={f} className={`px-3 py-1 rounded-full text-[11px] font-black tracking-widest ${f === '6M' ? 'bg-primary text-white' : 'bg-secondary text-muted-foreground'}`}>{f}</button>
               ))}
             </div>
           </div>
@@ -160,8 +160,8 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-6">Dept Distribution</h3>
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+          <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6">Dept Distribution</h3>
           <div className="h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -188,9 +188,9 @@ export function AdminDashboard() {
       {/* ═══ ROW 3 — ADMIN ACTIONS & LOGS ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Pending Actions */}
-        <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
           <div className="p-6 border-b border-border">
-            <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Pending Admin Actions</h3>
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Pending Admin Actions</h3>
           </div>
           <div className="divide-y divide-border">
             {PENDING_ACTIONS.map((action, i) => (
@@ -201,7 +201,7 @@ export function AdminDashboard() {
                   </div>
                   <div>
                     <p className="text-[13px] font-bold text-foreground leading-tight">{action.title}</p>
-                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: action.color }}>{action.urgency} Priority</span>
+                    <span className="text-[11px] font-black uppercase tracking-widest" style={{ color: action.color }}>{action.urgency} Priority</span>
                   </div>
                 </div>
                 <ArrowRight size={16} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
@@ -214,9 +214,9 @@ export function AdminDashboard() {
         </div>
 
         {/* Audit Log */}
-        <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
           <div className="p-6 border-b border-border">
-            <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Recent System Activity</h3>
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Recent System Activity</h3>
           </div>
           <div className="p-6 space-y-6">
             {AUDIT_LOG.map((log, i) => (
@@ -237,10 +237,10 @@ export function AdminDashboard() {
         </div>
 
         {/* Module Usage */}
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm flex flex-col">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Module Usage</h3>
-            <span className="px-2 py-0.5 rounded bg-emerald-50 text-[10px] font-black text-emerald-600 uppercase tracking-widest">Most used: Attendance 94%</span>
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Module Usage</h3>
+            <span className="px-2 py-0.5 rounded bg-emerald-50 text-[11px] font-black text-emerald-600 uppercase tracking-widest">Most used: Attendance 94%</span>
           </div>
           <div className="space-y-6 flex-1">
             {MODULE_USAGE.map((mod, i) => (
@@ -266,21 +266,21 @@ export function AdminDashboard() {
 
       {/* ═══ BOTTOM ROW — ROLES & QUICK ACTIONS ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm overflow-hidden">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-6">User Roles Distribution</h3>
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm overflow-hidden">
+          <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6">User Roles Distribution</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-border">
-                  <th className="pb-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Role Name</th>
-                  <th className="pb-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Members</th>
-                  <th className="pb-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Status</th>
-                  <th className="pb-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-right">Action</th>
+                <tr className="bg-[#F9FAFB] dark:bg-white/5">
+                  <th className="pb-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Role Name</th>
+                  <th className="pb-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Members</th>
+                  <th className="pb-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Status</th>
+                  <th className="pb-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {ROLE_DIST.map((role, i) => (
-                  <tr key={i} className="hover:bg-secondary/30 transition-colors">
+                  <tr key={i} className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08]">
                     <td className="py-4">
                       <span className="px-3 py-1 rounded-full text-[11px] font-black tracking-wider" style={{ color: role.color, backgroundColor: role.bg }}>{role.role}</span>
                     </td>
@@ -301,8 +301,8 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-6">Quick System Actions</h3>
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+          <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6">Quick System Actions</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {[
               { icon: IndianRupee, label: "Run Payroll", color: "#8B5CF6", bg: "#EDE9FE" },

@@ -74,7 +74,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
 
   return (
     <div
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider"
       style={{ color: config.color, backgroundColor: config.bg }}
     >
       <Icon size={12} strokeWidth={3} />

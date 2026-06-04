@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Settings,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Lock,
   User,
   Bell,
@@ -10,6 +11,7 @@ import {
   Eye,
   EyeOff,
   Check,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Info,
   Download,
   Sliders,
@@ -195,14 +197,14 @@ export function FinanceSettings() {
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-28 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent">
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex items-center gap-4 border-b border-emerald-500/10 pb-6">
-        <div className="w-12 h-12 rounded-2xl bg-[#F3F4F6] flex items-center justify-center flex-shrink-0 dark:bg-secondary">
-          <Settings size={24} className="text-[#6B7280]" />
+        <div className="w-11 h-11 rounded-[10px] bg-[#F3F4F6] flex items-center justify-center flex-shrink-0 dark:bg-secondary">
+          <Settings size={22} className="text-[#6B7280]" />
         </div>
         <div>
-          <h1 className="text-[26px] font-black text-foreground leading-none mb-1">
+          <h1 className="text-[26px] font-bold text-foreground leading-none mb-1">
             Settings
           </h1>
-          <p className="text-[13px] font-bold text-muted-foreground">
+          <p className="text-[13px] text-[#6B7280]">
             Personal preferences and payroll configuration
           </p>
         </div>
@@ -222,7 +224,7 @@ export function FinanceSettings() {
         <div className="w-full lg:w-[260px] bg-white rounded-2xl p-3 flex flex-col gap-6 shadow-sm flex-shrink-0 dark:bg-card border border-border">
           {/* Section: PERSONAL */}
           <div>
-            <p className="px-3 text-[10px] font-black text-[#9CA3AF] uppercase tracking-widest mb-2.5">
+            <p className="px-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-widest mb-2.5">
               PERSONAL
             </p>
             <ul className="space-y-1">
@@ -254,7 +256,7 @@ export function FinanceSettings() {
 
           {/* Section: PAYROLL SCOPE */}
           <div>
-            <p className="px-3 text-[10px] font-black text-[#9CA3AF] uppercase tracking-widest mb-2.5">
+            <p className="px-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-widest mb-2.5">
               PAYROLL SCOPE
             </p>
             <ul className="space-y-1">
@@ -283,7 +285,7 @@ export function FinanceSettings() {
 
           {/* Section: ACCOUNT */}
           <div>
-            <p className="px-3 text-[10px] font-black text-[#9CA3AF] uppercase tracking-widest mb-2.5">
+            <p className="px-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-widest mb-2.5">
               ACCOUNT
             </p>
             <ul className="space-y-1">
@@ -353,7 +355,7 @@ export function FinanceSettings() {
               {/* Form Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     First Name
                   </label>
                   <input
@@ -364,7 +366,7 @@ export function FinanceSettings() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Last Name
                   </label>
                   <input
@@ -375,7 +377,7 @@ export function FinanceSettings() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Email Address
                   </label>
                   <input
@@ -386,7 +388,7 @@ export function FinanceSettings() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Phone Number
                   </label>
                   <input
@@ -397,7 +399,7 @@ export function FinanceSettings() {
                   />
                 </div>
                 <div className="space-y-1.5 md:col-span-2">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Bio
                   </label>
                   <textarea
@@ -500,7 +502,7 @@ export function FinanceSettings() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Language
                   </label>
                   <select
@@ -514,7 +516,7 @@ export function FinanceSettings() {
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Date Format
                   </label>
                   <select
@@ -528,7 +530,7 @@ export function FinanceSettings() {
                   </select>
                 </div>
                 <div className="space-y-1.5 md:col-span-2">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Time Zone
                   </label>
                   <select
@@ -557,7 +559,7 @@ export function FinanceSettings() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Payroll Cut-off Date
                   </label>
                   <select
@@ -571,7 +573,7 @@ export function FinanceSettings() {
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Personal Tax Regime
                   </label>
                   <select
@@ -608,7 +610,7 @@ export function FinanceSettings() {
 
               <div className="max-w-md space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Current Password
                   </label>
                   <div className="relative">
@@ -629,7 +631,7 @@ export function FinanceSettings() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     New Password
                   </label>
                   <div className="relative">
@@ -650,7 +652,7 @@ export function FinanceSettings() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                     Confirm New Password
                   </label>
                   <div className="relative">

@@ -210,7 +210,7 @@ export function ManagerSettings() {
   }) => (
     <div className="flex items-start justify-between py-4 border-b border-border last:border-0 gap-8">
       <div className="flex-1">
-        <p className="text-[13px] font-black text-foreground leading-tight">{label}</p>
+        <p className="text-[13px] font-bold text-foreground leading-tight">{label}</p>
         <p className="text-[11px] font-bold text-muted-foreground mt-1 max-w-[500px]">
           {description}
         </p>
@@ -234,34 +234,34 @@ export function ManagerSettings() {
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-28 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent">
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex items-center gap-4 border-b border-emerald-500/10 pb-6">
-        <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center border border-border flex-shrink-0">
-          <Settings size={24} className="text-[#6B7280]" />
+        <div className="w-11 h-11 rounded-[10px] bg-secondary flex items-center justify-center border border-border flex-shrink-0">
+          <Settings size={22} className="text-[#6B7280]" />
         </div>
         <div>
-          <h1 className="text-[26px] font-black text-foreground leading-none mb-1">
+          <h1 className="text-[26px] font-bold text-foreground leading-none mb-1">
             Settings
           </h1>
-          <p className="text-[13px] font-bold text-muted-foreground uppercase tracking-widest">
+          <p className="text-[13px] text-[#6B7280]">
             Personal preferences and team configuration
           </p>
         </div>
       </div>
 
       {/* ─── Access Notice Banner (amber) ────────────────────────── */}
-      <div className="w-full bg-amber-500/10 rounded-[20px] border border-amber-500/20 px-6 py-4 flex items-start gap-3.5 dark:bg-amber-500/5">
+      <div className="w-full bg-amber-500/10 rounded-2xl border border-amber-500/20 px-6 py-4 flex items-start gap-3.5 dark:bg-amber-500/5">
         <Lock size={18} className="text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
         <p className="text-[13px] font-bold text-amber-700 dark:text-amber-500/90 leading-relaxed">
-          <span className="font-black">Manager role access active.</span> You have permission to manage team preferences and personal configs only. System, payroll, and global security policies remain locked and are managed by Super Admin and Finance roles.
+          <span className="font-bold">Manager role access active.</span> You have permission to manage team preferences and personal configs only. System, payroll, and global security policies remain locked and are managed by Super Admin and Finance roles.
         </p>
       </div>
 
       {/* ─── Two-Column Layout ───────────────────────────────────── */}
       <div className="flex flex-col lg:flex-row gap-8 items-start">
         {/* Left Sub-nav */}
-        <div className="w-full lg:w-[260px] bg-card rounded-[24px] border border-border p-4 flex flex-col gap-6 shadow-sm flex-shrink-0">
+        <div className="w-full lg:w-[260px] bg-card rounded-2xl border border-border p-4 flex flex-col gap-6 shadow-sm flex-shrink-0">
           {/* Section: Team Settings */}
           <div>
-            <p className="px-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2.5">
+            <p className="px-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">
               Team Settings
             </p>
             <ul className="space-y-1">
@@ -276,7 +276,7 @@ export function ManagerSettings() {
                   <li key={item.label}>
                     <button
                       onClick={() => setActiveTab(item.label as SettingsTab)}
-                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-black transition-all text-left ${
+                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-bold transition-all text-left ${
                         isActive
                           ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/15"
                           : "text-muted-foreground hover:bg-secondary hover:text-foreground"
@@ -293,7 +293,7 @@ export function ManagerSettings() {
 
           {/* Section: My Preferences */}
           <div>
-            <p className="px-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2.5">
+            <p className="px-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">
               My Preferences
             </p>
             <ul className="space-y-1">
@@ -308,7 +308,7 @@ export function ManagerSettings() {
                   <li key={item.label}>
                     <button
                       onClick={() => setActiveTab(item.label as SettingsTab)}
-                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-black transition-all text-left ${
+                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-bold transition-all text-left ${
                         isActive
                           ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/15"
                           : "text-muted-foreground hover:bg-secondary hover:text-foreground"
@@ -325,7 +325,7 @@ export function ManagerSettings() {
 
           {/* Locked Sections */}
           <div className="border-t border-border pt-4">
-            <p className="px-3 text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest mb-2.5 flex items-center gap-1.5">
+            <p className="px-3 text-[11px] font-bold text-muted-foreground/60 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
               System Settings <Lock size={10} />
             </p>
             <ul className="space-y-1 opacity-50">
@@ -356,7 +356,7 @@ export function ManagerSettings() {
           {activeTab === "Team Preferences" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Team Configuration</h2>
+                <h2 className="text-[18px] font-bold text-foreground">Team Configuration</h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Update basic team metadata and accessibility permissions
                 </p>
@@ -366,7 +366,7 @@ export function ManagerSettings() {
               <div className="bg-[#F0FDF4] border border-emerald-500/20 rounded-2xl p-6 dark:bg-[#00B87C]/5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Team Name
                     </label>
                     <input
@@ -378,7 +378,7 @@ export function ManagerSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Team Size
                     </label>
                     <input
@@ -390,7 +390,7 @@ export function ManagerSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Department
                     </label>
                     <input
@@ -402,7 +402,7 @@ export function ManagerSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Cost Center
                     </label>
                     <input
@@ -414,7 +414,7 @@ export function ManagerSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Default Location
                     </label>
                     <select
@@ -429,7 +429,7 @@ export function ManagerSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Standard Work Mode
                     </label>
                     <select
@@ -479,7 +479,7 @@ export function ManagerSettings() {
           {activeTab === "Leave Approval Rules" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Approval Workflow</h2>
+                <h2 className="text-[18px] font-bold text-foreground">Approval Workflow</h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Set triggers, notice windows, and escalation policies for leave management
                 </p>
@@ -489,7 +489,7 @@ export function ManagerSettings() {
               <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Max leave days per request (before escalation to HR)
                     </label>
                     <input
@@ -501,7 +501,7 @@ export function ManagerSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Auto-escalate if not reviewed within (days)
                     </label>
                     <input
@@ -513,7 +513,7 @@ export function ManagerSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Leave calendar advance notice required (days)
                     </label>
                     <input
@@ -525,7 +525,7 @@ export function ManagerSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Blackout dates
                     </label>
                     <input
@@ -572,7 +572,7 @@ export function ManagerSettings() {
           {activeTab === "Performance Defaults" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Default Review Settings</h2>
+                <h2 className="text-[18px] font-bold text-foreground">Default Review Settings</h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Establish standard performance review timeframes and evaluation defaults
                 </p>
@@ -582,7 +582,7 @@ export function ManagerSettings() {
               <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Self-review window (days)
                     </label>
                     <input
@@ -594,7 +594,7 @@ export function ManagerSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       My review deadline (days after self-review)
                     </label>
                     <input
@@ -606,7 +606,7 @@ export function ManagerSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Default rating scale
                     </label>
                     <select
@@ -621,7 +621,7 @@ export function ManagerSettings() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                       Feedback visibility
                     </label>
                     <select
@@ -665,7 +665,7 @@ export function ManagerSettings() {
           {activeTab === "Expense Approval Limits" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">My Approval Authority</h2>
+                <h2 className="text-[18px] font-bold text-foreground">My Approval Authority</h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Review your current expense delegation limits and routing thresholds
                 </p>
@@ -676,13 +676,13 @@ export function ManagerSettings() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-secondary/40 border-b border-border">
-                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                      <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                         Category
                       </th>
-                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                      <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                         My Limit
                       </th>
-                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest font-black">
+                      <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider font-bold">
                         Above Limit Action
                       </th>
                     </tr>
@@ -696,8 +696,8 @@ export function ManagerSettings() {
                       { cat: "Other", limit: "₹3,000", action: "Escalate to Finance" },
                     ].map((row, idx) => (
                       <tr key={idx} className="hover:bg-secondary/20 transition-colors">
-                        <td className="px-6 py-4 font-black">{row.cat}</td>
-                        <td className="px-6 py-4 text-[#00B87C] font-black">{row.limit}</td>
+                        <td className="px-6 py-4 font-bold">{row.cat}</td>
+                        <td className="px-6 py-4 text-[#00B87C] font-bold">{row.limit}</td>
                         <td className="px-6 py-4 font-bold text-muted-foreground">{row.action}</td>
                       </tr>
                     ))}
@@ -709,11 +709,11 @@ export function ManagerSettings() {
               <div className="bg-[#F0FDF4] border border-emerald-500/20 rounded-xl p-5 flex items-center justify-between dark:bg-[#00B87C]/5">
                 <div className="flex items-center gap-3">
                   <Receipt size={18} className="text-[#00B87C]" />
-                  <span className="text-[13px] font-black text-foreground">
+                  <span className="text-[13px] font-bold text-foreground">
                     Total per request threshold:
                   </span>
                 </div>
-                <span className="text-[15px] font-black text-[#00B87C]">
+                <span className="text-[15px] font-bold text-[#00B87C]">
                   ₹25,000 max
                 </span>
               </div>
@@ -725,7 +725,7 @@ export function ManagerSettings() {
                   <p className="text-[12px] font-bold text-amber-700 dark:text-amber-500/90 leading-tight">
                     Delegated approval authority is locked.
                   </p>
-                  <p className="text-[10px] font-bold text-amber-600/90 dark:text-amber-500/80 mt-1">
+                  <p className="text-[11px] font-bold text-amber-600/90 dark:text-amber-500/80 mt-1">
                     Approval limits are configured centrally by HR Administration. Please contact your Department Head to request threshold changes.
                   </p>
                 </div>
@@ -737,7 +737,7 @@ export function ManagerSettings() {
           {activeTab === "Notification Settings" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">My Notification Preferences</h2>
+                <h2 className="text-[18px] font-bold text-foreground">My Notification Preferences</h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Configure alerts, push triggers, and digest schedules
                 </p>
@@ -818,7 +818,7 @@ export function ManagerSettings() {
           {activeTab === "Language & Region" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Language & Region Settings</h2>
+                <h2 className="text-[18px] font-bold text-foreground">Language & Region Settings</h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Select your localized display parameters and time zone defaults
                 </p>
@@ -826,7 +826,7 @@ export function ManagerSettings() {
 
               <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6 gap-6 flex flex-col">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     Preferred Language
                   </label>
                   <select
@@ -842,7 +842,7 @@ export function ManagerSettings() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     Date Format
                   </label>
                   <select
@@ -857,7 +857,7 @@ export function ManagerSettings() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     Time Zone
                   </label>
                   <select
@@ -879,7 +879,7 @@ export function ManagerSettings() {
           {activeTab === "Change Password" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Change Password</h2>
+                <h2 className="text-[18px] font-bold text-foreground">Change Password</h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Create a new secure passphrase for your user credentials
                 </p>
@@ -888,7 +888,7 @@ export function ManagerSettings() {
               <div className="space-y-5">
                 {/* Current Password */}
                 <div className="space-y-1.5 relative">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     Current Password
                   </label>
                   <div className="relative">
@@ -911,7 +911,7 @@ export function ManagerSettings() {
 
                 {/* New Password */}
                 <div className="space-y-1.5 relative">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     New Password
                   </label>
                   <div className="relative">
@@ -935,7 +935,7 @@ export function ManagerSettings() {
                 {/* Password Strength Bar */}
                 {newPassword && (
                   <div className="space-y-2">
-                    <div className="flex justify-between items-center text-[10px] font-black text-muted-foreground uppercase">
+                    <div className="flex justify-between items-center text-[11px] font-bold text-muted-foreground uppercase">
                       <span>Password Strength</span>
                       <span
                         className={
@@ -971,7 +971,7 @@ export function ManagerSettings() {
 
                 {/* Confirm Password */}
                 <div className="space-y-1.5 relative">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -994,7 +994,7 @@ export function ManagerSettings() {
 
                 {/* Requirements Checklist */}
                 <div className="bg-secondary/40 rounded-xl p-4 border border-border">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2.5">
+                  <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">
                     Security Requirements
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-bold">
@@ -1067,7 +1067,7 @@ export function ManagerSettings() {
           {activeTab === "Appearance" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Theme & Layout Customization</h2>
+                <h2 className="text-[18px] font-bold text-foreground">Theme & Layout Customization</h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Update theme controls, display templates, and format protocols
                 </p>
@@ -1075,7 +1075,7 @@ export function ManagerSettings() {
 
               {/* Theme Selector */}
               <div className="space-y-3">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                   Display Mode
                 </label>
                 <div className="flex flex-wrap gap-3">
@@ -1089,7 +1089,7 @@ export function ManagerSettings() {
                       <button
                         key={t.val}
                         onClick={() => setTheme(t.val)}
-                        className={`px-6 py-3 rounded-2xl text-[13px] font-black border transition-all ${
+                        className={`px-6 py-3 rounded-2xl text-[13px] font-bold border transition-all ${
                           isSelected
                             ? "bg-[#00B87C] text-white border-emerald-500/20 shadow-lg shadow-emerald-500/20"
                             : "bg-card text-foreground border-border hover:bg-secondary"
@@ -1105,7 +1105,7 @@ export function ManagerSettings() {
               {/* Locale Fields */}
               <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-6 flex flex-col gap-5 mt-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     System Language
                   </label>
                   <select
@@ -1120,7 +1120,7 @@ export function ManagerSettings() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     Date Format
                   </label>
                   <select
@@ -1134,7 +1134,7 @@ export function ManagerSettings() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     System Time Zone
                   </label>
                   <select
@@ -1154,7 +1154,7 @@ export function ManagerSettings() {
           <div className="mt-8 pt-5 border-t border-border flex flex-col sm:flex-row items-center justify-end gap-5">
             <button
               onClick={handleReset}
-              className="flex items-center gap-2 text-[12px] font-black text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-2 text-[12px] font-bold text-muted-foreground hover:text-foreground transition-colors"
             >
               <RefreshCw size={14} />
               Reset to Defaults
@@ -1162,7 +1162,7 @@ export function ManagerSettings() {
 
             <button
               onClick={handleSave}
-              className="flex items-center gap-2 px-8 py-3 bg-[#00B87C] text-white rounded-2xl font-black text-[13px] shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
+              className="flex items-center gap-2 px-8 py-3 bg-[#00B87C] text-white rounded-2xl font-bold text-[13px] shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
             >
               <CheckCircle size={15} />
               Save Settings

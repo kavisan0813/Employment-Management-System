@@ -114,18 +114,18 @@ export function ManagerAttendance() {
       {/* ── Page Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#DCFCE7] flex items-center justify-center shrink-0">
-            <CalendarCheck size={24} className="text-[#10B981]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#DCFCE7] flex items-center justify-center shrink-0">
+            <CalendarCheck size={22} className="text-[#10B981]" />
           </div>
           <div>
             <h1
-              className="text-[26px] font-extrabold tracking-tight leading-none"
+              className="text-[26px] font-bold tracking-tight leading-none"
               style={{ color: "var(--foreground)" }}
             >
               Team Attendance
             </h1>
             <p
-              className="text-[13px] font-semibold mt-1"
+              className="text-[13px] text-[#6B7280] mt-1"
               style={{ color: "var(--muted-foreground)" }}
             >
               Engineering Team · April 2026
@@ -213,7 +213,7 @@ export function ManagerAttendance() {
                 ].map((header) => (
                   <th
                     key={header}
-                    className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap"
+                    className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider whitespace-nowrap"
                   >
                     {header}
                   </th>
@@ -226,7 +226,7 @@ export function ManagerAttendance() {
                 return (
                   <tr
                     key={row.id}
-                    className="hover:bg-[#F0FDF4] dark:hover:bg-zinc-800/50 transition-colors group"
+                    className="hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-800/50 transition-colors group"
                     style={{ height: "64px" }}
                   >
                     <td className="px-6 py-2">
@@ -334,7 +334,7 @@ export function ManagerAttendance() {
           {CALENDAR_DAYS.map((day) => (
             <div
               key={day}
-              className="text-[10px] font-black text-muted-foreground uppercase tracking-widest"
+              className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider"
             >
               {day}
             </div>
@@ -431,19 +431,19 @@ export function ManagerAttendance() {
         <div className="flex items-center gap-4 mt-4 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-[#10B981]" />
-            <span className="text-[10px] font-bold text-muted-foreground uppercase">Present</span>
+            <span className="text-[11px] font-bold text-muted-foreground uppercase">Present</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-[#F59E0B]" />
-            <span className="text-[10px] font-bold text-muted-foreground uppercase">Late</span>
+            <span className="text-[11px] font-bold text-muted-foreground uppercase">Late</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-[#EF4444]" />
-            <span className="text-[10px] font-bold text-muted-foreground uppercase">Absent</span>
+            <span className="text-[11px] font-bold text-muted-foreground uppercase">Absent</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-[#F97316]" />
-            <span className="text-[10px] font-bold text-muted-foreground uppercase">Leave</span>
+            <span className="text-[11px] font-bold text-muted-foreground uppercase">Leave</span>
           </div>
         </div>
       </div>
@@ -463,12 +463,12 @@ export function ManagerAttendance() {
               className="p-6 border-b flex items-center gap-3"
               style={{ borderColor: "var(--border)" }}
             >
-              <div className="w-10 h-10 rounded-xl bg-[#E0F2FE] flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-[10px] bg-[#E0F2FE] flex items-center justify-center shrink-0">
                 <Clock size={20} className="text-[#0EA5E9]" />
               </div>
               <div>
                 <h3
-                  className="text-[16px] font-extrabold"
+                  className="text-[16px] font-bold"
                   style={{ color: "var(--foreground)" }}
                 >
                   Approve Regularization Request
@@ -502,7 +502,7 @@ export function ManagerAttendance() {
               {/* Form Fields */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-2">
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
                     Corrected Check-in Time
                   </label>
                   <input
@@ -514,7 +514,7 @@ export function ManagerAttendance() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-2">
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
                     Reason for regularization
                   </label>
                   <select
@@ -530,7 +530,7 @@ export function ManagerAttendance() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-2">
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
                     Manager Notes
                   </label>
                   <textarea
@@ -556,7 +556,7 @@ export function ManagerAttendance() {
             >
               <button
                 onClick={() => setShowRegularizeModal(false)}
-                className="px-5 py-2.5 rounded-xl border text-[13px] font-bold transition-colors hover:bg-white dark:hover:bg-zinc-900"
+                className="px-5 py-2.5 rounded-xl border text-[13px] font-bold transition-colors hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-900"
                 style={{ borderColor: "var(--border)", color: "var(--muted-foreground)" }}
               >
                 Cancel
@@ -598,12 +598,12 @@ function KPICard({
       className="p-5 rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm"
       style={{ borderColor: "var(--border)" }}
     >
-      <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+      <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
         {title}
       </h3>
       <div className="flex items-end gap-2">
         <span
-          className="text-[28px] font-extrabold leading-none tracking-tight"
+          className="text-[28px] font-bold leading-none tracking-tight"
           style={{ color: colors[color].text }}
         >
           {value}

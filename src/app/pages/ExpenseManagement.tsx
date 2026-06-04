@@ -47,7 +47,7 @@ import {
   Cell,
 } from "recharts";
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { useAuth } from "../context/AuthContext";
 import { EmployeeExpenses } from "./EmployeeExpenses";
 
@@ -402,7 +402,7 @@ export function Expenses() {
       {/* ── Page Header ── */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
+          <h1 className="text-[26px] font-bold text-[#111827] flex items-center gap-3">
             <Layers className="text-emerald-500" size={32} />
             Expense Management
           </h1>
@@ -539,7 +539,7 @@ export function Expenses() {
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-6 py-2.5 text-sm font-bold text-white bg-emerald-500 hover:bg-emerald-600 rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 active:scale-95"
+            className="px-6 py-2.5 text-sm font-bold text-white bg-[#00B87C] hover:bg-[#059669] rounded-xl transition-all shadow-lg shadow-[#00B87C]/20 flex items-center gap-2 active:scale-95"
           >
             <Plus size={20} strokeWidth={3} />
             Add Expense
@@ -548,7 +548,7 @@ export function Expenses() {
       </div>
 
       {/* ── PREMIUM TOP WORKFLOW STATUS BAR ── */}
-      <div className="mt-6 mb-8 bg-card border border-border rounded-[24px] shadow-sm p-2 flex flex-wrap items-center gap-2">
+      <div className="mt-6 mb-8 bg-card border border-border rounded-2xl shadow-sm p-2 flex flex-wrap items-center gap-2">
         <StatusChip
           dotColor="bg-orange-500"
           label="₹42K Pending Approvals"
@@ -577,7 +577,7 @@ export function Expenses() {
           <motion.div
             key={i}
             whileHover={{ y: -5 }}
-            className="relative group bg-card border border-border rounded-3xl p-6 overflow-hidden hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300 cursor-pointer"
+            className="relative group bg-card border border-border rounded-3xl p-6 overflow-hidden hover:shadow-xl hover:shadow-[#00B87C]/5 transition-all duration-300 cursor-pointer"
           >
             <div
               className={`absolute -right-4 -top-4 w-24 h-24 rounded-full bg-${stat.color}-500/5 group-hover:scale-150 transition-transform duration-500`}
@@ -599,7 +599,7 @@ export function Expenses() {
                 </div>
               </div>
               <div className="flex items-baseline gap-2">
-                <h3 className="text-3xl font-black text-foreground tracking-tight">
+                <h3 className="text-[28px] font-bold">
                   {stat.val}
                 </h3>
               </div>
@@ -646,7 +646,7 @@ export function Expenses() {
 
           <button
             onClick={() => setShowFilterPanel(!showFilterPanel)}
-            className="flex items-center gap-2 px-7 py-4 rounded-full font-bold text-[15px] bg-[#10B981] text-white hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
+            className="flex items-center gap-2 px-7 py-4 rounded-full font-bold text-[15px] bg-[#10B981] text-white hover:bg-emerald-600 transition-all shadow-lg shadow-[#00B87C]/20 active:scale-95"
           >
             <Filter size={18} />
             Filters
@@ -660,7 +660,7 @@ export function Expenses() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-[24px] shadow-sm p-4 flex flex-wrap items-center gap-8"
+              className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-sm p-4 flex flex-wrap items-center gap-8"
             >
               <FilterPill
                 icon={<MapPin size={18} />}
@@ -740,7 +740,7 @@ export function Expenses() {
             <div className="relative" ref={settingsMenuRef}>
               <button
                 onClick={() => setShowSettingsMenu(!showSettingsMenu)}
-                className={`p-2.5 rounded-xl border transition-all ${showSettingsMenu ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-lg shadow-emerald-500/10" : "border-border text-muted-foreground hover:bg-muted/50"}`}
+                className={`p-2.5 rounded-xl border transition-all ${showSettingsMenu ? "bg-[#00B87C]/10 border-[#00B87C]/30 text-[#00B87C] shadow-lg shadow-[#00B87C]/10" : "border-border text-muted-foreground hover:bg-muted/50"}`}
               >
                 <Settings size={18} />
               </button>
@@ -753,7 +753,7 @@ export function Expenses() {
                     className="absolute top-full right-0 mt-2 w-56 bg-card border border-border rounded-2xl shadow-2xl z-50 py-2 overflow-hidden"
                   >
                     <div className="px-4 py-2 border-b border-border mb-1">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Table Preferences
                       </p>
                     </div>
@@ -803,7 +803,7 @@ export function Expenses() {
             <div className="relative" ref={shareMenuRef}>
               <button
                 onClick={() => setShowShareMenu(!showShareMenu)}
-                className={`p-2.5 rounded-xl border transition-all ${showShareMenu ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-lg shadow-emerald-500/10" : "border-border text-muted-foreground hover:bg-muted/50"}`}
+                className={`p-2.5 rounded-xl border transition-all ${showShareMenu ? "bg-[#00B87C]/10 border-[#00B87C]/30 text-[#00B87C] shadow-lg shadow-[#00B87C]/10" : "border-border text-muted-foreground hover:bg-muted/50"}`}
               >
                 <Share2 size={18} />
               </button>
@@ -816,7 +816,7 @@ export function Expenses() {
                     className="absolute top-full right-0 mt-2 w-56 bg-card border border-border rounded-2xl shadow-2xl z-50 py-2 overflow-hidden"
                   >
                     <div className="px-4 py-2 border-b border-border mb-1">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Share Expense Report
                       </p>
                     </div>
@@ -856,7 +856,7 @@ export function Expenses() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 bg-muted/30">
+              <tr className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70 bg-muted/30">
                 {visibleColumns.details && (
                   <th className="px-8 py-5">Employee Details</th>
                 )}
@@ -887,14 +887,14 @@ export function Expenses() {
                   {visibleColumns.details && (
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white font-black text-xs flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white font-black text-xs flex items-center justify-center shadow-lg shadow-[#00B87C]/20">
                           {claim.employee.avatar}
                         </div>
                         <div>
                           <p className="text-sm font-black text-foreground leading-none mb-1">
                             {claim.employee.name}
                           </p>
-                          <p className="text-[10px] font-bold text-muted-foreground tracking-tight">
+                          <p className="text-[11px] font-bold text-muted-foreground tracking-tight">
                             {claim.employee.dept} • {claim.id}
                           </p>
                         </div>
@@ -939,7 +939,7 @@ export function Expenses() {
                   {visibleColumns.approval && (
                     <td className="px-4 py-5">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
                           claim.approvalStatus === "Pending"
                             ? "bg-amber-500/5 text-amber-600 border-amber-500/10"
                             : claim.approvalStatus === "Approved"
@@ -1194,7 +1194,7 @@ export function Expenses() {
 
               <div className="p-8 grid grid-cols-2 gap-6 max-h-[70vh] overflow-y-auto">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Category*
                   </label>
                   <select
@@ -1207,7 +1207,7 @@ export function Expenses() {
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Claim Date*
                   </label>
                   <input
@@ -1217,7 +1217,7 @@ export function Expenses() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Amount (₹)*
                   </label>
                   <input
@@ -1228,7 +1228,7 @@ export function Expenses() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Payment Mode
                   </label>
                   <select
@@ -1241,7 +1241,7 @@ export function Expenses() {
                   </select>
                 </div>
                 <div className="col-span-2 space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Description
                   </label>
                   <textarea
@@ -1259,7 +1259,7 @@ export function Expenses() {
                   <p className="text-sm font-black text-foreground">
                     Click to upload receipt
                   </p>
-                  <p className="text-[10px] font-bold text-muted-foreground mt-1 tracking-tight">
+                  <p className="text-[11px] font-bold text-muted-foreground mt-1 tracking-tight">
                     PDF, JPG, PNG up to 10MB
                   </p>
                 </div>
@@ -1287,7 +1287,7 @@ export function Expenses() {
                     setIsEditing(false);
                     setEditingClaim(null);
                   }}
-                  className="flex-[2] py-3 text-sm font-black text-white bg-emerald-500 hover:bg-emerald-600 rounded-2xl transition-all shadow-xl shadow-emerald-500/30"
+                  className="flex-[2] py-3 text-sm font-black text-white bg-[#00B87C] hover:bg-[#059669] rounded-2xl transition-all shadow-xl shadow-[#00B87C]/30"
                 >
                   {isEditing ? "Update Claim" : "Submit Claim"}
                 </button>
@@ -1320,7 +1320,7 @@ export function Expenses() {
                   <h3 className="text-xl font-black text-foreground">
                     Claim Details
                   </h3>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
                     {viewClaim.id}
                   </p>
                 </div>
@@ -1334,7 +1334,7 @@ export function Expenses() {
 
               <div className="flex-1 overflow-y-auto p-8 space-y-8">
                 <div className="flex items-center gap-4 p-4 rounded-3xl bg-muted/30 border border-border">
-                  <div className="w-14 h-14 rounded-full bg-emerald-500 text-white font-black flex items-center justify-center text-xl shadow-lg shadow-emerald-500/20">
+                  <div className="w-14 h-14 rounded-full bg-emerald-500 text-white font-black flex items-center justify-center text-xl shadow-lg shadow-[#00B87C]/20">
                     {viewClaim.employee.avatar}
                   </div>
                   <div>
@@ -1344,7 +1344,7 @@ export function Expenses() {
                     <p className="text-xs font-bold text-muted-foreground">
                       {viewClaim.employee.email}
                     </p>
-                    <span className="inline-block mt-1 text-[9px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded border border-emerald-500/10">
+                    <span className="inline-block mt-1 text-[9px] font-semibold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded border border-emerald-500/10">
                       {viewClaim.employee.dept}
                     </span>
                   </div>
@@ -1369,16 +1369,16 @@ export function Expenses() {
                 </div>
 
                 <div className="p-6 rounded-[28px] bg-slate-900 dark:bg-emerald-600 text-white shadow-xl">
-                  <span className="text-[10px] font-black uppercase tracking-widest opacity-60">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider opacity-60">
                     Payout Amount
                   </span>
-                  <p className="text-3xl font-black mt-1">
+                  <p className="text-[28px] font-bold mt-1">
                     {formatCurrency(viewClaim.amount)}
                   </p>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Description
                   </label>
                   <p className="text-sm font-bold text-foreground leading-relaxed bg-muted/30 p-4 rounded-2xl">
@@ -1387,7 +1387,7 @@ export function Expenses() {
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Receipt Preview
                   </label>
                   <div className="relative group rounded-3xl overflow-hidden border border-border shadow-lg h-48 bg-muted">
@@ -1407,7 +1407,7 @@ export function Expenses() {
 
               <div className="p-8 border-t border-border bg-muted/20 flex gap-3">
                 <button
-                  className="flex-1 py-3 text-sm font-black text-white bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20"
+                  className="flex-1 py-3 text-sm font-black text-white bg-[#00B87C] hover:bg-[#059669] rounded-2xl shadow-xl shadow-[#00B87C]/20"
                   onClick={() => {
                     toast.success("Approved Successfully");
                     setViewClaim(null);
@@ -1457,7 +1457,7 @@ export function Expenses() {
                     <h3 className="text-xl font-black text-foreground">
                       Share with Manager
                     </h3>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
                       Approval Request Workflow
                     </p>
                   </div>
@@ -1471,7 +1471,7 @@ export function Expenses() {
               </div>
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Select Manager
                   </label>
                   <select className="w-full px-4 py-3 text-sm rounded-2xl border border-border bg-muted/30 font-bold outline-none">
@@ -1480,7 +1480,7 @@ export function Expenses() {
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Add Note
                   </label>
                   <textarea
@@ -1492,10 +1492,10 @@ export function Expenses() {
                 <div className="flex items-center justify-between p-4 rounded-2xl border border-border bg-muted/20">
                   <span className="text-xs font-black">Priority Level</span>
                   <div className="flex gap-2">
-                    <button className="px-3 py-1 bg-white border border-border text-[10px] font-black rounded-lg">
+                    <button className="px-3 py-1 bg-white border border-border text-[11px] font-semibold rounded-lg">
                       Normal
                     </button>
-                    <button className="px-3 py-1 bg-emerald-500 text-white text-[10px] font-black rounded-lg shadow-lg shadow-emerald-500/20">
+                    <button className="px-3 py-1 bg-emerald-500 text-white text-[11px] font-semibold rounded-lg shadow-lg shadow-[#00B87C]/20">
                       Urgent
                     </button>
                   </div>
@@ -1529,7 +1529,7 @@ export function Expenses() {
                     toast.success("Sent to Manager successfully");
                     setShowManagerShare(false);
                   }}
-                  className="flex-[2] py-3 text-sm font-black text-white bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20"
+                  className="flex-[2] py-3 text-sm font-black text-white bg-[#00B87C] hover:bg-[#059669] rounded-2xl shadow-xl shadow-[#00B87C]/20"
                 >
                   Send for Approval
                 </button>
@@ -1566,7 +1566,7 @@ export function Expenses() {
                     <h3 className="text-xl font-black text-foreground">
                       Share with Finance
                     </h3>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
                       Audit & Disbursement Review
                     </p>
                   </div>
@@ -1581,7 +1581,7 @@ export function Expenses() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Finance Approver
                     </label>
                     <select className="w-full px-4 py-3 text-sm rounded-2xl border border-border bg-muted/30 font-bold outline-none">
@@ -1589,7 +1589,7 @@ export function Expenses() {
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Cost Center
                     </label>
                     <select className="w-full px-4 py-3 text-sm rounded-2xl border border-border bg-muted/30 font-bold outline-none">
@@ -1598,14 +1598,14 @@ export function Expenses() {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Reimbursement Method
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {["Bank Transfer", "Payroll", "Cash"].map((m) => (
                       <button
                         key={m}
-                        className={`py-2 text-[9px] font-black uppercase rounded-xl border ${m === "Bank Transfer" ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/10" : "bg-muted border-border text-muted-foreground"}`}
+                        className={`py-2 text-[9px] font-black uppercase rounded-xl border ${m === "Bank Transfer" ? "bg-[#00B87C] border-[#00B87C] text-white shadow-lg shadow-[#00B87C]/10" : "bg-muted border-border text-muted-foreground"}`}
                       >
                         {m}
                       </button>
@@ -1613,7 +1613,7 @@ export function Expenses() {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Finance Note
                   </label>
                   <textarea
@@ -1635,7 +1635,7 @@ export function Expenses() {
                     toast.success("Sent to Finance successfully");
                     setShowFinanceShare(false);
                   }}
-                  className="flex-[2] py-3 text-sm font-black text-white bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20"
+                  className="flex-[2] py-3 text-sm font-black text-white bg-[#00B87C] hover:bg-[#059669] rounded-2xl shadow-xl shadow-[#00B87C]/20"
                 >
                   Send to Finance
                 </button>
@@ -1694,7 +1694,7 @@ export function Expenses() {
                     toast.success("Claim Approved successfully");
                     setShowApproveModal(false);
                   }}
-                  className="flex-[2] py-3 text-sm font-black text-white bg-emerald-500 rounded-2xl shadow-xl shadow-emerald-500/20"
+                  className="flex-[2] py-3 text-sm font-bold text-white bg-[#00B87C] rounded-2xl shadow-xl shadow-[#00B87C]/20"
                 >
                   Confirm Approve
                 </button>
@@ -1738,7 +1738,7 @@ export function Expenses() {
                 visible to the employee.
               </p>
               <div className="space-y-1.5 mb-8">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Reason for Rejection*
                 </label>
                 <textarea
@@ -1797,7 +1797,7 @@ export function Expenses() {
                     <h3 className="text-xl font-black text-foreground">
                       Mark as Reimbursed?
                     </h3>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
                       Disbursement Confirmation
                     </p>
                   </div>
@@ -1812,7 +1812,7 @@ export function Expenses() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Payment Date
                     </label>
                     <input
@@ -1822,7 +1822,7 @@ export function Expenses() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Payment Method
                     </label>
                     <select className="w-full px-4 py-3 text-sm rounded-2xl border border-border bg-muted/30 font-bold outline-none">
@@ -1833,7 +1833,7 @@ export function Expenses() {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Reference Number
                   </label>
                   <input
@@ -1855,7 +1855,7 @@ export function Expenses() {
                     toast.success("Marked as Reimbursed successfully");
                     setShowPaidModal(false);
                   }}
-                  className="flex-[2] py-3 text-sm font-black text-white bg-emerald-500 rounded-2xl shadow-xl shadow-emerald-500/20"
+                  className="flex-[2] py-3 text-sm font-bold text-white bg-[#00B87C] rounded-2xl shadow-xl shadow-[#00B87C]/20"
                 >
                   Confirm Payment
                 </button>
@@ -1888,7 +1888,7 @@ export function Expenses() {
                   <h3 className="text-xl font-black text-foreground">
                     Claim Details
                   </h3>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
                     {viewClaim.id}
                   </p>
                 </div>
@@ -1902,7 +1902,7 @@ export function Expenses() {
 
               <div className="flex-1 overflow-y-auto p-8 space-y-8">
                 <div className="flex items-center gap-4 p-4 rounded-3xl bg-muted/30 border border-border">
-                  <div className="w-14 h-14 rounded-full bg-emerald-500 text-white font-black flex items-center justify-center text-xl shadow-lg shadow-emerald-500/20">
+                  <div className="w-14 h-14 rounded-full bg-emerald-500 text-white font-black flex items-center justify-center text-xl shadow-lg shadow-[#00B87C]/20">
                     {viewClaim.employee.avatar}
                   </div>
                   <div>
@@ -1912,7 +1912,7 @@ export function Expenses() {
                     <p className="text-xs font-bold text-muted-foreground">
                       {viewClaim.employee.email}
                     </p>
-                    <span className="inline-block mt-1 text-[9px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded border border-emerald-500/10">
+                    <span className="inline-block mt-1 text-[9px] font-semibold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded border border-emerald-500/10">
                       {viewClaim.employee.dept}
                     </span>
                   </div>
@@ -1937,16 +1937,16 @@ export function Expenses() {
                 </div>
 
                 <div className="p-6 rounded-[28px] bg-slate-900 dark:bg-emerald-600 text-white shadow-xl">
-                  <span className="text-[10px] font-black uppercase tracking-widest opacity-60">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider opacity-60">
                     Payout Amount
                   </span>
-                  <p className="text-3xl font-black mt-1">
+                  <p className="text-[28px] font-bold mt-1">
                     {formatCurrency(viewClaim.amount)}
                   </p>
                 </div>
 
                 <div className="space-y-4">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Timeline Tracker
                   </label>
                   <div className="space-y-4">
@@ -1982,7 +1982,7 @@ export function Expenses() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Internal Comments
                   </label>
                   <div className="bg-muted/30 p-4 rounded-2xl space-y-2">
@@ -1997,7 +1997,7 @@ export function Expenses() {
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Receipt Preview
                   </label>
                   <div className="relative group rounded-3xl overflow-hidden border border-border shadow-lg h-48 bg-muted">
@@ -2023,7 +2023,7 @@ export function Expenses() {
 
               <div className="p-8 border-t border-border bg-muted/20 flex gap-3">
                 <button
-                  className="flex-1 py-3 text-sm font-black text-white bg-emerald-500 hover:bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-500/20"
+                  className="flex-1 py-3 text-sm font-black text-white bg-[#00B87C] hover:bg-[#059669] rounded-2xl shadow-xl shadow-[#00B87C]/20"
                   onClick={() => {
                     setSelectedClaim(viewClaim);
                     setShowApproveModal(true);
@@ -2069,7 +2069,7 @@ export function Expenses() {
                   <h3 className="text-xl font-black text-foreground">
                     Column Visibility
                   </h3>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
                     Customize Table View
                   </p>
                 </div>
@@ -2084,11 +2084,11 @@ export function Expenses() {
                 {Object.entries(visibleColumns).map(([key, val]) => (
                   <label
                     key={key}
-                    className="flex items-center justify-between p-4 rounded-2xl border border-border bg-muted/20 cursor-pointer hover:bg-emerald-500/5 transition-all group"
+                    className="flex items-center justify-between p-4 rounded-2xl border border-border bg-muted/20 cursor-pointer hover:bg-[#00B87C]/[0.08] transition-all group"
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${val ? "bg-emerald-500 border-emerald-500 shadow-lg shadow-emerald-500/20" : "bg-white border-slate-300"}`}
+                        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${val ? "bg-emerald-500 border-emerald-500 shadow-lg shadow-[#00B87C]/20" : "bg-white border-slate-300"}`}
                       >
                         {val && (
                           <Check
@@ -2154,7 +2154,7 @@ export function Expenses() {
                     <h3 className="text-xl font-black text-foreground">
                       Receipt Viewer
                     </h3>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-0.5">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mt-0.5">
                       {receiptToView.id} • {receiptToView.category}
                     </p>
                   </div>
@@ -2188,12 +2188,12 @@ export function Expenses() {
                         <p className="text-xs font-black text-foreground">
                           Verified Receipt Image
                         </p>
-                        <p className="text-[10px] font-bold text-muted-foreground">
+                        <p className="text-[11px] font-bold text-muted-foreground">
                           Uploaded by {receiptToView.employee.name} on{" "}
                           {receiptToView.date}
                         </p>
                       </div>
-                      <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-500/10">
+                      <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full text-[11px] font-semibold uppercase tracking-wider border border-emerald-500/10">
                         Valid Doc
                       </span>
                     </div>
@@ -2245,17 +2245,17 @@ export function Expenses() {
           ].map((item, i) => (
             <div
               key={i}
-              className="p-4 rounded-3xl border border-border bg-muted/20 flex items-center justify-between group hover:bg-emerald-500/5 transition-all"
+              className="p-4 rounded-3xl border border-border bg-muted/20 flex items-center justify-between group hover:bg-[#00B87C]/[0.08] transition-all"
             >
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-emerald-500/10">
+                <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-[#00B87C]/10">
                   {item.id}
                 </div>
                 <div>
                   <p className="text-sm font-black text-foreground">
                     {item.name}
                   </p>
-                  <p className="text-[10px] font-bold text-muted-foreground">
+                  <p className="text-[11px] font-bold text-muted-foreground">
                     {item.date} • {item.cat}
                   </p>
                 </div>
@@ -2305,12 +2305,12 @@ export function Expenses() {
                     ₹2,450
                   </p>
                 </div>
-                <span className="px-3 py-1 bg-amber-500/10 text-amber-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-amber-500/10">
+                <span className="px-3 py-1 bg-amber-500/10 text-amber-600 rounded-full text-[9px] font-semibold uppercase tracking-wider border border-amber-500/10">
                   High Priority
                 </span>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">
+                <label className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Manager Comment
                 </label>
                 <textarea
@@ -2321,7 +2321,7 @@ export function Expenses() {
               <div className="flex gap-2">
                 <button
                   onClick={() => toast.success("Approved")}
-                  className="flex-1 py-2.5 text-[11px] font-black text-white bg-emerald-500 rounded-xl"
+                  className="flex-1 py-2.5 text-[11px] font-semibold text-white bg-[#00B87C] rounded-xl"
                 >
                   Approve
                 </button>
@@ -2371,7 +2371,7 @@ export function Expenses() {
                   <p className="text-sm font-black text-foreground">
                     {item.name}
                   </p>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
+                  <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
                     {item.method} •{" "}
                     <span className="text-emerald-500">Approved</span>
                   </p>
@@ -2383,7 +2383,7 @@ export function Expenses() {
                 </p>
                 <button
                   onClick={() => toast.success("Marked as Paid")}
-                  className="px-5 py-2.5 bg-white text-slate-900 border border-border text-[11px] font-black rounded-xl shadow-lg hover:bg-slate-50 transition-all"
+                  className="px-5 py-2.5 bg-white text-slate-900 border border-border text-[11px] font-black rounded-xl shadow-lg hover:bg-[#00B87C]/[0.08] transition-all"
                 >
                   Mark as Paid
                 </button>
@@ -2421,7 +2421,7 @@ export function Expenses() {
                 </p>
               </div>
               <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/10">
-                <p className="text-[9px] font-black uppercase tracking-widest text-rose-600 mb-1">
+                <p className="text-[9px] font-semibold uppercase tracking-wider text-rose-600 mb-1">
                   Reason for rejection
                 </p>
                 <p className="text-xs font-bold text-rose-700 leading-relaxed">
@@ -2431,7 +2431,7 @@ export function Expenses() {
               <div className="flex gap-3">
                 <button
                   onClick={() => toast.success("Resubmitted")}
-                  className="flex-1 py-3 text-[11px] font-black text-white bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20"
+                  className="flex-1 py-3 text-[11px] font-semibold text-white bg-[#00B87C] rounded-xl shadow-lg shadow-[#00B87C]/20"
                 >
                   Resubmit
                 </button>
@@ -2534,7 +2534,7 @@ export function Expenses() {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Total
               </span>
               <span className="text-2xl font-black text-foreground">
@@ -2635,7 +2635,7 @@ export function Expenses() {
               {title}
             </p>
             <span
-              className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${completed ? "bg-emerald-500/10 text-emerald-600" : active ? "bg-amber-500/10 text-amber-600" : "bg-muted text-muted-foreground"}`}
+              className={`px-2 py-0.5 rounded text-[8px] font-semibold uppercase tracking-wider ${completed ? "bg-emerald-500/10 text-emerald-600" : active ? "bg-amber-500/10 text-amber-600" : "bg-muted text-muted-foreground"}`}
             >
               {status}
             </span>
@@ -2741,7 +2741,7 @@ export function Expenses() {
   }) {
     return (
       <div className="space-y-1">
-        <label className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+        <label className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
           {label}
         </label>
         <div className="flex items-center gap-2">

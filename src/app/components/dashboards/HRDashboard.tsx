@@ -52,12 +52,12 @@ export function HRDashboard() {
       {/* ═══ PAGE HEADER ═══ */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#DCFCE7] flex items-center justify-center">
+          <div className="w-11 h-11 rounded-[10px] bg-[#DCFCE7] flex items-center justify-center">
             <Users size={28} className="text-[#10B981]" />
           </div>
           <div>
-            <h2 className="text-[26px] font-black text-foreground tracking-tight">HR Dashboard</h2>
-            <p className="text-[13px] font-semibold text-muted-foreground">Welcome back, Alex johnson</p>
+            <h2 className="text-[26px] font-bold text-[#111827]">HR Dashboard</h2>
+            <p className="text-[13px] text-[#6B7280]">Welcome back, Alex johnson</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -104,23 +104,23 @@ export function HRDashboard() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-shadow cursor-pointer"
           >
-            <div className="w-12 h-12 rounded-xl mb-4 flex items-center justify-center" style={{ backgroundColor: kpi.bg }}>
+            <div className="w-9 h-9 rounded-[10px] mb-4 flex items-center justify-center" style={{ backgroundColor: kpi.bg }}>
               <kpi.icon size={24} style={{ color: kpi.color }} />
             </div>
-            <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">{kpi.label}</p>
-            <p className="text-3xl font-black text-foreground tracking-tighter mb-1">{kpi.value}</p>
-            <p className="text-[12px] font-bold text-muted-foreground">{kpi.sub}</p>
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">{kpi.label}</p>
+            <p className="text-[28px] font-bold text-[#111827] mb-1">{kpi.value}</p>
+            <p className="text-[12px] text-[#6B7280]">{kpi.sub}</p>
           </motion.div>
         ))}
       </div>
 
       {/* ═══ ROW 2 — CHARTS ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-card p-6 rounded-[24px] border border-border shadow-sm">
+        <div className="lg:col-span-2 bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Headcount Trend</h3>
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Headcount Trend</h3>
             <select className="bg-secondary text-[11px] font-bold px-3 py-1 rounded-lg border-none outline-none">
               <option>Last 6 Months</option>
               <option>Last Year</option>
@@ -145,8 +145,8 @@ export function HRDashboard() {
           </div>
         </div>
 
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-6">Employee Breakdown</h3>
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+          <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6">Employee Breakdown</h3>
           <div className="h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -176,10 +176,10 @@ export function HRDashboard() {
       {/* ═══ ROW 3 — LEAVES & HIRES ═══ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Pending Leaves */}
-        <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
           <div className="p-6 border-b border-border flex items-center justify-between">
-            <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Leave Approvals</h3>
-            <span className="px-2 py-1 bg-emerald-100 text-[#10B981] text-[10px] font-black rounded-lg">12 PENDING</span>
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Leave Approvals</h3>
+            <span className="px-2 py-1 bg-emerald-100 text-[#10B981] text-[11px] font-black rounded-lg">12 PENDING</span>
           </div>
           <div className="divide-y divide-border">
             {LEAVE_REQUESTS.map((req, i) => (
@@ -208,9 +208,9 @@ export function HRDashboard() {
         </div>
 
         {/* Recent Hires */}
-        <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
           <div className="p-6 border-b border-border">
-            <h3 className="text-sm font-black text-foreground uppercase tracking-wider">Recent Hires</h3>
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Recent Hires</h3>
           </div>
           <div className="p-4 space-y-4">
             {RECENT_HIRES.map((hire, i) => (
@@ -223,7 +223,7 @@ export function HRDashboard() {
                   <p className="text-[11px] font-semibold text-muted-foreground">{hire.role}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="px-2 py-0.5 rounded-lg bg-emerald-50 text-[9px] font-black text-emerald-600 uppercase tracking-wider">{hire.dept}</span>
-                    <span className="text-[10px] text-muted-foreground font-medium">{hire.date}</span>
+                    <span className="text-[11px] text-muted-foreground font-medium">{hire.date}</span>
                   </div>
                 </div>
                 <ArrowRight size={16} className="text-muted-foreground" />
@@ -236,8 +236,8 @@ export function HRDashboard() {
         </div>
 
         {/* Attrition Risk */}
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-6">Attendance by Dept</h3>
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm flex flex-col">
+          <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6">Attendance by Dept</h3>
           <div className="space-y-6 flex-1">
             {DEPT_ATTENDANCE.map((dept, i) => (
               <div key={i} className="space-y-2">

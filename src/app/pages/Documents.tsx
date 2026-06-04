@@ -276,7 +276,7 @@ export function Documents() {
       {/* ── Page Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
             <span>Dashboard</span>
             <span>/</span>
             <span className="text-slate-600 dark:text-slate-300 font-bold">
@@ -359,7 +359,7 @@ export function Documents() {
               <kpi.icon size={18} />
             </div>
             <div>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                 {kpi.label}
               </p>
               <p className="text-lg font-extrabold tracking-tight-slate-900 dark:text-slate-100 mt-0.5">
@@ -466,7 +466,7 @@ export function Documents() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-neutral-50 dark:bg-zinc-800 border-b border-border text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                <tr className="bg-neutral-50 dark:bg-zinc-800 border-b border-border text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                   <th className="px-4 py-3">File Name</th>
                   <th className="px-4 py-3">Category</th>
                   <th className="px-4 py-3">Linked To</th>
@@ -495,12 +495,12 @@ export function Documents() {
                     <td className="px-4 py-3 text-slate-500">{doc.category}</td>
                     <td className="px-4 py-3">
                       {doc.linkedEmployee ? (
-                        <span className="flex items-center gap-1 text-[10px]">
+                        <span className="flex items-center gap-1 text-[11px]">
                           <User size={12} className="text-slate-400" />
                           {doc.linkedEmployee}
                         </span>
                       ) : (
-                        <span className="text-[10px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-slate-500">
+                        <span className="text-[11px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-slate-500">
                           {doc.linkedDept || "Global"}
                         </span>
                       )}
@@ -511,7 +511,7 @@ export function Documents() {
                       {doc.expiry || "-"}
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-[10px] font-bold bg-neutral-100 dark:bg-zinc-800 px-1 rounded">
+                      <span className="text-[11px] font-bold bg-neutral-100 dark:bg-zinc-800 px-1 rounded">
                         {doc.version}
                       </span>
                     </td>
@@ -558,7 +558,7 @@ export function Documents() {
           {/* Dedicated Upload Document Card in Grid */}
           <div
             onClick={() => setShowUploadModal(true)}
-            className="bg-[#F0FDF4]/50 dark:bg-zinc-800/20 p-4 rounded-2xl border-2 border-dashed border-[#00B87C]/30 hover:border-[#00B87C]/80 flex flex-col items-center justify-center text-center relative cursor-pointer transition-all hover:-translate-y-1 hover:shadow-md group min-h-[160px]"
+            className="bg-[#F0FDF4]/50 dark:bg-zinc-800/20 p-4 rounded-2xl border-2 border-dashed border-[#00B87C]/30 hover:border-[#00B87C]/80 flex flex-col items-center justify-center text-center relative cursor-pointer transition-all hover:-translate-y-1 hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] group min-h-[160px]"
           >
             <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#E6F4EA] text-[#00B87C] mb-3 shadow-sm group-hover:scale-105 transition-transform">
               <UploadCloud size={24} />
@@ -566,7 +566,7 @@ export function Documents() {
             <h4 className="text-xs font-extrabold text-slate-900 dark:text-slate-100">
               Upload Document
             </h4>
-            <p className="text-[10px] font-bold text-slate-400 mt-1">
+            <p className="text-[11px] font-bold text-slate-400 mt-1">
               Drag files or click to browse
             </p>
           </div>
@@ -574,7 +574,7 @@ export function Documents() {
           {filteredDocs.map((doc) => (
             <div
               key={doc.id}
-              className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-border shadow-sm flex flex-col items-center text-center relative transition-all hover:-translate-y-1 hover:shadow-md group"
+              className="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-border shadow-sm flex flex-col items-center text-center relative transition-all hover:-translate-y-1 hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] group"
             >
               <div
                 className={`w-12 h-12 rounded-xl flex items-center justify-center ${getFileIconColor(doc.type)} mb-3 shadow-md`}
@@ -585,7 +585,7 @@ export function Documents() {
               <h4 className="text-xs font-extrabold text-slate-900 dark:text-slate-100 truncate w-full px-2">
                 {doc.name}
               </h4>
-              <div className="text-[10px] font-bold text-slate-400 mt-1">
+              <div className="text-[11px] font-bold text-slate-400 mt-1">
                 {doc.size} • {doc.type}
               </div>
 
@@ -598,19 +598,19 @@ export function Documents() {
               <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-neutral-50 dark:border-zinc-800 w-full">
                 <button
                   onClick={() => setPreviewDoc(doc)}
-                  className="text-slate-500 hover:text-[#00B87C] text-[10px] font-extrabold flex items-center gap-1"
+                  className="text-slate-500 hover:text-[#00B87C] text-[11px] font-extrabold flex items-center gap-1"
                 >
                   <Eye size={12} /> View
                 </button>
                 <button
                   onClick={() => handleArchive(doc.id)}
-                  className="text-slate-400 hover:text-amber-600 text-[10px] font-extrabold flex items-center gap-1"
+                  className="text-slate-400 hover:text-amber-600 text-[11px] font-extrabold flex items-center gap-1"
                 >
                   <Archive size={12} /> Archive
                 </button>
                 <button
                   onClick={() => setConfirmDeleteId(doc.id)}
-                  className="text-slate-400 hover:text-rose-600 text-[10px] font-extrabold flex items-center gap-1"
+                  className="text-slate-400 hover:text-rose-600 text-[11px] font-extrabold flex items-center gap-1"
                 >
                   <Trash2 size={12} /> Delete
                 </button>
@@ -757,13 +757,13 @@ export function Documents() {
                 <span className="text-xs font-extrabold mt-3 truncate px-4 w-full">
                   {previewDoc.name}
                 </span>
-                <span className="text-[10px] text-slate-400 mt-1">
+                <span className="text-[11px] text-slate-400 mt-1">
                   {previewDoc.size} • {previewDoc.type}
                 </span>
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-50 dark:border-zinc-800/60 pb-1">
+                <h4 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-50 dark:border-zinc-800/60 pb-1">
                   Metadata
                 </h4>
                 <div className="grid grid-cols-2 gap-2 text-xs font-bold">
@@ -792,7 +792,7 @@ export function Documents() {
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-50 dark:border-zinc-800/60 pb-1">
+                <h4 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-50 dark:border-zinc-800/60 pb-1">
                   Version History
                 </h4>
                 <div className="space-y-2">
@@ -809,7 +809,7 @@ export function Documents() {
                           {v.updatedBy}
                         </span>
                       </div>
-                      <span className="text-slate-400 text-[10px]">
+                      <span className="text-slate-400 text-[11px]">
                         {v.updatedDate}
                       </span>
                     </div>

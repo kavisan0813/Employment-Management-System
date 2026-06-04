@@ -10,7 +10,7 @@ import {
   User,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { StatusBadge } from "../../components/workflow/StatusBadge";
 
 interface RegularizationRequest {
@@ -111,14 +111,14 @@ function RegularizationModal({
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-white dark:bg-card">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/20">
-              <Calendar size={24} />
+            <div className="w-11 h-11 rounded-[10px] bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/20">
+              <Calendar size={22} />
             </div>
             <div>
-              <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">
+              <h3 className="text-[18px] font-bold text-foreground uppercase tracking-tight">
                 Apply Regularization
               </h3>
-              <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-widest">
+              <p className="text-[12px] text-[#6B7280]">
                 Correct your attendance logs
               </p>
             </div>
@@ -137,7 +137,7 @@ function RegularizationModal({
         >
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
                 Date Selector *
               </label>
               <input
@@ -151,7 +151,7 @@ function RegularizationModal({
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
                 Regularization Type *
               </label>
               <select
@@ -174,7 +174,7 @@ function RegularizationModal({
 
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
                 Check-in Time
               </label>
               <input
@@ -187,7 +187,7 @@ function RegularizationModal({
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
                 Check-out Time
               </label>
               <input
@@ -202,7 +202,7 @@ function RegularizationModal({
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Approving Authority *
             </label>
             <select
@@ -219,7 +219,7 @@ function RegularizationModal({
           </div>
 
           <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Reason *
             </label>
             <textarea
@@ -243,7 +243,7 @@ function RegularizationModal({
                 Upload Proof (Optional)
               </span>
             </div>
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               PDF, JPG
             </span>
           </div>
@@ -252,13 +252,13 @@ function RegularizationModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-4 text-[14px] font-black text-slate-500 hover:bg-secondary rounded-[20px] transition-all uppercase tracking-widest"
+              className="flex-1 py-4 text-[14px] font-bold text-slate-500 hover:bg-secondary rounded-2xl transition-all uppercase tracking-wider"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-[1.8] py-4 bg-[#00B87C] text-white rounded-[20px] text-[14px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/25 hover:opacity-95 active:scale-[0.98] transition-all"
+              className="flex-[1.8] py-4 bg-[#00B87C] text-white rounded-2xl text-[14px] font-bold uppercase tracking-wider shadow-xl shadow-emerald-500/25 hover:opacity-95 active:scale-[0.98] transition-all"
             >
               Submit Request
             </button>
@@ -324,12 +324,12 @@ export function ManagerPersonalAttendance() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-500/10 pb-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/20">
-            <Clock size={24} />
+          <div className="w-11 h-11 rounded-[10px] bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/20">
+            <Clock size={22} />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground leading-none mb-1">My Attendance</h1>
-            <p className="text-[13px] font-bold text-muted-foreground uppercase tracking-widest">Personal Log & Corrections</p>
+            <h1 className="text-[26px] font-bold text-foreground leading-none mb-1">My Attendance</h1>
+            <p className="text-[13px] text-[#6B7280]">Personal Log & Corrections</p>
           </div>
         </div>
 
@@ -339,7 +339,7 @@ export function ManagerPersonalAttendance() {
           <select 
             value={selectedEmployee} 
             onChange={(e) => setSelectedEmployee(e.target.value)}
-            className="bg-transparent text-[13px] font-black text-foreground focus:outline-none cursor-pointer"
+            className="bg-transparent text-[13px] font-bold text-foreground focus:outline-none cursor-pointer"
           >
             <option value="Suresh Iyer">Suresh Iyer (Manager)</option>
           </select>
@@ -355,7 +355,7 @@ export function ManagerPersonalAttendance() {
           >
             <ChevronLeft size={18} />
           </button>
-          <span className="px-4 text-[14px] font-black text-foreground min-w-[100px] text-center">
+          <span className="px-4 text-[14px] font-bold text-foreground min-w-[100px] text-center">
             {MONTH_NAMES[selectedMonth]} {selectedYear}
           </span>
           <button
@@ -386,10 +386,10 @@ export function ManagerPersonalAttendance() {
             key={i}
             className="p-6 bg-card rounded-2xl border border-border shadow-sm flex flex-col items-center justify-center text-center group hover:border-[#00B87C] transition-colors"
           >
-            <p className="text-3xl font-black mb-1" style={{ color: card.color }}>
+            <p className="text-[28px] font-bold mb-1" style={{ color: card.color }}>
               {card.value}
             </p>
-            <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
               {card.label}
             </p>
           </div>
@@ -400,9 +400,9 @@ export function ManagerPersonalAttendance() {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
         {/* Calendar */}
         <div className="xl:col-span-7 flex flex-col gap-5">
-          <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm relative overflow-hidden">
+          <div className="bg-card rounded-2xl p-8 border border-border shadow-sm relative overflow-hidden">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-[16px] font-black text-foreground">Attendance Calendar</h3>
+              <h3 className="text-[16px] font-bold text-foreground">Attendance Calendar</h3>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                 {[
                   { label: "Present", color: "#00B87C" },
@@ -412,7 +412,7 @@ export function ManagerPersonalAttendance() {
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">
+                    <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                       {item.label}
                     </span>
                   </div>
@@ -422,7 +422,7 @@ export function ManagerPersonalAttendance() {
 
             <div className="grid grid-cols-7 mb-4">
               {DAYS_OF_WEEK.map((day) => (
-                <div key={day} className="text-center text-[11px] font-black uppercase tracking-widest text-muted-foreground/40">
+                <div key={day} className="text-center text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]/40">
                   {day}
                 </div>
               ))}
@@ -467,7 +467,7 @@ export function ManagerPersonalAttendance() {
                     key={day}
                     className={`aspect-square rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer hover:scale-105 border ${cellStyle}`}
                   >
-                    <span className={`text-base font-black ${textStyle}`}>
+                    <span className={`text-base font-bold ${textStyle}`}>
                       {day}
                     </span>
                     {!isWeekend && (
@@ -490,10 +490,10 @@ export function ManagerPersonalAttendance() {
                 key={i}
                 className="bg-card p-5 rounded-2xl border border-border shadow-sm text-center group hover:border-[#00B87C] transition-colors"
               >
-                <p className={`text-lg font-black mb-1 ${stat.color}`}>
+                <p className={`text-lg font-bold mb-1 ${stat.color}`}>
                   {stat.value}
                 </p>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                   {stat.label}
                 </p>
               </div>
@@ -503,11 +503,11 @@ export function ManagerPersonalAttendance() {
 
         {/* Daily Log Table */}
         <div className="xl:col-span-5 flex flex-col gap-6">
-          <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden flex flex-col">
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
             <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
               <div className="flex items-center gap-2">
-                <h3 className="text-[16px] font-black text-foreground">Daily Log</h3>
-                <span className="px-2.5 py-0.5 rounded-md bg-background border border-border text-[10px] font-bold text-muted-foreground">
+                <h3 className="text-[16px] font-bold text-foreground">Daily Log</h3>
+                <span className="px-2.5 py-0.5 rounded-md bg-background border border-border text-[11px] font-bold text-muted-foreground">
                   April 2026
                 </span>
               </div>
@@ -516,22 +516,22 @@ export function ManagerPersonalAttendance() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-background border-b border-border">
-                    <th className="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Date</th>
-                    <th className="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">In</th>
-                    <th className="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Out</th>
-                    <th className="px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status</th>
+                  <tr className="bg-[#F9FAFB] dark:bg-white/5 border-b border-[#F3F4F6]">
+                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">Date</th>
+                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">In</th>
+                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">Out</th>
+                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {ATTENDANCE_LOGS.map((log, i) => (
-                    <tr key={i} className="h-14 hover:bg-secondary/40 transition-colors group">
-                      <td className="px-6 text-[13px] font-black text-foreground">{log.date}</td>
+                    <tr key={i} className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors group">
+                      <td className="px-6 text-[13px] font-bold text-foreground">{log.date}</td>
                       <td className="px-6 text-[12px] font-bold text-muted-foreground">{log.in}</td>
                       <td className="px-6 text-[12px] font-bold text-muted-foreground">{log.out}</td>
                       <td className="px-6">
                         <span
-                          className={`text-[12px] font-black ${
+                          className={`text-[11px] font-semibold ${
                             log.status === "Present"
                               ? "text-[#00B87C]"
                               : log.status === "Late"
@@ -552,13 +552,13 @@ export function ManagerPersonalAttendance() {
           </div>
 
           {/* Pending Corrections */}
-          <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-            <h3 className="text-[15px] font-black text-foreground mb-4">Pending Regularizations</h3>
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+            <h3 className="text-[15px] font-bold text-foreground mb-4">Pending Regularizations</h3>
             <div className="space-y-3">
               {requests.map((req) => (
                 <div key={req.id} className="p-4 rounded-xl border border-border bg-secondary/20 flex flex-col gap-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-black text-foreground">{req.type}</span>
+                    <span className="text-[12px] font-bold text-foreground">{req.type}</span>
                     <StatusBadge status={req.status} />
                   </div>
                   <div className="flex justify-between text-[11px] text-muted-foreground font-bold">

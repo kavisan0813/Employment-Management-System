@@ -84,14 +84,14 @@ export function FinanceAttendance() {
       
       {/* ─── Top Bar ─────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-2 p-1 bg-card rounded-xl border border-border shadow-sm w-fit">
+        <div className="flex items-center gap-2 p-1 bg-card rounded-2xl border border-border shadow-sm w-fit">
           <button
             onClick={() => setSelectedMonth((prev) => (prev === 0 ? 11 : prev - 1))}
             className="p-1.5 hover:bg-secondary rounded-lg text-muted-foreground transition-colors"
           >
             <ChevronLeft size={18} />
           </button>
-          <div className="flex items-center gap-2 px-3 text-[14px] font-black text-foreground min-w-[120px] justify-center">
+          <div className="flex items-center gap-2 px-3 text-[14px] font-bold text-foreground min-w-[120px] justify-center">
             <Calendar size={14} className="text-muted-foreground" />
             <span>{MONTH_NAMES[selectedMonth]} {selectedYear}</span>
           </div>
@@ -111,7 +111,7 @@ export function FinanceAttendance() {
             Apply Regularization
           </button>
           <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-card hover:bg-secondary transition-all">
-            <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-[10px] font-black text-white">AS</div>
+            <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-[11px] font-semibold text-white">AS</div>
             <span className="text-[13px] font-black text-foreground">Ananya Sharma</span>
             <ChevronDown size={14} className="text-muted-foreground" />
           </button>
@@ -120,8 +120,8 @@ export function FinanceAttendance() {
 
       {/* ─── Stat Cards ─────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Working Days" value="22" color="#111827" />
-        <StatCard label="Present" value="19" color="#00B87C" bg="bg-[#DCFCE7]/50" />
+        <StatCard label="Working Days" value="22" color="var(--foreground)" />
+        <StatCard label="Present" value="19" color="#00B87C" bg="bg-[#DCFCE7]/50 dark:bg-emerald-500/10" />
         <StatCard label="Absent" value="0" color="#EF4444" bg="bg-rose-500/5" />
         <StatCard label="Leaves Taken" value="2" color="#F59E0B" bg="bg-amber-500/5" />
       </div>
@@ -217,7 +217,7 @@ export function FinanceAttendance() {
               </thead>
               <tbody className="divide-y divide-border">
                 {ATTENDANCE_LOGS.map((log, i) => (
-                  <tr key={i} className="h-14 hover:bg-[#F0FDF4] dark:hover:bg-emerald-500/5 transition-all">
+                  <tr key={i} className="h-14 hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all">
                     <td className="px-6 text-[13px] font-black text-foreground">{log.date}</td>
                     <td className="px-6 text-[12px] font-bold text-muted-foreground">{log.in}</td>
                     <td className="px-6 text-[12px] font-bold text-muted-foreground">{log.out}</td>
@@ -258,7 +258,7 @@ export function FinanceAttendance() {
                   <div key={index} className="p-4 rounded-2xl border border-border bg-muted/20 flex flex-col gap-1.5">
                     <div className="flex justify-between items-center">
                       <span className="text-[13px] font-black text-foreground">{req.date}</span>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-600 border border-amber-500/20">{req.status}</span>
+                      <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">{req.status}</span>
                     </div>
                     <div className="flex items-center gap-4 text-[11px] font-bold text-muted-foreground">
                       <span>In: <strong className="text-foreground">{req.checkIn}</strong></span>
@@ -290,7 +290,7 @@ export function FinanceAttendance() {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-[460px] bg-card border border-border rounded-[24px] shadow-2xl flex flex-col"
+              className="relative w-full max-w-[460px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col"
             >
               <div className="p-6 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -306,7 +306,7 @@ export function FinanceAttendance() {
 
               <form onSubmit={handleApplyReg} className="p-6 space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Select Date</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Select Date</label>
                   <input 
                     type="date" 
                     value={regDate}
@@ -317,7 +317,7 @@ export function FinanceAttendance() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Check-In Time</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Check-In Time</label>
                     <input 
                       type="time" 
                       value={regIn}
@@ -326,7 +326,7 @@ export function FinanceAttendance() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Check-Out Time</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Check-Out Time</label>
                     <input 
                       type="time" 
                       value={regOut}
@@ -337,7 +337,7 @@ export function FinanceAttendance() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Reason for Regularization</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Reason for Regularization</label>
                   <textarea 
                     value={regReason}
                     onChange={(e) => setRegReason(e.target.value)}
@@ -385,7 +385,7 @@ function LegendItem({ label, color }: { label: string, color: string }) {
   return (
     <div className="flex items-center gap-2">
       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{label}</span>
+      <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">{label}</span>
     </div>
   );
 }
@@ -394,7 +394,7 @@ function MiniStat({ label, value }: { label: string, value: string }) {
   return (
     <div className="bg-card p-5 rounded-2xl border border-border shadow-sm text-center hover:border-[#00B87C]/30 transition-all">
       <p className="text-[16px] font-black text-foreground mb-1 tracking-tight">{value}</p>
-      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{label}</p>
+      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">{label}</p>
     </div>
   );
 }

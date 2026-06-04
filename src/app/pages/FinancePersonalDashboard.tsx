@@ -241,7 +241,7 @@ export function FinancePersonalDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div
-            className="flex items-center justify-center rounded-2xl"
+            className="flex items-center justify-center rounded-[10px]"
             style={{
               width: 44,
               height: 44,
@@ -254,7 +254,7 @@ export function FinancePersonalDashboard() {
             <h1
               style={{
                 fontSize: 26,
-                fontWeight: 800,
+                fontWeight: 700,
                 color: "var(--foreground)",
                 margin: 0,
                 letterSpacing: "-0.5px",
@@ -265,9 +265,8 @@ export function FinancePersonalDashboard() {
             <p
               style={{
                 fontSize: 13,
-                color: "var(--muted-foreground)",
+                color: "#6B7280",
                 marginTop: 2,
-                fontWeight: 600,
               }}
             >
               Your personal workspace
@@ -306,64 +305,22 @@ export function FinancePersonalDashboard() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="rounded-2xl overflow-hidden"
-        style={{
-          background:
-            "linear-gradient(135deg, var(--card) 60%, #DCFCE7 100%)",
-          border: "1px solid var(--border)",
-        }}
+        className="w-full bg-card rounded-2xl p-8 mb-8 flex items-center justify-between border border-border shadow-sm relative overflow-hidden group"
       >
-        <div className="flex items-center justify-between px-6 py-5">
-          <div>
-            <h2
-              style={{
-                fontSize: 20,
-                fontWeight: 800,
-                color: "#111827",
-                margin: 0,
-              }}
-              className="dark:text-white"
-            >
-              {greeting}, {firstName}! 👋
-            </h2>
-            <p
-              style={{
-                fontSize: 13,
-                color: "var(--muted-foreground)",
-                marginTop: 4,
-                fontWeight: 500,
-              }}
-            >
-              You have <strong style={{ color: "var(--foreground)" }}>2 pending actions</strong> today.
-            </p>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-[#0EA5E9]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-700"></div>
+        <div className="relative z-10">
+          <h2 className="text-[22px] font-bold text-foreground mb-1">{greeting}, {firstName}! 👋</h2>
+          <p className="text-[14px] font-medium text-muted-foreground">
+            You have <span className="text-[#0EA5E9] font-bold">{pendingActions.length} pending actions</span> today.
+          </p>
+        </div>
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="flex flex-col items-end hidden sm:flex">
+            <div className="px-3 py-1 rounded-full bg-[#0EA5E9]/10 text-[#0EA5E9] text-[11px] font-bold uppercase tracking-wider border border-[#0EA5E9]/20">Finance</div>
+            <p className="text-[11px] font-bold text-muted-foreground mt-1">#EMP-1082</p>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <div
-              className="flex items-center justify-center rounded-full font-black text-white"
-              style={{
-                width: 52,
-                height: 52,
-                background: "linear-gradient(135deg, #0EA5E9, #0369A1)",
-                fontSize: 18,
-                letterSpacing: "-0.5px",
-                boxShadow: "0 4px 14px rgba(14,165,233,0.3)",
-              }}
-            >
-              {initials}
-            </div>
-            <span
-              className="px-3 py-1 rounded-full"
-              style={{
-                fontSize: 10,
-                fontWeight: 800,
-                color: "#0369A1",
-                backgroundColor: "#E0F2FE",
-                letterSpacing: "0.5px",
-                textTransform: "uppercase",
-              }}
-            >
-              Finance
-            </span>
+          <div className="w-14 h-14 rounded-full border-2 border-[#0EA5E9]/20 p-0.5 overflow-hidden shadow-inner">
+            <div className="w-full h-full rounded-full bg-[#0EA5E9] flex items-center justify-center text-white font-bold text-xl shadow-lg">{initials}</div>
           </div>
         </div>
       </motion.div>
@@ -376,7 +333,7 @@ export function FinancePersonalDashboard() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08 * i, duration: 0.35 }}
-            className="rounded-2xl p-5 group hover:shadow-md transition-all"
+            className="rounded-2xl p-5 group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
             style={{
               backgroundColor: "var(--card)",
               border: "1px solid var(--border)",
@@ -384,7 +341,7 @@ export function FinancePersonalDashboard() {
           >
             <div className="flex items-center gap-3 mb-3">
               <div
-                className="flex items-center justify-center rounded-xl"
+                className="flex items-center justify-center rounded-[10px]"
                 style={{
                   width: 36,
                   height: 36,
@@ -395,10 +352,10 @@ export function FinancePersonalDashboard() {
               </div>
               <span
                 style={{
-                  fontSize: 10,
-                  fontWeight: 800,
-                  color: "var(--muted-foreground)",
-                  letterSpacing: "1px",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "#9CA3AF",
+                  letterSpacing: "0.05em",
                   textTransform: "uppercase",
                 }}
               >
@@ -408,7 +365,7 @@ export function FinancePersonalDashboard() {
             <div
               style={{
                 fontSize: 28,
-                fontWeight: 900,
+                fontWeight: 700,
                 color: kpi.valueColor,
                 letterSpacing: "-1px",
                 lineHeight: 1,
@@ -419,7 +376,7 @@ export function FinancePersonalDashboard() {
             <p
               style={{
                 fontSize: 12,
-                color: "var(--muted-foreground)",
+                color: "#6B7280",
                 marginTop: 4,
                 fontWeight: 500,
               }}
@@ -431,7 +388,7 @@ export function FinancePersonalDashboard() {
                 className="px-2.5 py-1 rounded-lg inline-block"
                 style={{
                   fontSize: 11,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   color: kpi.trendColor,
                   backgroundColor: kpi.trendBg,
                 }}
@@ -463,8 +420,8 @@ export function FinancePersonalDashboard() {
               <span
                 style={{
                   fontSize: 11,
-                  fontWeight: 800,
-                  color: "var(--muted-foreground)",
+                  fontWeight: 600,
+                  color: "#9CA3AF",
                   letterSpacing: "1px",
                   textTransform: "uppercase",
                 }}
@@ -567,8 +524,8 @@ export function FinancePersonalDashboard() {
               <span
                 style={{
                   fontSize: 11,
-                  fontWeight: 800,
-                  color: "var(--muted-foreground)",
+                  fontWeight: 600,
+                  color: "#9CA3AF",
                   letterSpacing: "1px",
                   textTransform: "uppercase",
                 }}
@@ -579,7 +536,7 @@ export function FinancePersonalDashboard() {
             <div className="px-5 pb-5">
               <div
                 onClick={() => navigate("/schedule")}
-                className="rounded-xl px-4 py-3.5 cursor-pointer transition-all hover:shadow-md"
+                className="rounded-xl px-4 py-3.5 cursor-pointer transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
                 style={{
                   backgroundColor: "#DCFCE7",
                   borderLeft: "3px solid #00B87C",
@@ -603,7 +560,7 @@ export function FinancePersonalDashboard() {
                       style={{
                         fontSize: 14,
                         fontWeight: 800,
-                        color: "#111827",
+                        color: "var(--foreground)",
                         margin: "4px 0 0",
                       }}
                     >
@@ -645,11 +602,12 @@ export function FinancePersonalDashboard() {
           >
             <h3
               style={{
-                fontSize: 14,
-                fontWeight: 800,
-                color: "var(--foreground)",
+                fontSize: 11,
+                fontWeight: 600,
+                color: "#9CA3AF",
                 margin: "0 0 12px",
-                letterSpacing: "-0.3px",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
               }}
             >
               Quick Actions
@@ -716,11 +674,12 @@ export function FinancePersonalDashboard() {
             <div className="px-5 pt-5 pb-2 flex items-center justify-between">
               <h3
                 style={{
-                  fontSize: 14,
-                  fontWeight: 800,
-                  color: "var(--foreground)",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "#9CA3AF",
                   margin: 0,
-                  letterSpacing: "-0.3px",
+                  textTransform: "uppercase",
+                  letterSpacing: "1px",
                 }}
               >
                 Latest Announcements
@@ -818,11 +777,12 @@ export function FinancePersonalDashboard() {
             <div className="px-5 pt-5 pb-2">
               <h3
                 style={{
-                  fontSize: 14,
-                  fontWeight: 800,
-                  color: "var(--foreground)",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "#9CA3AF",
                   margin: 0,
-                  letterSpacing: "-0.3px",
+                  textTransform: "uppercase",
+                  letterSpacing: "1px",
                 }}
               >
                 My Team / Colleagues

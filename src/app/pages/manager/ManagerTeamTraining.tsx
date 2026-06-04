@@ -120,14 +120,14 @@ export function ManagerTeamTraining() {
       {/* PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#E0F2FE] flex items-center justify-center shrink-0">
-            <Book size={24} className="text-sky-600" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#E0F2FE] flex items-center justify-center shrink-0">
+            <Book size={22} className="text-sky-600" />
           </div>
           <div>
-            <h2 className="text-[26px] font-extrabold tracking-tight leading-none text-foreground">
+            <h1 className="text-[26px] font-bold tracking-tight leading-none text-foreground">
               Team Training
-            </h2>
-            <p className="text-[13px] font-semibold mt-1 text-muted-foreground">
+            </h1>
+            <p className="text-[13px] text-[#6B7280] mt-1">
               Manage skills, assign courses, and track compliance.
             </p>
           </div>
@@ -145,28 +145,28 @@ export function ManagerTeamTraining() {
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Mandatory Pending</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-red-500 leading-none">2</p>
+            <p className="text-3xl font-bold text-red-500 leading-none">2</p>
             <p className="text-sm font-bold text-red-500/70 mb-0.5">overdue</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">In Progress</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-teal-600 leading-none">5</p>
+            <p className="text-3xl font-bold text-teal-600 leading-none">5</p>
             <p className="text-sm font-bold text-teal-600/70 mb-0.5">courses</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Completed This Month</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-emerald-600 leading-none">8</p>
+            <p className="text-3xl font-bold text-emerald-600 leading-none">8</p>
             <p className="text-sm font-bold text-emerald-600/70 mb-0.5">finished</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Certifications</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-purple-600 leading-none">12</p>
+            <p className="text-3xl font-bold text-purple-600 leading-none">12</p>
             <p className="text-sm font-bold text-purple-600/70 mb-0.5">active</p>
           </div>
         </div>
@@ -197,7 +197,7 @@ export function ManagerTeamTraining() {
         <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-secondary/50 text-muted-foreground text-xs font-black uppercase tracking-wider">
+              <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
                 <tr>
                   <th className="px-6 py-4 border-b border-border">Employee</th>
                   <th className="px-6 py-4 border-b border-border">Enrolled Courses</th>
@@ -211,7 +211,7 @@ export function ManagerTeamTraining() {
                 {MOCK_MY_TEAM.map((row) => (
                   <tr 
                     key={row.id} 
-                    className={`hover:bg-secondary/30 transition-colors h-[64px] ${row.atRisk ? 'border-l-[3px] border-l-red-500' : 'border-l-[3px] border-l-transparent'}`}
+                    className={`hover:bg-[#00B87C]/[0.08] transition-colors h-[64px] ${row.atRisk ? 'border-l-[3px] border-l-red-500' : 'border-l-[3px] border-l-transparent'}`}
                   >
                     <td className="px-6 py-2">
                       <div className="flex items-center gap-3">
@@ -220,7 +220,7 @@ export function ManagerTeamTraining() {
                           <p className="text-sm font-bold text-foreground flex items-center gap-2">
                             {row.name}
                             {row.atRisk && (
-                              <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[9px] font-black uppercase tracking-widest rounded border border-red-200">
+                              <span className="px-1.5 py-0.5 bg-red-500/10 text-red-500 text-[9px] font-bold uppercase tracking-wider rounded border border-red-200">
                                 Training at risk
                               </span>
                             )}
@@ -257,9 +257,9 @@ export function ManagerTeamTraining() {
       {activeTab === "Training Catalog" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {MOCK_CATALOG.map((course) => (
-            <div key={course.id} className="bg-card border border-border rounded-2xl overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+            <div key={course.id} className="bg-card border border-border rounded-2xl overflow-hidden hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-shadow flex flex-col">
               <div className={`h-24 bg-gradient-to-r ${course.color} p-4 flex flex-col justify-between shrink-0`}>
-                <span className="w-max px-2 py-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest rounded">
+                <span className="w-max px-2 py-1 bg-white/20 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider rounded">
                   {course.category}
                 </span>
               </div>
@@ -289,7 +289,7 @@ export function ManagerTeamTraining() {
         <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-secondary/50 text-muted-foreground text-xs font-black uppercase tracking-wider">
+              <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
                 <tr>
                   <th className="px-6 py-4 border-b border-border">Employee</th>
                   <th className="px-6 py-4 border-b border-border">Course</th>
@@ -302,14 +302,14 @@ export function ManagerTeamTraining() {
               </thead>
               <tbody className="divide-y divide-border">
                 {MOCK_ASSIGNMENTS.map((row) => (
-                  <tr key={row.id} className="hover:bg-secondary/30 transition-colors h-[64px]">
+                  <tr key={row.id} className="hover:bg-[#00B87C]/[0.08] transition-colors h-[64px]">
                     <td className="px-6 py-2 font-bold text-foreground">{row.emp}</td>
                     <td className="px-6 py-2 font-semibold text-muted-foreground">{row.course}</td>
                     <td className="px-6 py-2 text-xs text-muted-foreground">{row.assignedOn}</td>
                     <td className="px-6 py-2 text-xs font-bold text-foreground">{row.dueDate}</td>
                     <td className="px-6 py-2">
                       <div className="w-24">
-                        <div className="flex items-center justify-between text-[10px] font-bold mb-1">
+                        <div className="flex items-center justify-between text-[11px] font-bold mb-1">
                           <span>{row.progress}%</span>
                         </div>
                         <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
@@ -345,10 +345,10 @@ export function ManagerTeamTraining() {
             {/* Header */}
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-secondary/30 rounded-t-2xl">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#E0F2FE] flex items-center justify-center text-sky-600">
+                <div className="w-9 h-9 rounded-[10px] bg-[#E0F2FE] flex items-center justify-center text-sky-600">
                   <BookOpen size={20} />
                 </div>
-                <h3 className="text-lg font-extrabold text-foreground">
+                <h3 className="text-lg font-bold text-foreground">
                   Assign Training to Team
                 </h3>
               </div>
@@ -382,7 +382,7 @@ export function ManagerTeamTraining() {
                     {MOCK_CATALOG.filter(c => c.title.toLowerCase().includes(courseSearch.toLowerCase())).map(c => (
                       <div key={c.id} className="p-2.5 hover:bg-secondary cursor-pointer border-b border-border last:border-0" onClick={() => setCourseSearch(c.title)}>
                         <p className="text-sm font-bold text-foreground">{c.title}</p>
-                        <p className="text-[10px] font-semibold text-muted-foreground">{c.provider}</p>
+                        <p className="text-[11px] font-semibold text-muted-foreground">{c.provider}</p>
                       </div>
                     ))}
                   </div>

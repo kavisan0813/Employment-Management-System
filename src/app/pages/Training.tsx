@@ -210,7 +210,7 @@ function AddCourseModal({
         </div>
         <div className="space-y-3">
           <div>
-            <label className="block text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">
+            <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1">
               Title
             </label>
             <input
@@ -221,7 +221,7 @@ function AddCourseModal({
             />
           </div>
           <div>
-            <label className="block text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">
+            <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1">
               Trainer
             </label>
             <input
@@ -232,7 +232,7 @@ function AddCourseModal({
             />
           </div>
           <div>
-            <label className="block text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">
+            <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1">
               Category
             </label>
             <select
@@ -247,7 +247,7 @@ function AddCourseModal({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">
+              <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1">
                 Duration
               </label>
               <input
@@ -258,7 +258,7 @@ function AddCourseModal({
               />
             </div>
             <div>
-              <label className="block text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">
+              <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1">
                 Difficulty
               </label>
               <select
@@ -347,7 +347,7 @@ function AssignCourseModal({
         ) : (
           <div className="space-y-3">
             <div>
-              <label className="block text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">
+              <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1">
                 Select Course
               </label>
               <select
@@ -363,7 +363,7 @@ function AssignCourseModal({
               </select>
             </div>
             <div>
-              <label className="block text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase mb-1">
+              <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase mb-1">
                 Employee or Department
               </label>
               <input
@@ -453,7 +453,7 @@ function CoursePlayerModal({
           {/* Progress stats */}
           <div className="bg-neutral-50 dark:bg-zinc-800/30 p-4 rounded-2xl border border-border flex items-center justify-between gap-4">
             <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">
                 Course progress
               </span>
               <span className="text-base font-extrabold text-slate-800 dark:text-slate-200">
@@ -603,7 +603,7 @@ export function Training() {
       {/* ── Page Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
             <span>Dashboard</span>
             <span>/</span>
             <span className="text-slate-600 dark:text-slate-300 font-bold">
@@ -765,7 +765,7 @@ export function Training() {
               setTypeFilter("All");
               setDeptFilter("All");
             }}
-            className="text-[10px] font-black text-muted-foreground uppercase tracking-wider hover:text-[#00B87C]"
+            className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:text-[#00B87C]"
           >
             Reset
           </button>
@@ -803,7 +803,7 @@ export function Training() {
                   <div
                     key={course.id}
                     onClick={() => setLearningCourse(course)}
-                    className="w-[240px] h-[290px] bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col flex-shrink-0 transition-all hover:-translate-y-1 hover:shadow-md cursor-pointer"
+                    className="w-[240px] h-[290px] bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col flex-shrink-0 transition-all hover:-translate-y-1 hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] cursor-pointer"
                   >
                     {/* Gradient Banner */}
                     <div
@@ -820,14 +820,14 @@ export function Training() {
                         <h4 className="text-xs font-extrabold text-slate-900 dark:text-slate-100 line-clamp-2 mb-1">
                           {course.title}
                         </h4>
-                        <p className="text-[10px] font-bold text-slate-400">
+                        <p className="text-[11px] font-bold text-slate-400">
                           Trainer: {course.trainer}
                         </p>
                       </div>
 
                       <div>
                         {/* Progress bar */}
-                        <div className="flex items-center justify-between text-[10px] font-extrabold text-slate-500 mb-1.5">
+                        <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-500 mb-1.5">
                           <div className="h-1 w-[75%] bg-neutral-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                             <div
                               className="h-full bg-[#00B87C]"
@@ -838,7 +838,7 @@ export function Training() {
                         </div>
 
                         <div className="flex items-center justify-between pt-2 border-t border-slate-50 dark:border-zinc-800/60">
-                          <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400">
+                          <span className="flex items-center gap-1 text-[11px] font-bold text-slate-400">
                             <Clock size={12} />
                             {course.timeLeft}
                           </span>
@@ -847,7 +847,7 @@ export function Training() {
                               e.stopPropagation();
                               setLearningCourse(course);
                             }}
-                            className="px-2.5 py-1 bg-[#DCFCE7] text-[#00B87C] text-[10px] font-black rounded-lg hover:bg-[#cbf7d9] transition-all flex items-center gap-1"
+                            className="px-2.5 py-1 bg-[#DCFCE7] text-[#00B87C] text-[11px] font-semibold rounded-lg hover:bg-[#cbf7d9] transition-all flex items-center gap-1"
                           >
                             Continue <ArrowRight size={10} />
                           </button>
@@ -878,7 +878,7 @@ export function Training() {
                         <h4 className="text-xs font-extrabold text-slate-900 dark:text-slate-100">
                           {cert.name}
                         </h4>
-                        <p className="text-[10px] font-bold text-muted-foreground mt-0.5">
+                        <p className="text-[11px] font-bold text-muted-foreground mt-0.5">
                           {cert.authority}
                         </p>
                         <span className="text-[9px] font-medium text-slate-400 block mt-1">
@@ -888,7 +888,7 @@ export function Training() {
                     </div>
                     <button
                       onClick={() => handleDownloadCert(cert.name)}
-                      className="px-3 py-1.5 border border-border rounded-xl text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:bg-neutral-50 transition-all flex items-center gap-1 flex-shrink-0"
+                      className="px-3 py-1.5 border border-border rounded-xl text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-neutral-50 transition-all flex items-center gap-1 flex-shrink-0"
                     >
                       <Download size={12} />
                       Get
@@ -949,7 +949,7 @@ export function Training() {
               <div
                 key={course.id}
                 onClick={() => setLearningCourse(course)}
-                className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col relative transition-all hover:-translate-y-1 hover:shadow-md cursor-pointer"
+                className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col relative transition-all hover:-translate-y-1 hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] cursor-pointer"
               >
                 {/* Banner */}
                 <div
@@ -975,7 +975,7 @@ export function Training() {
                     <h4 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 mt-2 line-clamp-2">
                       {course.title}
                     </h4>
-                    <div className="flex items-center gap-3 text-[10px] font-medium text-slate-400 mt-2">
+                    <div className="flex items-center gap-3 text-[11px] font-medium text-slate-400 mt-2">
                       <span>{course.duration}</span>
                       <span>•</span>
                       <span>By {course.trainer}</span>
@@ -989,17 +989,17 @@ export function Training() {
                     </div>
 
                     {course.progress === 100 ? (
-                      <span className="px-2.5 py-1 text-[10px] font-black text-[#00B87C] bg-[#E6F4EA] rounded-lg flex items-center gap-1">
+                      <span className="px-2.5 py-1 text-[11px] font-semibold text-[#00B87C] bg-[#E6F4EA] rounded-lg flex items-center gap-1">
                         Completed ✓
                       </span>
                     ) : course.isEnrolled ? (
-                      <span className="px-2.5 py-1 text-[10px] font-black text-slate-600 bg-slate-100 rounded-lg flex items-center gap-1">
+                      <span className="px-2.5 py-1 text-[11px] font-semibold text-slate-600 bg-slate-100 rounded-lg flex items-center gap-1">
                         Enrolled ({course.progress}%)
                       </span>
                     ) : (
                       <button
                         onClick={() => handleEnroll(course.id)}
-                        className="px-4 py-1.5 bg-[#00B87C] hover:bg-[#00a36d] text-white text-[10px] font-black rounded-xl shadow-sm transition-all active:scale-95"
+                        className="px-4 py-1.5 bg-[#00B87C] hover:bg-[#00a36d] text-white text-[11px] font-semibold rounded-xl shadow-sm transition-all active:scale-95"
                       >
                         Enroll
                       </button>
@@ -1057,7 +1057,7 @@ export function Training() {
                   <h4 className="text-sm font-extrabold text-slate-900 dark:text-slate-100">
                     {item.title}
                   </h4>
-                  <p className="text-[10px] font-bold text-muted-foreground mt-0.5">
+                  <p className="text-[11px] font-bold text-muted-foreground mt-0.5">
                     Instructor: {item.instructor} • Deadline: {item.due}
                   </p>
                 </div>
@@ -1076,7 +1076,7 @@ export function Training() {
                   {item.status}
                 </span>
                 {item.status !== "Completed" && (
-                  <button className="px-4 py-1.5 text-[10px] font-black text-white bg-[#00B87C] hover:bg-[#00a36d] rounded-xl shadow-sm transition-all">
+                  <button className="px-4 py-1.5 text-[11px] font-semibold text-white bg-[#00B87C] hover:bg-[#00a36d] rounded-xl shadow-sm transition-all">
                     Launch
                   </button>
                 )}

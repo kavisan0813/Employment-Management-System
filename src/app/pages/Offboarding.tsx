@@ -14,16 +14,21 @@ import {
   Briefcase,
   Laptop,
   ShieldCheck,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   BookOpen,
   Star,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   AlertTriangle,
   ArrowLeft,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Building2,
   FileText,
   Mail,
   Send,
   CheckCircle2,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   HelpCircle,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ThumbsUp,
   MessageSquare,
 } from "lucide-react";
@@ -31,6 +36,7 @@ import { motion, AnimatePresence } from "motion/react";
 
 /* ─── Types ─── */
 type ExitType = "Resignation" | "Termination" | "Retirement" | "Contract End" | "Other";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExitStatus = "Active" | "Completed" | "Scheduled";
 type ClearanceStatus = "cleared" | "pending" | "not_started";
 type TabType = "Active" | "Completed" | "Scheduled" | "Exit Analytics";
@@ -303,13 +309,13 @@ const progressColor = (pct: number) => {
 const exitTypeChip = (type: ExitType) => {
   switch (type) {
     case "Resignation":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0] text-[10px] font-black uppercase tracking-wider">Resignation</span>;
+      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0] text-[11px] font-semibold uppercase tracking-wider">Resignation</span>;
     case "Termination":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] text-[10px] font-black uppercase tracking-wider">Termination</span>;
+      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] text-[11px] font-semibold uppercase tracking-wider">Termination</span>;
     case "Retirement":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0D9488] border border-[#99F6E4] text-[10px] font-black uppercase tracking-wider">Retirement</span>;
+      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0D9488] border border-[#99F6E4] text-[11px] font-semibold uppercase tracking-wider">Retirement</span>;
     default:
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#EDE9FE] text-[#7C3AED] border border-[#DDD6FE] text-[10px] font-black uppercase tracking-wider">{type}</span>;
+      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#EDE9FE] text-[#7C3AED] border border-[#DDD6FE] text-[11px] font-semibold uppercase tracking-wider">{type}</span>;
   }
 };
 
@@ -317,24 +323,29 @@ const clearanceChip = (status: ClearanceStatus) => {
   switch (status) {
     case "cleared": return <span className="text-[11px] font-black text-[#00B87C] flex items-center gap-1"><Check size={12} /> Done</span>;
     case "pending": return <span className="text-[11px] font-black text-amber-500 flex items-center gap-1"><Clock size={12} /> Pending</span>;
-    case "not_started": return <span className="text-[11px] font-black text-muted-foreground flex items-center gap-1"><X size={12} /> Not Started</span>;
+    case "not_started": return <span className="text-[11px] font-semibold text-[#94A3B8] flex items-center gap-1"><X size={12} /> Not Started</span>;
   }
 };
 
 /* ─── MAIN COMPONENT ─── */
 export function Offboarding() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("Active");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeExitId, setActiveExitId] = useState<string | null>(null);
   const [showInitiateModal, setShowInitiateModal] = useState(false);
   const [showDetail, setShowDetail] = useState<string | null>(null);
   const [showReminder, setShowReminder] = useState<string | null>(null);
   const [showComplete, setShowComplete] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showInterview, setShowInterview] = useState<string | null>(null);
   const [showSchedule, setShowSchedule] = useState<{id: string; type: "interview" | "clearance"} | null>(null);
 
-  const activeExits = EXITS.filter(e => e.type !== "Completed");
+  const activeExits = EXITS.filter(e => e.progress < 100);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const completedExits: ExitEmployee[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const scheduledExits: ExitEmployee[] = [];
 
   const stats = {
@@ -361,8 +372,8 @@ export function Offboarding() {
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#FEE2E2] dark:bg-red-500/10 flex items-center justify-center shadow-inner border border-red-100 dark:border-red-500/20">
-            <LogOut size={28} className="text-[#EF4444]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#FEE2E2] dark:bg-red-500/10 flex items-center justify-center shadow-inner border border-red-100 dark:border-red-500/20">
+            <LogOut size={22} className="text-[#EF4444]" />
           </div>
           <div>
             <h1 className="text-[26px] font-black text-foreground tracking-tight">Offboarding / Exit Management</h1>
@@ -379,7 +390,7 @@ export function Offboarding() {
           </button>
           <button
             onClick={() => setShowInitiateModal(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20"
           >
             <Plus size={18} />
             Initiate Exit
@@ -423,7 +434,7 @@ export function Offboarding() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-4 text-[13px] font-black tracking-widest uppercase transition-all relative whitespace-nowrap ${
+                className={`px-6 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap ${
                   isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -542,22 +553,22 @@ function KpiCard({ icon: Icon, bgColor, iconColor, label, value, valueColor, sub
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-all"
+      className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
     >
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[1.5px]">{label}</p>
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: bgColor }}>
+        <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">{label}</p>
+        <div className="w-9 h-9 rounded-[10px] flex items-center justify-center" style={{ backgroundColor: bgColor }}>
           <Icon size={16} style={{ color: iconColor }} />
         </div>
       </div>
-      <h3 className={`text-lg font-black tracking-tighter ${valueColor}`}>{value}</h3>
-      <p className="text-[9px] font-bold text-muted-foreground mt-1">{sub}</p>
+      <h3 className={`text-[28px] font-black tracking-tighter ${valueColor}`}>{value}</h3>
+      <p className="text-[12px] font-bold text-[#6B7280] mt-1">{sub}</p>
     </motion.div>
   );
 }
 
 /* ─── EXIT CARD ─── */
-function ExitCard({ exit, onViewDetail, onSendReminder, onComplete, onScheduleInterview }: {
+function ExitCard({ exit, onViewDetail, onSendReminder, onComplete }: {
   exit: ExitEmployee; onViewDetail: () => void; onSendReminder: () => void;
   onComplete: () => void; onScheduleInterview: () => void;
 }) {
@@ -568,7 +579,7 @@ function ExitCard({ exit, onViewDetail, onSendReminder, onComplete, onScheduleIn
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-card rounded-2xl p-5 shadow-sm hover:shadow-md transition-all border ${isOverdue ? "border-[#EF4444]/50" : "border-border"}`}
+      className={`bg-card rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all border ${isOverdue ? "border-[#EF4444]/50" : "border-border"}`}
     >
       {/* TOP ROW */}
       <div className="flex items-center justify-between mb-4">
@@ -582,7 +593,7 @@ function ExitCard({ exit, onViewDetail, onSendReminder, onComplete, onScheduleIn
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[10px] font-black uppercase tracking-wider">LWD: {exit.lwd.replace(" (OVERDUE!)", "")}</span>
+          <span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[11px] font-semibold uppercase tracking-wider">LWD: {exit.lwd.replace(" (OVERDUE!)", "")}</span>
           {exitTypeChip(exit.type)}
         </div>
       </div>
@@ -594,7 +605,7 @@ function ExitCard({ exit, onViewDetail, onSendReminder, onComplete, onScheduleIn
             <circle cx="24" cy="24" r="20" fill="none" stroke="var(--border)" strokeWidth="4" />
             <circle cx="24" cy="24" r="20" fill="none" stroke={colors.bar} strokeWidth="4" strokeDasharray={`${2 * Math.PI * 20}`} strokeDashoffset={`${2 * Math.PI * 20 * (1 - exit.progress / 100)}`} strokeLinecap="round" />
           </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black" style={{ color: colors.text }}>{exit.progress}%</span>
+          <span className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold" style={{ color: colors.text }}>{exit.progress}%</span>
         </div>
         <div className="flex-1 min-w-0">
           {/* Progress Stepper */}
@@ -609,7 +620,7 @@ function ExitCard({ exit, onViewDetail, onSendReminder, onComplete, onScheduleIn
               return (
                 <div key={idx} className="flex items-center flex-1 last:flex-none">
                   <div className="flex flex-col items-center">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border-2 transition-all ${
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold border-2 transition-all ${
                       step.done ? "bg-[#00B87C] border-[#00B87C] text-white" :
                       isActiveStep ? "border-[#14B8A6] text-[#14B8A6] bg-[#CCFBF1]" :
                       "border-border text-muted-foreground bg-card"
@@ -633,7 +644,7 @@ function ExitCard({ exit, onViewDetail, onSendReminder, onComplete, onScheduleIn
       {/* CLEARANCE STATUS ROW */}
       <div className="flex flex-wrap items-center gap-3 mb-4 px-1">
         {exit.clearance.map((c, i) => (
-          <div key={i} className="flex items-center gap-1.5 text-[10px] font-black">
+          <div key={i} className="flex items-center gap-1.5 text-[11px] font-semibold">
             <span className="text-muted-foreground">{c.dept}</span>
             {c.status === "cleared" ? (
               <Check size={12} className="text-[#00B87C]" />
@@ -731,7 +742,7 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
         <div className="px-8 py-6 space-y-5 max-h-[60vh] overflow-y-auto">
           {/* Employee Search */}
           <div>
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">SELECT EMPLOYEE</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">SELECT EMPLOYEE</label>
             <div className="relative">
               <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -744,7 +755,7 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
 
           {/* Exit Type */}
           <div>
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">EXIT TYPE</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">EXIT TYPE</label>
             <div className="flex flex-wrap gap-2">
               {exitTypes.map((t) => (
                 <button
@@ -765,14 +776,14 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
           {/* Date Row */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">LAST WORKING DATE</label>
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">LAST WORKING DATE</label>
               <div className="relative">
                 <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input type="date" className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
               </div>
             </div>
             <div>
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">RESIGNATION DATE</label>
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">RESIGNATION DATE</label>
               <div className="relative">
                 <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input type="date" defaultValue="2026-04-06" className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
@@ -782,18 +793,18 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
 
           {/* Notice Period */}
           <div>
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">NOTICE PERIOD (DAYS)</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">NOTICE PERIOD (DAYS)</label>
             <input type="number" defaultValue={30} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
           </div>
 
           {/* Reason Category */}
           <div>
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">REASON CATEGORY</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">REASON CATEGORY</label>
             <div className="flex flex-wrap gap-2">
               {reasonCategories.map((r) => (
                 <button
                   key={r}
-                  className="px-3 py-1.5 rounded-lg border border-border text-[10px] font-bold text-muted-foreground hover:border-[#00B87C]/30 hover:text-foreground transition-all"
+                  className="px-3 py-1.5 rounded-lg border border-border text-[11px] font-bold text-muted-foreground hover:border-[#00B87C]/30 hover:text-foreground transition-all"
                 >
                   {r}
                 </button>
@@ -803,13 +814,13 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
 
           {/* Reason Details */}
           <div>
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">REASON DETAILS (OPTIONAL)</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">REASON DETAILS (OPTIONAL)</label>
             <textarea rows={3} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all resize-none" placeholder="Add details..." />
           </div>
 
           {/* Assigned HR Owner */}
           <div>
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">ASSIGNED HR OWNER</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">ASSIGNED HR OWNER</label>
             <div className="relative">
               <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input type="text" placeholder="Search HR employee..." className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
@@ -818,7 +829,7 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
 
           {/* Notifications */}
           <div>
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">SEND NOTIFICATIONS TO</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">SEND NOTIFICATIONS TO</label>
             <div className="space-y-2.5">
               {[
                 { label: "Employee (confirmation email)", defaultChecked: true },
@@ -838,7 +849,7 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
 
         {/* Footer */}
         <div className="px-8 py-5 border-t border-border flex items-center justify-between">
-          <button onClick={onClose} className="px-5 py-2.5 rounded-xl text-[12px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all">
+          <button onClick={onClose} className="px-5 py-2.5 rounded-xl text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider hover:text-foreground transition-all">
             Cancel
           </button>
           <div className="flex items-center gap-3">
@@ -847,7 +858,7 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
             </button>
             <button
               onClick={() => setStep("success")}
-              className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[12px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20"
+              className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[12px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20"
             >
               Initiate Exit
             </button>
@@ -892,7 +903,7 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
             </div>
             <div className="flex items-center gap-2 ml-4">
               {exitTypeChip(exit.type)}
-              <span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[10px] font-black uppercase tracking-wider">LWD: {exit.lwd.replace(" (OVERDUE!)", "")}</span>
+<span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[11px] font-semibold uppercase tracking-wider">LWD: {exit.lwd.replace(" (OVERDUE!)", "")}</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -910,7 +921,7 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
         <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-[30%_40%_30%] divide-x divide-border">
           {/* LEFT: Timeline */}
           <div className="p-6 space-y-4">
-            <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">EXIT TIMELINE</h3>
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">EXIT TIMELINE</h3>
             <div className="space-y-0">
               {exit.timeline.map((item, i) => (
                 <div key={i} className="flex gap-3">
@@ -930,7 +941,7 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
                     <p className={`text-[12px] font-bold ${item.status === "done" ? "text-[#00B87C]" : item.status === "active" ? "text-[#14B8A6]" : "text-muted-foreground"}`}>
                       {item.label}
                     </p>
-                    <p className="text-[10px] font-medium text-muted-foreground">{item.date}</p>
+                    <p className="text-[11px] font-medium text-muted-foreground">{item.date}</p>
                   </div>
                 </div>
               ))}
@@ -941,17 +952,17 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
           <div className="p-6 space-y-6 overflow-y-auto">
             {/* Clearances */}
             <div>
-              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">DEPARTMENT CLEARANCES</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">DEPARTMENT CLEARANCES</h3>
               <div className="space-y-2">
                 {exit.clearance.map((c, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-[#F0FDF4] transition-all border border-transparent hover:border-[#DCFCE7]">
+                  <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-[#00B87C]/[0.08] transition-all border border-transparent hover:border-[#DCFCE7]">
                     <div className="flex items-center gap-3">
                       <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: c.bgColor }}>
                         <c.icon size={14} style={{ color: c.color }} />
                       </div>
                       <div>
                         <p className="text-[12px] font-bold text-foreground">{c.dept}</p>
-                        <p className="text-[10px] font-medium text-muted-foreground">{c.person}</p>
+                        <p className="text-[11px] font-medium text-muted-foreground">{c.person}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -974,7 +985,7 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
 
             {/* Assets */}
             <div>
-              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">ASSET RECOVERY CHECKLIST</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">ASSET RECOVERY CHECKLIST</h3>
               <div className="space-y-2">
                 {exit.assets.map((a, i) => (
                   <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-border/50">
@@ -982,7 +993,7 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
                       <Laptop size={14} className="text-muted-foreground" />
                       <div>
                         <p className="text-[12px] font-bold text-foreground">{a.name}</p>
-                        <p className="text-[10px] font-medium text-muted-foreground">{a.detail}</p>
+                        <p className="text-[11px] font-medium text-muted-foreground">{a.detail}</p>
                       </div>
                     </div>
                     {a.status === "returned" ? (
@@ -997,7 +1008,7 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
 
             {/* Documents */}
             <div>
-              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">DOCUMENT CHECKLIST</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">DOCUMENT CHECKLIST</h3>
               <div className="space-y-2">
                 {exit.documents.map((d, i) => (
                   <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-border/50">
@@ -1022,7 +1033,7 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
           <div className="p-6 space-y-6">
             {/* F&F Settlement */}
             <div>
-              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">F&F SETTLEMENT CALCULATION</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">F&F SETTLEMENT CALCULATION</h3>
               <div className="p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold text-foreground">Last Working Month Salary</span>
@@ -1047,7 +1058,7 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold text-muted-foreground">Asset Loss Deductions</span>
-                  <span className="text-[11px] font-black text-muted-foreground">{exit.deductions > 0 ? `-${formatCurrency(exit.deductions)}` : "-₹0"}</span>
+                  <span className="text-[11px] font-semibold text-[#94A3B8]">{exit.deductions > 0 ? `-${formatCurrency(exit.deductions)}` : "-₹0"}</span>
                 </div>
                 <hr className="border-border" />
                 <div className="flex items-center justify-between">
@@ -1056,7 +1067,7 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-between">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEF3C7] text-amber-500 border border-[#FDE68A] text-[10px] font-black uppercase tracking-wider">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEF3C7] text-amber-500 border border-[#FDE68A] text-[11px] font-semibold uppercase tracking-wider">
                   <Clock size={12} /> {exit.ffStatus}
                 </span>
               </div>
@@ -1070,7 +1081,7 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
 
             {/* Exit Interview */}
             <div>
-              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">EXIT INTERVIEW</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">EXIT INTERVIEW</h3>
               <div className="p-4 rounded-2xl border border-border space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold text-foreground">Conducted by</span>
@@ -1145,7 +1156,7 @@ function ReminderModal({ exitName, onClose }: { exitName: string; onClose: () =>
         </div>
         <div className="px-6 py-5 space-y-4">
           <div>
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">REMIND DEPARTMENT</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">REMIND DEPARTMENT</label>
             <div className="space-y-2">
               {["IT Team", "Finance Team", "HR Team", "Admin Team"].map((d) => (
                 <label key={d} className="flex items-center gap-3 cursor-pointer">
@@ -1156,13 +1167,13 @@ function ReminderModal({ exitName, onClose }: { exitName: string; onClose: () =>
             </div>
           </div>
           <div>
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 block">MESSAGE (OPTIONAL)</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">MESSAGE (OPTIONAL)</label>
             <textarea rows={3} className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-amber-500/20 transition-all resize-none" placeholder="Reminder message..." defaultValue="Please complete pending clearances for this exit at the earliest." />
           </div>
         </div>
         <div className="px-6 pb-5 flex items-center justify-between">
-          <button onClick={onClose} className="px-4 py-2 rounded-xl text-[11px] font-black text-muted-foreground uppercase tracking-widest">Cancel</button>
-          <button onClick={() => setSent(true)} className="px-5 py-2.5 rounded-xl bg-amber-500 text-white text-[11px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all flex items-center gap-2">
+          <button onClick={onClose} className="px-4 py-2 rounded-xl text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Cancel</button>
+          <button onClick={() => setSent(true)} className="px-5 py-2.5 rounded-xl bg-amber-500 text-white text-[11px] font-semibold uppercase tracking-wider hover:bg-amber-600 transition-all flex items-center gap-2">
             <Send size={14} /> Send Reminder
           </button>
         </div>
@@ -1190,8 +1201,8 @@ function CompleteExitModal({ exit, onClose, onConfirm }: { exit: ExitEmployee; o
         </p>
         <p className="text-[11px] font-bold text-amber-500 mb-6">This will finalize all records and generate the relieving letter.</p>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl border border-border text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all">Cancel</button>
-          <button onClick={onConfirm} className="flex-1 px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all">Confirm Complete</button>
+          <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl border border-border text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider hover:text-foreground transition-all">Cancel</button>
+          <button onClick={onConfirm} className="flex-1 px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all">Confirm Complete</button>
         </div>
       </motion.div>
     </div>
@@ -1284,7 +1295,7 @@ function ExitInterviewModal({ employeeName, interviewDone, onClose, onComplete }
             <p className="text-[12px] font-bold text-foreground mb-2">Primary reason for leaving?</p>
             <div className="flex flex-wrap gap-2">
               {["Career Growth", "Compensation", "Work Culture", "Relocation", "Personal", "Health", "Education", "Other"].map((r) => (
-                <button key={r} className="px-3 py-1.5 rounded-lg border border-border text-[10px] font-bold text-muted-foreground hover:border-[#00B87C]/30 transition-all">{r}</button>
+                <button key={r} className="px-3 py-1.5 rounded-lg border border-border text-[11px] font-bold text-muted-foreground hover:border-[#00B87C]/30 transition-all">{r}</button>
               ))}
             </div>
           </div>
@@ -1302,8 +1313,8 @@ function ExitInterviewModal({ employeeName, interviewDone, onClose, onComplete }
           </div>
         </div>
         <div className="px-6 pb-5 flex items-center justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2.5 rounded-xl text-[11px] font-black text-muted-foreground uppercase tracking-widest">Cancel</button>
-          <button onClick={onComplete} className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all">
+          <button onClick={onClose} className="px-4 py-2.5 rounded-xl text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Cancel</button>
+          <button onClick={onComplete} className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all">
             <Check size={14} className="inline mr-1" /> Mark as Completed
           </button>
         </div>

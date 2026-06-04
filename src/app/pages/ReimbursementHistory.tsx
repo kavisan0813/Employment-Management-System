@@ -60,12 +60,12 @@ export function ReimbursementHistory() {
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+          className="p-2 hover:bg-[#00B87C]/[0.08] rounded-xl transition-colors"
         >
           <ArrowLeft size={20} className="text-slate-600" />
         </button>
         <div>
-          <h1 className="text-3xl font-black text-[#111827] tracking-tight">
+          <h1 className="text-[26px] font-bold text-[#111827]">
             Reimbursement History
           </h1>
           <p className="text-slate-500 font-medium">
@@ -75,29 +75,29 @@ export function ReimbursementHistory() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-4">
             <IndianRupee size={20} className="text-emerald-500" />
           </div>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-1">
             Total Paid
           </p>
           <p className="text-2xl font-black text-[#111827]">₹14,795</p>
         </div>
-        <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center mb-4">
             <History size={20} className="text-amber-500" />
           </div>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-1">
             Pending Payment
           </p>
           <p className="text-2xl font-black text-[#111827]">₹3,200</p>
         </div>
-        <div className="bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center mb-4">
             <Calendar size={20} className="text-indigo-500" />
           </div>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-1">
             This Month Paid
           </p>
           <p className="text-2xl font-black text-[#111827]">₹2,295</p>
@@ -120,10 +120,10 @@ export function ReimbursementHistory() {
             />
           </div>
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-3 bg-slate-50 text-slate-600 rounded-2xl text-sm font-bold hover:bg-slate-100 transition-all border border-slate-100">
+            <button className="flex items-center gap-2 px-4 py-3 bg-slate-50 text-slate-600 rounded-2xl text-sm font-bold hover:bg-[#00B87C]/[0.08] transition-all border border-slate-100">
               <Filter size={18} /> Filter
             </button>
-            <button className="flex items-center gap-2 px-4 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl text-sm font-bold hover:bg-slate-50 transition-all">
+            <button className="flex items-center gap-2 px-4 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl text-sm font-bold hover:bg-[#00B87C]/[0.08] transition-all">
               <Download size={18} /> Export
             </button>
           </div>
@@ -133,25 +133,25 @@ export function ReimbursementHistory() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <th className="px-8 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                   Claim ID
                 </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <th className="px-8 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                   Category
                 </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <th className="px-8 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                   Amount
                 </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <th className="px-8 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                   Approved Date
                 </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <th className="px-8 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                   Paid Date
                 </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <th className="px-8 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                   Payment Method
                 </th>
-                <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <th className="px-8 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
                   Status
                 </th>
               </tr>
@@ -160,7 +160,7 @@ export function ReimbursementHistory() {
               {history.map((item, i) => (
                 <tr
                   key={i}
-                  className="group hover:bg-slate-50/50 transition-colors"
+                  className="group hover:bg-[#00B87C]/[0.08]/50 transition-colors"
                 >
                   <td className="px-8 py-5">
                     <span className="text-[13px] font-black text-emerald-600">

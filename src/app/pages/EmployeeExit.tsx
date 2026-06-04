@@ -7,12 +7,16 @@ import {
   UploadCloud,
   FileText,
   Calendar,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   IndianRupee,
   AlertCircle,
   Check,
   Pen,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Download,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ChevronRight,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   User,
   ShieldCheck,
 } from "lucide-react";
@@ -137,13 +141,13 @@ export function EmployeeExit() {
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#FEE2E2] flex items-center justify-center shadow-inner border border-red-100">
-            <LogOut size={28} className="text-[#EF4444]" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#FEE2E2] flex items-center justify-center shadow-inner border border-red-100">
+            <LogOut size={22} className="text-[#EF4444]" />
           </div>
           <div>
             <div className="flex items-center gap-3 mb-0.5">
               <h1 className="text-[26px] font-black text-foreground tracking-tight">My Exit Checklist</h1>
-              <span className="px-2.5 py-0.5 rounded-full bg-[#FEE2E2] text-[#EF4444] border border-[#FECACA] text-[10px] font-black uppercase tracking-wider">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#FEE2E2] text-[#EF4444] border border-[#FECACA] text-[11px] font-semibold uppercase tracking-wider">
                 LWD: Apr 10, 2026
               </span>
             </div>
@@ -164,7 +168,7 @@ export function EmployeeExit() {
         {/* LEFT COLUMN — Checklist */}
         <div className="flex-1 space-y-6">
           {/* NOTICE PERIOD COUNTDOWN CARD */}
-          <div className="relative bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+          <div className="relative bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
             <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-gradient-to-b from-[#00B87C] to-[#059669]" />
             <div className="p-6 pl-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
@@ -184,7 +188,7 @@ export function EmployeeExit() {
           </div>
 
           {/* CHECKLIST */}
-          <div className="bg-card border border-border rounded-[24px] shadow-sm overflow-hidden">
+          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-border bg-secondary/10 flex items-center justify-between">
               <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">
                 YOUR EXIT CHECKLIST
@@ -196,7 +200,7 @@ export function EmployeeExit() {
               {tasks.map((task) => (
                 <div
                   key={task.id}
-                  className="flex items-center gap-4 px-6 py-3 hover:bg-[#F0FDF4]/20 transition-colors"
+                  className="flex items-center gap-4 px-6 py-3 hover:bg-[#00B87C]/[0.08]/20 transition-colors"
                   style={{ minHeight: "52px" }}
                 >
                   <StatusCircle status={task.status} />
@@ -217,7 +221,7 @@ export function EmployeeExit() {
                     {task.status !== "done" && task.actionType === "btn" && (
                       <button
                         onClick={() => openModalFor(task)}
-                        className="px-4 py-1.5 rounded-lg bg-[#00B87C] text-white text-[10px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm whitespace-nowrap"
+                        className="px-4 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm whitespace-nowrap"
                       >
                         {task.actionLabel}
                       </button>
@@ -232,7 +236,7 @@ export function EmployeeExit() {
                     {task.status !== "done" && task.actionType === "schedule" && (
                       <button
                         onClick={() => openModalFor(task)}
-                        className="px-4 py-1.5 rounded-lg border border-[#00B87C]/30 text-[#00B87C] text-[10px] font-black uppercase tracking-wider hover:bg-[#00B87C]/5 transition-all whitespace-nowrap"
+                        className="px-4 py-1.5 rounded-lg border border-[#00B87C]/30 text-[#00B87C] text-[11px] font-semibold uppercase tracking-wider hover:bg-[#00B87C]/5 transition-all whitespace-nowrap"
                       >
                         {task.actionLabel}
                       </button>
@@ -241,14 +245,14 @@ export function EmployeeExit() {
                     {task.status !== "done" && task.actionType === "sign" && (
                       <button
                         onClick={() => openModalFor(task)}
-                        className="px-4 py-1.5 rounded-lg bg-[#00B87C] text-white text-[10px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm whitespace-nowrap"
+                        className="px-4 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm whitespace-nowrap"
                       >
                         {task.actionLabel}
                       </button>
                     )}
 
                     {task.status === "done" && task.completedDate && (
-                      <span className="text-[10px] font-bold text-[#00B87C] whitespace-nowrap">Done {task.completedDate}</span>
+                      <span className="text-[11px] font-bold text-[#00B87C] whitespace-nowrap">Done {task.completedDate}</span>
                     )}
 
                     {task.status === "done" && (
@@ -263,7 +267,7 @@ export function EmployeeExit() {
 
         {/* RIGHT COLUMN — F&F Summary */}
         <div className="lg:w-[340px] shrink-0">
-          <div className="bg-card border border-border rounded-[24px] shadow-sm overflow-hidden sticky top-24">
+          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden sticky top-24">
             <div className="px-6 py-4 border-b border-border bg-secondary/10">
               <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">
                 MY ESTIMATED F&F SETTLEMENT
@@ -295,7 +299,7 @@ export function EmployeeExit() {
               <div className="border-t border-border pt-4 mt-4">
                 <div className="bg-[#F0FDF4] dark:bg-[#00B87C]/5 rounded-2xl p-4 border border-[#00B87C]/20">
                   <div className="flex items-center justify-between">
-                    <p className="text-[10px] font-black text-[#00B87C] uppercase tracking-widest">Estimated Net</p>
+                    <p className="text-[11px] font-semibold text-[#00B87C] uppercase tracking-widest">Estimated Net</p>
                     <span className="text-[24px] font-black text-[#00B87C] tracking-tight">{formatCurrency(173200)}</span>
                   </div>
                 </div>
@@ -307,7 +311,7 @@ export function EmployeeExit() {
               <div className="border-t border-border pt-4 mt-2">
                 <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#FEF3C7] border border-[#FBBF24]/20">
                   <AlertCircle size={14} className="text-[#D97706]" />
-                  <span className="text-[10px] font-bold text-[#D97706]">Settlement processed after all clearances</span>
+                  <span className="text-[11px] font-bold text-[#D97706]">Settlement processed after all clearances</span>
                 </div>
               </div>
             </div>
@@ -347,7 +351,7 @@ export function EmployeeExit() {
               </div>
 
               <div className="px-6 py-5 space-y-5">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block">Document Type</label>
+                <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block">Document Type</label>
                 <select className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all appearance-none">
                   <option>ID Card Copy</option>
                   <option>NOC Letter</option>
@@ -365,7 +369,7 @@ export function EmployeeExit() {
 
                 {uploadedFiles.length > 0 && (
                   <div className="space-y-2">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Uploaded Files</p>
+                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">Uploaded Files</p>
                     {uploadedFiles.map((f, i) => (
                       <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#F0FDF4] border border-[#00B87C]/20 text-[12px] font-bold text-[#00B87C]">
                         <FileText size={14} /> {f}
@@ -379,7 +383,7 @@ export function EmployeeExit() {
                 <button onClick={() => setShowUploadModal(false)} className="px-4 py-2.5 rounded-xl text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all">Cancel</button>
                 <button
                   onClick={() => handleUpload(["Clearance_Doc_1.pdf"])}
-                  className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5"
                 >
                   <UploadCloud size={14} /> Upload
                 </button>
@@ -429,7 +433,7 @@ export function EmployeeExit() {
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Your Full Name</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-2">Your Full Name</label>
                   <input
                     type="text"
                     defaultValue="James Carter"
@@ -438,7 +442,7 @@ export function EmployeeExit() {
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Digital Signature</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-2">Digital Signature</label>
                   <div className="border-2 border-dashed border-border rounded-2xl h-24 flex items-center justify-center bg-background cursor-pointer group hover:border-[#00B87C] transition-all">
                     {signatureComplete ? (
                       <div className="flex items-center gap-2 text-[#00B87C]">
@@ -464,7 +468,7 @@ export function EmployeeExit() {
                 <button onClick={() => setShowSignatureModal(false)} className="px-4 py-2.5 rounded-xl text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all">Cancel</button>
                 <button
                   onClick={() => { setSignatureComplete(true); setShowSignatureModal(false); }}
-                  className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5"
                 >
                   <Pen size={14} /> Sign & Submit
                 </button>
@@ -507,11 +511,11 @@ export function EmployeeExit() {
 
               <div className="px-6 py-5 space-y-5">
                 <div>
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Preferred Date</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-2">Preferred Date</label>
                   <input type="date" className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
                 </div>
                 <div>
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block mb-2">Preferred Time</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-2">Preferred Time</label>
                   <select className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all appearance-none">
                     <option>10:00 AM</option>
                     <option>11:00 AM</option>
@@ -526,7 +530,7 @@ export function EmployeeExit() {
                 <button onClick={() => setShowScheduleModal(false)} className="px-4 py-2.5 rounded-xl text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all">Cancel</button>
                 <button
                   onClick={() => setShowScheduleModal(false)}
-                  className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5"
                 >
                   <Calendar size={14} /> Schedule
                 </button>

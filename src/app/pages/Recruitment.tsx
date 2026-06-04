@@ -365,7 +365,7 @@ function UpcomingInterviewsPanel({
   if (!interviews.length) return null;
   return (
     <div
-      className="rounded-[28px] p-6 mb-8 relative overflow-hidden group shadow-sm border transition-all hover:shadow-md"
+      className="rounded-[28px] p-6 mb-8 relative overflow-hidden group shadow-sm border transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
       style={{
         backgroundColor: "var(--card)",
         borderColor: "var(--border)",
@@ -379,11 +379,11 @@ function UpcomingInterviewsPanel({
           </div>
           <div>
             <h3
-              className="text-sm font-black uppercase tracking-widest flex items-center gap-2"
+              className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2"
               style={{ color: "var(--foreground)" }}
             >
               Interview Alerts
-              <span className="px-2 py-0.5 rounded-md text-[10px] bg-emerald-500 text-white">
+              <span className="px-2 py-0.5 rounded-md text-[11px] bg-emerald-500 text-white">
                 {interviews.length}
               </span>
             </h3>
@@ -392,7 +392,7 @@ function UpcomingInterviewsPanel({
             </p>
           </div>
         </div>
-        <button className="text-[11px] font-black uppercase tracking-widest text-emerald-600 hover:opacity-80">
+        <button className="text-[11px] font-semibold uppercase tracking-wider text-emerald-600 hover:opacity-80">
           View All
         </button>
       </div>
@@ -431,11 +431,11 @@ function UpcomingInterviewsPanel({
                 {iv.candidateName}
               </p>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[10px] font-bold text-emerald-600">
+                <span className="text-[11px] font-bold text-emerald-600">
                   {iv.time}
                 </span>
                 <span className="w-1 h-1 rounded-full bg-slate-300" />
-                <span className="text-[10px] font-bold text-slate-400">
+                <span className="text-[11px] font-bold text-slate-400">
                   {iv.type}
                 </span>
               </div>
@@ -552,7 +552,7 @@ function OpenPositionsModal({
                       .map((tag) => (
                         <span
                           key={tag}
-                          className="px-2.5 py-0.5 rounded-full text-[10px] font-bold"
+                          className="px-2.5 py-0.5 rounded-full text-[11px] font-bold"
                           style={{
                             backgroundColor: "var(--secondary)",
                             color: "var(--primary)",
@@ -1735,7 +1735,7 @@ function CandidateCard({
           ))}
           {(candidate.interviewerAvatars || []).length > 3 && (
             <div
-              className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-[10px] font-bold"
+              className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-[11px] font-bold"
               style={{
                 borderColor: "var(--card)",
                 backgroundColor: "var(--secondary)",
@@ -1880,7 +1880,7 @@ function CandidateDetailSidePanel({
           </div>
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800 transition-colors"
             style={{ color: "var(--muted-foreground)" }}
           >
             <X size={20} />
@@ -1907,7 +1907,7 @@ function CandidateDetailSidePanel({
                     />
                   ) : (
                     <div
-                      className="w-full h-full flex items-center justify-center text-3xl font-black"
+                      className="w-full h-full flex items-center justify-center text-xl font-bold"
                       style={{ color: "var(--primary)" }}
                     >
                       {candidate.initials}
@@ -1936,7 +1936,7 @@ function CandidateDetailSidePanel({
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <span
-                    className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"
+                    className="px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider"
                     style={{
                       backgroundColor: "var(--secondary)",
                       color: "var(--primary)",
@@ -1945,7 +1945,7 @@ function CandidateDetailSidePanel({
                     {candidate.source || "LinkedIn"}
                   </span>
                   <span
-                    className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"
+                    className="px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider"
                     style={{
                       backgroundColor: "rgba(16,185,129,0.1)",
                       color: "#10B981",
@@ -1966,7 +1966,7 @@ function CandidateDetailSidePanel({
                 <button
                   key={t}
                   onClick={() => setActiveTab(t)}
-                  className={`pb-3 text-xs font-black uppercase tracking-widest transition-all relative ${activeTab === t ? "text-emerald-600" : "text-slate-400"}`}
+                  className={`pb-3 text-xs font-semibold uppercase tracking-wider transition-all relative ${activeTab === t ? "text-emerald-600" : "text-slate-400"}`}
                   style={{
                     color:
                       activeTab === t
@@ -1994,7 +1994,7 @@ function CandidateDetailSidePanel({
                       borderColor: "var(--border)",
                     }}
                   >
-                    <p className="text-[10px] font-black uppercase tracking-widest mb-1 text-slate-400">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider mb-1 text-slate-400">
                       Total Experience
                     </p>
                     <p
@@ -2011,7 +2011,7 @@ function CandidateDetailSidePanel({
                       borderColor: "var(--border)",
                     }}
                   >
-                    <p className="text-[10px] font-black uppercase tracking-widest mb-1 text-slate-400">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider mb-1 text-slate-400">
                       Notice Period
                     </p>
                     <p
@@ -2024,7 +2024,7 @@ function CandidateDetailSidePanel({
                 </div>
 
                 <div>
-                  <h4 className="text-[11px] font-black uppercase tracking-widest mb-4 text-slate-400">
+                  <h4 className="text-[11px] font-semibold uppercase tracking-wider mb-4 text-slate-400">
                     Contact Details
                   </h4>
                   <div className="space-y-3">
@@ -2044,7 +2044,7 @@ function CandidateDetailSidePanel({
                     ].map((item, i) => (
                       <div
                         key={i}
-                        className="flex items-center gap-3 text-sm font-bold p-3 rounded-xl border transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+                        className="flex items-center gap-3 text-sm font-bold p-3 rounded-xl border transition-colors hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800"
                         style={{
                           color: "var(--foreground)",
                           borderColor: "var(--border)",
@@ -2066,7 +2066,7 @@ function CandidateDetailSidePanel({
                 </div>
 
                 <div>
-                  <h4 className="text-[11px] font-black uppercase tracking-widest mb-4 text-slate-400">
+                  <h4 className="text-[11px] font-semibold uppercase tracking-wider mb-4 text-slate-400">
                     Pipeline Status
                   </h4>
                   <div className="relative pl-6 space-y-6">
@@ -2108,7 +2108,7 @@ function CandidateDetailSidePanel({
                             {step}
                           </span>
                           {i === currentIdx && (
-                            <span className="text-[10px] font-bold text-emerald-500">
+                            <span className="text-[11px] font-bold text-emerald-500">
                               Currently in this stage
                             </span>
                           )}
@@ -2119,7 +2119,7 @@ function CandidateDetailSidePanel({
                 </div>
 
                 <div>
-                  <h4 className="text-[11px] font-black uppercase tracking-widest mb-4 text-slate-400">
+                  <h4 className="text-[11px] font-semibold uppercase tracking-wider mb-4 text-slate-400">
                     Skills & Expertise
                   </h4>
                   <div className="flex flex-wrap gap-2">
@@ -2166,7 +2166,7 @@ function CandidateDetailSidePanel({
                 ].map((iv, i) => (
                   <div
                     key={i}
-                    className="p-4 rounded-2xl border transition-all hover:shadow-md"
+                    className="p-4 rounded-2xl border transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
                     style={{
                       backgroundColor: "var(--card)",
                       borderColor: "var(--border)",
@@ -2199,7 +2199,7 @@ function CandidateDetailSidePanel({
                     </div>
                   </div>
                 ))}
-                <button className="w-full py-3 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-xs font-black uppercase tracking-widest text-slate-400 hover:border-emerald-500 hover:text-emerald-500 transition-all">
+                <button className="w-full py-3 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-xs font-semibold uppercase tracking-wider text-slate-400 hover:border-emerald-500 hover:text-emerald-500 transition-all">
                   Schedule New Interview
                 </button>
               </div>
@@ -2213,7 +2213,7 @@ function CandidateDetailSidePanel({
         >
           <div className="flex gap-3">
             <button
-              className="flex-1 py-4 rounded-2xl text-xs font-black uppercase tracking-widest border transition-all hover:bg-slate-50 dark:hover:bg-slate-800"
+              className="flex-1 py-4 rounded-2xl text-xs font-semibold uppercase tracking-wider border transition-all hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800"
               style={{
                 color: "var(--foreground)",
                 borderColor: "var(--border)",
@@ -2222,7 +2222,7 @@ function CandidateDetailSidePanel({
               Reject
             </button>
             <button
-              className="flex-[2] py-4 rounded-2xl text-white text-xs font-black uppercase tracking-widest shadow-xl hover:opacity-90 transition-all"
+              className="flex-[2] py-4 rounded-2xl text-white text-xs font-semibold uppercase tracking-wider shadow-xl hover:opacity-90 transition-all"
               style={{
                 backgroundColor: "var(--primary)",
                 boxShadow: "0 8px 20px -6px rgba(16,185,129,0.5)",
@@ -2274,7 +2274,7 @@ function CandidatesView({
             ].map((h) => (
               <th
                 key={h}
-                className="px-8 py-5 text-left text-[11px] font-black uppercase tracking-widest"
+                className="px-8 py-5 text-left text-[11px] font-semibold uppercase tracking-wider"
                 style={{ color: "var(--muted-foreground)" }}
               >
                 {h}
@@ -2346,7 +2346,7 @@ function CandidatesView({
               </td>
               <td className="px-8 py-4">
                 <span
-                  className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase ${
                     c.source === "LinkedIn"
                       ? "bg-blue-50 text-blue-600"
                       : c.source === "Indeed"
@@ -2457,7 +2457,7 @@ function InterviewsView({
       <div className="lg:col-span-2 space-y-6">
         <div className="flex items-center justify-between px-1">
           <h3
-            className="text-sm font-black uppercase tracking-widest"
+            className="text-sm font-semibold uppercase tracking-wider"
             style={{ color: "var(--muted-foreground)" }}
           >
             Upcoming Interviews ({interviews.length})
@@ -2470,7 +2470,7 @@ function InterviewsView({
           {interviews.map((iv) => (
             <div
               key={iv.id}
-              className="p-6 rounded-[24px] shadow-sm border group transition-all hover:border-emerald-500/30"
+              className="p-6 rounded-2xl shadow-sm border group transition-all hover:border-emerald-500/30"
               style={{
                 backgroundColor: "var(--card)",
                 borderColor: "var(--border)",
@@ -2516,7 +2516,7 @@ function InterviewsView({
                     <X size={18} />
                   </button>
                   <button
-                    className="p-2.5 rounded-xl transition-all hover:bg-slate-100"
+                    className="p-2.5 rounded-xl transition-all hover:bg-[#00B87C]/[0.08]"
                     style={{ color: "var(--muted-foreground)" }}
                     title="Reschedule"
                   >
@@ -2533,7 +2533,7 @@ function InterviewsView({
                     <Calendar size={14} />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase text-slate-400">
+                    <span className="text-[11px] font-semibold uppercase text-slate-400">
                       Date
                     </span>
                     <span
@@ -2549,7 +2549,7 @@ function InterviewsView({
                     <Clock size={14} />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase text-slate-400">
+                    <span className="text-[11px] font-semibold uppercase text-slate-400">
                       Time
                     </span>
                     <span
@@ -2565,7 +2565,7 @@ function InterviewsView({
                     <Video size={14} />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase text-slate-400">
+                    <span className="text-[11px] font-semibold uppercase text-slate-400">
                       Mode
                     </span>
                     <span
@@ -2587,7 +2587,7 @@ function InterviewsView({
                   Join Meeting
                 </button>
                 <button
-                  className="flex-1 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-widest border transition-all hover:bg-slate-50"
+                  className="flex-1 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-widest border transition-all hover:bg-[#00B87C]/[0.08]"
                   style={{
                     backgroundColor: "var(--card)",
                     color: "var(--foreground)",
@@ -2612,20 +2612,20 @@ function InterviewsView({
         >
           <div className="flex items-center justify-between mb-8">
             <h3
-              className="text-sm font-black uppercase tracking-widest"
+              className="text-sm font-semibold uppercase tracking-wider"
               style={{ color: "var(--foreground)" }}
             >
               Calendar
             </h3>
             <div className="flex gap-2">
               <button
-                className="p-1.5 rounded-lg border hover:bg-slate-50"
+                className="p-1.5 rounded-lg border hover:bg-[#00B87C]/[0.08]"
                 style={{ borderColor: "var(--border)" }}
               >
                 <ChevronLeft size={16} />
               </button>
               <button
-                className="p-1.5 rounded-lg border hover:bg-slate-50"
+                className="p-1.5 rounded-lg border hover:bg-[#00B87C]/[0.08]"
                 style={{ borderColor: "var(--border)" }}
               >
                 <ChevronRight size={16} />
@@ -2636,7 +2636,7 @@ function InterviewsView({
             {["S", "M", "T", "W", "T", "F", "S"].map((d) => (
               <div
                 key={d}
-                className="h-8 flex items-center justify-center text-[10px] font-black text-slate-400"
+                className="h-8 flex items-center justify-center text-[11px] font-semibold text-slate-400"
               >
                 {d}
               </div>
@@ -2651,7 +2651,7 @@ function InterviewsView({
                   className={`relative h-10 rounded-xl flex items-center justify-center text-xs font-bold transition-all cursor-pointer group ${
                     isToday
                       ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900"
-                      : "hover:bg-slate-50 dark:hover:bg-slate-800"
+                      : "hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800"
                   }`}
                   style={{
                     color: isToday ? "white" : "var(--foreground)",
@@ -2671,7 +2671,7 @@ function InterviewsView({
           </div>
 
           <div className="mt-10 space-y-4">
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
               Today's Agenda
             </h4>
             {interviews.filter((iv) => {
@@ -2694,7 +2694,7 @@ function InterviewsView({
                   >
                     <div className="w-1 h-10 rounded-full bg-emerald-500" />
                     <div>
-                      <p className="text-[10px] font-black uppercase text-emerald-600 mb-0.5">
+                      <p className="text-[11px] font-semibold uppercase text-emerald-600 mb-0.5">
                         {iv.time}
                       </p>
                       <p
@@ -2807,7 +2807,7 @@ function AnalyticsView() {
               </p>
             </div>
             <div className="flex gap-2">
-              <button className="px-4 py-2 rounded-xl bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-widest">
+              <button className="px-4 py-2 rounded-xl bg-emerald-50 text-emerald-600 text-[11px] font-semibold uppercase tracking-wider">
                 Download PDF
               </button>
               <select
@@ -2845,7 +2845,7 @@ function AnalyticsView() {
                     >
                       {f.count}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-400">
+                    <span className="text-[11px] font-bold text-slate-400">
                       candidates
                     </span>
                   </div>
@@ -2868,7 +2868,7 @@ function AnalyticsView() {
                   </div>
                 </div>
                 {i > 0 && (
-                  <div className="absolute -top-6 right-0 text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                  <div className="absolute -top-6 right-0 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
                     {Math.round((f.count / arr[i - 1].count) * 100)}% Pass Rate
                   </div>
                 )}
@@ -2939,12 +2939,12 @@ function AnalyticsView() {
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span
-                  className="text-3xl font-black"
+                  className="text-[28px] font-bold"
                   style={{ color: "var(--foreground)" }}
                 >
                   284
                 </span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                   Total Applicants
                 </span>
               </div>
@@ -3016,7 +3016,7 @@ function AnalyticsView() {
           <div className="flex items-end gap-3 h-40">
             {[18, 24, 21, 19, 15, 22, 18].map((v, i) => (
               <div key={i} className="flex-1 group relative">
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-black px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100 whitespace-nowrap">
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[11px] font-semibold px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100 whitespace-nowrap">
                   {v} days
                 </div>
                 <div
@@ -3026,7 +3026,7 @@ function AnalyticsView() {
                     backgroundColor: "var(--secondary)",
                   }}
                 />
-                <div className="text-[10px] font-black text-center mt-3 text-slate-400">
+                <div className="text-[11px] font-semibold text-center mt-3 text-slate-400">
                   {["M", "T", "W", "T", "F", "S", "S"][i]}
                 </div>
               </div>
@@ -3042,7 +3042,7 @@ function AnalyticsView() {
           }}
         >
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
               Recent Hiring Activity
             </h3>
             <button className="text-xs font-black text-emerald-600">
@@ -3053,7 +3053,7 @@ function AnalyticsView() {
             {activities.map((act, i) => (
               <div
                 key={i}
-                className="p-4 rounded-2xl border flex items-center gap-4 transition-all hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                className="p-4 rounded-2xl border flex items-center gap-4 transition-all hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800/50"
                 style={{ borderColor: "var(--border)" }}
               >
                 <div
@@ -3088,7 +3088,7 @@ function AnalyticsView() {
                     {act.type} · {act.role}
                   </p>
                 </div>
-                <span className="text-[10px] font-black text-slate-300">
+                <span className="text-[11px] font-semibold text-slate-300">
                   {act.time}
                 </span>
               </div>
@@ -3151,7 +3151,7 @@ function JobsView({
               ].map((h) => (
                 <th
                   key={h}
-                  className="px-8 py-5 text-left text-[11px] font-black uppercase tracking-widest"
+                  className="px-8 py-5 text-left text-[11px] font-semibold uppercase tracking-wider"
                   style={{ color: "var(--muted-foreground)" }}
                 >
                   {h}
@@ -3220,7 +3220,7 @@ function JobsView({
                 </td>
                 <td className="px-8 py-5">
                   <span
-                    className={`px-3 py-1 rounded-full text-[10px] font-black uppercase border bg-emerald-100 text-emerald-600 border-emerald-200`}
+                    className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase border bg-emerald-100 text-emerald-600 border-emerald-200`}
                   >
                     Open
                   </span>
@@ -3283,7 +3283,7 @@ function EmptyColumnState({ stage }: { stage: Stage }) {
   };
   return (
     <div
-      className="rounded-[24px] py-8 px-4 flex flex-col items-center justify-center gap-2 text-center"
+      className="rounded-2xl py-8 px-4 flex flex-col items-center justify-center gap-2 text-center"
       style={{
         border: "1.5px dashed var(--border)",
         backgroundColor: "var(--background)",
@@ -3560,7 +3560,7 @@ function KpiCards() {
                 {c.value}
               </span>
               <span
-                className="px-2 py-0.5 rounded-md text-[10px] font-black"
+                className="px-2 py-0.5 rounded-md text-[11px] font-semibold"
                 style={{
                   backgroundColor: "var(--secondary)",
                   color: "var(--primary)",

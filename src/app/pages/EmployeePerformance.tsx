@@ -234,7 +234,7 @@ function StatusBadge({ status }: { status: string }) {
   };
   return (
     <span
-      className={`px-2 py-0.5 rounded-full text-[10px] font-black border uppercase tracking-wider ${cfg[status] || cfg["Not Started"]}`}
+      className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border uppercase tracking-wider ${cfg[status] || cfg["Not Started"]}`}
     >
       {status}
     </span>
@@ -266,7 +266,7 @@ function SummaryCard({
   return (
     <div
       onClick={onClick}
-      className={`bg-card p-6 rounded-[24px] border border-border shadow-sm flex items-center gap-4 transition-all hover:shadow-md ${onClick ? "cursor-pointer" : ""}`}
+      className={`bg-card p-6 rounded-2xl border border-border shadow-sm flex items-center gap-4 transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] ${onClick ? "cursor-pointer" : ""}`}
     >
       <div
         className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center ${color}`}
@@ -274,7 +274,7 @@ function SummaryCard({
         <Icon size={24} />
       </div>
       <div className="flex-1">
-        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
           {label}
         </p>
         <div className="flex items-center justify-between">
@@ -283,7 +283,7 @@ function SummaryCard({
           </p>
           {chip && (
             <span
-              className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${
+              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
                 chipColor === "green"
                   ? "bg-emerald-500/10 text-primary border-primary/20"
                   : chipColor === "amber"
@@ -325,7 +325,7 @@ function ModalLayout({
         onClick={onClose}
       />
       <div
-        className="relative bg-card w-full rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-border"
+        className="relative bg-card w-full rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-border"
         style={{ maxWidth }}
       >
         <div className="p-6 border-b border-border flex items-center justify-between shrink-0">
@@ -463,13 +463,13 @@ export function EmployeePerformance() {
               </button>
             </div>
 
-            <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+            <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
               <div className="divide-y divide-border">
                 {MOCK_GOALS.map((goal) => (
                   <div
                     key={goal.id}
                     onClick={() => setSelectedGoalDetail(goal)}
-                    className="p-5 flex items-center justify-between hover:bg-secondary/30 transition-colors cursor-pointer group"
+                    className="p-5 flex items-center justify-between hover:bg-[#00B87C]/[0.08] transition-colors cursor-pointer group"
                   >
                     <div className="flex items-center gap-5">
                       <div
@@ -588,23 +588,23 @@ export function EmployeePerformance() {
                   Review Period: Apr 2025 - Mar 2026
                 </span>
               </div>
-              <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-x-auto">
+              <div className="bg-card rounded-2xl border border-border shadow-sm overflow-x-auto">
                 <table className="w-full text-left min-w-[800px]">
                   <thead>
                     <tr className="bg-secondary">
-                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Review Period
                       </th>
-                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Score
                       </th>
-                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Rating
                       </th>
-                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Recommendation
                       </th>
-                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Status
                       </th>
                       <th className="px-6 py-4 text-right">Actions</th>
@@ -662,7 +662,7 @@ export function EmployeePerformance() {
 
             {/* KPI & Metric Breakdown */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+              <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
                 <h3 className="text-[14px] font-black text-foreground mb-4 flex items-center gap-2">
                   <TrendingUp size={18} className="text-primary" /> Key
                   Performance Indicators
@@ -691,7 +691,7 @@ export function EmployeePerformance() {
                   ))}
                 </div>
               </div>
-              <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+              <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
                 <h3 className="text-[14px] font-black text-foreground mb-4 flex items-center gap-2">
                   <Star size={18} className="text-amber-500" /> Recent Feedback
                 </h3>
@@ -702,7 +702,7 @@ export function EmployeePerformance() {
                       performance details was outstanding."
                     </p>
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-black text-primary">
+                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[11px] font-semibold text-primary">
                         MW
                       </div>
                       <span className="text-[11px] font-black text-muted-foreground">
@@ -812,7 +812,7 @@ export function EmployeePerformance() {
               <p className="text-[12px] font-bold text-muted-foreground italic">
                 "{selectedGoalDetail.managerComments}"
               </p>
-              <p className="text-[10px] font-bold text-muted-foreground mt-2 text-right">
+              <p className="text-[11px] font-bold text-muted-foreground mt-2 text-right">
                 Last updated: {selectedGoalDetail.lastUpdated}
               </p>
             </div>
@@ -821,7 +821,7 @@ export function EmployeePerformance() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setGoalToUpdate(selectedGoalDetail)}
-                  className="flex-1 py-3 px-4 rounded-xl bg-primary text-white text-[13px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all"
+                  className="flex-1 py-3 px-4 rounded-xl bg-primary text-white text-[13px] font-black shadow-lg shadow-[#00B87C]/20 hover:opacity-95 transition-all"
                 >
                   Update Progress
                 </button>
@@ -873,7 +873,7 @@ export function EmployeePerformance() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   Current Progress
                 </label>
                 <div className="w-full px-4 py-3 bg-secondary/30 border border-border rounded-xl text-[13px] font-bold text-muted-foreground">
@@ -881,7 +881,7 @@ export function EmployeePerformance() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   New Progress (%)
                 </label>
                 <input
@@ -896,7 +896,7 @@ export function EmployeePerformance() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Progress Notes
               </label>
               <textarea
@@ -908,7 +908,7 @@ export function EmployeePerformance() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Attachment (Optional)
               </label>
               <div className="w-full px-4 py-3 bg-secondary border border-dashed border-border rounded-xl text-[12px] font-bold text-muted-foreground text-center hover:bg-secondary/80 transition-all cursor-pointer">
@@ -926,7 +926,7 @@ export function EmployeePerformance() {
               </button>
               <button
                 type="submit"
-                className="flex-[2] py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all"
+                className="flex-[2] py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-[#00B87C]/20 hover:opacity-95 transition-all"
               >
                 Save Update
               </button>
@@ -956,7 +956,7 @@ export function EmployeePerformance() {
                   key={m.label}
                   className="p-4 bg-card border border-border rounded-2xl text-center"
                 >
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                     {m.label}
                   </p>
                   <p className={`text-[18px] font-black ${m.color}`}>{m.val}</p>
@@ -1085,7 +1085,7 @@ export function EmployeePerformance() {
                   setShowPerformanceSummary(false);
                   setSelectedReviewDetail(MOCK_REVIEWS[0]);
                 }}
-                className="flex-1 py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-[#00B87C]/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
               >
                 <FileText size={18} /> View Full Review
               </button>
@@ -1190,14 +1190,14 @@ export function EmployeePerformance() {
                 </h4>
                 <div className="space-y-3">
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black text-primary uppercase tracking-widest">
+                    <p className="text-[11px] font-semibold text-primary uppercase tracking-widest">
                       Top Strengths
                     </p>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedReviewDetail.strengths.slice(0, 2).map((s) => (
                         <span
                           key={s}
-                          className="px-2 py-0.5 bg-emerald-500/10 rounded text-[10px] font-bold text-primary border border-primary/20"
+                          className="px-2 py-0.5 bg-emerald-500/10 rounded text-[11px] font-bold text-primary border border-primary/20"
                         >
                           {s}
                         </span>
@@ -1205,7 +1205,7 @@ export function EmployeePerformance() {
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest">
+                    <p className="text-[11px] font-semibold text-rose-500 uppercase tracking-widest">
                       Growth Areas
                     </p>
                     <div className="flex flex-wrap gap-1.5">
@@ -1214,7 +1214,7 @@ export function EmployeePerformance() {
                         .map((s) => (
                           <span
                             key={s}
-                            className="px-2 py-0.5 bg-rose-500/10 rounded text-[10px] font-bold text-rose-500 border border-rose-500/20"
+                            className="px-2 py-0.5 bg-rose-500/10 rounded text-[11px] font-bold text-rose-500 border border-rose-500/20"
                           >
                             {s}
                           </span>
@@ -1279,7 +1279,7 @@ export function EmployeePerformance() {
                   );
                   setSelectedReviewDetail(null);
                 }}
-                className="flex-1 py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-[#00B87C]/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
               >
                 <CheckCircle2 size={18} /> Acknowledge Review
               </button>
@@ -1402,7 +1402,7 @@ export function EmployeePerformance() {
                       <span className="text-[11px] font-black text-foreground">
                         {entry.type}
                       </span>
-                      <span className="text-[10px] font-bold text-muted-foreground">
+                      <span className="text-[11px] font-bold text-muted-foreground">
                         {entry.date}
                       </span>
                     </div>
@@ -1454,7 +1454,7 @@ export function EmployeePerformance() {
             }}
           >
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Goal Title
               </label>
               <input
@@ -1466,7 +1466,7 @@ export function EmployeePerformance() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   Category
                 </label>
                 <select className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none appearance-none">
@@ -1477,7 +1477,7 @@ export function EmployeePerformance() {
                 </select>
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   Priority
                 </label>
                 <select className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none appearance-none">
@@ -1488,7 +1488,7 @@ export function EmployeePerformance() {
               </div>
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Due Date
               </label>
               <input
@@ -1498,7 +1498,7 @@ export function EmployeePerformance() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Target Value / Metric
               </label>
               <input
@@ -1509,7 +1509,7 @@ export function EmployeePerformance() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Description
               </label>
               <textarea
@@ -1521,7 +1521,7 @@ export function EmployeePerformance() {
             </div>
             <button
               type="submit"
-              className="w-full py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all mt-2"
+              className="w-full py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-[#00B87C]/20 hover:opacity-95 transition-all mt-2"
             >
               Submit Goal Request
             </button>
@@ -1538,7 +1538,7 @@ export function EmployeePerformance() {
         >
           <form onSubmit={handleSendFeedback} className="space-y-5">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Select Manager / Colleague
               </label>
               <select
@@ -1552,7 +1552,7 @@ export function EmployeePerformance() {
               </select>
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Feedback Topic
               </label>
               <input
@@ -1563,7 +1563,7 @@ export function EmployeePerformance() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 Message
               </label>
               <textarea
@@ -1589,7 +1589,7 @@ export function EmployeePerformance() {
               </button>
               <button
                 type="submit"
-                className="flex-[2] py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all"
+                className="flex-[2] py-4 rounded-xl bg-primary text-white text-[14px] font-black shadow-lg shadow-[#00B87C]/20 hover:opacity-95 transition-all"
               >
                 Send Request
               </button>

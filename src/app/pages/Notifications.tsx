@@ -47,7 +47,7 @@ interface AnnouncementItem {
   pinned: boolean;
 }
 
-export function Notifications() {
+export default function Notifications() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -739,7 +739,7 @@ export function Notifications() {
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <div
-                          className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold text-[10px]"
+                          className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold text-[11px]"
                           style={{ backgroundColor: "#00B87C" }}
                         >
                           {ann.authorAvatar}
@@ -935,23 +935,23 @@ export function Notifications() {
                       borderColor: "var(--border)",
                     }}
                   >
-                    <button className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700">
                       <Bold size={14} />
                     </button>
-                    <button className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700">
                       <Italic size={14} />
                     </button>
-                    <button className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700">
                       <Underline size={14} />
                     </button>
                     <div className="w-px h-4 bg-gray-300 mx-1" />
-                    <button className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700">
                       <List size={14} />
                     </button>
-                    <button className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700">
                       <Link2 size={14} />
                     </button>
-                    <button className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700 ml-auto">
+                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700 ml-auto">
                       <RotateCcw size={14} />
                     </button>
                   </div>
@@ -1371,7 +1371,7 @@ function FinanceNotificationsView() {
   const grouped = groupedNotifications();
 
   return (
-    <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6 animate-in fade-in duration-500 bg-[#F8FAFC] dark:bg-[#0F172A] min-h-screen">
+    <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6 animate-in fade-in duration-500 bg-[#F8FAFC] dark:bg-background min-h-screen">
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
@@ -1398,13 +1398,13 @@ function FinanceNotificationsView() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleMarkAllRead}
-            className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-[13px] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-2 shadow-sm active:scale-95"
+            className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-[13px] hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-2 shadow-sm active:scale-95"
           >
             Mark All Read
           </button>
           <button
             onClick={() => setShowPreferences(true)}
-            className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-[13px] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-2 shadow-sm active:scale-95"
+            className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold text-[13px] hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-2 shadow-sm active:scale-95"
           >
             ⚙ Preferences
           </button>
@@ -1413,8 +1413,8 @@ function FinanceNotificationsView() {
 
       {/* NOTIFICATION STATS ROW */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <KPICard title="UNREAD TODAY" value={unreadTodayCount} color="amber" />
-        <KPICard title="PENDING ACTIONS" value={pendingActionsCount} color="red" />
+        <KPICard title="UNREAD TODAY" value={unreadTodayCount} color="green" />
+        <KPICard title="PENDING ACTIONS" value={pendingActionsCount} color="green" />
         <KPICard title="RESOLVED TODAY" value={8} color="green" />
       </div>
 
@@ -1427,7 +1427,7 @@ function FinanceNotificationsView() {
               <button
                 key={tab.key}
                 onClick={() => setActiveFilter(tab.key)}
-                className={`px-6 py-4 text-[13px] font-black tracking-widest uppercase transition-all relative whitespace-nowrap cursor-pointer ${
+                className={`px-6 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap cursor-pointer ${
                   isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -1485,7 +1485,7 @@ function FinanceNotificationsView() {
                       <div
                         key={notif.id}
                         onClick={() => handleRowClick(notif)}
-                        className={`flex items-center justify-between px-6 py-4 cursor-pointer hover:bg-[#F0FDF4] dark:hover:bg-emerald-500/5 transition-all ${bgTint} ${leftBorder}`}
+                        className={`flex items-center justify-between px-6 py-4 cursor-pointer hover:bg-[#00B87C]/[0.08] transition-all ${bgTint} ${leftBorder}`}
                         style={{ height: "64px" }}
                       >
                         <div className="flex items-center gap-4 min-w-0 flex-1">
@@ -1694,9 +1694,9 @@ function KPICard({ title, value, color }: { title: string; value: number; color:
   };
 
   return (
-    <div className={`p-6 bg-card border ${colors[color].border} ${colors[color].bg} rounded-2xl shadow-sm hover:shadow-md transition-all`}>
-      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[1.5px] mb-2">{title}</p>
-      <h3 className={`text-3xl font-black tracking-tighter ${colors[color].text}`}>{value}</h3>
+    <div className={`p-6 bg-card border ${colors[color].border} ${colors[color].bg} rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all`}>
+      <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">{title}</p>
+      <h3 className={`text-[28px] font-bold ${colors[color].text}`}>{value}</h3>
     </div>
   );
 }

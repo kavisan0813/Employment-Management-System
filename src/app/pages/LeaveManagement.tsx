@@ -302,7 +302,7 @@ function StatusBadge({
   const Icon = sc.icon;
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full font-semibold ${small ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-xs"}`}
+      className={`inline-flex items-center gap-1.5 rounded-full font-semibold ${small ? "px-2 py-0.5 text-[11px]" : "px-2.5 py-1 text-xs"}`}
       style={{ backgroundColor: sc.bg, color: sc.color }}
     >
       <Icon size={small ? 10 : 12} />
@@ -355,7 +355,7 @@ function DetailDrawer({
               Leave Detail
             </h3>
             {request.escalated && (
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-700 flex items-center gap-1">
+              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-orange-100 text-orange-700 flex items-center gap-1">
                 <AlertCircle size={10} /> ESCALATED TO HR
               </span>
             )}
@@ -416,7 +416,7 @@ function DetailDrawer({
             >
               Requested <span className="text-foreground">2 days ago</span>
               {canAct && (
-                <span className="ml-2 px-1.5 py-0.5 rounded bg-red-100 text-red-700">
+                <span className="ml-2 px-1.5 py-0.5 rounded bg-red-500/10 text-red-500">
                   SLA: 24h overdue
                 </span>
               )}
@@ -441,7 +441,7 @@ function DetailDrawer({
                 </div>
                 <button
                   onClick={() => setShowViolationDetails(!showViolationDetails)}
-                  className="text-[10px] font-bold text-orange-700 uppercase hover:underline"
+                  className="text-[11px] font-bold text-orange-700 uppercase hover:underline"
                 >
                   {showViolationDetails ? "Hide" : "Details"}
                 </button>
@@ -450,7 +450,7 @@ function DetailDrawer({
                 {request.policyViolations.map((v) => (
                   <span
                     key={v}
-                    className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-orange-700 border border-orange-200"
+                    className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-white text-orange-700 border border-orange-200"
                   >
                     {v}
                   </span>
@@ -507,7 +507,7 @@ function DetailDrawer({
                   style={{ borderColor: "var(--border)" }}
                 >
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-[10px] font-bold uppercase text-muted-foreground">
+                    <span className="text-[11px] font-bold uppercase text-muted-foreground">
                       {b.label}
                     </span>
                     <span
@@ -582,7 +582,7 @@ function DetailDrawer({
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Sick freq.</span>
                   <span
-                    className={`font-bold px-1 rounded ${request.summary.sickFrequency === "High" ? "bg-red-100 text-red-700" : "text-foreground"}`}
+                    className={`font-bold px-1 rounded ${request.summary.sickFrequency === "High" ? "bg-red-500/10 text-red-500" : "text-foreground"}`}
                   >
                     {request.summary.sickFrequency}
                   </span>
@@ -611,12 +611,12 @@ function DetailDrawer({
                   </div>
                   <div>
                     <p className="text-xs font-bold">medical_cert_v1.pdf</p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-[11px] text-muted-foreground">
                       1.2 MB · Uploaded Apr 12
                     </p>
                   </div>
                 </div>
-                <button className="p-1.5 rounded-lg hover:bg-white transition-colors text-emerald-600">
+                <button className="p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] transition-colors text-emerald-600">
                   <Download size={14} />
                 </button>
               </div>
@@ -673,7 +673,7 @@ function DetailDrawer({
                   placeholder="Enter remarks for approval or rejection..."
                   rows={3}
                 />
-                <p className="text-[10px] mt-1 text-muted-foreground">
+                <p className="text-[11px] mt-1 text-muted-foreground">
                   * Remarks are mandatory for rejection.
                 </p>
               </div>
@@ -1141,7 +1141,7 @@ export function LeaveManagement() {
           return (
             <div
               key={card.label}
-              className="rounded-2xl p-5 border shadow-sm transition-all hover:shadow-md bg-white dark:bg-zinc-900"
+              className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-white dark:bg-zinc-900"
               style={{ borderColor: "var(--border)" }}
             >
               <div className="flex items-start justify-between">
@@ -1236,7 +1236,7 @@ export function LeaveManagement() {
                 >
                   <div className="grid grid-cols-3 gap-4 mb-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
                         Department
                       </label>
                       <select
@@ -1261,7 +1261,7 @@ export function LeaveManagement() {
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
                         Leave Type
                       </label>
                       <select
@@ -1285,7 +1285,7 @@ export function LeaveManagement() {
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
                         Approval Stage
                       </label>
                       <select
@@ -1384,19 +1384,19 @@ export function LeaveManagement() {
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => handleBulkAction("Approve")}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold transition-colors"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-[#00B87C]/[0.08]/20 text-xs font-bold transition-colors"
                     >
                       <Check size={14} /> Approve Selected
                     </button>
                     <button
                       onClick={() => handleBulkAction("Reject")}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold transition-colors"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-[#00B87C]/[0.08]/20 text-xs font-bold transition-colors"
                     >
                       <X size={14} /> Reject Selected
                     </button>
                     <button
                       onClick={handleExport}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold transition-colors text-white"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-[#00B87C]/[0.08]/20 text-xs font-bold transition-colors text-white"
                     >
                       <Download size={14} /> Export
                     </button>
@@ -1529,7 +1529,7 @@ export function LeaveManagement() {
                               {req.criticalRole && (
                                 <span
                                   title="Critical Role"
-                                  className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-red-100 text-red-700"
+                                  className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-red-500/10 text-red-500"
                                 >
                                   Critical
                                 </span>
@@ -1562,7 +1562,7 @@ export function LeaveManagement() {
                                 }
                               />
                               <span
-                                className={`text-[10px] font-bold ${aging.overdue ? "text-red-600" : "text-muted-foreground"}`}
+                                className={`text-[11px] font-bold ${aging.overdue ? "text-red-600" : "text-muted-foreground"}`}
                               >
                                 {aging.label}
                               </span>
@@ -1706,7 +1706,7 @@ export function LeaveManagement() {
                   </div>
                 ))}
               </div>
-              <div className="flex justify-between mt-2 text-[10px] font-bold text-neutral-400 uppercase">
+              <div className="flex justify-between mt-2 text-[11px] font-bold text-neutral-400 uppercase">
                 <span>Mon</span>
                 <span>Tue</span>
                 <span>Wed</span>
@@ -1739,11 +1739,11 @@ export function LeaveManagement() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-2xl font-bold">85%</p>
-                  <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">
+                  <p className="text-[11px] font-bold uppercase text-muted-foreground tracking-wider">
                     Daily Capacity
                   </p>
                 </div>
-                <span className="px-2 py-1 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">
+                <span className="px-2 py-1 rounded text-[11px] font-bold bg-emerald-500/10 text-emerald-500">
                   SAFE
                 </span>
               </div>
@@ -1768,7 +1768,7 @@ export function LeaveManagement() {
                 </div>
               </div>
               <div className="pt-2">
-                <div className="flex justify-between text-[10px] font-bold uppercase text-muted-foreground mb-1.5">
+                <div className="flex justify-between text-[11px] font-bold uppercase text-muted-foreground mb-1.5">
                   <span>Coverage Health</span>
                   <span className="text-emerald-600">Optimal</span>
                 </div>
@@ -1899,7 +1899,7 @@ export function LeaveManagement() {
                     {/* Tooltip */}
                     {leaves.length > 0 && (
                       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-[2000]">
-                        <div className="bg-zinc-900 text-white text-[10px] py-1 px-2 rounded-md shadow-lg whitespace-nowrap">
+                        <div className="bg-zinc-900 text-white text-[11px] py-1 px-2 rounded-md shadow-lg whitespace-nowrap">
                           {leaves.map((l) => l.name).join(", ")}
                         </div>
                         <div className="w-2 h-2 bg-zinc-900 rotate-45 mx-auto -mt-1" />
@@ -1959,7 +1959,7 @@ export function LeaveManagement() {
               >
                 Quick Actions
               </h3>
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase">
                 {requests.filter((r) => r.status === "Pending").length} Pending
               </span>
             </div>
@@ -2082,14 +2082,14 @@ export function LeaveManagement() {
                     <div className="w-9 h-5 rounded-full relative bg-neutral-200 dark:bg-zinc-700">
                       <div className="absolute top-1 left-1 w-3 h-3 rounded-full bg-white transition-transform" />
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-foreground">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-foreground">
                       Enabled
                     </span>
                   </label>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
                       Applied By
                     </label>
                     <input
@@ -2227,7 +2227,7 @@ export function LeaveManagement() {
                       </label>
                       <p className="pl-1">or drag and drop</p>
                     </div>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-[11px] text-muted-foreground">
                       PDF, PNG, JPG up to 10MB
                     </p>
                   </div>

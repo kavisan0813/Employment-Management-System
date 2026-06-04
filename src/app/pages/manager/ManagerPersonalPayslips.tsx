@@ -13,7 +13,7 @@ import {
   ArrowDownCircle,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 interface Payslip {
   id: string;
@@ -213,11 +213,11 @@ function PayslipModal({
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+            <div className="w-9 h-9 rounded-[10px] bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
               <IndianRupee size={20} className="text-[#00B87C]" />
             </div>
             <div>
-              <h3 className="text-[18px] font-black text-foreground">
+              <h3 className="text-[18px] font-bold text-foreground">
                 Payslip Preview
               </h3>
               <p className="text-[12px] font-bold text-muted-foreground">
@@ -236,10 +236,10 @@ function PayslipModal({
         <div className="flex-1 overflow-y-auto p-8 space-y-6 no-scrollbar">
           <div className="p-5 bg-emerald-500/5 rounded-2xl border border-emerald-500/20 flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest mb-1">
+              <p className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider mb-1">
                 Employee
               </p>
-              <p className="text-[15px] font-black text-foreground">
+              <p className="text-[15px] font-bold text-foreground">
                 Suresh Iyer
               </p>
               <p className="text-[12px] font-bold text-muted-foreground">
@@ -247,10 +247,10 @@ function PayslipModal({
               </p>
             </div>
             <div className="text-right">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
                 Pay Period
               </p>
-              <p className="text-[15px] font-black text-foreground">
+              <p className="text-[15px] font-bold text-foreground">
                 {payslip.month} {payslip.year}
               </p>
               <p className="text-[12px] font-bold text-muted-foreground">
@@ -261,7 +261,7 @@ function PayslipModal({
 
           <div className="grid grid-cols-2 gap-5">
             <div className="space-y-3">
-              <h4 className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest flex items-center gap-1.5">
+              <h4 className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider flex items-center gap-1.5">
                 <TrendingUp size={12} /> Earnings
               </h4>
               <div className="bg-background rounded-2xl border border-border overflow-hidden">
@@ -273,16 +273,16 @@ function PayslipModal({
                     <span className="font-medium text-muted-foreground">
                       {e.label}
                     </span>
-                    <span className="font-black text-foreground">
+                    <span className="font-bold text-foreground">
                       ₹{e.value.toLocaleString()}
                     </span>
                   </div>
                 ))}
                 <div className="flex justify-between px-4 py-3 bg-emerald-500/5 border-t border-emerald-500/20">
-                  <span className="text-[12px] font-black text-[#00B87C]">
+                  <span className="text-[12px] font-bold text-[#00B87C]">
                     Gross Pay
                   </span>
-                  <span className="text-[12px] font-black text-[#00B87C]">
+                  <span className="text-[12px] font-bold text-[#00B87C]">
                     ₹{payslip.grossPay.toLocaleString()}
                   </span>
                 </div>
@@ -290,7 +290,7 @@ function PayslipModal({
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-[11px] font-black text-rose-500 uppercase tracking-widest flex items-center gap-1.5">
+              <h4 className="text-[11px] font-bold text-rose-500 uppercase tracking-wider flex items-center gap-1.5">
                 <ArrowDownCircle size={12} /> Deductions
               </h4>
               <div className="bg-background rounded-2xl border border-border overflow-hidden">
@@ -302,16 +302,16 @@ function PayslipModal({
                     <span className="font-medium text-muted-foreground">
                       {d.label}
                     </span>
-                    <span className="font-black text-rose-500">
+                    <span className="font-bold text-rose-500">
                       ₹{d.value.toLocaleString()}
                     </span>
                   </div>
                 ))}
                 <div className="flex justify-between px-4 py-3 bg-rose-500/5 border-t border-rose-500/20">
-                  <span className="text-[12px] font-black text-rose-500">
+                  <span className="text-[12px] font-bold text-rose-500">
                     Total Deductions
                   </span>
-                  <span className="text-[12px] font-black text-rose-500">
+                  <span className="text-[12px] font-bold text-rose-500">
                     ₹{payslip.deductions.toLocaleString()}
                   </span>
                 </div>
@@ -321,16 +321,16 @@ function PayslipModal({
 
           <div className="p-6 bg-[#00B87C] rounded-2xl flex items-center justify-between shadow-xl shadow-emerald-500/20">
             <div>
-              <p className="text-white/70 text-[11px] font-black uppercase tracking-widest mb-1">
+              <p className="text-white/70 text-[11px] font-bold uppercase tracking-wider mb-1">
                 Net Take-Home Pay
               </p>
-              <p className="text-[28px] font-black text-white">
+              <p className="text-[28px] font-bold text-white">
                 ₹{payslip.netPay.toLocaleString()}
               </p>
             </div>
             <div className="text-right text-white/70 text-[12px] font-bold">
               <p>Credited to</p>
-              <p className="font-black text-white">ICICI Bank ****9852</p>
+              <p className="font-bold text-white">ICICI Bank ****9852</p>
             </div>
           </div>
         </div>
@@ -338,7 +338,7 @@ function PayslipModal({
         <div className="p-6 bg-secondary/30 flex gap-4 border-t border-border shrink-0">
           <button
             onClick={onClose}
-            className="flex-1 py-3.5 text-[13px] font-black text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
+            className="flex-1 py-3.5 text-[13px] font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider"
           >
             Close
           </button>
@@ -350,7 +350,7 @@ function PayslipModal({
                 `${payslip.month} ${payslip.year} payslip PDF downloaded.`,
               )
             }
-            className="flex-[2] py-3.5 bg-[#00B87C] text-white rounded-2xl text-[13px] font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
+            className="flex-[2] py-3.5 bg-[#00B87C] text-white rounded-2xl text-[13px] font-bold uppercase tracking-wider shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
           >
             <Download size={16} /> Download PDF
           </button>
@@ -382,14 +382,14 @@ export function ManagerPersonalPayslips() {
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-500/10 pb-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-            <IndianRupee size={24} className="text-[#00B87C]" />
+          <div className="w-11 h-11 rounded-[10px] bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+            <IndianRupee size={22} className="text-[#00B87C]" />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground leading-none mb-1">
+            <h1 className="text-[26px] font-bold text-foreground leading-none mb-1">
               My Payslips
             </h1>
-            <p className="text-[13px] font-bold text-muted-foreground uppercase tracking-widest">
+            <p className="text-[13px] text-[#6B7280]">
               View and download your monthly salary statements
             </p>
           </div>
@@ -398,7 +398,7 @@ export function ManagerPersonalPayslips() {
           onClick={() =>
             showToast("Exporting", "info", "Generating annual pay statement...")
           }
-          className="flex items-center gap-2 px-5 py-2.5 bg-secondary border border-border rounded-xl text-[13px] font-black text-foreground hover:bg-secondary/80 transition-all"
+          className="flex items-center gap-2 px-5 py-2.5 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground hover:bg-secondary/80 transition-all"
         >
           <Download size={16} /> Export Annual Statement
         </button>
@@ -406,44 +406,44 @@ export function ManagerPersonalPayslips() {
 
       {/* ─── KPI Cards ───────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-[10px] bg-emerald-500/10 flex items-center justify-center">
               <Wallet size={20} className="text-[#00B87C]" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
               Current CTC
             </p>
           </div>
-          <p className="text-[28px] font-black text-[#00B87C]">₹24L</p>
+          <p className="text-[28px] font-bold text-[#00B87C]">₹24L</p>
           <p className="text-[12px] font-bold text-muted-foreground mt-1">
             Annual package · Revised Apr 2025
           </p>
         </div>
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-[10px] bg-emerald-500/10 flex items-center justify-center">
               <TrendingUp size={20} className="text-[#00B87C]" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
               Monthly Net Pay
             </p>
           </div>
-          <p className="text-[28px] font-black text-[#00B87C]">₹1,62,000</p>
+          <p className="text-[28px] font-bold text-[#00B87C]">₹1,62,000</p>
           <p className="text-[12px] font-bold text-muted-foreground mt-1">
             After all deductions · April 2026
           </p>
         </div>
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-[10px] bg-rose-500/10 flex items-center justify-center">
               <ArrowDownCircle size={20} className="text-rose-500" />
             </div>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
               Monthly Deductions
             </p>
           </div>
-          <p className="text-[28px] font-black text-rose-500">₹38,000</p>
+          <p className="text-[28px] font-bold text-rose-500">₹38,000</p>
           <p className="text-[12px] font-bold text-muted-foreground mt-1">
             PF + Tax + Professional Tax
           </p>
@@ -451,11 +451,11 @@ export function ManagerPersonalPayslips() {
       </div>
 
       {/* ─── Table Card ──────────────────────────────────────────── */}
-      <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
         <div className="p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-1 h-4 bg-[#00B87C] rounded-full" />
-            <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[1.5px]">
+            <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[1.5px]">
               PAYSLIP HISTORY
             </h3>
             <span className="text-[11px] font-bold text-muted-foreground/60">
@@ -470,7 +470,7 @@ export function ManagerPersonalPayslips() {
                   setShowMonthDrop(!showMonthDrop);
                   setShowYearDrop(false);
                 }}
-                className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-black text-foreground cursor-pointer hover:bg-secondary/80 transition-all"
+                className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-bold text-foreground cursor-pointer hover:bg-secondary/80 transition-all"
               >
                 {selectedMonth}{" "}
                 <ChevronDown size={14} className="text-muted-foreground" />
@@ -484,7 +484,7 @@ export function ManagerPersonalPayslips() {
                         setSelectedMonth(m);
                         setShowMonthDrop(false);
                       }}
-                      className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedMonth === m ? "text-[#00B87C] font-black" : "text-foreground"}`}
+                      className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedMonth === m ? "text-[#00B87C] font-bold" : "text-foreground"}`}
                     >
                       {m}
                     </button>
@@ -499,7 +499,7 @@ export function ManagerPersonalPayslips() {
                   setShowYearDrop(!showYearDrop);
                   setShowMonthDrop(false);
                 }}
-                className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-black text-foreground cursor-pointer hover:bg-secondary/80 transition-all"
+                className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-bold text-foreground cursor-pointer hover:bg-secondary/80 transition-all"
               >
                 {selectedYear}{" "}
                 <ChevronDown size={14} className="text-muted-foreground" />
@@ -513,7 +513,7 @@ export function ManagerPersonalPayslips() {
                         setSelectedYear(y);
                         setShowYearDrop(false);
                       }}
-                      className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedYear === y ? "text-[#00B87C] font-black" : "text-foreground"}`}
+                      className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedYear === y ? "text-[#00B87C] font-bold" : "text-foreground"}`}
                     >
                       {y}
                     </button>
@@ -528,25 +528,25 @@ export function ManagerPersonalPayslips() {
           <table className="w-full text-left min-w-[720px]">
             <thead>
               <tr className="bg-secondary/50 border-b border-border">
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase">
                   Month
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase text-right">
                   Gross Pay
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase text-right">
                   Deductions
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase text-right">
                   Net Pay
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase">
                   Paid Date
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase">
                   Status
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase text-right">
                   Actions
                 </th>
               </tr>
@@ -560,7 +560,7 @@ export function ManagerPersonalPayslips() {
                         size={40}
                         className="text-muted-foreground/30"
                       />
-                      <p className="text-[14px] font-black text-muted-foreground">
+                      <p className="text-[14px] font-bold text-muted-foreground">
                         No payslips found
                       </p>
                     </div>
@@ -570,7 +570,7 @@ export function ManagerPersonalPayslips() {
                 filteredPayslips.map((p) => (
                   <tr
                     key={p.id}
-                    className="hover:bg-secondary/40 transition-colors group"
+                    className="hover:bg-[#00B87C]/[0.08] transition-colors group"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -578,7 +578,7 @@ export function ManagerPersonalPayslips() {
                           <IndianRupee size={16} className="text-[#00B87C]" />
                         </div>
                         <div>
-                          <p className="text-[14px] font-black text-foreground">
+                          <p className="text-[14px] font-bold text-foreground">
                             {p.month} {p.year}
                           </p>
                           <p className="text-[11px] font-bold text-muted-foreground">
@@ -588,17 +588,17 @@ export function ManagerPersonalPayslips() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-[14px] font-black text-foreground">
+                      <span className="text-[14px] font-bold text-foreground">
                         ₹{p.grossPay.toLocaleString()}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-[14px] font-black text-rose-500">
+                      <span className="text-[14px] font-bold text-rose-500">
                         ₹{p.deductions.toLocaleString()}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-[16px] font-black text-[#00B87C]">
+                      <span className="text-[16px] font-bold text-[#00B87C]">
                         ₹{p.netPay.toLocaleString()}
                       </span>
                     </td>
@@ -607,11 +607,11 @@ export function ManagerPersonalPayslips() {
                     </td>
                     <td className="px-6 py-4">
                       {p.status === "Paid" ? (
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/10 text-[#00B87C] border border-[#00B87C]/20 flex items-center gap-1.5 w-fit uppercase tracking-wider">
+                        <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-[#00B87C] border border-[#00B87C]/20 flex items-center gap-1.5 w-fit uppercase tracking-wider">
                           <CheckCircle2 size={11} /> Paid
                         </span>
                       ) : (
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1.5 w-fit uppercase tracking-wider">
+                        <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1.5 w-fit uppercase tracking-wider">
                           <Clock size={11} /> {p.status}
                         </span>
                       )}
@@ -620,7 +620,7 @@ export function ManagerPersonalPayslips() {
                       <div className="flex items-center gap-2 justify-end">
                         <button
                           onClick={() => setPreviewPayslip(p)}
-                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-border text-[11px] font-black text-foreground hover:bg-secondary hover:border-[#00B87C]/30 transition-all"
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-border text-[11px] font-bold text-foreground hover:bg-secondary hover:border-[#00B87C]/30 transition-all"
                         >
                           <Eye size={14} /> View
                         </button>
@@ -632,7 +632,7 @@ export function ManagerPersonalPayslips() {
                               `${p.month} ${p.year} payslip downloaded.`,
                             )
                           }
-                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-black text-[#00B87C] hover:bg-emerald-500/20 transition-all"
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-bold text-[#00B87C] hover:bg-emerald-500/20 transition-all"
                         >
                           <Download size={14} /> PDF
                         </button>
@@ -649,7 +649,7 @@ export function ManagerPersonalPayslips() {
           <p className="text-[12px] font-bold text-muted-foreground">
             Showing {filteredPayslips.length} of {MOCK_PAYSLIPS.length} payslips
           </p>
-          <p className="text-[11px] font-black text-[#00B87C] uppercase tracking-widest">
+          <p className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider">
             FY 2025–26
           </p>
         </div>

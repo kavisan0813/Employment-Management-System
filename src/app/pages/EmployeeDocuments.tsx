@@ -257,13 +257,13 @@ function StatusChip({
   }
   if (status === "expiring") {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-black border border-amber-500/20 whitespace-nowrap">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-[11px] font-semibold border border-amber-500/20 whitespace-nowrap">
         <AlertTriangle size={11} /> {expiryLabel || "Expiring Soon"}
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-500 text-[10px] font-black border border-rose-500/20 whitespace-nowrap">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-500 text-[11px] font-semibold border border-rose-500/20 whitespace-nowrap">
       <XCircle size={11} /> Not Uploaded
     </span>
   );
@@ -286,7 +286,7 @@ function CategoryCard({
     cat.items.some((i) => i.status === "not-uploaded");
 
   return (
-    <div className="bg-card rounded-[24px] border border-border shadow-sm hover:shadow-md transition-all overflow-hidden">
+    <div className="bg-card rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden">
       <div className="p-5 border-b border-border flex items-center gap-4">
         <div
           className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${cat.iconBg}`}
@@ -302,7 +302,7 @@ function CategoryCard({
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-primary text-[10px] font-black border border-primary/20">
+          <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-primary text-[11px] font-semibold border border-primary/20">
             {uploadedCount}/{cat.items.length}
           </span>
           {hasIssues && (
@@ -315,7 +315,7 @@ function CategoryCard({
         {cat.items.map((doc, i) => (
           <div
             key={i}
-            className="px-5 py-3.5 flex items-center gap-4 group hover:bg-secondary/30 transition-colors"
+            className="px-5 py-3.5 flex items-center gap-4 group hover:bg-[#00B87C]/[0.08] transition-colors"
           >
             <div className="w-9 h-9 rounded-lg bg-secondary border border-border flex items-center justify-center flex-shrink-0">
               <FileText size={16} className="text-muted-foreground" />
@@ -409,7 +409,7 @@ export function EmployeeDocuments() {
         </div>
         <button
           onClick={() => openUploadModal()}
-          className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl font-black shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
+          className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl font-black shadow-xl shadow-[#00B87C]/20 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
         >
           <UploadCloud size={18} />
           Upload Document
@@ -417,7 +417,7 @@ export function EmployeeDocuments() {
       </div>
 
       {/* ─── Status Banner ───────────────────────────────────────── */}
-      <div className="w-full bg-emerald-500/10 rounded-[20px] border border-primary/20 px-6 py-4 flex flex-wrap items-center gap-x-8 gap-y-3 dark:bg-emerald-500/5">
+      <div className="w-full bg-emerald-500/10 rounded-2xl border border-primary/20 px-6 py-4 flex flex-wrap items-center gap-x-8 gap-y-3 dark:bg-emerald-500/5">
         <div className="flex items-center gap-3">
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           <span className="text-[14px] font-black text-primary">
@@ -488,7 +488,7 @@ export function EmployeeDocuments() {
               <form onSubmit={handleUploadSubmit} className="p-6 space-y-6">
                 <div className="grid grid-cols-1 gap-5">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       DOCUMENT TYPE
                     </label>
                     <select
@@ -509,7 +509,7 @@ export function EmployeeDocuments() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       DOCUMENT NAME
                     </label>
                     <input
@@ -525,7 +525,7 @@ export function EmployeeDocuments() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       FILE UPLOAD
                     </label>
                     <div className="border-2 border-dashed border-border rounded-2xl p-8 bg-secondary/50 flex flex-col items-center justify-center gap-2 hover:border-primary transition-all cursor-pointer group">
@@ -543,7 +543,7 @@ export function EmployeeDocuments() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                      <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                         EXPIRY DATE (OPTIONAL)
                       </label>
                       <div className="relative">
@@ -558,7 +558,7 @@ export function EmployeeDocuments() {
                       </div>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                      <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                         NOTES (OPTIONAL)
                       </label>
                       <input
@@ -584,7 +584,7 @@ export function EmployeeDocuments() {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-6 py-3.5 bg-primary text-white rounded-xl font-black text-[13px] shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
+                    className="flex-1 px-6 py-3.5 bg-primary text-white rounded-xl font-black text-[13px] shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all"
                   >
                     Upload Document
                   </button>
@@ -601,7 +601,7 @@ export function EmployeeDocuments() {
             className="absolute inset-0 bg-background/40"
             onClick={() => setViewingDoc(null)}
           />
-          <div className="relative bg-card w-full max-w-[420px] rounded-[24px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border">
+          <div className="relative bg-card w-full max-w-[420px] rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border">
             <div className="p-6 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
@@ -633,7 +633,7 @@ export function EmployeeDocuments() {
                   showToast("Downloading", "info", "File download started.");
                   setViewingDoc(null);
                 }}
-                className="w-full py-4 bg-primary text-white text-[14px] font-black rounded-2xl shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all"
+                className="w-full py-4 bg-primary text-white text-[14px] font-black rounded-2xl shadow-xl shadow-[#00B87C]/20 hover:opacity-95 transition-all"
               >
                 Download File
               </button>

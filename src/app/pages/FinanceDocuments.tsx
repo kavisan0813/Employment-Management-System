@@ -11,7 +11,9 @@ import {
   Heart, 
   Building2,
   CloudUpload,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ChevronDown,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Eye,
   Download
 } from "lucide-react";
@@ -158,12 +160,12 @@ export function FinanceDocuments() {
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#E0F2FE] dark:bg-[#0EA5E9]/10 flex items-center justify-center text-[#0EA5E9]">
-            <Folder size={24} />
+          <div className="w-11 h-11 rounded-[10px] bg-[#E0F2FE] dark:bg-[#0EA5E9]/10 flex items-center justify-center text-[#0EA5E9]">
+            <Folder size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-foreground tracking-tight">My Documents</h1>
-            <p className="text-[13px] font-bold text-muted-foreground">Access and manage your digital repository</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">My Documents</h1>
+            <p className="text-[13px] text-[#6B7280]">Access and manage your digital repository</p>
           </div>
         </div>
         <button 
@@ -171,7 +173,7 @@ export function FinanceDocuments() {
             setSelectedFileForUpload(null);
             setIsUploadModalOpen(true);
           }}
-          className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20 flex items-center gap-2"
+          className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-bold text-[12px] uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20 flex items-center gap-2"
         >
           <Upload size={16} /> Upload Document
         </button>
@@ -196,7 +198,7 @@ export function FinanceDocuments() {
       {/* CATEGORIES GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {categories.map((category) => (
-          <div key={category.id} className="bg-card border border-border rounded-[24px] overflow-hidden shadow-sm hover:border-[#00B87C]/30 transition-all flex flex-col h-full">
+          <div key={category.id} className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm hover:border-[#00B87C]/30 transition-all flex flex-col h-full">
             <div className="p-6 border-b border-border flex items-center justify-between bg-muted/10">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl ${category.iconBg} flex items-center justify-center ${category.iconColor}`}>
@@ -204,14 +206,14 @@ export function FinanceDocuments() {
                 </div>
                 <h3 className="text-[16px] font-black text-foreground tracking-tight">{category.title}</h3>
               </div>
-              <span className={`px-2.5 py-1 rounded-lg ${category.chipColor} text-[10px] font-black uppercase tracking-widest`}>
+              <span className={`px-2.5 py-1 rounded-lg ${category.chipColor} text-[11px] font-bold uppercase tracking-widest`}>
                 {category.files.length} files
               </span>
             </div>
             
             <div className="divide-y divide-border">
               {category.files.map((file, i) => (
-                <div key={i} className="px-6 py-3 flex items-center justify-between hover:bg-[#F0FDF4] dark:hover:bg-emerald-500/5 transition-all h-[48px] group">
+                <div key={i} className="px-6 py-3 flex items-center justify-between hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all h-[48px] group">
                   <div className="flex items-center gap-3">
                     <FileText size={16} className="text-muted-foreground/40 group-hover:text-[#00B87C] transition-all" />
                     <span className="text-[14px] font-bold text-foreground">{file.name}</span>
@@ -293,7 +295,7 @@ export function FinanceDocuments() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-[640px] bg-card border border-border rounded-[24px] shadow-2xl flex flex-col overflow-hidden"
+              className="relative w-full max-w-[640px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
             >
               <div className="p-6 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -329,7 +331,7 @@ export function FinanceDocuments() {
                     setViewingDoc(null);
                     showToast("Downloading", "success", "Your file download started successfully.");
                   }}
-                  className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[12px] font-black uppercase tracking-widest hover:bg-[#009966] transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20"
+                  className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest hover:bg-[#009966] transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20"
                 >
                   <Download size={14} /> Download PDF
                 </button>
@@ -350,6 +352,7 @@ interface UploadModalProps {
   onSubmit: (categoryId: string, fileName: string, expiry?: string) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function UploadModal({ isOpen, onClose, preSelected, categories, onSubmit }: UploadModalProps) {
   const [catId, setCatId] = useState(preSelected?.categoryId || categories[0]?.id || "");
   const [docName, setDocName] = useState(preSelected?.fileName || "");
@@ -390,7 +393,7 @@ function UploadModal({ isOpen, onClose, preSelected, categories, onSubmit }: Upl
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Category</label>
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">Category</label>
               <select 
                 value={catId} 
                 onChange={(e) => {
@@ -408,7 +411,7 @@ function UploadModal({ isOpen, onClose, preSelected, categories, onSubmit }: Upl
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Document Name</label>
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">Document Name</label>
               {preSelected ? (
                 <input 
                   type="text" 
@@ -431,7 +434,7 @@ function UploadModal({ isOpen, onClose, preSelected, categories, onSubmit }: Upl
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">File Upload</label>
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">File Upload</label>
               <div 
                 onClick={() => {
                   const input = document.createElement("input");
@@ -453,7 +456,7 @@ function UploadModal({ isOpen, onClose, preSelected, categories, onSubmit }: Upl
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Description (Optional)</label>
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">Description (Optional)</label>
               <input 
                 type="text" 
                 value={description}
@@ -464,7 +467,7 @@ function UploadModal({ isOpen, onClose, preSelected, categories, onSubmit }: Upl
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Expiry Date (If applicable)</label>
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">Expiry Date (If applicable)</label>
               <input 
                 type="date" 
                 value={expiry}

@@ -191,7 +191,7 @@ export function Signup() {
       >
         <div className="flex flex-col items-center mb-8">
           <div
-            className="flex items-center justify-center w-14 h-14 rounded-2xl mb-4 shadow-xl"
+            className="flex items-center justify-center w-11 h-11 rounded-[10px] mb-4 shadow-xl"
             style={{
               background: "linear-gradient(135deg, #10B981, #059669)",
             }}
@@ -568,11 +568,11 @@ export function Signup() {
               {formData.password && (
                 <div className="space-y-1.5 mt-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Strength
                     </span>
                     <span
-                      className="text-[10px] font-black uppercase tracking-wider"
+                      className="text-[11px] font-semibold uppercase tracking-wider"
                       style={{ color: strength.color }}
                     >
                       {strength.label}
@@ -646,7 +646,7 @@ export function Signup() {
               </div>
               {formData.confirmPassword &&
                 formData.password !== formData.confirmPassword && (
-                  <p className="text-[10px] font-bold text-destructive mt-1">
+                  <p className="text-[11px] font-bold text-destructive mt-1">
                     Passwords do not match
                   </p>
                 )}

@@ -125,11 +125,11 @@ export function ManagerTeamPerformance() {
   };
 
   const getScoreChip = (score: string) => {
-    if (score === "Exceptional") return <span className="px-2 py-1 rounded bg-emerald-100 text-emerald-700 text-[11px] font-bold border border-emerald-200">Exceptional</span>;
+    if (score === "Exceptional") return <span className="px-2 py-1 rounded bg-emerald-500/10 text-emerald-500 text-[11px] font-bold border border-emerald-200">Exceptional</span>;
     if (score === "Exceeds") return <span className="px-2 py-1 rounded bg-teal-100 text-teal-700 text-[11px] font-bold border border-teal-200">Exceeds</span>;
-    if (score === "Below Avg") return <span className="px-2 py-1 rounded bg-red-100 text-red-700 text-[11px] font-bold border border-red-200">Below Avg</span>;
+    if (score === "Below Avg") return <span className="px-2 py-1 rounded bg-red-500/10 text-red-500 text-[11px] font-bold border border-red-200">Below Avg</span>;
     if (score === "Pending") return <span className="text-[11px] font-bold text-muted-foreground">—</span>;
-    return <span className="px-2 py-1 rounded bg-slate-100 text-slate-700 text-[11px] font-bold border border-slate-200">{score}</span>;
+    return <span className="px-2 py-1 rounded bg-slate-500/10 text-slate-500 text-[11px] font-bold border border-slate-200">{score}</span>;
   };
 
   const getStatusChip = (status: string) => {
@@ -161,19 +161,19 @@ export function ManagerTeamPerformance() {
       {/* PAGE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#EDE9FE] flex items-center justify-center shrink-0">
-            <TrendingUp size={24} className="text-indigo-600" />
+          <div className="w-11 h-11 rounded-[10px] bg-[#EDE9FE] flex items-center justify-center shrink-0">
+            <TrendingUp size={22} className="text-indigo-600" />
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h2 className="text-[26px] font-extrabold tracking-tight leading-none text-foreground">
+              <h1 className="text-[26px] font-bold tracking-tight leading-none text-foreground">
                 Team Performance
-              </h2>
-              <span className="px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-indigo-200">
+              </h1>
+              <span className="px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[11px] font-semibold uppercase rounded-full border border-indigo-200">
                 FY 2024-25 Annual Review
               </span>
             </div>
-            <p className="text-[13px] font-semibold mt-1 text-muted-foreground">
+            <p className="text-[13px] text-[#6B7280] mt-1">
               Evaluate your direct reports and submit final ratings.
             </p>
           </div>
@@ -193,27 +193,27 @@ export function ManagerTeamPerformance() {
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Reviews Completed</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-emerald-600 leading-none">5/12</p>
+            <p className="text-3xl font-bold text-emerald-600 leading-none">5/12</p>
             <p className="text-sm font-bold text-emerald-600/70 mb-0.5">reports</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Pending My Reviews</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-amber-500 leading-none">4</p>
+            <p className="text-3xl font-bold text-amber-500 leading-none">4</p>
             <p className="text-sm font-bold text-amber-600/70 mb-0.5">pending</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Avg Team Rating</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-amber-500 leading-none flex items-center gap-1">4.1<Star size={24} fill="currentColor"/></p>
+            <p className="text-3xl font-bold text-amber-500 leading-none flex items-center gap-1">4.1<Star size={24} fill="currentColor"/></p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Team Band</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-extrabold text-emerald-600 leading-none">B</p>
+            <p className="text-3xl font-bold text-emerald-600 leading-none">B</p>
             <p className="text-sm font-bold text-emerald-600/70 mb-0.5">overall</p>
           </div>
         </div>
@@ -250,7 +250,7 @@ export function ManagerTeamPerformance() {
       <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-secondary/50 text-muted-foreground text-xs font-black uppercase tracking-wider">
+            <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
               <tr>
                 <th className="px-6 py-4 border-b border-border">Employee</th>
                 <th className="px-6 py-4 border-b border-border">Self Rating</th>
@@ -263,7 +263,7 @@ export function ManagerTeamPerformance() {
             </thead>
             <tbody className="divide-y divide-border">
               {MOCK_TEAM_PERFORMANCE.map((row) => (
-                <tr key={row.id} className="hover:bg-secondary/30 transition-colors h-[64px]">
+                <tr key={row.id} className="hover:bg-[#00B87C]/[0.08] transition-colors h-[64px]">
                   <td className="px-6 py-2">
                     <div className="flex items-center gap-3">
                       <img src={row.avatar} className="w-9 h-9 rounded-full border border-border" />
@@ -324,16 +324,16 @@ export function ManagerTeamPerformance() {
             {/* Header */}
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-secondary/30 shrink-0 rounded-t-2xl">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-amber-500">
+                <div className="w-9 h-9 rounded-[10px] bg-[#FEF3C7] flex items-center justify-center text-amber-500">
                   <Star size={20} fill="currentColor" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-extrabold text-foreground leading-none mb-1">
+                  <h3 className="text-lg font-bold text-foreground leading-none mb-1">
                     Performance Review
                   </h3>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-muted-foreground">{reviewingEmp.name}</span>
-                    <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-black uppercase tracking-widest rounded-full">
+                    <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-bold uppercase tracking-wider rounded-full">
                       FY 2024-25
                     </span>
                   </div>
@@ -358,14 +358,14 @@ export function ManagerTeamPerformance() {
                   <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground font-medium">
                     <span>{reviewingEmp.designation}</span>
                     <span className="w-1 h-1 rounded-full bg-border"></span>
-                    <span className="px-1.5 py-0.5 bg-background border border-border rounded text-[10px] uppercase font-bold">{reviewingEmp.dept}</span>
+                    <span className="px-1.5 py-0.5 bg-background border border-border rounded text-[11px] uppercase font-bold">{reviewingEmp.dept}</span>
                   </div>
                 </div>
               </div>
 
               {/* COMPETENCY RATINGS */}
               <section>
-                <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4 border-b border-border pb-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4 border-b border-border pb-2">
                   Competency Ratings
                 </h4>
                 <div className="space-y-4">
@@ -384,14 +384,14 @@ export function ManagerTeamPerformance() {
                                 <button
                                   key={rating}
                                   onClick={() => setCompRatings(prev => ({ ...prev, [comp.id]: rating }))}
-                                  className={`w-7 h-7 rounded-md text-xs font-black transition-all border ${getRatingColor(rating, isSelected)}`}
+                                  className={`w-7 h-7 rounded-md text-xs font-bold transition-all border ${getRatingColor(rating, isSelected)}`}
                                 >
                                   {rating}
                                 </button>
                               );
                             })}
                           </div>
-                          <span className="text-[10px] font-semibold text-muted-foreground">Self: ⭐{comp.self}</span>
+                          <span className="text-[11px] font-semibold text-muted-foreground">Self: ⭐{comp.self}</span>
                         </div>
                       </div>
                       
@@ -419,7 +419,7 @@ export function ManagerTeamPerformance() {
 
               {/* GOAL REVIEW */}
               <section>
-                <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4 border-b border-border pb-2 flex items-center gap-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4 border-b border-border pb-2 flex items-center gap-2">
                   <Target size={14} /> Goal Review
                 </h4>
                 <div className="space-y-3">
@@ -454,7 +454,7 @@ export function ManagerTeamPerformance() {
 
               {/* OVERALL RATING */}
               <section className="bg-secondary/50 rounded-xl p-5 border border-border">
-                <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
                   <Award size={14} /> Overall Rating
                 </h4>
                 
@@ -463,7 +463,7 @@ export function ManagerTeamPerformance() {
                     <p className="text-sm font-bold text-foreground">Calculated Average</p>
                     <p className="text-[11px] text-muted-foreground mt-0.5">Based on competency ratings</p>
                   </div>
-                  <div className="text-2xl font-black text-foreground flex items-center gap-1">
+                  <div className="text-2xl font-bold text-foreground flex items-center gap-1">
                     {calcAvg()} <Star size={20} className="text-amber-500" fill="currentColor" />
                   </div>
                 </div>
@@ -480,7 +480,7 @@ export function ManagerTeamPerformance() {
 
                 {overrideRating && (
                   <div>
-                    <label className="block text-[11px] font-black uppercase tracking-widest text-muted-foreground mb-2">Final Status</label>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Final Status</label>
                     <div className="relative">
                       <select 
                         value={finalRating}
@@ -501,7 +501,7 @@ export function ManagerTeamPerformance() {
 
               {/* FEEDBACK */}
               <section>
-                <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4 border-b border-border pb-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4 border-b border-border pb-2">
                   Summary Feedback
                 </h4>
                 <div className="space-y-4">

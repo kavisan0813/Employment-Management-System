@@ -15,7 +15,7 @@ import {
   Zap
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 
 interface TimelineEntry {
   id: string;
@@ -175,7 +175,7 @@ export function FinanceSupport() {
             <ChevronLeft size={20} />
           </button>
           <div
-            className="w-11 h-11 rounded-[12px] flex items-center justify-center shadow-sm border"
+            className="w-11 h-11 rounded-[10px] flex items-center justify-center shadow-sm border"
             style={{
               backgroundColor: "#E0F2FE",
               borderColor: "rgba(14, 165, 233, 0.2)",
@@ -183,7 +183,7 @@ export function FinanceSupport() {
           >
             <Headphones size={22} color="#0EA5E9" />
           </div>
-          <h1 className="text-[26px] font-black text-foreground leading-none">
+          <h1 className="text-[26px] font-bold text-foreground leading-none">
             Support & Helpdesk
           </h1>
         </div>
@@ -202,32 +202,32 @@ export function FinanceSupport() {
       {/* ─── Ticket Stats Cards ──────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div 
-          className="bg-card p-6 rounded-[24px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
+          className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
           onClick={() => {
             setActiveTab("My Tickets");
             setTicketStatusTab("Open");
           }}
         >
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">OPEN TICKETS</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">OPEN TICKETS</p>
           <p className="text-[32px] font-black" style={{ color: "#F59E0B" }}>1</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3">In progress / Open</p>
         </div>
         <div 
-          className="bg-card p-6 rounded-[24px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
+          className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
           onClick={() => {
             setActiveTab("My Tickets");
             setTicketStatusTab("Resolved");
           }}
         >
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">RESOLVED</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">RESOLVED</p>
           <p className="text-[32px] font-black" style={{ color: "#00B87C" }}>5</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3">total resolved</p>
         </div>
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm group hover:shadow-md transition-all overflow-hidden relative">
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative">
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-teal-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-          <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">AVG RESOLUTION</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">AVG RESOLUTION</p>
           <p className="text-[32px] font-black" style={{ color: "#0D9488" }}>1.2 days</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3">response time</p>
         </div>
@@ -262,7 +262,7 @@ export function FinanceSupport() {
           >
             {activeTab === "My Tickets" && (
               <div className="space-y-4">
-                <div className="bg-card rounded-[24px] border border-border shadow-sm p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="bg-card rounded-2xl border border-border shadow-sm p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
                     {["All Requests", "Open", "Resolved"].map((tab) => (
                       <button
@@ -290,18 +290,18 @@ export function FinanceSupport() {
                   </div>
                 </div>
 
-                <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+                <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-secondary/30">
-                          <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">TICKET ID</th>
-                          <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">SUBJECT</th>
-                          <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">CATEGORY</th>
-                          <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">PRIORITY</th>
-                          <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">STATUS</th>
-                          <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">CREATED</th>
-                          <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">ACTION</th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">TICKET ID</th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">SUBJECT</th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">CATEGORY</th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">PRIORITY</th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">STATUS</th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">CREATED</th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-right">ACTION</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
@@ -310,17 +310,17 @@ export function FinanceSupport() {
                             <td className="px-6 py-4 font-mono text-[12px] font-bold text-muted-foreground">{row.id}</td>
                             <td className="px-6 py-4 text-[14px] font-bold text-foreground">{row.subject}</td>
                             <td className="px-6 py-4">
-                              <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border" style={{ backgroundColor: row.catBg, color: row.catColor, borderColor: "transparent" }}>
+                              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest border" style={{ backgroundColor: row.catBg, color: row.catColor, borderColor: "transparent" }}>
                                 {row.category}
                               </span>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border" style={{ backgroundColor: row.priorityBg, color: row.priorityColor, borderColor: "transparent" }}>
+                              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest border" style={{ backgroundColor: row.priorityBg, color: row.priorityColor, borderColor: "transparent" }}>
                                 {row.priority}
                               </span>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border" style={{ backgroundColor: row.statusBg, color: row.statusColor, borderColor: "transparent" }}>
+                              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest border" style={{ backgroundColor: row.statusBg, color: row.statusColor, borderColor: "transparent" }}>
                                 {row.status}
                               </span>
                             </td>
@@ -341,7 +341,7 @@ export function FinanceSupport() {
               <div className="max-w-2xl mx-auto bg-card rounded-[32px] border border-border shadow-sm overflow-hidden p-8">
                 <form onSubmit={handleRaiseTicket} className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-[12px] font-black text-muted-foreground uppercase tracking-widest ml-1">CATEGORY</label>
+                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">CATEGORY</label>
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
@@ -354,7 +354,7 @@ export function FinanceSupport() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[12px] font-black text-muted-foreground uppercase tracking-widest ml-1">PRIORITY</label>
+                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">PRIORITY</label>
                     <div className="grid grid-cols-4 gap-3">
                       {["Low", "Medium", "High", "Critical"].map((level) => (
                         <button
@@ -374,7 +374,7 @@ export function FinanceSupport() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[12px] font-black text-muted-foreground uppercase tracking-widest ml-1">SUBJECT</label>
+                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">SUBJECT</label>
                     <input
                       type="text"
                       placeholder="Brief summary of the issue..."
@@ -386,7 +386,7 @@ export function FinanceSupport() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[12px] font-black text-muted-foreground uppercase tracking-widest ml-1">DESCRIPTION</label>
+                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">DESCRIPTION</label>
                     <textarea
                       placeholder="Detailed description of your issue..."
                       value={description}
@@ -398,7 +398,7 @@ export function FinanceSupport() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[12px] font-black text-muted-foreground uppercase tracking-widest ml-1">ATTACHMENTS</label>
+                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">ATTACHMENTS</label>
                     <div 
                       onClick={() => fileInputRef.current?.click()}
                       className="border-2 border-dashed border-border rounded-2xl p-8 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-secondary/50 hover:border-primary/30 transition-all"
@@ -453,7 +453,7 @@ export function FinanceSupport() {
                       </div>
                       <h3 className="text-[17px] font-black text-foreground tracking-tight mb-1">{cat.name}</h3>
                       <p className="text-[13px] font-bold text-muted-foreground">{cat.count} articles</p>
-                      <div className="mt-4 flex items-center gap-1.5 text-primary text-[12px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">
+                      <div className="mt-4 flex items-center gap-1.5 text-primary text-[12px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">
                         Explore <ChevronRight size={14} />
                       </div>
                     </div>
