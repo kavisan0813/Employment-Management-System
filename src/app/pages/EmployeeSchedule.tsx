@@ -247,16 +247,20 @@ const Modal = ({
   );
 };
 
+const getRequestStatusStyle = (status: ShiftRequest["status"]): string => {
+  switch (status) {
+    case "Pending": return "bg-amber-500/10 text-amber-600 border-amber-500/20";
+    case "Approved": return "bg-emerald-500/10 text-primary border-primary/20";
+    case "Rejected": return "bg-red-500/10 text-red-600 border-red-500/20";
+    case "Cancelled": return "bg-secondary text-muted-foreground border-border";
+    default: return "bg-secondary text-muted-foreground border-border";
+  }
+};
+
 const StatusBadge = ({ status }: { status: ShiftRequest["status"] }) => {
-  const styles = {
-    Pending: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-    Approved: "bg-emerald-500/10 text-primary border-primary/20",
-    Rejected: "bg-red-500/10 text-red-600 border-red-500/20",
-    Cancelled: "bg-secondary text-muted-foreground border-border",
-  };
   return (
     <span
-      className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${styles[status]}`}
+      className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${getRequestStatusStyle(status)}`}
     >
       {status}
     </span>

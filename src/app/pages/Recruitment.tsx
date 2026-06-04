@@ -358,9 +358,11 @@ function SearchFilterBar({
 function UpcomingInterviewsPanel({
   interviews,
   onDismiss,
+  onJoinCall,
 }: {
   interviews: ScheduledInterview[];
   onDismiss: (id: string) => void;
+  onJoinCall: (iv: ScheduledInterview) => void;
 }) {
   if (!interviews.length) return null;
   return (
@@ -441,8 +443,16 @@ function UpcomingInterviewsPanel({
               </div>
             </div>
             <button
+              onClick={() => onJoinCall(iv)}
+              className="p-1.5 rounded-lg hover:bg-emerald-50 hover:text-emerald-600 transition-all text-slate-400"
+              title="Join Video Meeting"
+            >
+              <Video size={14} />
+            </button>
+            <button
               onClick={() => onDismiss(iv.id)}
-              className="p-1.5 rounded-lg hover:bg-red-50 hover:text-red-500 transition-all text-slate-300"
+              className="p-1.5 rounded-lg hover:bg-red-50 hover:text-red-500 transition-all text-slate-400"
+              title="Cancel Interview"
             >
               <X size={14} />
             </button>
@@ -704,24 +714,95 @@ function MessageModal({
   candidate: Candidate;
   onClose: () => void;
 }) {
+  const [messages, setMessages] = useState<Array<{ sender: "recruiter" | "candidate"; text: string; timestamp: string }>>(() => {
+    const saved = localStorage.getItem("nexus_recruitment_messages");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return parsed[candidate.id] || [];
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return [];
+  });
   const [msg, setMsg] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
   useEscapeKey(onClose);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
+
+  const handleSend = () => {
+    if (!msg.trim()) return;
+    const text = msg.trim();
+    const newMsg = {
+      sender: "recruiter" as const,
+      text,
+      timestamp: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+    };
+    
+    // Save message
+    const saved = localStorage.getItem("nexus_recruitment_messages");
+    let messagesMap: Record<string, any> = {};
+    if (saved) {
+      try { messagesMap = JSON.parse(saved); } catch (e) {}
+    }
+    const currentList = [...messages, newMsg];
+    messagesMap[candidate.id] = currentList;
+    localStorage.setItem("nexus_recruitment_messages", JSON.stringify(messagesMap));
+    setMessages(currentList);
+    setMsg("");
+
+    // Simulate candidate typing and reply
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      let replyText = "Hi, thank you for reaching out! I'm interested in the role and would love to connect for next steps.";
+      const t = text.toLowerCase();
+      if (t.includes("interview") || t.includes("schedule") || t.includes("time") || t.includes("meet")) {
+        replyText = `Thank you! That sounds great. The interview details look good and I look forward to speaking with the team.`;
+      } else if (t.includes("offer") || t.includes("salary") || t.includes("package") || t.includes("hire")) {
+        replyText = `Thank you so much! I am absolutely thrilled to receive this offer. I will review the documents and get back to you shortly.`;
+      } else if (t.includes("reject") || t.includes("no") || t.includes("sorry")) {
+        replyText = `Thank you for letting me know. I appreciate the feedback and hope we can cross paths in the future.`;
+      }
+      const reply = {
+        sender: "candidate" as const,
+        text: replyText,
+        timestamp: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+      };
+      
+      const updatedList = [...currentList, reply];
+      messagesMap[candidate.id] = updatedList;
+      localStorage.setItem("nexus_recruitment_messages", JSON.stringify(messagesMap));
+      setMessages(updatedList);
+    }, 1800);
+  };
+
   return (
     <div
       className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,.45)" }}
+      style={{ backgroundColor: "rgba(0,0,0,.45)", backdropFilter: "blur(4px)" }}
       onClick={onClose}
     >
+      <style>{`
+        @keyframes dotPulse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        .dot-bounce { animation: dotPulse 0.8s infinite ease-in-out; }
+      `}</style>
       <div
-        className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
+        className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col"
         style={{
           backgroundColor: "var(--card)",
           border: "1px solid var(--border)",
+          height: "500px",
         }}
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="flex items-center justify-between px-6 py-4"
+          className="flex items-center justify-between px-6 py-4 flex-shrink-0"
           style={{ borderBottom: "1px solid var(--border)" }}
         >
           <div className="flex items-center gap-3">
@@ -759,35 +840,98 @@ function MessageModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl"
+            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             style={{ color: "var(--muted-foreground)" }}
           >
             <X size={16} />
           </button>
         </div>
+        
+        {/* Messages Feed */}
         <div
-          className="px-6 py-4"
-          style={{ minHeight: 100, backgroundColor: "var(--background)" }}
+          className="px-6 py-4 space-y-4 overflow-y-auto flex-1 custom-scrollbar"
+          style={{ backgroundColor: "var(--background)" }}
         >
-          <p
-            style={{
-              color: "var(--muted-foreground)",
-              fontSize: 13,
-              textAlign: "center",
-              marginTop: 20,
-            }}
-          >
-            Start the conversation with {candidate.name}
-          </p>
+          {messages.length === 0 && !isTyping ? (
+            <div className="flex flex-col items-center justify-center h-full text-center p-6">
+              <MessageSquare size={28} className="text-slate-300 mb-2" />
+              <p
+                style={{
+                  color: "var(--muted-foreground)",
+                  fontSize: 13,
+                  fontWeight: 600,
+                }}
+              >
+                Start the conversation with {candidate.name}
+              </p>
+              <p className="text-[11px] text-slate-400 mt-1">
+                Type a message below to reach out to the applicant.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {messages.map((m, i) => (
+                <div
+                  key={i}
+                  className={`flex flex-col ${m.sender === "recruiter" ? "items-end" : "items-start"}`}
+                >
+                  <div
+                    className="px-4 py-2.5 rounded-2xl text-sm max-w-[85%] font-semibold shadow-sm"
+                    style={{
+                      backgroundColor: m.sender === "recruiter" ? "var(--primary)" : "var(--card)",
+                      color: m.sender === "recruiter" ? "white" : "var(--foreground)",
+                      border: m.sender === "recruiter" ? "none" : "1px solid var(--border)",
+                      borderBottomRightRadius: m.sender === "recruiter" ? 4 : 16,
+                      borderBottomLeftRadius: m.sender !== "recruiter" ? 4 : 16,
+                    }}
+                  >
+                    {m.text}
+                  </div>
+                  <span className="text-[9px] text-slate-400 mt-1 px-1 font-bold">
+                    {m.timestamp}
+                  </span>
+                </div>
+              ))}
+              {isTyping && (
+                <div className="flex flex-col items-start">
+                  <div
+                    className="px-4 py-3 rounded-2xl text-sm font-semibold flex items-center gap-1 shadow-sm"
+                    style={{
+                      backgroundColor: "var(--card)",
+                      color: "var(--foreground)",
+                      border: "1px solid var(--border)",
+                      borderBottomLeftRadius: 4,
+                    }}
+                  >
+                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full dot-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full dot-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full dot-bounce" style={{ animationDelay: "300ms" }} />
+                  </div>
+                  <span className="text-[9px] text-slate-400 mt-1 px-1 font-bold">
+                    {candidate.name} is typing...
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+          <div ref={chatEndRef} />
         </div>
+
+        {/* Action input */}
         <div
-          className="px-6 py-4"
+          className="px-6 py-4 flex-shrink-0"
           style={{ borderTop: "1px solid var(--border)" }}
         >
-          <div className="flex gap-3 items-end">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSend();
+            }}
+            className="flex gap-3 items-end"
+          >
             <textarea
               rows={2}
-              className="flex-1 rounded-xl px-3 py-2.5 text-sm outline-none resize-none"
+              className="flex-1 rounded-xl px-3 py-2 text-sm outline-none resize-none"
               style={{
                 border: "1px solid var(--border)",
                 backgroundColor: "var(--background)",
@@ -796,18 +940,25 @@ function MessageModal({
               placeholder={`Write a message to ${candidate.name}…`}
               value={msg}
               onChange={(e) => setMsg(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
             />
             <button
-              onClick={onClose}
-              className="p-2.5 rounded-xl text-white hover:opacity-90"
+              type="submit"
+              disabled={!msg.trim()}
+              className="p-3 rounded-xl text-white hover:opacity-90 transition-opacity disabled:opacity-40"
               style={{
-                backgroundColor: "#10B981",
+                backgroundColor: "var(--primary)",
                 boxShadow: "0 4px 12px rgba(16,185,129,.3)",
               }}
             >
               <Send size={16} />
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>
@@ -830,22 +981,39 @@ function ScheduleModal({
     type: "Video Call",
     interviewer: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState(false);
   useEscapeKey(onClose);
+
   const handleConfirm = () => {
-    if (!form.date || !form.time) return;
+    setTouched(true);
+    const errs: Record<string, string> = {};
+    if (!form.date) errs.date = "Date is required";
+    if (!form.time) errs.time = "Time is required";
+    if (!form.interviewer.trim()) errs.interviewer = "Interviewer name is required";
+
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+
     onSchedule({
       candidateId: candidate.id,
       candidateName: candidate.name,
       candidateInitials: candidate.initials,
       role: candidate.role,
-      ...form,
+      date: form.date,
+      time: form.time,
+      type: form.type,
+      interviewer: form.interviewer.trim(),
     });
     onClose();
   };
+
   return (
     <div
       className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,.45)" }}
+      style={{ backgroundColor: "rgba(0,0,0,.45)", backdropFilter: "blur(4px)" }}
       onClick={onClose}
     >
       <div
@@ -883,13 +1051,24 @@ function ScheduleModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl"
+            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             style={{ color: "var(--muted-foreground)" }}
           >
             <X size={16} />
           </button>
         </div>
         <div className="px-6 py-5 space-y-4 overflow-y-auto flex-1">
+          {touched && Object.keys(errors).length > 0 && (
+            <div
+              className="px-4 py-2.5 rounded-xl text-xs font-semibold"
+              style={{
+                backgroundColor: "rgba(239,68,68,.1)",
+                color: "#EF4444",
+              }}
+            >
+              Please fill in all required fields.
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label
@@ -903,14 +1082,17 @@ function ScheduleModal({
               </label>
               <input
                 type="date"
-                className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none"
+                className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none font-semibold"
                 style={{
-                  border: `1px solid ${!form.date ? "#EF4444" : "var(--border)"}`,
+                  border: `1.5px solid ${touched && errors.date ? "#EF4444" : "var(--border)"}`,
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
                 }}
                 value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
+                onChange={(e) => {
+                  setForm({ ...form, date: e.target.value });
+                  if (errors.date) setErrors((prev) => ({ ...prev, date: "" }));
+                }}
               />
             </div>
             <div>
@@ -931,14 +1113,17 @@ function ScheduleModal({
                 />
                 <input
                   type="time"
-                  className="w-full rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none"
+                  className="w-full rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none font-semibold"
                   style={{
-                    border: `1px solid ${!form.time ? "#EF4444" : "var(--border)"}`,
+                    border: `1.5px solid ${touched && errors.time ? "#EF4444" : "var(--border)"}`,
                     backgroundColor: "var(--background)",
                     color: "var(--foreground)",
                   }}
                   value={form.time}
-                  onChange={(e) => setForm({ ...form, time: e.target.value })}
+                  onChange={(e) => {
+                    setForm({ ...form, time: e.target.value });
+                    if (errors.time) setErrors((prev) => ({ ...prev, time: "" }));
+                  }}
                 />
               </div>
             </div>
@@ -955,7 +1140,7 @@ function ScheduleModal({
             </label>
             <div className="relative mt-1.5">
               <select
-                className="w-full rounded-xl px-3 pr-8 py-2.5 text-sm outline-none appearance-none"
+                className="w-full rounded-xl px-3 pr-8 py-2.5 text-sm outline-none appearance-none font-semibold"
                 style={{
                   border: "1px solid var(--border)",
                   backgroundColor: "var(--background)",
@@ -988,20 +1173,21 @@ function ScheduleModal({
                 fontWeight: 600,
               }}
             >
-              Interviewer
+              Interviewer *
             </label>
             <input
-              className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none"
+              className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none font-semibold"
               style={{
-                border: "1px solid var(--border)",
+                border: `1.5px solid ${touched && errors.interviewer ? "#EF4444" : "var(--border)"}`,
                 backgroundColor: "var(--background)",
                 color: "var(--foreground)",
               }}
-              placeholder="Enter interviewer name"
+              placeholder="e.g. Sarah Jenkins"
               value={form.interviewer}
-              onChange={(e) =>
-                setForm({ ...form, interviewer: e.target.value })
-              }
+              onChange={(e) => {
+                setForm({ ...form, interviewer: e.target.value });
+                if (errors.interviewer) setErrors((prev) => ({ ...prev, interviewer: "" }));
+              }}
             />
           </div>
         </div>
@@ -1011,7 +1197,7 @@ function ScheduleModal({
         >
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             style={{
               backgroundColor: "var(--secondary)",
               color: "var(--primary)",
@@ -1053,24 +1239,36 @@ function AddCandidateModal({
     type: "Full-time",
     email: "",
   });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState(false);
   useEscapeKey(onClose);
 
   const handleAdd = () => {
-    if (!form.name.trim()) {
-      setError("Name is required");
+    setTouched(true);
+    const errs: Record<string, string> = {};
+    if (!form.name.trim()) errs.name = "Full name is required";
+    if (!form.role.trim()) errs.role = "Job role is required";
+    
+    if (form.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email.trim())) {
+        errs.email = "Please enter a valid email address";
+      }
+    }
+
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
       return;
     }
-    if (!form.role.trim()) {
-      setError("Job role is required");
-      return;
-    }
+
     const initials = form.name
-      .split(" ")
+      .trim()
+      .split(/\s+/)
       .map((w) => w[0])
       .join("")
       .slice(0, 2)
       .toUpperCase();
+
     onAdd(stage, {
       id: `C${Date.now()}`,
       name: form.name.trim(),
@@ -1094,7 +1292,7 @@ function AddCandidateModal({
   return (
     <div
       className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,.45)" }}
+      style={{ backgroundColor: "rgba(0,0,0,.45)", backdropFilter: "blur(4px)" }}
       onClick={onClose}
     >
       <div
@@ -1133,22 +1331,22 @@ function AddCandidateModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl"
+            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             style={{ color: "var(--muted-foreground)" }}
           >
             <X size={16} />
           </button>
         </div>
         <div className="px-6 py-5 space-y-4 overflow-y-auto flex-1">
-          {error && (
+          {touched && Object.keys(errors).length > 0 && (
             <div
-              className="px-4 py-3 rounded-xl text-sm font-medium"
+              className="px-4 py-2.5 rounded-xl text-xs font-semibold"
               style={{
                 backgroundColor: "rgba(239,68,68,.1)",
                 color: "#EF4444",
               }}
             >
-              {error}
+              {Object.values(errors)[0]}
             </div>
           )}
           <div>
@@ -1159,7 +1357,7 @@ function AddCandidateModal({
                 fontWeight: 600,
               }}
             >
-              Full Name
+              Full Name *
             </label>
             <div className="relative mt-1.5">
               <Users
@@ -1168,9 +1366,9 @@ function AddCandidateModal({
                 style={{ color: "var(--muted-foreground)" }}
               />
               <input
-                className="w-full rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none"
+                className="w-full rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none font-semibold"
                 style={{
-                  border: "1px solid var(--border)",
+                  border: `1.5px solid ${touched && errors.name ? "#EF4444" : "var(--border)"}`,
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
                 }}
@@ -1178,7 +1376,7 @@ function AddCandidateModal({
                 value={form.name}
                 onChange={(e) => {
                   setForm({ ...form, name: e.target.value });
-                  setError("");
+                  if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
                 }}
               />
             </div>
@@ -1191,7 +1389,7 @@ function AddCandidateModal({
                 fontWeight: 600,
               }}
             >
-              Job Role
+              Job Role *
             </label>
             <div className="relative mt-1.5">
               <Briefcase
@@ -1200,9 +1398,9 @@ function AddCandidateModal({
                 style={{ color: "var(--muted-foreground)" }}
               />
               <input
-                className="w-full rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none"
+                className="w-full rounded-xl pl-9 pr-3 py-2.5 text-sm outline-none font-semibold"
                 style={{
-                  border: "1px solid var(--border)",
+                  border: `1.5px solid ${touched && errors.role ? "#EF4444" : "var(--border)"}`,
                   backgroundColor: "var(--background)",
                   color: "var(--foreground)",
                 }}
@@ -1210,7 +1408,7 @@ function AddCandidateModal({
                 value={form.role}
                 onChange={(e) => {
                   setForm({ ...form, role: e.target.value });
-                  setError("");
+                  if (errors.role) setErrors((prev) => ({ ...prev, role: "" }));
                 }}
               />
             </div>
@@ -1226,15 +1424,18 @@ function AddCandidateModal({
               Email Address
             </label>
             <input
-              className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none"
+              className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none font-semibold"
               style={{
-                border: "1px solid var(--border)",
+                border: `1.5px solid ${touched && errors.email ? "#EF4444" : "var(--border)"}`,
                 backgroundColor: "var(--background)",
                 color: "var(--foreground)",
               }}
               placeholder="candidate@example.com"
               value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              onChange={(e) => {
+                setForm({ ...form, email: e.target.value });
+                if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
+              }}
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1255,7 +1456,7 @@ function AddCandidateModal({
                   style={{ color: "var(--muted-foreground)" }}
                 />
                 <select
-                  className="w-full rounded-xl pl-9 pr-8 py-2.5 text-sm outline-none appearance-none"
+                  className="w-full rounded-xl pl-9 pr-8 py-2.5 text-sm outline-none appearance-none font-semibold"
                   style={{
                     border: "1px solid var(--border)",
                     backgroundColor: "var(--background)",
@@ -1289,7 +1490,7 @@ function AddCandidateModal({
               </label>
               <div className="relative mt-1.5">
                 <select
-                  className="w-full rounded-xl px-3 pr-8 py-2.5 text-sm outline-none appearance-none"
+                  className="w-full rounded-xl px-3 pr-8 py-2.5 text-sm outline-none appearance-none font-semibold"
                   style={{
                     border: "1px solid var(--border)",
                     backgroundColor: "var(--background)",
@@ -1319,7 +1520,7 @@ function AddCandidateModal({
         >
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             style={{
               backgroundColor: "var(--secondary)",
               color: "var(--primary)",
@@ -1346,25 +1547,42 @@ function AddCandidateModal({
 
 /* ─── Post Job Modal ─────────────────────────────────────── */
 function PostJobModal({
+  job,
   onClose,
   onPost,
 }: {
+  job?: JobPosting;
   onClose: () => void;
-  onPost: (j: Omit<JobPosting, "id" | "postedAt" | "applicants">) => void;
+  onPost: (j: Omit<JobPosting, "id" | "postedAt" | "applicants"> & { id?: string }) => void;
 }) {
   const [form, setForm] = useState({
-    title: "",
-    department: "Engineering",
-    location: "Remote",
-    type: "Full-time",
-    experience: "",
-    salary: "",
-    description: "",
+    title: job?.title || "",
+    department: job?.department || "Engineering",
+    location: job?.location || "Remote",
+    type: job?.type || "Full-time",
+    experience: job?.experience || "",
+    salary: job?.salary || "",
+    description: job?.description || "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState(false);
   useEscapeKey(onClose);
+
   const handlePost = () => {
-    if (!form.title.trim()) return;
-    onPost(form);
+    setTouched(true);
+    const errs: Record<string, string> = {};
+    if (!form.title.trim()) errs.title = "Job title is required";
+    if (!form.description.trim()) errs.description = "Job description is required";
+
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+
+    onPost({
+      ...form,
+      id: job?.id,
+    });
     onClose();
   };
 
@@ -1390,15 +1608,18 @@ function PostJobModal({
           </span>
         )}
         <input
-          className={`w-full rounded-xl ${icon ? "pl-9" : "px-3"} pr-3 py-2.5 text-sm outline-none`}
+          className={`w-full rounded-xl ${icon ? "pl-9" : "px-3"} pr-3 py-2.5 text-sm outline-none font-semibold`}
           style={{
-            border: `1px solid ${key === "title" && !form.title ? "#EF4444" : "var(--border)"}`,
+            border: `1.5px solid ${touched && errors[key] ? "#EF4444" : "var(--border)"}`,
             backgroundColor: "var(--background)",
             color: "var(--foreground)",
           }}
           placeholder={placeholder}
           value={form[key]}
-          onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+          onChange={(e) => {
+            setForm({ ...form, [key]: e.target.value });
+            if (errors[key]) setErrors((prev) => ({ ...prev, [key]: "" }));
+          }}
         />
       </div>
     </div>
@@ -1407,7 +1628,7 @@ function PostJobModal({
   return (
     <div
       className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,.45)" }}
+      style={{ backgroundColor: "rgba(0,0,0,.45)", backdropFilter: "blur(4px)" }}
       onClick={onClose}
     >
       <div
@@ -1431,7 +1652,7 @@ function PostJobModal({
                 fontWeight: 700,
               }}
             >
-              Post a New Job
+              {job ? "Edit Job Listing" : "Post a New Job"}
             </h3>
             <p
               style={{
@@ -1440,18 +1661,29 @@ function PostJobModal({
                 marginTop: 2,
               }}
             >
-              Create a new job opening for recruitment
+              {job ? "Update job listing details" : "Create a new job opening for recruitment"}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl"
+            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             style={{ color: "var(--muted-foreground)" }}
           >
             <X size={16} />
           </button>
         </div>
         <div className="px-6 py-5 space-y-4 overflow-y-auto flex-1">
+          {touched && Object.keys(errors).length > 0 && (
+            <div
+              className="px-4 py-2.5 rounded-xl text-xs font-semibold"
+              style={{
+                backgroundColor: "rgba(239,68,68,.1)",
+                color: "#EF4444",
+              }}
+            >
+              {Object.values(errors)[0]}
+            </div>
+          )}
           {field(
             "Job Title *",
             "title",
@@ -1485,7 +1717,7 @@ function PostJobModal({
                     />
                   )}
                   <select
-                    className="w-full rounded-xl pl-9 pr-8 py-2.5 text-sm outline-none appearance-none"
+                    className="w-full rounded-xl pl-9 pr-8 py-2.5 text-sm outline-none appearance-none font-semibold"
                     style={{
                       border: "1px solid var(--border)",
                       backgroundColor: "var(--background)",
@@ -1528,7 +1760,7 @@ function PostJobModal({
                 Job Type
               </label>
               <select
-                className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none appearance-none"
+                className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none appearance-none font-semibold"
                 style={{
                   border: "1px solid var(--border)",
                   backgroundColor: "var(--background)",
@@ -1560,21 +1792,22 @@ function PostJobModal({
                 fontWeight: 600,
               }}
             >
-              Job Description
+              Job Description *
             </label>
             <textarea
               rows={3}
-              className="w-full mt-1.5 rounded-xl px-3 py-2.5 text-sm outline-none resize-none"
+              className="w-full mt-1.5 rounded-xl px-3 py-2 text-sm outline-none resize-none font-semibold"
               style={{
-                border: "1px solid var(--border)",
+                border: `1.5px solid ${touched && errors.description ? "#EF4444" : "var(--border)"}`,
                 backgroundColor: "var(--background)",
                 color: "var(--foreground)",
               }}
               placeholder="Brief description of the role and responsibilities…"
               value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
+              onChange={(e) => {
+                setForm({ ...form, description: e.target.value });
+                if (errors.description) setErrors((prev) => ({ ...prev, description: "" }));
+              }}
             />
           </div>
         </div>
@@ -1584,7 +1817,7 @@ function PostJobModal({
         >
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             style={{
               backgroundColor: "var(--secondary)",
               color: "var(--primary)",
@@ -1594,13 +1827,13 @@ function PostJobModal({
           </button>
           <button
             onClick={handlePost}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white hover:opacity-90"
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white hover:opacity-90 transition-opacity"
             style={{
               background: "var(--primary)",
               boxShadow: "0 4px 12px rgba(5,150,105,.35)",
             }}
           >
-            Post Job
+            {job ? "Save Changes" : "Post Job"}
           </button>
         </div>
       </div>
@@ -1648,6 +1881,7 @@ function CandidateCard({
   onDetail,
   onDelete,
   onMoveNext,
+  onUpdateRating,
   nextStage,
   onDragStart,
 }: {
@@ -1657,12 +1891,10 @@ function CandidateCard({
   onDetail: () => void;
   onDelete: () => void;
   onMoveNext: () => void;
+  onUpdateRating: (newRating: number) => void;
   onDragStart: (e: React.DragEvent) => void;
 }) {
   const [hovered, setHovered] = useState(false);
-
-
-
 
   return (
     <div
@@ -1711,13 +1943,13 @@ function CandidateCard({
           className="text-[12px]"
           style={{ color: "var(--muted-foreground)" }}
         >
-          Applied 2 days ago
+          Applied {candidate.date}
         </span>
       </div>
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-1">
-          <StarRating value={candidate.rating} size={12} />
+          <StarRating value={candidate.rating} size={12} onChange={onUpdateRating} />
           <span className="text-[12px] font-bold text-amber-500 ml-1">
             {candidate.rating.toFixed(1)}
           </span>
@@ -1817,14 +2049,34 @@ function CandidateDetailSidePanel({
   candidate,
   stage,
   onClose,
+  onDelete,
+  onMoveNext,
+  onEdit,
+  onSchedule,
+  scheduledInterviews,
 }: {
   candidate: Candidate;
   stage: Stage;
   onClose: () => void;
+  onDelete: () => void;
+  onMoveNext: () => void;
+  onEdit: (c: Candidate) => void;
+  onSchedule: () => void;
+  scheduledInterviews: ScheduledInterview[];
 }) {
-  const [activeTab, setActiveTab] = useState<
-    "Overview" | "Interviews" | "Activity"
-  >("Overview");
+  const [activeTab, setActiveTab] = useState<"Overview" | "Interviews" | "Activity">("Overview");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: candidate.name,
+    role: candidate.role,
+    location: candidate.location,
+    type: candidate.type,
+    source: candidate.source || "LinkedIn",
+    email: `${candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com`,
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  useEscapeKey(onClose);
+
   const steps: Stage[] = [
     "Applied",
     "Screening",
@@ -1834,6 +2086,41 @@ function CandidateDetailSidePanel({
     "Hired",
   ];
   const currentIdx = steps.indexOf(stage);
+
+  const handleSaveEdit = () => {
+    const errs: Record<string, string> = {};
+    if (!editForm.name.trim()) errs.name = "Name is required";
+    if (!editForm.role.trim()) errs.role = "Role is required";
+    if (editForm.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(editForm.email.trim())) {
+        errs.email = "Invalid email format";
+      }
+    }
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+
+    const initials = editForm.name
+      .trim()
+      .split(/\s+/)
+      .map((w) => w[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+
+    onEdit({
+      ...candidate,
+      name: editForm.name.trim(),
+      role: editForm.role.trim(),
+      location: editForm.location,
+      type: editForm.type,
+      source: editForm.source as any,
+      initials,
+    });
+    setIsEditing(false);
+  };
 
   return (
     <>
@@ -1875,7 +2162,7 @@ function CandidateDetailSidePanel({
               className="text-lg font-black"
               style={{ color: "var(--foreground)" }}
             >
-              Candidate Profile
+              {isEditing ? "Edit Profile" : "Candidate Profile"}
             </h2>
           </div>
           <button
@@ -1910,7 +2197,7 @@ function CandidateDetailSidePanel({
                       className="w-full h-full flex items-center justify-center text-3xl font-black"
                       style={{ color: "var(--primary)" }}
                     >
-                      {candidate.initials}
+                      {isEditing ? editForm.name.slice(0, 2).toUpperCase() : candidate.initials}
                     </div>
                   )}
                 </div>
@@ -1921,40 +2208,74 @@ function CandidateDetailSidePanel({
                   <CheckCircle size={14} />
                 </div>
               </div>
-              <div className="pt-2">
-                <h3
-                  className="text-2xl font-black mb-1 leading-tight"
-                  style={{ color: "var(--foreground)" }}
-                >
-                  {candidate.name}
-                </h3>
-                <p
-                  className="text-sm font-bold mb-3 flex items-center gap-2"
-                  style={{ color: "var(--muted-foreground)" }}
-                >
-                  {candidate.role} • {candidate.location}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span
-                    className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"
-                    style={{
-                      backgroundColor: "var(--secondary)",
-                      color: "var(--primary)",
-                    }}
+              
+              {!isEditing ? (
+                <div className="pt-2 flex-1">
+                  <h3
+                    className="text-2xl font-black mb-1 leading-tight"
+                    style={{ color: "var(--foreground)" }}
                   >
-                    {candidate.source || "LinkedIn"}
-                  </span>
-                  <span
-                    className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"
-                    style={{
-                      backgroundColor: "rgba(16,185,129,0.1)",
-                      color: "#10B981",
-                    }}
+                    {candidate.name}
+                  </h3>
+                  <p
+                    className="text-sm font-bold mb-3 flex items-center gap-2"
+                    style={{ color: "var(--muted-foreground)" }}
                   >
-                    Verified
-                  </span>
+                    {candidate.role} • {candidate.location}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span
+                      className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"
+                      style={{
+                        backgroundColor: "var(--secondary)",
+                        color: "var(--primary)",
+                      }}
+                    >
+                      {candidate.source || "LinkedIn"}
+                    </span>
+                    <span
+                      className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"
+                      style={{
+                        backgroundColor: "rgba(16,185,129,0.1)",
+                        color: "#10B981",
+                      }}
+                    >
+                      {candidate.type}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="pt-2 flex-1 space-y-2">
+                  <input
+                    className="w-full rounded-xl px-3 py-1.5 text-sm outline-none border font-semibold"
+                    style={{
+                      borderColor: errors.name ? "#EF4444" : "var(--border)",
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                    }}
+                    value={editForm.name}
+                    onChange={(e) => {
+                      setEditForm({ ...editForm, name: e.target.value });
+                      if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
+                    }}
+                    placeholder="Candidate Name"
+                  />
+                  <input
+                    className="w-full rounded-xl px-3 py-1.5 text-sm outline-none border font-semibold"
+                    style={{
+                      borderColor: errors.role ? "#EF4444" : "var(--border)",
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                    }}
+                    value={editForm.role}
+                    onChange={(e) => {
+                      setEditForm({ ...editForm, role: e.target.value });
+                      if (errors.role) setErrors((prev) => ({ ...prev, role: "" }));
+                    }}
+                    placeholder="Job Role"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Tabs */}
@@ -1965,8 +2286,11 @@ function CandidateDetailSidePanel({
               {(["Overview", "Interviews", "Activity"] as const).map((t) => (
                 <button
                   key={t}
+                  disabled={isEditing}
                   onClick={() => setActiveTab(t)}
-                  className={`pb-3 text-xs font-black uppercase tracking-widest transition-all relative ${activeTab === t ? "text-emerald-600" : "text-slate-400"}`}
+                  className={`pb-3 text-xs font-black uppercase tracking-widest transition-all relative ${
+                    activeTab === t ? "text-emerald-600" : "text-slate-400"
+                  } ${isEditing ? "opacity-30 cursor-not-allowed" : ""}`}
                   style={{
                     color:
                       activeTab === t
@@ -1984,7 +2308,96 @@ function CandidateDetailSidePanel({
           </div>
 
           <div className="p-8 pt-4 space-y-8">
-            {activeTab === "Overview" && (
+            {isEditing && (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Location</label>
+                  <select
+                    className="w-full mt-1.5 rounded-xl px-3 py-2 text-sm outline-none border font-semibold"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: "var(--border)",
+                    }}
+                    value={editForm.location}
+                    onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                  >
+                    {["Remote", "On-site", "Hybrid"].map((l) => (
+                      <option key={l}>{l}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Job Type</label>
+                  <select
+                    className="w-full mt-1.5 rounded-xl px-3 py-2 text-sm outline-none border font-semibold"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: "var(--border)",
+                    }}
+                    value={editForm.type}
+                    onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
+                  >
+                    {["Full-time", "Part-time", "Contract", "Internship"].map((t) => (
+                      <option key={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Source</label>
+                  <select
+                    className="w-full mt-1.5 rounded-xl px-3 py-2 text-sm outline-none border font-semibold"
+                    style={{
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                      borderColor: "var(--border)",
+                    }}
+                    value={editForm.source}
+                    onChange={(e) => setEditForm({ ...editForm, source: e.target.value as Source })}
+                  >
+                    {["LinkedIn", "Indeed", "Referral"].map((s) => (
+                      <option key={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Email Address</label>
+                  <input
+                    className="w-full mt-1.5 rounded-xl px-3 py-2 text-sm outline-none border font-semibold"
+                    style={{
+                      borderColor: errors.email ? "#EF4444" : "var(--border)",
+                      backgroundColor: "var(--background)",
+                      color: "var(--foreground)",
+                    }}
+                    value={editForm.email}
+                    onChange={(e) => {
+                      setEditForm({ ...editForm, email: e.target.value });
+                      if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
+                    }}
+                    placeholder="candidate@example.com"
+                  />
+                </div>
+                <div className="flex gap-3 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest border transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+                    style={{ color: "var(--foreground)", borderColor: "var(--border)" }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveEdit}
+                    className="flex-1 py-2.5 rounded-xl text-white text-xs font-black uppercase tracking-widest shadow-md hover:opacity-90 transition-opacity"
+                    style={{ backgroundColor: "var(--primary)" }}
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {!isEditing && activeTab === "Overview" && (
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div
@@ -2024,14 +2437,22 @@ function CandidateDetailSidePanel({
                 </div>
 
                 <div>
-                  <h4 className="text-[11px] font-black uppercase tracking-widest mb-4 text-slate-400">
-                    Contact Details
-                  </h4>
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                      Contact Details
+                    </h4>
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="text-[11px] font-black uppercase tracking-widest text-emerald-600 hover:opacity-80"
+                    >
+                      Edit Profile
+                    </button>
+                  </div>
                   <div className="space-y-3">
                     {[
                       {
                         icon: <Send size={14} />,
-                        val: `${candidate.name.toLowerCase().replace(" ", ".")}@example.com`,
+                        val: editForm.email,
                       },
                       {
                         icon: <MessageSquare size={14} />,
@@ -2039,7 +2460,7 @@ function CandidateDetailSidePanel({
                       },
                       {
                         icon: <Briefcase size={14} />,
-                        val: "linkedin.com/in/jordanblake",
+                        val: `linkedin.com/in/${candidate.name.toLowerCase().replace(/\s+/g, "")}`,
                       },
                     ].map((item, i) => (
                       <div
@@ -2059,7 +2480,7 @@ function CandidateDetailSidePanel({
                         >
                           {item.icon}
                         </div>
-                        {item.val}
+                        <span className="truncate flex-1">{item.val}</span>
                       </div>
                     ))}
                   </div>
@@ -2148,24 +2569,11 @@ function CandidateDetailSidePanel({
               </>
             )}
 
-            {activeTab === "Interviews" && (
+            {!isEditing && activeTab === "Interviews" && (
               <div className="space-y-4">
-                {[
-                  {
-                    date: "May 12, 2024",
-                    time: "10:30 AM",
-                    type: "Technical Interview",
-                    result: "Passed",
-                  },
-                  {
-                    date: "May 15, 2024",
-                    time: "02:00 PM",
-                    type: "System Design",
-                    result: "Upcoming",
-                  },
-                ].map((iv, i) => (
+                {scheduledInterviews.map((iv) => (
                   <div
-                    key={i}
+                    key={iv.id}
                     className="p-4 rounded-2xl border transition-all hover:shadow-md"
                     style={{
                       backgroundColor: "var(--card)",
@@ -2176,10 +2584,8 @@ function CandidateDetailSidePanel({
                       <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
                         {iv.type}
                       </p>
-                      <span
-                        className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${iv.result === "Passed" ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"}`}
-                      >
-                        {iv.result}
+                      <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase bg-emerald-100 text-emerald-600 border border-emerald-200">
+                        Upcoming
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
@@ -2197,41 +2603,99 @@ function CandidateDetailSidePanel({
                         <Clock size={14} className="text-slate-400" /> {iv.time}
                       </div>
                     </div>
+                    {iv.interviewer && (
+                      <p className="text-[11px] font-bold text-slate-400 mt-2">
+                        Interviewer: <span className="text-slate-700 dark:text-slate-300 font-semibold">{iv.interviewer}</span>
+                      </p>
+                    )}
                   </div>
                 ))}
-                <button className="w-full py-3 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-xs font-black uppercase tracking-widest text-slate-400 hover:border-emerald-500 hover:text-emerald-500 transition-all">
+                {scheduledInterviews.length === 0 && (
+                  <p className="text-xs font-bold text-slate-400 text-center py-6">
+                    No upcoming interviews scheduled.
+                  </p>
+                )}
+                <button
+                  onClick={onSchedule}
+                  className="w-full py-3 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-xs font-black uppercase tracking-widest text-slate-400 hover:border-emerald-500 hover:text-emerald-500 transition-all"
+                >
                   Schedule New Interview
                 </button>
+              </div>
+            )}
+
+            {!isEditing && activeTab === "Activity" && (
+              <div className="space-y-6 pl-4 relative">
+                <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-slate-100 dark:bg-slate-800" />
+                {[
+                  {
+                    title: `Applied for ${candidate.role}`,
+                    desc: `Job application received via ${candidate.source}.`,
+                    date: candidate.date,
+                    color: "bg-blue-500",
+                  },
+                  {
+                    title: `Entered Pipeline: ${stage}`,
+                    desc: `Moved to stage ${stage} for screening.`,
+                    date: "Today",
+                    color: "bg-emerald-500",
+                  },
+                  ...scheduledInterviews.map((iv) => ({
+                    title: `${iv.type} Scheduled`,
+                    desc: `Interview with ${iv.interviewer || "Team"} scheduled.`,
+                    date: iv.date,
+                    color: "bg-amber-500",
+                  })),
+                ].map((act, idx) => (
+                  <div key={idx} className="relative flex gap-4">
+                    <div className={`absolute -left-[21px] w-3.5 h-3.5 rounded-full ${act.color} border-2 border-white dark:border-slate-900 z-10`} />
+                    <div className="flex flex-col">
+                      <span className="text-xs font-black text-slate-700 dark:text-slate-200">
+                        {act.title}
+                      </span>
+                      <span className="text-[11px] font-bold text-slate-400 mt-0.5">
+                        {act.desc}
+                      </span>
+                      <span className="text-[9px] font-bold text-slate-300 mt-1 uppercase font-mono">
+                        {act.date}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
         </div>
 
-        <div
-          className="p-8 border-t bg-white/50 dark:bg-black/20 backdrop-blur-md"
-          style={{ borderColor: "var(--border)" }}
-        >
-          <div className="flex gap-3">
-            <button
-              className="flex-1 py-4 rounded-2xl text-xs font-black uppercase tracking-widest border transition-all hover:bg-slate-50 dark:hover:bg-slate-800"
-              style={{
-                color: "var(--foreground)",
-                borderColor: "var(--border)",
-              }}
-            >
-              Reject
-            </button>
-            <button
-              className="flex-[2] py-4 rounded-2xl text-white text-xs font-black uppercase tracking-widest shadow-xl hover:opacity-90 transition-all"
-              style={{
-                backgroundColor: "var(--primary)",
-                boxShadow: "0 8px 20px -6px rgba(16,185,129,0.5)",
-              }}
-            >
-              Move to Next Stage
-            </button>
+        {!isEditing && (
+          <div
+            className="p-8 border-t bg-white/50 dark:bg-black/20 backdrop-blur-md"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <div className="flex gap-3">
+              <button
+                onClick={onDelete}
+                className="flex-1 py-4 rounded-2xl text-xs font-black uppercase tracking-widest border transition-all hover:bg-red-50 hover:text-red-500"
+                style={{
+                  color: "var(--foreground)",
+                  borderColor: "var(--border)",
+                }}
+              >
+                Reject
+              </button>
+              <button
+                onClick={onMoveNext}
+                className="flex-[2] py-4 rounded-2xl text-white text-xs font-black uppercase tracking-widest shadow-xl hover:opacity-90 transition-all"
+                style={{
+                  backgroundColor: "var(--primary)",
+                  boxShadow: "0 8px 20px -6px rgba(16,185,129,0.5)",
+                }}
+              >
+                Move to Next Stage
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );
@@ -2405,9 +2869,11 @@ function CandidatesView({
 function InterviewsView({
   interviews,
   onDismiss,
+  onJoinCall,
 }: {
   interviews: ScheduledInterview[];
   onDismiss: (id: string) => void;
+  onJoinCall: (iv: ScheduledInterview) => void;
 }) {
   if (interviews.length === 0) {
     return (
@@ -2507,6 +2973,14 @@ function InterviewsView({
                   </div>
                 </div>
                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                  <button
+                    onClick={() => onJoinCall(iv)}
+                    className="p-2.5 rounded-xl transition-all hover:bg-emerald-50 hover:text-emerald-500"
+                    style={{ color: "var(--muted-foreground)" }}
+                    title="Join Call"
+                  >
+                    <Video size={18} />
+                  </button>
                   <button
                     onClick={() => onDismiss(iv.id)}
                     className="p-2.5 rounded-xl transition-all hover:bg-red-50 hover:text-red-500"
@@ -2753,33 +3227,49 @@ function InterviewsView({
   );
 }
 
-function AnalyticsView() {
-  const activities = [
-    {
-      type: "Hired",
-      name: "Jordan Blake",
-      role: "Sr. Frontend Engineer",
-      time: "2h ago",
-    },
-    {
-      type: "Offer",
-      name: "Sarah Wilson",
-      role: "Product Designer",
-      time: "5h ago",
-    },
-    {
-      type: "Interview",
-      name: "Michael Chen",
-      role: "DevOps Engineer",
-      time: "1d ago",
-    },
-    {
-      type: "Application",
-      name: "Elena Rodriguez",
-      role: "QA Lead",
-      time: "1d ago",
-    },
+function AnalyticsView({ pipeline }: { pipeline: Record<Stage, Candidate[]> }) {
+  const allCandidates = Object.values(pipeline).flat();
+  const totalCandidates = allCandidates.length;
+
+  const appliedCount = pipeline.Applied.length;
+  const screeningCount = pipeline.Screening.length;
+  const interviewCount = pipeline["Round 1"].length + pipeline["Round 2"].length;
+  const offerCount = pipeline.Offer.length;
+  const hiredCount = pipeline.Hired.length;
+
+  const totalApplied = appliedCount || 1;
+
+  const funnel = [
+    { stage: "Applied", count: appliedCount, rate: 100 },
+    { stage: "Screening", count: screeningCount, rate: Math.round((screeningCount / totalApplied) * 100) },
+    { stage: "Interview", count: interviewCount, rate: Math.round((interviewCount / totalApplied) * 100) },
+    { stage: "Offer", count: offerCount, rate: Math.round((offerCount / totalApplied) * 100) },
+    { stage: "Hired", count: hiredCount, rate: Math.round((hiredCount / totalApplied) * 100) },
   ];
+
+  const linkedinCount = allCandidates.filter((c) => c.source === "LinkedIn").length;
+  const indeedCount = allCandidates.filter((c) => c.source === "Indeed").length;
+  const referralCount = allCandidates.filter((c) => c.source === "Referral").length;
+
+  const totalSources = linkedinCount + indeedCount + referralCount || 1;
+  const linkedinPct = Math.round((linkedinCount / totalSources) * 100);
+  const indeedPct = Math.round((indeedCount / totalSources) * 100);
+  const referralPct = Math.round((referralCount / totalSources) * 100);
+
+  // Build dynamic activities list
+  const activities = [
+    ...pipeline.Hired.slice(-2).map((c) => ({ type: "Hired" as const, name: c.name, role: c.role, time: "Just now" })),
+    ...pipeline.Offer.slice(-1).map((c) => ({ type: "Offer" as const, name: c.name, role: c.role, time: "4h ago" })),
+    ...pipeline["Round 2"].slice(-1).map((c) => ({ type: "Interview" as const, name: c.name, role: c.role, time: "1d ago" })),
+    ...pipeline.Applied.slice(-1).map((c) => ({ type: "Application" as const, name: c.name, role: c.role, time: "1d ago" })),
+  ].slice(0, 4);
+
+  if (activities.length === 0) {
+    activities.push(
+      { type: "Application", name: "Elena Rodriguez", role: "QA Lead", time: "1d ago" },
+      { type: "Interview", name: "Michael Chen", role: "DevOps Engineer", time: "2d ago" }
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -2823,13 +3313,7 @@ function AnalyticsView() {
             </div>
           </div>
           <div className="space-y-8">
-            {[
-              { stage: "Applied", count: 284, rate: 100 },
-              { stage: "Screening", count: 142, rate: 50 },
-              { stage: "Interview", count: 68, rate: 24 },
-              { stage: "Offer", count: 12, rate: 4 },
-              { stage: "Hired", count: 8, rate: 3 },
-            ].map((f, i, arr) => (
+            {funnel.map((f, i, arr) => (
               <div key={f.stage} className="relative group">
                 <div className="flex items-center justify-between px-1 mb-2">
                   <span
@@ -2857,7 +3341,7 @@ function AnalyticsView() {
                   <div
                     className="h-full rounded-full transition-all duration-1000 ease-out flex items-center justify-end pr-3"
                     style={{
-                      width: `${(f.count / arr[0].count) * 100}%`,
+                      width: `${(f.count / (arr[0].count || 1)) * 100}%`,
                       backgroundColor: "var(--primary)",
                       boxShadow: "0 0 20px var(--primary)33",
                     }}
@@ -2869,7 +3353,7 @@ function AnalyticsView() {
                 </div>
                 {i > 0 && (
                   <div className="absolute -top-6 right-0 text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
-                    {Math.round((f.count / arr[i - 1].count) * 100)}% Pass Rate
+                    {arr[i - 1].count > 0 ? Math.round((f.count / arr[i - 1].count) * 100) : 0}% Pass Rate
                   </div>
                 )}
               </div>
@@ -2911,7 +3395,7 @@ function AnalyticsView() {
                   fill="transparent"
                   stroke="#10B981"
                   strokeWidth="4.5"
-                  strokeDasharray="60 100"
+                  strokeDasharray={`${linkedinPct} 100`}
                   strokeLinecap="round"
                 />
                 <circle
@@ -2921,8 +3405,8 @@ function AnalyticsView() {
                   fill="transparent"
                   stroke="#0EA5E9"
                   strokeWidth="4.5"
-                  strokeDasharray="25 100"
-                  strokeDashoffset="-60"
+                  strokeDasharray={`${indeedPct} 100`}
+                  strokeDashoffset={`-${linkedinPct}`}
                   strokeLinecap="round"
                 />
                 <circle
@@ -2932,8 +3416,8 @@ function AnalyticsView() {
                   fill="transparent"
                   stroke="#8B5CF6"
                   strokeWidth="4.5"
-                  strokeDasharray="15 100"
-                  strokeDashoffset="-85"
+                  strokeDasharray={`${referralPct} 100`}
+                  strokeDashoffset={`-${linkedinPct + indeedPct}`}
                   strokeLinecap="round"
                 />
               </svg>
@@ -2942,7 +3426,7 @@ function AnalyticsView() {
                   className="text-3xl font-black"
                   style={{ color: "var(--foreground)" }}
                 >
-                  284
+                  {totalCandidates}
                 </span>
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                   Total Applicants
@@ -2953,14 +3437,14 @@ function AnalyticsView() {
               {[
                 {
                   label: "LinkedIn",
-                  val: "60%",
+                  val: `${linkedinPct}%`,
                   color: "#10B981",
                   trend: "+12%",
                 },
-                { label: "Indeed", val: "25%", color: "#0EA5E9", trend: "+5%" },
+                { label: "Indeed", val: `${indeedPct}%`, color: "#0EA5E9", trend: "+5%" },
                 {
                   label: "Referral",
-                  val: "15%",
+                  val: `${referralPct}%`,
                   color: "#8B5CF6",
                   trend: "-2%",
                 },
@@ -3104,11 +3588,13 @@ function AnalyticsView() {
 function JobsView({
   jobs,
   onPostJob,
+  onEditJob,
   onSelectJob,
   onDeleteJob,
 }: {
   jobs: JobPosting[];
   onPostJob: () => void;
+  onEditJob: (j: JobPosting) => void;
   onSelectJob: (j: JobPosting) => void;
   onDeleteJob: (id: string) => void;
 }) {
@@ -3230,8 +3716,9 @@ function JobsView({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        onEditJob(j);
                       }}
-                      className="p-2 rounded-xl transition-all"
+                      className="p-2 rounded-xl transition-all hover:bg-slate-100 dark:hover:bg-slate-800"
                       style={{ color: "var(--muted-foreground)" }}
                     >
                       <Edit3 size={16} />
@@ -3405,9 +3892,11 @@ function DropZone({
 
 /* ─── Page Header ────────────────────────────────────────── */
 function PageHeader({
+  activeJobsCount,
   onPostJob,
   onShowJobs,
 }: {
+  activeJobsCount: number;
   onPostJob: () => void;
   onShowJobs: () => void;
 }) {
@@ -3431,7 +3920,7 @@ function PageHeader({
               color: "var(--primary)",
             }}
           >
-            12 Active Jobs
+            {activeJobsCount} Active Job{activeJobsCount !== 1 ? "s" : ""}
           </span>
         </div>
       </div>
@@ -3465,11 +3954,19 @@ function PageHeader({
 }
 
 /* ─── Info Bar ───────────────────────────────────────────── */
-function InfoBar() {
+function InfoBar({
+  newApps,
+  interviewsToday,
+  offersPending,
+}: {
+  newApps: number;
+  interviewsToday: number;
+  offersPending: number;
+}) {
   const stats = [
-    { label: "84 new applications this week", color: "#10B981" },
-    { label: "6 interviews scheduled today", color: "#F59E0B" },
-    { label: "3 offers pending response", color: "#8B5CF6" },
+    { label: `${newApps} new applications this week`, color: "#10B981" },
+    { label: `${interviewsToday} interviews scheduled today`, color: "#F59E0B" },
+    { label: `${offersPending} offers pending response`, color: "#8B5CF6" },
   ];
 
   return (
@@ -3493,29 +3990,39 @@ function InfoBar() {
 }
 
 /* ─── KPI Cards ──────────────────────────────────────────── */
-function KpiCards() {
+function KpiCards({
+  openPositions,
+  applications,
+  interviewsToday,
+  offersSent,
+}: {
+  openPositions: number;
+  applications: number;
+  interviewsToday: number;
+  offersSent: number;
+}) {
   const cards = [
     {
       label: "Open Positions",
-      value: 12,
+      value: openPositions,
       color: "emerald",
       icon: <Briefcase size={20} />,
     },
     {
       label: "Applications",
-      value: 84,
+      value: applications,
       color: "teal",
       icon: <Users size={20} />,
     },
     {
       label: "Interviews Today",
-      value: 6,
+      value: interviewsToday,
       color: "amber",
       icon: <Calendar size={20} />,
     },
     {
       label: "Offers Sent",
-      value: 8,
+      value: offersSent,
       color: "purple",
       icon: <Send size={20} />,
     },
@@ -3620,45 +4127,260 @@ function RecruitmentTabs({
   );
 }
 
+const INITIAL_JOBS: JobPosting[] = [
+  {
+    id: "J001",
+    title: "Senior React Developer",
+    department: "Engineering",
+    location: "Remote",
+    type: "Full-time",
+    experience: "5+ years",
+    salary: "₹1,20,000 – ₹1,80,000",
+    description: "We are looking for a Senior React Developer to join our frontend team. You will be responsible for building high-quality, reusable components and optimizing application performance.",
+    postedAt: "Jun 1, 2026",
+    applicants: 3,
+  },
+  {
+    id: "J002",
+    title: "Backend Engineer",
+    department: "Engineering",
+    location: "Remote",
+    type: "Full-time",
+    experience: "3+ years",
+    salary: "₹90,000 – ₹1,40,000",
+    description: "Looking for a backend engineer experienced in Node.js and TypeScript. You will build and scale APIs and work with databases.",
+    postedAt: "May 28, 2026",
+    applicants: 2,
+  },
+  {
+    id: "J003",
+    title: "Product Designer",
+    department: "Design",
+    location: "Hybrid",
+    type: "Full-time",
+    experience: "2+ years",
+    salary: "₹70,000 – ₹1,00,000",
+    description: "Join our design team to create user-centered product designs. Figma proficiency is required.",
+    postedAt: "May 25, 2026",
+    applicants: 1,
+  },
+  {
+    id: "J004",
+    title: "HR Specialist",
+    department: "HR",
+    location: "On-site",
+    type: "Full-time",
+    experience: "2+ years",
+    salary: "₹50,000 – ₹70,000",
+    description: "We are hiring an HR Specialist to help manage employee onboarding, relations, and recruitment coordination.",
+    postedAt: "May 20, 2026",
+    applicants: 1,
+  }
+];
+
+const INITIAL_INTERVIEWS: ScheduledInterview[] = [
+  {
+    id: "IV001",
+    candidateId: "C004",
+    candidateName: "David Miller",
+    candidateInitials: "DM",
+    role: "Senior React Developer",
+    date: "2026-06-04",
+    time: "14:00",
+    type: "Technical Test",
+    interviewer: "Sarah Jenkins",
+  },
+  {
+    id: "IV002",
+    candidateId: "C005",
+    candidateName: "Priya Nair",
+    candidateInitials: "PN",
+    role: "HR Specialist",
+    date: "2026-06-05",
+    time: "10:30",
+    type: "Video Call",
+    interviewer: "Mark Davis",
+  }
+];
+
+function VideoCallSimulator({
+  interview,
+  onClose,
+}: {
+  interview: ScheduledInterview;
+  onClose: () => void;
+}) {
+  const [status, setStatus] = useState<"connecting" | "connected">("connecting");
+  const [duration, setDuration] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoOff, setIsVideoOff] = useState(false);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => {
+      setStatus("connected");
+    }, 2000);
+    return () => clearTimeout(t1);
+  }, []);
+
+  useEffect(() => {
+    if (status !== "connected") return;
+    const interval = setInterval(() => {
+      setDuration((d) => d + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [status]);
+
+  const formatDuration = (s: number) => {
+    const mins = Math.floor(s / 60);
+    const secs = s % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[5000] flex items-center justify-center bg-slate-950 p-4 sm:p-8 select-none"
+      style={{ backdropFilter: "blur(16px)" }}
+    >
+      <div className="w-full max-w-4xl h-[80vh] bg-slate-900 rounded-[32px] overflow-hidden shadow-2xl flex flex-col relative border border-slate-800">
+        {status === "connecting" ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-white gap-6">
+            <div className="relative">
+              <div className="w-24 h-24 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20 text-3xl font-black animate-pulse">
+                {interview.candidateInitials}
+              </div>
+              <div className="absolute inset-0 rounded-full border border-emerald-500 animate-ping opacity-20" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-bold tracking-tight mb-2">Connecting with {interview.candidateName}...</h3>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest animate-pulse">Establishing secure link</p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col relative bg-slate-950">
+            {/* Candidate Video Stream (Simulated) */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {isVideoOff ? (
+                <div className="w-full h-full bg-slate-900 flex items-center justify-center text-slate-500 text-6xl font-black">
+                  {interview.candidateInitials}
+                </div>
+              ) : (
+                <div className="relative w-full h-full bg-slate-900 flex flex-col items-center justify-center text-white p-6">
+                  {/* Waveform visualizer simulation overlay */}
+                  <div className="absolute bottom-6 left-6 z-20 flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs font-black uppercase tracking-widest">{interview.candidateName} ({interview.role})</span>
+                  </div>
+                  {/* Dynamic audio pulse ring */}
+                  <div className="w-32 h-32 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500 text-5xl font-black relative shadow-xl">
+                    {interview.candidateInitials}
+                    <div className="absolute inset-0 border-2 border-emerald-400 rounded-full animate-ping opacity-30" style={{ animationDuration: "1.5s" }} />
+                  </div>
+                  <p className="text-sm font-semibold text-slate-400 mt-6 max-w-xs text-center">
+                    Candidate is connected. Audio/video stream active.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Recruiter Picture in Picture (PiP) */}
+            <div className="absolute top-6 right-6 w-32 h-44 rounded-2xl bg-slate-800 border-2 border-slate-700 shadow-xl overflow-hidden z-20 flex flex-col items-center justify-center text-slate-400">
+              <Users size={24} className="mb-2 text-slate-500" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Recruiter</span>
+            </div>
+
+            {/* Timer Overlay */}
+            <div className="absolute top-6 left-6 z-20 bg-black/40 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/5 text-white text-xs font-bold font-mono">
+              {formatDuration(duration)}
+            </div>
+
+            {/* Video Controls Bar */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4 bg-slate-900/95 backdrop-blur-md px-6 py-3.5 rounded-[24px] border border-slate-800 shadow-2xl">
+              <button
+                onClick={() => setIsMuted((m) => !m)}
+                className={`p-3 rounded-full border transition-all ${isMuted ? "bg-red-500/10 border-red-500/20 text-red-400" : "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"}`}
+              >
+                {/* Mute icon */}
+                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/></svg>
+              </button>
+              <button
+                onClick={() => setIsVideoOff((v) => !v)}
+                className={`p-3 rounded-full border transition-all ${isVideoOff ? "bg-red-500/10 border-red-500/20 text-red-400" : "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"}`}
+              >
+                <Video size={20} />
+              </button>
+              <button
+                onClick={onClose}
+                className="p-3.5 rounded-full bg-red-600 text-white hover:bg-red-500 transition-all shadow-lg shadow-red-500/30 hover:scale-105 active:scale-95"
+              >
+                {/* Hang up icon */}
+                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M10.68 22.28a6 6 0 0 0 2.64 0l7.46-3.73a2 2 0 0 0 1.11-1.79v-2.58a2 2 0 0 0-1.25-1.86l-4.71-1.71a2 2 0 0 0-2 .41L12.3 12.7a8.62 8.62 0 0 1-3.6-3.6l1.38-1.63a2 2 0 0 0 .41-2L8.78 1.76A2 2 0 0 0 6.92.5H4.34a2 2 0 0 0-1.79 1.11L1.73 9.48a16 16 0 0 0 14.79 14.79l.52-.06Z"/></svg>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main Page ──────────────────────────────────────────── */
 export function Recruitment() {
-  const {
-    recruitmentPipeline: contextPipeline,
-    addCandidate,
-    deleteCandidate,
-    moveCandidate,
-    jobs,
-    addJob,
-    deleteJob,
-    interviews,
-    scheduleInterview,
-    cancelInterview,
-  } = useRecruitment();
   const { toasts, toast, dismiss } = useToast();
   const [activeTab, setActiveTab] = useState<TabId>("Pipeline");
 
-  const pipeline = STAGES.reduce(
-    (acc, stage) => {
-      const ctx = contextPipeline[stage] || [];
-      const mock =
-        (recruitmentPipeline as Record<Stage, Candidate[]>)[stage] || [];
-      acc[stage] = ctx.length > 0 ? (ctx as unknown as Candidate[]) : mock;
-      return acc;
-    },
-    {} as Record<Stage, Candidate[]>,
-  );
+  // Local persistent states
+  const [pipeline, setPipeline] = useState<Record<Stage, Candidate[]>>(() => {
+    const saved = localStorage.getItem("nexus_recruitment_pipeline");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    // Deep clone the mock data recruitmentPipeline so we don't mutate global mock object
+    return JSON.parse(JSON.stringify(recruitmentPipeline)) as Record<Stage, Candidate[]>;
+  });
 
-  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
+  const [jobs, setJobs] = useState<JobPosting[]>(() => {
+    const saved = localStorage.getItem("nexus_recruitment_jobs");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return INITIAL_JOBS;
+  });
 
-  const displayPipeline = STAGES.reduce(
-    (acc, stage) => {
-      acc[stage] = pipeline[stage].filter(
-        (c: Candidate) => !deletedIds.has(c.id),
-      );
-      return acc;
-    },
-    {} as Record<Stage, Candidate[]>,
-  );
+  const [interviews, setInterviews] = useState<ScheduledInterview[]>(() => {
+    const saved = localStorage.getItem("nexus_recruitment_interviews");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return INITIAL_INTERVIEWS;
+  });
+
+  // State saving helpers
+  const updatePipeline = (newPipeline: Record<Stage, Candidate[]>) => {
+    setPipeline(newPipeline);
+    localStorage.setItem("nexus_recruitment_pipeline", JSON.stringify(newPipeline));
+  };
+
+  const updateJobs = (newJobs: JobPosting[]) => {
+    setJobs(newJobs);
+    localStorage.setItem("nexus_recruitment_jobs", JSON.stringify(newJobs));
+  };
+
+  const updateInterviews = (newInterviews: ScheduledInterview[]) => {
+    setInterviews(newInterviews);
+    localStorage.setItem("nexus_recruitment_interviews", JSON.stringify(newInterviews));
+  };
 
   // Search & filter
   const [query, setQuery] = useState("");
@@ -3667,7 +4389,7 @@ export function Recruitment() {
 
   const filteredPipeline = STAGES.reduce(
     (acc, stage) => {
-      acc[stage] = displayPipeline[stage].filter((c: Candidate) => {
+      acc[stage] = (pipeline[stage] || []).filter((c: Candidate) => {
         const q = query.toLowerCase();
         return (
           (!q ||
@@ -3683,14 +4405,15 @@ export function Recruitment() {
   );
 
   const totalFiltered = STAGES.reduce(
-    (s, st) => s + filteredPipeline[st].length,
+    (s, st) => s + (filteredPipeline[st] || []).length,
     0,
   );
   const isFiltering =
     !!query || locationFilter !== "All" || typeFilter !== "All";
 
-  // Modal state
+  // Modal & premium states
   const [showPostJob, setShowPostJob] = useState(false);
+  const [editJobTarget, setEditJobTarget] = useState<JobPosting | null>(null);
   const [showJobs, setShowJobs] = useState(false);
   const [addStage, setAddStage] = useState<Stage | null>(null);
   const [detailCandidate, setDetailCandidate] = useState<{
@@ -3708,23 +4431,35 @@ export function Recruitment() {
     stage: Stage;
     candidate: Candidate;
   } | null>(null);
+  const [activeVideoCall, setActiveVideoCall] = useState<ScheduledInterview | null>(null);
+
   const dragRef = useRef<{ candidateId: string; fromStage: Stage } | null>(
     null,
   );
 
+  // CRUD - Candidate
   const handleAddCandidate = (stage: Stage, candidate: Candidate) => {
-    addCandidate(stage, candidate as unknown as ContextCandidate);
+    const newPipeline = {
+      ...pipeline,
+      [stage]: [...(pipeline[stage] || []), candidate],
+    };
+    updatePipeline(newPipeline);
     toast(`${candidate.name} added to ${stage}`, "success");
   };
 
   const confirmDelete = () => {
     if (!deleteTarget) return;
     const { candidateId, stage, candidate } = deleteTarget;
-    const isCtx = (contextPipeline[stage] || []).some(
-      (c: Candidate) => c.id === candidateId,
-    );
-    if (isCtx) deleteCandidate(candidateId, stage);
-    else setDeletedIds((prev) => new Set([...prev, candidateId]));
+    const newPipeline = {
+      ...pipeline,
+      [stage]: (pipeline[stage] || []).filter((c) => c.id !== candidateId),
+    };
+    updatePipeline(newPipeline);
+    
+    // Cleanup interviews
+    const newInterviews = interviews.filter((iv) => iv.candidateId !== candidateId);
+    updateInterviews(newInterviews);
+
     toast(`${candidate.name} removed`, "error");
     setDeleteTarget(null);
   };
@@ -3734,31 +4469,164 @@ export function Recruitment() {
     fromStage: Stage,
     toStage: Stage,
   ) => {
-    const candidate = displayPipeline[fromStage].find(
-      (c: Candidate) => c.id === candidateId,
-    );
-    const isCtx = (contextPipeline[fromStage] || []).some(
-      (c: Candidate) => c.id === candidateId,
-    );
-    if (isCtx) moveCandidate(candidateId, fromStage, toStage);
-    else if (candidate) {
-      setDeletedIds((prev) => new Set([...prev, candidateId]));
-      addCandidate(toStage, candidate as unknown as ContextCandidate);
-    }
-    if (candidate) toast(`${candidate.name} moved to ${toStage}`, "success");
+    const candidate = (pipeline[fromStage] || []).find((c) => c.id === candidateId);
+    if (!candidate) return;
+
+    const newPipeline = {
+      ...pipeline,
+      [fromStage]: (pipeline[fromStage] || []).filter((c) => c.id !== candidateId),
+      [toStage]: [...(pipeline[toStage] || []), candidate],
+    };
+    updatePipeline(newPipeline);
+    toast(`${candidate.name} moved to ${toStage}`, "success");
   };
 
+  const handleUpdateRating = (stage: Stage, candidateId: string, rating: number) => {
+    const newPipeline = {
+      ...pipeline,
+      [stage]: (pipeline[stage] || []).map((c) =>
+        c.id === candidateId ? { ...c, rating } : c
+      ),
+    };
+    updatePipeline(newPipeline);
+  };
+
+  const handleEditCandidate = (stage: Stage, updated: Candidate) => {
+    const newPipeline = {
+      ...pipeline,
+      [stage]: (pipeline[stage] || []).map((c) =>
+        c.id === updated.id ? updated : c
+      ),
+    };
+    updatePipeline(newPipeline);
+    setDetailCandidate({ candidate: updated, stage });
+    toast(`Profile updated for ${updated.name}`, "success");
+  };
+
+  // CRUD - Job Posting
+  const handlePostJob = (
+    jobForm: Omit<JobPosting, "id" | "postedAt" | "applicants"> & { id?: string },
+  ) => {
+    if (jobForm.id) {
+      // Edit
+      const updatedJobs = jobs.map((j) =>
+        j.id === jobForm.id
+          ? {
+              ...j,
+              title: jobForm.title,
+              department: jobForm.department,
+              location: jobForm.location,
+              type: jobForm.type,
+              experience: jobForm.experience,
+              salary: jobForm.salary,
+              description: jobForm.description,
+            }
+          : j
+      );
+      updateJobs(updatedJobs);
+      toast(`"${jobForm.title}" updated successfully`, "success");
+    } else {
+      // Create
+      const newJob: JobPosting = {
+        id: `J${Date.now()}`,
+        title: jobForm.title,
+        department: jobForm.department,
+        location: jobForm.location,
+        type: jobForm.type,
+        experience: jobForm.experience || "Any",
+        salary: jobForm.salary || "Not Specified",
+        description: jobForm.description,
+        postedAt: new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }),
+        applicants: 0,
+      };
+      updateJobs([...jobs, newJob]);
+      toast(`"${jobForm.title}" posted successfully`, "success");
+    }
+    setEditJobTarget(null);
+  };
+
+  const handleDeleteJob = (jobId: string) => {
+    const updatedJobs = jobs.filter((j) => j.id !== jobId);
+    updateJobs(updatedJobs);
+    toast("Job listing deleted", "error");
+  };
+
+  // CRUD - Interview Scheduling
   const handleSchedule = (iv: Omit<ScheduledInterview, "id">) => {
-    scheduleInterview(iv);
+    const newInterview: ScheduledInterview = {
+      ...iv,
+      id: `IV${Date.now()}`,
+      candidateInitials: iv.candidateInitials || iv.candidateName.slice(0, 2).toUpperCase(),
+    };
+    updateInterviews([...interviews, newInterview]);
+
+    // Add interviewDate to candidate
+    let foundStage: Stage | null = null;
+    for (const st of STAGES) {
+      const c = (pipeline[st] || []).find((x) => x.id === iv.candidateId);
+      if (c) {
+        foundStage = st;
+        break;
+      }
+    }
+    if (foundStage) {
+      const newPipeline = {
+        ...pipeline,
+        [foundStage]: (pipeline[foundStage] || []).map((x) =>
+          x.id === iv.candidateId ? { ...x, interviewDate: `${iv.date} ${iv.time}` } : x
+        ),
+      };
+      updatePipeline(newPipeline);
+    }
+
     toast(`Interview scheduled with ${iv.candidateName} on ${iv.date}`, "info");
   };
 
-  const handlePostJob = (
-    job: Omit<JobPosting, "id" | "postedAt" | "applicants">,
-  ) => {
-    addJob(job);
-    toast(`"${job.title}" posted successfully`, "success");
+  const handleCancelInterview = (id: string) => {
+    const iv = interviews.find((x) => x.id === id);
+    const updatedInterviews = interviews.filter((x) => x.id !== id);
+    updateInterviews(updatedInterviews);
+
+    if (iv) {
+      let foundStage: Stage | null = null;
+      for (const st of STAGES) {
+        const c = (pipeline[st] || []).find((x) => x.id === iv.candidateId);
+        if (c) {
+          foundStage = st;
+          break;
+        }
+      }
+      if (foundStage) {
+        const newPipeline = {
+          ...pipeline,
+          [foundStage]: (pipeline[foundStage] || []).map((x) => {
+            if (x.id === iv.candidateId) {
+              const { interviewDate, ...rest } = x;
+              return rest;
+            }
+            return x;
+          }),
+        };
+        updatePipeline(newPipeline);
+      }
+    }
+
+    toast("Interview cancelled", "warning");
   };
+
+  // Dynamic Statistics Calculations
+  const allCandidates = Object.values(pipeline).flat();
+  const openPositions = jobs.length;
+  const applications = allCandidates.length;
+  const newApps = (pipeline.Applied || []).length;
+  const todayStr = new Date().toISOString().split("T")[0];
+  const interviewsToday = interviews.filter((iv) => iv.date === todayStr).length;
+  const offersPending = (pipeline.Offer || []).length;
+  const offersSent = offersPending;
 
   return (
     <div
@@ -3767,10 +4635,14 @@ export function Recruitment() {
     >
       <ToastContainer toasts={toasts} onDismiss={dismiss} />
 
-      {/* Modals */}
-      {showPostJob && (
+      {/* Modals & Overlays */}
+      {(showPostJob || editJobTarget) && (
         <PostJobModal
-          onClose={() => setShowPostJob(false)}
+          job={editJobTarget || undefined}
+          onClose={() => {
+            setShowPostJob(false);
+            setEditJobTarget(null);
+          }}
           onPost={handlePostJob}
         />
       )}
@@ -3789,6 +4661,25 @@ export function Recruitment() {
           candidate={detailCandidate.candidate}
           stage={detailCandidate.stage}
           onClose={() => setDetailCandidate(null)}
+          onDelete={() => {
+            setDeleteTarget({
+              candidateId: detailCandidate.candidate.id,
+              stage: detailCandidate.stage,
+              candidate: detailCandidate.candidate,
+            });
+            setDetailCandidate(null);
+          }}
+          onMoveNext={() => {
+            const si = STAGES.indexOf(detailCandidate.stage);
+            const nextStage = si < STAGES.length - 1 ? STAGES[si + 1] : null;
+            if (nextStage) {
+              handleMoveCandidate(detailCandidate.candidate.id, detailCandidate.stage, nextStage);
+              setDetailCandidate(null);
+            }
+          }}
+          onEdit={(updatedCandidate) => handleEditCandidate(detailCandidate.stage, updatedCandidate)}
+          onSchedule={() => setScheduleCandidate(detailCandidate.candidate)}
+          scheduledInterviews={interviews.filter(iv => iv.candidateId === detailCandidate.candidate.id)}
         />
       )}
       {messageCandidate && (
@@ -3811,13 +4702,29 @@ export function Recruitment() {
           onCancel={() => setDeleteTarget(null)}
         />
       )}
+      {activeVideoCall && (
+        <VideoCallSimulator
+          interview={activeVideoCall}
+          onClose={() => setActiveVideoCall(null)}
+        />
+      )}
 
       <PageHeader
+        activeJobsCount={openPositions}
         onPostJob={() => setShowPostJob(true)}
         onShowJobs={() => setShowJobs(true)}
       />
-      <InfoBar />
-      <KpiCards />
+      <InfoBar
+        newApps={newApps}
+        interviewsToday={interviewsToday}
+        offersPending={offersPending}
+      />
+      <KpiCards
+        openPositions={openPositions}
+        applications={applications}
+        interviewsToday={interviewsToday}
+        offersSent={offersSent}
+      />
       <RecruitmentTabs active={activeTab} onChange={setActiveTab} />
 
       {activeTab === "Pipeline" && (
@@ -3825,7 +4732,8 @@ export function Recruitment() {
           {interviews.length > 0 && (
             <UpcomingInterviewsPanel
               interviews={interviews}
-              onDismiss={(id) => cancelInterview(id)}
+              onDismiss={handleCancelInterview}
+              onJoinCall={(iv) => setActiveVideoCall(iv)}
             />
           )}
 
@@ -3841,8 +4749,8 @@ export function Recruitment() {
 
           <div className="flex gap-6 overflow-x-auto pb-6 custom-scrollbar">
             {STAGES.map((stage) => {
-              const rawCount = displayPipeline[stage].length;
-              const candidates = filteredPipeline[stage];
+              const rawCount = (pipeline[stage] || []).length;
+              const candidates = filteredPipeline[stage] || [];
 
               return (
                 <div
@@ -3904,6 +4812,7 @@ export function Recruitment() {
                             nextStage &&
                             handleMoveCandidate(candidate.id, stage, nextStage)
                           }
+                          onUpdateRating={(rating) => handleUpdateRating(stage, candidate.id, rating)}
                           onDragStart={(e: React.DragEvent) => {
                             dragRef.current = {
                               candidateId: candidate.id,
@@ -3940,19 +4849,28 @@ export function Recruitment() {
         <JobsView
           jobs={jobs}
           onPostJob={() => setShowPostJob(true)}
+          onEditJob={(j) => setEditJobTarget(j)}
           onSelectJob={(j) => {
             setActiveTab("Pipeline");
             toast(`Showing pipeline for ${j.title}`, "info");
           }}
-          onDeleteJob={(id) => deleteJob(id)}
+          onDeleteJob={handleDeleteJob}
         />
       )}
       {activeTab === "Candidates" && (
         <CandidatesView
-          candidates={Object.values(displayPipeline).flat()}
-          onDetail={(c) =>
-            setDetailCandidate({ candidate: c, stage: "Applied" })
-          }
+          candidates={Object.values(pipeline).flat()}
+          onDetail={(c) => {
+            // Find candidate's current stage
+            let foundStage: Stage = "Applied";
+            for (const st of STAGES) {
+              if ((pipeline[st] || []).some(x => x.id === c.id)) {
+                foundStage = st;
+                break;
+              }
+            }
+            setDetailCandidate({ candidate: c, stage: foundStage });
+          }}
           onSchedule={(c) => setScheduleCandidate(c)}
           onMessage={(c) => setMessageCandidate(c)}
         />
@@ -3960,10 +4878,11 @@ export function Recruitment() {
       {activeTab === "Interviews" && (
         <InterviewsView
           interviews={interviews}
-          onDismiss={(id) => cancelInterview(id)}
+          onDismiss={handleCancelInterview}
+          onJoinCall={(iv) => setActiveVideoCall(iv)}
         />
       )}
-      {activeTab === "Analytics" && <AnalyticsView />}
+      {activeTab === "Analytics" && <AnalyticsView pipeline={pipeline} />}
     </div>
   );
 }

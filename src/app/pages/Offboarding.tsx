@@ -333,7 +333,7 @@ export function Offboarding() {
   const [showInterview, setShowInterview] = useState<string | null>(null);
   const [showSchedule, setShowSchedule] = useState<{id: string; type: "interview" | "clearance"} | null>(null);
 
-  const activeExits = EXITS.filter(e => e.type !== "Completed");
+  const activeExits = EXITS.filter(e => e.progress !== 100);
   const completedExits: ExitEmployee[] = [];
   const scheduledExits: ExitEmployee[] = [];
 

@@ -205,20 +205,34 @@ const Modal = ({
   );
 };
 
+const getStatusStyle = (status: Colleague["status"]): string => {
+  switch (status) {
+    case "Active": return "bg-emerald-500/10 text-primary border-primary/20";
+    case "On Leave": return "bg-amber-500/10 text-amber-600 border-amber-500/20";
+    case "Remote": return "bg-blue-500/10 text-blue-600 border-blue-500/20";
+    case "Offline": return "bg-secondary text-muted-foreground border-border";
+    default: return "bg-secondary text-muted-foreground border-border";
+  }
+};
+
 const StatusBadge = ({ status }: { status: Colleague["status"] }) => {
-  const styles = {
-    Active: "bg-emerald-500/10 text-primary border-primary/20",
-    "On Leave": "bg-amber-500/10 text-amber-600 border-amber-500/20",
-    Remote: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-    Offline: "bg-secondary text-muted-foreground border-border",
-  };
   return (
     <span
-      className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${styles[status]}`}
+      className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${getStatusStyle(status)}`}
     >
       {status}
     </span>
   );
+};
+
+const getAvailabilityStyle = (availability: Colleague["availability"]): string => {
+  switch (availability) {
+    case "Available": return "bg-emerald-500";
+    case "Busy": return "bg-red-500";
+    case "In Meeting": return "bg-amber-500";
+    case "Away": return "bg-slate-400";
+    default: return "bg-slate-400";
+  }
 };
 
 const AvailabilityBadge = ({
@@ -226,15 +240,9 @@ const AvailabilityBadge = ({
 }: {
   availability: Colleague["availability"];
 }) => {
-  const styles = {
-    Available: "bg-emerald-500",
-    Busy: "bg-red-500",
-    "In Meeting": "bg-amber-500",
-    Away: "bg-slate-400",
-  };
   return (
     <div className="flex items-center gap-1.5">
-      <div className={`w-2 h-2 rounded-full ${styles[availability]}`} />
+      <div className={`w-2 h-2 rounded-full ${getAvailabilityStyle(availability)}`} />
       <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
         {availability}
       </span>

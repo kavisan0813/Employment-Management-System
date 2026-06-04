@@ -83,6 +83,31 @@ const ACTION_CONFIG: Record<ActionType, { chip: string }> = {
   VIEW: { chip: "bg-[#F3F4F6] text-[#6B7280] border-[#E5E7EB]" },
 };
 
+const getSeverityConfig = (severity: Severity) => {
+  switch (severity) {
+    case "critical": return SEV_CONFIG.critical;
+    case "warning": return SEV_CONFIG.warning;
+    case "info":
+    default:
+      return SEV_CONFIG.info;
+  }
+};
+
+const getActionConfig = (action: ActionType) => {
+  switch (action) {
+    case "APPROVE": return ACTION_CONFIG.APPROVE;
+    case "DELETE": return ACTION_CONFIG.DELETE;
+    case "UPDATE": return ACTION_CONFIG.UPDATE;
+    case "EXPORT": return ACTION_CONFIG.EXPORT;
+    case "RUN": return ACTION_CONFIG.RUN;
+    case "LOGIN FAILED": return ACTION_CONFIG["LOGIN FAILED"];
+    case "CREATE": return ACTION_CONFIG.CREATE;
+    case "VIEW":
+    default:
+      return ACTION_CONFIG.VIEW;
+  }
+};
+
 /* ─── Sub-components ─── */
 function KPICard({ title, value, sub, color, icon: Icon }: { title: string; value: string; sub: string; color: "green" | "red" | "teal" | "purple"; icon: React.ElementType }) {
   const colors = { green: { text: "#00B87C", bg: "#DCFCE7" }, red: { text: "#EF4444", bg: "#FEE2E2" }, teal: { text: "#0EA5E9", bg: "#E0F2FE" }, purple: { text: "#8B5CF6", bg: "#EDE9FE" } };
@@ -225,8 +250,8 @@ export function AuditLogs() {
             </thead>
             <tbody className="divide-y divide-[#F3F4F6]">
               {displayedLogs.map((log) => {
-                const sev = SEV_CONFIG[log.severity];
-                const act = ACTION_CONFIG[log.action];
+                const sev = getSeverityConfig(log.severity);
+                const act = getActionConfig(log.action);
                 const rowBg = log.severity === "critical" ? "bg-[#FFF5F5]" : log.severity === "warning" ? "bg-[#FFFBEB]" : "";
                 return (
                   <motion.tr
@@ -345,7 +370,7 @@ export function AuditLogs() {
                         {[{ t: "Today 10:40 AM", a: "VIEW", m: "Employees" }, { t: "Today 10:38 AM", a: "VIEW", m: "Employees" }, { t: "Today 10:35 AM", a: "LOGIN", m: "Auth" }].map((e, i) => (
                           <div key={i} className="flex items-center gap-3 px-3 py-2 rounded-xl bg-muted/20 border border-border">
                             <span className="text-[11px] font-bold text-muted-foreground w-32">{e.t}</span>
-                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border ${ACTION_CONFIG[e.a as ActionType]?.chip || ""}`}>{e.a}</span>
+                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border ${getActionConfig(e.a as ActionType)?.chip || ""}`}>{e.a}</span>
                             <span className="text-[11px] font-medium text-muted-foreground">{e.m}</span>
                           </div>
                         ))}

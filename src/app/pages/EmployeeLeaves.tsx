@@ -16,6 +16,7 @@ import {
 import { showToast } from "../components/workflow/ToastNotification";
 import { StatusBadge } from "../components/workflow/StatusBadge";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const TABS = ["My Requests", "History", "Policy"];
 
@@ -316,12 +317,13 @@ export function EmployeeLeaves() {
 /* ─── Components ─────────────────────────────────────────────────── */
 
 function HistoryTab() {
+  const { t } = useTranslation();
   return (
     <div className="bg-card rounded-[24px] border border-border shadow-sm p-12 text-center">
       <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
         <History size={32} className="text-muted-foreground" />
       </div>
-      <h3 className="text-lg font-black text-foreground">Leave History</h3>
+      <h3 className="text-lg font-black text-foreground">{t("leaveHistory")}</h3>
       <p className="text-[14px] font-medium text-muted-foreground max-w-sm mx-auto mt-2">
         Historical leave records will be archived here after the current
         financial year ends.
@@ -725,16 +727,19 @@ function TimelineItem({
   subtitle: string;
   status: "completed" | "current" | "upcoming";
 }) {
-  const colors = {
-    completed: "bg-primary text-white border-primary",
-    current: "bg-amber-500 text-white border-amber-500 animate-pulse",
-    upcoming: "bg-secondary text-muted-foreground border-border",
+  const getTimelineColor = (s: "completed" | "current" | "upcoming"): string => {
+    switch (s) {
+      case "completed": return "bg-primary text-white border-primary";
+      case "current": return "bg-amber-500 text-white border-amber-500 animate-pulse";
+      case "upcoming": return "bg-secondary text-muted-foreground border-border";
+      default: return "bg-secondary text-muted-foreground border-border";
+    }
   };
 
   return (
     <div className="flex gap-4 relative z-10">
       <div
-        className={`w-6 h-6 rounded-full flex items-center justify-center border ${colors[status]} shadow-sm`}
+        className={`w-6 h-6 rounded-full flex items-center justify-center border ${getTimelineColor(status)} shadow-sm`}
       >
         {icon}
       </div>
