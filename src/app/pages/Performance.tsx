@@ -123,6 +123,19 @@ const reviewHistory: ReviewHistory[] = [
   },
 ];
 
+const loadPerformanceReviews = (): ReviewHistory[] => {
+  const local = localStorage.getItem("nexus_performance_reviews");
+  if (local) {
+    try {
+      return JSON.parse(local);
+    } catch (e) {
+      console.error("Failed to parse performance reviews", e);
+    }
+  }
+  localStorage.setItem("nexus_performance_reviews", JSON.stringify(reviewHistory));
+  return reviewHistory;
+};
+
 const trendData = [
   { name: "Jan", score: 78 },
   { name: "Feb", score: 82 },
@@ -203,7 +216,7 @@ export function Performance() {
   const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [history, setHistory] = useState<ReviewHistory[]>(reviewHistory);
+  const [history, setHistory] = useState<ReviewHistory[]>(loadPerformanceReviews);
   const [activeReview, setActiveReview] = useState<ReviewHistory | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "view" | "edit">(
     "create",
@@ -212,6 +225,30 @@ export function Performance() {
     id: string;
     name: string;
   } | null>(null);
+
+  // Form State
+  const [formPeriod, setFormPeriod] = useState("Q1 2026");
+  const [formAttendanceScore, setFormAttendanceScore] = useState(95);
+  const [formPerformanceScore, setFormPerformanceScore] = useState(90);
+  const [formRating, setFormRating] = useState(4.5);
+  const [formRecommendation, setFormRecommendation] = useState<Recommendation>("No Change");
+  const [formStatus, setFormStatus] = useState<ReviewStatus>("Pending");
+  const [formStrengths, setFormStrengths] = useState("");
+  const [formImprovement, setFormImprovement] = useState("");
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  // Close modals on Escape key press
+  React.useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setIsModalOpen(false);
+        setIsDeleteOpen(false);
+        setDeleteTarget(null);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const filteredEmployees = useMemo(() => {
     if (selectedDept === "All Departments") return employees;
@@ -241,6 +278,21 @@ export function Performance() {
     });
   }, [search, status, selectedDept, history]);
 
+  const distributionData = useMemo(() => {
+    const exceptional = history.filter(r => r.rating >= 4.5).length;
+    const exceeds = history.filter(r => r.rating >= 4.0 && r.rating < 4.5).length;
+    const meets = history.filter(r => r.rating >= 3.0 && r.rating < 4.0).length;
+    const below = history.filter(r => r.rating < 3.0).length;
+    const total = history.length || 1;
+
+    return [
+      { name: "Exceptional", value: Math.round((exceptional / total) * 100), color: "#10B981" },
+      { name: "Exceeds", value: Math.round((exceeds / total) * 100), color: "#14B8A6" },
+      { name: "Meets", value: Math.round((meets / total) * 100), color: "#F59E0B" },
+      { name: "Below", value: Math.round((below / total) * 100), color: "#EF4444" },
+    ];
+  }, [history]);
+
   const handleExport = () => {
     toast.loading("Generating performance report...");
     setTimeout(() => {
@@ -267,10 +319,18 @@ export function Performance() {
   };
 
   const handleStartReview = () => {
-    if (selectedEmpId === "All Employees") {
-      toast.error("Please select an employee first from the filters");
-      return;
-    }
+    // If no specific employee is selected, default to the first one in the list
+    const defaultEmp = selectedEmpId !== "All Employees" ? selectedEmpId : (employees[0]?.id || "");
+    setSelectedEmpId(defaultEmp);
+    setFormPeriod(`Q1 ${year}`);
+    setFormAttendanceScore(95);
+    setFormPerformanceScore(90);
+    setFormRating(4.5);
+    setFormRecommendation("No Change");
+    setFormStatus("Pending");
+    setFormStrengths("");
+    setFormImprovement("");
+    setFormErrors({});
     setModalMode("create");
     setActiveReview(null);
     setIsModalOpen(true);
@@ -279,12 +339,30 @@ export function Performance() {
   const handleView = (review: ReviewHistory) => {
     setModalMode("view");
     setActiveReview(review);
+    setFormPeriod(review.period);
+    setFormAttendanceScore(review.attendanceScore);
+    setFormPerformanceScore(review.performanceScore);
+    setFormRating(review.rating);
+    setFormRecommendation(review.recommendation);
+    setFormStatus(review.status);
+    setFormStrengths("Exceptional attention to detail and consistent high-quality output.");
+    setFormImprovement("Could improve communication frequency with external stakeholders.");
+    setFormErrors({});
     setIsModalOpen(true);
   };
 
   const handleEdit = (review: ReviewHistory) => {
     setModalMode("edit");
     setActiveReview(review);
+    setFormPeriod(review.period);
+    setFormAttendanceScore(review.attendanceScore);
+    setFormPerformanceScore(review.performanceScore);
+    setFormRating(review.rating);
+    setFormRecommendation(review.recommendation);
+    setFormStatus(review.status);
+    setFormStrengths("Exceptional attention to detail and consistent high-quality output.");
+    setFormImprovement("Could improve communication frequency with external stakeholders.");
+    setFormErrors({});
     setIsModalOpen(true);
   };
 
@@ -295,7 +373,9 @@ export function Performance() {
 
   const confirmDelete = () => {
     if (deleteTarget) {
-      setHistory((prev) => prev.filter((r) => r.id !== deleteTarget.id));
+      const updated = history.filter((r) => r.id !== deleteTarget.id);
+      setHistory(updated);
+      localStorage.setItem("nexus_performance_reviews", JSON.stringify(updated));
       toast.success("Review deleted successfully");
       setIsDeleteOpen(false);
       setDeleteTarget(null);
@@ -303,14 +383,60 @@ export function Performance() {
   };
 
   const handleSaveReview = () => {
+    const errors: Record<string, string> = {};
+    if (!formPeriod.trim()) errors.period = "Period is required";
+    if (isNaN(formAttendanceScore) || formAttendanceScore < 0 || formAttendanceScore > 100) {
+      errors.attendanceScore = "Attendance score must be between 0 and 100";
+    }
+    if (isNaN(formPerformanceScore) || formPerformanceScore < 0 || formPerformanceScore > 100) {
+      errors.performanceScore = "Performance score must be between 0 and 100";
+    }
+    if (isNaN(formRating) || formRating < 1.0 || formRating > 5.0) {
+      errors.rating = "Rating must be between 1.0 and 5.0";
+    }
+    if (!formStrengths.trim()) errors.strengths = "Strengths field is required";
+    if (!formImprovement.trim()) errors.improvement = "Improvement Areas field is required";
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     if (modalMode === "edit" && activeReview) {
-      setHistory((prev) =>
-        prev.map((r) =>
-          r.id === activeReview.id ? { ...r, status: "Completed" } : r,
-        ),
-      );
+      const updated = history.map((r) => {
+        if (r.id === activeReview.id) {
+          return {
+            ...r,
+            period: formPeriod,
+            attendanceScore: formAttendanceScore,
+            performanceScore: formPerformanceScore,
+            rating: formRating,
+            recommendation: formRecommendation,
+            status: formStatus,
+          };
+        }
+        return r;
+      });
+      setHistory(updated);
+      localStorage.setItem("nexus_performance_reviews", JSON.stringify(updated));
       toast.success("Review updated successfully");
     } else {
+      const emp = employees.find((e) => e.id === selectedEmpId) || employees[0];
+      const newReview: ReviewHistory = {
+        id: `R${100 + history.length + Date.now() % 100}`,
+        employeeId: emp.id,
+        employeeName: emp.name,
+        department: emp.department,
+        period: formPeriod,
+        attendanceScore: formAttendanceScore,
+        performanceScore: formPerformanceScore,
+        rating: formRating,
+        recommendation: formRecommendation,
+        status: formStatus,
+      };
+      const updated = [newReview, ...history];
+      setHistory(updated);
+      localStorage.setItem("nexus_performance_reviews", JSON.stringify(updated));
       toast.success("New review submitted successfully");
     }
     setIsModalOpen(false);
@@ -319,15 +445,15 @@ export function Performance() {
   const stats = [
     {
       label: "Total Reviews",
-      val: "1,284",
-      sub: "+12% from last cycle",
+      val: history.length.toString(),
+      sub: "Active cycle logs",
       icon: <FileText size={18} />,
       color: "#3B82F6",
       bg: "rgba(59,130,246,0.1)",
     },
     {
       label: "Pending Reviews",
-      val: "124",
+      val: history.filter(r => r.status === "Pending" || r.status === "In Review").length.toString(),
       sub: "Awaiting your action",
       icon: <Clock size={18} />,
       color: "#F59E0B",
@@ -335,23 +461,23 @@ export function Performance() {
     },
     {
       label: "Completed Reviews",
-      val: "842",
-      sub: "65% completion rate",
+      val: history.filter(r => r.status === "Completed" || r.status === "Approved").length.toString(),
+      sub: `${Math.round((history.filter(r => r.status === "Completed" || r.status === "Approved").length / (history.length || 1)) * 100)}% completion rate`,
       icon: <CheckCircle2 size={18} />,
       color: "#10B981",
       bg: "rgba(16,185,129,0.1)",
     },
     {
       label: "Average Score",
-      val: "86.4",
-      sub: "↑ 2.4% vs last year",
+      val: (history.reduce((acc, r) => acc + r.performanceScore, 0) / (history.length || 1)).toFixed(1),
+      sub: "Average out of 100",
       icon: <TrendingUp size={18} />,
       color: "#0D9488",
       bg: "rgba(13,148,136,0.1)",
     },
     {
       label: "Eligible for Increment",
-      val: "48",
+      val: history.filter(r => r.recommendation === "Increment").length.toString(),
       sub: "Based on perf scores",
       icon: <Award size={18} />,
       color: "#8B5CF6",
@@ -359,7 +485,7 @@ export function Performance() {
     },
     {
       label: "Promotion Recommended",
-      val: "12",
+      val: history.filter(r => r.recommendation === "Promotion").length.toString(),
       sub: "High performers list",
       icon: <UserCheck size={18} />,
       color: "#F43F5E",
@@ -1026,7 +1152,7 @@ export function Performance() {
                 <Dialog.Description className="text-sm font-bold text-muted-foreground">
                   {modalMode === "view"
                     ? "Detailed performance analytics and ratings"
-                    : `Complete the appraisal for ${selectedEmployee?.name}`}
+                    : `Complete the appraisal for ${selectedEmployee?.name || "the employee"}`}
                 </Dialog.Description>
               </div>
               <Dialog.Close className="p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-all">
@@ -1038,34 +1164,105 @@ export function Performance() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Metrics Summary */}
                 <div className="lg:col-span-5 space-y-6">
+                  {modalMode === "create" && (
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                        Select Employee
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={selectedEmpId}
+                          onChange={(e) => setSelectedEmpId(e.target.value)}
+                          className="w-full appearance-none px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer bg-card"
+                        >
+                          {employees.map((e) => (
+                            <option key={e.id} value={e.id}>
+                              {e.name} ({e.id})
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown
+                          size={14}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   <div className="p-6 rounded-2xl bg-muted border border-border">
                     <div className="flex items-center gap-4 mb-6">
-                      <img
-                        src={selectedEmployee?.avatar}
-                        alt=""
-                        className="w-12 h-12 rounded-xl object-cover"
-                      />
+                      <div className="w-12 h-12 rounded-xl bg-card border border-border overflow-hidden shrink-0 flex items-center justify-center font-black text-muted-foreground text-sm uppercase">
+                        {selectedEmployee?.avatar ? (
+                          <img
+                            src={selectedEmployee.avatar}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          selectedEmployee?.name?.split(" ").map(n => n[0]).join("") || "EMP"
+                        )}
+                      </div>
                       <div>
                         <h4 className="font-black text-foreground">
-                          {selectedEmployee?.name}
+                          {selectedEmployee?.name || "Select Employee"}
                         </h4>
                         <p className="text-xs font-bold text-muted-foreground">
-                          {selectedEmployee?.role ||
-                            selectedEmployee?.designation}
+                          {selectedEmployee?.role || selectedEmployee?.designation || "Staff"}
                         </p>
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <MetricItem
-                        label="Attendance"
-                        val={activeReview?.attendanceScore || 95}
-                        icon={Calendar}
-                      />
-                      <MetricItem
-                        label="Performance"
-                        val={activeReview?.performanceScore || 92}
-                        icon={Activity}
-                      />
+                      {modalMode === "view" ? (
+                        <>
+                          <MetricItem
+                            label="Attendance"
+                            val={formAttendanceScore}
+                            icon={Calendar}
+                          />
+                          <MetricItem
+                            label="Performance"
+                            val={formPerformanceScore}
+                            icon={Activity}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-1.5">
+                            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                              Attendance Score (0-100)
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              max="100"
+                              value={formAttendanceScore}
+                              onChange={(e) => setFormAttendanceScore(parseInt(e.target.value) || 0)}
+                              className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"
+                              style={{ borderColor: formErrors.attendanceScore ? "#EF4444" : "var(--border)" }}
+                            />
+                            {formErrors.attendanceScore && (
+                              <p className="text-xs text-red-500 mt-1">{formErrors.attendanceScore}</p>
+                            )}
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                              Performance Score (0-100)
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              max="100"
+                              value={formPerformanceScore}
+                              onChange={(e) => setFormPerformanceScore(parseInt(e.target.value) || 0)}
+                              className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"
+                              style={{ borderColor: formErrors.performanceScore ? "#EF4444" : "var(--border)" }}
+                            />
+                            {formErrors.performanceScore && (
+                              <p className="text-xs text-red-500 mt-1">{formErrors.performanceScore}</p>
+                            )}
+                          </div>
+                        </>
+                      )}
                       <MetricItem label="Teamwork" val={85} icon={Users} />
                       <MetricItem
                         label="Task Completion"
@@ -1085,21 +1282,72 @@ export function Performance() {
                       </label>
                       <input
                         type="text"
-                        value={activeReview?.period || `${period} ${year}`}
-                        readOnly
-                        className="w-full px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none"
+                        value={formPeriod}
+                        onChange={(e) => setFormPeriod(e.target.value)}
+                        readOnly={modalMode === "view"}
+                        className={`w-full px-4 py-2.5 rounded-xl border text-sm font-bold text-foreground outline-none bg-card ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
+                        style={{ borderColor: formErrors.period ? "#EF4444" : "var(--border)" }}
                       />
+                      {formErrors.period && (
+                        <p className="text-xs text-red-500 mt-1">{formErrors.period}</p>
+                      )}
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
+                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                        Rating (1.0 - 5.0)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="1.0"
+                        max="5.0"
+                        value={formRating}
+                        onChange={(e) => setFormRating(parseFloat(e.target.value) || 0)}
+                        readOnly={modalMode === "view"}
+                        className={`w-full px-4 py-2.5 rounded-xl border text-sm font-bold text-foreground outline-none bg-card ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
+                        style={{ borderColor: formErrors.rating ? "#EF4444" : "var(--border)" }}
+                      />
+                      {formErrors.rating && (
+                        <p className="text-xs text-red-500 mt-1">{formErrors.rating}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
                         Reviewer
                       </label>
                       <input
                         type="text"
                         value="Robert Chen"
                         readOnly
-                        className="w-full px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none"
+                        className="w-full px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none opacity-70"
                       />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                        Review Status
+                      </label>
+                      <div className="relative">
+                        <select
+                          disabled={modalMode === "view"}
+                          value={formStatus}
+                          onChange={(e) => setFormStatus(e.target.value as ReviewStatus)}
+                          className={`w-full appearance-none px-4 py-2.5 rounded-xl border text-sm font-bold text-foreground outline-none cursor-pointer bg-card ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="In Review">In Review</option>
+                          <option value="Completed">Completed</option>
+                          <option value="Approved">Approved</option>
+                        </select>
+                        {modalMode !== "view" && (
+                          <ChevronDown
+                            size={14}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+                          />
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -1109,15 +1357,16 @@ export function Performance() {
                     </label>
                     <textarea
                       rows={2}
+                      value={formStrengths}
+                      onChange={(e) => setFormStrengths(e.target.value)}
                       readOnly={modalMode === "view"}
                       placeholder="Key strengths..."
-                      className={`w-full px-4 py-2.5 rounded-xl border border-border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70" : ""}`}
-                      defaultValue={
-                        modalMode !== "create"
-                          ? "Exceptional attention to detail and consistent high-quality output."
-                          : ""
-                      }
+                      className={`w-full px-4 py-2.5 rounded-xl border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
+                      style={{ borderColor: formErrors.strengths ? "#EF4444" : "var(--border)" }}
                     />
+                    {formErrors.strengths && (
+                      <p className="text-xs text-red-500 mt-1">{formErrors.strengths}</p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -1126,15 +1375,16 @@ export function Performance() {
                     </label>
                     <textarea
                       rows={2}
+                      value={formImprovement}
+                      onChange={(e) => setFormImprovement(e.target.value)}
                       readOnly={modalMode === "view"}
                       placeholder="Areas to grow..."
-                      className={`w-full px-4 py-2.5 rounded-xl border border-border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70" : ""}`}
-                      defaultValue={
-                        modalMode !== "create"
-                          ? "Could improve communication frequency with external stakeholders."
-                          : ""
-                      }
+                      className={`w-full px-4 py-2.5 rounded-xl border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
+                      style={{ borderColor: formErrors.improvement ? "#EF4444" : "var(--border)" }}
                     />
+                    {formErrors.improvement && (
+                      <p className="text-xs text-red-500 mt-1">{formErrors.improvement}</p>
+                    )}
                   </div>
 
                   <div className="space-y-1.5">
@@ -1144,10 +1394,9 @@ export function Performance() {
                     <div className="relative">
                       <select
                         disabled={modalMode === "view"}
-                        defaultValue={
-                          activeReview?.recommendation || "No Change"
-                        }
-                        className={`w-full appearance-none px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer bg-card ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70" : ""}`}
+                        value={formRecommendation}
+                        onChange={(e) => setFormRecommendation(e.target.value as Recommendation)}
+                        className={`w-full appearance-none px-4 py-2.5 rounded-xl border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer bg-card ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
                       >
                         <option value="No Change">No Change</option>
                         <option value="Bonus">Bonus</option>

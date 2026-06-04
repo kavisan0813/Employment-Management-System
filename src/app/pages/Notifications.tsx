@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router";
 import {
   Bell,
@@ -19,17 +19,20 @@ import {
   ArrowLeft,
   Receipt,
   AlertCircle,
+  MoreVertical,
+  Trash2,
+  Edit2,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 interface NotificationItem {
   id: number;
-  type: "Leave" | "Payroll" | "Alert" | "Info" | "Birthday";
+  type: "Leave" | "Payroll" | "Alert" | "Info" | "Birthday" | "Expense" | "Success";
   title: string;
   description: string;
   time: string;
   read: boolean;
-  category: "Approvals" | "Payroll" | "Mentions" | "System";
+  category: "Approvals" | "Payroll" | "Mentions" | "System" | "Expenses" | "Alerts";
 }
 
 interface AnnouncementItem {
@@ -40,14 +43,177 @@ interface AnnouncementItem {
   author: string;
   authorRole: string;
   authorAvatar: string;
-  date: string;
+  date: string; // e.g. "Apr 28, 2026"
   likes: number;
   comments: number;
   views: number;
   pinned: boolean;
 }
 
-export default function Notifications() {
+/* ─── Helper Functions ───────────────────────── */
+
+const getFormattedDate = (): string => {
+  const today = new Date();
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const month = months[today.getMonth()];
+  const day = today.getDate().toString().padStart(2, "0");
+  const year = today.getFullYear();
+  return `${month} ${day}, ${year}`;
+};
+
+// Initial data templates
+const initialNotificationsList: NotificationItem[] = [
+  {
+    id: 1,
+    type: "Alert",
+    title: "MFA Verification Required",
+    description: "Ensure multi-factor authentication is verified before April 30.",
+    time: "2h ago",
+    read: false,
+    category: "System",
+  },
+  {
+    id: 2,
+    type: "Leave",
+    title: "Leave Request Approved",
+    description: "Your annual leave request for May 12-15 has been approved by HR.",
+    time: "3h ago",
+    read: false,
+    category: "Approvals",
+  },
+  {
+    id: 3,
+    type: "Payroll",
+    title: "Payroll Disbursed",
+    description: "Salary slip for March 2026 is available for download.",
+    time: "5h ago",
+    read: false,
+    category: "Payroll",
+  },
+  {
+    id: 4,
+    type: "Info",
+    title: "Security Update",
+    description: "Sarah Johnson tagged you in security policy v2.3.",
+    time: "1d ago",
+    read: false,
+    category: "Mentions",
+  },
+  {
+    id: 5,
+    type: "Birthday",
+    title: "Birthday Today",
+    description: "Wish Emily Chen a wonderful happy birthday today!",
+    time: "1d ago",
+    read: true,
+    category: "System",
+  },
+  {
+    id: 6,
+    type: "Leave",
+    title: "Approval Needed",
+    description: "David Miller requested a shift swap for next Friday.",
+    time: "2d ago",
+    read: true,
+    category: "Approvals",
+  },
+  {
+    id: 7,
+    type: "Info",
+    title: "Appraisal Complete",
+    description: "Quarterly increments have been logged into the performance matrix.",
+    time: "3d ago",
+    read: true,
+    category: "System",
+  },
+];
+
+const initialAnnouncementsList: AnnouncementItem[] = [
+  {
+    id: 1,
+    type: "URGENT",
+    title: "System Downtime: Scheduled Maintenance",
+    content: "Core HR systems will be offline on Saturday, May 2, from 12:00 AM to 4:00 AM IST for server upgrades.",
+    author: "Tech Infrastructure Team",
+    authorRole: "IT",
+    authorAvatar: "TI",
+    date: "Apr 28, 2026",
+    likes: 12,
+    comments: 3,
+    views: 188,
+    pinned: true,
+  },
+  {
+    id: 2,
+    type: "IMPORTANT",
+    title: "Quarterly Townhall Meeting",
+    content: "Join us for our Q1 business review this Thursday at 3:00 PM. The meeting link is provided in your calendar.",
+    author: "Sarah Johnson",
+    authorRole: "HR Director",
+    authorAvatar: "SJ",
+    date: "Apr 26, 2026",
+    likes: 45,
+    comments: 12,
+    views: 420,
+    pinned: true,
+  },
+  {
+    id: 3,
+    type: "HR UPDATE",
+    title: "Enhanced Health Insurance Benefits",
+    content: "We are proud to announce expanded medical benefits for employees starting next month.",
+    author: "Sarah Johnson",
+    authorRole: "HR Director",
+    authorAvatar: "SJ",
+    date: "Apr 24, 2026",
+    likes: 56,
+    comments: 22,
+    views: 512,
+    pinned: false,
+  },
+  {
+    id: 4,
+    type: "INFO",
+    title: "Eco-Friendly Workplace Initiative",
+    content: "NexusHR is moving paperless. Check out our new sustainability guidelines today.",
+    author: "Green Committee",
+    authorRole: "Internal",
+    authorAvatar: "GC",
+    date: "Apr 22, 2026",
+    likes: 31,
+    comments: 4,
+    views: 215,
+    pinned: false,
+  },
+];
+
+const loadNotifications = (): NotificationItem[] => {
+  const local = localStorage.getItem("nexus_notifications");
+  if (local) {
+    try {
+      return JSON.parse(local);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  localStorage.setItem("nexus_notifications", JSON.stringify(initialNotificationsList));
+  return initialNotificationsList;
+};
+
+const loadAnnouncements = (): AnnouncementItem[] => {
+  const local = localStorage.getItem("nexus_announcements");
+  if (local) {
+    try {
+      return JSON.parse(local);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  localStorage.setItem("nexus_announcements", JSON.stringify(initialAnnouncementsList));
+  return initialAnnouncementsList;
+};
+
+export function Notifications() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -58,144 +224,187 @@ export default function Notifications() {
   const [activeFilter, setActiveFilter] = useState<
     "All" | "Unread" | "Approvals" | "Mentions" | "System"
   >("All");
-  const [activeModal, setActiveModal] = useState<"create_announcement" | null>(
+  const [activeModal, setActiveModal] = useState<"create_announcement" | "edit_announcement" | null>(
     null,
   );
   const [showPreferences, setShowPreferences] = useState(false);
 
-  // Notification data
-  const [notifications, setNotifications] = useState<NotificationItem[]>([
-    {
-      id: 1,
-      type: "Alert",
-      title: "MFA Verification Required",
-      description:
-        "Ensure multi-factor authentication is verified before April 30.",
-      time: "2h ago",
-      read: false,
-      category: "System",
-    },
-    {
-      id: 2,
-      type: "Leave",
-      title: "Leave Request Approved",
-      description:
-        "Your annual leave request for May 12-15 has been approved by HR.",
-      time: "3h ago",
-      read: false,
-      category: "Approvals",
-    },
-    {
-      id: 3,
-      type: "Payroll",
-      title: "Payroll Disbursed",
-      description: "Salary slip for March 2026 is available for download.",
-      time: "5h ago",
-      read: false,
-      category: "Payroll",
-    },
-    {
-      id: 4,
-      type: "Info",
-      title: "Security Update",
-      description: "Sarah Johnson tagged you in security policy v2.3.",
-      time: "1d ago",
-      read: false,
-      category: "Mentions",
-    },
-    {
-      id: 5,
-      type: "Birthday",
-      title: "Birthday Today",
-      description: "Wish Emily Chen a wonderful happy birthday today!",
-      time: "1d ago",
-      read: true,
-      category: "System",
-    },
-    {
-      id: 6,
-      type: "Leave",
-      title: "Approval Needed",
-      description: "David Miller requested a shift swap for next Friday.",
-      time: "2d ago",
-      read: true,
-      category: "Approvals",
-    },
-    {
-      id: 7,
-      type: "Info",
-      title: "Appraisal Complete",
-      description:
-        "Quarterly increments have been logged into the performance matrix.",
-      time: "3d ago",
-      read: true,
-      category: "System",
-    },
-  ]);
+  // Storage-backed state
+  const [notifications, setNotifications] = useState<NotificationItem[]>(loadNotifications);
+  const [announcements, setAnnouncements] = useState<AnnouncementItem[]>(loadAnnouncements);
 
-  // Announcements data
-  const [announcements] = useState<AnnouncementItem[]>([
-    {
-      id: 1,
-      type: "URGENT",
-      title: "System Downtime: Scheduled Maintenance",
-      content:
-        "Core HR systems will be offline on Saturday, May 2, from 12:00 AM to 4:00 AM IST for server upgrades.",
-      author: "Tech Infrastructure Team",
-      authorRole: "IT",
-      authorAvatar: "TI",
-      date: "Apr 28, 2026",
-      likes: 12,
-      comments: 3,
-      views: 188,
-      pinned: true,
-    },
-    {
-      id: 2,
-      type: "IMPORTANT",
-      title: "Quarterly Townhall Meeting",
-      content:
-        "Join us for our Q1 business review this Thursday at 3:00 PM. The meeting link is provided in your calendar.",
-      author: "Sarah Johnson",
-      authorRole: "HR Director",
-      authorAvatar: "SJ",
-      date: "Apr 26, 2026",
-      likes: 45,
-      comments: 12,
-      views: 420,
-      pinned: true,
-    },
-    {
-      id: 3,
-      type: "HR UPDATE",
-      title: "Enhanced Health Insurance Benefits",
-      content:
-        "We are proud to announce expanded medical benefits for employees starting next month.",
-      author: "Sarah Johnson",
-      authorRole: "HR Director",
-      authorAvatar: "SJ",
-      date: "Apr 24, 2026",
-      likes: 56,
-      comments: 22,
-      views: 512,
-      pinned: false,
-    },
-    {
-      id: 4,
-      type: "INFO",
-      title: "Eco-Friendly Workplace Initiative",
-      content:
-        "NexusHR is moving paperless. Check out our new sustainability guidelines today.",
-      author: "Green Committee",
-      authorRole: "Internal",
-      authorAvatar: "GC",
-      date: "Apr 22, 2026",
-      likes: 31,
-      comments: 4,
-      views: 215,
-      pinned: false,
-    },
-  ]);
+  // Visual/a11y and CRUD states
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [activeAnnouncementMenu, setActiveAnnouncementMenu] = useState<number | null>(null);
+  const [editAnnouncement, setEditAnnouncement] = useState<AnnouncementItem | null>(null);
+  const [deleteAnnouncementConfirm, setDeleteAnnouncementConfirm] = useState<AnnouncementItem | null>(null);
+
+  // Form State
+  const [formTitle, setFormTitle] = useState("");
+  const [formCategory, setFormCategory] = useState<AnnouncementItem["type"]>("INFO");
+  const [formAudience, setFormAudience] = useState("All Employees");
+  const [formContent, setFormContent] = useState("");
+  const [formPinned, setFormPinned] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  // Close menus on outside click
+  useEffect(() => {
+    function handleOutsideClick(e: MouseEvent) {
+      if (!(e.target as HTMLElement).closest(".relative")) {
+        setActiveAnnouncementMenu(null);
+      }
+    }
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
+  // Close modals/drawers on Escape key press
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setActiveModal(null);
+        setShowPreferences(false);
+        setEditAnnouncement(null);
+        setDeleteAnnouncementConfirm(null);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Form Handlers
+  const handleOpenCreate = () => {
+    setFormTitle("");
+    setFormCategory("INFO");
+    setFormAudience("All Employees");
+    setFormContent("");
+    setFormPinned(false);
+    setFormErrors({});
+    setActiveModal("create_announcement");
+  };
+
+  const handleOpenEdit = (ann: AnnouncementItem) => {
+    setFormTitle(ann.title);
+    setFormCategory(ann.type);
+    setFormAudience("All Employees");
+    setFormContent(ann.content);
+    setFormPinned(ann.pinned);
+    setFormErrors({});
+    setEditAnnouncement(ann);
+    setActiveModal("edit_announcement");
+  };
+
+  const handlePostAnnouncement = () => {
+    const errors: Record<string, string> = {};
+    if (!formTitle.trim()) errors.title = "Title is required";
+    if (!formContent.trim()) errors.content = "Content is required";
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    const authorName = user?.name || "Sarah Johnson";
+    const authorRoleName = user?.role === "Finance" ? "Finance Manager" : "HR Director";
+    const initials = authorName.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+
+    const newAnn: AnnouncementItem = {
+      id: Date.now(),
+      type: formCategory,
+      title: formTitle.trim(),
+      content: formContent.trim(),
+      author: authorName,
+      authorRole: authorRoleName,
+      authorAvatar: initials || "HR",
+      date: getFormattedDate(),
+      likes: 0,
+      comments: 0,
+      views: 1,
+      pinned: formPinned,
+    };
+
+    const updated = [newAnn, ...announcements];
+    setAnnouncements(updated);
+    localStorage.setItem("nexus_announcements", JSON.stringify(updated));
+
+    setActiveModal(null);
+    setToastMessage("Announcement posted successfully");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
+
+  const handleUpdateAnnouncement = () => {
+    if (!editAnnouncement) return;
+
+    const errors: Record<string, string> = {};
+    if (!formTitle.trim()) errors.title = "Title is required";
+    if (!formContent.trim()) errors.content = "Content is required";
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    const updated = announcements.map(ann => {
+      if (ann.id === editAnnouncement.id) {
+        return {
+          ...ann,
+          type: formCategory,
+          title: formTitle.trim(),
+          content: formContent.trim(),
+          pinned: formPinned,
+        };
+      }
+      return ann;
+    });
+
+    setAnnouncements(updated);
+    localStorage.setItem("nexus_announcements", JSON.stringify(updated));
+
+    setEditAnnouncement(null);
+    setActiveModal(null);
+    setToastMessage("Announcement updated successfully");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
+
+  const handleDeleteAnnouncement = (id: number) => {
+    const updated = announcements.filter(ann => ann.id !== id);
+    setAnnouncements(updated);
+    localStorage.setItem("nexus_announcements", JSON.stringify(updated));
+    setDeleteAnnouncementConfirm(null);
+
+    setToastMessage("Announcement deleted successfully");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
+
+  const handleTogglePin = (ann: AnnouncementItem) => {
+    const updated = announcements.map(a => {
+      if (a.id === ann.id) {
+        return { ...a, pinned: !a.pinned };
+      }
+      return a;
+    });
+    setAnnouncements(updated);
+    localStorage.setItem("nexus_announcements", JSON.stringify(updated));
+
+    setToastMessage(ann.pinned ? "Announcement unpinned" : "Announcement pinned");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
+
+  const handleDismissNotification = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = notifications.filter(n => n.id !== id);
+    setNotifications(updated);
+    localStorage.setItem("nexus_notifications", JSON.stringify(updated));
+
+    setToastMessage("Notification dismissed");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
 
   const [preferences, setPreferences] = useState({
     leave: { email: true, push: true, sms: false },
@@ -480,25 +689,34 @@ export default function Notifications() {
                       {notif.description}
                     </p>
                   </div>
-                  <div className="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color: "var(--muted-foreground)",
-                      }}
-                    >
-                      {notif.time}
-                    </span>
-                    {!notif.read && (
-                      <div
+                  <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                    <div className="flex flex-col items-end gap-1">
+                      <span
                         style={{
-                          width: "8px",
-                          height: "8px",
-                          borderRadius: "50%",
-                          backgroundColor: "#00B87C",
+                          fontSize: "10px",
+                          color: "var(--muted-foreground)",
                         }}
-                      />
-                    )}
+                      >
+                        {notif.time}
+                      </span>
+                      {!notif.read && (
+                        <div
+                          style={{
+                            width: "8px",
+                            height: "8px",
+                            borderRadius: "50%",
+                            backgroundColor: "#00B87C",
+                          }}
+                        />
+                      )}
+                    </div>
+                    <button
+                      onClick={(e) => handleDismissNotification(notif.id, e)}
+                      className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer ml-1"
+                      aria-label="Dismiss notification"
+                    >
+                      <X size={14} />
+                    </button>
                   </div>
                 </div>
               );
@@ -541,7 +759,7 @@ export default function Notifications() {
               Company Announcements
             </h2>
             <button
-              onClick={() => setActiveModal("create_announcement")}
+              onClick={handleOpenCreate}
               style={{
                 backgroundColor: "#00B87C",
                 color: "white",
@@ -594,14 +812,63 @@ export default function Notifications() {
                           {ann.type}
                         </span>
                       </div>
-                      <span
-                        style={{
-                          fontSize: "12px",
-                          color: "var(--muted-foreground)",
-                        }}
-                      >
-                        {ann.date}
-                      </span>
+                      <div className="flex items-center gap-2 relative">
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            color: "var(--muted-foreground)",
+                          }}
+                        >
+                          {ann.date}
+                        </span>
+                        
+                        <div className="relative">
+                          <button
+                            className="p-1 rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors cursor-pointer"
+                            aria-label={`Actions for announcement: ${ann.title}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveAnnouncementMenu(
+                                activeAnnouncementMenu === ann.id ? null : ann.id
+                              );
+                            }}
+                          >
+                            <MoreVertical size={14} />
+                          </button>
+                          
+                          {activeAnnouncementMenu === ann.id && (
+                            <div className="absolute right-0 mt-1 w-32 bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-lg z-30 py-1 text-left animate-in fade-in slide-in-from-top-1">
+                              <button
+                                className="w-full text-left px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/40 cursor-pointer"
+                                onClick={() => {
+                                  setActiveAnnouncementMenu(null);
+                                  handleTogglePin(ann);
+                                }}
+                              >
+                                {ann.pinned ? "Unpin" : "Pin"}
+                              </button>
+                              <button
+                                className="w-full text-left px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/40 cursor-pointer"
+                                onClick={() => {
+                                  setActiveAnnouncementMenu(null);
+                                  handleOpenEdit(ann);
+                                }}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className="w-full text-left px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer"
+                                onClick={() => {
+                                  setActiveAnnouncementMenu(null);
+                                  setDeleteAnnouncementConfirm(ann);
+                                }}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     <h3
@@ -705,14 +972,63 @@ export default function Notifications() {
                       >
                         {ann.type}
                       </span>
-                      <span
-                        style={{
-                          fontSize: "12px",
-                          color: "var(--muted-foreground)",
-                        }}
-                      >
-                        {ann.date}
-                      </span>
+                      <div className="flex items-center gap-2 relative">
+                        <span
+                          style={{
+                            fontSize: "12px",
+                            color: "var(--muted-foreground)",
+                          }}
+                        >
+                          {ann.date}
+                        </span>
+
+                        <div className="relative">
+                          <button
+                            className="p-1 rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors cursor-pointer"
+                            aria-label={`Actions for announcement: ${ann.title}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveAnnouncementMenu(
+                                activeAnnouncementMenu === ann.id ? null : ann.id
+                              );
+                            }}
+                          >
+                            <MoreVertical size={14} />
+                          </button>
+
+                          {activeAnnouncementMenu === ann.id && (
+                            <div className="absolute right-0 mt-1 w-32 bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-lg z-30 py-1 text-left animate-in fade-in slide-in-from-top-1">
+                              <button
+                                className="w-full text-left px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/40 cursor-pointer"
+                                onClick={() => {
+                                  setActiveAnnouncementMenu(null);
+                                  handleTogglePin(ann);
+                                }}
+                              >
+                                {ann.pinned ? "Unpin" : "Pin"}
+                              </button>
+                              <button
+                                className="w-full text-left px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/40 cursor-pointer"
+                                onClick={() => {
+                                  setActiveAnnouncementMenu(null);
+                                  handleOpenEdit(ann);
+                                }}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className="w-full text-left px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer"
+                                onClick={() => {
+                                  setActiveAnnouncementMenu(null);
+                                  setDeleteAnnouncementConfirm(ann);
+                                }}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     <h3
@@ -782,9 +1098,11 @@ export default function Notifications() {
         </div>
       </div>
 
-      {/* MODAL: CREATE ANNOUNCEMENT */}
-      {activeModal === "create_announcement" && (
+      {/* MODAL: CREATE/EDIT ANNOUNCEMENT */}
+      {(activeModal === "create_announcement" || activeModal === "edit_announcement") && (
         <div
+          role="dialog"
+          aria-modal="true"
           style={{
             position: "fixed",
             inset: 0,
@@ -796,7 +1114,7 @@ export default function Notifications() {
           }}
         >
           <div
-            className="rounded-2xl p-6 max-w-xl w-full mx-4"
+            className="rounded-2xl p-6 max-w-xl w-full mx-4 animate-in fade-in zoom-in-95 duration-200"
             style={{
               backgroundColor: "var(--card)",
               border: "1px solid var(--border)",
@@ -812,10 +1130,13 @@ export default function Notifications() {
                   margin: 0,
                 }}
               >
-                New Announcement
+                {activeModal === "create_announcement" ? "New Announcement" : "Edit Announcement"}
               </h2>
               <button
-                onClick={() => setActiveModal(null)}
+                onClick={() => {
+                  setActiveModal(null);
+                  setEditAnnouncement(null);
+                }}
                 style={{
                   background: "none",
                   border: "none",
@@ -843,14 +1164,19 @@ export default function Notifications() {
                 </label>
                 <input
                   type="text"
+                  value={formTitle}
+                  onChange={(e) => setFormTitle(e.target.value)}
                   placeholder="Enter descriptive title..."
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
                     backgroundColor: "var(--input-background)",
-                    borderColor: "var(--border)",
+                    borderColor: formErrors.title ? "#EF4444" : "var(--border)",
                     color: "var(--foreground)",
                   }}
                 />
+                {formErrors.title && (
+                  <p style={{ color: "#EF4444", fontSize: "12px", marginTop: "4px" }}>{formErrors.title}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -868,6 +1194,8 @@ export default function Notifications() {
                     Category
                   </label>
                   <select
+                    value={formCategory}
+                    onChange={(e) => setFormCategory(e.target.value as AnnouncementItem["type"])}
                     className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border"
                     style={{
                       backgroundColor: "var(--input-background)",
@@ -896,6 +1224,8 @@ export default function Notifications() {
                     Target Audience
                   </label>
                   <select
+                    value={formAudience}
+                    onChange={(e) => setFormAudience(e.target.value)}
                     className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border"
                     style={{
                       backgroundColor: "var(--input-background)",
@@ -926,7 +1256,7 @@ export default function Notifications() {
                 </label>
                 <div
                   className="rounded-xl border overflow-hidden"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{ borderColor: formErrors.content ? "#EF4444" : "var(--border)" }}
                 >
                   <div
                     className="flex items-center gap-1 px-2 py-1 border-b"
@@ -935,28 +1265,30 @@ export default function Notifications() {
                       borderColor: "var(--border)",
                     }}
                   >
-                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
                       <Bold size={14} />
                     </button>
-                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
                       <Italic size={14} />
                     </button>
-                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
                       <Underline size={14} />
                     </button>
                     <div className="w-px h-4 bg-gray-300 mx-1" />
-                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
                       <List size={14} />
                     </button>
-                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
                       <Link2 size={14} />
                     </button>
-                    <button className="p-1.5 rounded text-[#94A3B8] hover:bg-neutral-200 dark:hover:bg-zinc-700 ml-auto">
+                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700 ml-auto">
                       <RotateCcw size={14} />
                     </button>
                   </div>
                   <textarea
                     rows={4}
+                    value={formContent}
+                    onChange={(e) => setFormContent(e.target.value)}
                     placeholder="Compose your announcement here..."
                     className="w-full px-3 py-2.5 text-sm outline-none resize-none"
                     style={{
@@ -965,6 +1297,9 @@ export default function Notifications() {
                     }}
                   />
                 </div>
+                {formErrors.content && (
+                  <p style={{ color: "#EF4444", fontSize: "12px", marginTop: "4px" }}>{formErrors.content}</p>
+                )}
               </div>
 
               <div className="flex items-center justify-between pt-2">
@@ -972,25 +1307,17 @@ export default function Notifications() {
                   <label className="flex items-center gap-2 text-xs font-semibold cursor-pointer">
                     <input
                       type="checkbox"
-                      defaultChecked
+                      checked={formPinned}
+                      onChange={(e) => setFormPinned(e.target.checked)}
                       style={{ accentColor: "#00B87C" }}
                     />
-                    Send Email
-                  </label>
-                  <label className="flex items-center gap-2 text-xs font-semibold cursor-pointer">
-                    <input
-                      type="checkbox"
-                      defaultChecked
-                      style={{ accentColor: "#00B87C" }}
-                    />
-                    Push Alert
+                    Pin Announcement
                   </label>
                 </div>
 
                 <button
-                  onClick={() => {
-                    setActiveModal(null);
-                  }}
+                  type="button"
+                  onClick={activeModal === "create_announcement" ? handlePostAnnouncement : handleUpdateAnnouncement}
                   style={{
                     backgroundColor: "#00B87C",
                     color: "white",
@@ -1002,11 +1329,87 @@ export default function Notifications() {
                     cursor: "pointer",
                   }}
                 >
-                  Post Announcement
+                  {activeModal === "create_announcement" ? "Post Announcement" : "Save Changes"}
                 </button>
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* DELETE ANNOUNCEMENT CONFIRMATION MODAL */}
+      {deleteAnnouncementConfirm && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 2000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            className="rounded-2xl p-6 max-w-sm w-full mx-4 text-center animate-in fade-in zoom-in-95 duration-200"
+            style={{
+              backgroundColor: "var(--card)",
+              border: "1px solid var(--border)",
+              boxShadow: "0 12px 40px rgba(0,0,0,0.2)",
+            }}
+          >
+            <div className="w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center mx-auto mb-4">
+              <Trash2 className="text-rose-500" size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-foreground mb-2">Delete Announcement?</h3>
+            <p className="text-sm text-muted-foreground mb-6">
+              Are you sure you want to delete this announcement? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                type="button"
+                onClick={() => setDeleteAnnouncementConfirm(null)}
+                className="px-4 py-2 rounded-xl text-sm font-semibold border border-border hover:bg-neutral-100 dark:hover:bg-zinc-800 text-foreground transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDeleteAnnouncement(deleteAnnouncementConfirm.id)}
+                className="px-4 py-2 rounded-xl text-sm font-semibold bg-rose-500 hover:bg-rose-600 text-white transition-colors cursor-pointer"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUCCESS TOAST */}
+      {showSuccessToast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            backgroundColor: "#00B87C",
+            color: "white",
+            padding: "12px 24px",
+            borderRadius: "12px",
+            boxShadow: "0 8px 24px rgba(0, 184, 124, 0.25)",
+            zIndex: 3000,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            fontWeight: 600,
+            fontSize: "14px",
+          }}
+          className="animate-in fade-in slide-in-from-bottom-5 duration-300"
+        >
+          <Check size={18} />
+          {toastMessage}
         </div>
       )}
 
@@ -1148,131 +1551,175 @@ export default function Notifications() {
 }
 
 // ─── FINANCE ROLE NOTIFICATIONS MASTERPIECE VIEW ───────────────────
+interface FinanceNotificationItem {
+  id: number;
+  type: string;
+  urgent?: boolean;
+  amberAlert?: boolean;
+  title: string;
+  description: string;
+  time: string;
+  read: boolean;
+  section: string;
+  category: string;
+  path: string;
+  state?: any;
+}
+
+const initialFinanceNotificationsList: FinanceNotificationItem[] = [
+  {
+    id: 1,
+    type: "Alert",
+    urgent: true,
+    title: "TDS Filing Deadline in 8 Days",
+    description: "Submit Form 24Q before April 15 to avoid penalties",
+    time: "10:30 AM",
+    read: false,
+    section: "TODAY",
+    category: "Alerts",
+    path: "/reports",
+    state: { activeTab: "Tax Reports" }
+  },
+  {
+    id: 2,
+    type: "Expense",
+    title: "36 Expense Claims Awaiting Your Approval",
+    description: "Total value: ₹42,800 — oldest claim: 4 days",
+    time: "9:45 AM",
+    read: false,
+    section: "TODAY",
+    category: "Expenses",
+    path: "/expenses",
+    state: { activeTab: "Pending" }
+  },
+  {
+    id: 3,
+    type: "Payroll",
+    title: "Payroll Calculation In Progress — April 2026",
+    description: "Stage 3 of 5: Auto-calculation started",
+    time: "9:00 AM",
+    read: false,
+    section: "TODAY",
+    category: "Payroll",
+    path: "/payroll"
+  },
+  {
+    id: 4,
+    type: "Alert",
+    amberAlert: true,
+    title: "PF Payment Due — April 20",
+    description: "Ensure bank transfer initiated by Apr 20, 2026",
+    time: "8:30 AM",
+    read: false,
+    section: "TODAY",
+    category: "Alerts",
+    path: "/finance/dashboard"
+  },
+  {
+    id: 5,
+    type: "Success",
+    title: "Yuki Tanaka Increment Approved by You",
+    description: "+15% increment — ₹94K to ₹1.08L — effective May 1",
+    time: "8:00 AM",
+    read: false,
+    section: "TODAY",
+    category: "System",
+    path: "/appraisal",
+    state: { search: "Yuki Tanaka", employeeId: "EMP-002" }
+  },
+  {
+    id: 6,
+    type: "Payroll",
+    title: "March 2026 Payroll Disbursed Successfully",
+    description: "₹24.2L credited to 1,248 accounts",
+    time: "Apr 5, 6:00 PM",
+    read: true,
+    section: "YESTERDAY",
+    category: "Payroll",
+    path: "/payroll"
+  },
+  {
+    id: 7,
+    type: "Expense",
+    title: "Daniel Kim Expense Rejected — Missing Receipt",
+    description: "₹1,400 claim #EXP-0398 rejected",
+    time: "Apr 5, 3:00 PM",
+    read: true,
+    section: "YESTERDAY",
+    category: "Expenses",
+    path: "/expenses",
+    state: { activeTab: "Rejected" }
+  },
+  {
+    id: 8,
+    type: "Info",
+    title: "New Salary Band Structure Approved by HR",
+    description: "Effective from FY 2026-27",
+    time: "Apr 5, 11:00 AM",
+    read: true,
+    section: "YESTERDAY",
+    category: "System",
+    path: "/settings"
+  },
+  {
+    id: 9,
+    type: "Alert",
+    title: "ESI Contribution Calculation Reminder",
+    description: "Due Apr 21, 2026",
+    time: "Apr 3, 4:30 PM",
+    read: true,
+    section: "THIS WEEK",
+    category: "Alerts",
+    path: "/payroll"
+  },
+  {
+    id: 10,
+    type: "Success",
+    title: "Form 16 Generated for All Employees — FY 2024-25",
+    description: "1,284 employees",
+    time: "Apr 2, 10:00 AM",
+    read: true,
+    section: "THIS WEEK",
+    category: "System",
+    path: "/reports",
+    state: { activeTab: "Tax Reports" }
+  }
+];
+
+const loadFinanceNotifications = (): FinanceNotificationItem[] => {
+  const local = localStorage.getItem("nexus_finance_notifications");
+  if (local) {
+    try {
+      return JSON.parse(local);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  localStorage.setItem("nexus_finance_notifications", JSON.stringify(initialFinanceNotificationsList));
+  return initialFinanceNotificationsList;
+};
+
 function FinanceNotificationsView() {
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState<"All" | "Unread" | "Payroll" | "Expenses" | "System" | "Alerts">("All");
   const [showPreferences, setShowPreferences] = useState(false);
 
   // Finance-specific Notifications state
-  const [financeNotifications, setFinanceNotifications] = useState([
-    {
-      id: 1,
-      type: "Alert",
-      urgent: true,
-      title: "TDS Filing Deadline in 8 Days",
-      description: "Submit Form 24Q before April 15 to avoid penalties",
-      time: "10:30 AM",
-      read: false,
-      section: "TODAY",
-      category: "Alerts",
-      path: "/reports",
-      state: { activeTab: "Tax Reports" }
-    },
-    {
-      id: 2,
-      type: "Expense",
-      title: "36 Expense Claims Awaiting Your Approval",
-      description: "Total value: ₹42,800 — oldest claim: 4 days",
-      time: "9:45 AM",
-      read: false,
-      section: "TODAY",
-      category: "Expenses",
-      path: "/expenses",
-      state: { activeTab: "Pending" }
-    },
-    {
-      id: 3,
-      type: "Payroll",
-      title: "Payroll Calculation In Progress — April 2026",
-      description: "Stage 3 of 5: Auto-calculation started",
-      time: "9:00 AM",
-      read: false,
-      section: "TODAY",
-      category: "Payroll",
-      path: "/payroll"
-    },
-    {
-      id: 4,
-      type: "Alert",
-      amberAlert: true,
-      title: "PF Payment Due — April 20",
-      description: "Ensure bank transfer initiated by Apr 20, 2026",
-      time: "8:30 AM",
-      read: false,
-      section: "TODAY",
-      category: "Alerts",
-      path: "/finance/dashboard"
-    },
-    {
-      id: 5,
-      type: "Success",
-      title: "Yuki Tanaka Increment Approved by You",
-      description: "+15% increment — ₹94K to ₹1.08L — effective May 1",
-      time: "8:00 AM",
-      read: false,
-      section: "TODAY",
-      category: "System",
-      path: "/appraisal",
-      state: { search: "Yuki Tanaka", employeeId: "EMP-002" }
-    },
-    {
-      id: 6,
-      type: "Payroll",
-      title: "March 2026 Payroll Disbursed Successfully",
-      description: "₹24.2L credited to 1,248 accounts",
-      time: "Apr 5, 6:00 PM",
-      read: true,
-      section: "YESTERDAY",
-      category: "Payroll",
-      path: "/payroll"
-    },
-    {
-      id: 7,
-      type: "Expense",
-      title: "Daniel Kim Expense Rejected — Missing Receipt",
-      description: "₹1,400 claim #EXP-0398 rejected",
-      time: "Apr 5, 3:00 PM",
-      read: true,
-      section: "YESTERDAY",
-      category: "Expenses",
-      path: "/expenses",
-      state: { activeTab: "Rejected" }
-    },
-    {
-      id: 8,
-      type: "Info",
-      title: "New Salary Band Structure Approved by HR",
-      description: "Effective from FY 2026-27",
-      time: "Apr 5, 11:00 AM",
-      read: true,
-      section: "YESTERDAY",
-      category: "System",
-      path: "/settings"
-    },
-    {
-      id: 9,
-      type: "Alert",
-      title: "ESI Contribution Calculation Reminder",
-      description: "Due Apr 21, 2026",
-      time: "Apr 3, 4:30 PM",
-      read: true,
-      section: "THIS WEEK",
-      category: "Alerts",
-      path: "/payroll"
-    },
-    {
-      id: 10,
-      type: "Success",
-      title: "Form 16 Generated for All Employees — FY 2024-25",
-      description: "1,284 employees",
-      time: "Apr 2, 10:00 AM",
-      read: true,
-      section: "THIS WEEK",
-      category: "System",
-      path: "/reports",
-      state: { activeTab: "Tax Reports" }
+  const [financeNotifications, setFinanceNotifications] = useState<FinanceNotificationItem[]>(loadFinanceNotifications);
+
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  // Close modals/drawers on Escape key press
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setShowPreferences(false);
+      }
     }
-  ]);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Preferences Toggles & Channels
   const [preferences, setPreferences] = useState({
@@ -1292,14 +1739,19 @@ function FinanceNotificationsView() {
   });
 
   const handleMarkAllRead = () => {
-    setFinanceNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    const updated = financeNotifications.map((n: FinanceNotificationItem) => ({ ...n, read: true }));
+    setFinanceNotifications(updated);
+    localStorage.setItem("nexus_finance_notifications", JSON.stringify(updated));
+    setToastMessage("All notifications marked as read");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
   };
 
-  const handleRowClick = (notif: typeof financeNotifications[0]) => {
+  const handleRowClick = (notif: FinanceNotificationItem) => {
     // Mark row as read
-    setFinanceNotifications(prev =>
-      prev.map(n => n.id === notif.id ? { ...n, read: true } : n)
-    );
+    const updated = financeNotifications.map((n: FinanceNotificationItem) => n.id === notif.id ? { ...n, read: true } : n);
+    setFinanceNotifications(updated);
+    localStorage.setItem("nexus_finance_notifications", JSON.stringify(updated));
     // Navigate with deep-linking state if present
     if (notif.state) {
       navigate(notif.path, { state: notif.state });
@@ -1308,13 +1760,24 @@ function FinanceNotificationsView() {
     }
   };
 
+  const handleDismissFinanceNotification = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = financeNotifications.filter((n: FinanceNotificationItem) => n.id !== id);
+    setFinanceNotifications(updated);
+    localStorage.setItem("nexus_finance_notifications", JSON.stringify(updated));
+
+    setToastMessage("Notification dismissed");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
+
   const handleSavePreferences = () => {
     setShowPreferences(false);
   };
 
   // Filter Logic
   const getFilteredNotifications = () => {
-    return financeNotifications.filter(n => {
+    return financeNotifications.filter((n: FinanceNotificationItem) => {
       if (activeFilter === "Unread") return !n.read;
       if (activeFilter === "Payroll") return n.category === "Payroll";
       if (activeFilter === "Expenses") return n.category === "Expenses";
@@ -1325,12 +1788,12 @@ function FinanceNotificationsView() {
   };
 
   // Dynamic KPI stats calculations
-  const unreadTodayCount = financeNotifications.filter(n => !n.read && n.section === "TODAY").length;
-  const pendingActionsCount = financeNotifications.filter(n => !n.read && (n.category === "Expenses" || n.category === "Alerts")).length;
+  const unreadTodayCount = financeNotifications.filter((n: FinanceNotificationItem) => !n.read && n.section === "TODAY").length;
+  const pendingActionsCount = financeNotifications.filter((n: FinanceNotificationItem) => !n.read && (n.category === "Expenses" || n.category === "Alerts")).length;
 
   const tabs = [
     { key: "All", label: `All (${financeNotifications.length})` },
-    { key: "Unread", label: `Unread (${financeNotifications.filter(n => !n.read).length})` },
+    { key: "Unread", label: `Unread (${financeNotifications.filter((n: FinanceNotificationItem) => !n.read).length})` },
     { key: "Payroll", label: "Payroll" },
     { key: "Expenses", label: "Expenses" },
     { key: "System", label: "System" },
@@ -1360,7 +1823,7 @@ function FinanceNotificationsView() {
       YESTERDAY: [],
       "THIS WEEK": []
     };
-    list.forEach(n => {
+    list.forEach((n: FinanceNotificationItem) => {
       if (sections[n.section]) {
         sections[n.section].push(n);
       }
@@ -1469,7 +1932,7 @@ function FinanceNotificationsView() {
 
                 {/* Notifications list */}
                 <div className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {items.map(notif => {
+                  {items.map((notif: FinanceNotificationItem) => {
                     const details = getIconDetails(notif.type);
                     const leftBorder = !notif.read
                       ? notif.urgent
@@ -1516,7 +1979,7 @@ function FinanceNotificationsView() {
                           </div>
                         </div>
 
-                        {/* Right: Time & Unread dot */}
+                        {/* Right: Time & Unread dot & Dismiss */}
                         <div className="flex items-center gap-4 flex-shrink-0 ml-4">
                           <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                             {notif.time}
@@ -1533,6 +1996,13 @@ function FinanceNotificationsView() {
                               />
                             )}
                           </div>
+                          <button
+                            onClick={(e) => handleDismissFinanceNotification(notif.id, e)}
+                            className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
+                            aria-label="Dismiss notification"
+                          >
+                            <X size={14} />
+                          </button>
                         </div>
                       </div>
                     );
@@ -1680,6 +2150,32 @@ function FinanceNotificationsView() {
             </div>
           </div>
         </>
+      )}
+
+      {/* SUCCESS TOAST */}
+      {showSuccessToast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            backgroundColor: "#00B87C",
+            color: "white",
+            padding: "12px 24px",
+            borderRadius: "12px",
+            boxShadow: "0 8px 24px rgba(0, 184, 124, 0.25)",
+            zIndex: 3000,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            fontWeight: 600,
+            fontSize: "14px",
+          }}
+          className="animate-in fade-in slide-in-from-bottom-5 duration-300"
+        >
+          <Check size={18} />
+          {toastMessage}
+        </div>
       )}
     </div>
   );

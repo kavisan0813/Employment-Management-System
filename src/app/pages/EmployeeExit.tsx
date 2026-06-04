@@ -79,15 +79,18 @@ function StatusCircle({ status }: { status: TaskStatus }) {
 
 /* ─── Responsible Pill ─── */
 function ResponsiblePill({ label }: { label: string }) {
-  const styles: Record<string, string> = {
-    You: "bg-[#DCFCE7] text-[#00B87C] border-[#00B87C]/20",
-    HR: "bg-[#EDE9FE] text-[#8B5CF6] border-[#8B5CF6]/20",
-    IT: "bg-[#E0F2FE] text-[#0EA5E9] border-[#0EA5E9]/20",
-    Admin: "bg-[#FEF3C7] text-[#D97706] border-[#D97706]/20",
-    Finance: "bg-[#FEE2E2] text-[#EF4444] border-[#EF4444]/20",
+  const getResponsibleStyle = (l: string): string => {
+    switch (l) {
+      case "You": return "bg-[#DCFCE7] text-[#00B87C] border-[#00B87C]/20";
+      case "HR": return "bg-[#EDE9FE] text-[#8B5CF6] border-[#8B5CF6]/20";
+      case "IT": return "bg-[#E0F2FE] text-[#0EA5E9] border-[#0EA5E9]/20";
+      case "Admin": return "bg-[#FEF3C7] text-[#D97706] border-[#D97706]/20";
+      case "Finance": return "bg-[#FEE2E2] text-[#EF4444] border-[#EF4444]/20";
+      default: return "bg-muted text-muted-foreground border-border";
+    }
   };
   return (
-    <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${styles[label] || "bg-muted text-muted-foreground border-border"}`}>
+    <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${getResponsibleStyle(label)}`}>
       {label}
     </span>
   );
@@ -95,12 +98,15 @@ function ResponsiblePill({ label }: { label: string }) {
 
 /* ─── Status Pill ─── */
 function StatusPill({ status }: { status: TaskStatus }) {
-  const config: Record<TaskStatus, { label: string; classes: string }> = {
-    done: { label: "Done", classes: "bg-[#F0FDF4] text-[#00B87C] border-[#00B87C]/20" },
-    in_progress: { label: "In Progress", classes: "bg-[#FFFBEB] text-[#D97706] border-[#FBBF24]/20" },
-    pending: { label: "Pending", classes: "bg-muted text-muted-foreground border-border" },
+  const getStatusConfig = (s: TaskStatus): { label: string; classes: string } => {
+    switch (s) {
+      case "done": return { label: "Done", classes: "bg-[#F0FDF4] text-[#00B87C] border-[#00B87C]/20" };
+      case "in_progress": return { label: "In Progress", classes: "bg-[#FFFBEB] text-[#D97706] border-[#FBBF24]/20" };
+      case "pending": return { label: "Pending", classes: "bg-muted text-muted-foreground border-border" };
+      default: return { label: "Pending", classes: "bg-muted text-muted-foreground border-border" };
+    }
   };
-  const c = config[status];
+  const c = getStatusConfig(status);
   return (
     <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${c.classes}`}>
       {c.label}

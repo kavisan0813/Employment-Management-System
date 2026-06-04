@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
+import { useDebounce } from "../hooks/useDebounce";
 import {
   Search,
   Plus,
@@ -898,10 +899,62 @@ function DeleteConfirmModal({
   );
 }
 
+interface HighlightTextProps {
+  text: string;
+  search: string;
+}
+
+function HighlightText({ text, search }: HighlightTextProps) {
+  if (!search || !search.trim()) return <>{text}</>;
+  const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`(${escapedSearch})`, "gi");
+  const parts = text.split(regex);
+  return (
+    <>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <mark
+            key={i}
+            className="bg-yellow-200/60 dark:bg-yellow-500/30 text-yellow-950 dark:text-yellow-100 rounded-sm px-0.5"
+            style={{ backgroundColor: "rgba(253, 224, 71, 0.4)", color: "inherit" }}
+          >
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
+}
+
 export function Employees() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      if (
+        activeEl &&
+        (activeEl.tagName === "INPUT" ||
+          activeEl.tagName === "TEXTAREA" ||
+          activeEl.hasAttribute("contenteditable"))
+      ) {
+        return;
+      }
+      if (e.key === "/") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const [selectedDept, setSelectedDept] = useState("All Departments");
   const [selectedStatus, setSelectedStatus] = useState("All Status");
   const [selectedDesignation, setSelectedDesignation] =
@@ -943,48 +996,71 @@ export function Employees() {
     new Set(employees.map((e) => e.employmentType)),
   );
 
-  const filtered = employees.filter((emp) => {
-    const matchSearch =
-      emp.name.toLowerCase().includes(search.toLowerCase()) ||
-      emp.id.toLowerCase().includes(search.toLowerCase()) ||
-      emp.email.toLowerCase().includes(search.toLowerCase());
-    const matchDept =
-      selectedDept === "All Departments" || emp.department === selectedDept;
-    const matchStatus =
-      selectedStatus === "All Status" || emp.status === selectedStatus;
-    const matchDesig =
-      selectedDesignation === "All Designations" ||
-      emp.designation === selectedDesignation;
-    const matchLoc =
-      selectedLocation === "All Locations" || emp.location === selectedLocation;
-    const matchType =
-      selectedTypes.length === 0 || selectedTypes.includes(emp.employmentType);
-    return (
-      matchSearch &&
-      matchDept &&
-      matchStatus &&
-      matchDesig &&
-      matchLoc &&
-      matchType
-    );
-  });
+  const filtered = useMemo(() => {
+    return employees.filter((emp) => {
+      const matchSearch =
+        debouncedSearch.trim() === "" ||
+        emp.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        emp.id.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        emp.designation.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        emp.department.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        emp.email.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        emp.location.toLowerCase().includes(debouncedSearch.toLowerCase());
+
+      const matchDept =
+        selectedDept === "All Departments" || emp.department === selectedDept;
+
+      const matchStatus =
+        selectedStatus === "All Status" || emp.status === selectedStatus;
+
+      const matchDesig =
+        selectedDesignation === "All Designations" ||
+        emp.designation === selectedDesignation;
+
+      const matchLoc =
+        selectedLocation === "All Locations" || emp.location === selectedLocation;
+
+      const matchType =
+        selectedTypes.length === 0 || selectedTypes.includes(emp.employmentType);
+
+      return (
+        matchSearch &&
+        matchDept &&
+        matchStatus &&
+        matchDesig &&
+        matchLoc &&
+        matchType
+      );
+    });
+  }, [
+    debouncedSearch,
+    selectedDept,
+    selectedStatus,
+    selectedDesignation,
+    selectedLocation,
+    selectedTypes,
+  ]);
 
   // Sort
-  const sorted = [...filtered].sort((a, b) => {
-    let valA = (a as Record<string, string | number>)[sortCol];
-    let valB = (b as Record<string, string | number>)[sortCol];
-    if (typeof valA === "string") valA = valA.toLowerCase();
-    if (typeof valB === "string") valB = valB.toLowerCase();
-    if (valA < valB) return sortDesc ? 1 : -1;
-    if (valA > valB) return sortDesc ? -1 : 1;
-    return 0;
-  });
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      let valA = (a as Record<string, any>)[sortCol];
+      let valB = (b as Record<string, any>)[sortCol];
+      if (typeof valA === "string") valA = valA.toLowerCase();
+      if (typeof valB === "string") valB = valB.toLowerCase();
+      if (valA < valB) return sortDesc ? 1 : -1;
+      if (valA > valB) return sortDesc ? -1 : 1;
+      return 0;
+    });
+  }, [filtered, sortCol, sortDesc]);
 
-  const totalPages = Math.ceil(sorted.length / ROWS_PER_PAGE);
-  const paginated = sorted.slice(
-    (page - 1) * ROWS_PER_PAGE,
-    page * ROWS_PER_PAGE,
-  );
+  const totalPages = useMemo(() => {
+    return Math.ceil(sorted.length / ROWS_PER_PAGE);
+  }, [sorted]);
+
+  const paginated = useMemo(() => {
+    return sorted.slice((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE);
+  }, [sorted, page]);
 
   const toggleRowSelection = (id: string) => {
     setSelectedRows((prev) =>
@@ -1005,6 +1081,70 @@ export function Employees() {
       setSelectedTypes([...selectedTypes, type]);
     }
   };
+
+  const clearFilters = () => {
+    setSearch("");
+    setSelectedDept("All Departments");
+    setSelectedStatus("All Status");
+    setSelectedDesignation("All Designations");
+    setSelectedLocation("All Locations");
+    setSelectedTypes([]);
+    setPage(1);
+  };
+
+  const activeChips = useMemo(() => {
+    const chips: { id: string; label: string; onClear: () => void }[] = [];
+    if (search) {
+      chips.push({
+        id: "search",
+        label: `Search: "${search}"`,
+        onClear: () => setSearch(""),
+      });
+    }
+    if (selectedDept !== "All Departments") {
+      chips.push({
+        id: "dept",
+        label: selectedDept,
+        onClear: () => setSelectedDept("All Departments"),
+      });
+    }
+    if (selectedDesignation !== "All Designations") {
+      chips.push({
+        id: "designation",
+        label: selectedDesignation,
+        onClear: () => setSelectedDesignation("All Designations"),
+      });
+    }
+    if (selectedLocation !== "All Locations") {
+      chips.push({
+        id: "location",
+        label: selectedLocation,
+        onClear: () => setSelectedLocation("All Locations"),
+      });
+    }
+    if (selectedStatus !== "All Status") {
+      chips.push({
+        id: "status",
+        label: selectedStatus,
+        onClear: () => setSelectedStatus("All Status"),
+      });
+    }
+    selectedTypes.forEach((type) => {
+      chips.push({
+        id: `type-${type}`,
+        label: type,
+        onClear: () => setSelectedTypes((prev) => prev.filter((t) => t !== type)),
+      });
+    });
+    return chips;
+  }, [
+    search,
+    selectedDept,
+    selectedDesignation,
+    selectedLocation,
+    selectedStatus,
+    selectedTypes,
+  ]);
 
   const handleSort = (col: string) => {
     if (sortCol === col) {
@@ -1177,7 +1317,7 @@ export function Employees() {
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
             <div
-              className="flex items-center gap-3 flex-1 rounded-xl px-4"
+              className="flex items-center gap-3 flex-1 rounded-xl px-4 relative"
               style={{
                 backgroundColor: "var(--background)",
                 border: "1px solid var(--border)",
@@ -1186,6 +1326,7 @@ export function Employees() {
             >
               <Search size={18} color="var(--muted-foreground)" />
               <input
+                ref={searchInputRef}
                 type="text"
                 value={search}
                 onChange={(e) => {
@@ -1200,8 +1341,19 @@ export function Employees() {
                   fontSize: "14px",
                   color: "var(--foreground)",
                   width: "100%",
+                  paddingRight: "28px",
                 }}
               />
+              <kbd
+                className="absolute right-4 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-sans font-bold rounded border pointer-events-none select-none"
+                style={{
+                  borderColor: "var(--border)",
+                  backgroundColor: "var(--card)",
+                  color: "var(--muted-foreground)",
+                }}
+              >
+                /
+              </kbd>
             </div>
 
             <div
@@ -1223,6 +1375,10 @@ export function Employees() {
                 <span style={{ color: "var(--foreground)", fontWeight: 700 }}>
                   {filtered.length}
                 </span>{" "}
+                of{" "}
+                <span style={{ color: "var(--foreground)", fontWeight: 700 }}>
+                  {employees.length}
+                </span>{" "}
                 employees
               </span>
               <div
@@ -1242,8 +1398,8 @@ export function Employees() {
                       view === "table" ? "var(--secondary)" : "transparent",
                     color:
                       view === "table"
-                        ? "var(--primary)"
-                        : "var(--muted-foreground)",
+                         ? "var(--primary)"
+                         : "var(--muted-foreground)",
                   }}
                   title="Table View"
                 >
@@ -1283,10 +1439,42 @@ export function Employees() {
             </div>
           </div>
 
+          {/* Active filter chips */}
+          {activeChips.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <span className="text-[12px] font-bold text-muted-foreground mr-1">Active filters:</span>
+              {activeChips.map((chip) => (
+                <div
+                  key={chip.id}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-semibold border transition-all hover:bg-secondary/80"
+                  style={{
+                    backgroundColor: "var(--background)",
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                  }}
+                >
+                  <span>{chip.label}</span>
+                  <button
+                    onClick={chip.onClear}
+                    className="p-0.5 rounded-full hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={clearFilters}
+                className="text-[12px] font-bold text-red-500 hover:text-red-600 transition-colors ml-2 py-1 px-2 rounded-lg hover:bg-red-500/5"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <div
-              className="flex items-center gap-3 overflow-x-auto pb-1"
-              style={{ scrollbarWidth: "none" }}
+              className="flex flex-wrap items-center gap-3 pb-1"
+              style={{ overflow: "visible" }}
             >
               <FilterChip
                 value={selectedDept}
@@ -1504,7 +1692,44 @@ export function Employees() {
       )}
 
       {/* Main View */}
-      {view === "table" ? (
+      {filtered.length === 0 ? (
+        <div
+          className="flex flex-col items-center justify-center py-20 px-4 rounded-2xl border border-dashed text-center"
+          style={{
+            backgroundColor: "var(--card)",
+            borderColor: "var(--border)",
+          }}
+        >
+          <div
+            className="flex items-center justify-center w-16 h-16 rounded-full mb-4"
+            style={{ backgroundColor: "var(--secondary)" }}
+          >
+            <Search size={28} style={{ color: "var(--muted-foreground)" }} />
+          </div>
+          <h3
+            className="text-[18px] font-black mb-1"
+            style={{ color: "var(--foreground)" }}
+          >
+            No employees found
+          </h3>
+          <p
+            className="text-[14px] max-w-sm mb-6"
+            style={{ color: "var(--muted-foreground)", lineHeight: 1.6 }}
+          >
+            Try adjusting your search or filters to find what you're looking for.
+          </p>
+          <button
+            onClick={clearFilters}
+            className="px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 active:scale-95 shadow-md"
+            style={{
+              backgroundColor: "#10B981",
+              boxShadow: "0 4px 12px rgba(16,185,129,0.25)",
+            }}
+          >
+            Clear all filters
+          </button>
+        </div>
+      ) : view === "table" ? (
         <div
           className="rounded-2xl overflow-x-auto shadow-sm"
           style={{
@@ -1639,7 +1864,7 @@ export function Employees() {
                         textOverflow: "ellipsis",
                       }}
                     >
-                      {emp.name}
+                      <HighlightText text={emp.name} search={debouncedSearch} />
                     </div>
                     <div
                       style={{
@@ -1663,7 +1888,7 @@ export function Employees() {
                   }}
                   title={emp.designation}
                 >
-                  {emp.designation}
+                  <HighlightText text={emp.designation} search={debouncedSearch} />
                 </div>
                 {/* Department badge */}
                 <div>
@@ -1845,15 +2070,6 @@ export function Employees() {
                 </div>
               </div>
             ))}
-            {filtered.length === 0 && (
-              <div className="py-16 text-center w-full">
-                <p
-                  style={{ color: "var(--muted-foreground)", fontSize: "14px" }}
-                >
-                  No employees found matching your filters.
-                </p>
-              </div>
-            )}
           </div>
         </div>
       ) : view === "grid" ? (
@@ -1923,13 +2139,13 @@ export function Employees() {
                   className="mt-4 text-[16px] font-bold"
                   style={{ color: "var(--foreground)" }}
                 >
-                  {emp.name}
+                  <HighlightText text={emp.name} search={debouncedSearch} />
                 </h3>
                 <p
                   className="text-[13px] mb-3 text-center px-2"
                   style={{ color: "var(--muted-foreground)" }}
                 >
-                  {emp.designation}
+                  <HighlightText text={emp.designation} search={debouncedSearch} />
                 </p>
                 <span
                   className="px-2.5 py-1 rounded-full text-[11px] font-bold"
@@ -2026,13 +2242,6 @@ export function Employees() {
               </div>
             </div>
           ))}
-          {filtered.length === 0 && (
-            <div className="col-span-full py-16 text-center">
-              <p style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>
-                No employees found matching your filters.
-              </p>
-            </div>
-          )}
         </div>
       ) : view === "team" ? (
         <div className="flex flex-col gap-6">
@@ -2105,13 +2314,13 @@ export function Employees() {
                             className="font-bold text-[14px] truncate transition-colors group-hover:text-emerald-600"
                             style={{ color: "var(--foreground)" }}
                           >
-                            {emp.name}
+                            <HighlightText text={emp.name} search={debouncedSearch} />
                           </p>
                           <p
                             className="text-[12px] truncate"
                             style={{ color: "var(--muted-foreground)" }}
                           >
-                            {emp.designation}
+                            <HighlightText text={emp.designation} search={debouncedSearch} />
                           </p>
                         </div>
                         <div className="shrink-0 flex flex-col items-end gap-1.5">
@@ -2128,19 +2337,6 @@ export function Employees() {
                 </div>
               </div>
             ),
-          )}
-          {filtered.length === 0 && (
-            <div
-              className="py-16 text-center w-full rounded-2xl"
-              style={{
-                backgroundColor: "var(--card)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              <p style={{ color: "var(--muted-foreground)", fontSize: "14px" }}>
-                No employees found matching your filters.
-              </p>
-            </div>
           )}
         </div>
       ) : null}

@@ -17,14 +17,47 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
-import { motion, AnimatePresence } from "motion/react";
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isToday } from "date-fns";
+import { showToast } from "../components/workflow/ToastNotification";
+import { StatusBadge } from "../components/workflow/StatusBadge";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
-// Types
-type LeaveTab = "My Requests" | "Calendar" | "History" | "Policy";
-type LeaveType = "CL" | "EL" | "SL" | "CO";
-type ApprovalStatus = "Pending" | "Approved" | "Rejected" | "Cancelled";
+const TABS = ["My Requests", "History", "Policy"];
+
+const LEAVE_TYPES = [
+  {
+    id: "CL",
+    name: "Casual Leave",
+    total: 12,
+    used: 6,
+    color: "var(--primary)",
+    bg: "var(--secondary)",
+  },
+  {
+    id: "EL",
+    name: "Earned Leave",
+    total: 24,
+    used: 18,
+    color: "var(--primary)",
+    bg: "var(--secondary)",
+  },
+  {
+    id: "SL",
+    name: "Sick Leave",
+    total: 12,
+    used: 8,
+    color: "#14B8A6",
+    bg: "rgba(20, 184, 166, 0.1)",
+  },
+  {
+    id: "CO",
+    name: "Comp Off",
+    total: 5,
+    used: 2,
+    color: "#8B5CF6",
+    bg: "rgba(139, 92, 246, 0.1)",
+  },
+];
 
 interface LeaveRecord {
   id: string;
@@ -271,332 +304,142 @@ export function EmployeeLeaves() {
           ))}
         </div>
 
-        {/* TAB CONTENTS */}
-        <div className="px-2">
-          {activeTab === "My Requests" && (
-            <div className="space-y-8 animate-in fade-in duration-300">
-              {/* Pending Requests */}
-              <div>
-                <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4 ml-2">Pending Requests</h3>
-                <div className="space-y-3">
-                  {pendingRequests.map(req => (
-                    <div key={req.id} className="relative bg-card border border-border rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#00B87C]/[0.08] transition-colors group overflow-hidden">
-                      <div className={`absolute left-0 top-0 bottom-0 w-1 ${
-                        req.type === 'CL' ? 'bg-[#00B87C]' : 
-                        req.type === 'EL' ? 'bg-[#0EA5E9]' : 
-                        req.type === 'SL' ? 'bg-[#EF4444]' : 'bg-[#8B5CF6]'
-                      }`} />
-                      
-                      <div className="flex items-start md:items-center gap-4 pl-2">
-                        <div className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border ${
-                          req.type === 'CL' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 
-                          req.type === 'EL' ? 'bg-sky-500/10 text-sky-600 border-sky-500/20' : 
-                          req.type === 'SL' ? 'bg-rose-500/10 text-rose-600 border-rose-500/20' : 
-                          'bg-violet-500/10 text-violet-600 border-violet-500/20'
-                        }`}>
-                          {req.type}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="text-[15px] font-black text-foreground">{req.from} – {req.to}</h4>
-                            <span className="text-[12px] font-bold text-muted-foreground">• {req.days} days</span>
-                          </div>
-                          <p className="text-[13px] font-bold text-muted-foreground italic mt-0.5">{req.reason}</p>
-                          <p className="text-[11px] font-bold text-muted-foreground/60 mt-1 uppercase tracking-widest">Applied on {req.appliedOn}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between md:justify-end gap-4 pl-2 md:pl-0 border-t md:border-0 border-border pt-3 md:pt-0">
-                        <span className="px-3 py-1 rounded-full bg-amber-500/10 text-[#F59E0B] text-[11px] font-bold uppercase tracking-widest flex items-center gap-1.5">
-                          <Clock size={12} /> Pending
-                        </span>
-                        <button 
-                          onClick={() => setShowCancelConfirm(req.id)}
-                          className="px-4 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-[11px] font-bold uppercase tracking-widest transition-colors"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-
-                      {/* Cancel Confirmation overlay inline */}
-                      {showCancelConfirm === req.id && (
-                        <div className="absolute inset-0 bg-card/95 backdrop-blur-sm flex items-center justify-between px-6 z-10 animate-in fade-in duration-200">
-                          <span className="text-[13px] font-bold text-foreground">Are you sure you want to cancel this request?</span>
-                          <div className="flex items-center gap-2">
-                            <button onClick={() => setShowCancelConfirm(null)} className="px-4 py-1.5 rounded-lg text-muted-foreground hover:bg-muted text-[11px] font-bold uppercase tracking-widest transition-colors">No, Keep</button>
-                            <button onClick={() => handleCancelRequest(req.id)} className="px-4 py-1.5 rounded-lg bg-red-600 text-white text-[11px] font-bold uppercase tracking-widest hover:bg-red-700 transition-colors">Yes, Cancel</button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                  {pendingRequests.length === 0 && (
-                    <div className="bg-card border border-border border-dashed rounded-2xl p-8 text-center">
-                      <p className="text-[13px] font-bold text-muted-foreground">No pending requests</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Upcoming Approved Leaves */}
-              <div>
-                <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4 ml-2">Upcoming Approved Leaves</h3>
-                <div className="space-y-3">
-                  {approvedLeaves.map(req => (
-                    <div key={req.id} className="relative bg-card border border-border rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 overflow-hidden">
-                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#00B87C]" />
-                      
-                      <div className="flex items-start md:items-center gap-4 pl-2">
-                        <div className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border ${
-                          req.type === 'CL' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 
-                          req.type === 'EL' ? 'bg-sky-500/10 text-sky-600 border-sky-500/20' : 
-                          req.type === 'SL' ? 'bg-rose-500/10 text-rose-600 border-rose-500/20' : 
-                          'bg-violet-500/10 text-violet-600 border-violet-500/20'
-                        }`}>
-                          {req.type}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="text-[15px] font-black text-foreground">{req.from} – {req.to}</h4>
-                            <span className="text-[12px] font-bold text-muted-foreground">• {req.days} days</span>
-                          </div>
-                          <p className="text-[13px] font-bold text-muted-foreground mt-0.5">Approved by {req.approvedBy}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center pl-2 md:pl-0">
-                        <span className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-[#00B87C] text-[11px] font-bold uppercase tracking-widest flex items-center gap-1.5 border border-emerald-500/20">
-                          {req.startsIn}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                  {approvedLeaves.length === 0 && (
-                    <div className="bg-card border border-border border-dashed rounded-2xl p-8 text-center">
-                      <p className="text-[13px] font-bold text-muted-foreground">No upcoming approved leaves</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "Calendar" && (
-            <div className="animate-in fade-in duration-300">
-              <div className="bg-card border border-border rounded-2xl p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-[16px] font-black text-foreground">
-                    {format(currentDate, 'MMMM yyyy')}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <button 
-                      onClick={() => setCurrentDate(subMonths(currentDate, 1))}
-                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted text-muted-foreground"
-                    >
-                      <ChevronLeft size={16} />
-                    </button>
-                    <button 
-                      onClick={() => setCurrentDate(new Date())}
-                      className="px-3 py-1.5 rounded-lg border border-border text-[12px] font-bold uppercase hover:bg-muted text-foreground tracking-widest"
-                    >
-                      Today
-                    </button>
-                    <button 
-                      onClick={() => setCurrentDate(addMonths(currentDate, 1))}
-                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted text-muted-foreground"
-                    >
-                      <ChevronRight size={16} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-7 gap-2 mb-2">
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} className="text-center text-[11px] font-black text-muted-foreground uppercase tracking-widest py-2">
-                      {day}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="grid grid-cols-7 gap-2">
-                  {(() => {
-                    const monthStart = startOfMonth(currentDate);
-                    const monthEnd = endOfMonth(monthStart);
-                    const startDate = startOfWeek(monthStart);
-                    const endDate = endOfWeek(monthEnd);
-                    const dateFormat = "d";
-                    const rows = [];
-
-                    let days = [];
-                    let day = startDate;
-                    let formattedDate = "";
-
-                    const calendarDays = eachDayOfInterval({
-                      start: startDate,
-                      end: endDate
-                    });
-
-                    return calendarDays.map((calDay, i) => {
-                      formattedDate = format(calDay, dateFormat);
-                      const isCurrentMonth = isSameMonth(calDay, monthStart);
-                      const isCurrentDay = isToday(calDay);
-                      const dateNum = parseInt(formattedDate);
-                      
-                      let bgClass = "bg-card border-border hover:border-[#00B87C]/50 cursor-pointer";
-                      let content = null;
-                      
-                      if (!isCurrentMonth) {
-                        return (
-                          <div key={i} className="min-h-[80px] p-2 rounded-xl border border-border/50 bg-muted/10 flex flex-col">
-                            <span className="text-muted-foreground/40 text-[12px] font-bold">{formattedDate}</span>
-                          </div>
-                        );
-                      }
-
-                      // Dummy logic for leaves based on the day number to show UI
-                      if (dateNum === 5) {
-                        bgClass = "bg-[#0EA5E9]/5 border-[#0EA5E9]/20";
-                        content = <div className="mt-1 px-1.5 py-0.5 bg-[#0EA5E9] text-white text-[10px] font-bold rounded uppercase tracking-wider truncate text-center">Holiday</div>;
-                      } else if (dateNum >= 18 && dateNum <= 20) {
-                        bgClass = "bg-amber-500/5 border-amber-500/20";
-                        content = <div className="mt-1 px-1.5 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded uppercase tracking-wider truncate text-center">SL (Pend)</div>;
-                      } else if (dateNum >= 10 && dateNum <= 14) {
-                        bgClass = "bg-[#00B87C]/5 border-[#00B87C]/20";
-                        content = <div className="mt-1 px-1.5 py-0.5 bg-[#00B87C] text-white text-[10px] font-bold rounded uppercase tracking-wider truncate text-center">EL (Appr)</div>;
-                      }
-
-                      return (
-                        <div key={i} className={`min-h-[80px] p-2 rounded-xl border transition-colors flex flex-col ${bgClass}`}>
-                          <span className={`text-[12px] font-bold ${isCurrentDay ? 'w-6 h-6 bg-[#00B87C] text-white rounded-full flex items-center justify-center' : 'text-foreground'}`}>
-                            {formattedDate}
-                          </span>
-                          <div className="flex-1" />
-                          {content}
-                        </div>
-                      );
-                    });
-                  })()}
-                </div>
-                
-                <div className="flex flex-wrap gap-4 mt-6 pt-6 border-t border-border">
-                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#F59E0B]" /><span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Pending</span></div>
-                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#00B87C]" /><span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Approved</span></div>
-                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#EF4444]" /><span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Rejected</span></div>
-                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#0EA5E9]" /><span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Holiday</span></div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "History" && (
-            <div className="animate-in fade-in duration-300 overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">LEAVE TYPE</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">FROM</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">TO</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">DAYS</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest hidden md:table-cell">REASON</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">STATUS</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest hidden md:table-cell">APPLIED ON</th>
-                    <th className="py-4 px-4 w-10"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {historyLeaves.map(leave => (
-                    <tr key={leave.id} className="hover:bg-muted/50 transition-colors cursor-pointer group">
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <span className={`w-2 h-2 rounded-full ${leave.type === 'CL' ? 'bg-[#00B87C]' : leave.type === 'EL' ? 'bg-[#0EA5E9]' : leave.type === 'SL' ? 'bg-[#EF4444]' : 'bg-[#8B5CF6]'}`} />
-                          <span className="text-[13px] font-bold text-foreground">{leave.typeFull}</span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4 text-[13px] font-bold text-foreground">{leave.from}</td>
-                      <td className="py-4 px-4 text-[13px] font-bold text-foreground">{leave.to}</td>
-                      <td className="py-4 px-4 text-[13px] font-bold text-muted-foreground">{leave.days}</td>
-                      <td className="py-4 px-4 text-[13px] font-bold text-muted-foreground truncate max-w-[150px] hidden md:table-cell">{leave.reason}</td>
-                      <td className="py-4 px-4">
-                        <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 w-fit ${
-                          leave.status === 'Approved' ? 'bg-emerald-500/10 text-[#00B87C]' : 
-                          leave.status === 'Rejected' ? 'bg-rose-500/10 text-rose-600' : 
-                          'bg-muted text-muted-foreground'
-                        }`}>
-                          {leave.status === 'Approved' && <CheckCircle2 size={12} />}
-                          {leave.status === 'Rejected' && <X size={12} />}
-                          {leave.status}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4 text-[12px] font-bold text-muted-foreground hidden md:table-cell">{leave.appliedOn}</td>
-                      <td className="py-4 px-4 text-right">
-                        <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground opacity-0 group-hover:opacity-100 transition-all">
-                          <MoreVertical size={16} />
-                        </button>
-                      </td>
+      {/* ─── Tab Content ──────────────────────────────────────────── */}
+      <div className="min-h-[400px]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            {activeTab === "My Requests" && (
+              <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-secondary/30">
+                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                        Request ID
+                      </th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                        Leave Type
+                      </th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                        Duration
+                      </th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                        Days
+                      </th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                        Status
+                      </th>
+                      <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">
+                        Action
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {requests.map((req, i) => (
+                      <tr
+                        key={i}
+                        className="hover:bg-secondary/50 transition-colors cursor-pointer"
+                        onClick={() => setSelectedRequest(req)}
+                      >
+                        <td className="px-6 py-4 text-[13px] font-black text-foreground">
+                          {req.id}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
+                            {req.type}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 flex flex-col">
+                          <span className="text-[13px] font-bold text-foreground">
+                            {new Date(req.from).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            })}{" "}
+                            –{" "}
+                            {new Date(req.to).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground">
+                            Applied {req.appliedOn}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-[13px] font-black text-foreground">
+                          {req.days} days
+                        </td>
+                        <td className="px-6 py-4">
+                          <StatusBadge status={req.status} />
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <button className="p-2 hover:bg-card rounded-lg transition-colors text-muted-foreground">
+                            <MoreVertical size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {activeTab === "History" && <HistoryTab />}
+            {activeTab === "Policy" && <PolicyTab />}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-          {activeTab === "Policy" && (
-            <div className="animate-in fade-in duration-300 space-y-6">
-              <div className="bg-[#F0FDF4] border border-[#00B87C]/30 rounded-2xl p-6 dark:bg-[#00B87C]/5">
-                <div className="flex items-center gap-2 mb-4">
-                  <Info size={18} className="text-[#00B87C]" />
-                  <h3 className="text-[14px] font-black text-foreground">Leave Types & Entitlements</h3>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left bg-white dark:bg-zinc-900 rounded-xl overflow-hidden border border-border">
-                    <thead className="bg-muted/50">
-                      <tr>
-                        <th className="py-3 px-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Type</th>
-                        <th className="py-3 px-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Days/Year</th>
-                        <th className="py-3 px-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Accrual</th>
-                        <th className="py-3 px-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Carryforward</th>
-                        <th className="py-3 px-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">Encashable</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      <tr>
-                        <td className="py-3 px-4 text-[13px] font-bold">Casual Leave (CL)</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">12</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">Monthly (1/mo)</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
-                      </tr>
-                      <tr>
-                        <td className="py-3 px-4 text-[13px] font-bold">Earned Leave (EL)</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">24</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">Monthly (2/mo)</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">Yes (max 45)</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-[#00B87C]">Yes</td>
-                      </tr>
-                      <tr>
-                        <td className="py-3 px-4 text-[13px] font-bold">Sick Leave (SL)</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">12</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">Annual Frontload</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
-                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              
-              <div className="bg-[#F0FDF4] border border-[#00B87C]/30 rounded-2xl p-6 dark:bg-[#00B87C]/5">
-                <div className="flex items-center gap-2 mb-4">
-                  <FileText size={18} className="text-[#00B87C]" />
-                  <h3 className="text-[14px] font-black text-foreground">General Rules</h3>
-                </div>
-                <ul className="space-y-3 text-[13px] font-bold text-muted-foreground list-disc pl-5">
-                  <li>Sick leave of more than 2 consecutive days requires a medical certificate.</li>
-                  <li>Earned leave must be applied at least 14 days in advance for requests longer than 5 days.</li>
-                  <li>Clubbing of Casual Leave and Earned Leave is not permitted.</li>
-                  <li>Comp-off must be availed within 45 days of the worked holiday/weekend.</li>
-                </ul>
-              </div>
+      {/* ─── Modals & Drawers ─────────────────────────────────────── */}
+      <ApplyLeaveModal
+        isOpen={showApplyModal}
+        onClose={() => setShowApplyModal(false)}
+        onSubmit={handleApplyLeave}
+      />
+
+      <LeaveDetailDrawer
+        request={selectedRequest}
+        onClose={() => setSelectedRequest(null)}
+      />
+    </div>
+  );
+}
+
+/* ─── Components ─────────────────────────────────────────────────── */
+
+function HistoryTab() {
+  const { t } = useTranslation();
+  return (
+    <div className="bg-card rounded-[24px] border border-border shadow-sm p-12 text-center">
+      <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+        <History size={32} className="text-muted-foreground" />
+      </div>
+      <h3 className="text-lg font-black text-foreground">{t("leaveHistory")}</h3>
+      <p className="text-[14px] font-medium text-muted-foreground max-w-sm mx-auto mt-2">
+        Historical leave records will be archived here after the current
+        financial year ends.
+      </p>
+    </div>
+  );
+}
+
+function PolicyTab() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {[
+        { title: "Annual Leave Policy", icon: Info, color: "var(--primary)" },
+        { title: "Medical Leave Policy", icon: Info, color: "#14B8A6" },
+      ].map((p, i) => (
+        <div
+          key={i}
+          className="bg-card rounded-[24px] p-8 border border-border shadow-sm hover:border-primary transition-all group"
+        >
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-secondary">
+              <p.icon size={24} style={{ color: p.color }} />
             </div>
           )}
         </div>
@@ -722,9 +565,112 @@ export function EmployeeLeaves() {
 
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
 
+          <div className="space-y-3">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              Reason
+            </label>
+            <p className="text-[14px] font-medium text-foreground bg-secondary/50 p-6 rounded-2xl border border-border leading-relaxed italic">
+              "{request.reason}"
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              Approval Timeline
+            </label>
+            <div className="space-y-6 relative ml-2">
+              <div className="absolute top-0 bottom-0 left-3 w-[1px] bg-border"></div>
+
+              <TimelineItem
+                icon={<Plus size={14} />}
+                title="Leave Applied"
+                subtitle={`by Priya Sharma on ${request.appliedOn}`}
+                status="completed"
+              />
+              <TimelineItem
+                icon={<User size={14} />}
+                title="Manager Review"
+                subtitle="Awaiting review from Sameer Khanna"
+                status={request.status === "Pending" ? "current" : "completed"}
+              />
+              <TimelineItem
+                icon={<CheckCircle2 size={14} />}
+                title="Final Approval"
+                subtitle="HR Department validation"
+                status="upcoming"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="p-8 bg-secondary/30 border-t border-border flex gap-4">
+          <button className="flex-1 py-4 bg-background border border-border rounded-2xl text-[13px] font-black text-rose-500 hover:bg-rose-50 transition-all">
+            Cancel Request
+          </button>
+          <button className="flex-1 py-4 bg-background border border-border rounded-2xl text-[13px] font-black text-foreground hover:bg-secondary transition-all">
+            Download Receipt
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function DetailItem({
+  label,
+  value,
+}: {
+  label: string;
+  value: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-1">
+      <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+        {label}
+      </p>
+      <div className="text-[14px] font-bold text-foreground">{value}</div>
+    </div>
+  );
+}
+
+function TimelineItem({
+  icon,
+  title,
+  subtitle,
+  status,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+  status: "completed" | "current" | "upcoming";
+}) {
+  const getTimelineColor = (s: "completed" | "current" | "upcoming"): string => {
+    switch (s) {
+      case "completed": return "bg-primary text-white border-primary";
+      case "current": return "bg-amber-500 text-white border-amber-500 animate-pulse";
+      case "upcoming": return "bg-secondary text-muted-foreground border-border";
+      default: return "bg-secondary text-muted-foreground border-border";
+    }
+  };
+
+  return (
+    <div className="flex gap-4 relative z-10">
+      <div
+        className={`w-6 h-6 rounded-full flex items-center justify-center border ${getTimelineColor(status)} shadow-sm`}
+      >
+        {icon}
+      </div>
+      <div>
+        <h4
+          className={`text-[13px] font-black ${status === "upcoming" ? "text-muted-foreground" : "text-foreground"}`}
+        >
+          {title}
+        </h4>
+        <p className="text-[11px] font-medium text-muted-foreground">
+          {subtitle}
+        </p>
+      </div>
     </div>
   );
 }

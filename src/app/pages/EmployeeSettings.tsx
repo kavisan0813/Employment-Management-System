@@ -251,9 +251,13 @@ function AccountSecurity({ onModal }: { onModal: (m: string | null) => void }) {
     if (/[A-Z]/.test(pw)) s++;
     if (/\d/.test(pw)) s++;
     if (/[!@#$%^&*]/.test(pw)) s++;
-    const labels = ["", "Weak", "Fair", "Good", "Strong"];
-    const colors = ["", "#EF4444", "#F59E0B", "#3B82F6", "var(--primary)"];
-    return { level: s, label: labels[s] || "", color: colors[s] || "var(--muted-foreground)" };
+    const getLabel = (v: number): string => {
+      switch (v) { case 1: return "Weak"; case 2: return "Fair"; case 3: return "Good"; case 4: return "Strong"; default: return ""; }
+    };
+    const getColor = (v: number): string => {
+      switch (v) { case 1: return "#EF4444"; case 2: return "#F59E0B"; case 3: return "#3B82F6"; case 4: return "var(--primary)"; default: return "var(--muted-foreground)"; }
+    };
+    return { level: s, label: getLabel(s), color: getColor(s) };
   };
 
   const strength = pwStrength(newPw);

@@ -196,17 +196,22 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
 /* ─────────────────────────────────────────────────────────────── */
 
 function PriorityBadge({ priority }: { priority: Priority }) {
-  const styles = {
-    Urgent:
-      "bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20",
-    Important:
-      "bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20",
-    Normal:
-      "bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-500/10 dark:text-slate-400 dark:border-slate-500/20",
-  };
+  let styleClass = "";
+  switch (priority) {
+    case "Urgent":
+      styleClass = "bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20";
+      break;
+    case "Important":
+      styleClass = "bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20";
+      break;
+    case "Normal":
+    default:
+      styleClass = "bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-500/10 dark:text-slate-400 dark:border-slate-500/20";
+      break;
+  }
   return (
     <span
-      className={`px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider border ${styles[priority]}`}
+      className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${styleClass}`}
     >
       {priority}
     </span>
@@ -214,23 +219,31 @@ function PriorityBadge({ priority }: { priority: Priority }) {
 }
 
 function CategoryBadge({ category }: { category: Category }) {
-  const styles: Record<Category, string> = {
-    General:
-      "bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/10 dark:border-blue-500/20",
-    "HR Policy":
-      "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:border-emerald-500/20",
-    Payroll:
-      "bg-purple-50 text-purple-600 border-purple-100 dark:bg-purple-500/10 dark:border-purple-500/20",
-    Holiday:
-      "bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:border-amber-500/20",
-    Training:
-      "bg-indigo-50 text-indigo-600 border-indigo-100 dark:bg-indigo-500/10 dark:border-indigo-500/20",
-    Emergency:
-      "bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:border-rose-500/20",
-  };
+  let styleClass = "";
+  switch (category) {
+    case "General":
+      styleClass = "bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/10 dark:border-blue-500/20";
+      break;
+    case "HR Policy":
+      styleClass = "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:border-emerald-500/20";
+      break;
+    case "Payroll":
+      styleClass = "bg-purple-50 text-purple-600 border-purple-100 dark:bg-purple-500/10 dark:border-purple-500/20";
+      break;
+    case "Holiday":
+      styleClass = "bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:border-amber-500/20";
+      break;
+    case "Training":
+      styleClass = "bg-indigo-50 text-indigo-600 border-indigo-100 dark:bg-indigo-500/10 dark:border-indigo-500/20";
+      break;
+    case "Emergency":
+    default:
+      styleClass = "bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:border-rose-500/20";
+      break;
+  }
   return (
     <span
-      className={`px-2 py-0.5 rounded-md text-[9px] font-semibold uppercase tracking-wider border ${styles[category]}`}
+      className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${styleClass}`}
     >
       {category}
     </span>
@@ -393,10 +406,12 @@ export function EmployeeAnnouncements() {
     setShowConfirmModal(null);
   };
 
-  const handleCopyLink = (id: number) => {
-    const link = `${window.location.origin}/notifications?id=${id}`;
-    navigator.clipboard.writeText(link);
-    showToast("Copied", "success", "Announcement link copied to clipboard.");
+  const announcementHelpers = {
+    copyLink: (id: number) => {
+      const link = `${window.location.origin}/notifications?id=${id}`;
+      navigator.clipboard.writeText(link);
+      showToast("Copied", "success", "Announcement link copied to clipboard.");
+    }
   };
 
   const resetFilters = () => {
@@ -536,7 +551,7 @@ export function EmployeeAnnouncements() {
               announcement={ann}
               onView={() => setSelectedAnnouncement(ann)}
               onMarkRead={() => handleMarkAsRead(ann.id)}
-              onCopy={() => handleCopyLink(ann.id)}
+              onCopy={() => announcementHelpers.copyLink(ann.id)}
               onArchive={() =>
                 setShowConfirmModal({ type: "archive", id: ann.id })
               }

@@ -342,8 +342,7 @@ export function Offboarding() {
   const [showInterview, setShowInterview] = useState<string | null>(null);
   const [showSchedule, setShowSchedule] = useState<{id: string; type: "interview" | "clearance"} | null>(null);
 
-  const activeExits = EXITS.filter(e => e.progress < 100);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const activeExits = EXITS.filter(e => e.progress !== 100);
   const completedExits: ExitEmployee[] = [];
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const scheduledExits: ExitEmployee[] = [];

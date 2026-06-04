@@ -26,6 +26,8 @@ import {
   Home,
   AlertCircle,
   Loader2,
+  Plus,
+  X,
 } from "lucide-react";
 import {
   LineChart,
@@ -39,22 +41,164 @@ import {
   Pie,
 } from "recharts";
 
-interface AttendanceRow {
-  date: string;
-  name: string;
-  department: string;
-  status: string;
-  checkIn: string;
-  checkOut: string;
-  hours: string;
-}
-
 import {
   attendanceCalendar,
   dailyLogs,
   employees,
   departments,
 } from "../data/mockData";
+
+export interface AttendanceRecord {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  employeeAvatar?: string;
+  department: string;
+  date: string; // e.g. "Apr 01, 2026"
+  status: string;
+  checkIn: string; // e.g. "08:58 AM"
+  checkOut: string; // e.g. "06:02 PM"
+  hours: string; // e.g. "9h 04m"
+  notes?: string;
+}
+
+interface AttendanceRow {
+  id: string;
+  employeeId: string;
+  name: string;
+  department: string;
+  date: string;
+  status: string;
+  checkIn: string;
+  checkOut: string;
+  hours: string;
+  notes?: string;
+}
+
+/* ─── Helper Functions ───────────────────────── */
+
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const formatDate = (day: number, month: number, year: number): string => {
+  const monthStr = MONTH_NAMES[month].substring(0, 3);
+  const dayStr = day < 10 ? `0${day}` : `${day}`;
+  return `${monthStr} ${dayStr}, ${year}`;
+};
+
+const convertToInputDate = (dateStr: string): string => {
+  // dateStr is like "Apr 01, 2026"
+  const parts = dateStr.replace(",", "").split(" ");
+  if (parts.length < 3) return "";
+  const monthName = parts[0];
+  const dayStr = parts[1];
+  const yearStr = parts[2];
+  
+  const monthIdx = MONTH_NAMES.findIndex(m => m.startsWith(monthName));
+  if (monthIdx === -1) return "";
+  const monthStr = (monthIdx + 1) < 10 ? `0${monthIdx + 1}` : `${monthIdx + 1}`;
+  return `${yearStr}-${monthStr}-${dayStr}`;
+};
+
+const convertToDisplayDate = (inputDate: string): string => {
+  // inputDate is like "2026-04-01"
+  const parts = inputDate.split("-");
+  if (parts.length < 3) return "";
+  const year = parseInt(parts[0]);
+  const month = parseInt(parts[1]) - 1;
+  const day = parseInt(parts[2]);
+  
+  const monthStr = MONTH_NAMES[month].substring(0, 3);
+  const dayStr = day < 10 ? `0${day}` : `${day}`;
+  return `${monthStr} ${dayStr}, ${year}`;
+};
+
+const to12Hour = (time24: string): string => {
+  if (!time24) return "";
+  const [hoursStr, minutesStr] = time24.split(":");
+  const hours = parseInt(hoursStr);
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const displayHours = hours % 12 || 12;
+  const displayHoursStr = displayHours < 10 ? `0${displayHours}` : `${displayHours}`;
+  return `${displayHoursStr}:${minutesStr} ${ampm}`;
+};
+
+const to24Hour = (time12: string): string => {
+  if (!time12) return "";
+  const parts = time12.split(" ");
+  if (parts.length < 2) return "";
+  const timePart = parts[0];
+  const ampm = parts[1];
+  const [hoursStr, minutesStr] = timePart.split(":");
+  let hours = parseInt(hoursStr);
+  if (ampm === "PM" && hours < 12) hours += 12;
+  if (ampm === "AM" && hours === 12) hours = 0;
+  const hoursStr24 = hours < 10 ? `0${hours}` : `${hours}`;
+  return `${hoursStr24}:${minutesStr}`;
+};
+
+const calculateHours = (checkIn: string, checkOut: string, status: string): string => {
+  if (status === "Absent" || status === "Leave" || status === "Holiday" || status === "Weekend") {
+    return "0h 00m";
+  }
+  if (!checkIn || !checkOut) return "8h 00m";
+  
+  const [inHours, inMins] = checkIn.split(":");
+  const [outHours, outMins] = checkOut.split(":");
+  
+  let diffMins = (parseInt(outHours) * 60 + parseInt(outMins)) - (parseInt(inHours) * 60 + parseInt(inMins));
+  if (diffMins < 0) diffMins += 24 * 60; // Overnight shift
+  
+  const hrs = Math.floor(diffMins / 60);
+  const mins = diffMins % 60;
+  const minsStr = mins < 10 ? `0${mins}` : `${mins}`;
+  return `${hrs}h ${minsStr}m`;
+};
+
+// Initialize records from localStorage or initial mock data mapping
+const initialRecords: AttendanceRecord[] = (() => {
+  const local = localStorage.getItem("nexus_attendance_records");
+  if (local) {
+    try {
+      return JSON.parse(local);
+    } catch (e) {
+      console.error("Failed to parse localStorage attendance records", e);
+    }
+  }
+
+  const generated: AttendanceRecord[] = [];
+  dailyLogs.forEach((log, index) => {
+    const emp = employees[index % employees.length];
+    generated.push({
+      id: `ATT-${1000 + index}`,
+      employeeId: emp.id,
+      employeeName: emp.name,
+      employeeAvatar: emp.avatar,
+      department: emp.department,
+      date: log.date,
+      status: log.status,
+      checkIn: log.checkIn,
+      checkOut: log.checkOut,
+      hours: log.hours,
+      notes: "Initial pre-populated system record",
+    });
+  });
+
+  localStorage.setItem("nexus_attendance_records", JSON.stringify(generated));
+  return generated;
+})();
 
 /* ─── Constants ─────────────────────────────── */
 
@@ -112,20 +256,6 @@ const STATUS_CONFIG: Record<
   },
 };
 
-const MONTH_NAMES = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -188,17 +318,188 @@ export function Attendance() {
   const deptRef = useRef<HTMLDivElement>(null);
   const empRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns on outside click
+  // CRUD & Interactive States
+  const [records, setRecords] = useState<AttendanceRecord[]>(initialRecords);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editRecord, setEditRecord] = useState<AttendanceRecord | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [activeRowMenu, setActiveRowMenu] = useState<string | null>(null);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  // Form State
+  const [formEmployeeId, setFormEmployeeId] = useState("");
+  const [formDate, setFormDate] = useState("");
+  const [formStatus, setFormStatus] = useState("Present");
+  const [formCheckIn, setFormCheckIn] = useState("09:00");
+  const [formCheckOut, setFormCheckOut] = useState("18:00");
+  const [formNotes, setFormNotes] = useState("");
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  // Close dropdowns and menus on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (deptRef.current && !deptRef.current.contains(e.target as Node))
         setShowDeptDropdown(false);
       if (empRef.current && !empRef.current.contains(e.target as Node))
         setShowEmpDropdown(false);
+      // Close row menus on click outside
+      if (!(e.target as HTMLElement).closest(".relative")) {
+        setActiveRowMenu(null);
+      }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
+
+  // Close modals on Escape key press
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setShowAddModal(false);
+        setEditRecord(null);
+        setDeleteConfirm(null);
+        setSelectedDayDetail(null);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Form Handlers
+  const handleOpenAdd = () => {
+    setFormEmployeeId(selectedEmpId !== "All Employees" ? selectedEmpId : (employees[0]?.id || ""));
+    const today = new Date();
+    const formattedDate = `${selectedYear}-${(selectedMonth + 1).toString().padStart(2, "0")}-01`;
+    setFormDate(formattedDate);
+    setFormStatus("Present");
+    setFormCheckIn("09:00");
+    setFormCheckOut("18:00");
+    setFormNotes("");
+    setFormErrors({});
+    setShowAddModal(true);
+  };
+
+  const handleOpenEdit = (rec: AttendanceRecord) => {
+    setFormEmployeeId(rec.employeeId);
+    setFormDate(convertToInputDate(rec.date));
+    setFormStatus(rec.status);
+    setFormCheckIn(rec.checkIn && rec.checkIn !== "--:--" ? to24Hour(rec.checkIn) : "09:00");
+    setFormCheckOut(rec.checkOut && rec.checkOut !== "--:--" ? to24Hour(rec.checkOut) : "18:00");
+    setFormNotes(rec.notes || "");
+    setFormErrors({});
+    setEditRecord(rec);
+  };
+
+  const handleSaveAdd = () => {
+    const errors: Record<string, string> = {};
+    if (!formEmployeeId) errors.employeeId = "Employee is required";
+    if (!formDate) errors.date = "Date is required";
+    if (!formStatus) errors.status = "Status is required";
+
+    const needsTimes = ["Present", "Late", "Half-day", "WFH"].includes(formStatus);
+    if (needsTimes) {
+      if (!formCheckIn) errors.checkIn = "Punch-in time is required";
+      if (!formCheckOut) errors.checkOut = "Punch-out time is required";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    const emp = employees.find(e => e.id === formEmployeeId) || employees[0];
+    const displayDate = convertToDisplayDate(formDate);
+    const displayCheckIn = needsTimes ? to12Hour(formCheckIn) : "--:--";
+    const displayCheckOut = needsTimes ? to12Hour(formCheckOut) : "--:--";
+    const displayHours = needsTimes ? calculateHours(formCheckIn, formCheckOut, formStatus) : "0h 00m";
+
+    const newRecord: AttendanceRecord = {
+      id: `ATT-${Date.now()}`,
+      employeeId: emp.id,
+      employeeName: emp.name,
+      employeeAvatar: emp.avatar,
+      department: emp.department,
+      date: displayDate,
+      status: formStatus,
+      checkIn: displayCheckIn,
+      checkOut: displayCheckOut,
+      hours: displayHours,
+      notes: formNotes,
+    };
+
+    const updated = [newRecord, ...records];
+    setRecords(updated);
+    localStorage.setItem("nexus_attendance_records", JSON.stringify(updated));
+    
+    setShowAddModal(false);
+    setToastMessage("Attendance record added successfully");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editRecord) return;
+    const errors: Record<string, string> = {};
+    if (!formEmployeeId) errors.employeeId = "Employee is required";
+    if (!formDate) errors.date = "Date is required";
+    if (!formStatus) errors.status = "Status is required";
+
+    const needsTimes = ["Present", "Late", "Half-day", "WFH"].includes(formStatus);
+    if (needsTimes) {
+      if (!formCheckIn) errors.checkIn = "Punch-in time is required";
+      if (!formCheckOut) errors.checkOut = "Punch-out time is required";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    const emp = employees.find(e => e.id === formEmployeeId) || employees[0];
+    const displayDate = convertToDisplayDate(formDate);
+    const displayCheckIn = needsTimes ? to12Hour(formCheckIn) : "--:--";
+    const displayCheckOut = needsTimes ? to12Hour(formCheckOut) : "--:--";
+    const displayHours = needsTimes ? calculateHours(formCheckIn, formCheckOut, formStatus) : "0h 00m";
+
+    const updatedRecords = records.map(rec => {
+      if (rec.id === editRecord.id) {
+        return {
+          ...rec,
+          employeeId: emp.id,
+          employeeName: emp.name,
+          employeeAvatar: emp.avatar,
+          department: emp.department,
+          date: displayDate,
+          status: formStatus,
+          checkIn: displayCheckIn,
+          checkOut: displayCheckOut,
+          hours: displayHours,
+          notes: formNotes,
+        };
+      }
+      return rec;
+    });
+
+    setRecords(updatedRecords);
+    localStorage.setItem("nexus_attendance_records", JSON.stringify(updatedRecords));
+
+    setEditRecord(null);
+    setToastMessage("Attendance record updated successfully");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!deleteConfirm) return;
+    const updated = records.filter(rec => rec.id !== deleteConfirm);
+    setRecords(updated);
+    localStorage.setItem("nexus_attendance_records", JSON.stringify(updated));
+    setDeleteConfirm(null);
+    setToastMessage("Attendance record deleted successfully");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
 
   // Dependent Filter Logic
   const filteredEmployeesList = useMemo(() => {
@@ -244,7 +545,6 @@ export function Attendance() {
 
     setIsDownloading(true);
 
-    // Simulate processing
     setTimeout(() => {
       let csvContent = "";
       let filename = "attendance_report_bulk.csv";
@@ -252,10 +552,10 @@ export function Attendance() {
       if (type === "full") {
         csvContent =
           "Date,Employee,Department,Status,Check In,Check Out,Hours\n" +
-          dailyLogs
+          records
             .map(
               (log) =>
-                `${log.date},${selectedEmployee?.name || "Multiple"},${selectedDept},${log.status},${log.checkIn},${log.checkOut},${log.hours}`,
+                `${log.date},${log.employeeName},${log.department},${log.status},${log.checkIn},${log.checkOut},${log.hours}`,
             )
             .join("\n");
       } else if (rowData) {
@@ -283,29 +583,36 @@ export function Attendance() {
   };
 
   const filteredLogs = useMemo(() => {
-    return dailyLogs.filter(() => {
-      // If an employee is selected, and we had real data, we'd filter by employeeId.
-      // Since dailyLogs is generic, we'll just respect the department/search filters
-      // by assuming the logs could belong to any employee in that context.
-      if (selectedDept !== "All Departments") {
-        // In a real app, we'd check log.employee.department
-        // For now, we just allow the logs to be shown but they'll be mapped to dept emps.
+    return records.filter((log) => {
+      // 1. Filter by Department
+      if (selectedDept !== "All Departments" && log.department !== selectedDept) {
+        return false;
       }
 
+      // 2. Filter by Employee ID
+      if (selectedEmpId !== "All Employees" && log.employeeId !== selectedEmpId) {
+        return false;
+      }
+
+      // 3. Filter by Search Query
       if (searchQuery) {
-        // Mock search: if search query matches any employee in the current filter, show logs
         const query = searchQuery.toLowerCase();
-        const anyMatch = employees.some(
-          (e) =>
-            e.name.toLowerCase().includes(query) ||
-            e.id.toLowerCase().includes(query),
-        );
-        if (!anyMatch) return false;
+        const emp = employees.find(e => e.id === log.employeeId);
+        const nameMatch = log.employeeName.toLowerCase().includes(query);
+        const roleMatch = emp ? emp.role.toLowerCase().includes(query) : false;
+        const idMatch = log.employeeId.toLowerCase().includes(query);
+        
+        if (!nameMatch && !roleMatch && !idMatch) return false;
       }
 
-      return true;
+      // 4. Filter by Period (Month & Year)
+      const monthPrefix = MONTH_NAMES[selectedMonth].substring(0, 3);
+      const isCorrectMonth = log.date.startsWith(monthPrefix);
+      const isCorrectYear = log.date.endsWith(selectedYear.toString());
+      
+      return isCorrectMonth && isCorrectYear;
     });
-  }, [selectedDept, selectedEmpId, searchQuery]);
+  }, [records, selectedDept, selectedEmpId, searchQuery, selectedMonth, selectedYear]);
 
   // Calendar Math
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
@@ -317,15 +624,83 @@ export function Attendance() {
     return days;
   }, [selectedMonth, selectedYear, daysInMonth, firstDayOfMonth]);
 
-  // Metrics
-  const metrics = {
-    totalDays: 22,
-    present: 19,
-    absent: 1,
-    late: 2,
-    attendanceRate: 92,
-    lateTrend: -5, // Percentage change
-  };
+  // Dynamic Metrics Calculation
+  const metrics = useMemo(() => {
+    const periodLogs = records.filter(log => {
+      if (selectedDept !== "All Departments" && log.department !== selectedDept) return false;
+      if (selectedEmpId !== "All Employees" && log.employeeId !== selectedEmpId) return false;
+      
+      const monthPrefix = MONTH_NAMES[selectedMonth].substring(0, 3);
+      const isCorrectMonth = log.date.startsWith(monthPrefix);
+      const isCorrectYear = log.date.endsWith(selectedYear.toString());
+      
+      return isCorrectMonth && isCorrectYear;
+    });
+
+    const total = periodLogs.length;
+    const present = periodLogs.filter(l => l.status === "Present" || l.status === "WFH").length;
+    const absent = periodLogs.filter(l => l.status === "Absent").length;
+    const late = periodLogs.filter(l => l.status === "Late").length;
+    
+    const attendanceRate = total > 0 ? Math.round((present / total) * 100) : 100;
+    
+    return {
+      totalDays: total || 22,
+      present: present || 19,
+      absent: absent || 1,
+      late: late || 2,
+      attendanceRate: total > 0 ? attendanceRate : 92,
+      lateTrend: -5,
+    };
+  }, [records, selectedDept, selectedEmpId, selectedMonth, selectedYear]);
+
+  const selectedDayRecord = useMemo(() => {
+    if (selectedDayDetail === null) return null;
+    const dateStr = formatDate(selectedDayDetail, selectedMonth, selectedYear);
+    
+    let rec = records.find((r) => {
+      const dateMatch = r.date === dateStr;
+      if (selectedEmpId !== "All Employees") {
+        return dateMatch && r.employeeId === selectedEmpId;
+      }
+      return dateMatch;
+    });
+
+    if (rec) return rec;
+
+    if (selectedMonth === 3 && selectedYear === 2026) {
+      const mockStatus = attendanceCalendar[selectedDayDetail] || "Present";
+      const emp = selectedEmployee || employees[0];
+      return {
+        id: `ATT-MOCK-${selectedDayDetail}`,
+        employeeId: emp.id,
+        employeeName: emp.name,
+        employeeAvatar: emp.avatar,
+        department: emp.department,
+        date: dateStr,
+        status: mockStatus,
+        checkIn: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus) ? "08:58 AM" : "--:--",
+        checkOut: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus) ? "06:02 PM" : "--:--",
+        hours: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus) ? "9h 04m" : "0h 00m",
+        notes: "Historical mock log",
+      };
+    }
+    
+    const emp = selectedEmployee || employees[0];
+    return {
+      id: `ATT-MOCK-${selectedDayDetail}`,
+      employeeId: emp.id,
+      employeeName: emp.name,
+      employeeAvatar: emp.avatar,
+      department: emp.department,
+      date: dateStr,
+      status: "Absent",
+      checkIn: "--:--",
+      checkOut: "--:--",
+      hours: "0h 00m",
+      notes: "No attendance recorded",
+    };
+  }, [selectedDayDetail, selectedMonth, selectedYear, selectedEmpId, selectedEmployee, records]);
 
   const handleEmployeeRedirect = (id: string) => {
     navigate(`/employees/${id}`);
@@ -333,6 +708,383 @@ export function Attendance() {
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-5">
+      {/* Add Attendance Modal */}
+      {showAddModal && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          onClick={() => setShowAddModal(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-modal-title"
+            className="w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
+            style={{ borderColor: "var(--border)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="p-6 border-b flex items-center justify-between bg-neutral-50 dark:bg-zinc-800/40"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <div className="flex items-center gap-2">
+                <CalendarIcon className="text-[#00B87C]" size={20} />
+                <h3 id="add-modal-title" className="text-lg font-extrabold text-slate-900 dark:text-slate-100">
+                  Add Attendance Record
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-700 text-muted-foreground transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5 overflow-y-auto flex-1">
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                  Select Employee *
+                </label>
+                <select
+                  className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.employeeId ? "border-red-500" : "border-border"}`}
+                  value={formEmployeeId}
+                  onChange={(e) => setFormEmployeeId(e.target.value)}
+                >
+                  <option value="" disabled>-- Choose Employee --</option>
+                  {employees.map((emp) => (
+                    <option key={emp.id} value={emp.id}>
+                      {emp.name} ({emp.id}) — {emp.department}
+                    </option>
+                  ))}
+                </select>
+                {formErrors.employeeId && (
+                  <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.employeeId}</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                    Date *
+                  </label>
+                  <input
+                    type="date"
+                    className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.date ? "border-red-500" : "border-border"}`}
+                    value={formDate}
+                    onChange={(e) => setFormDate(e.target.value)}
+                  />
+                  {formErrors.date && (
+                    <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.date}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                    Status *
+                  </label>
+                  <select
+                    className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.status ? "border-red-500" : "border-border"}`}
+                    value={formStatus}
+                    onChange={(e) => setFormStatus(e.target.value)}
+                  >
+                    {Object.keys(STATUS_CONFIG).map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                  {formErrors.status && (
+                    <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.status}</p>
+                  )}
+                </div>
+              </div>
+
+              {["Present", "Late", "Half-day", "WFH"].includes(formStatus) && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div>
+                    <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                      Punch In Time *
+                    </label>
+                    <input
+                      type="time"
+                      className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.checkIn ? "border-red-500" : "border-border"}`}
+                      value={formCheckIn}
+                      onChange={(e) => setFormCheckIn(e.target.value)}
+                    />
+                    {formErrors.checkIn && (
+                      <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.checkIn}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                      Punch Out Time *
+                    </label>
+                    <input
+                      type="time"
+                      className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.checkOut ? "border-red-500" : "border-border"}`}
+                      value={formCheckOut}
+                      onChange={(e) => setFormCheckOut(e.target.value)}
+                    />
+                    {formErrors.checkOut && (
+                      <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.checkOut}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                  Notes / Description
+                </label>
+                <textarea
+                  placeholder="e.g. Punch in failed, added manually by HR."
+                  rows={3}
+                  className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-medium"
+                  value={formNotes}
+                  onChange={(e) => setFormNotes(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div
+              className="p-6 bg-neutral-50 dark:bg-zinc-800/40 border-t flex gap-3 flex-shrink-0"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <button
+                type="button"
+                onClick={() => setShowAddModal(false)}
+                className="flex-1 py-2.5 rounded-xl border text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 hover:bg-neutral-200 transition-all active:scale-[0.98]"
+                style={{ borderColor: "var(--border)" }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveAdd}
+                className="flex-1 py-2.5 rounded-xl text-white text-xs font-extrabold shadow-sm hover:opacity-90 transition-all active:scale-[0.98]"
+                style={{
+                  backgroundColor: "#00B87C",
+                }}
+              >
+                Save Record
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Attendance Modal */}
+      {editRecord && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          onClick={() => setEditRecord(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-modal-title"
+            className="w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
+            style={{ borderColor: "var(--border)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="p-6 border-b flex items-center justify-between bg-neutral-50 dark:bg-zinc-800/40"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <div className="flex items-center gap-2">
+                <CalendarIcon className="text-[#00B87C]" size={20} />
+                <h3 id="edit-modal-title" className="text-lg font-extrabold text-slate-900 dark:text-slate-100">
+                  Edit Attendance Record
+                </h3>
+              </div>
+              <button
+                onClick={() => setEditRecord(null)}
+                className="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-700 text-muted-foreground transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5 overflow-y-auto flex-1">
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                  Employee
+                </label>
+                <div
+                  className="flex items-center gap-3 p-3 rounded-xl border bg-neutral-50 dark:bg-zinc-800/30"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <img
+                    src={editRecord.employeeAvatar || employees[0].avatar}
+                    alt=""
+                    className="w-10 h-10 rounded-full object-cover border"
+                  />
+                  <div>
+                    <p className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                      {editRecord.employeeName}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground font-bold">
+                      {editRecord.employeeId} • {editRecord.department}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                    Date *
+                  </label>
+                  <input
+                    type="date"
+                    className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.date ? "border-red-500" : "border-border"}`}
+                    value={formDate}
+                    onChange={(e) => setFormDate(e.target.value)}
+                  />
+                  {formErrors.date && (
+                    <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.date}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                    Status *
+                  </label>
+                  <select
+                    className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.status ? "border-red-500" : "border-border"}`}
+                    value={formStatus}
+                    onChange={(e) => setFormStatus(e.target.value)}
+                  >
+                    {Object.keys(STATUS_CONFIG).map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                  {formErrors.status && (
+                    <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.status}</p>
+                  )}
+                </div>
+              </div>
+
+              {["Present", "Late", "Half-day", "WFH"].includes(formStatus) && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div>
+                    <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                      Punch In Time *
+                    </label>
+                    <input
+                      type="time"
+                      className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.checkIn ? "border-red-500" : "border-border"}`}
+                      value={formCheckIn}
+                      onChange={(e) => setFormCheckIn(e.target.value)}
+                    />
+                    {formErrors.checkIn && (
+                      <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.checkIn}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                      Punch Out Time *
+                    </label>
+                    <input
+                      type="time"
+                      className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.checkOut ? "border-red-500" : "border-border"}`}
+                      value={formCheckOut}
+                      onChange={(e) => setFormCheckOut(e.target.value)}
+                    />
+                    {formErrors.checkOut && (
+                      <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.checkOut}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                  Notes / Description
+                </label>
+                <textarea
+                  placeholder="e.g. Punch in failed, added manually by HR."
+                  rows={3}
+                  className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-medium"
+                  value={formNotes}
+                  onChange={(e) => setFormNotes(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div
+              className="p-6 bg-neutral-50 dark:bg-zinc-800/40 border-t flex gap-3 flex-shrink-0"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <button
+                type="button"
+                onClick={() => setEditRecord(null)}
+                className="flex-1 py-2.5 rounded-xl border text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 hover:bg-neutral-200 transition-all active:scale-[0.98]"
+                style={{ borderColor: "var(--border)" }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveEdit}
+                className="flex-1 py-2.5 rounded-xl text-white text-xs font-extrabold shadow-sm hover:opacity-90 transition-all active:scale-[0.98]"
+                style={{
+                  backgroundColor: "#00B87C",
+                }}
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          onClick={() => setDeleteConfirm(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-modal-title"
+            aria-describedby="delete-modal-description"
+            className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95"
+            style={{ borderColor: "var(--border)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950/40 text-rose-600 flex items-center justify-center mx-auto mb-4">
+              <AlertCircle size={24} />
+            </div>
+            <h3 id="delete-modal-title" className="text-lg font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+              Delete Attendance Record
+            </h3>
+            <p id="delete-modal-description" className="text-xs text-muted-foreground mb-5">
+              Are you sure you want to delete this record? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                className="w-full py-2.5 text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 rounded-xl hover:bg-neutral-200 transition-colors"
+                onClick={() => setDeleteConfirm(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="w-full py-2.5 text-xs font-extrabold text-white bg-rose-600 rounded-xl hover:bg-rose-700 shadow-sm transition-colors active:scale-95"
+                onClick={handleDeleteConfirm}
+              >
+                Confirm Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Day Detail Modal Overlay */}
       {selectedDayDetail && (
         <div
@@ -340,6 +1092,9 @@ export function Attendance() {
           onClick={() => setSelectedDayDetail(null)}
         >
           <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="detail-modal-title"
             className="w-full max-w-md rounded-2xl bg-white dark:bg-zinc-900 border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
             style={{ borderColor: "var(--border)" }}
             onClick={(e) => e.stopPropagation()}
@@ -354,6 +1109,7 @@ export function Attendance() {
                 </div>
                 <div>
                   <h3
+                    id="detail-modal-title"
                     className="text-lg font-black"
                     style={{ color: "var(--foreground)" }}
                   >
@@ -374,124 +1130,120 @@ export function Attendance() {
             </div>
 
             <div className="p-6 space-y-6">
-              <div
-                className="flex items-center justify-between p-4 rounded-xl bg-neutral-50 dark:bg-zinc-800/50 border"
-                style={{ borderColor: "var(--border)" }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[var(--primary)]">
-                    <img
-                      src={selectedEmployee?.avatar || employees[0].avatar}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <p
-                      className="text-sm font-black"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      {selectedEmployee?.name || "Sarah Johnson"}
-                    </p>
-                    <p className="text-[11px] text-muted-foreground font-bold">
-                      {selectedEmployee?.role || "Senior Developer"}
-                    </p>
-                  </div>
-                </div>
-                <StatusBadge
-                  status={attendanceCalendar[selectedDayDetail] || "Present"}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div
-                  className="p-4 rounded-xl border bg-white dark:bg-zinc-900"
-                  style={{ borderColor: "var(--border)" }}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <ArrowUpRight size={16} className="text-emerald-500" />
-                    <span className="text-[11px] font-bold text-muted-foreground uppercase">
-                      Punch In
-                    </span>
-                  </div>
-                  <p
-                    className="text-lg font-black"
-                    style={{ color: "var(--foreground)" }}
+              {selectedDayRecord && (
+                <>
+                  <div
+                    className="flex items-center justify-between p-4 rounded-xl bg-neutral-50 dark:bg-zinc-800/50 border"
+                    style={{ borderColor: "var(--border)" }}
                   >
-                    08:58 AM
-                  </p>
-                  <p className="text-[9px] text-emerald-600 font-bold mt-1">
-                    2m early
-                  </p>
-                </div>
-                <div
-                  className="p-4 rounded-xl border bg-white dark:bg-zinc-900"
-                  style={{ borderColor: "var(--border)" }}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <ArrowUpRight
-                      size={16}
-                      className="text-orange-500 rotate-90"
-                    />
-                    <span className="text-[11px] font-bold text-muted-foreground uppercase">
-                      Punch Out
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[var(--primary)]">
+                        <img
+                          src={selectedDayRecord.employeeAvatar || employees[0].avatar}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <p
+                          className="text-sm font-black"
+                          style={{ color: "var(--foreground)" }}
+                        >
+                          {selectedDayRecord.employeeName}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground font-bold">
+                          {employees.find((e) => e.id === selectedDayRecord.employeeId)?.role || "Senior Developer"}
+                        </p>
+                      </div>
+                    </div>
+                    <StatusBadge status={selectedDayRecord.status} />
                   </div>
-                  <p
-                    className="text-lg font-black"
-                    style={{ color: "var(--foreground)" }}
-                  >
-                    06:02 PM
-                  </p>
-                  <p className="text-[9px] text-muted-foreground font-bold mt-1">
-                    On time
-                  </p>
-                </div>
-              </div>
 
-              <div className="space-y-3">
-                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  Log Timeline
-                </h4>
-                <div className="relative pl-6 space-y-4 before:content-[''] before:absolute before:left-2 before:top-1 before:bottom-1 before:w-0.5 before:bg-neutral-100 dark:before:bg-zinc-800">
-                  <div className="relative flex items-center justify-between">
-                    <div className="absolute -left-[22px] w-4 h-4 rounded-full border-2 border-white dark:border-zinc-900 bg-emerald-500" />
-                    <span
-                      className="text-xs font-bold"
-                      style={{ color: "var(--foreground)" }}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div
+                      className="p-4 rounded-xl border bg-white dark:bg-zinc-900"
+                      style={{ borderColor: "var(--border)" }}
                     >
-                      Check-in recorded
-                    </span>
-                    <span className="text-[11px] font-bold text-muted-foreground">
-                      08:58 AM
-                    </span>
-                  </div>
-                  <div className="relative flex items-center justify-between">
-                    <div className="absolute -left-[22px] w-4 h-4 rounded-full border-2 border-white dark:border-zinc-900 bg-emerald-500" />
-                    <span
-                      className="text-xs font-bold"
-                      style={{ color: "var(--foreground)" }}
+                      <div className="flex items-center gap-2 mb-2">
+                        <ArrowUpRight size={16} className="text-emerald-500" />
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                          Punch In
+                        </span>
+                      </div>
+                      <p
+                        className="text-lg font-black"
+                        style={{ color: "var(--foreground)" }}
+                      >
+                        {selectedDayRecord.checkIn}
+                      </p>
+                      <p className={`text-[9px] font-bold mt-1 ${selectedDayRecord.status === "Late" ? "text-amber-500" : "text-emerald-600"}`}>
+                        {selectedDayRecord.checkIn !== "--:--" ? (selectedDayRecord.status === "Late" ? "Late" : "On time") : "No log"}
+                      </p>
+                    </div>
+                    <div
+                      className="p-4 rounded-xl border bg-white dark:bg-zinc-900"
+                      style={{ borderColor: "var(--border)" }}
                     >
-                      Work started
-                    </span>
-                    <span className="text-[11px] font-bold text-muted-foreground">
-                      09:05 AM
-                    </span>
+                      <div className="flex items-center gap-2 mb-2">
+                        <ArrowUpRight
+                          size={16}
+                          className="text-orange-500 rotate-90"
+                        />
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                          Punch Out
+                        </span>
+                      </div>
+                      <p
+                        className="text-lg font-black"
+                        style={{ color: "var(--foreground)" }}
+                      >
+                        {selectedDayRecord.checkOut}
+                      </p>
+                      <p className="text-[9px] text-muted-foreground font-bold mt-1">
+                        {selectedDayRecord.checkOut !== "--:--" ? "Recorded" : "No log"}
+                      </p>
+                    </div>
                   </div>
-                  <div className="relative flex items-center justify-between">
-                    <div className="absolute -left-[22px] w-4 h-4 rounded-full border-2 border-white dark:border-zinc-900 bg-emerald-500" />
-                    <span
-                      className="text-xs font-bold"
-                      style={{ color: "var(--foreground)" }}
-                    >
-                      Checkout recorded
-                    </span>
-                    <span className="text-[11px] font-bold text-muted-foreground">
-                      06:02 PM
-                    </span>
+
+                  <div className="space-y-3">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      Log Timeline
+                    </h4>
+                    {selectedDayRecord.checkIn !== "--:--" ? (
+                      <div className="relative pl-6 space-y-4 before:content-[''] before:absolute before:left-2 before:top-1 before:bottom-1 before:w-0.5 before:bg-neutral-100 dark:before:bg-zinc-800">
+                        <div className="relative flex items-center justify-between">
+                          <div className="absolute -left-[22px] w-4 h-4 rounded-full border-2 border-white dark:border-zinc-900 bg-emerald-500" />
+                          <span
+                            className="text-xs font-bold"
+                            style={{ color: "var(--foreground)" }}
+                          >
+                            Check-in recorded
+                          </span>
+                          <span className="text-[10px] font-bold text-muted-foreground">
+                            {selectedDayRecord.checkIn}
+                          </span>
+                        </div>
+                        {selectedDayRecord.checkOut !== "--:--" && (
+                          <div className="relative flex items-center justify-between">
+                            <div className="absolute -left-[22px] w-4 h-4 rounded-full border-2 border-white dark:border-zinc-900 bg-emerald-500" />
+                            <span
+                              className="text-xs font-bold"
+                              style={{ color: "var(--foreground)" }}
+                            >
+                              Checkout recorded
+                            </span>
+                            <span className="text-[10px] font-bold text-muted-foreground">
+                              {selectedDayRecord.checkOut}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-xs font-bold text-muted-foreground italic">No punch activity recorded for this day.</p>
+                    )}
                   </div>
-                </div>
-              </div>
+                </>
+              )}
             </div>
 
             <div
@@ -539,24 +1291,46 @@ export function Attendance() {
           </p>
         </div>
 
-        <div
-          className="flex items-center gap-1.5 p-1 rounded-xl border bg-white dark:bg-zinc-900"
-          style={{ borderColor: "var(--border)" }}
-        >
+        <div className="flex items-center gap-3">
           <button
-            onClick={() => setView("table")}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${view === "table" ? "bg-[var(--secondary)] text-[var(--primary)] shadow-sm" : "text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
+            onClick={handleOpenAdd}
+            className="flex items-center gap-2 px-4 h-10 bg-[#00B87C] text-white rounded-xl hover:bg-[#00a36d] shadow-sm transition-all text-xs font-bold active:scale-95"
           >
-            <List size={14} /> Table
+            <Plus size={16} />
+            <span>Add Attendance</span>
           </button>
-          <button
-            onClick={() => setView("calendar")}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${view === "calendar" ? "bg-[var(--secondary)] text-[var(--primary)] shadow-sm" : "text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
+
+          <div
+            className="flex items-center gap-1.5 p-1 h-10 rounded-xl border bg-white dark:bg-zinc-900"
+            style={{ borderColor: "var(--border)" }}
           >
-            <LayoutGrid size={14} /> Calendar
-          </button>
+            <button
+              onClick={() => setView("table")}
+              className={`flex items-center gap-2 px-3.5 h-full rounded-lg text-xs font-bold transition-all ${view === "table" ? "bg-[var(--secondary)] text-[var(--primary)] shadow-sm" : "text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
+            >
+              <List size={14} /> Table
+            </button>
+            <button
+              onClick={() => setView("calendar")}
+              className={`flex items-center gap-2 px-3.5 h-full rounded-lg text-xs font-bold transition-all ${view === "calendar" ? "bg-[var(--secondary)] text-[var(--primary)] shadow-sm" : "text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
+            >
+              <LayoutGrid size={14} /> Calendar
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Success Toast */}
+      {showSuccessToast && (
+        <div className="fixed bottom-5 right-5 z-[2000] bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3 animate-in slide-in-from-right-5 duration-300">
+          <div className="w-6 h-6 rounded-full bg-[#00B87C] flex items-center justify-center text-white font-bold text-xs">
+            ✓
+          </div>
+          <div>
+            <p className="text-xs font-bold">{toastMessage}</p>
+          </div>
+        </div>
+      )}
 
       {/* ── Filter Bar ── */}
       <div
@@ -906,9 +1680,9 @@ export function Attendance() {
                 <div className="flex items-center gap-2 text-[11px] font-bold text-muted-foreground">
                   Showing{" "}
                   <span className="text-foreground">
-                    {Math.min(dailyLogs.length, itemsPerPage)}
+                    {Math.min(filteredLogs.length, itemsPerPage)}
                   </span>{" "}
-                  of <span className="text-foreground">{dailyLogs.length}</span>
+                  of <span className="text-foreground">{filteredLogs.length}</span>
                 </div>
               </div>
 
@@ -952,6 +1726,12 @@ export function Attendance() {
                       >
                         Working Hours
                       </th>
+                      <th
+                        className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b text-right"
+                        style={{ borderColor: "var(--border)" }}
+                      >
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -960,22 +1740,12 @@ export function Attendance() {
                         (currentPage - 1) * itemsPerPage,
                         currentPage * itemsPerPage,
                       )
-                      .map((log, i) => {
-                        // Logic to pick a relevant employee for the log
-                        let emp = selectedEmployee;
-                        if (!emp) {
-                          const deptEmps =
-                            selectedDept === "All Departments"
-                              ? employees
-                              : employees.filter(
-                                  (e) => e.department === selectedDept,
-                                );
-                          emp = deptEmps[i % deptEmps.length] || employees[0];
-                        }
+                      .map((log) => {
+                        const emp = employees.find((e) => e.id === log.employeeId) || employees[0];
 
                         return (
                           <tr
-                            key={i}
+                            key={log.id}
                             className="group hover:bg-neutral-50/80 dark:hover:bg-zinc-800/40 transition-colors"
                           >
                             <td
@@ -1084,6 +1854,47 @@ export function Attendance() {
                                     }}
                                   />
                                 </div>
+                              </div>
+                            </td>
+                            <td
+                              className="px-5 py-2.5 border-b text-right relative"
+                              style={{ borderColor: "var(--border)" }}
+                            >
+                              <div className="flex items-center justify-end gap-1">
+                                <button
+                                  className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors"
+                                  aria-label={`Actions for ${emp.name} on ${log.date}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveRowMenu(
+                                      activeRowMenu === log.id ? null : log.id,
+                                    );
+                                  }}
+                                >
+                                  <MoreVertical size={16} />
+                                </button>
+                                {activeRowMenu === log.id && (
+                                  <div className="absolute right-5 mt-1 w-32 bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-lg z-[2100] py-1 text-left animate-in fade-in slide-in-from-top-1">
+                                    <button
+                                      className="w-full text-left px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/40"
+                                      onClick={() => {
+                                        setActiveRowMenu(null);
+                                        handleOpenEdit(log);
+                                      }}
+                                    >
+                                      Edit
+                                    </button>
+                                    <button
+                                      className="w-full text-left px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20"
+                                      onClick={() => {
+                                        setActiveRowMenu(null);
+                                        setDeleteConfirm(log.id);
+                                      }}
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                )}
                               </div>
                             </td>
                           </tr>
@@ -1218,9 +2029,28 @@ export function Attendance() {
                       );
 
                     const isWeekend = i % 7 === 0 || i % 7 === 6;
-                    const status = isWeekend
-                      ? "Weekend"
-                      : attendanceCalendar[day] || "Present";
+                    const dateStr = formatDate(day, selectedMonth, selectedYear);
+                    let status = "Present";
+                    if (isWeekend) {
+                      status = "Weekend";
+                    } else {
+                      const dayRec = records.find((r) => {
+                        const matchesDate = r.date === dateStr;
+                        if (selectedEmpId !== "All Employees") {
+                          return matchesDate && r.employeeId === selectedEmpId;
+                        }
+                        return matchesDate;
+                      });
+                      if (dayRec) {
+                        status = dayRec.status;
+                      } else {
+                        if (selectedMonth === 3 && selectedYear === 2026) {
+                          status = attendanceCalendar[day] || "Present";
+                        } else {
+                          status = "Absent";
+                        }
+                      }
+                    }
                     const config = STATUS_CONFIG[status];
                     const isToday = day === 22 && selectedMonth === 3;
                     const isSelected = selectedDayDetail === day;
