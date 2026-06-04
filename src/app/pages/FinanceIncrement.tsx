@@ -720,7 +720,7 @@ function FilterSelect({ label, options = ["Option 1", "Option 2"] }: { label: st
           {options.map((opt, i) => (
             <button
               key={i}
-              onClick={() => { setSelected(opt); setIsOpen(false); }}
+              onMouseDown={(e) => { e.preventDefault(); setSelected(opt); setIsOpen(false); }}
               className={`w-full text-left px-4 py-2.5 text-[13px] font-bold hover:bg-muted transition-all ${selected === opt ? 'text-[#00B87C]' : 'text-foreground'}`}
             >
               {opt}

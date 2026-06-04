@@ -1092,7 +1092,7 @@ export function EmployeeExpenses() {
                     <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       PAYMENT MODE
                     </label>
-                    <select className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none appearance-none focus:border-primary transition-colors">
+                    <select className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors">
                       <option>Personal Card</option>
                       <option>Cash</option>
                       <option>UPI / Bank Transfer</option>

@@ -228,23 +228,29 @@ const CATEGORY_CONFIG: Record<
 /* ─────────────────────────────────────────────────────────────── */
 
 function StatusBadge({ status }: { status: ExpenseStatus }) {
-  const cfg: Record<ExpenseStatus, string> = {
-    Approved: "bg-emerald-500/10 text-primary border-primary/20",
-    Pending: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-    Rejected: "bg-rose-500/10 text-rose-500 border-rose-500/20",
-    Draft: "bg-secondary text-muted-foreground border-border",
+  const getStatusStyle = (s: ExpenseStatus): string => {
+    switch (s) {
+      case "Approved": return "bg-emerald-500/10 text-primary border-primary/20";
+      case "Pending": return "bg-amber-500/10 text-amber-500 border-amber-500/20";
+      case "Rejected": return "bg-rose-500/10 text-rose-500 border-rose-500/20";
+      case "Draft": return "bg-secondary text-muted-foreground border-border";
+      default: return "bg-secondary text-muted-foreground border-border";
+    }
   };
-  const icons: Record<ExpenseStatus, React.ElementType> = {
-    Approved: CheckCircle2,
-    Pending: Clock,
-    Rejected: X,
-    Draft: Edit3,
+  const getStatusIcon = (s: ExpenseStatus): React.ElementType => {
+    switch (s) {
+      case "Approved": return CheckCircle2;
+      case "Pending": return Clock;
+      case "Rejected": return X;
+      case "Draft": return Edit3;
+      default: return Edit3;
+    }
   };
-  const Icon = icons[status];
+  const Icon = getStatusIcon(status);
 
   return (
     <span
-      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border flex items-center gap-1.5 w-fit uppercase tracking-wider ${cfg[status]}`}
+      className={`px-2.5 py-1 rounded-full text-[10px] font-black border flex items-center gap-1.5 w-fit uppercase tracking-wider ${getStatusStyle(status)}`}
     >
       <Icon size={12} />
       {status}
@@ -1086,7 +1092,7 @@ export function ManagerPersonalExpenses() {
                     <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       PAYMENT MODE
                     </label>
-                    <select className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none appearance-none focus:border-primary transition-colors">
+                    <select className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors">
                       <option>Personal Card</option>
                       <option>Cash</option>
                       <option>UPI / Bank Transfer</option>
@@ -1237,4 +1243,3 @@ export function ManagerPersonalExpenses() {
     </div>
   );
 }
-

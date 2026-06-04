@@ -149,10 +149,6 @@ export function ManagerPersonalLeaves() {
             <h1 className="text-[26px] font-bold text-foreground tracking-tight m-0 leading-tight">My Leaves</h1>
             <p className="text-[13px] text-[#6B7280]">Manage your leave requests and balance</p>
           </div>
-          <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight m-0 leading-tight">My Leaves</h1>
-            <p className="text-[13px] font-bold text-muted-foreground mt-1">Leave balance, requests and history</p>
-          </div>
         </div>
         <div>
           <button 
