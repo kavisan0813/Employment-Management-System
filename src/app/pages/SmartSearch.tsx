@@ -279,7 +279,7 @@ const SmartSearch = () => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ask anything about your workforce..."
-              className="w-full h-16 pl-14 pr-32 rounded-2xl bg-white dark:bg-[#06211C] border-none shadow-xl shadow-emerald-900/5 focus:ring-4 focus:ring-emerald-500/20 transition-all duration-300 text-lg text-[#022C22] dark:text-[#ECFDF5] outline-none placeholder:text-emerald-900/30 dark:placeholder:text-emerald-100/20"
+              className="w-full h-16 pl-14 pr-32 rounded-2xl bg-card border-none shadow-xl shadow-emerald-900/5 focus:ring-4 focus:ring-emerald-500/20 transition-all duration-300 text-lg text-[#022C22] dark:text-[#ECFDF5] outline-none placeholder:text-emerald-900/30 dark:placeholder:text-emerald-100/20"
             />
             <div className="absolute inset-y-0 right-3 flex items-center gap-2">
               <Button
@@ -369,7 +369,7 @@ const SmartSearch = () => {
                             <Card
                               key={emp.id}
                               onClick={() => navigate(`/employees/${emp.id}`)}
-                              className="overflow-hidden border-none shadow-md hover:shadow-xl transition-all bg-white dark:bg-[#06211C] group cursor-pointer active:scale-[0.98]"
+                              className="overflow-hidden border-none shadow-md hover:shadow-xl transition-all bg-card group cursor-pointer active:scale-[0.98]"
                             >
                               <CardContent className="p-4 flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/50 dark:to-teal-900/50 flex items-center justify-center text-emerald-700 dark:text-emerald-300 font-bold shrink-0 transition-transform group-hover:scale-110">
@@ -445,7 +445,7 @@ const SmartSearch = () => {
                             <Card
                               key={att.id}
                               onClick={() => navigate("/attendance")}
-                              className="border-none shadow-md bg-white dark:bg-[#06211C] cursor-pointer hover:shadow-lg transition-all active:scale-[0.99] group overflow-hidden"
+                              className="border-none shadow-md bg-card cursor-pointer hover:shadow-lg transition-all active:scale-[0.99] group overflow-hidden"
                             >
                               <CardContent className="p-4 flex gap-4">
                                 <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 group-hover:bg-amber-100 transition-colors">
@@ -479,7 +479,7 @@ const SmartSearch = () => {
                             <Card
                               key={pay.id}
                               onClick={() => navigate("/payroll")}
-                              className="border-none shadow-md bg-white dark:bg-[#06211C] cursor-pointer hover:shadow-lg transition-all active:scale-[0.99] group overflow-hidden"
+                              className="border-none shadow-md bg-card cursor-pointer hover:shadow-lg transition-all active:scale-[0.99] group overflow-hidden"
                             >
                               <CardContent className="p-4 flex gap-4">
                                 <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 group-hover:bg-blue-100 transition-colors">
@@ -526,7 +526,7 @@ const SmartSearch = () => {
                               <Card
                                 key={leave.id}
                                 onClick={() => navigate("/leave")}
-                                className="border-l-4 border-l-amber-500 border-none shadow-md bg-white dark:bg-[#06211C] cursor-pointer hover:shadow-lg transition-all active:scale-[0.99] group overflow-hidden"
+                                className="border-l-4 border-l-amber-500 border-none shadow-md bg-card cursor-pointer hover:shadow-lg transition-all active:scale-[0.99] group overflow-hidden"
                               >
                                 <CardContent className="p-4 flex items-center gap-4">
                                   <div className="flex-1">
@@ -578,7 +578,7 @@ const SmartSearch = () => {
                   animate={{ opacity: 1 }}
                   className="flex flex-col items-center justify-center py-20 text-center"
                 >
-                  <div className="w-20 h-20 bg-emerald-50 dark:bg-[#06211C] rounded-full flex items-center justify-center mb-4">
+                  <div className="w-20 h-20 bg-card rounded-full flex items-center justify-center mb-4">
                     <X size={32} className="text-emerald-300" />
                   </div>
                   <h3 className="text-xl font-bold text-[#022C22] dark:text-[#ECFDF5]">

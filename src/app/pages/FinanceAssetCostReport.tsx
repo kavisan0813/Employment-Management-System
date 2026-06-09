@@ -25,19 +25,13 @@ import {
   RefreshCw,
   X,
   Eye,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   XCircle,
   PieChart,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   FileText,
   Shield,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DollarSign,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Percent,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Home,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Trash2,
   ExternalLink,
   TrendingDown
@@ -50,15 +44,10 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Legend,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Cell,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   PieChart as RechartsPieChart,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Pie,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Sector
 } from "recharts";
 import { motion, AnimatePresence } from "motion/react";
@@ -221,14 +210,12 @@ export function FinanceAssetCostReport() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedDept, setSelectedDept] = useState<string | null>(null);
   const [activeKPIModal, setActiveKPIModal] = useState<KPIModalType>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeChartIndex, setActiveChartIndex] = useState<number | null>(null);
   const [exportLoading, setExportLoading] = useState<"pdf" | "csv" | null>(null);
   const [selectedFY, setSelectedFY] = useState("FY 2025-26");
   const [selectedCatFilter, setSelectedCatFilter] = useState("All Categories");
   const [showFYDropdown, setShowFYDropdown] = useState(false);
   const [showCatDropdown, setShowCatDropdown] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const csvRef = useRef<HTMLAnchorElement>(null);
 
   const totalAssetValue = ASSET_COST_BY_CATEGORY.reduce((s, c) => s + c.totalValue, 0);

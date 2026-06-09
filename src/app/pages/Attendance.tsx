@@ -93,7 +93,7 @@ const MONTH_NAMES = [
 ];
 
 const formatDate = (day: number, month: number, year: number): string => {
-  const monthStr = MONTH_NAMES[month].substring(0, 3);
+  const monthStr = (Reflect.get(MONTH_NAMES, month) || "").substring(0, 3);
   const dayStr = day < 10 ? `0${day}` : `${day}`;
   return `${monthStr} ${dayStr}, ${year}`;
 };
@@ -180,7 +180,7 @@ const initialRecords: AttendanceRecord[] = (() => {
 
   const generated: AttendanceRecord[] = [];
   dailyLogs.forEach((log, index) => {
-    const emp = employees[index % employees.length];
+    const emp = Reflect.get(employees, index % employees.length) || employees[0];
     generated.push({
       id: `ATT-${1000 + index}`,
       employeeId: emp.id,
@@ -280,7 +280,7 @@ const statusDistribution = [
 /* ─── Components ─────────────────────────── */
 
 function StatusBadge({ status }: { status: string }) {
-  const config = STATUS_CONFIG[status] || STATUS_CONFIG.Present;
+  const config = Reflect.get(STATUS_CONFIG, status) || STATUS_CONFIG.Present;
   const Icon = config.icon;
   return (
     <span
@@ -606,7 +606,7 @@ export function Attendance() {
       }
 
       // 4. Filter by Period (Month & Year)
-      const monthPrefix = MONTH_NAMES[selectedMonth].substring(0, 3);
+      const monthPrefix = (Reflect.get(MONTH_NAMES, selectedMonth) || "").substring(0, 3);
       const isCorrectMonth = log.date.startsWith(monthPrefix);
       const isCorrectYear = log.date.endsWith(selectedYear.toString());
       
@@ -630,7 +630,7 @@ export function Attendance() {
       if (selectedDept !== "All Departments" && log.department !== selectedDept) return false;
       if (selectedEmpId !== "All Employees" && log.employeeId !== selectedEmpId) return false;
       
-      const monthPrefix = MONTH_NAMES[selectedMonth].substring(0, 3);
+      const monthPrefix = (Reflect.get(MONTH_NAMES, selectedMonth) || "").substring(0, 3);
       const isCorrectMonth = log.date.startsWith(monthPrefix);
       const isCorrectYear = log.date.endsWith(selectedYear.toString());
       
@@ -669,7 +669,7 @@ export function Attendance() {
     if (rec) return rec;
 
     if (selectedMonth === 3 && selectedYear === 2026) {
-      const mockStatus = attendanceCalendar[selectedDayDetail] || "Present";
+      const mockStatus = Reflect.get(attendanceCalendar, selectedDayDetail) || "Present";
       const emp = selectedEmployee || employees[0];
       return {
         id: `ATT-MOCK-${selectedDayDetail}`,
@@ -718,7 +718,7 @@ export function Attendance() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="add-modal-title"
-            className="w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
+            className="w-full max-w-lg rounded-2xl bg-card border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
             style={{ borderColor: "var(--border)" }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -884,7 +884,7 @@ export function Attendance() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="edit-modal-title"
-            className="w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
+            className="w-full max-w-lg rounded-2xl bg-card border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
             style={{ borderColor: "var(--border)" }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -1054,7 +1054,7 @@ export function Attendance() {
             aria-modal="true"
             aria-labelledby="delete-modal-title"
             aria-describedby="delete-modal-description"
-            className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95"
+            className="w-full max-w-sm rounded-2xl bg-card shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95"
             style={{ borderColor: "var(--border)" }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -1095,7 +1095,7 @@ export function Attendance() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="detail-modal-title"
-            className="w-full max-w-md rounded-2xl bg-white dark:bg-zinc-900 border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+            className="w-full max-w-md rounded-2xl bg-card border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
             style={{ borderColor: "var(--border)" }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -1113,7 +1113,7 @@ export function Attendance() {
                     className="text-lg font-black"
                     style={{ color: "var(--foreground)" }}
                   >
-                    {MONTH_NAMES[selectedMonth]} {selectedDayDetail},{" "}
+                    {Reflect.get(MONTH_NAMES, selectedMonth)} {selectedDayDetail},{" "}
                     {selectedYear}
                   </h3>
                   <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
@@ -1161,7 +1161,7 @@ export function Attendance() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div
-                      className="p-4 rounded-xl border bg-white dark:bg-zinc-900"
+                      className="p-4 rounded-xl border bg-card"
                       style={{ borderColor: "var(--border)" }}
                     >
                       <div className="flex items-center gap-2 mb-2">
@@ -1181,7 +1181,7 @@ export function Attendance() {
                       </p>
                     </div>
                     <div
-                      className="p-4 rounded-xl border bg-white dark:bg-zinc-900"
+                      className="p-4 rounded-xl border bg-card"
                       style={{ borderColor: "var(--border)" }}
                     >
                       <div className="flex items-center gap-2 mb-2">
@@ -1301,7 +1301,7 @@ export function Attendance() {
           </button>
 
           <div
-            className="flex items-center gap-1.5 p-1 h-10 rounded-xl border bg-white dark:bg-zinc-900"
+            className="flex items-center gap-1.5 p-1 h-10 rounded-xl border bg-card"
             style={{ borderColor: "var(--border)" }}
           >
             <button
@@ -1334,7 +1334,7 @@ export function Attendance() {
 
       {/* ── Filter Bar ── */}
       <div
-        className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-end p-4 rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm"
+        className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-end p-4 rounded-2xl border bg-card shadow-sm"
         style={{ borderColor: "var(--border)" }}
       >
         {/* Date Filter */}
@@ -1403,7 +1403,7 @@ export function Attendance() {
 
           {showDeptDropdown && (
             <div
-              className="absolute top-[calc(100%+8px)] left-0 w-full z-[2000] rounded-2xl border bg-white dark:bg-zinc-900 shadow-xl overflow-hidden"
+              className="absolute top-[calc(100%+8px)] left-0 w-full z-[2000] rounded-2xl border bg-card shadow-xl overflow-hidden"
               style={{ borderColor: "var(--border)" }}
             >
               <div className="max-h-60 overflow-y-auto">
@@ -1468,7 +1468,7 @@ export function Attendance() {
 
           {showEmpDropdown && (
             <div
-              className="absolute top-[calc(100%+8px)] left-0 w-full z-[2000] rounded-2xl border bg-white dark:bg-zinc-900 shadow-xl overflow-hidden"
+              className="absolute top-[calc(100%+8px)] left-0 w-full z-[2000] rounded-2xl border bg-card shadow-xl overflow-hidden"
               style={{ borderColor: "var(--border)" }}
             >
               <div
@@ -1618,7 +1618,7 @@ export function Attendance() {
         ].map((card, i) => (
           <div
             key={i}
-            className="group p-4 rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:-translate-y-0.5"
+            className="group p-4 rounded-2xl border bg-card shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:-translate-y-0.5"
             style={{ borderColor: "var(--border)" }}
           >
             <div className="flex items-start justify-between">
@@ -1661,7 +1661,7 @@ export function Attendance() {
         <div className="xl:col-span-8 space-y-6">
           {view === "table" ? (
             <div
-              className="rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm overflow-hidden flex flex-col"
+              className="rounded-2xl border bg-card shadow-sm overflow-hidden flex flex-col"
               style={{ borderColor: "var(--border)" }}
             >
               <div
@@ -1972,7 +1972,7 @@ export function Attendance() {
             </div>
           ) : (
             <div
-              className="rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm overflow-hidden"
+              className="rounded-2xl border bg-card shadow-sm overflow-hidden"
               style={{ borderColor: "var(--border)" }}
             >
               <div
@@ -2045,13 +2045,13 @@ export function Attendance() {
                         status = dayRec.status;
                       } else {
                         if (selectedMonth === 3 && selectedYear === 2026) {
-                          status = attendanceCalendar[day] || "Present";
+                          status = Reflect.get(attendanceCalendar, day) || "Present";
                         } else {
                           status = "Absent";
                         }
                       }
                     }
-                    const config = STATUS_CONFIG[status];
+                    const config = Reflect.get(STATUS_CONFIG, status) || STATUS_CONFIG.Present;
                     const isToday = day === 22 && selectedMonth === 3;
                     const isSelected = selectedDayDetail === day;
 
@@ -2145,7 +2145,7 @@ export function Attendance() {
 
           {/* Monthly Trend Chart */}
           <div
-            className="rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm p-5"
+            className="rounded-2xl border bg-card shadow-sm p-5"
             style={{ borderColor: "var(--border)" }}
           >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 gap-3">
@@ -2228,7 +2228,7 @@ export function Attendance() {
         <div className="xl:col-span-4 space-y-5">
           {/* Employee Year Summary */}
           <div
-            className="rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm p-5"
+            className="rounded-2xl border bg-card shadow-sm p-5"
             style={{ borderColor: "var(--border)" }}
           >
             <h3
@@ -2324,7 +2324,7 @@ export function Attendance() {
 
           {/* Status Distribution */}
           <div
-            className="rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm p-5"
+            className="rounded-2xl border bg-card shadow-sm p-5"
             style={{ borderColor: "var(--border)" }}
           >
             <h3
@@ -2390,7 +2390,7 @@ export function Attendance() {
 
           {/* System Alerts */}
           <div
-            className="rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm p-5"
+            className="rounded-2xl border bg-card shadow-sm p-5"
             style={{ borderColor: "var(--border)" }}
           >
             <h3

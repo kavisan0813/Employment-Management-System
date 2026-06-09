@@ -6,7 +6,6 @@ import {
   X,
   CalendarDays,
   FileText,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   AlertCircle,
   MoreVertical,
   CheckCircle2,
@@ -43,7 +42,6 @@ interface LeaveRecord {
 export function FinanceLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user } = useAuth();
   
   const [activeTab, setActiveTab] = useState<LeaveTab>("My Requests");

@@ -393,7 +393,7 @@ function DepartmentDetailModal({
       onClick={onClose}
     >
       <div
-        className="w-full sm:w-[550px] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 bg-white dark:bg-zinc-900"
+        className="w-full sm:w-[550px] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 bg-card"
         style={{ borderLeft: "1px solid var(--border)" }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -704,7 +704,7 @@ export function Departments() {
           return (
             <div
               key={dept.id}
-              className="bg-white dark:bg-zinc-900 rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
+              className="bg-card rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
             >
               {/* Status / Actions */}
               <div className="absolute top-4 right-4 flex items-center gap-2">
@@ -861,7 +861,7 @@ export function Departments() {
           className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
           style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
         >
-          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95">
+          <div className="w-full max-w-sm rounded-2xl bg-card shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95">
             <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950/40 text-rose-600 flex items-center justify-center mx-auto mb-4">
               <AlertTriangle size={24} />
             </div>
@@ -905,7 +905,7 @@ export function Departments() {
           style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
         >
           <div
-            className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 animate-in fade-in zoom-in-95"
+            className="w-full max-w-sm rounded-2xl bg-card shadow-xl border border-border p-6 animate-in fade-in zoom-in-95"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100 mb-1">
@@ -972,7 +972,7 @@ export function Departments() {
           onClick={() => setViewEmployeesDept(null)}
         >
           <div
-            className="w-full sm:w-[450px] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 bg-white dark:bg-zinc-900"
+            className="w-full sm:w-[450px] h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 bg-card"
             style={{ borderLeft: "1px solid var(--border)" }}
             onClick={(e) => e.stopPropagation()}
           >

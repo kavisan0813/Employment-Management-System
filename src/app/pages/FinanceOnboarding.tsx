@@ -2,44 +2,30 @@ import { ReactNode, useState } from "react";
 import {
   IndianRupee,
   Download,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Users,
   Clock,
   CheckCircle,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Calendar,
   X,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Search,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   User,
   Shield,
   Upload,
   ChevronDown,
   ChevronRight,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Briefcase,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   MapPin,
   Check,
   AlertTriangle,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Building,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Banknote,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   FileText,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Eye,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ArrowUpRight,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   RefreshCw,
   Percent,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   UserCheck,
   Landmark,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CreditCard,
   List,
 } from "lucide-react";
@@ -302,14 +288,10 @@ export function FinanceOnboarding() {
     showToast("Preview", "info", "Payslip preview generated");
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const pendingCount = NEW_HIRES.filter(h => h.urgency === "amber" || h.urgency === "red").length;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const pendingTasks = NEW_HIRES.flatMap(h => h.tasks.filter(t => t.status === "pending" || t.status === "overdue"));
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const todayHires = NEW_HIRES.filter(h => h.joiningDate.includes("Apr 8"));
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getStatusChip = (status: string) => {
     switch (status) {
       case "done": return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#00B87C] uppercase tracking-widest"><Check size={11} className="text-[#00B87C]" /> Done</span>;

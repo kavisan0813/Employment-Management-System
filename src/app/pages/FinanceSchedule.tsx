@@ -5,10 +5,8 @@ import {
   ChevronRight,
   X,
   Calendar,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CalendarX,
   MessageSquare,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Edit2
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -25,7 +23,6 @@ interface ShiftCell {
   hasOt?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SHIFT_SCHEDULE: ShiftCell[] = [
   { day: "Mon", date: "Apr 6", type: "Morning", time: "06:00 – 14:00" },
   { day: "Tue", date: "Apr 7", type: "Morning", time: "06:00 – 14:00", hasOt: true },

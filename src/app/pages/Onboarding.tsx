@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import {
@@ -271,12 +270,10 @@ export function Onboarding() {
     showToast("Escalated", "warning", "Issue has been escalated to Admin.");
     setShowEscalateModal(false);
   };
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDuplicateTemplate = (id: string) => {
     showToast("Template Duplicated", "success", "Template duplicated successfully.");
     setShowTemplateMenu(null);
   };
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDeleteTemplate = (_id: string) => {
     showToast("Template Deleted", "success", "Template deleted.");
     setShowTemplateMenu(null);

@@ -14,21 +14,16 @@ import {
   Briefcase,
   Laptop,
   ShieldCheck,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   BookOpen,
   Star,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   AlertTriangle,
   ArrowLeft,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Building2,
   FileText,
   Mail,
   Send,
   CheckCircle2,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   HelpCircle,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ThumbsUp,
   MessageSquare,
 } from "lucide-react";
@@ -36,7 +31,6 @@ import { motion, AnimatePresence } from "motion/react";
 
 /* ─── Types ─── */
 type ExitType = "Resignation" | "Termination" | "Retirement" | "Contract End" | "Other";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ExitStatus = "Active" | "Completed" | "Scheduled";
 type ClearanceStatus = "cleared" | "pending" | "not_started";
 type TabType = "Active" | "Completed" | "Scheduled" | "Exit Analytics";
@@ -329,22 +323,18 @@ const clearanceChip = (status: ClearanceStatus) => {
 
 /* ─── MAIN COMPONENT ─── */
 export function Offboarding() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("Active");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeExitId, setActiveExitId] = useState<string | null>(null);
   const [showInitiateModal, setShowInitiateModal] = useState(false);
   const [showDetail, setShowDetail] = useState<string | null>(null);
   const [showReminder, setShowReminder] = useState<string | null>(null);
   const [showComplete, setShowComplete] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showInterview, setShowInterview] = useState<string | null>(null);
   const [showSchedule, setShowSchedule] = useState<{id: string; type: "interview" | "clearance"} | null>(null);
 
   const activeExits = EXITS.filter(e => e.progress !== 100);
   const completedExits: ExitEmployee[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const scheduledExits: ExitEmployee[] = [];
 
   const stats = {

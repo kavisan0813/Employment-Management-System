@@ -213,7 +213,6 @@ export function FinanceSettlements() {
     showToast("Exporting", "info", "Downloading F&F Settlements CSV...");
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const totalPending = SETTLEMENTS.reduce((s, i) => s + (i.status === "Pending" ? i.netFF : 0), 0);
 
   return (

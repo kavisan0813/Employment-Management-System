@@ -14,31 +14,18 @@ import {
   BarChart as BarChartIcon,
   Settings,
   Database,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Package,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Laptop,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Smartphone,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Monitor,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Printer,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Wifi,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Watch,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Car,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   IndianRupee,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   AlertTriangle,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   TrendingUp,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Search,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CheckCircle2,
   RefreshCw,
   Building2,
@@ -113,7 +100,6 @@ const YOY_GROWTH_DATA = [
   { month: "Apr", lastYear: 24.8, currentYear: 28.4 }
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ASSET_COST_BY_CATEGORY = [
   { id: "cat1", category: "Laptops", count: 142, totalValue: 18500000, annualDepreciation: 3700000, bookValue: 14800000, icon: "Laptop", status: "Active" },
   { id: "cat2", category: "Smartphones", count: 85, totalValue: 4250000, annualDepreciation: 850000, bookValue: 3400000, icon: "Smartphone", status: "Active" },
@@ -124,7 +110,6 @@ const ASSET_COST_BY_CATEGORY = [
   { id: "cat7", category: "Vehicles", count: 12, totalValue: 7200000, annualDepreciation: 1200000, bookValue: 6000000, icon: "Car", status: "Depreciating" },
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DEPT_ASSET_DIST_DATA = [
   { department: "Engineering", value: 35, color: "#00B87C" },
   { department: "Sales", value: 18, color: "#8B5CF6" },
@@ -135,7 +120,6 @@ const DEPT_ASSET_DIST_DATA = [
   { department: "Legal", value: 4, color: "#14B8A6" },
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ASSET_VALUE_BY_DEPT = [
   { department: "Engineering", total: 85, depreciated: 32, current: 53 },
   { department: "Sales", total: 42, depreciated: 15, current: 27 },

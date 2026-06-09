@@ -19,7 +19,6 @@ import {
   ChevronDown,
   Linkedin,
   X,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CheckCircle2
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -29,7 +28,6 @@ import { showToast } from "../components/workflow/ToastNotification";
 type ProfileTab = "Personal Info" | "Employment" | "Documents" | "Emergency Contact" | "Settings";
 
 export function FinanceProfile() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<ProfileTab>("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
@@ -540,7 +538,6 @@ function EmergencyContactTab({ isEditing }: { isEditing: boolean }) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function SettingsTab({ onTabChange }: { onTabChange: (tab: ProfileTab) => void }) {
   return (
     <div className="space-y-6">

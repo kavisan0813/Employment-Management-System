@@ -464,7 +464,7 @@ export const ShiftSchedule: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div
-          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-white dark:bg-zinc-900 group"
+          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-card group"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex items-start justify-between">
@@ -491,7 +491,7 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
         <div
-          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-white dark:bg-zinc-900 group"
+          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-card group"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex items-start justify-between">
@@ -523,7 +523,7 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
         <div
-          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-white dark:bg-zinc-900 group"
+          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-card group"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex items-start justify-between">
@@ -547,7 +547,7 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
         <div
-          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-white dark:bg-zinc-900 group"
+          className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-card group"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="flex items-start justify-between">
@@ -580,7 +580,7 @@ export const ShiftSchedule: React.FC = () => {
       </div>
 
       {/* Shift Legend & Quick Assign Toolbar */}
-      <div className="bg-white dark:bg-zinc-900 border border-border rounded-2xl p-4 mb-6 flex items-center justify-between shadow-sm">
+      <div className="bg-card border border-border rounded-2xl p-4 mb-6 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-[#00B87C]">
@@ -640,7 +640,7 @@ export const ShiftSchedule: React.FC = () => {
       </div>
 
       {/* Weekly Schedule Grid */}
-      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8 bg-white dark:bg-zinc-900">
+      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8">
         <div className="grid grid-cols-[240px_repeat(7,1fr)] bg-secondary/50 border-b border-border">
           <div className="px-4 py-3 text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center">
             Employee
@@ -764,7 +764,7 @@ export const ShiftSchedule: React.FC = () => {
         {/* Swap Requests */}
         <div
           id="swaps-panel"
-          className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-[400px] transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] overflow-hidden"
+          className="bg-card rounded-2xl border border-border shadow-sm flex flex-col h-[400px] transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] overflow-hidden"
         >
           {/* Header */}
           <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-card rounded-t-2xl flex-shrink-0">
@@ -877,7 +877,7 @@ export const ShiftSchedule: React.FC = () => {
         {/* Overtime Summary */}
         <div
           id="overtime-panel"
-          className="bg-white dark:bg-zinc-900 rounded-2xl border border-border shadow-sm flex flex-col h-full transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
+          className="bg-card rounded-2xl border border-border shadow-sm flex flex-col h-full transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
         >
           <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-card rounded-t-2xl">
             <div className="flex items-center gap-3">
@@ -1028,7 +1028,7 @@ export const ShiftSchedule: React.FC = () => {
           {templates.map((tmpl) => (
             <div
               key={tmpl.id}
-              className="bg-white dark:bg-zinc-900 rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
+              className="bg-card rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
             >
               {tmpl.badge && (
                 <span
@@ -1222,7 +1222,7 @@ export const ShiftSchedule: React.FC = () => {
         >
           {applyStep === "form" ? (
             <div
-              className="w-full max-w-2xl rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 flex flex-col max-h-[90vh]"
+              className="w-full max-w-2xl rounded-2xl bg-card shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 flex flex-col max-h-[90vh]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -1530,7 +1530,7 @@ export const ShiftSchedule: React.FC = () => {
           ) : (
             /* Step 2: Confirmation Popup */
             <div
-              className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95"
+              className="w-full max-w-sm rounded-2xl bg-card shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-[#00B87C] flex items-center justify-center mx-auto mb-4">
@@ -1648,7 +1648,7 @@ export const ShiftSchedule: React.FC = () => {
           onClick={() => setSelectedTemplate(null)}
         >
           <div
-            className="w-full max-w-md rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in slide-in-from-bottom-4"
+            className="w-full max-w-md rounded-2xl bg-card shadow-xl border border-border overflow-hidden animate-in fade-in slide-in-from-bottom-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-neutral-50 dark:bg-zinc-800/40">
@@ -1714,7 +1714,7 @@ export const ShiftSchedule: React.FC = () => {
           onClick={() => setShowCreateTemplate(false)}
         >
           <div
-            className="w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95"
+            className="w-full max-w-lg rounded-2xl bg-card shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 py-4 border-b border-border bg-neutral-50 dark:bg-zinc-800/40 flex items-center justify-between">
@@ -1873,7 +1873,7 @@ export const ShiftSchedule: React.FC = () => {
           onClick={() => setEditTemplate(null)}
         >
           <div
-            className="w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95"
+            className="w-full max-w-lg rounded-2xl bg-card shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 py-4 border-b border-border bg-neutral-50 dark:bg-zinc-800/40 flex items-center justify-between">
@@ -2033,7 +2033,7 @@ export const ShiftSchedule: React.FC = () => {
           onClick={() => setRenameTemplate(null)}
         >
           <div
-            className="w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-border p-6 animate-in fade-in zoom-in-95"
+            className="w-full max-w-sm rounded-2xl bg-card shadow-xl border border-border p-6 animate-in fade-in zoom-in-95"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 mb-4">
@@ -2256,7 +2256,7 @@ export const ShiftSchedule: React.FC = () => {
       {/* Swap Details Modal */}
       {selectedSwapDetails && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-900 rounded-[32px] shadow-2xl border border-border w-full max-w-md overflow-hidden transform transition-all p-6">
+          <div className="bg-card rounded-[32px] shadow-2xl border border-border w-full max-w-md overflow-hidden transform transition-all p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-extrabold text-foreground">
                 Swap Details
@@ -2282,7 +2282,7 @@ export const ShiftSchedule: React.FC = () => {
                 </span>
               </div>
 
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-zinc-900 p-2 rounded-full border border-border shadow-sm">
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card p-2 rounded-full border border-border shadow-sm">
                 <ArrowLeftRight size={16} className="text-[#00B87C]" />
               </div>
 

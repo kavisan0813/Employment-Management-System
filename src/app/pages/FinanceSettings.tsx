@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Settings,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Lock,
   User,
   Bell,
@@ -11,7 +10,6 @@ import {
   Eye,
   EyeOff,
   Check,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Info,
   Download,
   Sliders,

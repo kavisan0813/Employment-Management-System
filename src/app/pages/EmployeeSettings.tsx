@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
@@ -16,25 +15,19 @@ import {
   HelpCircle,
   Headphones,
   ChevronRight,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Camera,
   X,
   Eye,
   EyeOff,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Shield,
   AlertTriangle,
   Sun,
   Monitor,
   Search,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Phone,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Mail,
   Smartphone,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   MapPin,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Linkedin,
   Clock,
   Calendar,
@@ -49,7 +42,6 @@ import {
   LogOut,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useAuth } from "../context/AuthContext";
 
 type SectionKey =
@@ -110,7 +102,6 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Modal({ open, onClose, title, children }: ModalProps) {
   return (
     <AnimatePresence>
@@ -160,7 +151,6 @@ function Toggle({ on, onChange, disabled }: { on: boolean; onChange: (v: boolean
 
 export default function EmployeeSettings() {
   const [activeSection, setActiveSection] = useState<SectionKey>("security");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -229,7 +219,6 @@ export default function EmployeeSettings() {
 /* ═══════════════════════════════════════════
    SECTION: ACCOUNT & SECURITY
    ═══════════════════════════════════════════ */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function AccountSecurity({ onModal }: { onModal: (m: string | null) => void }) {
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");

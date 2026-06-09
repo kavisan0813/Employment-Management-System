@@ -11,9 +11,7 @@ import {
   Heart, 
   Building2,
   CloudUpload,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ChevronDown,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Eye,
   Download
 } from "lucide-react";
@@ -352,7 +350,6 @@ interface UploadModalProps {
   onSubmit: (categoryId: string, fileName: string, expiry?: string) => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function UploadModal({ isOpen, onClose, preSelected, categories, onSubmit }: UploadModalProps) {
   const [catId, setCatId] = useState(preSelected?.categoryId || categories[0]?.id || "");
   const [docName, setDocName] = useState(preSelected?.fileName || "");

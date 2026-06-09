@@ -13,7 +13,6 @@ import {
   Flag,
   CheckCircle2,
   AlertTriangle,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   UserX,
   Ban,
   Info,
@@ -117,7 +116,6 @@ export function HRAuditLogs() {
 
   const todayLogs = LOGS.filter(l => l.timestamp.startsWith("Today")).length;
   const flaggedCount = LOGS.filter(l => l.isFlagged).length;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const sensitiveEdits = LOGS.filter(l => l.action === "UPDATE" && l.severity !== "info").length + LOGS.filter(l => l.action === "DELETE").length;
 
   const displayedLogs = flaggedFilter ? LOGS.filter(l => l.isFlagged) : LOGS;

@@ -9,12 +9,10 @@ import {
   ChevronLeft,
   ChevronDown,
   ShieldAlert,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Globe,
   Flag,
   CheckCircle2,
   AlertTriangle,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   UserX,
   Ban,
   Info,
@@ -119,9 +117,7 @@ export function FinanceAuditLogs() {
 
   const todayLogs = LOGS.filter(l => l.timestamp.startsWith("Today")).length;
   const flaggedCount = LOGS.filter(l => l.isFlagged).length;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const payrollEvents = LOGS.filter(l => l.module === "Payroll").length;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const expenseApprovals = LOGS.filter(l => l.module === "Expenses").length;
 
   const displayedLogs = flaggedFilter ? LOGS.filter(l => l.isFlagged) : LOGS;

@@ -7,16 +7,12 @@ import {
   UploadCloud,
   FileText,
   Calendar,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   IndianRupee,
   AlertCircle,
   Check,
   Pen,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Download,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ChevronRight,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   User,
   ShieldCheck,
 } from "lucide-react";

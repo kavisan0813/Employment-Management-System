@@ -11,27 +11,12 @@ import {
   ChevronDown,
   ShieldAlert,
   Globe,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Monitor,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Eye,
   Flag,
   CheckCircle2,
   AlertTriangle,
   UserX,
   Ban,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Settings,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Clock,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  LogIn,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Trash2,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Edit3,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Upload,
   Check,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -149,13 +134,11 @@ export function AuditLogs() {
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [showFlags, setShowFlags] = useState(true);
   const [flaggedFilter, setFlaggedFilter] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentPage, setCurrentPage] = useState(1);
   const logsPerPage = 25;
 
   const todayLogs = LOGS.filter(l => l.timestamp.startsWith("Today")).length;
   const flaggedCount = LOGS.filter(l => l.isFlagged).length;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const criticalCount = LOGS.filter(l => l.severity === "critical").length;
 
   const displayedLogs = flaggedFilter ? LOGS.filter(l => l.isFlagged) : LOGS;
@@ -429,9 +412,9 @@ export function AuditLogs() {
                   <div><label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">From</label><input type="date" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
                   <div><label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">To</label><input type="date" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
                 </div>
-                <div><label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">Modules</label><div className="flex flex-wrap gap-1.5">{["All","Dashboard","Employees","Attendance","Leave","Payroll","Settings"].map(m => <button key={m} className="px-2.5 py-1 rounded-lg bg-[#00B87C]/10 text-[#00B87C] text-[11px] font-semibold border border-[#00B87C]/20">{m}</button>)}</div></div>
-                <div><label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">Format</label><div className="flex gap-2">{["CSV","PDF","Excel"].map(f => <button key={f} className={`px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider border ${f === "CSV" ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-muted-foreground hover:border-[#00B87C]/50"}`}>{f}</button>)}</div></div>
-                <div><label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">Severity</label><div className="flex gap-2">{["All","Critical only","Warning+"].map(s => <button key={s} className={`px-3 py-1.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider border ${s === "All" ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-muted-foreground hover:border-[#00B87C]/50"}`}>{s}</button>)}</div></div>
+                <div><label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">Modules</label><div className="flex flex-wrap gap-1.5">{["All", "Dashboard", "Employees", "Attendance", "Leave", "Payroll", "Settings"].map(m => <button key={m} className="px-2.5 py-1 rounded-lg bg-[#00B87C]/10 text-[#00B87C] text-[11px] font-semibold border border-[#00B87C]/20">{m}</button>)}</div></div>
+                <div><label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">Format</label><div className="flex gap-2">{["CSV", "PDF", "Excel"].map(f => <button key={f} className={`px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider border ${f === "CSV" ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-muted-foreground hover:border-[#00B87C]/50"}`}>{f}</button>)}</div></div>
+                <div><label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">Severity</label><div className="flex gap-2">{["All", "Critical only", "Warning+"].map(s => <button key={s} className={`px-3 py-1.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider border ${s === "All" ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-muted-foreground hover:border-[#00B87C]/50"}`}>{s}</button>)}</div></div>
               </div>
               <div className="px-6 py-5 border-t border-border flex items-center justify-end gap-3">
                 <button onClick={() => setShowExportModal(false)} className="px-4 py-2.5 rounded-xl text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all">Cancel</button>
@@ -471,11 +454,11 @@ export function AuditLogs() {
                 </div>
                 <div>
                   <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">Severity</label>
-                  <div className="flex gap-2">{["Critical","Warning"].map(s => <button key={s} className={`px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider border ${s === "Critical" ? "bg-[#FEF2F2] text-[#EF4444] border-[#FECACA]" : "bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]"}`}>{s}</button>)}</div>
+                  <div className="flex gap-2">{["Critical", "Warning"].map(s => <button key={s} className={`px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider border ${s === "Critical" ? "bg-[#FEF2F2] text-[#EF4444] border-[#FECACA]" : "bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]"}`}>{s}</button>)}</div>
                 </div>
                 <div>
                   <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">Notify Via</label>
-                  <div className="flex gap-4">{["Email","Push","SMS"].map(n => (
+                  <div className="flex gap-4">{["Email", "Push", "SMS"].map(n => (
                     <label key={n} className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" defaultChecked={n !== "SMS"} className="w-3.5 h-3.5 rounded border-border text-[#00B87C] focus:ring-[#00B87C]" /><span className="text-[12px] font-bold text-foreground">{n}</span></label>
                   ))}</div>
                 </div>
