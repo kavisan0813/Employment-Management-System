@@ -69,7 +69,7 @@ const progressRing = (pct: number, size = 36, stroke = 3) => {
   const offset = circ - (pct / 100) * circ;
   return (
     <svg width={size} height={size} className="shrink-0">
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#F3F4F6" strokeWidth={stroke} />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeWidth={stroke} className="text-muted/50" />
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#00B87C" strokeWidth={stroke} strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" transform={`rotate(-90 ${size / 2} ${size / 2})`} />
     </svg>
   );
@@ -306,7 +306,7 @@ export function Onboarding() {
       </div>
 
       {/* INFO BAR */}
-      <div className="flex flex-wrap items-center gap-5 px-5 py-3 rounded-2xl bg-[#DCFCE7]/40 border border-[#00B87C]/15">
+      <div className="flex flex-wrap items-center gap-5 px-5 py-3 rounded-2xl bg-[#00B87C]/[0.06] border border-[#00B87C]/15">
         <div className="flex items-center gap-2 text-[12px] font-bold text-[#00B87C]"><span className="w-2 h-2 rounded-full bg-[#00B87C]" /> {activeCount} new hires currently onboarding</div>
         <div className="w-px h-4 bg-[#00B87C]/20" />
         <div className="flex items-center gap-2 text-[12px] font-bold text-[#F59E0B]"><span className="w-2 h-2 rounded-full bg-[#F59E0B]" /> {overdueTasks} tasks overdue across active onboardings</div>
@@ -324,7 +324,7 @@ export function Onboarding() {
           { icon: FileText, bg: "#EDE9FE", iconColor: "#8B5CF6", label: "Pending Documents", value: `${pendingDocs}`, valColor: "text-[#8B5CF6]", sub: "not yet uploaded" },
           { icon: Clock8, bg: "#F3F4F6", iconColor: "#6B7280", label: "Avg Completion Time", value: "14d", valColor: "text-[#6B7280]", sub: "from joining to complete" },
         ].map((card, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: i * 0.05 }} className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all">
+          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: i * 0.05 }} className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C]/50 hover:shadow-[0_8px_30px_rgb(0,184,124,0.08)] transition-all">
             <div className="flex items-center justify-between mb-3">
               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[1.5px]">{card.label}</p>
               <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: card.bg }}><card.icon size={16} style={{ color: card.iconColor }} /></div>
@@ -399,24 +399,24 @@ export function Onboarding() {
                 </div>
                 <div className="relative mb-3">
                   <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type="text" placeholder="Search new hires..." className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#F3F4F6] text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                  <input type="text" placeholder="Search new hires..." className="w-full pl-9 pr-3 py-2 rounded-xl bg-muted/50 text-foreground text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
                 </div>
                 <div className="flex items-center gap-2">
                   {[{ key: "all", label: "All" }, { key: "week", label: "This Week" }, { key: "month", label: "This Month" }].map(p => (
-                    <button key={p.key} onClick={() => setFilterPill(p.key as typeof filterPill)} className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all ${filterPill === p.key ? "bg-[#00B87C] text-white" : "bg-[#F3F4F6] text-muted-foreground hover:text-foreground"}`}>{p.label}</button>
+                    <button key={p.key} onClick={() => setFilterPill(p.key as typeof filterPill)} className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all ${filterPill === p.key ? "bg-[#00B87C] text-white" : "bg-muted/50 text-muted-foreground hover:text-foreground"}`}>{p.label}</button>
                   ))}
                 </div>
               </div>
-              <div className="flex-1 overflow-y-auto divide-y divide-[#F3F4F6]">
+              <div className="flex-1 overflow-y-auto divide-y divide-border">
                 {filteredList.map(nh => (
-                  <div key={nh.id} onClick={() => setSelectedId(nh.id)} className={`flex items-center gap-3 px-5 py-[14px] cursor-pointer transition-all hover:bg-[#00B87C]/[0.08] ${selectedId === nh.id ? "bg-[#F0FDF4] border-l-[3px] border-[#00B87C]" : "border-l-[3px] border-transparent"}`}>
+                  <div key={nh.id} onClick={() => setSelectedId(nh.id)} className={`flex items-center gap-3 px-5 py-[14px] cursor-pointer transition-all hover:bg-[#00B87C]/[0.08] ${selectedId === nh.id ? "bg-[#00B87C]/[0.08] border-l-[3px] border-[#00B87C]" : "border-l-[3px] border-transparent"}`}>
                     <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[11px] font-black shrink-0" style={{ backgroundColor: nh.avatarColor }}>{nh.initials}</div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-bold text-[#111827] truncate">{nh.name}</p>
-                      <p className="text-[11px] text-[#94A3B8] truncate">{nh.role}</p>
+                      <p className="text-[13px] font-bold text-foreground truncate">{nh.name}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">{nh.role}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Calendar size={10} className="text-gray-400 shrink-0" />
-                        <span className="text-[11px] text-gray-400">Joining: {formatDate(nh.joiningDate)}</span>
+                        <Calendar size={10} className="text-muted-foreground shrink-0" />
+                        <span className="text-[11px] text-muted-foreground">Joining: {formatDate(nh.joiningDate)}</span>
                         {deptBadge(nh.dept, nh.deptColor)}
                       </div>
                     </div>
@@ -435,7 +435,7 @@ export function Onboarding() {
               <div className="px-6 py-5 border-b border-border flex flex-wrap items-center gap-4">
                 <div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-lg font-black shrink-0" style={{ backgroundColor: selected.avatarColor }}>{selected.initials}</div>
                 <div className="flex-1">
-                  <h2 className="text-[20px] font-black text-[#111827]">{selected.name}</h2>
+                  <h2 className="text-[20px] font-black text-foreground">{selected.name}</h2>
                   <p className="text-[14px] font-bold text-[#00B87C]">{selected.role} — {selected.dept}</p>
                   <div className="flex items-center gap-4 mt-1 text-[12px] font-semibold text-muted-foreground">
                     <span className="flex items-center gap-1"><Calendar size={12} /> Joining: {formatDate(selected.joiningDate)}</span>
@@ -443,13 +443,13 @@ export function Onboarding() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
-                  <div className="px-3 py-1.5 rounded-full bg-[#DCFCE7] text-[#00B87C] text-[11px] font-semibold uppercase tracking-wider flex items-center gap-1.5"><Calendar size={12} /> Day {selected.daysInOnboarding} of Onboarding</div>
+                  <div className="px-3 py-1.5 rounded-full bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20 text-[11px] font-semibold uppercase tracking-wider flex items-center gap-1.5"><Calendar size={12} /> Day {selected.daysInOnboarding} of Onboarding</div>
                 </div>
               </div>
 
               {/* Progress Bar */}
               <div className="px-6 py-3 border-b border-border flex items-center gap-4">
-                <div className="flex-1 h-[6px] bg-[#F3F4F6] rounded-full overflow-hidden">
+                <div className="flex-1 h-[6px] bg-muted/50 rounded-full overflow-hidden">
                   <motion.div initial={{ width: 0 }} animate={{ width: `${selected.progress}%` }} transition={{ duration: 0.8 }} className="h-full rounded-full" style={{ backgroundColor: selected.progressColor }} />
                 </div>
                 <span className="text-[13px] font-black" style={{ color: selected.progressColor }}>{selected.progress}% Complete</span>
@@ -462,21 +462,21 @@ export function Onboarding() {
                   <div key={phase.id} className="relative">
                     {/* Connector line */}
                     {pi < phases.length - 1 && (
-                      <div className={`absolute left-[15px] top-10 bottom-0 w-[2px] ${phase.status === "completed" ? "bg-[#00B87C]" : "bg-[#E5E7EB] dashed"}`} style={phase.status !== "completed" ? { backgroundImage: "repeating-linear-gradient(to bottom, #D1D5DB 0, #D1D5DB 4px, transparent 4px, transparent 8px)" } : {}} />
+                      <div className={`absolute left-[15px] top-10 bottom-0 w-[2px] ${phase.status === "completed" ? "bg-[#00B87C]" : "bg-border dashed"}`} style={phase.status !== "completed" ? { backgroundImage: "repeating-linear-gradient(to bottom, hsl(var(--border)) 0, hsl(var(--border)) 4px, transparent 4px, transparent 8px)" } : {}} />
                     )}
                     <div className="relative pb-6">
                       {/* Phase Header */}
                       <div className="flex items-center gap-3 mb-3">
-                        <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 border-2 ${phase.status === "completed" ? "bg-[#00B87C] border-[#00B87C]" : phase.status === "in-progress" ? "border-[#14B8A6] bg-white" : "border-[#D1D5DB] bg-white"}`}>
-                          {phase.status === "completed" ? <Check size={14} className="text-white" /> : phase.status === "in-progress" ? <div className="w-2.5 h-2.5 rounded-full bg-[#14B8A6] animate-pulse" /> : <div className="w-2.5 h-2.5 rounded-full bg-[#D1D5DB]" />}
+                        <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 border-2 ${phase.status === "completed" ? "bg-[#00B87C] border-[#00B87C]" : phase.status === "in-progress" ? "border-[#14B8A6] bg-card" : "border-muted-foreground/30 bg-card"}`}>
+                          {phase.status === "completed" ? <Check size={14} className="text-white" /> : phase.status === "in-progress" ? <div className="w-2.5 h-2.5 rounded-full bg-[#14B8A6] animate-pulse" /> : <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/40" />}
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-3">
-                            <h4 className={`text-[14px] font-black ${phase.status === "completed" ? "text-[#00B87C]" : phase.status === "in-progress" ? "text-[#14B8A6]" : "text-gray-400"}`}>{phase.name}</h4>
+                            <h4 className={`text-[14px] font-black ${phase.status === "completed" ? "text-[#00B87C]" : phase.status === "in-progress" ? "text-[#14B8A6]" : "text-muted-foreground"}`}>{phase.name}</h4>
                             {phase.date && <span className="text-[11px] font-semibold text-muted-foreground">{phase.date}</span>}
                           </div>
                         </div>
-                        <div className={`px-2.5 py-1 rounded-full text-[9px] font-semibold uppercase tracking-wider ${phase.status === "completed" ? "bg-[#DCFCE7] text-[#00B87C]" : phase.status === "in-progress" ? "bg-[#CCFBF1] text-[#14B8A6]" : "bg-[#F3F4F6] text-gray-400"}`}>
+                        <div className={`px-2.5 py-1 rounded-full text-[9px] font-semibold uppercase tracking-wider ${phase.status === "completed" ? "bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20" : phase.status === "in-progress" ? "bg-[#14B8A6]/10 text-[#14B8A6] border border-[#14B8A6]/20" : "bg-muted/50 text-muted-foreground border border-border"}`}>
                           {phase.status === "completed" ? "Completed" : phase.status === "in-progress" ? "In Progress" : "Upcoming"}
                         </div>
                       </div>
@@ -488,7 +488,7 @@ export function Onboarding() {
                             <div className="flex items-center gap-3 min-w-0 flex-1">
                               <TaskStatusIcon status={task.status} />
                               <div className="min-w-0 flex-1">
-                                <span className={`text-[12px] font-bold ${task.status === "overdue" ? "text-[#EF4444]" : task.status === "done" ? "text-[#111827] line-through opacity-60" : "text-[#111827]"}`}>{task.task}</span>
+                                <span className={`text-[12px] font-bold ${task.status === "overdue" ? "text-[#EF4444]" : task.status === "done" ? "text-foreground line-through opacity-60" : "text-foreground"}`}>{task.task}</span>
                                 <span className="text-[11px] font-semibold text-muted-foreground ml-2">({task.assignee})</span>
                               </div>
                             </div>
@@ -510,13 +510,13 @@ export function Onboarding() {
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.2em]">Required Documents</h4>
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 h-[6px] w-24 bg-[#F3F4F6] rounded-full overflow-hidden"><div className="h-full rounded-full bg-[#8B5CF6]" style={{ width: `${(uploadedDocs / DOCUMENTS_DATA.length) * 100}%` }} /></div>
+                    <div className="flex-1 h-[6px] w-24 bg-muted/50 rounded-full overflow-hidden"><div className="h-full rounded-full bg-[#8B5CF6]" style={{ width: `${(uploadedDocs / DOCUMENTS_DATA.length) * 100}%` }} /></div>
                     <span className="text-[11px] font-bold text-muted-foreground">{uploadedDocs} / {DOCUMENTS_DATA.length} uploaded</span>
                   </div>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
-                    <thead><tr className="border-b border-border text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    <thead><tr className="border-b border-border text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
                       <th className="pb-2 pr-4">Document</th><th className="pb-2 pr-4">Status</th><th className="pb-2 pr-4">Uploaded By</th><th className="pb-2 pr-4">Date</th><th className="pb-2 text-right">Action</th>
                     </tr></thead>
                     <tbody className="divide-y divide-border/50">
@@ -524,7 +524,7 @@ export function Onboarding() {
                         <tr key={doc.id} className="text-[12px]">
                           <td className="py-2.5 pr-4 font-bold text-foreground">{doc.name}</td>
                           <td className="py-2.5 pr-4">
-                            <span className={`inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider ${doc.status === "uploaded" ? "text-[#00B87C]" : doc.status === "pending" ? "text-[#F59E0B]" : doc.status === "missing" ? "text-[#EF4444]" : "text-gray-400"}`}>
+                            <span className={`inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider ${doc.status === "uploaded" ? "text-[#00B87C]" : doc.status === "pending" ? "text-[#F59E0B]" : doc.status === "missing" ? "text-[#EF4444]" : "text-muted-foreground"}`}>
                               {doc.status === "uploaded" ? <CheckCircle2 size={12} /> : doc.status === "pending" ? <Clock size={12} /> : doc.status === "missing" ? <XCircle size={12} /> : <HelpCircle size={12} />}
                               {doc.status === "uploaded" ? "Uploaded" : doc.status === "pending" ? "Pending" : doc.status === "missing" ? "Missing" : "Optional"}
                             </span>
@@ -532,14 +532,14 @@ export function Onboarding() {
                           <td className="py-2.5 pr-4 text-muted-foreground">{doc.uploadedBy || "—"}</td>
                           <td className="py-2.5 pr-4 text-muted-foreground">{doc.date || "—"}</td>
                           <td className="py-2.5 text-right">
-                            {doc.status === "uploaded" ? <button className="text-[11px] font-semibold text-[#00B87C] uppercase tracking-wider hover:underline">View</button> : doc.status === "pending" ? <button onClick={handleRequestDoc} className="text-[11px] font-semibold text-[#F59E0B] uppercase tracking-wider hover:underline">Request</button> : doc.status === "missing" ? <button onClick={handleUploadDoc} className="text-[11px] font-semibold text-[#EF4444] uppercase tracking-wider hover:underline">Upload</button> : <span className="text-gray-400">—</span>}
+                            {doc.status === "uploaded" ? <button className="text-[11px] font-semibold text-[#00B87C] uppercase tracking-wider hover:underline">View</button> : doc.status === "pending" ? <button onClick={handleRequestDoc} className="text-[11px] font-semibold text-[#F59E0B] uppercase tracking-wider hover:underline">Request</button> : doc.status === "missing" ? <button onClick={handleUploadDoc} className="text-[11px] font-semibold text-[#EF4444] uppercase tracking-wider hover:underline">Upload</button> : <span className="text-muted-foreground">—</span>}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-                <button onClick={handleUploadDoc} className="mt-4 flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-border text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider hover:border-[#00B87C]/50 hover:text-[#00B87C] transition-all"><Upload size={14} /> Upload Document for Employee</button>
+                <button onClick={handleUploadDoc} className="mt-4 flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:border-[#00B87C]/50 hover:text-[#00B87C] transition-all"><Upload size={14} /> Upload Document for Employee</button>
               </div>
 
               {/* Task Actions Toolbar */}
@@ -563,14 +563,14 @@ export function Onboarding() {
             {/* Header */}
             <div className="px-8 py-6 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#DCFCE7] flex items-center justify-center"><UserPlus size={20} className="text-[#00B87C]" /></div>
+                <div className="w-10 h-10 rounded-xl bg-[#00B87C]/10 flex items-center justify-center"><UserPlus size={20} className="text-[#00B87C]" /></div>
                 <div><h2 className="text-lg font-black text-foreground tracking-tight">Initiate New Onboarding</h2><p className="text-[12px] font-semibold text-muted-foreground">Start the onboarding journey for a new hire</p></div>
               </div>
               <button onClick={() => setShowInitiateModal(false)} className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-all"><X size={18} className="text-muted-foreground" /></button>
             </div>
             {/* Step dots */}
             <div className="px-8 py-3 border-b border-border flex items-center gap-2">
-              {[1, 2, 3].map(s => <div key={s} className={`w-2.5 h-2.5 rounded-full transition-all ${initiateStep >= s ? "bg-[#00B87C]" : "bg-[#E5E7EB]"}`} />)}
+              {[1, 2, 3].map(s => <div key={s} className={`w-2.5 h-2.5 rounded-full transition-all ${initiateStep >= s ? "bg-[#00B87C]" : "bg-border"}`} />)}
               <span className="ml-auto text-[11px] font-bold text-muted-foreground">Step {initiateStep} of 3</span>
             </div>
 
@@ -578,7 +578,7 @@ export function Onboarding() {
               <div className="px-8 py-6 space-y-5 overflow-y-auto max-h-[50vh]">
                 <h3 className="text-[13px] font-black text-foreground uppercase tracking-wider">Employee Details</h3>
                 <div>
-                  <label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Select Employee</label>
+                  <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Select Employee</label>
                   <div className="relative">
                     <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <input type="text" placeholder="Search from active employees or new hire records..." className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
@@ -586,22 +586,22 @@ export function Onboarding() {
                   <div className="mt-2 space-y-1 max-h-32 overflow-y-auto">
                     {employees.slice(0, 5).map(emp => (
                       <button key={emp.id} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted transition-all text-left">
-                        <div className="w-7 h-7 rounded-full bg-[#DCFCE7] flex items-center justify-center text-[#00B87C] text-[9px] font-black">{initials(emp.name)}</div>
+                        <div className="w-7 h-7 rounded-full bg-[#00B87C]/10 flex items-center justify-center text-[#00B87C] text-[9px] font-black">{initials(emp.name)}</div>
                         <div><p className="text-[12px] font-bold text-foreground">{emp.name}</p><p className="text-[11px] text-muted-foreground">{emp.role} · {emp.dept}</p></div>
                       </button>
                     ))}
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Joining Date</label><input type="date" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
-                  <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Department</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"><option>Engineering</option><option>Sales</option><option>Finance</option><option>Marketing</option><option>Design</option></select></div>
+                  <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Joining Date</label><input type="date" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
+                  <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Department</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"><option>Engineering</option><option>Sales</option><option>Finance</option><option>Marketing</option><option>Design</option></select></div>
                 </div>
-                <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Designation</label><input type="text" placeholder="e.g. Senior Frontend Developer" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
-                <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Reporting Manager</label>
+                <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Designation</label><input type="text" placeholder="e.g. Senior Frontend Developer" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
+                <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Reporting Manager</label>
                   <div className="relative"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" /><input type="text" placeholder="Search employee..." className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
                 </div>
                 <div>
-                  <label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">Employment Type</label>
+                  <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Employment Type</label>
                   <div className="flex gap-2">{
                     ["Full-time", "Part-time", "Contract", "Intern"].map(t => (
                       <button key={t} className="px-4 py-2 rounded-xl border border-border text-[11px] font-black uppercase tracking-wider transition-all hover:bg-[#00B87C] hover:text-white hover:border-[#00B87C]">{t}</button>
@@ -641,13 +641,13 @@ export function Onboarding() {
                     { label: "IT Contact", icon: Laptop },
                     { label: "Finance Contact", icon: Briefcase },
                   ].map(field => (
-                    <div key={field.label}><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">{field.label}</label>
+                    <div key={field.label}><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">{field.label}</label>
                       <div className="relative"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" /><input type="text" placeholder="Search..." className="w-full pl-9 pr-3 py-2 rounded-xl border border-border bg-background text-[11px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
                     </div>
                   ))}
                 </div>
                 <div>
-                  <label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">Notifications</label>
+                  <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Notifications</label>
                   <div className="space-y-2">
                     {["Send welcome email to employee", "Notify reporting manager", "Notify IT team for equipment", "Notify Finance for enrollment"].map(n => (
                       <label key={n} className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 rounded border-border accent-[#00B87C]" /><span className="text-[12px] font-bold text-foreground">{n}</span></label>
@@ -693,7 +693,7 @@ export function Onboarding() {
                     <h4 className="text-[14px] font-bold text-foreground">{tpl.name}</h4>
                     <div className="flex items-center gap-2">
                       {deptBadge(tpl.dept, tpl.deptColor)}
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${tpl.avgDays !== "—" ? "bg-[#DCFCE7] text-[#00B87C]" : "bg-[#F3F4F6] text-gray-400"}`}>{tpl.avgDays !== "—" ? "Active" : "Draft"}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${tpl.avgDays !== "—" ? "bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20" : "bg-muted/50 text-muted-foreground border border-border"}`}>{tpl.avgDays !== "—" ? "Active" : "Draft"}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 text-[11px] font-bold text-muted-foreground mb-3">
@@ -730,7 +730,7 @@ export function Onboarding() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowPhaseConfirm(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} onClick={e => e.stopPropagation()} className="bg-card border border-border rounded-[32px] w-full max-w-sm p-6 shadow-2xl">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#DCFCE7] flex items-center justify-center"><CheckCircle2 size={24} className="text-[#00B87C]" /></div>
+              <div className="w-12 h-12 rounded-2xl bg-[#00B87C]/10 flex items-center justify-center"><CheckCircle2 size={24} className="text-[#00B87C]" /></div>
               <div><h2 className="text-lg font-black text-foreground">Mark Phase Complete</h2><p className="text-[12px] text-muted-foreground">Are you sure this phase is fully complete?</p></div>
             </div>
             <div className="flex items-center justify-end gap-3 mt-4">
@@ -754,7 +754,7 @@ export function Onboarding() {
               <p className="text-[13px] font-bold text-foreground">Drop files here or click to browse</p>
               <p className="text-[11px] text-muted-foreground mt-1">PDF, JPG, PNG — Max 10MB</p>
             </div>
-            <div className="mt-4"><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Document Type</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none"><option>Experience Letter</option><option>Bank Account Details</option><option>Passport Photo</option><option>Other</option></select></div>
+            <div className="mt-4"><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Document Type</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none"><option>Experience Letter</option><option>Bank Account Details</option><option>Passport Photo</option><option>Other</option></select></div>
             <div className="flex items-center justify-end gap-3 mt-5">
               <button onClick={() => setShowUploadModal(false)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all">Cancel</button>
               <button onClick={() => { showToast("Uploaded", "success", "Document uploaded successfully."); setShowUploadModal(false); }} className="px-5 py-2.5 rounded-xl bg-[#8B5CF6] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md">Upload</button>
@@ -792,11 +792,11 @@ export function Onboarding() {
             </div>
             <div className="px-8 py-6 space-y-5 overflow-y-auto max-h-[60vh]">
               <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2"><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Template Name</label><input type="text" placeholder="e.g. Engineering Onboarding" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
-                <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Department</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none"><option>All Departments</option><option>Engineering</option><option>Sales</option><option>Finance</option></select></div>
-                <div><label className="text-[9px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5 block">Status</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none"><option>Draft</option><option>Published</option></select></div>
+                <div className="col-span-2"><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Template Name</label><input type="text" placeholder="e.g. Engineering Onboarding" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
+                <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Department</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none"><option>All Departments</option><option>Engineering</option><option>Sales</option><option>Finance</option></select></div>
+                <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Status</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none"><option>Draft</option><option>Published</option></select></div>
               </div>
-              <div><h4 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">Phases & Tasks</h4>
+              <div><h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">Phases & Tasks</h4>
                 <div className="space-y-3">
                   {["Pre-Joining", "Day 1", "Week 1", "Month 1", "Completion"].map((phase, i) => (
                     <div key={i} className="p-4 rounded-2xl border border-border bg-muted/10">
@@ -810,7 +810,7 @@ export function Onboarding() {
                       <button className="mt-2 text-[11px] font-semibold text-[#00B87C] uppercase tracking-wider flex items-center gap-1 hover:underline"><Plus size={12} /> Add Task</button>
                     </div>
                   ))}
-                  <button className="w-full py-3 rounded-2xl border-2 border-dashed border-border text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider hover:border-[#00B87C]/50 hover:text-[#00B87C] transition-all"><Plus size={14} className="inline mr-1" /> Add Phase</button>
+                  <button className="w-full py-3 rounded-2xl border-2 border-dashed border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:border-[#00B87C]/50 hover:text-[#00B87C] transition-all"><Plus size={14} className="inline mr-1" /> Add Phase</button>
                 </div>
               </div>
             </div>

@@ -71,7 +71,9 @@ const Training = lazy(() =>
 const Documents = lazy(() =>
   import("./pages/Documents").then((m) => ({ default: m.Documents })),
 );
-const Notifications = lazy(() => import("./pages/Notifications"));
+const Notifications = lazy(() =>
+  import("./pages/Notifications").then((m) => ({ default: m.Notifications })),
+);
 const EmployeeSelfService = lazy(() =>
   import("./pages/EmployeeSelfService").then((m) => ({
     default: m.EmployeeSelfService,

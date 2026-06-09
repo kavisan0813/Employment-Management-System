@@ -13,14 +13,62 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 
-const INITIAL_HEADCOUNT_TREND = [
-  { month: "Oct", count: 1240 },
-  { month: "Nov", count: 1252 },
-  { month: "Dec", count: 1260 },
-  { month: "Jan", count: 1272 },
-  { month: "Feb", count: 1278 },
-  { month: "Mar", count: 1284 },
-];
+const HEADCOUNT_PERIOD_DATA = {
+  "6M": {
+    data: [
+      { month: "Oct", count: 1240 },
+      { month: "Nov", count: 1252 },
+      { month: "Dec", count: 1260 },
+      { month: "Jan", count: 1272 },
+      { month: "Feb", count: 1278 },
+      { month: "Mar", count: 1284 },
+    ],
+    growth: "+44 Employees",
+    rate: "+3.5%",
+    peak: "1,284",
+    avg: "1,264",
+    desc: "Steady linear headcount expansion over the last two quarters."
+  },
+  "1Y": {
+    data: [
+      { month: "Apr '25", count: 1150 },
+      { month: "May '25", count: 1170 },
+      { month: "Jun '25", count: 1185 },
+      { month: "Jul '25", count: 1200 },
+      { month: "Aug '25", count: 1210 },
+      { month: "Sep '25", count: 1225 },
+      { month: "Oct '25", count: 1240 },
+      { month: "Nov '25", count: 1252 },
+      { month: "Dec '25", count: 1260 },
+      { month: "Jan '26", count: 1272 },
+      { month: "Feb '26", count: 1278 },
+      { month: "Mar '26", count: 1284 },
+    ],
+    growth: "+134 Employees",
+    rate: "+11.7%",
+    peak: "1,284",
+    avg: "1,217",
+    desc: "Double-digit headcount growth driven by engineering scaling."
+  },
+  "2Y": {
+    data: [
+      { month: "Q1 '24", count: 980 },
+      { month: "Q2 '24", count: 1020 },
+      { month: "Q3 '24", count: 1060 },
+      { month: "Q4 '24", count: 1110 },
+      { month: "Q1 '25", count: 1150 },
+      { month: "Q2 '25", count: 1185 },
+      { month: "Q3 '25", count: 1225 },
+      { month: "Q4 '25", count: 1260 },
+      { month: "Q1 '26", count: 1284 },
+    ],
+    growth: "+304 Employees",
+    rate: "+31.0%",
+    peak: "1,284",
+    avg: "1,142",
+    desc: "Long-term scaling demonstrating 30%+ user expansion over 24 months."
+  }
+};
 
 const INITIAL_DEPT_DATA = [
   { name: "Engineering", value: 450, color: "#8B5CF6" },
@@ -70,6 +118,7 @@ export function AdminDashboard() {
   const [totalEmployeesCount, setTotalEmployeesCount] = useState(1284);
   const [activeUsersCount, setActiveUsersCount] = useState(1284);
   const [pendingActionsCount, setPendingActionsCount] = useState(3);
+  const [headcountPeriod, setHeadcountPeriod] = useState<"6M" | "1Y" | "2Y">("6M");
   
   const [pendingActionsList, setPendingActionsList] = useState(INITIAL_PENDING_ACTIONS);
   const [auditLogList, setAuditLogList] = useState(INITIAL_AUDIT_LOG);
@@ -330,27 +379,68 @@ export function AdminDashboard() {
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm font-black text-foreground uppercase tracking-wider">{t("headcountTrend")}</h3>
             <div className="flex gap-2">
-              {['6M', '1Y', '2Y'].map(f => (
-                <button key={f} className={`px-3 py-1 rounded-full text-[11px] font-black tracking-widest ${f === '6M' ? 'bg-primary text-white' : 'bg-secondary text-muted-foreground'}`}>{f}</button>
+              {(["6M", "1Y", "2Y"] as const).map(f => (
+                <button
+                  key={f}
+                  onClick={() => setHeadcountPeriod(f)}
+                  className={`px-3 py-1 rounded-full text-[11px] font-black tracking-widest transition-all cursor-pointer ${
+                    f === headcountPeriod
+                      ? "bg-primary text-white shadow-sm shadow-[#00B87C]/20"
+                      : "bg-secondary text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {f}
+                </button>
               ))}
             </div>
           </div>
-          <div className="h-[280px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={INITIAL_HEADCOUNT_TREND}>
-                <defs>
-                  <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#00B87C" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#00B87C" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 700}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 700}} />
-                <Tooltip />
-                <Area type="monotone" dataKey="count" stroke="#00B87C" strokeWidth={3} fillOpacity={1} fill="url(#colorCount)" />
-              </AreaChart>
-            </ResponsiveContainer>
+          <div className="grid grid-cols-1 md:grid-cols-10 gap-6">
+            {/* Insights Panel */}
+            <div className="md:col-span-3 flex flex-col justify-between p-4 bg-emerald-50/20 dark:bg-emerald-950/5 border border-emerald-500/10 rounded-2xl h-full min-h-[140px] md:min-h-0">
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                  Period Insights ({headcountPeriod})
+                </span>
+                <h4 className="text-[20px] font-black text-foreground leading-tight">
+                  {HEADCOUNT_PERIOD_DATA[headcountPeriod].growth}
+                </h4>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider">
+                  {HEADCOUNT_PERIOD_DATA[headcountPeriod].rate} Growth
+                </span>
+                <p className="text-[12px] font-semibold text-muted-foreground leading-snug mt-2">
+                  {HEADCOUNT_PERIOD_DATA[headcountPeriod].desc}
+                </p>
+              </div>
+              <div className="pt-4 border-t border-border/50 grid grid-cols-2 gap-4 mt-4">
+                <div>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block">Peak Count</span>
+                  <span className="text-[15px] font-black text-foreground">{HEADCOUNT_PERIOD_DATA[headcountPeriod].peak}</span>
+                </div>
+                <div>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block">Average</span>
+                  <span className="text-[15px] font-black text-foreground">{HEADCOUNT_PERIOD_DATA[headcountPeriod].avg}</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Chart Panel */}
+            <div className="md:col-span-7 h-[280px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={HEADCOUNT_PERIOD_DATA[headcountPeriod].data}>
+                  <defs>
+                    <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#00B87C" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#00B87C" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 700}} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 700}} />
+                  <Tooltip />
+                  <Area type="monotone" dataKey="count" stroke="#00B87C" strokeWidth={3} fillOpacity={1} fill="url(#colorCount)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
 

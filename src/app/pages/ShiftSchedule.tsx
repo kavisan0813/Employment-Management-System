@@ -315,6 +315,30 @@ export const ShiftSchedule: React.FC = () => {
       : `Prev ${Math.abs(weekOffset)} Weeks`;
   }, [weekOffset]);
 
+  const dayBreakdown = useMemo(() => {
+    const morning: typeof filteredSchedule = [];
+    const evening: typeof filteredSchedule = [];
+    const night: typeof filteredSchedule = [];
+    const off: typeof filteredSchedule = [];
+
+    filteredSchedule.forEach((emp) => {
+      const shift = emp.shifts["Mon"];
+      if (!shift) {
+        off.push(emp);
+      } else if (shift.type === "Morning") {
+        morning.push(emp);
+      } else if (shift.type === "Evening") {
+        evening.push(emp);
+      } else if (shift.type === "Night") {
+        night.push(emp);
+      } else {
+        off.push(emp);
+      }
+    });
+
+    return { morning, evening, night, off };
+  }, [filteredSchedule]);
+
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* Page Header */}
@@ -640,123 +664,298 @@ export const ShiftSchedule: React.FC = () => {
       </div>
 
       {/* Weekly Schedule Grid */}
-      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8">
-        <div className="grid grid-cols-[240px_repeat(7,1fr)] bg-secondary/50 border-b border-border">
-          <div className="px-4 py-3 text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center">
-            Employee
-          </div>
-          {days.map((day, i) => (
-            <div
-              key={day}
-              className={`px-3 py-3 text-center border-l border-border flex flex-col justify-center ${day === "Mon" ? "bg-primary/5" : ""}`}
-            >
-              <span
-                className={`text-xs font-extra-bold ${day === "Mon" ? "text-primary" : "text-foreground"}`}
-              >
-                {day}
-              </span>
-              <span className="text-[11px] text-muted-foreground font-bold">
-                {dates[i]}
-              </span>
+      {view === "Week" && (
+        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8 animate-in fade-in duration-300">
+          <div className="grid grid-cols-[240px_repeat(7,1fr)] bg-secondary/50 border-b border-border">
+            <div className="px-4 py-3 text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center">
+              Employee
             </div>
-          ))}
-        </div>
-        <div className="grid-body divide-y divide-border">
-          {filteredSchedule.map((emp) => (
-            <div
-              key={emp.id}
-              className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]"
-            >
-              <div className="px-4 py-2 flex items-center gap-3 border-r border-border/50">
-                <div className="relative flex-shrink-0">
-                  <img
-                    src={emp.avatar}
-                    alt=""
-                    className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-800 shadow-sm"
-                  />
-                  <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full"></div>
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-extrabold text-foreground leading-tight">
-                    {emp.name}
-                  </span>
-                  <span className="text-[11px] font-semibold text-emerald-600 uppercase tracking-tight mt-0.5">
-                    {emp.dept}
-                  </span>
-                </div>
+            {days.map((day, i) => (
+              <div
+                key={day}
+                className={`px-3 py-3 text-center border-l border-border flex flex-col justify-center ${day === "Mon" ? "bg-primary/5" : ""}`}
+              >
+                <span
+                  className={`text-xs font-extra-bold ${day === "Mon" ? "text-primary" : "text-foreground"}`}
+                >
+                  {day}
+                </span>
+                <span className="text-[11px] text-muted-foreground font-bold">
+                  {dates[i]}
+                </span>
               </div>
-              {days.map((day) => {
-                const shift = emp.shifts[day];
-                return (
-                  <div
-                    key={day}
-                    className="border-l border-border/50 p-1 flex items-stretch"
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const shiftType = e.dataTransfer.getData("shiftType");
-                      if (shiftType) {
-                        handleDrop(emp.id, day, shiftType);
-                      }
-                    }}
-                    onClick={() => {
-                      if (activeBrush) {
-                        handleDrop(emp.id, day, activeBrush);
-                      } else {
-                        setShowAddModal(true);
-                      }
-                    }}
-                  >
-                    {shift ? (
-                      <div
-                        className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group ${
-                          shift.type === "Morning"
-                            ? "bg-secondary text-primary border-l-4 border-l-primary"
-                            : shift.type === "Evening"
-                              ? "bg-[rgba(245,158,11,0.1)] text-[#F59E0B] border-l-4 border-l-[#F59E0B]"
-                              : shift.type === "Night"
-                                ? "bg-violet-50 text-violet-700 border-l-4 border-l-violet-500"
-                                : "bg-blue-50 text-blue-700 border-l-4 border-l-blue-500"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-0.5">
-                          <span className="text-[11px] font-semibold uppercase tracking-tight">
-                            {shift.type}
-                          </span>
-                          {shift.isOT && (
-                            <span className="text-[8px] bg-red-500 text-white px-1.5 rounded-full font-black animate-pulse">
-                              OT
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-[11px] font-bold opacity-80">
-                          {shift.time}
-                        </span>
+            ))}
+          </div>
+          <div className="grid-body divide-y divide-border">
+            {filteredSchedule.map((emp) => (
+              <div
+                key={emp.id}
+                className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]"
+              >
+                <div className="px-4 py-2 flex items-center gap-3 border-r border-border/50">
+                  <div className="relative flex-shrink-0">
+                    <img
+                      src={emp.avatar}
+                      alt=""
+                      className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-800 shadow-sm"
+                    />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full"></div>
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-extrabold text-foreground leading-tight">
+                      {emp.name}
+                    </span>
+                    <span className="text-[11px] font-semibold text-emerald-600 uppercase tracking-tight mt-0.5">
+                      {emp.dept}
+                    </span>
+                  </div>
+                </div>
+                {days.map((day) => {
+                  const shift = emp.shifts[day];
+                  return (
+                    <div
+                      key={day}
+                      className="border-l border-border/50 p-1 flex items-stretch"
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const shiftType = e.dataTransfer.getData("shiftType");
+                        if (shiftType) {
+                          handleDrop(emp.id, day, shiftType);
+                        }
+                      }}
+                      onClick={() => {
+                        if (activeBrush) {
+                          handleDrop(emp.id, day, activeBrush);
+                        } else {
+                          setShowAddModal(true);
+                        }
+                      }}
+                    >
+                      {shift ? (
                         <div
-                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowAddModal(true);
-                          }}
+                          className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group ${
+                            shift.type === "Morning"
+                              ? "bg-secondary text-primary border-l-4 border-l-primary"
+                              : shift.type === "Evening"
+                                ? "bg-[rgba(245,158,11,0.1)] text-[#F59E0B] border-l-4 border-l-[#F59E0B]"
+                                : shift.type === "Night"
+                                  ? "bg-violet-50 text-violet-700 border-l-4 border-l-violet-500"
+                                  : "bg-blue-50 text-blue-700 border-l-4 border-l-blue-500"
+                          }`}
                         >
-                          <MoreIcon
-                            size={12}
-                            className="text-muted-foreground hover:text-emerald-500"
-                          />
+                          <div className="flex items-center justify-between mb-0.5">
+                            <span className="text-[11px] font-semibold uppercase tracking-tight">
+                              {shift.type}
+                            </span>
+                            {shift.isOT && (
+                              <span className="text-[8px] bg-red-500 text-white px-1.5 rounded-full font-black animate-pulse">
+                                OT
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[11px] font-bold opacity-80">
+                            {shift.time}
+                          </span>
+                          <div
+                            className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowAddModal(true);
+                            }}
+                          >
+                            <MoreIcon
+                              size={12}
+                              className="text-muted-foreground hover:text-emerald-500"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="flex-1 rounded-xl border border-dashed border-border/60 hover:border-emerald-500/50 hover:bg-emerald-50/20 transition-colors flex items-center justify-center text-muted-foreground/40 hover:text-emerald-500 cursor-pointer">
-                        <Plus size={12} />
-                      </div>
+                      ) : (
+                        <div className="flex-1 rounded-xl border border-dashed border-border/60 hover:border-emerald-500/50 hover:bg-emerald-50/20 transition-colors flex items-center justify-center text-muted-foreground/40 hover:text-emerald-500 cursor-pointer">
+                          <Plus size={12} />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Monthly Coverage Calendar */}
+      {view === "Month" && (
+        <div className="bg-card border border-border rounded-2xl p-6 shadow-sm mb-8 animate-in fade-in duration-300">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-sm font-black text-foreground uppercase tracking-wider">April 2026 — Team Shift Coverage</h3>
+            <span className="text-xs font-bold text-muted-foreground">🟢 Morning | 🟡 Evening | 🟣 Night</span>
+          </div>
+          
+          <div className="grid grid-cols-7 gap-2">
+            {/* Weekday headers */}
+            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((w) => (
+              <div key={w} className="py-2.5 text-center text-xs font-black text-slate-400 uppercase tracking-wider bg-secondary/30 rounded-lg">
+                {w}
+              </div>
+            ))}
+            
+            {/* Empty days for Wed Apr 1 start */}
+            <div className="min-h-[90px] p-2 bg-secondary/10 rounded-xl border border-dashed border-border/40 opacity-30" />
+            <div className="min-h-[90px] p-2 bg-secondary/10 rounded-xl border border-dashed border-border/40 opacity-30" />
+            
+            {/* Month Days */}
+            {Array.from({ length: 30 }, (_, i) => {
+              const day = i + 1;
+              // Generate realistic headcount variations
+              const morningCount = Math.floor(18 + (Math.sin(day) * 4));
+              const eveningCount = Math.floor(12 + (Math.cos(day) * 3));
+              const nightCount = Math.floor(6 + (Math.sin(day * 1.5) * 2));
+              
+              return (
+                <div
+                  key={day}
+                  className="min-h-[90px] p-3 bg-secondary/20 hover:bg-[#00B87C]/[0.04] rounded-xl border border-border hover:border-primary/50 transition-all flex flex-col justify-between group cursor-pointer"
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-black text-foreground group-hover:text-primary transition-colors">{day}</span>
+                    {day === 6 && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" title="Today" />
                     )}
                   </div>
-                );
-              })}
-            </div>
-          ))}
+                  <div className="space-y-1 mt-2">
+                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
+                      <span>{morningCount} MOR</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+                      <span>{eveningCount} EVE</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#7C3AED]" />
+                      <span>{nightCount} NGT</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Daily Breakdown Columns */}
+      {view === "Day" && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 animate-in fade-in duration-300">
+          {/* Morning Shift */}
+          <div className="bg-card border border-border rounded-2xl p-5 flex flex-col h-[400px]">
+            <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#00B87C]" />
+                <span className="text-sm font-extrabold text-foreground">Morning Shift</span>
+              </div>
+              <span className="text-xs font-black bg-secondary text-primary px-2 py-0.5 rounded-md">
+                {dayBreakdown.morning.length}
+              </span>
+            </div>
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
+              {dayBreakdown.morning.map((emp) => (
+                <div key={emp.id} className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all">
+                  <img src={emp.avatar} alt="" className="w-8 h-8 rounded-full shadow-sm" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-black text-foreground truncate">{emp.name}</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">{emp.dept}</p>
+                  </div>
+                </div>
+              ))}
+              {dayBreakdown.morning.length === 0 && (
+                <p className="text-center text-xs text-muted-foreground py-8">No employees scheduled</p>
+              )}
+            </div>
+          </div>
+
+          {/* Evening Shift */}
+          <div className="bg-card border border-border rounded-2xl p-5 flex flex-col h-[400px]">
+            <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" />
+                <span className="text-sm font-extrabold text-foreground">Evening Shift</span>
+              </div>
+              <span className="text-xs font-black bg-[rgba(245,158,11,0.1)] text-[#F59E0B] px-2 py-0.5 rounded-md">
+                {dayBreakdown.evening.length}
+              </span>
+            </div>
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
+              {dayBreakdown.evening.map((emp) => (
+                <div key={emp.id} className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all">
+                  <img src={emp.avatar} alt="" className="w-8 h-8 rounded-full shadow-sm" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-black text-foreground truncate">{emp.name}</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">{emp.dept}</p>
+                  </div>
+                </div>
+              ))}
+              {dayBreakdown.evening.length === 0 && (
+                <p className="text-center text-xs text-muted-foreground py-8">No employees scheduled</p>
+              )}
+            </div>
+          </div>
+
+          {/* Night Shift */}
+          <div className="bg-card border border-border rounded-2xl p-5 flex flex-col h-[400px]">
+            <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#7C3AED]" />
+                <span className="text-sm font-extrabold text-foreground">Night Shift</span>
+              </div>
+              <span className="text-xs font-black bg-violet-50 text-violet-700 px-2 py-0.5 rounded-md">
+                {dayBreakdown.night.length}
+              </span>
+            </div>
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
+              {dayBreakdown.night.map((emp) => (
+                <div key={emp.id} className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all">
+                  <img src={emp.avatar} alt="" className="w-8 h-8 rounded-full shadow-sm" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-black text-foreground truncate">{emp.name}</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">{emp.dept}</p>
+                  </div>
+                </div>
+              ))}
+              {dayBreakdown.night.length === 0 && (
+                <p className="text-center text-xs text-muted-foreground py-8">No employees scheduled</p>
+              )}
+            </div>
+          </div>
+
+          {/* Off Day */}
+          <div className="bg-card border border-border rounded-2xl p-5 flex flex-col h-[400px]">
+            <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#90A4AE]" />
+                <span className="text-sm font-extrabold text-foreground">Rest / Off Day</span>
+              </div>
+              <span className="text-xs font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md">
+                {dayBreakdown.off.length}
+              </span>
+            </div>
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
+              {dayBreakdown.off.map((emp) => (
+                <div key={emp.id} className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all">
+                  <img src={emp.avatar} alt="" className="w-8 h-8 rounded-full shadow-sm" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-black text-foreground truncate">{emp.name}</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">{emp.dept}</p>
+                  </div>
+                </div>
+              ))}
+              {dayBreakdown.off.length === 0 && (
+                <p className="text-center text-xs text-muted-foreground py-8">No employees scheduled</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Bottom Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
