@@ -2,17 +2,31 @@ import { ReactNode, useState } from "react";
 import {
   IndianRupee,
   Download,
+  Users,
   Clock,
   CheckCircle,
+  Calendar,
   X,
+  Search,
+  User,
   Shield,
   Upload,
   ChevronDown,
   ChevronRight,
+  Briefcase,
+  MapPin,
   Check,
   AlertTriangle,
+  Building,
+  Banknote,
+  FileText,
+  Eye,
+  ArrowUpRight,
+  RefreshCw,
   Percent,
+  UserCheck,
   Landmark,
+  CreditCard,
   List,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -265,22 +279,18 @@ export function FinanceOnboarding() {
     showToast("Preview", "info", "Payslip preview generated");
   };
 
-  
-  // const _pendingCount = NEW_HIRES.filter(h => h.urgency === "amber" || h.urgency === "red").length;
-  
-  // const _pendingTasks = NEW_HIRES.flatMap(h => h.tasks.filter(t => t.status === "pending" || t.status === "overdue"));
-  
-  // const _todayHires = NEW_HIRES.filter(h => h.joiningDate.includes("Apr 8"));
+  const pendingCount = NEW_HIRES.filter(h => h.urgency === "amber" || h.urgency === "red").length;
+  const pendingTasks = NEW_HIRES.flatMap(h => h.tasks.filter(t => t.status === "pending" || t.status === "overdue"));
+  const todayHires = NEW_HIRES.filter(h => h.joiningDate.includes("Apr 8"));
 
-  
-  // const _getStatusChip = (status: string) => {
-  //   switch (status) {
-  //     case "done": return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#00B87C] uppercase tracking-widest"><Check size={11} className="text-[#00B87C]" /> Done</span>;
-  //     case "overdue": return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-500 uppercase tracking-widest"><AlertTriangle size={11} /> Overdue</span>;
-  //     case "waiting": return <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">Waiting</span>;
-  //     default: return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 uppercase tracking-widest"><Clock size={11} /> Pending</span>;
-  //   }
-  // };
+  const getStatusChip = (status: string) => {
+    switch (status) {
+      case "done": return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#00B87C] uppercase tracking-widest"><Check size={11} className="text-[#00B87C]" /> Done</span>;
+      case "overdue": return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-500 uppercase tracking-widest"><AlertTriangle size={11} /> Overdue</span>;
+      case "waiting": return <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">Waiting</span>;
+      default: return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 uppercase tracking-widest"><Clock size={11} /> Pending</span>;
+    }
+  };
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-300 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent relative">

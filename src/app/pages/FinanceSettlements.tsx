@@ -235,6 +235,8 @@ export function FinanceSettlements() {
     showToast("Exporting", "info", "Downloading F&F Settlements CSV...");
   };
 
+  const totalPending = SETTLEMENTS.reduce((s, i) => s + (i.status === "Pending" ? i.netFF : 0), 0);
+
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
       {/* PAGE HEADER */}

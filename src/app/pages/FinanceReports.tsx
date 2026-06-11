@@ -14,6 +14,19 @@ import {
   BarChart as BarChartIcon,
   Settings,
   Database,
+  Package,
+  Laptop,
+  Smartphone,
+  Monitor,
+  Printer,
+  Wifi,
+  Watch,
+  Car,
+  IndianRupee,
+  AlertTriangle,
+  TrendingUp,
+  Search,
+  CheckCircle2,
   RefreshCw,
   Building2,
   Wrench,
@@ -84,16 +97,40 @@ const YOY_GROWTH_DATA = [
   { month: "Jan", lastYear: 24.2, currentYear: 27.9 },
   { month: "Feb", lastYear: 24.5, currentYear: 28.5 },
   { month: "Mar", lastYear: 25.1, currentYear: 29.2 },
-  { month: "Apr", lastYear: 24.8, currentYear: 28.4 },
+  { month: "Apr", lastYear: 24.8, currentYear: 28.4 }
 ];
 
-type ReportTab =
-  | "Dashboards"
-  | "Payroll Reports"
-  | "Expense Reports"
-  | "Tax Reports"
-  | "Asset Reports"
-  | "Custom Builder";
+const ASSET_COST_BY_CATEGORY = [
+  { id: "cat1", category: "Laptops", count: 142, totalValue: 18500000, annualDepreciation: 3700000, bookValue: 14800000, icon: "Laptop", status: "Active" },
+  { id: "cat2", category: "Smartphones", count: 85, totalValue: 4250000, annualDepreciation: 850000, bookValue: 3400000, icon: "Smartphone", status: "Active" },
+  { id: "cat3", category: "Monitors", count: 68, totalValue: 2040000, annualDepreciation: 340000, bookValue: 1700000, icon: "Monitor", status: "Active" },
+  { id: "cat4", category: "Printers", count: 24, totalValue: 960000, annualDepreciation: 160000, bookValue: 800000, icon: "Printer", status: "Depreciating" },
+  { id: "cat5", category: "Servers & Networking", count: 43, totalValue: 6200000, annualDepreciation: 1240000, bookValue: 4960000, icon: "Wifi", status: "Critical" },
+  { id: "cat6", category: "Accessories", count: 120, totalValue: 1200000, annualDepreciation: 240000, bookValue: 960000, icon: "Watch", status: "Active" },
+  { id: "cat7", category: "Vehicles", count: 12, totalValue: 7200000, annualDepreciation: 1200000, bookValue: 6000000, icon: "Car", status: "Depreciating" },
+];
+
+const DEPT_ASSET_DIST_DATA = [
+  { department: "Engineering", value: 35, color: "#00B87C" },
+  { department: "Sales", value: 18, color: "#8B5CF6" },
+  { department: "Operations", value: 15, color: "#F59E0B" },
+  { department: "Marketing", value: 12, color: "#3B82F6" },
+  { department: "Finance", value: 10, color: "#EC4899" },
+  { department: "HR", value: 6, color: "#EF4444" },
+  { department: "Legal", value: 4, color: "#14B8A6" },
+];
+
+const ASSET_VALUE_BY_DEPT = [
+  { department: "Engineering", total: 85, depreciated: 32, current: 53 },
+  { department: "Sales", total: 42, depreciated: 15, current: 27 },
+  { department: "Operations", total: 35, depreciated: 14, current: 21 },
+  { department: "Marketing", total: 28, depreciated: 9, current: 19 },
+  { department: "Finance", total: 22, depreciated: 8, current: 14 },
+  { department: "HR", total: 15, depreciated: 5, current: 10 },
+  { department: "Legal", total: 10, depreciated: 3, current: 7 },
+];
+
+type ReportTab = "Dashboards" | "Payroll Reports" | "Expense Reports" | "Tax Reports" | "Asset Reports" | "Custom Builder";
 
 export function FinanceReports() {
   const location = useLocation();

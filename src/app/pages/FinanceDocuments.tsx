@@ -11,7 +11,9 @@ import {
   Heart,
   Building2,
   CloudUpload,
-  Download,
+  ChevronDown,
+  Eye,
+  Download
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../components/workflow/ToastNotification";
@@ -427,15 +429,8 @@ interface UploadModalProps {
   onSubmit: (categoryId: string, fileName: string, expiry?: string) => void;
 }
 
-function UploadModal({
-  onClose,
-  preSelected,
-  categories,
-  onSubmit,
-}: UploadModalProps) {
-  const [catId, setCatId] = useState(
-    preSelected?.categoryId || categories[0]?.id || "",
-  );
+function UploadModal({ isOpen, onClose, preSelected, categories, onSubmit }: UploadModalProps) {
+  const [catId, setCatId] = useState(preSelected?.categoryId || categories[0]?.id || "");
   const [docName, setDocName] = useState(preSelected?.fileName || "");
   const [description, setDescription] = useState("");
   const [expiry, setExpiry] = useState("");

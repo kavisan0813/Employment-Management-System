@@ -6,6 +6,7 @@ import {
   X,
   CalendarDays,
   FileText,
+  AlertCircle,
   MoreVertical,
   CheckCircle2,
   Calendar,
@@ -41,6 +42,7 @@ interface LeaveRecord {
 export function FinanceLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   
   const [activeTab, setActiveTab] = useState<LeaveTab>("My Requests");
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);

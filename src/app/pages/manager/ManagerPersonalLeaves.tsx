@@ -52,6 +52,7 @@ interface LeaveRecord {
 export function ManagerPersonalLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   const [activeTab, setActiveTab] = useState<LeaveTab>("My Requests");
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
@@ -179,7 +180,7 @@ export function ManagerPersonalLeaves() {
             <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] flex items-center justify-center text-[#00B87C]">
               <Calendar size={18} />
             </div>
-            <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+            <span className="text-11px font-black text-muted-foreground uppercase tracking-widest">
               CASUAL LEAVE
             </span>
           </div>

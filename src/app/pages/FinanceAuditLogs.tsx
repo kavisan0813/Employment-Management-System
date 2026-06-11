@@ -9,9 +9,11 @@ import {
   ChevronLeft,
   ChevronDown,
   ShieldAlert,
+  Globe,
   Flag,
   CheckCircle2,
   AlertTriangle,
+  UserX,
   Ban,
   Info,
   Check,
@@ -124,7 +126,9 @@ export function FinanceAuditLogs() {
 
   const todayLogs = LOGS.filter(l => l.timestamp.startsWith("Today")).length;
   const flaggedCount = LOGS.filter(l => l.isFlagged).length;
-  
+  const payrollEvents = LOGS.filter(l => l.module === "Payroll").length;
+  const expenseApprovals = LOGS.filter(l => l.module === "Expenses").length;
+
   const displayedLogs = flaggedFilter ? LOGS.filter(l => l.isFlagged) : LOGS;
 
   return (

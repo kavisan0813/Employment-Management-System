@@ -503,7 +503,7 @@ function DetailDrawer({
               ].map((b) => (
                 <div
                   key={b.label}
-                  className="p-3 rounded-xl border bg-white dark:bg-zinc-900"
+                  className="p-3 rounded-xl border bg-card"
                   style={{ borderColor: "var(--border)" }}
                 >
                   <div className="flex justify-between items-center mb-1">
@@ -1141,7 +1141,7 @@ export function LeaveManagement() {
           return (
             <div
               key={card.label}
-              className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-white dark:bg-zinc-900"
+              className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-card"
               style={{ borderColor: "var(--border)" }}
             >
               <div className="flex items-start justify-between">
@@ -1176,7 +1176,7 @@ export function LeaveManagement() {
         <div className="xl:col-span-2 space-y-6">
           {/* Main Table Card */}
           <div
-            className="rounded-2xl border shadow-sm flex flex-col bg-white dark:bg-zinc-900"
+            className="rounded-2xl border shadow-sm flex flex-col bg-card"
             style={{ borderColor: "var(--border)" }}
           >
             <div
@@ -1631,7 +1631,7 @@ export function LeaveManagement() {
           {/* Analytics Overview */}
           <div className="grid grid-cols-2 gap-6">
             <div
-              className="rounded-2xl border p-5 bg-white dark:bg-zinc-900"
+              className="rounded-2xl border p-5 bg-card"
               style={{ borderColor: "var(--border)" }}
             >
               <div className="flex items-center justify-between mb-4">
@@ -1672,7 +1672,7 @@ export function LeaveManagement() {
             </div>
 
             <div
-              className="rounded-2xl border p-5 bg-white dark:bg-zinc-900"
+              className="rounded-2xl border p-5 bg-card"
               style={{ borderColor: "var(--border)" }}
             >
               <div className="flex items-center justify-between mb-4">
@@ -1723,7 +1723,7 @@ export function LeaveManagement() {
         <div className="space-y-6">
           {/* Team Coverage Widget */}
           <div
-            className="rounded-2xl border p-5 shadow-sm bg-white dark:bg-zinc-900"
+            className="rounded-2xl border p-5 shadow-sm bg-card"
             style={{ borderColor: "var(--border)" }}
           >
             <div className="flex items-center justify-between mb-4">
@@ -1784,7 +1784,7 @@ export function LeaveManagement() {
 
           {/* Team Leave Calendar */}
           <div
-            className="rounded-2xl border p-4 shadow-sm bg-white dark:bg-zinc-900"
+            className="rounded-2xl border p-4 shadow-sm bg-card"
             style={{ borderColor: "var(--border)" }}
           >
             <div className="flex items-center justify-between mb-4">
@@ -1949,7 +1949,7 @@ export function LeaveManagement() {
 
           {/* Pending Approvals Widget */}
           <div
-            className="rounded-2xl border p-5 shadow-sm bg-white dark:bg-zinc-900"
+            className="rounded-2xl border p-5 shadow-sm bg-card"
             style={{ borderColor: "var(--border)" }}
           >
             <div className="flex items-center justify-between mb-4">

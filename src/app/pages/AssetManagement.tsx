@@ -24,6 +24,19 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  Cell,
+  PieChart,
+  Pie
+} from "recharts";
 
 // Interfaces
 interface Asset {
@@ -148,31 +161,87 @@ export function AssetManagement() {
   const [recoverCondition, setRecoverCondition] = useState("Excellent");
   const [assignCondition, setAssignCondition] = useState("New");
 
-  const tabs = [
-    "All Assets",
-    "Assigned",
-    "Available",
-    "Pending Return",
-    "Maintenance",
-    "Reports",
-  ];
+  // Filter Dropdown States
+  const [categoryFilter, setCategoryFilter] = useState<string>("All");
+  const [deptFilter, setDeptFilter] = useState<string>("All");
+  const [statusFilter, setStatusFilter] = useState<string>("All");
+
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const [deptDropdownOpen, setDeptDropdownOpen] = useState(false);
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+
+  // Add Asset Form States
+  const [newAssetName, setNewAssetName] = useState("");
+  const [newAssetCategory, setNewAssetCategory] = useState<"Laptop" | "Smartphone" | "Monitor" | "Vehicle" | "Other">("Laptop");
+  const [newAssetSerialNo, setNewAssetSerialNo] = useState("");
+  const [newAssetBrand, setNewAssetBrand] = useState("");
+  const [newAssetValue, setNewAssetValue] = useState("");
+  const [newAssetPurchaseDate, setNewAssetPurchaseDate] = useState("");
+  const [newAssetWarrantyExpiry, setNewAssetWarrantyExpiry] = useState("");
+  const [newAssetVendor, setNewAssetVendor] = useState("");
+  const [newAssetLocation, setNewAssetLocation] = useState("");
+  const [newAssetNotes, setNewAssetNotes] = useState("");
+  const [newAssetAssignEmployee, setNewAssetAssignEmployee] = useState("");
+  const [newAssetAssignDate, setNewAssetAssignDate] = useState(new Date().toISOString().split('T')[0]);
+
+  // Assign Asset Form States
+  const [assignEmployee, setAssignEmployee] = useState("");
+  const [assignDept, setAssignDept] = useState("Engineering");
+  const [assignDate, setAssignDate] = useState(new Date().toISOString().split('T')[0]);
+  const [expectedReturnDate, setExpectedReturnDate] = useState("");
+  const [assignNotes, setAssignNotes] = useState("");
+
+  // Recover Asset Form States
+  const [recoverDate, setRecoverDate] = useState(new Date().toISOString().split('T')[0]);
+  const [recoverNotes, setRecoverNotes] = useState("");
+  const [damageDescription, setDamageDescription] = useState("");
+  const [repairCostEstimate, setRepairCostEstimate] = useState("");
+  const [deductFromEmployee, setDeductFromEmployee] = useState(false);
+  const [policeReportNumber, setPoliceReportNumber] = useState("");
+  const [firAttached, setFirAttached] = useState(false);
+  const [replacementRequired, setReplacementRequired] = useState(true);
+
+  // Dynamic Asset Log States (assetId -> logs array)
+  const [maintenanceLogs, setMaintenanceLogs] = useState<Record<string, Array<{title: string, cost: number, desc: string, date: string, status: string}>>>({
+    "AST-0421": [
+      { title: "Battery Replacement", cost: 4500, desc: "Replaced swollen battery with OEM part.", date: "Sep 10, 2022", status: "Completed" }
+    ]
+  });
+  const [assetDocuments, setAssetDocuments] = useState<Record<string, Array<{name: string, size: string, date: string}>>>({
+    "AST-0421": [
+      { name: "Purchase_Invoice_2021.pdf", size: "1.2 MB", date: "Jan 10, 2021" },
+      { name: "Warranty_Card_Dell.pdf", size: "850 KB", date: "Jan 10, 2021" }
+    ]
+  });
+
+  // Maintenance form inputs
+  const [newMaintenanceTitle, setNewMaintenanceTitle] = useState("");
+  const [newMaintenanceCost, setNewMaintenanceCost] = useState("");
+  const [newMaintenanceDesc, setNewMaintenanceDesc] = useState("");
+  const [isAddingLog, setIsAddingLog] = useState(false);
+
+  const tabs = ["All Assets", "Assigned", "Available", "Pending Return", "Maintenance", "Reports"];
 
   const filteredAssets = assets.filter((asset) => {
     if (activeTab !== "All Assets" && activeTab !== "Reports") {
       if (activeTab === "Assigned" && asset.status !== "Assigned") return false;
-      if (activeTab === "Available" && asset.status !== "Available")
-        return false;
-      if (activeTab === "Pending Return" && asset.status !== "Pending Return")
-        return false;
-      if (activeTab === "Maintenance" && asset.status !== "Maintenance")
-        return false;
+      if (activeTab === "Available" && asset.status !== "Available") return false;
+      if (activeTab === "Pending Return" && asset.status !== "Pending Return" && asset.status !== "Overdue") return false;
+      if (activeTab === "Maintenance" && asset.status !== "Maintenance") return false;
     }
 
+    if (categoryFilter !== "All" && asset.category !== categoryFilter) return false;
+
+    if (deptFilter !== "All" && asset.department !== deptFilter) return false;
+
+    if (statusFilter !== "All" && asset.status !== statusFilter) return false;
+    
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       return (
         asset.name.toLowerCase().includes(query) ||
         asset.serialNo.toLowerCase().includes(query) ||
+        asset.assetId.toLowerCase().includes(query) ||
         (asset.assignedTo && asset.assignedTo.toLowerCase().includes(query))
       );
     }
@@ -242,9 +311,40 @@ export function AssetManagement() {
 
   const handleAddAsset = (e: React.FormEvent) => {
     e.preventDefault();
+    const nextIdVal = 421 + assets.length;
+    const nextAssetId = `AST-0${nextIdVal}`;
+    const newVal = parseFloat(newAssetValue) || 0;
+
+    const newAsset: Asset = {
+      id: String(assets.length + 1),
+      name: newAssetName || "New Company Asset",
+      assetId: nextAssetId,
+      category: newAssetCategory,
+      serialNo: newAssetSerialNo || `SN-MOCK-${nextIdVal}`,
+      assignedTo: newAssetAssignEmployee || null,
+      assignedToResigned: false,
+      department: newAssetAssignEmployee ? "Engineering" : null,
+      value: newVal,
+      assignedDate: newAssetAssignEmployee ? newAssetAssignDate : null,
+      status: newAssetAssignEmployee ? "Assigned" : "Available",
+    };
+
+    setAssets([...assets, newAsset]);
     setIsAddModalOpen(false);
-    toast.success("Asset AST-0427 added successfully");
-    // Mock adding asset logic here if needed
+    toast.success(`Asset ${nextAssetId} added successfully`);
+    
+    // Clear states
+    setNewAssetName("");
+    setNewAssetCategory("Laptop");
+    setNewAssetSerialNo("");
+    setNewAssetBrand("");
+    setNewAssetValue("");
+    setNewAssetPurchaseDate("");
+    setNewAssetWarrantyExpiry("");
+    setNewAssetVendor("");
+    setNewAssetLocation("");
+    setNewAssetNotes("");
+    setNewAssetAssignEmployee("");
   };
 
   const handleAssignAsset = (e: React.FormEvent) => {
@@ -255,20 +355,25 @@ export function AssetManagement() {
     );
 
     if (selectedAsset) {
-      setAssets(
-        assets.map((a) =>
-          a.id === selectedAsset.id
-            ? {
-                ...a,
-                status: "Assigned",
-                assignedTo: "New Employee",
-                department: "New Dept",
-                assignedDate: "Today",
-              }
-            : a,
-        ),
-      );
+      setAssets(assets.map(a => 
+        a.id === selectedAsset.id 
+          ? { 
+              ...a, 
+              status: "Assigned", 
+              assignedTo: assignEmployee || "New Employee", 
+              department: assignDept || "Engineering", 
+              assignedDate: assignDate || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+            } 
+          : a
+      ));
     }
+
+    // Reset fields
+    setAssignEmployee("");
+    setAssignDept("Engineering");
+    setAssignDate(new Date().toISOString().split('T')[0]);
+    setExpectedReturnDate("");
+    setAssignNotes("");
   };
 
   const handleRecoverAsset = (e: React.FormEvent) => {
@@ -277,26 +382,77 @@ export function AssetManagement() {
     toast.success(`Asset recovered successfully.`);
 
     if (selectedAsset) {
-      setAssets(
-        assets.map((a) =>
-          a.id === selectedAsset.id
-            ? {
-                ...a,
-                status: "Available",
-                assignedTo: null,
-                department: null,
-                assignedDate: null,
-                assignedToResigned: false,
-              }
-            : a,
-        ),
-      );
+      const isDamaged = recoverCondition === "Damaged";
+      const isLost = recoverCondition === "Lost";
+      const newStatus = isDamaged ? "Maintenance" : (isLost ? "Maintenance" : "Available");
+
+      setAssets(assets.map(a => 
+        a.id === selectedAsset.id 
+          ? { 
+              ...a, 
+              status: newStatus as any, 
+              assignedTo: null, 
+              department: null, 
+              assignedDate: null, 
+              assignedToResigned: false 
+            } 
+          : a
+      ));
     }
 
     if (isDetailPanelOpen) {
       setIsDetailPanelOpen(false);
     }
+
+    // Reset fields
+    setRecoverDate(new Date().toISOString().split('T')[0]);
+    setRecoverNotes("");
+    setDamageDescription("");
+    setRepairCostEstimate("");
+    setDeductFromEmployee(false);
+    setPoliceReportNumber("");
+    setFirAttached(false);
+    setReplacementRequired(true);
   };
+
+  // Dynamic stats calculation
+  const totalAssetsCount = 1284 + (assets.length - 6);
+  const assignedCount = 1198 + (assets.filter(a => a.status === "Assigned").length - 2);
+  const pendingReturnCount = 23 + (assets.filter(a => a.status === "Pending Return").length - 1);
+  const overdueCount = 4 + (assets.filter(a => a.status === "Overdue").length - 1);
+  const maintenanceCount = 12 + (assets.filter(a => a.status === "Maintenance").length - 1);
+  
+  const totalValueSum = assets.reduce((sum, a) => sum + a.value, 0);
+  const orgTotalValue = (2.4 + (totalValueSum - 1330000) / 10000000).toFixed(2);
+
+  // Reports dashboard computations
+  const categoryCounts = assets.reduce((acc, a) => {
+    acc[a.category] = (acc[a.category] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  const categoryChartData = Object.entries(categoryCounts).map(([name, value]) => ({
+    name,
+    value
+  }));
+
+  const deptValues = assets.reduce((acc, a) => {
+    const dept = a.department || "Unassigned";
+    acc[dept] = (acc[dept] || 0) + a.value;
+    return acc;
+  }, {} as Record<string, number>);
+  const deptChartData = Object.entries(deptValues).map(([name, value]) => ({
+    name,
+    value: Math.round(value)
+  }));
+
+  const statusCounts = assets.reduce((acc, a) => {
+    acc[a.status] = (acc[a.status] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  const statusChartData = Object.entries(statusCounts).map(([name, value]) => ({
+    name,
+    value
+  }));
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -339,24 +495,21 @@ export function AssetManagement() {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#10B981]" />
             <span className="text-[13px] font-medium text-[#065F46]">
-              <strong className="font-bold text-[#047857]">1,284</strong> assets
-              tracked across organization
+              <strong className="font-bold text-[#047857]">{totalAssetsCount.toLocaleString('en-IN')}</strong> assets tracked across organization
             </span>
           </div>
           <div className="w-px h-4 bg-[#6EE7B7]" />
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#F59E0B]" />
             <span className="text-[13px] font-medium text-[#92400E]">
-              <strong className="font-bold text-[#B45309]">23</strong> assets
-              pending return
+              <strong className="font-bold text-[#B45309]">{pendingReturnCount}</strong> assets pending return
             </span>
           </div>
           <div className="w-px h-4 bg-[#6EE7B7]" />
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#EF4444]" />
             <span className="text-[13px] font-medium text-[#991B1B]">
-              <strong className="font-bold text-[#B91C1C]">4</strong> assets
-              overdue recovery — exit employees
+              <strong className="font-bold text-[#B91C1C]">{overdueCount}</strong> assets overdue recovery — exit employees
             </span>
           </div>
         </div>
@@ -367,7 +520,7 @@ export function AssetManagement() {
             {
               icon: Package,
               label: "TOTAL ASSETS",
-              value: "1,284",
+              value: totalAssetsCount.toLocaleString('en-IN'),
               subtext: "Across all categories",
               bg: "#E0F2FE",
               color: "#0EA5E9",
@@ -376,8 +529,8 @@ export function AssetManagement() {
             {
               icon: CheckCircle2,
               label: "ASSIGNED",
-              value: "1,198",
-              subtext: "to 1,198 employees",
+              value: assignedCount.toLocaleString('en-IN'),
+              subtext: `to ${assignedCount.toLocaleString('en-IN')} employees`,
               bg: "#DCFCE7",
               color: "#00B87C",
               valColor: "#00B87C",
@@ -385,7 +538,7 @@ export function AssetManagement() {
             {
               icon: RefreshCcw,
               label: "PENDING RETURN",
-              value: "23",
+              value: pendingReturnCount.toString(),
               subtext: "from exiting employees",
               bg: "#FEF3C7",
               color: "#F59E0B",
@@ -394,7 +547,7 @@ export function AssetManagement() {
             {
               icon: AlertCircle,
               label: "OVERDUE RECOVERY",
-              value: "4",
+              value: overdueCount.toString(),
               subtext: "assets not returned",
               bg: "#FEE2E2",
               color: "#EF4444",
@@ -403,7 +556,7 @@ export function AssetManagement() {
             {
               icon: IndianRupee,
               label: "TOTAL ASSET VALUE",
-              value: "₹2.4Cr",
+              value: `₹${orgTotalValue}Cr`,
               subtext: "book value FY 2025-26",
               bg: "#EDE9FE",
               color: "#8B5CF6",
@@ -412,20 +565,42 @@ export function AssetManagement() {
             {
               icon: Wrench,
               label: "IN MAINTENANCE",
-              value: "12",
+              value: maintenanceCount.toString(),
               subtext: "sent for repair/service",
               bg: "#F3F4F6",
               color: "#6B7280",
               valColor: "#4B5563",
             },
           ].map((kpi, idx) => (
-            <div
-              key={idx}
-              className="bg-card rounded-2xl p-4 border border-border shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
+            <div 
+              key={idx} 
+              onClick={() => {
+                if (kpi.label === "TOTAL ASSETS") {
+                  setActiveTab("All Assets");
+                  setCategoryFilter("All");
+                  setDeptFilter("All");
+                  setStatusFilter("All");
+                } else if (kpi.label === "ASSIGNED") {
+                  setActiveTab("Assigned");
+                  setStatusFilter("All");
+                } else if (kpi.label === "PENDING RETURN") {
+                  setActiveTab("Pending Return");
+                  setStatusFilter("Pending Return");
+                } else if (kpi.label === "OVERDUE RECOVERY") {
+                  setActiveTab("Pending Return");
+                  setStatusFilter("Overdue");
+                } else if (kpi.label === "TOTAL ASSET VALUE") {
+                  setActiveTab("Reports");
+                } else if (kpi.label === "IN MAINTENANCE") {
+                  setActiveTab("Maintenance");
+                  setStatusFilter("All");
+                }
+              }}
+              className="bg-card rounded-2xl p-4 border border-border shadow-[0_2px_10px_rgba(0,0,0,0.02)] cursor-pointer hover:shadow-md hover:border-[#00B87C]/30 transition-all group active:scale-[0.98]"
             >
               <div className="flex items-start justify-between mb-3">
-                <div
-                  className="w-9 h-9 rounded-[10px] flex items-center justify-center"
+                <div 
+                  className="w-9 h-9 rounded-[10px] flex items-center justify-center group-hover:scale-110 transition-transform"
                   style={{ backgroundColor: kpi.bg, color: kpi.color }}
                 >
                   <kpi.icon size={20} />
@@ -434,10 +609,7 @@ export function AssetManagement() {
               <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
                 {kpi.label}
               </p>
-              <p
-                className="text-[28px] font-black mb-1"
-                style={{ color: kpi.valColor }}
-              >
+              <p className="text-[28px] font-black mb-1 group-hover:text-[#00B87C] transition-colors" style={{ color: kpi.valColor }}>
                 {kpi.value}
               </p>
               <p className="text-[12px] font-bold text-[#6B7280]">
@@ -446,6 +618,7 @@ export function AssetManagement() {
             </div>
           ))}
         </div>
+
 
         {/* Tabs */}
         <div className="flex items-center gap-6 border-b border-border mb-6">
@@ -486,23 +659,141 @@ export function AssetManagement() {
               className="w-full pl-9 pr-4 py-2 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] transition-all"
             />
           </div>
+          
+          {/* Category Filter */}
+          <div className="relative">
+            <button 
+              onClick={() => {
+                setCategoryDropdownOpen(!categoryDropdownOpen);
+                setDeptDropdownOpen(false);
+                setStatusDropdownOpen(false);
+              }}
+              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
+                categoryFilter !== "All"
+                  ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
+                  : "bg-card border-border text-foreground hover:bg-muted"
+              }`}
+            >
+              Category{categoryFilter !== "All" ? `: ${categoryFilter}` : ""} <ChevronDown size={14} className={categoryFilter !== "All" ? "text-[#00B87C]" : "text-muted-foreground"} />
+            </button>
+            {categoryDropdownOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setCategoryDropdownOpen(false)} />
+                <div className="absolute left-0 mt-1.5 w-48 bg-card border border-border rounded-xl shadow-lg z-50 py-1.5 overflow-hidden">
+                  {["All", "Laptop", "Smartphone", "Monitor", "Vehicle", "Other"].map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => {
+                        setCategoryFilter(cat);
+                        setCategoryDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${
+                        categoryFilter === cat ? "text-[#00B87C] bg-[#00B87C]/5" : "text-foreground"
+                      }`}
+                    >
+                      {cat}
+                      {categoryFilter === cat && <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
 
-          <button className="flex items-center gap-2 px-3 py-2 bg-card border border-border text-foreground rounded-xl text-[13px] font-semibold hover:bg-muted">
-            Category <ChevronDown size={14} className="text-muted-foreground" />
-          </button>
-          <button className="flex items-center gap-2 px-3 py-2 bg-card border border-border text-foreground rounded-xl text-[13px] font-semibold hover:bg-muted">
-            Department{" "}
-            <ChevronDown size={14} className="text-muted-foreground" />
-          </button>
-          <button className="flex items-center gap-2 px-3 py-2 bg-card border border-border text-foreground rounded-xl text-[13px] font-semibold hover:bg-muted">
-            Status <ChevronDown size={14} className="text-muted-foreground" />
-          </button>
+          {/* Department Filter */}
+          <div className="relative">
+            <button 
+              onClick={() => {
+                setDeptDropdownOpen(!deptDropdownOpen);
+                setCategoryDropdownOpen(false);
+                setStatusDropdownOpen(false);
+              }}
+              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
+                deptFilter !== "All"
+                  ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
+                  : "bg-card border-border text-foreground hover:bg-muted"
+              }`}
+            >
+              Department{deptFilter !== "All" ? `: ${deptFilter}` : ""} <ChevronDown size={14} className={deptFilter !== "All" ? "text-[#00B87C]" : "text-muted-foreground"} />
+            </button>
+            {deptDropdownOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setDeptDropdownOpen(false)} />
+                <div className="absolute left-0 mt-1.5 w-48 bg-card border border-border rounded-xl shadow-lg z-50 py-1.5 overflow-hidden">
+                  {["All", "Engineering", "Product", "Finance", "Marketing", "Operations"].map((dept) => (
+                    <button
+                      key={dept}
+                      type="button"
+                      onClick={() => {
+                        setDeptFilter(dept);
+                        setDeptDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${
+                        deptFilter === dept ? "text-[#00B87C] bg-[#00B87C]/5" : "text-foreground"
+                      }`}
+                    >
+                      {dept}
+                      {deptFilter === dept && <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
 
+          {/* Status Filter */}
+          <div className="relative">
+            <button 
+              onClick={() => {
+                setStatusDropdownOpen(!statusDropdownOpen);
+                setCategoryDropdownOpen(false);
+                setDeptDropdownOpen(false);
+              }}
+              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
+                statusFilter !== "All"
+                  ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
+                  : "bg-card border-border text-foreground hover:bg-muted"
+              }`}
+            >
+              Status{statusFilter !== "All" ? `: ${statusFilter}` : ""} <ChevronDown size={14} className={statusFilter !== "All" ? "text-[#00B87C]" : "text-muted-foreground"} />
+            </button>
+            {statusDropdownOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setStatusDropdownOpen(false)} />
+                <div className="absolute left-0 mt-1.5 w-48 bg-card border border-border rounded-xl shadow-lg z-50 py-1.5 overflow-hidden">
+                  {["All", "Assigned", "Available", "Pending Return", "Overdue", "Maintenance"].map((stat) => (
+                    <button
+                      key={stat}
+                      type="button"
+                      onClick={() => {
+                        setStatusFilter(stat);
+                        setStatusDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${
+                        statusFilter === stat ? "text-[#00B87C] bg-[#00B87C]/5" : "text-foreground"
+                      }`}
+                    >
+                      {stat}
+                      {statusFilter === stat && <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+          
           <div className="w-px h-6 bg-border mx-1" />
-
-          <button
-            onClick={() => setSearchQuery("")}
-            className="flex items-center gap-2 px-3 py-2 text-muted-foreground hover:text-foreground rounded-xl text-[13px] font-semibold hover:bg-muted"
+          
+          <button 
+            onClick={() => {
+              setSearchQuery("");
+              setCategoryFilter("All");
+              setDeptFilter("All");
+              setStatusFilter("All");
+              setActiveTab("All Assets");
+            }}
+            className="flex items-center gap-2 px-3 py-2 text-muted-foreground hover:text-foreground rounded-xl text-[13px] font-semibold hover:bg-muted cursor-pointer"
           >
             <RotateCcw size={14} />
             Reset
@@ -514,269 +805,333 @@ export function AssetManagement() {
         </div>
 
         {/* Asset Table */}
-        <div className="bg-card border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden">
-          <div className="px-6 py-4 border-b border-border bg-muted/50">
-            <h3 className="text-[11px] font-semibold text-[#94A3B8] tracking-wider">
-              ALL ASSETS
-            </h3>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-border bg-[#F9FAFB] dark:bg-white/5">
-                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
-                    Asset
-                  </th>
-                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
-                    Category
-                  </th>
-                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
-                    Serial No.
-                  </th>
-                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
-                    Assigned To
-                  </th>
-                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
-                    Dept
-                  </th>
-                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
-                    Value
-                  </th>
-                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
-                    Assigned Date
-                  </th>
-                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredAssets.map((asset) => {
-                  const catColor = getCategoryColor(asset.category);
-                  return (
-                    <tr
-                      key={asset.id}
-                      className={`group hover:bg-[#00B87C]/[0.08] transition-colors border-b border-border last:border-0 h-14`}
-                    >
-                      <td
-                        className="px-6 py-3 cursor-pointer"
-                        onClick={() => openDetailPanel(asset)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border"
-                            style={{
-                              backgroundColor: catColor.bg,
-                              color: catColor.text,
-                              borderColor: catColor.border,
-                            }}
-                          >
-                            {getCategoryIcon(asset.category, 16)}
-                          </div>
-                          <div>
-                            <p className="text-[13px] font-bold text-foreground group-hover:text-[#00B87C] transition-colors">
-                              {asset.name}
-                            </p>
-                            <p className="text-[11px] font-medium text-muted-foreground">
-                              Asset ID: {asset.assetId}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td
-                        className="px-6 py-3 cursor-pointer"
-                        onClick={() => openDetailPanel(asset)}
-                      >
-                        <div
-                          className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border"
-                          style={{
-                            backgroundColor: catColor.bg,
-                            color: catColor.text,
-                            borderColor: catColor.border,
-                          }}
+        {activeTab === "Reports" ? (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Reports Dashboard Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Category Distribution Chart */}
+              <div className="bg-card p-6 border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                <h3 className="text-[12px] font-black text-foreground uppercase tracking-wider mb-6">Asset Category Distribution</h3>
+                <div className="h-[260px] flex items-center justify-center">
+                  {categoryChartData.length === 0 ? (
+                    <span className="text-muted-foreground font-semibold text-[13px]">No data available</span>
+                  ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={categoryChartData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={90}
+                          paddingAngle={5}
+                          dataKey="value"
                         >
-                          {asset.category}
-                        </div>
-                      </td>
-                      <td
-                        className="px-6 py-3 cursor-pointer"
-                        onClick={() => openDetailPanel(asset)}
+                          {categoryChartData.map((entry, index) => {
+                            const colors = ["#0EA5E9", "#00B87C", "#F59E0B", "#EF4444", "#8B5CF6"];
+                            return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
+                          })}
+                        </Pie>
+                        <Tooltip formatter={(value) => [`${value} assets`, "Count"]} />
+                        <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  )}
+                </div>
+              </div>
+
+              {/* Department Valuation Chart */}
+              <div className="bg-card p-6 border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                <h3 className="text-[12px] font-black text-foreground uppercase tracking-wider mb-6">Asset Valuation by Department</h3>
+                <div className="h-[260px]">
+                  {deptChartData.length === 0 ? (
+                    <div className="h-full flex items-center justify-center">
+                      <span className="text-muted-foreground font-semibold text-[13px]">No data available</span>
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={deptChartData}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} stroke="var(--border)" />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 600, fill: "var(--muted-foreground)" }} />
+                        <YAxis axisLine={false} tickLine={false} tickFormatter={(value) => `₹${value/1000}k`} tick={{ fontSize: 11, fontWeight: 600, fill: "var(--muted-foreground)" }} />
+                        <Tooltip formatter={(value) => [`₹${Number(value).toLocaleString('en-IN')}`, "Total Value"]} />
+                        <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                          {deptChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill="#8B5CF6" />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
+                </div>
+              </div>
+
+              {/* Status Breakdown Chart */}
+              <div className="bg-card p-6 border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                <h3 className="text-[12px] font-black text-foreground uppercase tracking-wider mb-6">Asset Status Breakdown</h3>
+                <div className="h-[260px]">
+                  {statusChartData.length === 0 ? (
+                    <div className="h-full flex items-center justify-center">
+                      <span className="text-muted-foreground font-semibold text-[13px]">No data available</span>
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={statusChartData} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} opacity={0.1} stroke="var(--border)" />
+                        <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 600, fill: "var(--muted-foreground)" }} />
+                        <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={100} tick={{ fontSize: 11, fontWeight: 600, fill: "var(--muted-foreground)" }} />
+                        <Tooltip formatter={(value) => [`${value} assets`, "Count"]} />
+                        <Bar dataKey="value" radius={[0, 8, 8, 0]}>
+                          {statusChartData.map((entry, index) => {
+                            const statusColors: Record<string, string> = {
+                              "Assigned": "#00B87C",
+                              "Pending Return": "#F59E0B",
+                              "Overdue": "#EF4444",
+                              "Available": "#94A3B8",
+                              "Maintenance": "#0EA5E9"
+                            };
+                            return <Cell key={`cell-${index}`} fill={statusColors[entry.name] || "#6B7280"} />;
+                          })}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
+                </div>
+              </div>
+
+              {/* Financial & Depreciation Summary Card */}
+              <div className="bg-card p-6 border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col justify-between">
+                <div>
+                  <h3 className="text-[12px] font-black text-foreground uppercase tracking-wider mb-6">Financial Summary & Depreciation</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-3.5 bg-muted rounded-xl border border-border/50">
+                      <div>
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Total Book Value</span>
+                        <span className="text-[20px] font-black text-[#00B87C]">₹{(totalValueSum).toLocaleString('en-IN')}</span>
+                      </div>
+                      <span className="text-[11px] font-bold text-muted-foreground">Original cost basis</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-3 bg-muted rounded-xl border border-border/50">
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Avg Asset Value</span>
+                        <span className="text-[15px] font-black text-foreground">₹{assets.length === 0 ? 0 : Math.round(totalValueSum / assets.length).toLocaleString('en-IN')}</span>
+                      </div>
+                      <div className="p-3 bg-muted rounded-xl border border-border/50">
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Depreciated Value (-18%)</span>
+                        <span className="text-[15px] font-black text-foreground">₹{Math.round(totalValueSum * 0.82).toLocaleString('en-IN')}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {assets.length > 0 && (
+                  <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider block">Highest Value Asset</span>
+                      <span className="text-[13px] font-bold text-foreground truncate max-w-[200px] block">
+                        {assets.reduce((max, a) => a.value > max.value ? a : max, assets[0]).name}
+                      </span>
+                    </div>
+                    <span className="text-[14px] font-black text-foreground">
+                      ₹{assets.reduce((max, a) => a.value > max.value ? a : max, assets[0]).value.toLocaleString('en-IN')}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </div>
+        ) : (
+          <div className="bg-card border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden">
+            <div className="px-6 py-4 border-b border-border bg-muted/50">
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] tracking-wider">ALL ASSETS</h3>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-border bg-[#F9FAFB] dark:bg-white/5">
+                    <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Asset</th>
+                    <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Category</th>
+                    <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Serial No.</th>
+                    <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Assigned To</th>
+                    <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Dept</th>
+                    <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Value</th>
+                    <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Assigned Date</th>
+                    <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Status</th>
+                    <th className="px-6 py-3 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAssets.map((asset) => {
+                    const catColor = getCategoryColor(asset.category);
+                    return (
+                      <tr 
+                        key={asset.id} 
+                        className={`group hover:bg-[#00B87C]/[0.08] transition-colors border-b border-border last:border-0 h-14`}
                       >
-                        <span className="font-mono text-[12px] font-semibold text-muted-foreground">
-                          {asset.serialNo}
-                        </span>
-                      </td>
-                      <td
-                        className="px-6 py-3 cursor-pointer"
-                        onClick={() => openDetailPanel(asset)}
-                      >
-                        {asset.assignedTo ? (
-                          <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-full bg-[#E0F2FE] flex items-center justify-center text-[#0369A1] text-[11px] font-bold shrink-0">
-                              {asset.assignedTo
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-                            </div>
-                            <span
-                              className={`text-[12px] font-bold ${asset.assignedToResigned ? "text-red-500" : "text-foreground"}`}
+                        <td className="px-6 py-3 cursor-pointer" onClick={() => openDetailPanel(asset)}>
+                          <div className="flex items-center gap-3">
+                            <div 
+                              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border"
+                              style={{ backgroundColor: catColor.bg, color: catColor.text, borderColor: catColor.border }}
                             >
-                              {asset.assignedTo}{" "}
-                              {asset.assignedToResigned && "(Resigned)"}
-                            </span>
+                              {getCategoryIcon(asset.category, 16)}
+                            </div>
+                            <div>
+                              <p className="text-[13px] font-bold text-foreground group-hover:text-[#00B87C] transition-colors">
+                                {asset.name}
+                              </p>
+                              <p className="text-[11px] font-medium text-muted-foreground">
+                                Asset ID: {asset.assetId}
+                              </p>
+                            </div>
                           </div>
-                        ) : (
-                          <span className="text-[12px] font-bold text-muted-foreground">
-                            —
+                        </td>
+                        <td className="px-6 py-3 cursor-pointer" onClick={() => openDetailPanel(asset)}>
+                          <div 
+                            className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border"
+                            style={{ backgroundColor: catColor.bg, color: catColor.text, borderColor: catColor.border }}
+                          >
+                            {asset.category}
+                          </div>
+                        </td>
+                        <td className="px-6 py-3 cursor-pointer" onClick={() => openDetailPanel(asset)}>
+                          <span className="font-mono text-[12px] font-semibold text-muted-foreground">
+                            {asset.serialNo}
                           </span>
-                        )}
-                      </td>
-                      <td
-                        className="px-6 py-3 cursor-pointer"
-                        onClick={() => openDetailPanel(asset)}
-                      >
-                        <span className="text-[12px] font-bold text-muted-foreground">
-                          {asset.department || "—"}
-                        </span>
-                      </td>
-                      <td
-                        className="px-6 py-3 cursor-pointer"
-                        onClick={() => openDetailPanel(asset)}
-                      >
-                        <span className="text-[12px] font-bold text-foreground">
-                          ₹{asset.value.toLocaleString("en-IN")}
-                        </span>
-                      </td>
-                      <td
-                        className="px-6 py-3 cursor-pointer"
-                        onClick={() => openDetailPanel(asset)}
-                      >
-                        <span className="text-[12px] font-bold text-muted-foreground">
-                          {asset.assignedDate || "—"}
-                        </span>
-                      </td>
-                      <td
-                        className="px-6 py-3 cursor-pointer"
-                        onClick={() => openDetailPanel(asset)}
-                      >
-                        {asset.status === "Assigned" && (
-                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0]">
-                            <CheckCircle2 size={12} strokeWidth={3} />
-                            <span className="text-[11px] font-semibold uppercase tracking-wider">
-                              Assigned
-                            </span>
-                          </div>
-                        )}
-                        {asset.status === "Pending Return" && (
-                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]">
-                            <RefreshCcw size={12} strokeWidth={3} />
-                            <span className="text-[11px] font-semibold uppercase tracking-wider">
-                              Pending Return
-                            </span>
-                          </div>
-                        )}
-                        {asset.status === "Overdue" && (
-                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]">
-                            <AlertCircle size={12} strokeWidth={3} />
-                            <span className="text-[11px] font-semibold uppercase tracking-wider">
-                              Overdue
-                            </span>
-                          </div>
-                        )}
-                        {asset.status === "Available" && (
-                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
-                            <Package size={12} strokeWidth={3} />
-                            <span className="text-[11px] font-semibold uppercase tracking-wider">
-                              Available
-                            </span>
-                          </div>
-                        )}
-                        {asset.status === "Maintenance" && (
-                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0F766E] border border-[#99F6E4]">
-                            <Wrench size={12} strokeWidth={3} />
-                            <span className="text-[11px] font-semibold uppercase tracking-wider">
-                              In Maintenance
-                            </span>
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-3">
-                        <div className="flex items-center gap-2">
+                        </td>
+                        <td className="px-6 py-3 cursor-pointer" onClick={() => openDetailPanel(asset)}>
+                          {asset.assignedTo ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-7 h-7 rounded-full bg-[#E0F2FE] flex items-center justify-center text-[#0369A1] text-[11px] font-bold shrink-0">
+                                {asset.assignedTo.split(' ').map(n => n[0]).join('')}
+                              </div>
+                              <span className={`text-[12px] font-bold ${asset.assignedToResigned ? "text-red-500" : "text-foreground"}`}>
+                                {asset.assignedTo} {asset.assignedToResigned && "(Resigned)"}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-[12px] font-bold text-muted-foreground">—</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-3 cursor-pointer" onClick={() => openDetailPanel(asset)}>
+                          <span className="text-[12px] font-bold text-muted-foreground">
+                            {asset.department || "—"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-3 cursor-pointer" onClick={() => openDetailPanel(asset)}>
+                          <span className="text-[12px] font-bold text-foreground">
+                            ₹{asset.value.toLocaleString('en-IN')}
+                          </span>
+                        </td>
+                        <td className="px-6 py-3 cursor-pointer" onClick={() => openDetailPanel(asset)}>
+                          <span className="text-[12px] font-bold text-muted-foreground">
+                            {asset.assignedDate || "—"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-3 cursor-pointer" onClick={() => openDetailPanel(asset)}>
                           {asset.status === "Assigned" && (
-                            <>
-                              <button
+                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0]">
+                              <CheckCircle2 size={12} strokeWidth={3} />
+                              <span className="text-[11px] font-semibold uppercase tracking-wider">Assigned</span>
+                            </div>
+                          )}
+                          {asset.status === "Pending Return" && (
+                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]">
+                              <RefreshCcw size={12} strokeWidth={3} />
+                              <span className="text-[11px] font-semibold uppercase tracking-wider">Pending Return</span>
+                            </div>
+                          )}
+                          {asset.status === "Overdue" && (
+                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA]">
+                              <AlertCircle size={12} strokeWidth={3} />
+                              <span className="text-[11px] font-semibold uppercase tracking-wider">Overdue</span>
+                            </div>
+                          )}
+                          {asset.status === "Available" && (
+                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                              <Package size={12} strokeWidth={3} />
+                              <span className="text-[11px] font-semibold uppercase tracking-wider">Available</span>
+                            </div>
+                          )}
+                          {asset.status === "Maintenance" && (
+                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0F766E] border border-[#99F6E4]">
+                              <Wrench size={12} strokeWidth={3} />
+                              <span className="text-[11px] font-semibold uppercase tracking-wider">In Maintenance</span>
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-6 py-3">
+                          <div className="flex items-center gap-2">
+                            {asset.status === "Assigned" && (
+                              <>
+                                <button 
+                                  onClick={() => openDetailPanel(asset)}
+                                  className="text-[12px] font-bold text-muted-foreground hover:text-foreground px-2 py-1 flex items-center gap-1"
+                                >
+                                  View <ChevronRight size={14} />
+                                </button>
+                                <button 
+                                  onClick={() => openRecoverModal(asset)}
+                                  className="px-3 py-1 bg-card border border-border text-foreground rounded-lg text-[11px] font-bold hover:bg-muted"
+                                >
+                                  Recover
+                                </button>
+                              </>
+                            )}
+                            {asset.status === "Pending Return" && (
+                              <button 
+                                onClick={() => toast.success(`Reminder sent to ${asset.assignedTo}`)}
+                                className="px-3 py-1.5 bg-[#FEF3C7] text-[#B45309] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#FDE68A]"
+                              >
+                                Send Reminder <ChevronRight size={14} />
+                              </button>
+                            )}
+                            {asset.status === "Overdue" && (
+                              <button 
+                                onClick={() => openEscalationModal(asset)}
+                                className="px-3 py-1.5 bg-[#FEE2E2] text-[#B91C1C] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#FECACA]"
+                              >
+                                Escalate <ChevronRight size={14} />
+                              </button>
+                            )}
+                            {asset.status === "Available" && (
+                              <button 
+                                onClick={() => openAssignModal(asset)}
+                                className="px-3 py-1.5 bg-[#DCFCE7] text-[#00B87C] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#D1FAE5]"
+                              >
+                                Assign <Plus size={14} strokeWidth={3} />
+                              </button>
+                            )}
+                            {asset.status === "Maintenance" && (
+                              <button 
                                 onClick={() => openDetailPanel(asset)}
                                 className="text-[12px] font-bold text-muted-foreground hover:text-foreground px-2 py-1 flex items-center gap-1"
                               >
                                 View <ChevronRight size={14} />
                               </button>
-                              <button
-                                onClick={() => openRecoverModal(asset)}
-                                className="px-3 py-1 bg-card border border-border text-foreground rounded-lg text-[11px] font-bold hover:bg-muted"
-                              >
-                                Recover
-                              </button>
-                            </>
-                          )}
-                          {asset.status === "Pending Return" && (
-                            <button
-                              onClick={() =>
-                                toast.success(
-                                  `Reminder sent to ${asset.assignedTo}`,
-                                )
-                              }
-                              className="px-3 py-1.5 bg-[#FEF3C7] text-[#B45309] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#FDE68A]"
-                            >
-                              Send Reminder <ChevronRight size={14} />
-                            </button>
-                          )}
-                          {asset.status === "Overdue" && (
-                            <button
-                              onClick={() => openEscalationModal(asset)}
-                              className="px-3 py-1.5 bg-[#FEE2E2] text-[#B91C1C] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#FECACA]"
-                            >
-                              Escalate <ChevronRight size={14} />
-                            </button>
-                          )}
-                          {asset.status === "Available" && (
-                            <button
-                              onClick={() => openAssignModal(asset)}
-                              className="px-3 py-1.5 bg-[#DCFCE7] text-[#00B87C] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#D1FAE5]"
-                            >
-                              Assign <Plus size={14} strokeWidth={3} />
-                            </button>
-                          )}
-                          {asset.status === "Maintenance" && (
-                            <button
-                              onClick={() => openDetailPanel(asset)}
-                              className="text-[12px] font-bold text-muted-foreground hover:text-foreground px-2 py-1 flex items-center gap-1"
-                            >
-                              View <ChevronRight size={14} />
-                            </button>
-                          )}
-                        </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {filteredAssets.length === 0 && (
+                    <tr>
+                      <td colSpan={9} className="px-6 py-12 text-center text-muted-foreground font-medium">
+                        No assets found matching your criteria
                       </td>
                     </tr>
-                  );
-                })}
-                {filteredAssets.length === 0 && (
-                  <tr>
-                    <td
-                      colSpan={9}
-                      className="px-6 py-12 text-center text-muted-foreground font-medium"
-                    >
-                      No assets found matching your criteria
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
+
       </div>
 
       {/* --- Add Asset Modal --- */}
@@ -816,109 +1171,105 @@ export function AssetManagement() {
               <form onSubmit={handleAddAsset} className="p-6">
                 <div className="grid grid-cols-2 gap-5 mb-6">
                   <div className="col-span-2">
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      ASSET NAME
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Dell XPS 15 (2024)"
-                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
-                      required
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">ASSET NAME</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Dell XPS 15 (2024)" 
+                      value={newAssetName}
+                      onChange={(e) => setNewAssetName(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
+                      required 
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      CATEGORY
-                    </label>
-                    <select
-                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none appearance-none"
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">CATEGORY</label>
+                    <select 
+                      value={newAssetCategory}
+                      onChange={(e) => setNewAssetCategory(e.target.value as any)}
+                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none appearance-none" 
                       required
                     >
-                      <option value="">Select Category</option>
-                      <option>Laptop</option>
-                      <option>Smartphone</option>
-                      <option>Monitor</option>
-                      <option>Tablet</option>
-                      <option>Vehicle</option>
-                      <option>Furniture</option>
-                      <option>Other</option>
+                      <option value="Laptop">Laptop</option>
+                      <option value="Smartphone">Smartphone</option>
+                      <option value="Monitor">Monitor</option>
+                      <option value="Vehicle">Vehicle</option>
+                      <option value="Other">Other</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      SERIAL NUMBER
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. SN-XYZ-123"
-                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-mono focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
-                      required
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">SERIAL NUMBER</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. SN-XYZ-123" 
+                      value={newAssetSerialNo}
+                      onChange={(e) => setNewAssetSerialNo(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-mono focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
+                      required 
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      BRAND / MODEL
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">BRAND / MODEL</label>
+                    <input 
+                      type="text" 
+                      value={newAssetBrand}
+                      onChange={(e) => setNewAssetBrand(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      PURCHASE DATE
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">PURCHASE DATE</label>
+                    <input 
+                      type="date" 
+                      value={newAssetPurchaseDate}
+                      onChange={(e) => setNewAssetPurchaseDate(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      PURCHASE VALUE (₹)
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="0.00"
-                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">PURCHASE VALUE (₹)</label>
+                    <input 
+                      type="number" 
+                      placeholder="0.00" 
+                      value={newAssetValue}
+                      onChange={(e) => setNewAssetValue(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      WARRANTY EXPIRY
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">WARRANTY EXPIRY</label>
+                    <input 
+                      type="date" 
+                      value={newAssetWarrantyExpiry}
+                      onChange={(e) => setNewAssetWarrantyExpiry(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      VENDOR / SUPPLIER
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">VENDOR / SUPPLIER</label>
+                    <input 
+                      type="text" 
+                      value={newAssetVendor}
+                      onChange={(e) => setNewAssetVendor(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      LOCATION / WAREHOUSE
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">LOCATION / WAREHOUSE</label>
+                    <input 
+                      type="text" 
+                      value={newAssetLocation}
+                      onChange={(e) => setNewAssetLocation(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
                     />
                   </div>
                   <div className="col-span-2">
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      Asset Tag / ID
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="AST-XXXX"
-                      disabled
-                      className="w-full px-3 py-2.5 bg-muted border border-border rounded-xl text-[13px] font-mono text-muted-foreground cursor-not-allowed"
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">Asset Tag / ID</label>
+                    <input 
+                      type="text" 
+                      placeholder="AST-XXXX" 
+                      value={`AST-0${421 + assets.length}`}
+                      disabled 
+                      className="w-full px-3 py-2.5 bg-muted border border-border rounded-xl text-[13px] font-mono text-muted-foreground cursor-not-allowed" 
                     />
                   </div>
                 </div>
@@ -929,35 +1280,33 @@ export function AssetManagement() {
                   </h3>
                   <div className="grid grid-cols-2 gap-5">
                     <div className="col-span-2 relative">
-                      <Search
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                        size={16}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Search employee name or ID..."
-                        className="w-full pl-9 pr-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+                      <input 
+                        type="text" 
+                        placeholder="Search employee name or ID..." 
+                        value={newAssetAssignEmployee}
+                        onChange={(e) => setNewAssetAssignEmployee(e.target.value)}
+                        className="w-full pl-9 pr-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                        ASSIGN DATE
-                      </label>
-                      <input
-                        type="date"
-                        defaultValue={new Date().toISOString().split("T")[0]}
-                        className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
+                      <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">ASSIGN DATE</label>
+                      <input 
+                        type="date" 
+                        value={newAssetAssignDate}
+                        onChange={(e) => setNewAssetAssignDate(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
                       />
                     </div>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                    NOTES / DESCRIPTION
-                  </label>
-                  <textarea
-                    rows={3}
+                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">NOTES / DESCRIPTION</label>
+                  <textarea 
+                    rows={3} 
+                    value={newAssetNotes}
+                    onChange={(e) => setNewAssetNotes(e.target.value)}
                     className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none resize-none"
                   ></textarea>
                 </div>
@@ -1072,38 +1421,36 @@ export function AssetManagement() {
                     ASSIGN TO
                   </label>
                   <div className="relative">
-                    <Search
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                      size={16}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Search employee name or ID..."
-                      className="w-full pl-9 pr-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
-                      required
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+                    <input 
+                      type="text" 
+                      placeholder="Search employee name or ID..." 
+                      value={assignEmployee}
+                      onChange={(e) => setAssignEmployee(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
+                      required 
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-5 mb-6">
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      ASSIGN DATE
-                    </label>
-                    <input
-                      type="date"
-                      defaultValue={new Date().toISOString().split("T")[0]}
-                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
-                      required
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">ASSIGN DATE</label>
+                    <input 
+                      type="date" 
+                      value={assignDate}
+                      onChange={(e) => setAssignDate(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
+                      required 
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                      EXPECTED RETURN (OPTIONAL)
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
+                    <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">EXPECTED RETURN (OPTIONAL)</label>
+                    <input 
+                      type="date" 
+                      value={expectedReturnDate}
+                      onChange={(e) => setExpectedReturnDate(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
                     />
                   </div>
                 </div>
@@ -1131,11 +1478,11 @@ export function AssetManagement() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                    NOTES
-                  </label>
-                  <textarea
-                    rows={2}
+                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">NOTES</label>
+                  <textarea 
+                    rows={2} 
+                    value={assignNotes}
+                    onChange={(e) => setAssignNotes(e.target.value)}
                     className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none resize-none"
                   ></textarea>
                 </div>
@@ -1274,14 +1621,13 @@ export function AssetManagement() {
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
-                    ACTUAL RETURN DATE
-                  </label>
-                  <input
-                    type="date"
-                    defaultValue={new Date().toISOString().split("T")[0]}
-                    className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none"
-                    required
+                  <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">ACTUAL RETURN DATE</label>
+                  <input 
+                    type="date" 
+                    value={recoverDate}
+                    onChange={(e) => setRecoverDate(e.target.value)}
+                    className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none" 
+                    required 
                   />
                 </div>
 
@@ -1292,8 +1638,10 @@ export function AssetManagement() {
                       <span className="text-red-500">*</span>
                     )}
                   </label>
-                  <textarea
-                    rows={2}
+                  <textarea 
+                    rows={2} 
+                    value={recoverNotes}
+                    onChange={(e) => setRecoverNotes(e.target.value)}
                     required={["Damaged", "Lost"].includes(recoverCondition)}
                     className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none resize-none"
                   ></textarea>
@@ -1306,23 +1654,23 @@ export function AssetManagement() {
                     className="space-y-6 mb-6 p-4 bg-[#FEF2F2] border border-[#FECACA] rounded-xl"
                   >
                     <div>
-                      <label className="block text-[11px] font-black text-[#991B1B] tracking-wider mb-2">
-                        DAMAGE DESCRIPTION
-                      </label>
-                      <textarea
-                        rows={2}
-                        className="w-full px-3 py-2 bg-input-background border border-[#FECACA] rounded-xl text-[13px] font-medium focus:outline-none focus:border-[#EF4444]"
+                      <label className="block text-[11px] font-black text-[#991B1B] tracking-wider mb-2">DAMAGE DESCRIPTION</label>
+                      <textarea 
+                        rows={2} 
+                        value={damageDescription}
+                        onChange={(e) => setDamageDescription(e.target.value)}
+                        className="w-full px-3 py-2 bg-input-background border border-[#FECACA] rounded-xl text-[13px] font-medium focus:outline-none focus:border-[#EF4444]" 
                         required
                       ></textarea>
                     </div>
                     <div>
-                      <label className="block text-[11px] font-black text-[#991B1B] tracking-wider mb-2">
-                        REPAIR COST ESTIMATE (₹)
-                      </label>
-                      <input
-                        type="number"
-                        placeholder="0.00"
-                        className="w-full px-3 py-2 bg-input-background border border-[#FECACA] rounded-xl text-[13px] font-medium focus:outline-none focus:border-[#EF4444]"
+                      <label className="block text-[11px] font-black text-[#991B1B] tracking-wider mb-2">REPAIR COST ESTIMATE (₹)</label>
+                      <input 
+                        type="number" 
+                        placeholder="0.00" 
+                        value={repairCostEstimate}
+                        onChange={(e) => setRepairCostEstimate(e.target.value)}
+                        className="w-full px-3 py-2 bg-input-background border border-[#FECACA] rounded-xl text-[13px] font-medium focus:outline-none focus:border-[#EF4444]" 
                       />
                     </div>
                     <div className="flex items-center justify-between">
@@ -1330,7 +1678,12 @@ export function AssetManagement() {
                         Deduct from Employee
                       </p>
                       <div className="relative inline-block w-10 h-6">
-                        <input type="checkbox" className="peer sr-only" />
+                        <input 
+                          type="checkbox" 
+                          checked={deductFromEmployee}
+                          onChange={(e) => setDeductFromEmployee(e.target.checked)}
+                          className="peer sr-only" 
+                        />
                         <div className="w-10 h-6 bg-[#FECACA] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#EF4444]"></div>
                       </div>
                     </div>
@@ -1344,42 +1697,41 @@ export function AssetManagement() {
                     className="space-y-6 mb-6 p-4 bg-[#FEF2F2] border border-[#FECACA] rounded-xl"
                   >
                     <div>
-                      <label className="block text-[11px] font-black text-[#991B1B] tracking-wider mb-2">
-                        POLICE REPORT NUMBER (OPTIONAL)
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-3 py-2 bg-input-background border border-[#FECACA] rounded-xl text-[13px] font-medium focus:outline-none focus:border-[#EF4444]"
+                      <label className="block text-[11px] font-black text-[#991B1B] tracking-wider mb-2">POLICE REPORT NUMBER (OPTIONAL)</label>
+                      <input 
+                        type="text" 
+                        value={policeReportNumber}
+                        onChange={(e) => setPoliceReportNumber(e.target.value)}
+                        className="w-full px-3 py-2 bg-input-background border border-[#FECACA] rounded-xl text-[13px] font-medium focus:outline-none focus:border-[#EF4444]" 
                       />
                     </div>
                     <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="fir-attached"
-                        className="rounded text-[#EF4444] focus:ring-[#EF4444]"
+                      <input 
+                        type="checkbox" 
+                        id="fir-attached" 
+                        checked={firAttached}
+                        onChange={(e) => setFirAttached(e.target.checked)}
+                        className="rounded text-[#EF4444] focus:ring-[#EF4444]" 
                       />
-                      <label
-                        htmlFor="fir-attached"
-                        className="text-[13px] font-bold text-[#991B1B]"
-                      >
-                        FIR Attached
-                      </label>
+                      <label htmlFor="fir-attached" className="text-[13px] font-bold text-[#991B1B]">FIR Attached</label>
                     </div>
                     <div className="flex items-center justify-between">
                       <p className="text-[13px] font-bold text-[#991B1B]">
                         Replacement Required
                       </p>
                       <div className="relative inline-block w-10 h-6">
-                        <input
-                          type="checkbox"
-                          defaultChecked
-                          className="peer sr-only"
+                        <input 
+                          type="checkbox" 
+                          checked={replacementRequired}
+                          onChange={(e) => setReplacementRequired(e.target.checked)}
+                          className="peer sr-only" 
                         />
                         <div className="w-10 h-6 bg-[#FECACA] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#EF4444]"></div>
                       </div>
                     </div>
                   </motion.div>
                 )}
+
 
                 <div className="flex items-center justify-between mb-8 p-3 border border-border bg-muted rounded-xl">
                   <div>
@@ -1732,84 +2084,162 @@ export function AssetManagement() {
 
                 {detailTab === "Maintenance" && (
                   <div>
-                    <button
-                      onClick={() =>
-                        toast.success("Maintenance log form opened")
-                      }
-                      className="w-full mb-4 py-2.5 border-2 border-dashed border-[#00B87C]/30 text-[#00B87C] rounded-xl text-[13px] font-bold hover:bg-[#00B87C]/5 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Plus size={16} strokeWidth={3} />
-                      Log Maintenance
-                    </button>
-
+                    {!isAddingLog ? (
+                      <button 
+                        onClick={() => setIsAddingLog(true)}
+                        className="w-full mb-4 py-2.5 border-2 border-dashed border-[#00B87C]/30 text-[#00B87C] rounded-xl text-[13px] font-bold hover:bg-[#00B87C]/5 transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Plus size={16} strokeWidth={3} />
+                        Log Maintenance
+                      </button>
+                    ) : (
+                      <form 
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          const currentLogs = maintenanceLogs[selectedAsset.assetId] || [];
+                          const costVal = parseFloat(newMaintenanceCost) || 0;
+                          const newLog = {
+                            title: newMaintenanceTitle || "General Service",
+                            cost: costVal,
+                            desc: newMaintenanceDesc || "Routine maintenance",
+                            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                            status: "Completed"
+                          };
+                          setMaintenanceLogs({
+                            ...maintenanceLogs,
+                            [selectedAsset.assetId]: [newLog, ...currentLogs]
+                          });
+                          setIsAddingLog(false);
+                          setNewMaintenanceTitle("");
+                          setNewMaintenanceCost("");
+                          setNewMaintenanceDesc("");
+                          toast.success("Maintenance log added successfully");
+                        }} 
+                        className="bg-card border border-border rounded-xl p-4 mb-4 space-y-3"
+                      >
+                        <h4 className="text-[12px] font-bold text-foreground">Log New Maintenance</h4>
+                        <div>
+                          <label className="block text-[9px] font-bold text-muted-foreground uppercase mb-1">Service Title</label>
+                          <input 
+                            type="text" 
+                            required 
+                            placeholder="e.g. Screen Replacement" 
+                            value={newMaintenanceTitle}
+                            onChange={(e) => setNewMaintenanceTitle(e.target.value)}
+                            className="w-full px-2 py-1.5 bg-input-background border border-border rounded-lg text-[12px] outline-none focus:ring-1 focus:ring-[#00B87C]" 
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] font-bold text-muted-foreground uppercase mb-1">Cost (₹)</label>
+                          <input 
+                            type="number" 
+                            required 
+                            placeholder="e.g. 5000" 
+                            value={newMaintenanceCost}
+                            onChange={(e) => setNewMaintenanceCost(e.target.value)}
+                            className="w-full px-2 py-1.5 bg-input-background border border-border rounded-lg text-[12px] outline-none focus:ring-1 focus:ring-[#00B87C]" 
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] font-bold text-muted-foreground uppercase mb-1">Description</label>
+                          <textarea 
+                            rows={2} 
+                            placeholder="Describe the service details..." 
+                            value={newMaintenanceDesc}
+                            onChange={(e) => setNewMaintenanceDesc(e.target.value)}
+                            className="w-full px-2 py-1.5 bg-input-background border border-border rounded-lg text-[12px] outline-none resize-none focus:ring-1 focus:ring-[#00B87C]"
+                          ></textarea>
+                        </div>
+                        <div className="flex gap-2 justify-end">
+                          <button 
+                            type="button" 
+                            onClick={() => setIsAddingLog(false)}
+                            className="px-3 py-1.5 text-[11px] font-bold text-muted-foreground hover:text-foreground cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                          <button 
+                            type="submit" 
+                            className="px-3 py-1.5 bg-[#00B87C] text-white text-[11px] font-bold rounded-lg hover:bg-[#009665] cursor-pointer"
+                          >
+                            Save Log
+                          </button>
+                        </div>
+                      </form>
+                    )}
+                    
                     <div className="space-y-3">
-                      <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
-                        <div className="flex justify-between items-start mb-2">
-                          <p className="text-[13px] font-bold text-foreground">
-                            Battery Replacement
-                          </p>
-                          <span className="text-[12px] font-bold text-foreground">
-                            ₹4,500
-                          </span>
-                        </div>
-                        <p className="text-[12px] font-medium text-muted-foreground mb-3">
-                          Replaced swollen battery with OEM part.
-                        </p>
-                        <div className="flex items-center justify-between text-[11px] font-bold">
-                          <span className="text-muted-foreground">
-                            Sep 10, 2022
-                          </span>
-                          <span className="text-[#059669] bg-secondary px-2 py-0.5 rounded">
-                            Completed
-                          </span>
-                        </div>
-                      </div>
+                      {(maintenanceLogs[selectedAsset.assetId] || []).length === 0 ? (
+                        <p className="text-center text-[12px] text-muted-foreground font-semibold py-4">No maintenance logs found</p>
+                      ) : (
+                        (maintenanceLogs[selectedAsset.assetId] || []).map((log, index) => (
+                          <div key={index} className="bg-card border border-border rounded-xl p-4 shadow-sm">
+                            <div className="flex justify-between items-start mb-2">
+                              <p className="text-[13px] font-bold text-foreground">{log.title}</p>
+                              <span className="text-[12px] font-bold text-foreground">₹{log.cost.toLocaleString('en-IN')}</span>
+                            </div>
+                            <p className="text-[12px] font-medium text-muted-foreground mb-3">{log.desc}</p>
+                            <div className="flex items-center justify-between text-[11px] font-bold">
+                              <span className="text-muted-foreground">{log.date}</span>
+                              <span className="text-[#059669] bg-secondary px-2 py-0.5 rounded">{log.status}</span>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                 )}
 
                 {detailTab === "Documents" && (
                   <div className="space-y-3">
-                    <button className="w-full mb-2 py-2.5 bg-card border border-border text-foreground rounded-xl text-[13px] font-bold hover:bg-muted shadow-sm flex items-center justify-center gap-2">
+                    <button 
+                      onClick={() => {
+                        const fileNames = [
+                          "Equipment_Insurance_2026.pdf",
+                          "User_Acceptance_Signoff.pdf",
+                          "Asset_Disposal_Form.pdf",
+                          "Vendor_Receipt_Oct.pdf"
+                        ];
+                        const randomName = fileNames[Math.floor(Math.random() * fileNames.length)];
+                        const currentDocs = assetDocuments[selectedAsset.assetId] || [];
+                        const isDuplicate = currentDocs.some(d => d.name === randomName);
+                        if (isDuplicate) {
+                          toast.error("Document already uploaded");
+                          return;
+                        }
+                        const newDoc = {
+                          name: randomName,
+                          size: `${(Math.random() * 2 + 0.5).toFixed(1)} MB`,
+                          date: new Date().toLocaleDateString('en-CA')
+                        };
+                        setAssetDocuments({
+                          ...assetDocuments,
+                          [selectedAsset.assetId]: [newDoc, ...currentDocs]
+                        });
+                        toast.success(`Uploaded ${randomName} successfully`);
+                      }}
+                      className="w-full mb-2 py-2.5 bg-card border border-border text-foreground rounded-xl text-[13px] font-bold hover:bg-muted shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                    >
                       <UploadCloud size={16} />
                       Upload Document
                     </button>
-
-                    <div className="bg-card border border-border rounded-xl p-3 flex items-center gap-3 shadow-sm hover:border-[#00B87C]/30 cursor-pointer group transition-colors">
-                      <div className="w-10 h-10 rounded-lg bg-[#E0F2FE] text-[#0EA5E9] flex items-center justify-center shrink-0 group-hover:bg-[#0EA5E9] group-hover:text-white transition-colors">
-                        <FileText size={18} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-bold text-foreground truncate">
-                          Purchase_Invoice_2021.pdf
-                        </p>
-                        <p className="text-[11px] font-medium text-muted-foreground">
-                          Added Jan 10, 2021 • 1.2 MB
-                        </p>
-                      </div>
-                      <MoreVertical
-                        size={16}
-                        className="text-muted-foreground"
-                      />
-                    </div>
-
-                    <div className="bg-card border border-border rounded-xl p-3 flex items-center gap-3 shadow-sm hover:border-[#00B87C]/30 cursor-pointer group transition-colors">
-                      <div className="w-10 h-10 rounded-lg bg-[#E0F2FE] text-[#0EA5E9] flex items-center justify-center shrink-0 group-hover:bg-[#0EA5E9] group-hover:text-white transition-colors">
-                        <FileText size={18} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-bold text-foreground truncate">
-                          Warranty_Card_Dell.pdf
-                        </p>
-                        <p className="text-[11px] font-medium text-muted-foreground">
-                          Added Jan 10, 2021 • 850 KB
-                        </p>
-                      </div>
-                      <MoreVertical
-                        size={16}
-                        className="text-muted-foreground"
-                      />
-                    </div>
+                    
+                    {(assetDocuments[selectedAsset.assetId] || []).length === 0 ? (
+                      <p className="text-center text-[12px] text-muted-foreground font-semibold py-4">No documents uploaded</p>
+                    ) : (
+                      (assetDocuments[selectedAsset.assetId] || []).map((doc, index) => (
+                        <div key={index} className="bg-card border border-border rounded-xl p-3 flex items-center gap-3 shadow-sm hover:border-[#00B87C]/30 cursor-pointer group transition-colors">
+                          <div className="w-10 h-10 rounded-lg bg-[#E0F2FE] text-[#0EA5E9] flex items-center justify-center shrink-0 group-hover:bg-[#0EA5E9] group-hover:text-white transition-colors">
+                            <FileText size={18} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[13px] font-bold text-foreground truncate">{doc.name}</p>
+                            <p className="text-[11px] font-medium text-muted-foreground">Added {doc.date} • {doc.size}</p>
+                          </div>
+                          <MoreVertical size={16} className="text-muted-foreground" />
+                        </div>
+                      ))
+                    )}
                   </div>
                 )}
               </div>

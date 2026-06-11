@@ -5,7 +5,9 @@ import {
   ChevronRight,
   X,
   Calendar,
+  CalendarX,
   MessageSquare,
+  Edit2
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../components/workflow/ToastNotification";
@@ -20,6 +22,16 @@ interface ShiftCell {
   time: string;
   hasOt?: boolean;
 }
+
+const SHIFT_SCHEDULE: ShiftCell[] = [
+  { day: "Mon", date: "Apr 6", type: "Morning", time: "06:00 – 14:00" },
+  { day: "Tue", date: "Apr 7", type: "Morning", time: "06:00 – 14:00", hasOt: true },
+  { day: "Wed", date: "Apr 8", type: "Off Day", time: "N/A" },
+  { day: "Thu", date: "Apr 9", type: "Evening", time: "14:00 – 22:00" },
+  { day: "Fri", date: "Apr 10", type: "Morning", time: "06:00 – 14:00" },
+  { day: "Sat", date: "Apr 11", type: "Off Day", time: "N/A" },
+  { day: "Sun", date: "Apr 12", type: "Off Day", time: "N/A" },
+];
 
 export function FinanceSchedule() {
   const [view, setView] = useState<ViewMode>("Week");

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import { useDebounce } from "../hooks/useDebounce";
 import {
@@ -934,7 +934,8 @@ function HighlightText({ text, search }: HighlightTextProps) {
 export function Employees() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [search, setSearch] = useState("");
+  const [searchParams] = useSearchParams();
+  const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const debouncedSearch = useDebounce(search, 300);
   const searchInputRef = useRef<HTMLInputElement>(null);
 

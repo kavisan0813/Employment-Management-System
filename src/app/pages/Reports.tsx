@@ -4919,6 +4919,30 @@ const hcTrendData2Y = [
   { month: "Apr 26", count: 248 },
 ];
 
+const hcTrendInsights = {
+  "6M": {
+    growth: "+16 Employees",
+    rate: "+6.9%",
+    peak: "248",
+    avg: "240",
+    desc: "Steady growth of engineering and product teams in the last 6 months."
+  },
+  "1Y": {
+    growth: "+38 Employees",
+    rate: "+18.1%",
+    peak: "248",
+    avg: "225",
+    desc: "Continuous linear expansion with strong hiring trends across all departments."
+  },
+  "2Y": {
+    growth: "+68 Employees",
+    rate: "+37.8%",
+    peak: "248",
+    avg: "213",
+    desc: "Long-term headcount scaling indicating substantial organizational expansion."
+  }
+};
+
 const leaveAnalysisData = [
   { month: "Nov", CL: 12, EL: 24, SL: 8 },
   { month: "Dec", CL: 18, EL: 30, SL: 12 },
@@ -5984,67 +6008,99 @@ export function Reports() {
               ))}
             </div>
           </div>
-          <div style={{ height: "250px" }}>
-            {isLoading ? (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  backgroundColor: "#F3F4F6",
-                  borderRadius: "16px",
-                  animation: "pulse 1.5s infinite ease-in-out",
-                }}
-              ></div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={hcTrend}
-                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                >
-                  <defs>
-                    <linearGradient id="hcGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#00B87C" stopOpacity={0.3} />
-                      <stop
-                        offset="95%"
-                        stopColor="#DCFCE7"
-                        stopOpacity={0.0}
-                      />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    vertical={false}
-                    strokeDasharray="3 3"
-                    stroke="#E5E7EB"
-                  />
-                  <XAxis
-                    dataKey="month"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 11, fill: "#9CA3AF", fontWeight: 600 }}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 11, fill: "#9CA3AF", fontWeight: 600 }}
-                  />
-                  <Tooltip />
-                  <Area
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#00B87C"
-                    strokeWidth={3}
-                    fill="url(#hcGrad)"
-                    dot={{
-                      fill: "#00B87C",
-                      stroke: "white",
-                      strokeWidth: 2,
-                      r: 4,
-                    }}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-10 gap-6">
+            {/* Insights Panel */}
+            <div className="md:col-span-3 flex flex-col justify-between p-4 bg-emerald-50/20 dark:bg-emerald-950/5 border border-emerald-500/10 rounded-2xl h-full min-h-[140px] md:min-h-0">
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                  Period Insights ({timeRange})
+                </span>
+                <h4 className="text-[20px] font-black text-foreground leading-tight">
+                  {hcTrendInsights[timeRange].growth}
+                </h4>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 text-[10px] font-black uppercase tracking-wider">
+                  {hcTrendInsights[timeRange].rate} Growth
+                </span>
+                <p className="text-[12px] font-semibold text-muted-foreground leading-snug mt-2">
+                  {hcTrendInsights[timeRange].desc}
+                </p>
+              </div>
+              <div className="pt-4 border-t border-border/50 grid grid-cols-2 gap-4 mt-4">
+                <div>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block">Peak Count</span>
+                  <span className="text-[15px] font-black text-foreground">{hcTrendInsights[timeRange].peak}</span>
+                </div>
+                <div>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block">Average</span>
+                  <span className="text-[15px] font-black text-foreground">{hcTrendInsights[timeRange].avg}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Chart Panel */}
+            <div className="md:col-span-7 h-[250px]">
+              {isLoading ? (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "#F3F4F6",
+                    borderRadius: "16px",
+                    animation: "pulse 1.5s infinite ease-in-out",
+                  }}
+                ></div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={hcTrend}
+                    margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient id="hcGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#00B87C" stopOpacity={0.3} />
+                        <stop
+                          offset="95%"
+                          stopColor="#DCFCE7"
+                          stopOpacity={0.0}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid
+                      vertical={false}
+                      strokeDasharray="3 3"
+                      stroke="#E5E7EB"
+                    />
+                    <XAxis
+                      dataKey="month"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 11, fill: "#9CA3AF", fontWeight: 600 }}
+                    />
+                    <YAxis
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 11, fill: "#9CA3AF", fontWeight: 600 }}
+                    />
+                    <Tooltip />
+                    <Area
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#00B87C"
+                      strokeWidth={3}
+                      fill="url(#hcGrad)"
+                      dot={{
+                        fill: "#00B87C",
+                        stroke: "white",
+                        strokeWidth: 2,
+                        r: 4,
+                      }}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
+            </div>
           </div>
+
         </div>
 
         {/* Hiring Pipeline */}

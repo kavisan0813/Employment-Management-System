@@ -430,6 +430,7 @@ const MONTH_DATE_MAP: Record<string, string> = {
 };
 
 export function EmployeeExpenses() {
+  const [expenses, setExpenses] = useState<Expense[]>(MOCK_EXPENSES);
   const [activeTab, setActiveTab] = useState<
     "All" | "Pending" | "Approved" | "Rejected"
   >("All");
@@ -441,8 +442,15 @@ export function EmployeeExpenses() {
   const [showCatDrop, setShowCatDrop] = useState(false);
   const [showMonthDrop, setShowMonthDrop] = useState(false);
   const [showStatusDrop, setShowStatusDrop] = useState(false);
-  const [newExpenseDesc, setNewExpenseDesc] = useState("");
+
+  // New expense form state
   const [newExpenseCat, setNewExpenseCat] = useState("Travel");
+  const [newExpenseTitle, setNewExpenseTitle] = useState("");
+  const [newExpenseAmount, setNewExpenseAmount] = useState("");
+  const [newExpenseDate, setNewExpenseDate] = useState("");
+  const [newExpensePayment, setNewExpensePayment] = useState("Personal Card");
+  const [newExpenseDesc, setNewExpenseDesc] = useState("");
+  const [newExpenseVendor, setNewExpenseVendor] = useState("");
 
   const handleExport = () => {
     const rows = filteredExpenses.map((e) =>
@@ -470,8 +478,42 @@ export function EmployeeExpenses() {
     showToast("Exported!", "success", "Expense report downloaded as CSV.");
   };
 
+  const handleSubmitExpense = () => {
+    if (!newExpenseTitle.trim()) {
+      showToast("Missing Title", "error", "Please enter an expense title.");
+      return;
+    }
+    if (!newExpenseAmount || isNaN(Number(newExpenseAmount)) || Number(newExpenseAmount) <= 0) {
+      showToast("Invalid Amount", "error", "Please enter a valid amount.");
+      return;
+    }
+    const newExp: Expense = {
+      id: `EXP-${Math.floor(1000 + Math.random() * 9000)}`,
+      title: newExpenseTitle,
+      vendor: newExpenseVendor || `${newExpenseCat} expense`,
+      category: newExpenseCat as ExpenseCategory,
+      date: newExpenseDate ? new Date(newExpenseDate).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+      amount: Number(newExpenseAmount),
+      receiptStatus: "Pending",
+      status: "Pending",
+      description: newExpenseDesc || `${newExpenseCat} expense claim`,
+      project: "Operations",
+      paymentMode: newExpensePayment,
+    };
+    setExpenses(prev => [newExp, ...prev]);
+    showToast("Expense Submitted", "success", "Your expense claim has been submitted for review.");
+    setShowAddModal(false);
+    setNewExpenseTitle("");
+    setNewExpenseAmount("");
+    setNewExpenseDate("");
+    setNewExpenseVendor("");
+    setNewExpenseDesc("");
+    setNewExpensePayment("Personal Card");
+    setNewExpenseCat("Travel");
+  };
+
   const filteredExpenses = useMemo(() => {
-    return MOCK_EXPENSES.filter((e) => {
+    return expenses.filter((e) => {
       const tabMatch = activeTab === "All" || e.status === activeTab;
       const catMatch =
         selectedCategory === "All Categories" ||
@@ -485,7 +527,7 @@ export function EmployeeExpenses() {
         );
       return tabMatch && catMatch && statusMatch && monthMatch;
     });
-  }, [activeTab, selectedCategory, selectedMonth, selectedStatus]);
+  }, [expenses, activeTab, selectedCategory, selectedMonth, selectedStatus]);
 
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
@@ -1065,44 +1107,57 @@ export function EmployeeExpenses() {
                   </div>
                 </div>
 
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">TITLE *</label>
+                  <input
+                    type="text"
+                    value={newExpenseTitle}
+                    onChange={e => setNewExpenseTitle(e.target.value)}
+                    placeholder="e.g. Flight to Delhi"
+                    className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
+                  />
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
-                      TITLE
-                    </label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">AMOUNT (₹) *</label>
                     <input
-                      type="text"
-                      placeholder="e.g. Flight to Delhi"
-                      className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
+                      type="number"
+                      value={newExpenseAmount}
+                      onChange={e => setNewExpenseAmount(e.target.value)}
+                      placeholder="0.00"
+                      className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-black text-foreground outline-none focus:border-primary transition-colors"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
-                      AMOUNT (₹)
-                    </label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">VENDOR / MERCHANT</label>
                     <input
-                      type="number"
-                      placeholder="0.00"
-                      className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-black text-foreground outline-none focus:border-primary transition-colors"
+                      type="text"
+                      value={newExpenseVendor}
+                      onChange={e => setNewExpenseVendor(e.target.value)}
+                      placeholder="e.g. Indigo Airlines"
+                      className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
-                      DATE
-                    </label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">DATE</label>
                     <input
                       type="date"
+                      value={newExpenseDate}
+                      onChange={e => setNewExpenseDate(e.target.value)}
                       className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
-                      PAYMENT MODE
-                    </label>
-                    <select className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">PAYMENT MODE</label>
+                    <select
+                      value={newExpensePayment}
+                      onChange={e => setNewExpensePayment(e.target.value)}
+                      className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
+                    >
                       <option>Personal Card</option>
                       <option>Cash</option>
                       <option>UPI / Bank Transfer</option>
@@ -1150,16 +1205,7 @@ export function EmployeeExpenses() {
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  showToast(
-                    "Expense Submitted",
-                    "success",
-                    "Your expense claim has been submitted for review.",
-                  );
-                  setShowAddModal(false);
-                  setNewExpenseDesc("");
-                  setNewExpenseCat("Travel");
-                }}
+                onClick={handleSubmitExpense}
                 className="px-6 py-3 bg-primary text-white rounded-xl font-black hover:opacity-95 transition-all text-[13px] shadow-lg shadow-[#00B87C]/20"
               >
                 Submit Expense

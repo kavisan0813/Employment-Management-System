@@ -22,5 +22,13 @@ export default [
         },
       },
     },
+    rules: {
+      "@typescript-eslint/no-unused-vars": "warn",
+      "no-empty": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-expressions": "warn",
+      "no-useless-assignment": "warn",
+      "prefer-const": "warn",
+    },
   },
 ];

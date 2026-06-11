@@ -1357,6 +1357,28 @@ export function Settings() {
   const [holAutoMark, setHolAutoMark] = useState(true);
   const [holOptional, setHolOptional] = useState(true);
   const [holRegionSpecific, setHolRegionSpecific] = useState(true);
+
+  // Attendance Policy states
+  const [apGracePeriod] = useState("15");
+  const [apLateMark] = useState("30");
+  const [apHalfDay] = useState("4");
+  const [apAbsentThreshold] = useState("2");
+  const [apMaxWorking] = useState("10");
+  const [apMinCheckIn] = useState("6");
+  const [apAllowReg] = useState(true);
+  const [apManagerApp] = useState(true);
+  const [apAutoWfh] = useState(false);
+  const [apLimitReg] = useState(true);
+  const [apLimitRegVal] = useState("3");
+  const [apAllowBackdated] = useState(true);
+  const [apAllowBackdatedVal] = useState("7");
+  const [apEscAlertMgr] = useState("3");
+  const [apEscAlertHr] = useState("2");
+  const [apEscMD] = useState("5");
+  const [apEscDeduct] = useState("3");
+
+  // Holiday filter states
+
   const [payrollCycle, setPayrollCycle] = useState("Monthly");
   const [payrollCutoff, setPayrollCutoff] = useState("25");
   const [payrollPayout, setPayrollPayout] = useState("1st");

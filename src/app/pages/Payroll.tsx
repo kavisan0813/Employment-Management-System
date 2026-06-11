@@ -255,7 +255,7 @@ function PayslipModal({
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div
-        className="w-full max-w-2xl bg-white dark:bg-[#06211C] rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] border border-emerald-500/10"
+        className="w-full max-w-2xl bg-card rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] border border-emerald-500/10"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Decorative header stripe */}
