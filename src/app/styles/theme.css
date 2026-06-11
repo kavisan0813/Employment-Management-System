@@ -4,7 +4,7 @@
   --font-size: 16px;
   --background: #f0fdf4;
   --foreground: #111827;
-  --card: #e6f4ea;
+  --card: #ffffff;
   --card-foreground: #111827;
   --popover: #ffffff;
   --popover-foreground: #111827;
@@ -59,9 +59,9 @@
 .dark {
   --background: #021410;
   --foreground: #ecfdf5;
-  --card: #0f2a24;
+  --card: #06211c;
   --card-foreground: #ecfdf5;
-  --popover: #0f2a24;
+  --popover: #06211c;
   --popover-foreground: #ecfdf5;
   --primary: #00b87c;
   --primary-foreground: #ffffff;
