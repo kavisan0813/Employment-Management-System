@@ -306,7 +306,9 @@ export function ManagerSupportTicket() {
           <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
             Resolved Requests
           </p>
-          <p className="text-[28px] font-bold text-[#00B87C]">{resolvedCount}</p>
+          <p className="text-[28px] font-bold text-[#00B87C]">
+            {resolvedCount}
+          </p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3 uppercase tracking-wider">
             total resolved
           </p>
@@ -707,14 +709,14 @@ function NewTicketModal({
         priority === "Urgent" || priority === "High"
           ? "#EF4444"
           : priority === "Medium"
-          ? "#F59E0B"
-          : "#6B7280",
+            ? "#F59E0B"
+            : "#6B7280",
       priorityBg:
         priority === "Urgent" || priority === "High"
           ? "rgba(239, 68, 68, 0.1)"
           : priority === "Medium"
-          ? "rgba(245, 158, 11, 0.1)"
-          : "rgba(107, 114, 128, 0.1)",
+            ? "rgba(245, 158, 11, 0.1)"
+            : "rgba(107, 114, 128, 0.1)",
       statusColor: "#3B82F6",
       statusBg: "rgba(59, 130, 246, 0.1)",
       description,
@@ -804,7 +806,9 @@ function NewTicketModal({
                   <option value="L&D Budget">L&D Budget</option>
                   <option value="Payroll Query">Payroll Query</option>
                   <option value="IT Access">IT Access</option>
-                  <option value="Hardware Allocation">Hardware Allocation</option>
+                  <option value="Hardware Allocation">
+                    Hardware Allocation
+                  </option>
                   <option value="Escalation">Escalation</option>
                   <option value="Other">Other</option>
                 </select>
@@ -991,7 +995,8 @@ function TicketDetailModal({
           {/* Main Description */}
           <div className="bg-secondary/20 p-5 rounded-2xl border border-border/50 space-y-3">
             <p className="text-[13px] font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
-              <FileText size={14} className="text-[#00B87C]" /> Issue Description
+              <FileText size={14} className="text-[#00B87C]" /> Issue
+              Description
             </p>
             <p className="text-[13.5px] font-medium text-muted-foreground leading-relaxed whitespace-pre-wrap">
               {ticket.description}
@@ -1011,7 +1016,10 @@ function TicketDetailModal({
                     className="p-3 bg-secondary/35 border border-border rounded-xl flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <Paperclip size={14} className="text-[#00B87C] flex-shrink-0" />
+                      <Paperclip
+                        size={14}
+                        className="text-[#00B87C] flex-shrink-0"
+                      />
                       <div className="min-w-0">
                         <p className="text-[12px] font-bold text-foreground truncate">
                           {file.name}
@@ -1023,7 +1031,11 @@ function TicketDetailModal({
                     </div>
                     <button
                       onClick={() =>
-                        showToast("Downloading", "success", `${file.name} download started.`)
+                        showToast(
+                          "Downloading",
+                          "success",
+                          `${file.name} download started.`,
+                        )
                       }
                       className="p-2 hover:bg-secondary rounded-lg text-muted-foreground transition-all"
                     >
@@ -1045,7 +1057,7 @@ function TicketDetailModal({
                 <div key={event.id} className="relative space-y-1">
                   {/* Indicator bullet */}
                   <div className="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full bg-card border-2 border-border shadow-sm" />
-                  
+
                   <div className="flex justify-between items-center text-[12px] font-bold text-muted-foreground uppercase tracking-wider">
                     <span>{event.user}</span>
                     <span className="flex items-center gap-1">
@@ -1060,7 +1072,8 @@ function TicketDetailModal({
                   )}
                   {event.type === "status_change" && (
                     <p className="text-[13px] font-bold text-foreground">
-                      Status updated to <span className="text-amber-500">{event.newStatus}</span>.
+                      Status updated to{" "}
+                      <span className="text-amber-500">{event.newStatus}</span>.
                     </p>
                   )}
                   {event.type === "resolved" && (

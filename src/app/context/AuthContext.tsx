@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const hasAccess = (path: string) => {
     if (!user) return false;
-    
+
     // Super Admin has access to everything
     if (user.role === "Super Admin") return true;
 
@@ -91,8 +91,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const normalizedPath = path === "/" ? "/" : path.replace(/\/$/, "");
 
     if (user.role === "HR Manager") {
-      const restricted = ["/settings/security", "/settings/integrations", "/settings/roles", "/finance/asset-cost-report"];
-      return !restricted.some(r => normalizedPath.startsWith(r));
+      const restricted = [
+        "/settings/security",
+        "/settings/integrations",
+        "/settings/roles",
+        "/finance/asset-cost-report",
+      ];
+      return !restricted.some((r) => normalizedPath.startsWith(r));
     }
 
     if (user.role === "Finance") {
@@ -126,7 +131,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/schedule",
         "/settings",
       ];
-      return allowed.some(p => normalizedPath === p || normalizedPath.startsWith(p + "/"));
+      return allowed.some(
+        (p) => normalizedPath === p || normalizedPath.startsWith(p + "/"),
+      );
     }
 
     if (user.role === "Manager") {
@@ -165,7 +172,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/profile",
         "/support",
       ];
-      return allowed.some(p => normalizedPath === p || normalizedPath.startsWith(p + "/"));
+      return allowed.some(
+        (p) => normalizedPath === p || normalizedPath.startsWith(p + "/"),
+      );
     }
 
     if (user.role === "Employee") {
@@ -190,7 +199,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/support",
         "/settings",
       ];
-      return allowed.some(p => normalizedPath === p || normalizedPath.startsWith(p + "/"));
+      return allowed.some(
+        (p) => normalizedPath === p || normalizedPath.startsWith(p + "/"),
+      );
     }
 
     return true; // Default allow for demo

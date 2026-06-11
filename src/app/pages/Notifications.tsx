@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import {
   Bell,
@@ -21,7 +21,6 @@ import {
   AlertCircle,
   MoreVertical,
   Trash2,
-  Edit2,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
@@ -1563,7 +1562,7 @@ interface FinanceNotificationItem {
   section: string;
   category: string;
   path: string;
-  state?: any;
+  state?: Record<string, unknown>;
 }
 
 const initialFinanceNotificationsList: FinanceNotificationItem[] = [

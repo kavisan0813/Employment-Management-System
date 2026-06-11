@@ -1357,45 +1357,6 @@ export function Settings() {
   const [holAutoMark, setHolAutoMark] = useState(true);
   const [holOptional, setHolOptional] = useState(true);
   const [holRegionSpecific, setHolRegionSpecific] = useState(true);
-
-  // Attendance Policy states
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apGracePeriod] = useState("15");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apLateMark] = useState("30");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apHalfDay] = useState("4");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apAbsentThreshold] = useState("2");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apMaxWorking] = useState("10");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apMinCheckIn] = useState("6");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apAllowReg] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apManagerApp] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apAutoWfh] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apLimitReg] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apLimitRegVal] = useState("3");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apAllowBackdated] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apAllowBackdatedVal] = useState("7");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apEscAlertMgr] = useState("3");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apEscAlertHr] = useState("2");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apEscMD] = useState("5");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [apEscDeduct] = useState("3");
-
-  // Holiday filter states
-
   const [payrollCycle, setPayrollCycle] = useState("Monthly");
   const [payrollCutoff, setPayrollCutoff] = useState("25");
   const [payrollPayout, setPayrollPayout] = useState("1st");
@@ -2072,18 +2033,18 @@ export function Settings() {
                     {s.workingDays.join(", ")}
                   </td>
                   <td style={{ padding: "12px 16px" }}>
-                      <span
-                        style={{
-                          backgroundColor: "rgba(0, 184, 124, 0.1)",
-                          color: "#00B87C",
-                          padding: "4px 10px",
-                          borderRadius: "9999px",
-                          fontSize: "11px",
-                          fontWeight: 600,
-                        }}
-                      >
-                        {s.empCount} Employees
-                      </span>
+                    <span
+                      style={{
+                        backgroundColor: "rgba(0, 184, 124, 0.1)",
+                        color: "#00B87C",
+                        padding: "4px 10px",
+                        borderRadius: "9999px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {s.empCount} Employees
+                    </span>
                   </td>
                   <td
                     style={{
@@ -2985,18 +2946,18 @@ export function Settings() {
         >
           <button
             onClick={() => setActiveModal("confirm_save_policy")}
-              style={{
-                backgroundColor: "#00B87C",
-                color: "white",
-                border: "none",
-                borderRadius: "12px",
-                padding: "8px 20px",
-                fontSize: "13px",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              Save Policy Changes
+            style={{
+              backgroundColor: "#00B87C",
+              color: "white",
+              border: "none",
+              borderRadius: "12px",
+              padding: "8px 20px",
+              fontSize: "13px",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Save Policy Changes
           </button>
         </div>
       </div>
@@ -5144,19 +5105,19 @@ export function Settings() {
         </button>
         <button
           onClick={() => showToast("Corporate profile definitions recorded")}
-            style={{
-              backgroundColor: "#00B87C",
-              color: "white",
-              border: "none",
-              borderRadius: "12px",
-              padding: "8px 20px",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            Save Changes
-          </button>
+          style={{
+            backgroundColor: "#00B87C",
+            color: "white",
+            border: "none",
+            borderRadius: "12px",
+            padding: "8px 20px",
+            fontSize: "13px",
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          Save Changes
+        </button>
       </div>
     </div>
   );

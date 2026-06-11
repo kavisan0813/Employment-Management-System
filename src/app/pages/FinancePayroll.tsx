@@ -710,32 +710,21 @@ function KPICard({ title, value, subValue, color, icon: Icon }: { title: string,
 }
 
 function FilterSelect({ label, options = ["Option 1", "Option 2"] }: { label: string, options?: string[] }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(label);
+  const [value, setValue] = useState(label);
   
   return (
-    <div className="relative">
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-        className="flex items-center gap-2.5 px-5 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm"
+    <div className="relative group">
+      <select
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        className="appearance-none flex items-center gap-2.5 px-5 pr-12 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer"
       >
-        {selected}
-        <ChevronDown size={16} className={`text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
-      </button>
-      {isOpen && (
-        <div className="absolute top-full mt-2 w-full min-w-[180px] bg-card border border-border rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
-          {options.map((opt, i) => (
-            <button
-              key={i}
-              onMouseDown={(e) => { e.preventDefault(); setSelected(opt); setIsOpen(false); }}
-              className={`w-full text-left px-4 py-2.5 text-[13px] font-bold hover:bg-muted transition-all ${selected === opt ? 'text-[#00B87C]' : 'text-foreground'}`}
-            >
-              {opt}
-            </button>
-          ))}
-        </div>
-      )}
+        <option value={label}>{label}</option>
+        {options.map((opt, i) => (
+          <option key={i} value={opt}>{opt}</option>
+        ))}
+      </select>
+      <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none group-hover:text-[#00B87C] transition-colors" />
     </div>
   );
 }

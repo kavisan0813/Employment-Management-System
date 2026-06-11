@@ -46,19 +46,24 @@ export function ManagerSettings() {
   const [maxLeaveDays, setMaxLeaveDays] = useState("5");
   const [autoEscalateDays, setAutoEscalateDays] = useState("2");
   const [advanceNoticeDays, setAdvanceNoticeDays] = useState("3");
-  const [blackoutDates, setBlackoutDates] = useState("Review period Apr 20 – May 5");
+  const [blackoutDates, setBlackoutDates] = useState(
+    "Review period Apr 20 – May 5",
+  );
   const [allowBackdated, setAllowBackdated] = useState(false);
   const [blockDuringReview, setBlockDuringReview] = useState(true);
   const [requireHandover, setRequireHandover] = useState(true);
-  const [alertConsecutiveAbsences, setAlertConsecutiveAbsences] = useState(true);
+  const [alertConsecutiveAbsences, setAlertConsecutiveAbsences] =
+    useState(true);
 
   // ─── States: Performance Defaults ──────────────────────────────────────
   const [selfReviewWindow, setSelfReviewWindow] = useState("14");
   const [reviewDeadline, setReviewDeadline] = useState("21");
   const [ratingScale, setRatingScale] = useState("5-point");
-  const [feedbackVisibility, setFeedbackVisibility] = useState("After finalization");
+  const [feedbackVisibility, setFeedbackVisibility] =
+    useState("After finalization");
   const [notifyReviewOpen, setNotifyReviewOpen] = useState(true);
-  const [requireJustificationBelow3, setRequireJustificationBelow3] = useState(true);
+  const [requireJustificationBelow3, setRequireJustificationBelow3] =
+    useState(true);
   const [enablePeerFeedback, setEnablePeerFeedback] = useState(true);
 
   // ─── States: Notification Preferences ──────────────────────────────────
@@ -88,7 +93,9 @@ export function ManagerSettings() {
   const [showConfirmPass, setShowConfirmPass] = useState(false);
 
   // ─── States: Appearance ────────────────────────────────────────────────
-  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "system");
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("theme") || "system",
+  );
 
   // ─── Password Strength Calculations ────────────────────────────────────
   const hasMinLength = newPassword.length >= 8;
@@ -136,7 +143,9 @@ export function ManagerSettings() {
       } else if (theme === "light") {
         document.documentElement.classList.remove("dark");
       } else {
-        const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const isSystemDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
         if (isSystemDark) {
           document.documentElement.classList.add("dark");
         } else {
@@ -210,7 +219,9 @@ export function ManagerSettings() {
   }) => (
     <div className="flex items-start justify-between py-4 border-b border-border last:border-0 gap-8">
       <div className="flex-1">
-        <p className="text-[13px] font-bold text-foreground leading-tight">{label}</p>
+        <p className="text-[13px] font-bold text-foreground leading-tight">
+          {label}
+        </p>
         <p className="text-[11px] font-bold text-muted-foreground mt-1 max-w-[500px]">
           {description}
         </p>
@@ -249,9 +260,15 @@ export function ManagerSettings() {
 
       {/* ─── Access Notice Banner (amber) ────────────────────────── */}
       <div className="w-full bg-amber-500/10 rounded-2xl border border-amber-500/20 px-6 py-4 flex items-start gap-3.5 dark:bg-amber-500/5">
-        <Lock size={18} className="text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
+        <Lock
+          size={18}
+          className="text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5"
+        />
         <p className="text-[13px] font-bold text-amber-700 dark:text-amber-500/90 leading-relaxed">
-          <span className="font-bold">Manager role access active.</span> You have permission to manage team preferences and personal configs only. System, payroll, and global security policies remain locked and are managed by Super Admin and Finance roles.
+          <span className="font-bold">Manager role access active.</span> You
+          have permission to manage team preferences and personal configs only.
+          System, payroll, and global security policies remain locked and are
+          managed by Super Admin and Finance roles.
         </p>
       </div>
 
@@ -356,7 +373,9 @@ export function ManagerSettings() {
           {activeTab === "Team Preferences" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-bold text-foreground">Team Configuration</h2>
+                <h2 className="text-[18px] font-bold text-foreground">
+                  Team Configuration
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Update basic team metadata and accessibility permissions
                 </p>
@@ -479,9 +498,12 @@ export function ManagerSettings() {
           {activeTab === "Leave Approval Rules" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-bold text-foreground">Approval Workflow</h2>
+                <h2 className="text-[18px] font-bold text-foreground">
+                  Approval Workflow
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
-                  Set triggers, notice windows, and escalation policies for leave management
+                  Set triggers, notice windows, and escalation policies for
+                  leave management
                 </p>
               </div>
 
@@ -572,9 +594,12 @@ export function ManagerSettings() {
           {activeTab === "Performance Defaults" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-bold text-foreground">Default Review Settings</h2>
+                <h2 className="text-[18px] font-bold text-foreground">
+                  Default Review Settings
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
-                  Establish standard performance review timeframes and evaluation defaults
+                  Establish standard performance review timeframes and
+                  evaluation defaults
                 </p>
               </div>
 
@@ -629,9 +654,15 @@ export function ManagerSettings() {
                       onChange={(e) => setFeedbackVisibility(e.target.value)}
                       className="w-full h-11 px-4 rounded-xl border border-border bg-card text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C]"
                     >
-                      <option value="After finalization">After review cycle finalization</option>
-                      <option value="Immediate">Immediately on submission</option>
-                      <option value="Hidden">Always hidden from employee</option>
+                      <option value="After finalization">
+                        After review cycle finalization
+                      </option>
+                      <option value="Immediate">
+                        Immediately on submission
+                      </option>
+                      <option value="Hidden">
+                        Always hidden from employee
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -665,9 +696,12 @@ export function ManagerSettings() {
           {activeTab === "Expense Approval Limits" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-bold text-foreground">My Approval Authority</h2>
+                <h2 className="text-[18px] font-bold text-foreground">
+                  My Approval Authority
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
-                  Review your current expense delegation limits and routing thresholds
+                  Review your current expense delegation limits and routing
+                  thresholds
                 </p>
               </div>
 
@@ -689,16 +723,43 @@ export function ManagerSettings() {
                   </thead>
                   <tbody className="divide-y divide-border text-[13px] font-bold text-foreground">
                     {[
-                      { cat: "Travel", limit: "₹10,000", action: "Escalate to Finance" },
-                      { cat: "Food", limit: "₹2,000", action: "Escalate to Finance" },
-                      { cat: "Equipment", limit: "₹5,000", action: "Escalate to Finance" },
-                      { cat: "Medical", limit: "₹5,000", action: "Escalate to Finance" },
-                      { cat: "Other", limit: "₹3,000", action: "Escalate to Finance" },
+                      {
+                        cat: "Travel",
+                        limit: "₹10,000",
+                        action: "Escalate to Finance",
+                      },
+                      {
+                        cat: "Food",
+                        limit: "₹2,000",
+                        action: "Escalate to Finance",
+                      },
+                      {
+                        cat: "Equipment",
+                        limit: "₹5,000",
+                        action: "Escalate to Finance",
+                      },
+                      {
+                        cat: "Medical",
+                        limit: "₹5,000",
+                        action: "Escalate to Finance",
+                      },
+                      {
+                        cat: "Other",
+                        limit: "₹3,000",
+                        action: "Escalate to Finance",
+                      },
                     ].map((row, idx) => (
-                      <tr key={idx} className="hover:bg-secondary/20 transition-colors">
+                      <tr
+                        key={idx}
+                        className="hover:bg-secondary/20 transition-colors"
+                      >
                         <td className="px-6 py-4 font-bold">{row.cat}</td>
-                        <td className="px-6 py-4 text-[#00B87C] font-bold">{row.limit}</td>
-                        <td className="px-6 py-4 font-bold text-muted-foreground">{row.action}</td>
+                        <td className="px-6 py-4 text-[#00B87C] font-bold">
+                          {row.limit}
+                        </td>
+                        <td className="px-6 py-4 font-bold text-muted-foreground">
+                          {row.action}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -720,13 +781,18 @@ export function ManagerSettings() {
 
               {/* Read-only Alert */}
               <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-5 flex items-start gap-3">
-                <Info size={16} className="text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
+                <Info
+                  size={16}
+                  className="text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5"
+                />
                 <div>
                   <p className="text-[12px] font-bold text-amber-700 dark:text-amber-500/90 leading-tight">
                     Delegated approval authority is locked.
                   </p>
                   <p className="text-[11px] font-bold text-amber-600/90 dark:text-amber-500/80 mt-1">
-                    Approval limits are configured centrally by HR Administration. Please contact your Department Head to request threshold changes.
+                    Approval limits are configured centrally by HR
+                    Administration. Please contact your Department Head to
+                    request threshold changes.
                   </p>
                 </div>
               </div>
@@ -737,7 +803,9 @@ export function ManagerSettings() {
           {activeTab === "Notification Settings" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-bold text-foreground">My Notification Preferences</h2>
+                <h2 className="text-[18px] font-bold text-foreground">
+                  My Notification Preferences
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Configure alerts, push triggers, and digest schedules
                 </p>
@@ -818,9 +886,12 @@ export function ManagerSettings() {
           {activeTab === "Language & Region" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-bold text-foreground">Language & Region Settings</h2>
+                <h2 className="text-[18px] font-bold text-foreground">
+                  Language & Region Settings
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
-                  Select your localized display parameters and time zone defaults
+                  Select your localized display parameters and time zone
+                  defaults
                 </p>
               </div>
 
@@ -850,9 +921,15 @@ export function ManagerSettings() {
                     onChange={(e) => setDateFormat(e.target.value)}
                     className="w-full h-11 px-4 rounded-xl border border-border bg-card text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C]"
                   >
-                    <option value="DD-MM-YYYY">DD-MM-YYYY (e.g. 18-05-2026)</option>
-                    <option value="YYYY-MM-DD">YYYY-MM-DD (e.g. 2026-05-18)</option>
-                    <option value="MM/DD/YYYY">MM/DD/YYYY (e.g. 05/18/2026)</option>
+                    <option value="DD-MM-YYYY">
+                      DD-MM-YYYY (e.g. 18-05-2026)
+                    </option>
+                    <option value="YYYY-MM-DD">
+                      YYYY-MM-DD (e.g. 2026-05-18)
+                    </option>
+                    <option value="MM/DD/YYYY">
+                      MM/DD/YYYY (e.g. 05/18/2026)
+                    </option>
                   </select>
                 </div>
 
@@ -865,10 +942,18 @@ export function ManagerSettings() {
                     onChange={(e) => setTimeZone(e.target.value)}
                     className="w-full h-11 px-4 rounded-xl border border-border bg-card text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C]"
                   >
-                    <option value="IST (UTC +5:30)">IST (UTC +5:30) - Mumbai, Kolkata</option>
-                    <option value="GMT (UTC +0:00)">GMT (UTC +0:00) - London</option>
-                    <option value="EST (UTC -5:00)">EST (UTC -5:00) - New York</option>
-                    <option value="PST (UTC -8:00)">PST (UTC -8:00) - Los Angeles</option>
+                    <option value="IST (UTC +5:30)">
+                      IST (UTC +5:30) - Mumbai, Kolkata
+                    </option>
+                    <option value="GMT (UTC +0:00)">
+                      GMT (UTC +0:00) - London
+                    </option>
+                    <option value="EST (UTC -5:00)">
+                      EST (UTC -5:00) - New York
+                    </option>
+                    <option value="PST (UTC -8:00)">
+                      PST (UTC -8:00) - Los Angeles
+                    </option>
                   </select>
                 </div>
               </div>
@@ -879,7 +964,9 @@ export function ManagerSettings() {
           {activeTab === "Change Password" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-bold text-foreground">Change Password</h2>
+                <h2 className="text-[18px] font-bold text-foreground">
+                  Change Password
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Create a new secure passphrase for your user credentials
                 </p>
@@ -904,7 +991,11 @@ export function ManagerSettings() {
                       onClick={() => setShowCurrentPass(!showCurrentPass)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
-                      {showCurrentPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showCurrentPass ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -942,15 +1033,15 @@ export function ManagerSettings() {
                           strengthScore === 4
                             ? "text-[#00B87C]"
                             : strengthScore >= 2
-                            ? "text-amber-500"
-                            : "text-rose-500"
+                              ? "text-amber-500"
+                              : "text-rose-500"
                         }
                       >
                         {strengthScore === 4
                           ? "Strong"
                           : strengthScore >= 2
-                          ? "Medium"
-                          : "Weak"}
+                            ? "Medium"
+                            : "Weak"}
                       </span>
                     </div>
                     <div className="grid grid-cols-4 gap-1.5 h-1.5">
@@ -962,7 +1053,10 @@ export function ManagerSettings() {
                           else barColor = "bg-[#00B87C]";
                         }
                         return (
-                          <div key={bar} className={`h-full rounded-full transition-all duration-300 ${barColor}`} />
+                          <div
+                            key={bar}
+                            className={`h-full rounded-full transition-all duration-300 ${barColor}`}
+                          />
                         );
                       })}
                     </div>
@@ -987,7 +1081,11 @@ export function ManagerSettings() {
                       onClick={() => setShowConfirmPass(!showConfirmPass)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
-                      {showConfirmPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showConfirmPass ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1006,9 +1104,19 @@ export function ManagerSettings() {
                             : "bg-secondary text-muted-foreground"
                         }`}
                       >
-                        {hasMinLength ? <Check size={10} /> : <div className="w-1 h-1 rounded-full bg-current" />}
+                        {hasMinLength ? (
+                          <Check size={10} />
+                        ) : (
+                          <div className="w-1 h-1 rounded-full bg-current" />
+                        )}
                       </div>
-                      <span className={hasMinLength ? "text-foreground" : "text-muted-foreground"}>
+                      <span
+                        className={
+                          hasMinLength
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }
+                      >
                         Minimum 8 characters
                       </span>
                     </div>
@@ -1021,9 +1129,19 @@ export function ManagerSettings() {
                             : "bg-secondary text-muted-foreground"
                         }`}
                       >
-                        {hasUppercase ? <Check size={10} /> : <div className="w-1 h-1 rounded-full bg-current" />}
+                        {hasUppercase ? (
+                          <Check size={10} />
+                        ) : (
+                          <div className="w-1 h-1 rounded-full bg-current" />
+                        )}
                       </div>
-                      <span className={hasUppercase ? "text-foreground" : "text-muted-foreground"}>
+                      <span
+                        className={
+                          hasUppercase
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }
+                      >
                         Uppercase letter
                       </span>
                     </div>
@@ -1036,9 +1154,19 @@ export function ManagerSettings() {
                             : "bg-secondary text-muted-foreground"
                         }`}
                       >
-                        {hasNumber ? <Check size={10} /> : <div className="w-1 h-1 rounded-full bg-current" />}
+                        {hasNumber ? (
+                          <Check size={10} />
+                        ) : (
+                          <div className="w-1 h-1 rounded-full bg-current" />
+                        )}
                       </div>
-                      <span className={hasNumber ? "text-foreground" : "text-muted-foreground"}>
+                      <span
+                        className={
+                          hasNumber
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }
+                      >
                         At least one number
                       </span>
                     </div>
@@ -1051,9 +1179,19 @@ export function ManagerSettings() {
                             : "bg-secondary text-muted-foreground"
                         }`}
                       >
-                        {hasSpecial ? <Check size={10} /> : <div className="w-1 h-1 rounded-full bg-current" />}
+                        {hasSpecial ? (
+                          <Check size={10} />
+                        ) : (
+                          <div className="w-1 h-1 rounded-full bg-current" />
+                        )}
                       </div>
-                      <span className={hasSpecial ? "text-foreground" : "text-muted-foreground"}>
+                      <span
+                        className={
+                          hasSpecial
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }
+                      >
                         Special character (@#$%!)
                       </span>
                     </div>
@@ -1067,7 +1205,9 @@ export function ManagerSettings() {
           {activeTab === "Appearance" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-bold text-foreground">Theme & Layout Customization</h2>
+                <h2 className="text-[18px] font-bold text-foreground">
+                  Theme & Layout Customization
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Update theme controls, display templates, and format protocols
                 </p>

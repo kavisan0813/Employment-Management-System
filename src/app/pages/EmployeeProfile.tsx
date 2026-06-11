@@ -255,7 +255,14 @@ export function EmployeeProfile() {
         <div className="flex-1 flex flex-col gap-6 xl:w-[70%] min-w-0">
           {/* PROFILE HEADER CARD */}
           <div className="rounded-2xl overflow-hidden shadow-sm bg-card border border-border">
-            <div className="h-[120px] w-full bg-gradient-to-r from-primary to-primary/80 opacity-90"></div>
+            <div
+              className="h-[140px] w-full relative"
+              style={{
+                background: "linear-gradient(135deg, #00B87C 0%, #009966 100%)",
+              }}
+            >
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+            </div>
             <div className="px-8 pb-8 relative">
               <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                 <div className="flex gap-6 items-start">
@@ -265,14 +272,18 @@ export function EmployeeProfile() {
                     alt={employee.name}
                   />
                   <div className="pt-3">
-                    <h1 className="text-2xl font-black text-foreground">
-                      {employee.name}{" "}
-                      <span className="text-sm font-bold ml-2 text-muted-foreground">
-                        #{employee.id}
-                      </span>
-                    </h1>
-                    <p className="text-[16px] font-bold mt-1 text-primary">
-                      {employee.designation}
+                    <div className="flex items-center gap-3 mb-1.5">
+                      <h1 className="text-[28px] font-black text-foreground tracking-tight leading-none">
+                        {employee.name}
+                      </h1>
+                      <div className="px-2.5 py-1 rounded-lg bg-[#00B87C]/10 text-[#00B87C] text-[11px] font-black uppercase tracking-widest border border-[#00B87C]/20 shadow-sm">
+                        {employee.designation}
+                      </div>
+                    </div>
+                    <p className="text-[15px] font-bold text-muted-foreground mt-1.5 flex items-center gap-2">
+                      {employee.department}{" "}
+                      <span className="w-1 h-1 rounded-full bg-border" /> #
+                      {employee.id}
                     </p>
 
                     <div className="flex flex-wrap items-center gap-3 mt-3 text-[13px]">
@@ -344,7 +355,8 @@ export function EmployeeProfile() {
                       <div className="absolute right-0 top-full mt-2 w-48 rounded-xl shadow-lg z-[2000] py-1 animate-in zoom-in-95 duration-100 bg-card border border-border">
                         <button
                           className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-primary/10 text-foreground"
-                          onClick={() => {
+                          onMouseDown={(e) => {
+                            e.preventDefault();
                             setIsMoreMenuOpen(false);
                             setActiveTab("performance");
                           }}
@@ -354,7 +366,8 @@ export function EmployeeProfile() {
                         <div className="h-px w-full my-1 bg-border"></div>
                         <button
                           className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-rose-500/10 text-rose-500"
-                          onClick={() => {
+                          onMouseDown={(e) => {
+                            e.preventDefault();
                             setIsMoreMenuOpen(false);
                             alert("Account deactivated.");
                           }}

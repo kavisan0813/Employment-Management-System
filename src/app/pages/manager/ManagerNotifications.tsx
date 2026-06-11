@@ -14,13 +14,19 @@ import {
   Filter,
   AlertCircle,
   TrendingUp,
-  BookOpen
+  BookOpen,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "motion/react";
 
 type NotificationCategory = "All" | "Unread" | "Approvals" | "System";
-type NotificationType = "Leave" | "Expense" | "HR" | "Attendance" | "Performance" | "Training";
+type NotificationType =
+  | "Leave"
+  | "Expense"
+  | "HR"
+  | "Attendance"
+  | "Performance"
+  | "Training";
 
 interface Notification {
   id: number;
@@ -40,11 +46,12 @@ const MOCK_NOTIFICATIONS: Notification[] = [
     type: "Performance",
     category: "System",
     title: "Performance Reviews Due",
-    message: "Annual appraisals for your team are due by April 25. 3 reviews pending your rating.",
+    message:
+      "Annual appraisals for your team are due by April 25. 3 reviews pending your rating.",
     timestamp: "1h ago",
     isRead: false,
     isImportant: true,
-    path: "/manager/performance",
+    path: "/performance",
   },
   {
     id: 2,
@@ -55,7 +62,7 @@ const MOCK_NOTIFICATIONS: Notification[] = [
     timestamp: "3h ago",
     isRead: false,
     isImportant: false,
-    path: "/manager/leaves",
+    path: "/leave",
   },
   {
     id: 3,
@@ -66,25 +73,27 @@ const MOCK_NOTIFICATIONS: Notification[] = [
     timestamp: "5h ago",
     isRead: false,
     isImportant: true,
-    path: "/manager/training",
+    path: "/training",
   },
   {
     id: 4,
     type: "Attendance",
     category: "System",
     title: "Team Overtime Alert",
-    message: "Your team has clocked an average of 48h this week. Review resource bandwidth.",
+    message:
+      "Your team has clocked an average of 48h this week. Review resource bandwidth.",
     timestamp: "1d ago",
     isRead: true,
     isImportant: false,
-    path: "/manager/attendance",
+    path: "/attendance",
   },
   {
     id: 5,
     type: "HR",
     category: "System",
     title: "New Team Member Onboarding",
-    message: "Rohan Sen (Senior React Engineer) is joining your team on May 20. Access onboarding pipeline.",
+    message:
+      "Rohan Sen (Senior React Engineer) is joining your team on May 20. Access onboarding pipeline.",
     timestamp: "2d ago",
     isRead: true,
     isImportant: false,
@@ -95,7 +104,8 @@ const MOCK_NOTIFICATIONS: Notification[] = [
 export function ManagerNotifications() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<NotificationCategory>("All");
-  const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] =
+    useState<Notification[]>(MOCK_NOTIFICATIONS);
   const [typeFilter, setTypeFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -139,16 +149,28 @@ export function ManagerNotifications() {
       case "Leave":
         return { icon: Calendar, color: "#F59E0B", bg: "rgba(245,158,11,0.1)" };
       case "Expense":
-        return { icon: CreditCard, color: "#3B82F6", bg: "rgba(59,130,246,0.1)" };
+        return {
+          icon: CreditCard,
+          color: "#3B82F6",
+          bg: "rgba(59,130,246,0.1)",
+        };
       case "Performance":
-        return { icon: TrendingUp, color: "#8B5CF6", bg: "rgba(139,92,246,0.1)" };
+        return {
+          icon: TrendingUp,
+          color: "#8B5CF6",
+          bg: "rgba(139,92,246,0.1)",
+        };
       case "Training":
         return { icon: BookOpen, color: "#06B6D4", bg: "rgba(6,182,212,0.1)" };
       case "Attendance":
         return { icon: Clock, color: "#EF4444", bg: "rgba(239,68,68,0.1)" };
       case "HR":
       default:
-        return { icon: ClipboardList, color: "#00B87C", bg: "rgba(0,184,124,0.1)" };
+        return {
+          icon: ClipboardList,
+          color: "#00B87C",
+          bg: "rgba(0,184,124,0.1)",
+        };
     }
   };
 
@@ -356,7 +378,8 @@ export function ManagerNotifications() {
                 No notifications found
               </h3>
               <p className="text-[14px] font-bold text-muted-foreground mt-2 max-w-[300px]">
-                We couldn't find any notifications matching your current filters.
+                We couldn't find any notifications matching your current
+                filters.
               </p>
               <button
                 onClick={() => {

@@ -230,20 +230,30 @@ const CATEGORY_CONFIG: Record<
 function StatusBadge({ status }: { status: ExpenseStatus }) {
   const getStatusStyle = (s: ExpenseStatus): string => {
     switch (s) {
-      case "Approved": return "bg-emerald-500/10 text-primary border-primary/20";
-      case "Pending": return "bg-amber-500/10 text-amber-500 border-amber-500/20";
-      case "Rejected": return "bg-rose-500/10 text-rose-500 border-rose-500/20";
-      case "Draft": return "bg-secondary text-muted-foreground border-border";
-      default: return "bg-secondary text-muted-foreground border-border";
+      case "Approved":
+        return "bg-emerald-500/10 text-primary border-primary/20";
+      case "Pending":
+        return "bg-amber-500/10 text-amber-500 border-amber-500/20";
+      case "Rejected":
+        return "bg-rose-500/10 text-rose-500 border-rose-500/20";
+      case "Draft":
+        return "bg-secondary text-muted-foreground border-border";
+      default:
+        return "bg-secondary text-muted-foreground border-border";
     }
   };
   const getStatusIcon = (s: ExpenseStatus): React.ElementType => {
     switch (s) {
-      case "Approved": return CheckCircle2;
-      case "Pending": return Clock;
-      case "Rejected": return X;
-      case "Draft": return Edit3;
-      default: return Edit3;
+      case "Approved":
+        return CheckCircle2;
+      case "Pending":
+        return Clock;
+      case "Rejected":
+        return X;
+      case "Draft":
+        return Edit3;
+      default:
+        return Edit3;
     }
   };
   const Icon = getStatusIcon(status);

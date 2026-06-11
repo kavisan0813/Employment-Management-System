@@ -1,30 +1,35 @@
 // Suresh Iyer - Manager Profile Page
 import { useState, useRef } from "react";
-import { 
-  User, 
-  Camera, 
-  MapPin, 
-  Edit3, 
-  X, 
-  Plus, 
-  Mail, 
-  Phone, 
-  Linkedin, 
-  Github, 
-  Download, 
-  Check, 
-  ChevronDown, 
+import {
+  User,
+  Camera,
+  MapPin,
+  Edit3,
+  X,
+  Plus,
+  Mail,
+  Phone,
+  Linkedin,
+  Github,
+  Download,
+  Check,
+  ChevronDown,
   Sparkles,
   Info,
   Lock,
   Calendar,
   AlertTriangle,
-  Star
+  Star,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../components/workflow/ToastNotification";
 
-type ProfileTab = "Personal Info" | "Employment" | "Documents" | "Emergency Contact" | "Preferences";
+type ProfileTab =
+  | "Personal Info"
+  | "Employment"
+  | "Documents"
+  | "Emergency Contact"
+  | "Preferences";
 
 interface SkillItem {
   id: string;
@@ -62,7 +67,9 @@ export function ManagerProfile() {
   const [alternatePhone, setAlternatePhone] = useState("+91 98001 12233");
   const [linkedinUrl, setLinkedinUrl] = useState("linkedin.com/in/suresh-iyer");
   const [githubUrl, setGithubUrl] = useState("github.com/sureshiyer");
-  const [currentAddress, setCurrentAddress] = useState("42, Nungambakkam High Road, Chennai 600034, Tamil Nadu");
+  const [currentAddress, setCurrentAddress] = useState(
+    "42, Nungambakkam High Road, Chennai 600034, Tamil Nadu",
+  );
 
   // --- Skills State ---
   const [skills, setSkills] = useState<SkillItem[]>([
@@ -73,13 +80,15 @@ export function ManagerProfile() {
     { id: "5", name: "AWS" },
     { id: "6", name: "Agile/Scrum" },
     { id: "7", name: "Technical Recruiting" },
-    { id: "8", name: "Code Review" }
+    { id: "8", name: "Code Review" },
   ]);
   const [newSkillText, setNewSkillText] = useState("");
   const [showAddSkillInput, setShowAddSkillInput] = useState(false);
 
   // --- Bio State ---
-  const [bio, setBio] = useState("Engineering Manager with 7+ years of experience leading high-performance tech teams. Passionate about building scalable systems and mentoring developers.");
+  const [bio, setBio] = useState(
+    "Engineering Manager with 7+ years of experience leading high-performance tech teams. Passionate about building scalable systems and mentoring developers.",
+  );
 
   // --- Emergency Contacts State ---
   const [contacts, setContacts] = useState<EmergencyContact[]>([
@@ -88,8 +97,8 @@ export function ManagerProfile() {
       relationship: "Spouse",
       phone: "+91 98001 11122",
       email: "priya.iyer@email.com",
-      address: "42, Nungambakkam High Road, Chennai 600034, Tamil Nadu"
-    }
+      address: "42, Nungambakkam High Road, Chennai 600034, Tamil Nadu",
+    },
   ]);
   const [sameAsCurrentAddress, setSameAsCurrentAddress] = useState(true);
 
@@ -101,7 +110,7 @@ export function ManagerProfile() {
     leaveReminders: true,
     teamDigests: true,
     performanceReminders: true,
-    announcements: false
+    announcements: false,
   });
   const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
   const [preferredLanguage, setPreferredLanguage] = useState("English (India)");
@@ -118,7 +127,11 @@ export function ManagerProfile() {
       reader.onload = (uploadEvent) => {
         if (uploadEvent.target?.result) {
           setAvatarPreview(uploadEvent.target.result as string);
-          showToast("Profile Picture", "success", "Your photo has been uploaded successfully.");
+          showToast(
+            "Profile Picture",
+            "success",
+            "Your photo has been uploaded successfully.",
+          );
         }
       };
       reader.readAsDataURL(e.target.files[0]);
@@ -127,29 +140,48 @@ export function ManagerProfile() {
 
   const handleAddSkill = () => {
     if (newSkillText.trim()) {
-      setSkills(prev => [...prev, { id: Date.now().toString(), name: newSkillText.trim(), isCustom: true }]);
+      setSkills((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          name: newSkillText.trim(),
+          isCustom: true,
+        },
+      ]);
       setNewSkillText("");
       setShowAddSkillInput(false);
-      showToast("Skill Added", "success", `"${newSkillText.trim()}" added to your expertise.`);
+      showToast(
+        "Skill Added",
+        "success",
+        `"${newSkillText.trim()}" added to your expertise.`,
+      );
     }
   };
 
   const handleAddContact = () => {
-    setContacts(prev => [
+    setContacts((prev) => [
       ...prev,
       {
         name: "",
         relationship: "",
         phone: "",
         email: "",
-        address: sameAsCurrentAddress ? currentAddress : ""
-      }
+        address: sameAsCurrentAddress ? currentAddress : "",
+      },
     ]);
-    showToast("Contact Form Added", "info", "Please fill in the emergency contact details.");
+    showToast(
+      "Contact Form Added",
+      "info",
+      "Please fill in the emergency contact details.",
+    );
   };
 
-  const handleContactChange = (index: number, field: keyof EmergencyContact, value: string) => {
-    setContacts(prev => {
+  const handleContactChange = (
+    index: number,
+    field: keyof EmergencyContact,
+    value: string,
+  ) => {
+    setContacts((prev) => {
       const updated = [...prev];
       updated[index] = { ...updated[index], [field]: value };
       return updated;
@@ -158,7 +190,11 @@ export function ManagerProfile() {
 
   const handleSaveAllChanges = () => {
     setIsEditing(false);
-    showToast("Profile Saved", "success", "Your profile details have been securely updated.");
+    showToast(
+      "Profile Saved",
+      "success",
+      "Your profile details have been securely updated.",
+    );
   };
 
   const handleCancelChanges = () => {
@@ -170,32 +206,47 @@ export function ManagerProfile() {
   const handlePasswordUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword || !newPassword || !confirmPassword) {
-      showToast("Verification Failed", "error", "Please fill out all password fields.");
+      showToast(
+        "Verification Failed",
+        "error",
+        "Please fill out all password fields.",
+      );
       return;
     }
     if (newPassword !== confirmPassword) {
-      showToast("Mismatch Error", "error", "Confirm password does not match new password.");
+      showToast(
+        "Mismatch Error",
+        "error",
+        "Confirm password does not match new password.",
+      );
       return;
     }
     setShowPasswordModal(false);
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
-    showToast("Password Secure", "success", "Your account security credentials have been updated.");
+    showToast(
+      "Password Secure",
+      "success",
+      "Your account security credentials have been updated.",
+    );
   };
 
   const handleDeactivateConfirm = () => {
     setShowDeactivateModal(false);
-    showToast("Action Restricted", "error", "Deactivation request has been sent to HR for verification.");
+    showToast(
+      "Action Restricted",
+      "error",
+      "Deactivation request has been sent to HR for verification.",
+    );
   };
 
   const handleThemeChange = (selectedTheme: "light" | "dark" | "system") => {
     setTheme(selectedTheme);
     const root = window.document.documentElement;
     localStorage.setItem("theme", selectedTheme);
-    
-    // eslint-disable-next-line no-useless-assignment
-    let isDarkTheme = false;
+
+    let isDarkTheme: boolean;
     if (selectedTheme === "system") {
       isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
     } else {
@@ -207,12 +258,15 @@ export function ManagerProfile() {
     } else {
       root.classList.remove("dark");
     }
-    showToast("Theme Preference", "info", `Switched display theme to ${selectedTheme}.`);
+    showToast(
+      "Theme Preference",
+      "info",
+      `Switched display theme to ${selectedTheme}.`,
+    );
   };
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-24 space-y-6 animate-in fade-in duration-500">
-      
       {/* ─── Page Header ─────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -220,17 +274,21 @@ export function ManagerProfile() {
             <User size={22} className="text-[#00B87C]" />
           </div>
           <div>
-            <h1 className="text-[26px] font-bold text-foreground tracking-tight">My Profile</h1>
-            <p className="text-[13px] text-[#6B7280]">View and manage your personal information</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">
+              My Profile
+            </h1>
+            <p className="text-[13px] text-[#6B7280]">
+              View and manage your personal information
+            </p>
           </div>
         </div>
         <div>
-          <button 
+          <button
             onClick={() => setIsEditing(true)}
             disabled={isEditing}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border font-bold text-[12px] uppercase tracking-wider transition-all shadow-sm ${
-              isEditing 
-                ? "bg-muted border-border text-muted-foreground cursor-not-allowed" 
+              isEditing
+                ? "bg-muted border-border text-muted-foreground cursor-not-allowed"
                 : "border-[#00B87C] text-[#00B87C] hover:bg-[#00B87C]/5 active:scale-95"
             }`}
           >
@@ -243,10 +301,10 @@ export function ManagerProfile() {
       {/* ─── Profile Hero Card ────────────────────────────────────── */}
       <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden relative">
         {/* Top Banner Gradient Strip */}
-        <div 
+        <div
           className="h-[100px] w-full"
           style={{
-            background: "linear-gradient(135deg, #00B87C 0%, #009966 100%)"
+            background: "linear-gradient(135deg, #00B87C 0%, #009966 100%)",
           }}
         />
 
@@ -256,44 +314,54 @@ export function ManagerProfile() {
             <div className="flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
               {/* Avatar Section */}
               <div className="relative group shrink-0">
-                <div 
+                <div
                   className="w-24 h-24 rounded-full border-[4px] border-card flex items-center justify-center font-bold text-3xl text-white shadow-xl overflow-hidden"
                   style={{ backgroundColor: "#F59E0B" }}
                 >
                   {avatarPreview ? (
-                    <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+                    <img
+                      src={avatarPreview}
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     "SI"
                   )}
                 </div>
-                <div 
+                <div
                   onClick={() => fileInputRef.current?.click()}
                   className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer backdrop-blur-[2px]"
                 >
                   <Camera size={22} className="text-white" />
                 </div>
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleAvatarChange} 
-                  accept="image/*" 
-                  className="hidden" 
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleAvatarChange}
+                  accept="image/*"
+                  className="hidden"
                 />
               </div>
 
               {/* Name & Title Content */}
               <div className="pb-1">
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3.5 mb-1.5">
-                  <h2 className="text-2xl font-bold text-foreground tracking-tight">{fullName}</h2>
+                  <h2 className="text-2xl font-bold text-foreground tracking-tight">
+                    {fullName}
+                  </h2>
                   <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Active</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider">
+                      Active
+                    </span>
                   </div>
                   <span className="px-3 py-1 rounded-full bg-muted/60 border border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     Full-time
                   </span>
                 </div>
-                <p className="text-[#00B87C] font-bold text-sm mb-3">Engineering Manager</p>
+                <p className="text-[#00B87C] font-bold text-sm mb-3">
+                  Engineering Manager
+                </p>
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
                   <span className="px-3 py-1 rounded-full bg-muted/50 border border-border text-[11px] font-bold text-muted-foreground">
                     #EMP-0042
@@ -302,7 +370,8 @@ export function ManagerProfile() {
                     Engineering
                   </span>
                   <span className="flex items-center gap-1 text-[11px] font-bold text-muted-foreground">
-                    <MapPin size={13} className="text-muted-foreground/60" /> Chennai, India
+                    <MapPin size={13} className="text-muted-foreground/60" />{" "}
+                    Chennai, India
                   </span>
                   <span className="text-[11px] font-bold text-muted-foreground">
                     Since Jan 2019
@@ -313,14 +382,26 @@ export function ManagerProfile() {
 
             {/* Quick Hero Actions */}
             <div className="flex items-center justify-center gap-2.5 mb-1">
-              <button 
-                onClick={() => showToast("Message System", "info", "Routing to HR correspondence desk...")}
+              <button
+                onClick={() =>
+                  showToast(
+                    "Message System",
+                    "info",
+                    "Routing to HR correspondence desk...",
+                  )
+                }
                 className="px-5 py-2.5 rounded-xl border border-border text-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all shadow-sm active:scale-95"
               >
                 Message HR
               </button>
-              <button 
-                onClick={() => showToast("Quick Actions", "info", "Profile settings options details loading...")}
+              <button
+                onClick={() =>
+                  showToast(
+                    "Quick Actions",
+                    "info",
+                    "Profile settings options details loading...",
+                  )
+                }
                 className="px-4 py-2.5 rounded-xl border border-border text-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all shadow-sm active:scale-95"
               >
                 More ▾
@@ -335,8 +416,12 @@ export function ManagerProfile() {
                 <Calendar size={20} />
               </div>
               <div>
-                <p className="text-xl font-bold text-foreground tracking-tight">7.2 yrs</p>
-                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Tenure</p>
+                <p className="text-xl font-bold text-foreground tracking-tight">
+                  7.2 yrs
+                </p>
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                  Tenure
+                </p>
               </div>
             </div>
             <div className="flex items-center justify-center sm:justify-start gap-4 px-4 py-2 border-y sm:border-y-0 sm:border-x border-border">
@@ -344,8 +429,12 @@ export function ManagerProfile() {
                 <Sparkles size={20} />
               </div>
               <div>
-                <p className="text-xl font-bold text-[#00B87C] tracking-tight">94%</p>
-                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Attendance</p>
+                <p className="text-xl font-bold text-[#00B87C] tracking-tight">
+                  94%
+                </p>
+                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                  Attendance
+                </p>
               </div>
             </div>
             <div className="flex items-center justify-center sm:justify-start gap-4 px-4 py-2">
@@ -353,8 +442,12 @@ export function ManagerProfile() {
                 <Star size={20} fill="currentColor" />
               </div>
               <div>
-                <p className="text-xl font-bold text-amber-500 tracking-tight">4.6★</p>
-                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">My Rating</p>
+                <p className="text-xl font-bold text-amber-500 tracking-tight">
+                  4.6★
+                </p>
+                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                  My Rating
+                </p>
               </div>
             </div>
           </div>
@@ -363,15 +456,23 @@ export function ManagerProfile() {
 
       {/* ─── Tab Navigation Bar ───────────────────────────────────── */}
       <div className="bg-card rounded-2xl border border-border shadow-sm p-1.5 flex items-center overflow-x-auto no-scrollbar scroll-smooth">
-        {(["Personal Info", "Employment", "Documents", "Emergency Contact", "Preferences"] as ProfileTab[]).map((tab) => {
+        {(
+          [
+            "Personal Info",
+            "Employment",
+            "Documents",
+            "Emergency Contact",
+            "Preferences",
+          ] as ProfileTab[]
+        ).map((tab) => {
           const active = activeTab === tab;
           return (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-6 py-3 rounded-xl text-[13px] font-bold tracking-widest uppercase transition-all whitespace-nowrap flex items-center gap-2 ${
-                active 
-                  ? "bg-[#00B87C] text-white font-bold shadow-md shadow-emerald-500/15" 
+                active
+                  ? "bg-[#00B87C] text-white font-bold shadow-md shadow-emerald-500/15"
                   : "text-[#6B7280] hover:text-[#374151] hover:bg-muted/50"
               }`}
             >
@@ -399,45 +500,54 @@ export function ManagerProfile() {
                   <div className="bg-card border border-border rounded-3xl p-6 md:p-8 shadow-sm">
                     <SectionLabel>Personal Details</SectionLabel>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-                      <InputField 
-                        label="Full Name" 
-                        value={fullName} 
+                      <InputField
+                        label="Full Name"
+                        value={fullName}
                         onChange={setFullName}
-                        disabled={!isEditing} 
+                        disabled={!isEditing}
                       />
-                      <InputField 
-                        label="Date of Birth" 
-                        value={dob} 
+                      <InputField
+                        label="Date of Birth"
+                        value={dob}
                         onChange={setDob}
                         type="date"
-                        disabled={!isEditing} 
+                        disabled={!isEditing}
                       />
-                      <DropdownField 
-                        label="Gender" 
-                        value={gender} 
+                      <DropdownField
+                        label="Gender"
+                        value={gender}
                         onChange={setGender}
                         options={["Male", "Female", "Other"]}
-                        disabled={!isEditing} 
+                        disabled={!isEditing}
                       />
-                      <DropdownField 
-                        label="Blood Group" 
-                        value={bloodGroup} 
+                      <DropdownField
+                        label="Blood Group"
+                        value={bloodGroup}
                         onChange={setBloodGroup}
-                        options={["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]}
-                        disabled={!isEditing} 
+                        options={[
+                          "A+",
+                          "A-",
+                          "B+",
+                          "B-",
+                          "O+",
+                          "O-",
+                          "AB+",
+                          "AB-",
+                        ]}
+                        disabled={!isEditing}
                       />
-                      <DropdownField 
-                        label="Marital Status" 
-                        value={maritalStatus} 
+                      <DropdownField
+                        label="Marital Status"
+                        value={maritalStatus}
                         onChange={setMaritalStatus}
                         options={["Single", "Married", "Divorced", "Widowed"]}
-                        disabled={!isEditing} 
+                        disabled={!isEditing}
                       />
-                      <InputField 
-                        label="Nationality" 
-                        value={nationality} 
+                      <InputField
+                        label="Nationality"
+                        value={nationality}
                         onChange={setNationality}
-                        disabled={!isEditing} 
+                        disabled={!isEditing}
                       />
                     </div>
                   </div>
@@ -446,41 +556,41 @@ export function ManagerProfile() {
                   <div className="bg-card border border-border rounded-3xl p-6 md:p-8 shadow-sm">
                     <SectionLabel>Contact Information</SectionLabel>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-                      <InputField 
-                        label="Personal Email" 
-                        value={personalEmail} 
+                      <InputField
+                        label="Personal Email"
+                        value={personalEmail}
                         onChange={setPersonalEmail}
-                        icon={<Mail size={14} />} 
-                        disabled={!isEditing} 
+                        icon={<Mail size={14} />}
+                        disabled={!isEditing}
                       />
-                      <InputField 
-                        label="Mobile Number" 
-                        value={mobileNumber} 
+                      <InputField
+                        label="Mobile Number"
+                        value={mobileNumber}
                         onChange={setMobileNumber}
-                        icon={<Phone size={14} />} 
-                        disabled={!isEditing} 
+                        icon={<Phone size={14} />}
+                        disabled={!isEditing}
                       />
-                      <InputField 
-                        label="Alternate Phone" 
-                        value={alternatePhone} 
+                      <InputField
+                        label="Alternate Phone"
+                        value={alternatePhone}
                         onChange={setAlternatePhone}
-                        icon={<Phone size={14} />} 
-                        disabled={!isEditing} 
+                        icon={<Phone size={14} />}
+                        disabled={!isEditing}
                       />
-                      <InputField 
-                        label="LinkedIn" 
-                        value={linkedinUrl} 
+                      <InputField
+                        label="LinkedIn"
+                        value={linkedinUrl}
                         onChange={setLinkedinUrl}
-                        icon={<Linkedin size={14} />} 
-                        disabled={!isEditing} 
+                        icon={<Linkedin size={14} />}
+                        disabled={!isEditing}
                       />
                       <div className="md:col-span-2">
-                        <InputField 
-                          label="GitHub" 
-                          value={githubUrl} 
+                        <InputField
+                          label="GitHub"
+                          value={githubUrl}
                           onChange={setGithubUrl}
-                          icon={<Github size={14} />} 
-                          disabled={!isEditing} 
+                          icon={<Github size={14} />}
+                          disabled={!isEditing}
                         />
                       </div>
                     </div>
@@ -507,8 +617,8 @@ export function ManagerProfile() {
                     <SectionLabel>Skills & Expertise</SectionLabel>
                     <div className="flex flex-wrap gap-2 mt-5">
                       {skills.map((skill) => (
-                        <span 
-                          key={skill.id} 
+                        <span
+                          key={skill.id}
                           className="px-3.5 py-1.5 rounded-xl border border-emerald-500/10 bg-[#DCFCE7] dark:bg-emerald-950/20 text-[#00B87C] text-[12px] font-bold tracking-wide"
                         >
                           {skill.name}
@@ -520,14 +630,16 @@ export function ManagerProfile() {
                         <div className="inline-flex items-center gap-1">
                           {showAddSkillInput ? (
                             <div className="flex items-center gap-1.5 bg-muted/60 border border-border rounded-xl px-2.5 py-1 w-[180px]">
-                              <input 
+                              <input
                                 type="text"
                                 value={newSkillText}
-                                onChange={(e) => setNewSkillText(e.target.value)}
+                                onChange={(e) =>
+                                  setNewSkillText(e.target.value)
+                                }
                                 placeholder="Enter skill..."
                                 className="bg-transparent border-none outline-none text-[11px] font-bold w-full text-foreground"
                               />
-                              <button 
+                              <button
                                 onClick={handleAddSkill}
                                 className="w-5 h-5 rounded-md bg-[#00B87C] text-white flex items-center justify-center hover:opacity-95"
                               >
@@ -535,7 +647,7 @@ export function ManagerProfile() {
                               </button>
                             </div>
                           ) : (
-                            <button 
+                            <button
                               onClick={() => setShowAddSkillInput(true)}
                               className="px-3.5 py-1.5 rounded-xl border border-dashed border-border text-muted-foreground text-[12px] font-bold hover:text-foreground hover:bg-muted/50 transition-all flex items-center gap-1"
                             >
@@ -552,16 +664,28 @@ export function ManagerProfile() {
                     <SectionLabel>Languages</SectionLabel>
                     <div className="space-y-3 mt-5">
                       <div className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-[#DCFCE7] dark:bg-emerald-950/20">
-                        <span className="text-[13px] font-bold text-foreground">English</span>
-                        <span className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider">Native</span>
+                        <span className="text-[13px] font-bold text-foreground">
+                          English
+                        </span>
+                        <span className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider">
+                          Native
+                        </span>
                       </div>
                       <div className="flex items-center justify-between p-3.5 rounded-xl border border-teal-500/10 bg-teal-500/5">
-                        <span className="text-[13px] font-bold text-foreground">Hindi</span>
-                        <span className="text-[11px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider">Fluent</span>
+                        <span className="text-[13px] font-bold text-foreground">
+                          Hindi
+                        </span>
+                        <span className="text-[11px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider">
+                          Fluent
+                        </span>
                       </div>
                       <div className="flex items-center justify-between p-3.5 rounded-xl border border-amber-500/10 bg-amber-500/5">
-                        <span className="text-[13px] font-bold text-foreground">Tamil</span>
-                        <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Conversational</span>
+                        <span className="text-[13px] font-bold text-foreground">
+                          Tamil
+                        </span>
+                        <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                          Conversational
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -602,9 +726,12 @@ export function ManagerProfile() {
                     <Check size={20} />
                   </div>
                   <div>
-                    <p className="text-[14px] font-bold text-emerald-800 dark:text-emerald-300 leading-snug">HR Administration Policy</p>
+                    <p className="text-[14px] font-bold text-emerald-800 dark:text-emerald-300 leading-snug">
+                      HR Administration Policy
+                    </p>
                     <p className="text-[12px] font-bold text-emerald-700/80 dark:text-emerald-400/80 mt-0.5 leading-relaxed">
-                      These details are managed by HR. Contact HR to request changes or file structural modifications.
+                      These details are managed by HR. Contact HR to request
+                      changes or file structural modifications.
                     </p>
                   </div>
                 </div>
@@ -612,14 +739,29 @@ export function ManagerProfile() {
                 {/* 2-col Read-Only Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-12 mt-4">
                   <ReadOnlyField label="Employee ID" value="#EMP-0042" />
-                  <ReadOnlyField label="Designation" value="Engineering Manager" />
+                  <ReadOnlyField
+                    label="Designation"
+                    value="Engineering Manager"
+                  />
                   <ReadOnlyField label="Department" value="Engineering" />
-                  <ReadOnlyField label="Reporting Manager" value="Robert Chen (VP Engineering)" />
+                  <ReadOnlyField
+                    label="Reporting Manager"
+                    value="Robert Chen (VP Engineering)"
+                  />
                   <ReadOnlyField label="Employment Type" value="Full-time" />
-                  <ReadOnlyField label="Work Mode" value="Hybrid (3 days office)" />
+                  <ReadOnlyField
+                    label="Work Mode"
+                    value="Hybrid (3 days office)"
+                  />
                   <ReadOnlyField label="Office Location" value="HQ, Chennai" />
-                  <ReadOnlyField label="Joining Date" value="January 15, 2019" />
-                  <ReadOnlyField label="Probation End Date" value="July 15, 2019" />
+                  <ReadOnlyField
+                    label="Joining Date"
+                    value="January 15, 2019"
+                  />
+                  <ReadOnlyField
+                    label="Probation End Date"
+                    value="July 15, 2019"
+                  />
                   <ReadOnlyField label="Notice Period" value="90 days" />
                   <ReadOnlyField label="Cost Center" value="ENG-001" />
                   <ReadOnlyField label="Grade/Band" value="Manager Level 2" />
@@ -627,12 +769,18 @@ export function ManagerProfile() {
 
                 {/* Reporting Structure Mini Org Chart */}
                 <div className="pt-8 border-t border-border mt-10">
-                  <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-6">Reporting Structure</p>
+                  <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-6">
+                    Reporting Structure
+                  </p>
                   <div className="flex flex-col items-center py-4 bg-muted/10 rounded-3xl border border-border/40 max-w-lg mx-auto">
                     {/* VP */}
                     <div className="px-5 py-3 rounded-2xl bg-card border border-border shadow-sm text-center min-w-[220px]">
-                      <p className="text-[13px] font-bold text-foreground">Robert Chen</p>
-                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">VP Engineering</p>
+                      <p className="text-[13px] font-bold text-foreground">
+                        Robert Chen
+                      </p>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">
+                        VP Engineering
+                      </p>
                     </div>
 
                     {/* Line Down */}
@@ -640,8 +788,12 @@ export function ManagerProfile() {
 
                     {/* Suresh Iyer */}
                     <div className="px-5 py-3 rounded-2xl bg-[#00B87C] border border-[#00B87C] shadow-lg shadow-emerald-500/10 text-center min-w-[220px] relative">
-                      <p className="text-[13px] font-bold text-white">Suresh Iyer</p>
-                      <p className="text-[11px] font-bold text-emerald-100/90 uppercase tracking-wider mt-0.5">Engineering Manager</p>
+                      <p className="text-[13px] font-bold text-white">
+                        Suresh Iyer
+                      </p>
+                      <p className="text-[11px] font-bold text-emerald-100/90 uppercase tracking-wider mt-0.5">
+                        Engineering Manager
+                      </p>
                       <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white" />
                     </div>
 
@@ -650,8 +802,12 @@ export function ManagerProfile() {
 
                     {/* Direct Reports */}
                     <div className="px-5 py-3 rounded-2xl bg-muted border border-border text-center min-w-[220px]">
-                      <p className="text-[13px] font-bold text-muted-foreground">12 Direct Reports</p>
-                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Engineering Division</p>
+                      <p className="text-[13px] font-bold text-muted-foreground">
+                        12 Direct Reports
+                      </p>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">
+                        Engineering Division
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -668,40 +824,92 @@ export function ManagerProfile() {
                 <div className="space-y-6 mt-4">
                   {/* Identity */}
                   <div>
-                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">Identity Documents</h4>
+                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">
+                      Identity Documents
+                    </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <DocCard name="Aadhar_Card_Verified.pdf" category="Aadhar Verified" size="1.2 MB" />
-                      <DocCard name="PAN_Card_Verified.pdf" category="PAN Verified" size="0.9 MB" />
-                      <DocCard name="Passport_Copy.pdf" category="Passport (expires Dec 2027)" size="2.4 MB" />
+                      <DocCard
+                        name="Aadhar_Card_Verified.pdf"
+                        category="Aadhar Verified"
+                        size="1.2 MB"
+                      />
+                      <DocCard
+                        name="PAN_Card_Verified.pdf"
+                        category="PAN Verified"
+                        size="0.9 MB"
+                      />
+                      <DocCard
+                        name="Passport_Copy.pdf"
+                        category="Passport (expires Dec 2027)"
+                        size="2.4 MB"
+                      />
                     </div>
                   </div>
 
                   {/* Employment */}
                   <div className="pt-4">
-                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">Employment Records</h4>
+                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">
+                      Employment Records
+                    </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <DocCard name="Offer_Letter_Signed.pdf" category="Offer Letter" size="3.1 MB" />
-                      <DocCard name="Appointment_Letter.pdf" category="Appointment" size="4.2 MB" />
-                      <DocCard name="NDA_Agreement.pdf" category="NDA Verified" size="1.5 MB" />
-                      <DocCard name="Appraisal_Letter_2024.pdf" category="Appraisal 2024" size="1.8 MB" />
+                      <DocCard
+                        name="Offer_Letter_Signed.pdf"
+                        category="Offer Letter"
+                        size="3.1 MB"
+                      />
+                      <DocCard
+                        name="Appointment_Letter.pdf"
+                        category="Appointment"
+                        size="4.2 MB"
+                      />
+                      <DocCard
+                        name="NDA_Agreement.pdf"
+                        category="NDA Verified"
+                        size="1.5 MB"
+                      />
+                      <DocCard
+                        name="Appraisal_Letter_2024.pdf"
+                        category="Appraisal 2024"
+                        size="1.8 MB"
+                      />
                     </div>
                   </div>
 
                   {/* Educational */}
                   <div className="pt-4">
-                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">Educational Certificates</h4>
+                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">
+                      Educational Certificates
+                    </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <DocCard name="BTech_Degree_Certificate.pdf" category="B.Tech Degree" size="5.5 MB" />
-                      <DocCard name="MBA_Degree_Certificate.pdf" category="MBA Degree" size="6.2 MB" />
+                      <DocCard
+                        name="BTech_Degree_Certificate.pdf"
+                        category="B.Tech Degree"
+                        size="5.5 MB"
+                      />
+                      <DocCard
+                        name="MBA_Degree_Certificate.pdf"
+                        category="MBA Degree"
+                        size="6.2 MB"
+                      />
                     </div>
                   </div>
 
                   {/* Financial */}
                   <div className="pt-4">
-                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">Financial Certificates</h4>
+                    <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">
+                      Financial Certificates
+                    </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <DocCard name="Bank_Passbook_Copy.pdf" category="Bank Passbook" size="1.4 MB" />
-                      <DocCard name="Form_16_FY24-25.pdf" category="Form 16" size="2.8 MB" />
+                      <DocCard
+                        name="Bank_Passbook_Copy.pdf"
+                        category="Bank Passbook"
+                        size="1.4 MB"
+                      />
+                      <DocCard
+                        name="Form_16_FY24-25.pdf"
+                        category="Form 16"
+                        size="2.8 MB"
+                      />
                     </div>
                   </div>
                 </div>
@@ -715,19 +923,27 @@ export function ManagerProfile() {
                   <SectionLabel>Emergency Contacts</SectionLabel>
                   {isEditing && (
                     <div className="flex items-center gap-2">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         id="addressSync"
                         checked={sameAsCurrentAddress}
                         onChange={(e) => {
                           setSameAsCurrentAddress(e.target.checked);
                           if (e.target.checked) {
-                            setContacts(prev => prev.map(c => ({ ...c, address: currentAddress })));
+                            setContacts((prev) =>
+                              prev.map((c) => ({
+                                ...c,
+                                address: currentAddress,
+                              })),
+                            );
                           }
                         }}
                         className="rounded border-border text-[#00B87C] focus:ring-[#00B87C]"
                       />
-                      <label htmlFor="addressSync" className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider cursor-pointer">
+                      <label
+                        htmlFor="addressSync"
+                        className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider cursor-pointer"
+                      >
                         Sync with Current Address
                       </label>
                     </div>
@@ -736,45 +952,60 @@ export function ManagerProfile() {
 
                 <div className="space-y-8 mt-4">
                   {contacts.map((contact, index) => (
-                    <div key={index} className="p-5 md:p-6 rounded-2xl border border-border/80 bg-muted/10 relative">
+                    <div
+                      key={index}
+                      className="p-5 md:p-6 rounded-2xl border border-border/80 bg-muted/10 relative"
+                    >
                       <div className="flex items-center gap-2 mb-6">
                         <span className="w-1.5 h-3.5 rounded-full bg-[#00B87C]" />
                         <h4 className="text-[11px] font-bold text-foreground uppercase tracking-wider">
-                          {index === 0 ? "Primary Contact" : `Emergency Contact #${index + 1}`}
+                          {index === 0
+                            ? "Primary Contact"
+                            : `Emergency Contact #${index + 1}`}
                         </h4>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <InputField 
-                          label="Contact Name" 
-                          value={contact.name} 
-                          onChange={(val) => handleContactChange(index, "name", val)}
-                          disabled={!isEditing} 
+                        <InputField
+                          label="Contact Name"
+                          value={contact.name}
+                          onChange={(val) =>
+                            handleContactChange(index, "name", val)
+                          }
+                          disabled={!isEditing}
                         />
-                        <InputField 
-                          label="Relationship" 
-                          value={contact.relationship} 
-                          onChange={(val) => handleContactChange(index, "relationship", val)}
-                          disabled={!isEditing} 
+                        <InputField
+                          label="Relationship"
+                          value={contact.relationship}
+                          onChange={(val) =>
+                            handleContactChange(index, "relationship", val)
+                          }
+                          disabled={!isEditing}
                         />
-                        <InputField 
-                          label="Phone" 
-                          value={contact.phone} 
-                          onChange={(val) => handleContactChange(index, "phone", val)}
-                          disabled={!isEditing} 
+                        <InputField
+                          label="Phone"
+                          value={contact.phone}
+                          onChange={(val) =>
+                            handleContactChange(index, "phone", val)
+                          }
+                          disabled={!isEditing}
                         />
-                        <InputField 
-                          label="Email Address" 
-                          value={contact.email} 
-                          onChange={(val) => handleContactChange(index, "email", val)}
-                          disabled={!isEditing} 
+                        <InputField
+                          label="Email Address"
+                          value={contact.email}
+                          onChange={(val) =>
+                            handleContactChange(index, "email", val)
+                          }
+                          disabled={!isEditing}
                         />
                         <div className="md:col-span-2">
-                          <InputField 
-                            label="Address" 
-                            value={contact.address} 
-                            onChange={(val) => handleContactChange(index, "address", val)}
-                            disabled={!isEditing || sameAsCurrentAddress} 
+                          <InputField
+                            label="Address"
+                            value={contact.address}
+                            onChange={(val) =>
+                              handleContactChange(index, "address", val)
+                            }
+                            disabled={!isEditing || sameAsCurrentAddress}
                           />
                         </div>
                       </div>
@@ -782,7 +1013,7 @@ export function ManagerProfile() {
                   ))}
                 </div>
 
-                <button 
+                <button
                   onClick={handleAddContact}
                   className="flex items-center gap-2 text-[#00B87C] hover:underline font-bold text-[13px] uppercase tracking-wider pl-1 mt-2 active:scale-95 transition-all outline-none"
                 >
@@ -800,40 +1031,72 @@ export function ManagerProfile() {
                     <SectionLabel>Notification Preferences</SectionLabel>
                   </div>
                   <div className="divide-y divide-border/60 mt-4">
-                    <ToggleRow 
-                      label="Email Notifications" 
-                      value={preferences.email} 
-                      onToggle={() => setPreferences(prev => ({ ...prev, email: !prev.email }))} 
+                    <ToggleRow
+                      label="Email Notifications"
+                      value={preferences.email}
+                      onToggle={() =>
+                        setPreferences((prev) => ({
+                          ...prev,
+                          email: !prev.email,
+                        }))
+                      }
                     />
-                    <ToggleRow 
-                      label="Push Notifications" 
-                      value={preferences.push} 
-                      onToggle={() => setPreferences(prev => ({ ...prev, push: !prev.push }))} 
+                    <ToggleRow
+                      label="Push Notifications"
+                      value={preferences.push}
+                      onToggle={() =>
+                        setPreferences((prev) => ({
+                          ...prev,
+                          push: !prev.push,
+                        }))
+                      }
                     />
-                    <ToggleRow 
-                      label="SMS Alerts — Critical Only" 
-                      value={preferences.sms} 
-                      onToggle={() => setPreferences(prev => ({ ...prev, sms: !prev.sms }))} 
+                    <ToggleRow
+                      label="SMS Alerts — Critical Only"
+                      value={preferences.sms}
+                      onToggle={() =>
+                        setPreferences((prev) => ({ ...prev, sms: !prev.sms }))
+                      }
                     />
-                    <ToggleRow 
-                      label="Leave Approval Reminders" 
-                      value={preferences.leaveReminders} 
-                      onToggle={() => setPreferences(prev => ({ ...prev, leaveReminders: !prev.leaveReminders }))} 
+                    <ToggleRow
+                      label="Leave Approval Reminders"
+                      value={preferences.leaveReminders}
+                      onToggle={() =>
+                        setPreferences((prev) => ({
+                          ...prev,
+                          leaveReminders: !prev.leaveReminders,
+                        }))
+                      }
                     />
-                    <ToggleRow 
-                      label="Team Update Digests" 
-                      value={preferences.teamDigests} 
-                      onToggle={() => setPreferences(prev => ({ ...prev, teamDigests: !prev.teamDigests }))} 
+                    <ToggleRow
+                      label="Team Update Digests"
+                      value={preferences.teamDigests}
+                      onToggle={() =>
+                        setPreferences((prev) => ({
+                          ...prev,
+                          teamDigests: !prev.teamDigests,
+                        }))
+                      }
                     />
-                    <ToggleRow 
-                      label="Performance Review Reminders" 
-                      value={preferences.performanceReminders} 
-                      onToggle={() => setPreferences(prev => ({ ...prev, performanceReminders: !prev.performanceReminders }))} 
+                    <ToggleRow
+                      label="Performance Review Reminders"
+                      value={preferences.performanceReminders}
+                      onToggle={() =>
+                        setPreferences((prev) => ({
+                          ...prev,
+                          performanceReminders: !prev.performanceReminders,
+                        }))
+                      }
                     />
-                    <ToggleRow 
-                      label="System Announcements" 
-                      value={preferences.announcements} 
-                      onToggle={() => setPreferences(prev => ({ ...prev, announcements: !prev.announcements }))} 
+                    <ToggleRow
+                      label="System Announcements"
+                      value={preferences.announcements}
+                      onToggle={() =>
+                        setPreferences((prev) => ({
+                          ...prev,
+                          announcements: !prev.announcements,
+                        }))
+                      }
                     />
                   </div>
                 </div>
@@ -846,15 +1109,17 @@ export function ManagerProfile() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                     {/* Theme Selector */}
                     <div className="space-y-2.5">
-                      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Theme Mode</label>
+                      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                        Theme Mode
+                      </label>
                       <div className="p-1.5 rounded-2xl bg-muted/40 border border-border flex items-center max-w-[320px]">
                         {(["light", "dark", "system"] as const).map((t) => (
                           <button
                             key={t}
                             onClick={() => handleThemeChange(t)}
                             className={`flex-1 py-2 rounded-xl text-[12px] font-bold uppercase tracking-wider transition-all ${
-                              theme === t 
-                                ? "bg-card text-foreground shadow-sm" 
+                              theme === t
+                                ? "bg-card text-foreground shadow-sm"
                                 : "text-muted-foreground hover:text-foreground"
                             }`}
                           >
@@ -864,19 +1129,25 @@ export function ManagerProfile() {
                       </div>
                     </div>
 
-                    <DropdownField 
-                      label="System Language" 
-                      value={preferredLanguage} 
-                      onChange={setPreferredLanguage} 
-                      options={["English (India)", "English (US)", "English (UK)", "Hindi", "Tamil"]}
-                      disabled={false} 
+                    <DropdownField
+                      label="System Language"
+                      value={preferredLanguage}
+                      onChange={setPreferredLanguage}
+                      options={[
+                        "English (India)",
+                        "English (US)",
+                        "English (UK)",
+                        "Hindi",
+                        "Tamil",
+                      ]}
+                      disabled={false}
                     />
-                    <DropdownField 
-                      label="Date Format" 
-                      value={dateFormat} 
-                      onChange={setDateFormat} 
+                    <DropdownField
+                      label="Date Format"
+                      value={dateFormat}
+                      onChange={setDateFormat}
                       options={["DD-MM-YYYY", "MM-DD-YYYY", "YYYY-MM-DD"]}
-                      disabled={false} 
+                      disabled={false}
                     />
                   </div>
                 </div>
@@ -892,11 +1163,15 @@ export function ManagerProfile() {
                         <Lock size={20} />
                       </div>
                       <div>
-                        <p className="text-[15px] font-bold text-foreground tracking-tight">Security Credentials</p>
-                        <p className="text-[12px] font-bold text-muted-foreground">Keep your password robust and updated regularly</p>
+                        <p className="text-[15px] font-bold text-foreground tracking-tight">
+                          Security Credentials
+                        </p>
+                        <p className="text-[12px] font-bold text-muted-foreground">
+                          Keep your password robust and updated regularly
+                        </p>
                       </div>
                     </div>
-                    <button 
+                    <button
                       onClick={() => setShowPasswordModal(true)}
                       className="px-6 py-3 rounded-xl border border-border text-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all shadow-sm active:scale-95"
                     >
@@ -906,12 +1181,15 @@ export function ManagerProfile() {
 
                   <div className="pt-6 border-t border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div>
-                      <p className="text-[14px] font-bold text-foreground">Deactivate Profile Account</p>
+                      <p className="text-[14px] font-bold text-foreground">
+                        Deactivate Profile Account
+                      </p>
                       <p className="text-[12px] font-medium text-muted-foreground leading-relaxed max-w-md mt-0.5">
-                        This action will lock your access and notify HR. Profile files will remain archived under compliance rules.
+                        This action will lock your access and notify HR. Profile
+                        files will remain archived under compliance rules.
                       </p>
                     </div>
-                    <button 
+                    <button
                       onClick={() => setShowDeactivateModal(true)}
                       className="text-red-500 hover:text-red-600 hover:underline font-bold text-[12px] uppercase tracking-wider active:scale-95 pl-1 transition-all outline-none shrink-0"
                     >
@@ -928,7 +1206,7 @@ export function ManagerProfile() {
       {/* ─── Bottom Floating Save Bar (Editing Mode) ──────────────── */}
       <AnimatePresence>
         {isEditing && (
-          <motion.div 
+          <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
@@ -938,13 +1216,13 @@ export function ManagerProfile() {
               Unsaved Changes!
             </span>
             <div className="flex items-center gap-3 ml-auto">
-              <button 
+              <button
                 onClick={handleCancelChanges}
                 className="px-6 py-2.5 rounded-xl border border-border text-muted-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all active:scale-95"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={handleSaveAllChanges}
                 className="px-8 py-2.5 rounded-xl bg-[#00B87C] text-white font-bold text-[12px] uppercase tracking-wider hover:opacity-95 transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
               >
@@ -959,13 +1237,13 @@ export function ManagerProfile() {
       <AnimatePresence>
         {showPasswordModal && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, y: 10 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 10 }}
               className="bg-card border border-border rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative"
             >
-              <button 
+              <button
                 onClick={() => setShowPasswordModal(false)}
                 className="absolute right-4 top-4 p-2 rounded-xl text-muted-foreground hover:bg-muted/60 transition-all outline-none"
               >
@@ -976,13 +1254,17 @@ export function ManagerProfile() {
                 <div className="w-9 h-9 rounded-[10px] bg-emerald-500/10 flex items-center justify-center text-[#00B87C]">
                   <Lock size={20} />
                 </div>
-                <h3 className="text-[18px] font-bold text-foreground tracking-tight">Change Password</h3>
+                <h3 className="text-[18px] font-bold text-foreground tracking-tight">
+                  Change Password
+                </h3>
               </div>
 
               <form onSubmit={handlePasswordUpdate} className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Current Password</label>
-                  <input 
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                    Current Password
+                  </label>
+                  <input
                     type="password"
                     required
                     value={currentPassword}
@@ -992,8 +1274,10 @@ export function ManagerProfile() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">New Password</label>
-                  <input 
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                    New Password
+                  </label>
+                  <input
                     type="password"
                     required
                     value={newPassword}
@@ -1003,8 +1287,10 @@ export function ManagerProfile() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Confirm New Password</label>
-                  <input 
+                  <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                    Confirm New Password
+                  </label>
+                  <input
                     type="password"
                     required
                     value={confirmPassword}
@@ -1015,14 +1301,14 @@ export function ManagerProfile() {
                 </div>
 
                 <div className="flex gap-3 pt-4">
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setShowPasswordModal(false)}
                     className="flex-1 py-3 rounded-xl border border-border text-muted-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all"
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     type="submit"
                     className="flex-1 py-3 rounded-xl bg-[#00B87C] text-white font-bold text-[12px] uppercase tracking-wider hover:opacity-95 transition-all shadow-md shadow-emerald-500/20"
                   >
@@ -1039,13 +1325,13 @@ export function ManagerProfile() {
       <AnimatePresence>
         {showDeactivateModal && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.95, y: 10 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 10 }}
               className="bg-card border border-border rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative"
             >
-              <button 
+              <button
                 onClick={() => setShowDeactivateModal(false)}
                 className="absolute right-4 top-4 p-2 rounded-xl text-muted-foreground hover:bg-muted/60 transition-all outline-none"
               >
@@ -1054,21 +1340,25 @@ export function ManagerProfile() {
 
               <div className="flex items-center gap-3 mb-4 text-red-500">
                 <AlertTriangle size={24} />
-                <h3 className="text-[18px] font-bold text-foreground tracking-tight">Confirm Deactivation</h3>
+                <h3 className="text-[18px] font-bold text-foreground tracking-tight">
+                  Confirm Deactivation
+                </h3>
               </div>
 
               <p className="text-[13px] font-bold text-muted-foreground leading-relaxed mb-6">
-                Are you sure you want to deactivate your profile? This will immediately restrict your system access and suspend all pending task workflows. Deactivation is subject to HR clearance.
+                Are you sure you want to deactivate your profile? This will
+                immediately restrict your system access and suspend all pending
+                task workflows. Deactivation is subject to HR clearance.
               </p>
 
               <div className="flex gap-3">
-                <button 
+                <button
                   onClick={() => setShowDeactivateModal(false)}
                   className="flex-1 py-3 rounded-xl border border-border text-muted-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   onClick={handleDeactivateConfirm}
                   className="flex-1 py-3 rounded-xl bg-red-500 text-white font-bold text-[12px] uppercase tracking-wider hover:bg-red-600 transition-all shadow-md shadow-red-500/20"
                 >
@@ -1079,7 +1369,6 @@ export function ManagerProfile() {
           </div>
         )}
       </AnimatePresence>
-
     </div>
   );
 }
@@ -1090,7 +1379,9 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-2">
       <div className="w-1 h-5 rounded-full bg-[#00B87C]" />
-      <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">{children}</h3>
+      <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+        {children}
+      </h3>
     </div>
   );
 }
@@ -1104,15 +1395,26 @@ interface InputFieldProps {
   disabled: boolean;
 }
 
-function InputField({ label, value, onChange, type = "text", icon, disabled }: InputFieldProps) {
+function InputField({
+  label,
+  value,
+  onChange,
+  type = "text",
+  icon,
+  disabled,
+}: InputFieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">{label}</label>
-      <div className={`flex items-center gap-2.5 px-4 h-11 rounded-2xl border transition-all ${
-        disabled 
-          ? "bg-muted/10 border-border opacity-75" 
-          : "bg-muted/30 border-border focus-within:border-[#00B87C] focus-within:ring-2 focus-within:ring-[#00B87C]/10"
-      }`}>
+      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+        {label}
+      </label>
+      <div
+        className={`flex items-center gap-2.5 px-4 h-11 rounded-2xl border transition-all ${
+          disabled
+            ? "bg-muted/10 border-border opacity-75"
+            : "bg-muted/30 border-border focus-within:border-[#00B87C] focus-within:ring-2 focus-within:ring-[#00B87C]/10"
+        }`}
+      >
         {icon && <span className="text-muted-foreground">{icon}</span>}
         <input
           type={type}
@@ -1134,24 +1436,39 @@ interface DropdownFieldProps {
   disabled: boolean;
 }
 
-function DropdownField({ label, value, onChange, options, disabled }: DropdownFieldProps) {
+function DropdownField({
+  label,
+  value,
+  onChange,
+  options,
+  disabled,
+}: DropdownFieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">{label}</label>
+      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+        {label}
+      </label>
       <div className="relative">
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
           className={`w-full appearance-none px-4 h-11 rounded-2xl border bg-muted/30 border-border text-[14px] font-bold text-foreground outline-none transition-all ${
-            disabled 
-              ? "opacity-75 cursor-not-allowed" 
+            disabled
+              ? "opacity-75 cursor-not-allowed"
               : "focus:border-[#00B87C] focus:ring-2 focus:ring-[#00B87C]/10 cursor-pointer"
           }`}
         >
-          {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+          {options.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
         </select>
-        <ChevronDown size={15} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+        <ChevronDown
+          size={15}
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+        />
       </div>
     </div>
   );
@@ -1160,21 +1477,39 @@ function DropdownField({ label, value, onChange, options, disabled }: DropdownFi
 function ReadOnlyField({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1">
-      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">{label}</p>
-      <p className="text-[15px] font-bold text-foreground tracking-tight ml-1">{value}</p>
+      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+        {label}
+      </p>
+      <p className="text-[15px] font-bold text-foreground tracking-tight ml-1">
+        {value}
+      </p>
     </div>
   );
 }
 
-function DocCard({ name, category, size }: { name: string; category: string; size: string }) {
+function DocCard({
+  name,
+  category,
+  size,
+}: {
+  name: string;
+  category: string;
+  size: string;
+}) {
   return (
-    <div 
-      onClick={() => showToast("File Download", "success", `Downloading file: "${name}"`)}
+    <div
+      onClick={() =>
+        showToast("File Download", "success", `Downloading file: "${name}"`)
+      }
       className="p-4 rounded-2xl border border-border bg-muted/10 flex items-center justify-between gap-4 hover:border-[#00B87C]/40 hover:bg-[#00B87C]/5 transition-all cursor-pointer group shadow-sm"
     >
       <div className="min-w-0">
-        <p className="text-[13px] font-bold text-foreground truncate group-hover:text-[#00B87C] transition-colors">{category}</p>
-        <p className="text-[11px] font-bold text-muted-foreground truncate mt-0.5">{name} • {size}</p>
+        <p className="text-[13px] font-bold text-foreground truncate group-hover:text-[#00B87C] transition-colors">
+          {category}
+        </p>
+        <p className="text-[11px] font-bold text-muted-foreground truncate mt-0.5">
+          {name} • {size}
+        </p>
       </div>
       <div className="w-9 h-9 rounded-xl bg-card border border-border flex items-center justify-center text-muted-foreground group-hover:bg-[#00B87C]/15 group-hover:text-[#00B87C] transition-all shadow-sm">
         <Download size={15} />
@@ -1183,21 +1518,33 @@ function DocCard({ name, category, size }: { name: string; category: string; siz
   );
 }
 
-function ToggleRow({ label, value, onToggle }: { label: string; value: boolean; onToggle: () => void }) {
+function ToggleRow({
+  label,
+  value,
+  onToggle,
+}: {
+  label: string;
+  value: boolean;
+  onToggle: () => void;
+}) {
   return (
     <div className="flex items-center justify-between py-4 group">
       <div>
-        <p className="text-[14px] font-bold text-foreground group-hover:text-[#00B87C] transition-colors">{label}</p>
+        <p className="text-[14px] font-bold text-foreground group-hover:text-[#00B87C] transition-colors">
+          {label}
+        </p>
       </div>
-      <button 
+      <button
         onClick={onToggle}
         className={`w-11 h-6 rounded-full relative transition-all duration-300 ${
-          value ? 'bg-[#00B87C]' : 'bg-muted-foreground/20'
+          value ? "bg-[#00B87C]" : "bg-muted-foreground/20"
         }`}
       >
-        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-300 ${
-          value ? 'left-6' : 'left-1'
-        }`} />
+        <div
+          className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-300 ${
+            value ? "left-6" : "left-1"
+          }`}
+        />
       </button>
     </div>
   );

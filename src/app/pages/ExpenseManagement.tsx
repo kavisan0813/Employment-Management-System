@@ -599,9 +599,7 @@ export function Expenses() {
                 </div>
               </div>
               <div className="flex items-baseline gap-2">
-                <h3 className="text-[28px] font-bold">
-                  {stat.val}
-                </h3>
+                <h3 className="text-[28px] font-bold">{stat.val}</h3>
               </div>
               <p className="text-xs text-muted-foreground mt-2 font-medium">
                 {stat.desc}

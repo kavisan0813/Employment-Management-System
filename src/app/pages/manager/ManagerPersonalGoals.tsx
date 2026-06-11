@@ -1,21 +1,31 @@
 import { useState, forwardRef } from "react";
-import { 
-  Target, 
-  Plus, 
-  ChevronRight, 
-  CheckCircle2, 
-  AlertCircle, 
-  BarChart3, 
+import {
+  Target,
+  Plus,
+  ChevronRight,
+  CheckCircle2,
+  AlertCircle,
+  BarChart3,
   X,
   PlusCircle,
-  MoreVertical
+  MoreVertical,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../components/workflow/ToastNotification";
 
-type GoalStatus = "All" | "In Progress" | "Completed" | "At Risk" | "Not Started";
+type GoalStatus =
+  | "All"
+  | "In Progress"
+  | "Completed"
+  | "At Risk"
+  | "Not Started";
 type Priority = "High" | "Medium" | "Low";
-type Category = "Leadership" | "Compliance" | "Strategy" | "Personal" | "Technical";
+type Category =
+  | "Leadership"
+  | "Compliance"
+  | "Strategy"
+  | "Personal"
+  | "Technical";
 
 interface Goal {
   id: string;
@@ -31,65 +41,65 @@ interface Goal {
 }
 
 const goalsData: Goal[] = [
-  { 
-    id: "1", 
-    title: "Lead Architecture Review", 
-    category: "Technical", 
-    priority: "High", 
-    progress: 80, 
-    deadline: "Q2 Target", 
-    kr: "Design new event-driven microservices architecture", 
-    lastUpdated: "May 8", 
-    manager: "Rajan Kumar", 
-    status: "In Progress" 
+  {
+    id: "1",
+    title: "Lead Architecture Review",
+    category: "Technical",
+    priority: "High",
+    progress: 80,
+    deadline: "Q2 Target",
+    kr: "Design new event-driven microservices architecture",
+    lastUpdated: "May 8",
+    manager: "Rajan Kumar",
+    status: "In Progress",
   },
-  { 
-    id: "2", 
-    title: "Grow Team to 15 Members", 
-    category: "Leadership", 
-    priority: "High", 
-    progress: 60, 
-    deadline: "Q3 Target", 
-    kr: "Hire and onboard 4 new senior React/Node engineers", 
-    lastUpdated: "May 10", 
-    manager: "Rajan Kumar", 
-    status: "In Progress" 
+  {
+    id: "2",
+    title: "Grow Team to 15 Members",
+    category: "Leadership",
+    priority: "High",
+    progress: 60,
+    deadline: "Q3 Target",
+    kr: "Hire and onboard 4 new senior React/Node engineers",
+    lastUpdated: "May 10",
+    manager: "Rajan Kumar",
+    status: "In Progress",
   },
-  { 
-    id: "3", 
-    title: "PMP Certification", 
-    category: "Strategy", 
-    priority: "Medium", 
-    progress: 100, 
-    deadline: "Completed", 
-    kr: "Obtain professional PMP accreditation", 
-    lastUpdated: "Apr 25", 
-    manager: "Rajan Kumar", 
-    status: "Completed" 
+  {
+    id: "3",
+    title: "PMP Certification",
+    category: "Strategy",
+    priority: "Medium",
+    progress: 100,
+    deadline: "Completed",
+    kr: "Obtain professional PMP accreditation",
+    lastUpdated: "Apr 25",
+    manager: "Rajan Kumar",
+    status: "Completed",
   },
-  { 
-    id: "4", 
-    title: "Improve Team Sprint Velocity", 
-    category: "Strategy", 
-    priority: "High", 
-    progress: 95, 
-    deadline: "Completed", 
-    kr: "Increase sprint delivery rate by 15%", 
-    lastUpdated: "Apr 28", 
-    manager: "Rajan Kumar", 
-    status: "Completed" 
+  {
+    id: "4",
+    title: "Improve Team Sprint Velocity",
+    category: "Strategy",
+    priority: "High",
+    progress: 95,
+    deadline: "Completed",
+    kr: "Increase sprint delivery rate by 15%",
+    lastUpdated: "Apr 28",
+    manager: "Rajan Kumar",
+    status: "Completed",
   },
-  { 
-    id: "5", 
-    title: "Establish DevOps CI/CD Best Practices", 
-    category: "Technical", 
-    priority: "Medium", 
-    progress: 25, 
-    deadline: "Q4 Target", 
-    kr: "Reduce pipeline deploy failures to < 2%", 
-    lastUpdated: "May 4", 
-    manager: "Rajan Kumar", 
-    status: "At Risk" 
+  {
+    id: "5",
+    title: "Establish DevOps CI/CD Best Practices",
+    category: "Technical",
+    priority: "Medium",
+    progress: 25,
+    deadline: "Q4 Target",
+    kr: "Reduce pipeline deploy failures to < 2%",
+    lastUpdated: "May 4",
+    manager: "Rajan Kumar",
+    status: "At Risk",
   },
 ];
 
@@ -97,10 +107,16 @@ export function ManagerPersonalGoals() {
   const [activeTab, setActiveTab] = useState<GoalStatus>("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredGoals = goalsData.filter(goal => activeTab === "All" || goal.status === activeTab);
+  const filteredGoals = goalsData.filter(
+    (goal) => activeTab === "All" || goal.status === activeTab,
+  );
 
   const handleAddGoal = () => {
-    showToast("Added!", "success", "Your personal goal has been added successfully.");
+    showToast(
+      "Added!",
+      "success",
+      "Your personal goal has been added successfully.",
+    );
     setIsModalOpen(false);
   };
 
@@ -113,13 +129,19 @@ export function ManagerPersonalGoals() {
             <Target size={22} />
           </div>
           <div>
-            <h1 className="text-[26px] font-bold text-foreground tracking-tight mb-1">My Goals</h1>
-            <p className="text-[13px] text-[#6B7280]">Focus on your key objectives and professional growth</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight mb-1">
+              My Goals
+            </h1>
+            <p className="text-[13px] text-[#6B7280]">
+              Focus on your key objectives and professional growth
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-bold text-[#00B87C] uppercase tracking-wider">FY 2025-26</span>
-          <button 
+          <span className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-bold text-[#00B87C] uppercase tracking-wider">
+            FY 2025-26
+          </span>
+          <button
             onClick={() => setIsModalOpen(true)}
             className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-bold text-[12px] uppercase tracking-wider hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20 flex items-center gap-2"
           >
@@ -141,12 +163,16 @@ export function ManagerPersonalGoals() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <BarChart3 size={18} className="text-[#00B87C]" />
-            <span className="text-[15px] font-bold text-foreground tracking-tight">Overall Progress: 72%</span>
+            <span className="text-[15px] font-bold text-foreground tracking-tight">
+              Overall Progress: 72%
+            </span>
           </div>
-          <span className="text-[12px] font-bold text-muted-foreground">4 / 5 goals on track</span>
+          <span className="text-[12px] font-bold text-muted-foreground">
+            4 / 5 goals on track
+          </span>
         </div>
         <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
-          <motion.div 
+          <motion.div
             initial={{ width: 0 }}
             animate={{ width: "72%" }}
             className="h-full bg-[#00B87C] rounded-full"
@@ -158,17 +184,27 @@ export function ManagerPersonalGoals() {
       <div className="bg-card border border-border rounded-[32px] p-2 md:p-4 shadow-sm min-h-[500px]">
         {/* Tabs */}
         <div className="flex items-center gap-6 border-b border-border px-4 mb-6 overflow-x-auto no-scrollbar">
-          {(["All", "In Progress", "Completed", "At Risk", "Not Started"] as GoalStatus[]).map((tab) => (
+          {(
+            [
+              "All",
+              "In Progress",
+              "Completed",
+              "At Risk",
+              "Not Started",
+            ] as GoalStatus[]
+          ).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`pb-4 text-[12px] font-bold uppercase tracking-wider transition-all relative whitespace-nowrap ${
-                activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
+                activeTab === tab
+                  ? "text-[#00B87C]"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {tab}
               {activeTab === tab && (
-                <motion.div 
+                <motion.div
                   layoutId="activeTabGoals"
                   className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00B87C]"
                 />
@@ -187,9 +223,9 @@ export function ManagerPersonalGoals() {
       </div>
 
       {/* ADD GOAL MODAL */}
-      <AddGoalModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <AddGoalModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         onSubmit={handleAddGoal}
       />
     </div>
@@ -198,7 +234,15 @@ export function ManagerPersonalGoals() {
 
 /* ─── UI COMPONENTS ─── */
 
-function KPICard({ label, value, color }: { label: string, value: string, color: 'default' | 'green' | 'teal' | 'red' }) {
+function KPICard({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: string;
+  color: "default" | "green" | "teal" | "red";
+}) {
   const colorMap = {
     default: "text-foreground",
     green: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20",
@@ -208,23 +252,37 @@ function KPICard({ label, value, color }: { label: string, value: string, color:
 
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm group hover:border-[#00B87C]/30 transition-all">
-      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">{label}</p>
-      <h3 className={`text-2xl font-bold tracking-tight ${colorMap[color].includes(' ') ? colorMap[color].split(' ')[0] : colorMap[color]}`}>{value}</h3>
+      <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">
+        {label}
+      </p>
+      <h3
+        className={`text-2xl font-bold tracking-tight ${colorMap[color].includes(" ") ? colorMap[color].split(" ")[0] : colorMap[color]}`}
+      >
+        {value}
+      </h3>
     </div>
   );
 }
 
 const GoalItem = forwardRef<HTMLDivElement, { goal: Goal }>(({ goal }, ref) => {
-  const statusIcon = goal.status === "Completed" ? <CheckCircle2 size={16} className="text-emerald-500" /> : 
-                    goal.status === "At Risk" ? <AlertCircle size={16} className="text-rose-500" /> : 
-                    <div className="w-4 h-4 rounded-full border-2 border-[#00B87C]/50 border-t-[#00B87C] animate-spin" />;
+  const statusIcon =
+    goal.status === "Completed" ? (
+      <CheckCircle2 size={16} className="text-emerald-500" />
+    ) : goal.status === "At Risk" ? (
+      <AlertCircle size={16} className="text-rose-500" />
+    ) : (
+      <div className="w-4 h-4 rounded-full border-2 border-[#00B87C]/50 border-t-[#00B87C] animate-spin" />
+    );
 
-  const priorityColor = goal.priority === "High" ? "text-rose-600 bg-rose-500/10 border-rose-500/20" :
-                       goal.priority === "Medium" ? "text-amber-600 bg-amber-500/10 border-amber-500/20" :
-                       "text-muted-foreground bg-muted/50 border-border";
+  const priorityColor =
+    goal.priority === "High"
+      ? "text-rose-600 bg-rose-500/10 border-rose-500/20"
+      : goal.priority === "Medium"
+        ? "text-amber-600 bg-amber-500/10 border-amber-500/20"
+        : "text-muted-foreground bg-muted/50 border-border";
 
   return (
-    <motion.div 
+    <motion.div
       ref={ref}
       layout
       initial={{ opacity: 0, scale: 0.98 }}
@@ -236,9 +294,17 @@ const GoalItem = forwardRef<HTMLDivElement, { goal: Goal }>(({ goal }, ref) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {statusIcon}
-          <h4 className="text-[14px] font-bold text-foreground tracking-tight">{goal.title}</h4>
-          <span className="px-2 py-0.5 rounded-md bg-muted text-[9px] font-bold text-muted-foreground uppercase tracking-wider">{goal.category}</span>
-          <span className={`px-2 py-0.5 rounded-md border text-[9px] font-bold uppercase tracking-wider ${priorityColor}`}>{goal.priority}</span>
+          <h4 className="text-[14px] font-bold text-foreground tracking-tight">
+            {goal.title}
+          </h4>
+          <span className="px-2 py-0.5 rounded-md bg-muted text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+            {goal.category}
+          </span>
+          <span
+            className={`px-2 py-0.5 rounded-md border text-[9px] font-bold uppercase tracking-wider ${priorityColor}`}
+          >
+            {goal.priority}
+          </span>
         </div>
         <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
           <MoreVertical size={16} />
@@ -248,7 +314,7 @@ const GoalItem = forwardRef<HTMLDivElement, { goal: Goal }>(({ goal }, ref) => {
       {/* PROGRESS ROW */}
       <div className="space-y-2">
         <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-          <motion.div 
+          <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${goal.progress}%` }}
             className="h-full bg-[#00B87C] rounded-full"
@@ -263,31 +329,50 @@ const GoalItem = forwardRef<HTMLDivElement, { goal: Goal }>(({ goal }, ref) => {
       {/* DETAIL ROW */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 py-2 border-t border-border/50">
         <div className="space-y-1">
-          <p className="text-[12px] font-bold text-muted-foreground italic tracking-tight">KR: {goal.kr}</p>
+          <p className="text-[12px] font-bold text-muted-foreground italic tracking-tight">
+            KR: {goal.kr}
+          </p>
           <div className="flex items-center gap-4">
-            <span className="text-[11px] font-bold text-muted-foreground/60">Last updated: {goal.lastUpdated}</span>
+            <span className="text-[11px] font-bold text-muted-foreground/60">
+              Last updated: {goal.lastUpdated}
+            </span>
             <div className="flex items-center gap-1.5">
-              <div className="w-5 h-5 rounded-full bg-blue-500/10 flex items-center justify-center text-[8px] font-bold text-blue-600">RK</div>
-              <span className="text-[11px] font-bold text-muted-foreground">{goal.manager}</span>
+              <div className="w-5 h-5 rounded-full bg-blue-500/10 flex items-center justify-center text-[8px] font-bold text-blue-600">
+                RK
+              </div>
+              <span className="text-[11px] font-bold text-muted-foreground">
+                {goal.manager}
+              </span>
             </div>
           </div>
         </div>
-        
+
         {/* ACTION ROW */}
         <div className="flex items-center gap-3">
-          <button 
-            onClick={() => showToast("Info", "info", "Goal details check-in is up-to-date.")}
+          <button
+            onClick={() =>
+              showToast("Info", "info", "Goal details check-in is up-to-date.")
+            }
             className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider hover:underline flex items-center gap-1"
           >
             View Details <ChevronRight size={14} />
           </button>
-          <button 
-            onClick={() => showToast("Success", "success", "Checked in goal progress successfully.")}
+          <button
+            onClick={() =>
+              showToast(
+                "Success",
+                "success",
+                "Checked in goal progress successfully.",
+              )
+            }
             className="px-4 py-1.5 rounded-lg border border-border text-[11px] font-bold uppercase tracking-wider hover:bg-muted transition-all"
           >
             Check-in
           </button>
-          <ChevronRight size={18} className="text-muted-foreground group-hover:text-[#00B87C] transition-all ml-1" />
+          <ChevronRight
+            size={18}
+            className="text-muted-foreground group-hover:text-[#00B87C] transition-all ml-1"
+          />
         </div>
       </div>
     </motion.div>
@@ -295,27 +380,27 @@ const GoalItem = forwardRef<HTMLDivElement, { goal: Goal }>(({ goal }, ref) => {
 });
 GoalItem.displayName = "GoalItem";
 
-function AddGoalModal({ 
-  isOpen, 
+function AddGoalModal({
+  isOpen,
   onClose,
-  onSubmit 
-}: { 
-  isOpen: boolean, 
-  onClose: () => void,
-  onSubmit: () => void
+  onSubmit,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: () => void;
 }) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
         className="absolute inset-0 bg-black/45 backdrop-blur-sm"
       />
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -323,21 +408,46 @@ function AddGoalModal({
       >
         <div className="p-8 space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-foreground tracking-tight">Add New Goal</h3>
-            <button onClick={onClose} className="p-2 rounded-xl hover:bg-secondary text-muted-foreground"><X size={20} /></button>
+            <h3 className="text-xl font-bold text-foreground tracking-tight">
+              Add New Goal
+            </h3>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl hover:bg-secondary text-muted-foreground"
+            >
+              <X size={20} />
+            </button>
           </div>
 
           <div className="space-y-4 max-h-[380px] overflow-y-auto pr-1">
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Goal Title</label>
-              <input type="text" placeholder="e.g. Implement TDS Automation" className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold" />
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                Goal Title
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Implement TDS Automation"
+                className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold"
+              />
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Category</label>
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                Category
+              </label>
               <div className="flex flex-wrap gap-2">
-                {["Leadership", "Compliance", "Strategy", "Personal", "Technical"].map(cat => (
-                  <button key={cat} type="button" className="px-4 py-2 rounded-xl border border-border text-[11px] font-bold uppercase tracking-wider hover:border-[#00B87C] transition-all">
+                {[
+                  "Leadership",
+                  "Compliance",
+                  "Strategy",
+                  "Personal",
+                  "Technical",
+                ].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    className="px-4 py-2 rounded-xl border border-border text-[11px] font-bold uppercase tracking-wider hover:border-[#00B87C] transition-all"
+                  >
                     {cat}
                   </button>
                 ))}
@@ -345,10 +455,16 @@ function AddGoalModal({
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Priority</label>
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                Priority
+              </label>
               <div className="flex gap-2">
-                {["High", "Medium", "Low"].map(p => (
-                  <button key={p} type="button" className={`flex-1 py-2 rounded-xl border border-border text-[11px] font-bold uppercase tracking-wider hover:border-[#00B87C] transition-all ${p === 'High' ? 'text-rose-600' : p === 'Medium' ? 'text-amber-600' : 'text-blue-600'}`}>
+                {["High", "Medium", "Low"].map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    className={`flex-1 py-2 rounded-xl border border-border text-[11px] font-bold uppercase tracking-wider hover:border-[#00B87C] transition-all ${p === "High" ? "text-rose-600" : p === "Medium" ? "text-amber-600" : "text-blue-600"}`}
+                  >
                     {p}
                   </button>
                 ))}
@@ -356,27 +472,58 @@ function AddGoalModal({
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Target Date</label>
-              <input type="date" className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold" />
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                Target Date
+              </label>
+              <input
+                type="date"
+                className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold"
+              />
             </div>
 
             <div className="space-y-2">
               <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1 flex justify-between">
                 Key Results
-                <button type="button" className="text-[#00B87C] hover:underline flex items-center gap-1 normal-case font-bold"><PlusCircle size={12} /> Add Key Result</button>
+                <button
+                  type="button"
+                  className="text-[#00B87C] hover:underline flex items-center gap-1 normal-case font-bold"
+                >
+                  <PlusCircle size={12} /> Add Key Result
+                </button>
               </label>
-              <input type="text" placeholder="Result 1..." className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold" />
+              <input
+                type="text"
+                placeholder="Result 1..."
+                className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold"
+              />
             </div>
 
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">Description</label>
-              <textarea placeholder="Describe your goal..." className="w-full h-24 px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold resize-none" />
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+                Description
+              </label>
+              <textarea
+                placeholder="Describe your goal..."
+                className="w-full h-24 px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold resize-none"
+              />
             </div>
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 py-3 rounded-2xl border border-border text-[12px] font-bold uppercase tracking-wider hover:bg-secondary transition-all">Cancel</button>
-            <button type="button" onClick={onSubmit} className="flex-2 px-8 py-3 rounded-2xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20">Add Goal</button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-3 rounded-2xl border border-border text-[12px] font-bold uppercase tracking-wider hover:bg-secondary transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={onSubmit}
+              className="flex-2 px-8 py-3 rounded-2xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20"
+            >
+              Add Goal
+            </button>
           </div>
         </div>
       </motion.div>

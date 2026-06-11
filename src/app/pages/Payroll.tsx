@@ -90,7 +90,9 @@ const loadFromStorage = (): PayrollEmployee[] => {
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (raw) return JSON.parse(raw) as PayrollEmployee[];
-  } catch {}
+  } catch {
+    // ignore
+  }
   return payrollEmployees.map((e) => ({
     ...e,
     status: e.status as "Paid" | "Pending" | "On Hold",
@@ -101,7 +103,7 @@ const loadFromStorage = (): PayrollEmployee[] => {
 };
 
 const saveToStorage = (data: PayrollEmployee[]) => {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch {}
+  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch { /* ignore */ }
 };
 
 /* ─── Toast System ───────────────────────── */
@@ -880,7 +882,11 @@ export function Payroll() {
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };

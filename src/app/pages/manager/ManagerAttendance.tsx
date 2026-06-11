@@ -83,13 +83,14 @@ const TEAM_ATTENDANCE_DATA: AttendanceRow[] = [
 
 const CALENDAR_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MOCK_HEATMAP = Array.from({ length: 5 }, () =>
-  Array.from({ length: 30 }, () => Math.floor(Math.random() * 4))
+  Array.from({ length: 30 }, () => Math.floor(Math.random() * 4)),
 );
 
 export function ManagerAttendance() {
   const [activeTab, setActiveTab] = useState("All");
   const [showRegularizeModal, setShowRegularizeModal] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<AttendanceRow | null>(null);
+  const [selectedEmployee, setSelectedEmployee] =
+    useState<AttendanceRow | null>(null);
 
   // For Regularization Form
   const [correctedTime, setCorrectedTime] = useState("09:00 AM");
@@ -102,10 +103,14 @@ export function ManagerAttendance() {
   };
 
   const getStatusColor = (status: string) => {
-    if (status.includes("Present")) return { text: "#00B87C", bg: "#DCFCE7", dot: "#10B981" };
-    if (status === "Late") return { text: "#D97706", bg: "#FEF3C7", dot: "#F59E0B" };
-    if (status === "On Leave") return { text: "#D97706", bg: "#FEF3C7", dot: "#F59E0B" };
-    if (status === "Absent") return { text: "#DC2626", bg: "#FEE2E2", dot: "#EF4444" };
+    if (status.includes("Present"))
+      return { text: "#00B87C", bg: "#DCFCE7", dot: "#10B981" };
+    if (status === "Late")
+      return { text: "#D97706", bg: "#FEF3C7", dot: "#F59E0B" };
+    if (status === "On Leave")
+      return { text: "#D97706", bg: "#FEF3C7", dot: "#F59E0B" };
+    if (status === "Absent")
+      return { text: "#DC2626", bg: "#FEE2E2", dot: "#EF4444" };
     return { text: "var(--foreground)", bg: "var(--secondary)", dot: "gray" };
   };
 
@@ -161,10 +166,20 @@ export function ManagerAttendance() {
 
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard title="TEAM PRESENT TODAY" value="11" sub="of 12" color="green" />
+        <KPICard
+          title="TEAM PRESENT TODAY"
+          value="11"
+          sub="of 12"
+          color="green"
+        />
         <KPICard title="ON LEAVE" value="1" sub="Priya Sharma" color="amber" />
         <KPICard title="LATE ARRIVALS" value="2" sub="today" color="red" />
-        <KPICard title="TEAM AVG ATTENDANCE" value="91.6%" sub="this month" color="green" />
+        <KPICard
+          title="TEAM AVG ATTENDANCE"
+          value="91.6%"
+          sub="this month"
+          color="green"
+        />
       </div>
 
       {/* ── Filter Tabs ── */}
@@ -220,7 +235,10 @@ export function ManagerAttendance() {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y" style={{ borderColor: "var(--border)" }}>
+            <tbody
+              className="divide-y"
+              style={{ borderColor: "var(--border)" }}
+            >
               {TEAM_ATTENDANCE_DATA.map((row) => {
                 const statusColors = getStatusColor(row.status);
                 return (
@@ -428,22 +446,33 @@ export function ManagerAttendance() {
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-4 mt-4 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="flex items-center gap-4 mt-4 pt-4 border-t"
+          style={{ borderColor: "var(--border)" }}
+        >
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-[#10B981]" />
-            <span className="text-[11px] font-bold text-muted-foreground uppercase">Present</span>
+            <span className="text-[11px] font-bold text-muted-foreground uppercase">
+              Present
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-[#F59E0B]" />
-            <span className="text-[11px] font-bold text-muted-foreground uppercase">Late</span>
+            <span className="text-[11px] font-bold text-muted-foreground uppercase">
+              Late
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-[#EF4444]" />
-            <span className="text-[11px] font-bold text-muted-foreground uppercase">Absent</span>
+            <span className="text-[11px] font-bold text-muted-foreground uppercase">
+              Absent
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded bg-[#F97316]" />
-            <span className="text-[11px] font-bold text-muted-foreground uppercase">Leave</span>
+            <span className="text-[11px] font-bold text-muted-foreground uppercase">
+              Leave
+            </span>
           </div>
         </div>
       </div>
@@ -494,8 +523,15 @@ export function ManagerAttendance() {
                 <p className="text-[12px] text-muted-foreground font-medium pl-8">
                   Apr 7, 2026 — Late Arrival
                 </p>
-                <p className="text-[13px] font-semibold pl-8 mt-1" style={{ color: "var(--foreground)" }}>
-                  Check-in: <span className="text-[#EF4444]">{selectedEmployee.checkIn}</span> (18 mins late)
+                <p
+                  className="text-[13px] font-semibold pl-8 mt-1"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Check-in:{" "}
+                  <span className="text-[#EF4444]">
+                    {selectedEmployee.checkIn}
+                  </span>{" "}
+                  (18 mins late)
                 </p>
               </div>
 
@@ -510,7 +546,10 @@ export function ManagerAttendance() {
                     value={correctedTime}
                     onChange={(e) => setCorrectedTime(e.target.value)}
                     className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors"
-                    style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+                    style={{
+                      borderColor: "var(--border)",
+                      color: "var(--foreground)",
+                    }}
                   />
                 </div>
                 <div>
@@ -521,7 +560,10 @@ export function ManagerAttendance() {
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none"
-                    style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+                    style={{
+                      borderColor: "var(--border)",
+                      color: "var(--foreground)",
+                    }}
                   >
                     <option value="Technical issue">Technical issue</option>
                     <option value="Traffic">Traffic</option>
@@ -538,14 +580,18 @@ export function ManagerAttendance() {
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Add your remarks..."
                     className="w-full min-h-[80px] p-4 rounded-xl border bg-transparent text-[13px] outline-none focus:border-[#00B87C] transition-colors resize-none"
-                    style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+                    style={{
+                      borderColor: "var(--border)",
+                      color: "var(--foreground)",
+                    }}
                   />
                 </div>
               </div>
 
               <div className="p-4 rounded-xl bg-[#F0FDF4] border border-[#DCFCE7]">
                 <p className="text-[12px] font-semibold text-[#10B981]">
-                  <span className="font-bold">Employee's reason:</span> Internet outage at home
+                  <span className="font-bold">Employee's reason:</span> Internet
+                  outage at home
                 </p>
               </div>
             </div>
@@ -557,7 +603,10 @@ export function ManagerAttendance() {
               <button
                 onClick={() => setShowRegularizeModal(false)}
                 className="px-5 py-2.5 rounded-xl border text-[13px] font-bold transition-colors hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-900"
-                style={{ borderColor: "var(--border)", color: "var(--muted-foreground)" }}
+                style={{
+                  borderColor: "var(--border)",
+                  color: "var(--muted-foreground)",
+                }}
               >
                 Cancel
               </button>

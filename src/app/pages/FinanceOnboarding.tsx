@@ -2,45 +2,17 @@ import { ReactNode, useState } from "react";
 import {
   IndianRupee,
   Download,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Users,
   Clock,
   CheckCircle,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Calendar,
   X,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Search,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  User,
   Shield,
   Upload,
   ChevronDown,
   ChevronRight,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Briefcase,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  MapPin,
   Check,
   AlertTriangle,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Building,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Banknote,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  FileText,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Eye,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ArrowUpRight,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  RefreshCw,
   Percent,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  UserCheck,
   Landmark,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  CreditCard,
   List,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -159,7 +131,6 @@ export function FinanceOnboarding() {
   const [showPFModal, setShowPFModal] = useState(false);
   const [showPayrollModal, setShowPayrollModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<NewHire | null>(null);
-  const [genericModalTitle, setGenericModalTitle] = useState("");
   const [selectedTask, setSelectedTask] = useState<FinancialTask | null>(null);
   const [showExportDropdown, setShowExportDropdown] = useState(false);
   const [showTaxModal, setShowTaxModal] = useState(false);
@@ -281,43 +252,35 @@ export function FinanceOnboarding() {
     showToast("Added to Payroll", "success", `${selectedEmployee?.name} added to April payroll cycle`);
   };
 
-  const handleSendForm = (empName: string) => {
-    showToast("Form Sent", "success", `Investment declaration form sent to ${empName}`);
-  };
-
-  const handleResendForm = (empName: string) => {
-    showToast("Form Resent", "success", `Investment declaration reminder sent to ${empName}`);
-  };
+  // Handlers removed to avoid unused vars
 
   const handleSaveTax = () => {
     setShowTaxModal(false);
     showToast("Tax Declaration Saved", "success", `Tax details updated for ${selectedEmployee?.name}`);
   };
 
-  const handleExport = () => {
-    showToast("Exporting", "info", "Downloading financial onboarding status CSV");
-  };
+  // handleExport removed
 
   const handlePreviewPayslip = () => {
     showToast("Preview", "info", "Payslip preview generated");
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const pendingCount = NEW_HIRES.filter(h => h.urgency === "amber" || h.urgency === "red").length;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const pendingTasks = NEW_HIRES.flatMap(h => h.tasks.filter(t => t.status === "pending" || t.status === "overdue"));
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const todayHires = NEW_HIRES.filter(h => h.joiningDate.includes("Apr 8"));
+  
+  // const _pendingCount = NEW_HIRES.filter(h => h.urgency === "amber" || h.urgency === "red").length;
+  
+  // const _pendingTasks = NEW_HIRES.flatMap(h => h.tasks.filter(t => t.status === "pending" || t.status === "overdue"));
+  
+  // const _todayHires = NEW_HIRES.filter(h => h.joiningDate.includes("Apr 8"));
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getStatusChip = (status: string) => {
-    switch (status) {
-      case "done": return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#00B87C] uppercase tracking-widest"><Check size={11} className="text-[#00B87C]" /> Done</span>;
-      case "overdue": return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-500 uppercase tracking-widest"><AlertTriangle size={11} /> Overdue</span>;
-      case "waiting": return <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">Waiting</span>;
-      default: return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 uppercase tracking-widest"><Clock size={11} /> Pending</span>;
-    }
-  };
+  
+  // const _getStatusChip = (status: string) => {
+  //   switch (status) {
+  //     case "done": return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#00B87C] uppercase tracking-widest"><Check size={11} className="text-[#00B87C]" /> Done</span>;
+  //     case "overdue": return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-500 uppercase tracking-widest"><AlertTriangle size={11} /> Overdue</span>;
+  //     case "waiting": return <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest">Waiting</span>;
+  //     default: return <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 uppercase tracking-widest"><Clock size={11} /> Pending</span>;
+  //   }
+  // };
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-300 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent relative">
@@ -368,7 +331,7 @@ export function FinanceOnboarding() {
 
       {/* ── KPI Cards ────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer" onClick={() => setGenericModalTitle("Pending Setup Tasks")}>
+        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer">
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
               <Clock size={18} className="text-amber-500" />
@@ -378,7 +341,7 @@ export function FinanceOnboarding() {
           <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">PENDING SETUP</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-1">need financial action</p>
         </div>
-        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer" onClick={() => setGenericModalTitle("Completed This Month")}>
+        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer">
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
               <CheckCircle size={18} className="text-[#00B87C]" />
@@ -388,7 +351,7 @@ export function FinanceOnboarding() {
           <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">COMPLETED THIS MONTH</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-1">financial setup done</p>
         </div>
-        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer" onClick={() => setGenericModalTitle("PF Enrollments Due")}>
+        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer">
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
               <Shield size={18} className="text-purple-500" />
@@ -398,7 +361,7 @@ export function FinanceOnboarding() {
           <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">PF ENROLLMENTS DUE</p>
           <p className="text-[13px] font-bold text-muted-foreground mt-1">for new hires</p>
         </div>
-        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer" onClick={() => setGenericModalTitle("Tax Declarations Pending")}>
+        <div className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer">
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
               <Percent size={18} className="text-cyan-500" />

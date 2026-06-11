@@ -207,11 +207,16 @@ const Modal = ({
 
 const getStatusStyle = (status: Colleague["status"]): string => {
   switch (status) {
-    case "Active": return "bg-emerald-500/10 text-primary border-primary/20";
-    case "On Leave": return "bg-amber-500/10 text-amber-600 border-amber-500/20";
-    case "Remote": return "bg-blue-500/10 text-blue-600 border-blue-500/20";
-    case "Offline": return "bg-secondary text-muted-foreground border-border";
-    default: return "bg-secondary text-muted-foreground border-border";
+    case "Active":
+      return "bg-emerald-500/10 text-primary border-primary/20";
+    case "On Leave":
+      return "bg-amber-500/10 text-amber-600 border-amber-500/20";
+    case "Remote":
+      return "bg-blue-500/10 text-blue-600 border-blue-500/20";
+    case "Offline":
+      return "bg-secondary text-muted-foreground border-border";
+    default:
+      return "bg-secondary text-muted-foreground border-border";
   }
 };
 
@@ -225,13 +230,20 @@ const StatusBadge = ({ status }: { status: Colleague["status"] }) => {
   );
 };
 
-const getAvailabilityStyle = (availability: Colleague["availability"]): string => {
+const getAvailabilityStyle = (
+  availability: Colleague["availability"],
+): string => {
   switch (availability) {
-    case "Available": return "bg-emerald-500";
-    case "Busy": return "bg-red-500";
-    case "In Meeting": return "bg-amber-500";
-    case "Away": return "bg-slate-400";
-    default: return "bg-slate-400";
+    case "Available":
+      return "bg-emerald-500";
+    case "Busy":
+      return "bg-red-500";
+    case "In Meeting":
+      return "bg-amber-500";
+    case "Away":
+      return "bg-slate-400";
+    default:
+      return "bg-slate-400";
   }
 };
 
@@ -242,7 +254,9 @@ const AvailabilityBadge = ({
 }) => {
   return (
     <div className="flex items-center gap-1.5">
-      <div className={`w-2 h-2 rounded-full ${getAvailabilityStyle(availability)}`} />
+      <div
+        className={`w-2 h-2 rounded-full ${getAvailabilityStyle(availability)}`}
+      />
       <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
         {availability}
       </span>
@@ -667,7 +681,12 @@ export function EmployeeDirectory() {
             },
             {
               key: "role",
-              options: ["All Roles", "Manager", "Senior Developer", "Developer"],
+              options: [
+                "All Roles",
+                "Manager",
+                "Senior Developer",
+                "Developer",
+              ],
             },
             {
               key: "location",
@@ -716,7 +735,8 @@ export function EmployeeDirectory() {
             No colleagues found
           </h3>
           <p className="text-[14px] font-bold text-muted-foreground">
-            Try adjusting your search or filters to find what you're looking for.
+            Try adjusting your search or filters to find what you're looking
+            for.
           </p>
           <button
             onClick={clearFilters}
@@ -910,7 +930,9 @@ export function EmployeeDirectory() {
                 {selectedColleague.designation}
               </p>
               <div className="mt-2">
-                <AvailabilityBadge availability={selectedColleague.availability} />
+                <AvailabilityBadge
+                  availability={selectedColleague.availability}
+                />
               </div>
             </div>
 
@@ -1170,11 +1192,18 @@ export function EmployeeDirectory() {
             <div className="flex flex-col items-center">
               <div className="p-4 bg-card border border-border rounded-2xl shadow-sm flex items-center gap-3 min-w-[240px]">
                 <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center font-black text-muted-foreground">
-                  {selectedColleague.manager.split(" ").map(n => n[0]).join("")}
+                  {selectedColleague.manager
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
                 </div>
                 <div>
-                  <p className="text-[13px] font-black text-foreground">{selectedColleague.manager}</p>
-                  <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Manager</p>
+                  <p className="text-[13px] font-black text-foreground">
+                    {selectedColleague.manager}
+                  </p>
+                  <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Manager
+                  </p>
                 </div>
               </div>
               <div className="h-8 w-px bg-border mt-2" />
@@ -1188,8 +1217,12 @@ export function EmployeeDirectory() {
                   {selectedColleague.initials}
                 </div>
                 <div>
-                  <p className="text-[14px] font-black text-foreground">{selectedColleague.name}</p>
-                  <p className="text-[11px] font-bold text-primary uppercase tracking-wider">{selectedColleague.designation}</p>
+                  <p className="text-[14px] font-black text-foreground">
+                    {selectedColleague.name}
+                  </p>
+                  <p className="text-[11px] font-bold text-primary uppercase tracking-wider">
+                    {selectedColleague.designation}
+                  </p>
                 </div>
               </div>
               <div className="h-8 w-px bg-border mt-2" />
@@ -1197,19 +1230,31 @@ export function EmployeeDirectory() {
 
             {/* Direct Reports / Team */}
             <div className="grid grid-cols-2 gap-4">
-              {filteredTeam.filter(c => c.id !== selectedColleague.id).slice(0, 2).map(peer => (
-                <div key={peer.id} className="p-3 bg-secondary border border-border rounded-xl flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-card flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
-                    {peer.initials}
+              {filteredTeam
+                .filter((c) => c.id !== selectedColleague.id)
+                .slice(0, 2)
+                .map((peer) => (
+                  <div
+                    key={peer.id}
+                    className="p-3 bg-secondary border border-border rounded-xl flex items-center gap-3"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-card flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
+                      {peer.initials}
+                    </div>
+                    <div>
+                      <p className="text-[12px] font-black text-foreground">
+                        {peer.name}
+                      </p>
+                      <p className="text-[11px] font-bold text-muted-foreground">
+                        {peer.designation}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[12px] font-black text-foreground">{peer.name}</p>
-                    <p className="text-[11px] font-bold text-muted-foreground">{peer.designation}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
               <div className="p-3 bg-secondary border border-border rounded-xl flex items-center justify-center">
-                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">+ {filteredTeam.length - 1} Team Members</p>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                  + {filteredTeam.length - 1} Team Members
+                </p>
               </div>
             </div>
           </div>

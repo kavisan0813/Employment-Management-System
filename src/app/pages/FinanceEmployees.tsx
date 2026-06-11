@@ -1,9 +1,19 @@
 import { useState, useCallback } from "react";
-import { useNavigate } from "react-router";
 import {
-  Search, ChevronDown, ChevronRight, Users, Download,
-  Lock, LayoutGrid, List, RotateCcw, X, Calendar, ExternalLink,
-  FileText, Check, AlertTriangle
+  Users,
+  Download,
+  X,
+  Check,
+  AlertTriangle,
+  Calendar,
+  Lock,
+  ChevronDown,
+  Search,
+  RotateCcw,
+  LayoutGrid,
+  List,
+  ChevronRight,
+  ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { employees } from "../data/mockData";
@@ -251,7 +261,6 @@ function FullPayslipHistoryModal({ open, onClose, employee, addToast }: {
 
 /* ─── MAIN COMPONENT ─── */
 export function FinanceEmployees() {
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDept, setSelectedDept] = useState("All Departments");
   const [selectedStatus, setSelectedStatus] = useState("Status: All");

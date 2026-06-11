@@ -916,13 +916,16 @@ function HighlightText({ text, search }: HighlightTextProps) {
           <mark
             key={i}
             className="bg-yellow-200/60 dark:bg-yellow-500/30 text-yellow-950 dark:text-yellow-100 rounded-sm px-0.5"
-            style={{ backgroundColor: "rgba(253, 224, 71, 0.4)", color: "inherit" }}
+            style={{
+              backgroundColor: "rgba(253, 224, 71, 0.4)",
+              color: "inherit",
+            }}
           >
             {part}
           </mark>
         ) : (
           part
-        )
+        ),
       )}
     </>
   );
@@ -1018,10 +1021,12 @@ export function Employees() {
         emp.designation === selectedDesignation;
 
       const matchLoc =
-        selectedLocation === "All Locations" || emp.location === selectedLocation;
+        selectedLocation === "All Locations" ||
+        emp.location === selectedLocation;
 
       const matchType =
-        selectedTypes.length === 0 || selectedTypes.includes(emp.employmentType);
+        selectedTypes.length === 0 ||
+        selectedTypes.includes(emp.employmentType);
 
       return (
         matchSearch &&
@@ -1044,8 +1049,8 @@ export function Employees() {
   // Sort
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
-      let valA = (a as Record<string, any>)[sortCol];
-      let valB = (b as Record<string, any>)[sortCol];
+      let valA = (a as Record<string, string | number>)[sortCol];
+      let valB = (b as Record<string, string | number>)[sortCol];
       if (typeof valA === "string") valA = valA.toLowerCase();
       if (typeof valB === "string") valB = valB.toLowerCase();
       if (valA < valB) return sortDesc ? 1 : -1;
@@ -1133,7 +1138,8 @@ export function Employees() {
       chips.push({
         id: `type-${type}`,
         label: type,
-        onClear: () => setSelectedTypes((prev) => prev.filter((t) => t !== type)),
+        onClear: () =>
+          setSelectedTypes((prev) => prev.filter((t) => t !== type)),
       });
     });
     return chips;
@@ -1268,8 +1274,8 @@ export function Employees() {
               margin: "2px 0 0",
             }}
           >
-            {isManager 
-              ? "View and manage your direct reports" 
+            {isManager
+              ? "View and manage your direct reports"
               : `Managing ${filtered.length} total employees across ${departments.length - 1} departments`}
           </p>
         </div>
@@ -1398,8 +1404,8 @@ export function Employees() {
                       view === "table" ? "var(--secondary)" : "transparent",
                     color:
                       view === "table"
-                         ? "var(--primary)"
-                         : "var(--muted-foreground)",
+                        ? "var(--primary)"
+                        : "var(--muted-foreground)",
                   }}
                   title="Table View"
                 >
@@ -1442,7 +1448,9 @@ export function Employees() {
           {/* Active filter chips */}
           {activeChips.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 mt-1">
-              <span className="text-[12px] font-bold text-muted-foreground mr-1">Active filters:</span>
+              <span className="text-[12px] font-bold text-muted-foreground mr-1">
+                Active filters:
+              </span>
               {activeChips.map((chip) => (
                 <div
                   key={chip.id}
@@ -1538,7 +1546,8 @@ export function Employees() {
                         backgroundColor: "var(--card)",
                         border: "1px solid var(--border)",
                       }}
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                      onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
                     >
                       {uniqueTypes.map((t) => (
                         <label
@@ -1716,7 +1725,8 @@ export function Employees() {
             className="text-[14px] max-w-sm mb-6"
             style={{ color: "var(--muted-foreground)", lineHeight: 1.6 }}
           >
-            Try adjusting your search or filters to find what you're looking for.
+            Try adjusting your search or filters to find what you're looking
+            for.
           </p>
           <button
             onClick={clearFilters}
@@ -1888,7 +1898,10 @@ export function Employees() {
                   }}
                   title={emp.designation}
                 >
-                  <HighlightText text={emp.designation} search={debouncedSearch} />
+                  <HighlightText
+                    text={emp.designation}
+                    search={debouncedSearch}
+                  />
                 </div>
                 {/* Department badge */}
                 <div>
@@ -2145,7 +2158,10 @@ export function Employees() {
                   className="text-[13px] mb-3 text-center px-2"
                   style={{ color: "var(--muted-foreground)" }}
                 >
-                  <HighlightText text={emp.designation} search={debouncedSearch} />
+                  <HighlightText
+                    text={emp.designation}
+                    search={debouncedSearch}
+                  />
                 </p>
                 <span
                   className="px-2.5 py-1 rounded-full text-[11px] font-bold"
@@ -2314,13 +2330,19 @@ export function Employees() {
                             className="font-bold text-[14px] truncate transition-colors group-hover:text-emerald-600"
                             style={{ color: "var(--foreground)" }}
                           >
-                            <HighlightText text={emp.name} search={debouncedSearch} />
+                            <HighlightText
+                              text={emp.name}
+                              search={debouncedSearch}
+                            />
                           </p>
                           <p
                             className="text-[12px] truncate"
                             style={{ color: "var(--muted-foreground)" }}
                           >
-                            <HighlightText text={emp.designation} search={debouncedSearch} />
+                            <HighlightText
+                              text={emp.designation}
+                              search={debouncedSearch}
+                            />
                           </p>
                         </div>
                         <div className="shrink-0 flex flex-col items-end gap-1.5">

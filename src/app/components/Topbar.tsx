@@ -39,13 +39,17 @@ export function Topbar({
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAllNotificationsScreen, setShowAllNotificationsScreen] =
     useState(false);
-  const [notifications, setNotifications] = useState(3);
+  const [notifications, setNotifications] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+
+  useEffect(() => {
+    setNotifications(user?.role === "Finance" ? 5 : 3);
+  }, [user?.role]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -352,7 +356,10 @@ export function Topbar({
                     Notifications
                   </span>
                   <button
-                    onClick={() => setShowNotifications(false)}
+                    onClick={() => {
+                      setNotifications(0);
+                      setShowNotifications(false);
+                    }}
                     style={{
                       color: "var(--primary)",
                       fontSize: "12px",
@@ -366,39 +373,52 @@ export function Topbar({
                   </button>
                 </div>
                 <div className="max-h-[300px] overflow-y-auto">
-                  {(user?.role === "Finance" ? [
-                    {
-                      text: "Alex John submitted expense ₹2,100",
-                      time: "2h ago",
-                      color: "#F59E0B",
-                    },
-                    {
-                      text: "TDS Filing Reminder",
-                      time: "4h ago",
-                      color: "#EF4444",
-                    },
-                    {
-                      text: "March Payroll Report Generated",
-                      time: "1d ago",
-                      color: "#22C55E",
-                    },
-                  ] : [
-                    {
-                      text: "MFA Verification Required",
-                      time: "2h ago",
-                      color: "#EF4444",
-                    },
-                    {
-                      text: "Leave Request Approved",
-                      time: "3h ago",
-                      color: "#00B87C",
-                    },
-                    {
-                      text: "Payroll Disbursed",
-                      time: "5h ago",
-                      color: "#8B5CF6",
-                    },
-                  ]).map((n, i) => (
+                  {(user?.role === "Finance"
+                    ? [
+                        {
+                          text: "TDS Filing Deadline in 8 Days",
+                          time: "10:30 AM",
+                          color: "#EF4444",
+                        },
+                        {
+                          text: "36 Expense Claims Awaiting Your Approval",
+                          time: "9:45 AM",
+                          color: "#F59E0B",
+                        },
+                        {
+                          text: "Payroll Calculation In Progress — April 2026",
+                          time: "9:00 AM",
+                          color: "#6366F1",
+                        },
+                        {
+                          text: "PF Payment Due — April 20",
+                          time: "8:30 AM",
+                          color: "#EF4444",
+                        },
+                        {
+                          text: "Yuki Tanaka Increment Approved by You",
+                          time: "8:00 AM",
+                          color: "#00B87C",
+                        },
+                      ]
+                    : [
+                        {
+                          text: "MFA Verification Required",
+                          time: "2h ago",
+                          color: "#EF4444",
+                        },
+                        {
+                          text: "Leave Request Approved",
+                          time: "3h ago",
+                          color: "#00B87C",
+                        },
+                        {
+                          text: "Payroll Disbursed",
+                          time: "5h ago",
+                          color: "#8B5CF6",
+                        },
+                      ]
+                  ).map((n, i) => (
                     <div
                       key={i}
                       className="px-4 py-3 flex items-start gap-3 transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800 cursor-pointer"
@@ -499,7 +519,9 @@ export function Topbar({
                 lineHeight: 1.2,
               }}
             >
-              {user?.role === "Finance" ? `${user.name} / ${user.role}` : (user?.name || "Ryan Park")}
+              {user?.role === "Finance"
+                ? `${user.name} / ${user.role}`
+                : user?.name || "Ryan Park"}
             </p>
             {user?.role !== "Finance" && (
               <p

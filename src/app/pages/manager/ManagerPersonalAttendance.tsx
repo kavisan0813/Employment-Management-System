@@ -64,7 +64,7 @@ function RegularizationModal({
       showToast(
         "Required Fields",
         "error",
-        "Please fill in all required fields."
+        "Please fill in all required fields.",
       );
       return;
     }
@@ -89,7 +89,7 @@ function RegularizationModal({
     showToast(
       "Request Submitted",
       "success",
-      "Regularization request submitted to HR."
+      "Regularization request submitted to HR.",
     );
     onClose();
   };
@@ -328,16 +328,20 @@ export function ManagerPersonalAttendance() {
             <Clock size={22} />
           </div>
           <div>
-            <h1 className="text-[26px] font-bold text-foreground leading-none mb-1">My Attendance</h1>
-            <p className="text-[13px] text-[#6B7280]">Personal Log & Corrections</p>
+            <h1 className="text-[26px] font-bold text-foreground leading-none mb-1">
+              My Attendance
+            </h1>
+            <p className="text-[13px] text-[#6B7280]">
+              Personal Log & Corrections
+            </p>
           </div>
         </div>
 
         {/* Employee Selector Preselected to Suresh Iyer */}
         <div className="flex items-center gap-2 bg-card px-4 py-2.5 rounded-xl border border-border shadow-sm">
           <User size={16} className="text-[#00B87C]" />
-          <select 
-            value={selectedEmployee} 
+          <select
+            value={selectedEmployee}
             onChange={(e) => setSelectedEmployee(e.target.value)}
             className="bg-transparent text-[13px] font-bold text-foreground focus:outline-none cursor-pointer"
           >
@@ -350,7 +354,9 @@ export function ManagerPersonalAttendance() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-2 p-1.5 bg-card rounded-xl border border-border shadow-sm w-fit">
           <button
-            onClick={() => setSelectedMonth((prev) => (prev === 0 ? 11 : prev - 1))}
+            onClick={() =>
+              setSelectedMonth((prev) => (prev === 0 ? 11 : prev - 1))
+            }
             className="p-1.5 hover:bg-secondary rounded-lg text-muted-foreground transition-colors"
           >
             <ChevronLeft size={18} />
@@ -359,7 +365,9 @@ export function ManagerPersonalAttendance() {
             {MONTH_NAMES[selectedMonth]} {selectedYear}
           </span>
           <button
-            onClick={() => setSelectedMonth((prev) => (prev === 11 ? 0 : prev + 1))}
+            onClick={() =>
+              setSelectedMonth((prev) => (prev === 11 ? 0 : prev + 1))
+            }
             className="p-1.5 hover:bg-secondary rounded-lg text-muted-foreground transition-colors"
           >
             <ChevronRight size={18} />
@@ -386,7 +394,10 @@ export function ManagerPersonalAttendance() {
             key={i}
             className="p-6 bg-card rounded-2xl border border-border shadow-sm flex flex-col items-center justify-center text-center group hover:border-[#00B87C] transition-colors"
           >
-            <p className="text-[28px] font-bold mb-1" style={{ color: card.color }}>
+            <p
+              className="text-[28px] font-bold mb-1"
+              style={{ color: card.color }}
+            >
               {card.value}
             </p>
             <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
@@ -402,7 +413,9 @@ export function ManagerPersonalAttendance() {
         <div className="xl:col-span-7 flex flex-col gap-5">
           <div className="bg-card rounded-2xl p-8 border border-border shadow-sm relative overflow-hidden">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-[16px] font-bold text-foreground">Attendance Calendar</h3>
+              <h3 className="text-[16px] font-bold text-foreground">
+                Attendance Calendar
+              </h3>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                 {[
                   { label: "Present", color: "#00B87C" },
@@ -411,7 +424,10 @@ export function ManagerPersonalAttendance() {
                   { label: "Weekend", color: "var(--muted-foreground)" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                    <div
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: item.color }}
+                    />
                     <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                       {item.label}
                     </span>
@@ -422,7 +438,10 @@ export function ManagerPersonalAttendance() {
 
             <div className="grid grid-cols-7 mb-4">
               {DAYS_OF_WEEK.map((day) => (
-                <div key={day} className="text-center text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]/40">
+                <div
+                  key={day}
+                  className="text-center text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]/40"
+                >
                   {day}
                 </div>
               ))}
@@ -430,7 +449,8 @@ export function ManagerPersonalAttendance() {
 
             <div className="grid grid-cols-7 gap-3">
               {calendarDays.map((day, i) => {
-                if (day === null) return <div key={`empty-${i}`} className="aspect-square" />;
+                if (day === null)
+                  return <div key={`empty-${i}`} className="aspect-square" />;
 
                 const isWeekend = i % 7 === 0 || i % 7 === 6;
                 const isToday = day === 6;
@@ -471,7 +491,9 @@ export function ManagerPersonalAttendance() {
                       {day}
                     </span>
                     {!isWeekend && (
-                      <div className={`mt-1.5 w-1.5 h-1.5 rounded-full ${dotStyle}`} />
+                      <div
+                        className={`mt-1.5 w-1.5 h-1.5 rounded-full ${dotStyle}`}
+                      />
                     )}
                   </div>
                 );
@@ -482,8 +504,16 @@ export function ManagerPersonalAttendance() {
           {/* Mini Stats Below Calendar */}
           <div className="grid grid-cols-3 gap-4">
             {[
-              { label: "Check-in Avg", value: "08:52 AM", color: "text-[#00B87C]" },
-              { label: "Check-out Avg", value: "06:03 PM", color: "text-muted-foreground" },
+              {
+                label: "Check-in Avg",
+                value: "08:52 AM",
+                color: "text-[#00B87C]",
+              },
+              {
+                label: "Check-out Avg",
+                value: "06:03 PM",
+                color: "text-muted-foreground",
+              },
               { label: "Punctuality", value: "98%", color: "text-[#00B87C]" },
             ].map((stat, i) => (
               <div
@@ -506,7 +536,9 @@ export function ManagerPersonalAttendance() {
           <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
             <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
               <div className="flex items-center gap-2">
-                <h3 className="text-[16px] font-bold text-foreground">Daily Log</h3>
+                <h3 className="text-[16px] font-bold text-foreground">
+                  Daily Log
+                </h3>
                 <span className="px-2.5 py-0.5 rounded-md bg-background border border-border text-[11px] font-bold text-muted-foreground">
                   April 2026
                 </span>
@@ -517,28 +549,45 @@ export function ManagerPersonalAttendance() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-[#F9FAFB] dark:bg-white/5 border-b border-[#F3F4F6]">
-                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">Date</th>
-                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">In</th>
-                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">Out</th>
-                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">Status</th>
+                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">
+                      Date
+                    </th>
+                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">
+                      In
+                    </th>
+                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">
+                      Out
+                    </th>
+                    <th className="px-6 py-3.5 text-[11px] font-semibold text-[#94A3B8] uppercase">
+                      Status
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {ATTENDANCE_LOGS.map((log, i) => (
-                    <tr key={i} className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors group">
-                      <td className="px-6 text-[13px] font-bold text-foreground">{log.date}</td>
-                      <td className="px-6 text-[12px] font-bold text-muted-foreground">{log.in}</td>
-                      <td className="px-6 text-[12px] font-bold text-muted-foreground">{log.out}</td>
+                    <tr
+                      key={i}
+                      className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors group"
+                    >
+                      <td className="px-6 text-[13px] font-bold text-foreground">
+                        {log.date}
+                      </td>
+                      <td className="px-6 text-[12px] font-bold text-muted-foreground">
+                        {log.in}
+                      </td>
+                      <td className="px-6 text-[12px] font-bold text-muted-foreground">
+                        {log.out}
+                      </td>
                       <td className="px-6">
                         <span
                           className={`text-[11px] font-semibold ${
                             log.status === "Present"
                               ? "text-[#00B87C]"
                               : log.status === "Late"
-                              ? "text-amber-500"
-                              : log.status === "Leave"
-                              ? "text-indigo-400"
-                              : "text-muted-foreground/30"
+                                ? "text-amber-500"
+                                : log.status === "Leave"
+                                  ? "text-indigo-400"
+                                  : "text-muted-foreground/30"
                           }`}
                         >
                           {log.status}
@@ -553,19 +602,28 @@ export function ManagerPersonalAttendance() {
 
           {/* Pending Corrections */}
           <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
-            <h3 className="text-[15px] font-bold text-foreground mb-4">Pending Regularizations</h3>
+            <h3 className="text-[15px] font-bold text-foreground mb-4">
+              Pending Regularizations
+            </h3>
             <div className="space-y-3">
               {requests.map((req) => (
-                <div key={req.id} className="p-4 rounded-xl border border-border bg-secondary/20 flex flex-col gap-2">
+                <div
+                  key={req.id}
+                  className="p-4 rounded-xl border border-border bg-secondary/20 flex flex-col gap-2"
+                >
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-bold text-foreground">{req.type}</span>
+                    <span className="text-[12px] font-bold text-foreground">
+                      {req.type}
+                    </span>
                     <StatusBadge status={req.status} />
                   </div>
                   <div className="flex justify-between text-[11px] text-muted-foreground font-bold">
                     <span>Date: {req.date}</span>
                     <span>Approver: {req.manager}</span>
                   </div>
-                  <p className="text-[12px] text-muted-foreground font-medium italic mt-1">"{req.reason}"</p>
+                  <p className="text-[12px] text-muted-foreground font-medium italic mt-1">
+                    "{req.reason}"
+                  </p>
                 </div>
               ))}
             </div>

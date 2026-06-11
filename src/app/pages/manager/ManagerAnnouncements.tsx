@@ -258,7 +258,8 @@ export function ManagerAnnouncements() {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
+  const [selectedAnnouncement, setSelectedAnnouncement] =
+    useState<Announcement | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState<{
     type: "archive" | "acknowledge";
     id: number;
@@ -536,7 +537,8 @@ export function ManagerAnnouncements() {
               No announcements found
             </h3>
             <p className="text-[14px] font-bold text-muted-foreground mt-1 max-w-[300px]">
-              Try adjusting your filters or search query to find what you're looking for.
+              Try adjusting your filters or search query to find what you're
+              looking for.
             </p>
           </div>
         )}
@@ -655,11 +657,11 @@ function AnnouncementCard({
           ? "border-[#00B87C]/30 ring-1 ring-[#00B87C]/5"
           : "border-border"
       } ${
-        announcement.isPinned && announcement.priority === "Urgent" 
-          ? "border-rose-500/40" 
-          : announcement.isPinned && announcement.priority === "Important" 
-          ? "border-amber-500/40" 
-          : ""
+        announcement.isPinned && announcement.priority === "Urgent"
+          ? "border-rose-500/40"
+          : announcement.isPinned && announcement.priority === "Important"
+            ? "border-amber-500/40"
+            : ""
       }`}
     >
       {!announcement.isRead && (
@@ -692,7 +694,8 @@ function AnnouncementCard({
                   onClick={onMarkRead}
                   className="w-full px-4 py-3 text-left text-[12px] font-bold text-foreground hover:bg-secondary flex items-center gap-2"
                 >
-                  <CheckCircle size={14} className="text-[#00B87C]" /> Mark as Read
+                  <CheckCircle size={14} className="text-[#00B87C]" /> Mark as
+                  Read
                 </button>
               )}
               <button
@@ -760,12 +763,18 @@ function AnnouncementCard({
             </p>
           </div>
         </div>
-        
+
         {/* Engagement counters */}
         <div className="flex items-center gap-3 text-muted-foreground text-[12px] font-bold uppercase tracking-wider">
-          <span className="flex items-center gap-1"><ThumbsUp size={12} /> {announcement.likes}</span>
-          <span className="flex items-center gap-1"><MessageSquare size={12} /> {announcement.comments}</span>
-          <span className="flex items-center gap-1"><Eye size={12} /> {announcement.views}</span>
+          <span className="flex items-center gap-1">
+            <ThumbsUp size={12} /> {announcement.likes}
+          </span>
+          <span className="flex items-center gap-1">
+            <MessageSquare size={12} /> {announcement.comments}
+          </span>
+          <span className="flex items-center gap-1">
+            <Eye size={12} /> {announcement.views}
+          </span>
         </div>
       </div>
     </motion.div>
@@ -900,13 +909,20 @@ function AnnouncementDetailModal({
         {/* Action footer */}
         <div className="p-6 bg-secondary/20 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4 text-muted-foreground text-[12px] font-bold uppercase tracking-wider">
-            <span className="flex items-center gap-1.5"><ThumbsUp size={14} /> {announcement.likes} Likes</span>
-            <span className="flex items-center gap-1.5"><MessageSquare size={14} /> {announcement.comments} Comments</span>
-            <span className="flex items-center gap-1.5"><Eye size={14} /> {announcement.views} Views</span>
+            <span className="flex items-center gap-1.5">
+              <ThumbsUp size={14} /> {announcement.likes} Likes
+            </span>
+            <span className="flex items-center gap-1.5">
+              <MessageSquare size={14} /> {announcement.comments} Comments
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Eye size={14} /> {announcement.views} Views
+            </span>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            {announcement.needsAcknowledgement && !announcement.isAcknowledged ? (
+            {announcement.needsAcknowledgement &&
+            !announcement.isAcknowledged ? (
               <button
                 onClick={onAcknowledge}
                 className="w-full sm:w-auto px-6 py-3 bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-wider rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2"
@@ -916,7 +932,8 @@ function AnnouncementDetailModal({
             ) : (
               announcement.needsAcknowledgement && (
                 <div className="flex items-center gap-1.5 text-emerald-600 font-bold text-[11px] uppercase tracking-wider bg-emerald-500/10 px-4 py-2 border border-emerald-500/20 rounded-xl">
-                  <CheckCircle size={14} /> Acknowledged at {announcement.acknowledgedAt}
+                  <CheckCircle size={14} /> Acknowledged at{" "}
+                  {announcement.acknowledgedAt}
                 </div>
               )
             )}

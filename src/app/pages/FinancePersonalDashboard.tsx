@@ -281,9 +281,7 @@ export function FinancePersonalDashboard() {
             border: "1px solid rgba(0,184,124,0.2)",
           }}
         >
-          <span
-            className="relative flex h-2.5 w-2.5"
-          >
+          <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00B87C] opacity-75" />
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#00B87C]" />
           </span>
@@ -309,18 +307,30 @@ export function FinancePersonalDashboard() {
       >
         <div className="absolute top-0 right-0 w-32 h-32 bg-[#0EA5E9]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-700"></div>
         <div className="relative z-10">
-          <h2 className="text-[22px] font-bold text-foreground mb-1">{greeting}, {firstName}! 👋</h2>
+          <h2 className="text-[22px] font-bold text-foreground mb-1">
+            {greeting}, {firstName}! 👋
+          </h2>
           <p className="text-[14px] font-medium text-muted-foreground">
-            You have <span className="text-[#0EA5E9] font-bold">{pendingActions.length} pending actions</span> today.
+            You have{" "}
+            <span className="text-[#0EA5E9] font-bold">
+              {pendingActions.length} pending actions
+            </span>{" "}
+            today.
           </p>
         </div>
         <div className="flex items-center gap-4 relative z-10">
           <div className="flex flex-col items-end hidden sm:flex">
-            <div className="px-3 py-1 rounded-full bg-[#0EA5E9]/10 text-[#0EA5E9] text-[11px] font-bold uppercase tracking-wider border border-[#0EA5E9]/20">Finance</div>
-            <p className="text-[11px] font-bold text-muted-foreground mt-1">#EMP-1082</p>
+            <div className="px-3 py-1 rounded-full bg-[#0EA5E9]/10 text-[#0EA5E9] text-[11px] font-bold uppercase tracking-wider border border-[#0EA5E9]/20">
+              Finance
+            </div>
+            <p className="text-[11px] font-bold text-muted-foreground mt-1">
+              #EMP-1082
+            </p>
           </div>
           <div className="w-14 h-14 rounded-full border-2 border-[#0EA5E9]/20 p-0.5 overflow-hidden shadow-inner">
-            <div className="w-full h-full rounded-full bg-[#0EA5E9] flex items-center justify-center text-white font-bold text-xl shadow-lg">{initials}</div>
+            <div className="w-full h-full rounded-full bg-[#0EA5E9] flex items-center justify-center text-white font-bold text-xl shadow-lg">
+              {initials}
+            </div>
           </div>
         </div>
       </motion.div>
@@ -798,8 +808,7 @@ export function FinancePersonalDashboard() {
                     <div
                       className="w-9 h-9 rounded-full flex items-center justify-center text-white font-black text-xs"
                       style={{
-                        background:
-                          "linear-gradient(135deg, #0EA5E9, #0369A1)",
+                        background: "linear-gradient(135deg, #0EA5E9, #0369A1)",
                       }}
                     >
                       {member.initials}

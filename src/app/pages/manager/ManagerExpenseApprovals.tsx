@@ -67,11 +67,15 @@ const MOCK_PENDING_EXPENSES = [
 ];
 
 export function ManagerExpenseApprovals() {
-  const [activeTab, setActiveTab] = useState<"Pending" | "Approved" | "Sent to Finance" | "Rejected">("Pending");
+  const [activeTab, setActiveTab] = useState<
+    "Pending" | "Approved" | "Sent to Finance" | "Rejected"
+  >("Pending");
   const [approveModalOpen, setApproveModalOpen] = useState(false);
-  const [selectedExpense, setSelectedExpense] = useState<typeof MOCK_PENDING_EXPENSES[0] | null>(null);
+  const [selectedExpense, setSelectedExpense] = useState<
+    (typeof MOCK_PENDING_EXPENSES)[0] | null
+  >(null);
 
-  const handleApproveClick = (expense: typeof MOCK_PENDING_EXPENSES[0]) => {
+  const handleApproveClick = (expense: (typeof MOCK_PENDING_EXPENSES)[0]) => {
     setSelectedExpense(expense);
     setApproveModalOpen(true);
   };
@@ -86,7 +90,8 @@ export function ManagerExpenseApprovals() {
   const getCategoryColor = (cat: string) => {
     if (cat === "Food") return "text-amber-600 bg-amber-50 border-amber-100";
     if (cat === "Travel") return "text-teal-600 bg-teal-50 border-teal-100";
-    if (cat === "Equipment") return "text-purple-600 bg-purple-50 border-purple-100";
+    if (cat === "Equipment")
+      return "text-purple-600 bg-purple-50 border-purple-100";
     return "text-teal-600 bg-teal-50 border-teal-100";
   };
 
@@ -116,9 +121,12 @@ export function ManagerExpenseApprovals() {
       <div className="flex items-start gap-3 p-4 mb-6 bg-amber-50 border border-amber-200 rounded-xl">
         <AlertTriangle size={20} className="text-amber-600 shrink-0 mt-0.5" />
         <div>
-          <h4 className="text-sm font-bold text-amber-900">Important Policy Reminder</h4>
+          <h4 className="text-sm font-bold text-amber-900">
+            Important Policy Reminder
+          </h4>
           <p className="text-xs font-medium text-amber-700 mt-0.5">
-            Your approvals go to Finance for final processing. Approve only valid business expenses with receipts.
+            Your approvals go to Finance for final processing. Approve only
+            valid business expenses with receipts.
           </p>
         </div>
       </div>
@@ -126,46 +134,62 @@ export function ManagerExpenseApprovals() {
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Pending My Approval</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+            Pending My Approval
+          </p>
           <div className="flex items-end gap-3">
             <p className="text-3xl font-bold text-amber-500 leading-none">4</p>
-            <p className="text-sm font-bold text-amber-600/70 mb-0.5">need your action</p>
+            <p className="text-sm font-bold text-amber-600/70 mb-0.5">
+              need your action
+            </p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Approved This Month</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+            Approved This Month
+          </p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-bold text-emerald-600 leading-none">₹12,400</p>
-            <p className="text-sm font-bold text-emerald-600/70 mb-0.5">sent to Finance</p>
+            <p className="text-3xl font-bold text-emerald-600 leading-none">
+              ₹12,400
+            </p>
+            <p className="text-sm font-bold text-emerald-600/70 mb-0.5">
+              sent to Finance
+            </p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Sent to Finance</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+            Sent to Finance
+          </p>
           <div className="flex items-end gap-3">
             <p className="text-3xl font-bold text-teal-600 leading-none">6</p>
-            <p className="text-sm font-bold text-teal-600/70 mb-0.5">awaiting Finance L2</p>
+            <p className="text-sm font-bold text-teal-600/70 mb-0.5">
+              awaiting Finance L2
+            </p>
           </div>
         </div>
       </div>
 
       {/* TABS */}
       <div className="flex items-center gap-1 border-b border-border mb-6 overflow-x-auto no-scrollbar">
-        {(["Pending", "Approved", "Sent to Finance", "Rejected"] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-5 py-3 text-sm font-bold transition-all relative whitespace-nowrap ${
-              activeTab === tab
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-t-lg"
-            }`}
-          >
-            {tab} {tab === "Pending" && "(4)"}
-            {activeTab === tab && (
-              <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#00B87C] rounded-t-full" />
-            )}
-          </button>
-        ))}
+        {(["Pending", "Approved", "Sent to Finance", "Rejected"] as const).map(
+          (tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-5 py-3 text-sm font-bold transition-all relative whitespace-nowrap ${
+                activeTab === tab
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-t-lg"
+              }`}
+            >
+              {tab} {tab === "Pending" && "(4)"}
+              {activeTab === tab && (
+                <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#00B87C] rounded-t-full" />
+              )}
+            </button>
+          ),
+        )}
       </div>
 
       {/* TAB CONTENT: PENDING EXPENSES */}
@@ -176,36 +200,55 @@ export function ManagerExpenseApprovals() {
               <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
                 <tr>
                   <th className="px-6 py-4 border-b border-border">Employee</th>
-                  <th className="px-6 py-4 border-b border-border">Description</th>
+                  <th className="px-6 py-4 border-b border-border">
+                    Description
+                  </th>
                   <th className="px-6 py-4 border-b border-border">Category</th>
                   <th className="px-6 py-4 border-b border-border">Amount</th>
                   <th className="px-6 py-4 border-b border-border">Receipt</th>
                   <th className="px-6 py-4 border-b border-border">Date</th>
                   <th className="px-6 py-4 border-b border-border">Status</th>
-                  <th className="px-6 py-4 border-b border-border text-right">Action</th>
+                  <th className="px-6 py-4 border-b border-border text-right">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {MOCK_PENDING_EXPENSES.map((row) => (
-                  <tr key={row.id} className="hover:bg-[#00B87C]/[0.08] transition-colors h-[64px]">
+                  <tr
+                    key={row.id}
+                    className="hover:bg-[#00B87C]/[0.08] transition-colors h-[64px]"
+                  >
                     <td className="px-6 py-2">
                       <div className="flex items-center gap-3">
-                        <img src={row.avatar} className="w-9 h-9 rounded-full border border-border" />
+                        <img
+                          src={row.avatar}
+                          className="w-9 h-9 rounded-full border border-border"
+                        />
                         <div>
-                          <p className="text-sm font-bold text-foreground">{row.empName}</p>
+                          <p className="text-sm font-bold text-foreground">
+                            {row.empName}
+                          </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-2 font-semibold text-foreground max-w-[200px] truncate" title={row.description}>
+                    <td
+                      className="px-6 py-2 font-semibold text-foreground max-w-[200px] truncate"
+                      title={row.description}
+                    >
                       {row.description}
                     </td>
                     <td className="px-6 py-2">
-                      <span className={`px-2 py-1 flex items-center gap-1.5 w-max rounded-md text-[11px] font-bold border ${getCategoryColor(row.category)}`}>
+                      <span
+                        className={`px-2 py-1 flex items-center gap-1.5 w-max rounded-md text-[11px] font-bold border ${getCategoryColor(row.category)}`}
+                      >
                         {getCategoryIcon(row.category)}
                         {row.category}
                       </span>
                     </td>
-                    <td className="px-6 py-2 font-bold text-foreground">{row.amount}</td>
+                    <td className="px-6 py-2 font-bold text-foreground">
+                      {row.amount}
+                    </td>
                     <td className="px-6 py-2">
                       {row.receiptStatus === "Attached" ? (
                         <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600">
@@ -217,7 +260,9 @@ export function ManagerExpenseApprovals() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-2 text-xs font-semibold text-muted-foreground">{row.date}</td>
+                    <td className="px-6 py-2 text-xs font-semibold text-muted-foreground">
+                      {row.date}
+                    </td>
                     <td className="px-6 py-2">
                       <span className="flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 w-max">
                         Pending L1
@@ -228,13 +273,17 @@ export function ManagerExpenseApprovals() {
                         <button className="px-3 py-1.5 text-xs font-bold text-rose-600 border border-rose-600/20 hover:bg-rose-50 rounded-lg transition-colors">
                           Reject
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleApproveClick(row)}
                           disabled={row.receiptStatus === "Missing"}
-                          title={row.receiptStatus === "Missing" ? "Receipt required for approval" : ""}
+                          title={
+                            row.receiptStatus === "Missing"
+                              ? "Receipt required for approval"
+                              : ""
+                          }
                           className={`px-3 py-1.5 text-xs font-bold rounded-lg shadow-sm transition-all ${
-                            row.receiptStatus === "Missing" 
-                              ? "bg-secondary text-muted-foreground border border-border cursor-not-allowed opacity-50" 
+                            row.receiptStatus === "Missing"
+                              ? "bg-secondary text-muted-foreground border border-border cursor-not-allowed opacity-50"
                               : "bg-[#00B87C] text-white hover:bg-[#00a36d] active:scale-95"
                           }`}
                         >
@@ -259,7 +308,7 @@ export function ManagerExpenseApprovals() {
               <h3 className="text-lg font-bold text-foreground">
                 Approve Expense Claim
               </h3>
-              <button 
+              <button
                 onClick={() => setApproveModalOpen(false)}
                 className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-800 text-muted-foreground transition-colors"
               >
@@ -269,44 +318,64 @@ export function ManagerExpenseApprovals() {
 
             {/* Body */}
             <div className="p-6 space-y-6">
-              
               {/* Employee Card */}
               <div className="flex items-center gap-3">
-                <img src={selectedExpense.avatar} className="w-12 h-12 rounded-full border border-border shadow-sm" />
+                <img
+                  src={selectedExpense.avatar}
+                  className="w-12 h-12 rounded-full border border-border shadow-sm"
+                />
                 <div>
-                  <h4 className="text-sm font-bold text-foreground">{selectedExpense.empName}</h4>
-                  <p className="text-xs text-muted-foreground font-medium">{selectedExpense.designation}</p>
+                  <h4 className="text-sm font-bold text-foreground">
+                    {selectedExpense.empName}
+                  </h4>
+                  <p className="text-xs text-muted-foreground font-medium">
+                    {selectedExpense.designation}
+                  </p>
                 </div>
               </div>
 
               {/* Expense Summary */}
               <div className="bg-secondary/50 rounded-xl border border-border p-4 space-y-3">
                 <div className="flex items-center justify-between border-b border-border/50 pb-3">
-                  <span className={`px-2 py-1 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider border ${getCategoryColor(selectedExpense.category)}`}>
+                  <span
+                    className={`px-2 py-1 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider border ${getCategoryColor(selectedExpense.category)}`}
+                  >
                     {getCategoryIcon(selectedExpense.category)}
                     {selectedExpense.category}
                   </span>
-                  <span className="text-xl font-bold text-foreground">{selectedExpense.amount}</span>
+                  <span className="text-xl font-bold text-foreground">
+                    {selectedExpense.amount}
+                  </span>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-muted-foreground mb-1">Description</p>
-                  <p className="text-sm font-semibold text-foreground">{selectedExpense.description}</p>
+                  <p className="text-xs font-bold text-muted-foreground mb-1">
+                    Description
+                  </p>
+                  <p className="text-sm font-semibold text-foreground">
+                    {selectedExpense.description}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2 pt-2">
                   <div className="w-8 h-8 rounded bg-background border border-border flex items-center justify-center">
                     <FileText size={16} className="text-emerald-600" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-foreground">receipt.pdf</p>
-                    <p className="text-[11px] text-muted-foreground">Attached by {selectedExpense.empName}</p>
+                    <p className="text-xs font-bold text-foreground">
+                      receipt.pdf
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Attached by {selectedExpense.empName}
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Note */}
               <div>
-                <label className="block text-xs font-bold text-foreground mb-1.5">Manager Note (Optional)</label>
-                <textarea 
+                <label className="block text-xs font-bold text-foreground mb-1.5">
+                  Manager Note (Optional)
+                </label>
+                <textarea
                   placeholder="Add a note for Finance..."
                   className="w-full p-3 bg-background border border-border rounded-xl text-sm outline-none focus:border-primary min-h-[80px] resize-none"
                 ></textarea>
@@ -316,21 +385,21 @@ export function ManagerExpenseApprovals() {
               <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/50 rounded-lg">
                 <Info size={16} className="text-blue-600 mt-0.5 shrink-0" />
                 <p className="text-xs font-semibold text-blue-800 dark:text-blue-300">
-                  Approving sends this to Finance for final processing (Level 2).
+                  Approving sends this to Finance for final processing (Level
+                  2).
                 </p>
               </div>
-
             </div>
 
             {/* Footer */}
             <div className="p-6 border-t border-border bg-secondary/30 rounded-b-2xl flex items-center justify-end gap-3">
-              <button 
+              <button
                 onClick={() => setApproveModalOpen(false)}
                 className="px-5 py-2.5 text-sm font-bold text-muted-foreground border border-border bg-background rounded-xl hover:bg-secondary transition-colors"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={() => setApproveModalOpen(false)}
                 className="px-6 py-2.5 text-sm font-bold text-white bg-[#00B87C] rounded-xl hover:bg-[#00a36d] shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
               >
@@ -340,7 +409,6 @@ export function ManagerExpenseApprovals() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

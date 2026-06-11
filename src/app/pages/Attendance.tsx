@@ -105,10 +105,10 @@ const convertToInputDate = (dateStr: string): string => {
   const monthName = parts[0];
   const dayStr = parts[1];
   const yearStr = parts[2];
-  
-  const monthIdx = MONTH_NAMES.findIndex(m => m.startsWith(monthName));
+
+  const monthIdx = MONTH_NAMES.findIndex((m) => m.startsWith(monthName));
   if (monthIdx === -1) return "";
-  const monthStr = (monthIdx + 1) < 10 ? `0${monthIdx + 1}` : `${monthIdx + 1}`;
+  const monthStr = monthIdx + 1 < 10 ? `0${monthIdx + 1}` : `${monthIdx + 1}`;
   return `${yearStr}-${monthStr}-${dayStr}`;
 };
 
@@ -119,7 +119,7 @@ const convertToDisplayDate = (inputDate: string): string => {
   const year = parseInt(parts[0]);
   const month = parseInt(parts[1]) - 1;
   const day = parseInt(parts[2]);
-  
+
   const monthStr = MONTH_NAMES[month].substring(0, 3);
   const dayStr = day < 10 ? `0${day}` : `${day}`;
   return `${monthStr} ${dayStr}, ${year}`;
@@ -131,7 +131,8 @@ const to12Hour = (time24: string): string => {
   const hours = parseInt(hoursStr);
   const ampm = hours >= 12 ? "PM" : "AM";
   const displayHours = hours % 12 || 12;
-  const displayHoursStr = displayHours < 10 ? `0${displayHours}` : `${displayHours}`;
+  const displayHoursStr =
+    displayHours < 10 ? `0${displayHours}` : `${displayHours}`;
   return `${displayHoursStr}:${minutesStr} ${ampm}`;
 };
 
@@ -149,18 +150,30 @@ const to24Hour = (time12: string): string => {
   return `${hoursStr24}:${minutesStr}`;
 };
 
-const calculateHours = (checkIn: string, checkOut: string, status: string): string => {
-  if (status === "Absent" || status === "Leave" || status === "Holiday" || status === "Weekend") {
+const calculateHours = (
+  checkIn: string,
+  checkOut: string,
+  status: string,
+): string => {
+  if (
+    status === "Absent" ||
+    status === "Leave" ||
+    status === "Holiday" ||
+    status === "Weekend"
+  ) {
     return "0h 00m";
   }
   if (!checkIn || !checkOut) return "8h 00m";
-  
+
   const [inHours, inMins] = checkIn.split(":");
   const [outHours, outMins] = checkOut.split(":");
-  
-  let diffMins = (parseInt(outHours) * 60 + parseInt(outMins)) - (parseInt(inHours) * 60 + parseInt(inMins));
+
+  let diffMins =
+    parseInt(outHours) * 60 +
+    parseInt(outMins) -
+    (parseInt(inHours) * 60 + parseInt(inMins));
   if (diffMins < 0) diffMins += 24 * 60; // Overnight shift
-  
+
   const hrs = Math.floor(diffMins / 60);
   const mins = diffMins % 60;
   const minsStr = mins < 10 ? `0${mins}` : `${mins}`;
@@ -255,7 +268,6 @@ const STATUS_CONFIG: Record<
     label: "Weekend",
   },
 };
-
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -368,8 +380,11 @@ export function Attendance() {
 
   // Form Handlers
   const handleOpenAdd = () => {
-    setFormEmployeeId(selectedEmpId !== "All Employees" ? selectedEmpId : (employees[0]?.id || ""));
-    const today = new Date();
+    setFormEmployeeId(
+      selectedEmpId !== "All Employees"
+        ? selectedEmpId
+        : employees[0]?.id || "",
+    );
     const formattedDate = `${selectedYear}-${(selectedMonth + 1).toString().padStart(2, "0")}-01`;
     setFormDate(formattedDate);
     setFormStatus("Present");
@@ -384,8 +399,14 @@ export function Attendance() {
     setFormEmployeeId(rec.employeeId);
     setFormDate(convertToInputDate(rec.date));
     setFormStatus(rec.status);
-    setFormCheckIn(rec.checkIn && rec.checkIn !== "--:--" ? to24Hour(rec.checkIn) : "09:00");
-    setFormCheckOut(rec.checkOut && rec.checkOut !== "--:--" ? to24Hour(rec.checkOut) : "18:00");
+    setFormCheckIn(
+      rec.checkIn && rec.checkIn !== "--:--" ? to24Hour(rec.checkIn) : "09:00",
+    );
+    setFormCheckOut(
+      rec.checkOut && rec.checkOut !== "--:--"
+        ? to24Hour(rec.checkOut)
+        : "18:00",
+    );
     setFormNotes(rec.notes || "");
     setFormErrors({});
     setEditRecord(rec);
@@ -397,7 +418,9 @@ export function Attendance() {
     if (!formDate) errors.date = "Date is required";
     if (!formStatus) errors.status = "Status is required";
 
-    const needsTimes = ["Present", "Late", "Half-day", "WFH"].includes(formStatus);
+    const needsTimes = ["Present", "Late", "Half-day", "WFH"].includes(
+      formStatus,
+    );
     if (needsTimes) {
       if (!formCheckIn) errors.checkIn = "Punch-in time is required";
       if (!formCheckOut) errors.checkOut = "Punch-out time is required";
@@ -408,11 +431,13 @@ export function Attendance() {
       return;
     }
 
-    const emp = employees.find(e => e.id === formEmployeeId) || employees[0];
+    const emp = employees.find((e) => e.id === formEmployeeId) || employees[0];
     const displayDate = convertToDisplayDate(formDate);
     const displayCheckIn = needsTimes ? to12Hour(formCheckIn) : "--:--";
     const displayCheckOut = needsTimes ? to12Hour(formCheckOut) : "--:--";
-    const displayHours = needsTimes ? calculateHours(formCheckIn, formCheckOut, formStatus) : "0h 00m";
+    const displayHours = needsTimes
+      ? calculateHours(formCheckIn, formCheckOut, formStatus)
+      : "0h 00m";
 
     const newRecord: AttendanceRecord = {
       id: `ATT-${Date.now()}`,
@@ -431,7 +456,7 @@ export function Attendance() {
     const updated = [newRecord, ...records];
     setRecords(updated);
     localStorage.setItem("nexus_attendance_records", JSON.stringify(updated));
-    
+
     setShowAddModal(false);
     setToastMessage("Attendance record added successfully");
     setShowSuccessToast(true);
@@ -445,7 +470,9 @@ export function Attendance() {
     if (!formDate) errors.date = "Date is required";
     if (!formStatus) errors.status = "Status is required";
 
-    const needsTimes = ["Present", "Late", "Half-day", "WFH"].includes(formStatus);
+    const needsTimes = ["Present", "Late", "Half-day", "WFH"].includes(
+      formStatus,
+    );
     if (needsTimes) {
       if (!formCheckIn) errors.checkIn = "Punch-in time is required";
       if (!formCheckOut) errors.checkOut = "Punch-out time is required";
@@ -456,13 +483,15 @@ export function Attendance() {
       return;
     }
 
-    const emp = employees.find(e => e.id === formEmployeeId) || employees[0];
+    const emp = employees.find((e) => e.id === formEmployeeId) || employees[0];
     const displayDate = convertToDisplayDate(formDate);
     const displayCheckIn = needsTimes ? to12Hour(formCheckIn) : "--:--";
     const displayCheckOut = needsTimes ? to12Hour(formCheckOut) : "--:--";
-    const displayHours = needsTimes ? calculateHours(formCheckIn, formCheckOut, formStatus) : "0h 00m";
+    const displayHours = needsTimes
+      ? calculateHours(formCheckIn, formCheckOut, formStatus)
+      : "0h 00m";
 
-    const updatedRecords = records.map(rec => {
+    const updatedRecords = records.map((rec) => {
       if (rec.id === editRecord.id) {
         return {
           ...rec,
@@ -482,7 +511,10 @@ export function Attendance() {
     });
 
     setRecords(updatedRecords);
-    localStorage.setItem("nexus_attendance_records", JSON.stringify(updatedRecords));
+    localStorage.setItem(
+      "nexus_attendance_records",
+      JSON.stringify(updatedRecords),
+    );
 
     setEditRecord(null);
     setToastMessage("Attendance record updated successfully");
@@ -492,7 +524,7 @@ export function Attendance() {
 
   const handleDeleteConfirm = () => {
     if (!deleteConfirm) return;
-    const updated = records.filter(rec => rec.id !== deleteConfirm);
+    const updated = records.filter((rec) => rec.id !== deleteConfirm);
     setRecords(updated);
     localStorage.setItem("nexus_attendance_records", JSON.stringify(updated));
     setDeleteConfirm(null);
@@ -585,23 +617,29 @@ export function Attendance() {
   const filteredLogs = useMemo(() => {
     return records.filter((log) => {
       // 1. Filter by Department
-      if (selectedDept !== "All Departments" && log.department !== selectedDept) {
+      if (
+        selectedDept !== "All Departments" &&
+        log.department !== selectedDept
+      ) {
         return false;
       }
 
       // 2. Filter by Employee ID
-      if (selectedEmpId !== "All Employees" && log.employeeId !== selectedEmpId) {
+      if (
+        selectedEmpId !== "All Employees" &&
+        log.employeeId !== selectedEmpId
+      ) {
         return false;
       }
 
       // 3. Filter by Search Query
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
-        const emp = employees.find(e => e.id === log.employeeId);
+        const emp = employees.find((e) => e.id === log.employeeId);
         const nameMatch = log.employeeName.toLowerCase().includes(query);
         const roleMatch = emp ? emp.role.toLowerCase().includes(query) : false;
         const idMatch = log.employeeId.toLowerCase().includes(query);
-        
+
         if (!nameMatch && !roleMatch && !idMatch) return false;
       }
 
@@ -609,10 +647,17 @@ export function Attendance() {
       const monthPrefix = MONTH_NAMES[selectedMonth].substring(0, 3);
       const isCorrectMonth = log.date.startsWith(monthPrefix);
       const isCorrectYear = log.date.endsWith(selectedYear.toString());
-      
+
       return isCorrectMonth && isCorrectYear;
     });
-  }, [records, selectedDept, selectedEmpId, searchQuery, selectedMonth, selectedYear]);
+  }, [
+    records,
+    selectedDept,
+    selectedEmpId,
+    searchQuery,
+    selectedMonth,
+    selectedYear,
+  ]);
 
   // Calendar Math
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
@@ -626,24 +671,29 @@ export function Attendance() {
 
   // Dynamic Metrics Calculation
   const metrics = useMemo(() => {
-    const periodLogs = records.filter(log => {
-      if (selectedDept !== "All Departments" && log.department !== selectedDept) return false;
-      if (selectedEmpId !== "All Employees" && log.employeeId !== selectedEmpId) return false;
-      
+    const periodLogs = records.filter((log) => {
+      if (selectedDept !== "All Departments" && log.department !== selectedDept)
+        return false;
+      if (selectedEmpId !== "All Employees" && log.employeeId !== selectedEmpId)
+        return false;
+
       const monthPrefix = MONTH_NAMES[selectedMonth].substring(0, 3);
       const isCorrectMonth = log.date.startsWith(monthPrefix);
       const isCorrectYear = log.date.endsWith(selectedYear.toString());
-      
+
       return isCorrectMonth && isCorrectYear;
     });
 
     const total = periodLogs.length;
-    const present = periodLogs.filter(l => l.status === "Present" || l.status === "WFH").length;
-    const absent = periodLogs.filter(l => l.status === "Absent").length;
-    const late = periodLogs.filter(l => l.status === "Late").length;
-    
-    const attendanceRate = total > 0 ? Math.round((present / total) * 100) : 100;
-    
+    const present = periodLogs.filter(
+      (l) => l.status === "Present" || l.status === "WFH",
+    ).length;
+    const absent = periodLogs.filter((l) => l.status === "Absent").length;
+    const late = periodLogs.filter((l) => l.status === "Late").length;
+
+    const attendanceRate =
+      total > 0 ? Math.round((present / total) * 100) : 100;
+
     return {
       totalDays: total || 22,
       present: present || 19,
@@ -657,8 +707,8 @@ export function Attendance() {
   const selectedDayRecord = useMemo(() => {
     if (selectedDayDetail === null) return null;
     const dateStr = formatDate(selectedDayDetail, selectedMonth, selectedYear);
-    
-    let rec = records.find((r) => {
+
+    const rec = records.find((r) => {
       const dateMatch = r.date === dateStr;
       if (selectedEmpId !== "All Employees") {
         return dateMatch && r.employeeId === selectedEmpId;
@@ -679,13 +729,19 @@ export function Attendance() {
         department: emp.department,
         date: dateStr,
         status: mockStatus,
-        checkIn: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus) ? "08:58 AM" : "--:--",
-        checkOut: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus) ? "06:02 PM" : "--:--",
-        hours: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus) ? "9h 04m" : "0h 00m",
+        checkIn: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus)
+          ? "08:58 AM"
+          : "--:--",
+        checkOut: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus)
+          ? "06:02 PM"
+          : "--:--",
+        hours: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus)
+          ? "9h 04m"
+          : "0h 00m",
         notes: "Historical mock log",
       };
     }
-    
+
     const emp = selectedEmployee || employees[0];
     return {
       id: `ATT-MOCK-${selectedDayDetail}`,
@@ -700,7 +756,14 @@ export function Attendance() {
       hours: "0h 00m",
       notes: "No attendance recorded",
     };
-  }, [selectedDayDetail, selectedMonth, selectedYear, selectedEmpId, selectedEmployee, records]);
+  }, [
+    selectedDayDetail,
+    selectedMonth,
+    selectedYear,
+    selectedEmpId,
+    selectedEmployee,
+    records,
+  ]);
 
   const handleEmployeeRedirect = (id: string) => {
     navigate(`/employees/${id}`);
@@ -728,7 +791,10 @@ export function Attendance() {
             >
               <div className="flex items-center gap-2">
                 <CalendarIcon className="text-[#00B87C]" size={20} />
-                <h3 id="add-modal-title" className="text-lg font-extrabold text-slate-900 dark:text-slate-100">
+                <h3
+                  id="add-modal-title"
+                  className="text-lg font-extrabold text-slate-900 dark:text-slate-100"
+                >
                   Add Attendance Record
                 </h3>
               </div>
@@ -750,7 +816,9 @@ export function Attendance() {
                   value={formEmployeeId}
                   onChange={(e) => setFormEmployeeId(e.target.value)}
                 >
-                  <option value="" disabled>-- Choose Employee --</option>
+                  <option value="" disabled>
+                    -- Choose Employee --
+                  </option>
                   {employees.map((emp) => (
                     <option key={emp.id} value={emp.id}>
                       {emp.name} ({emp.id}) — {emp.department}
@@ -758,7 +826,9 @@ export function Attendance() {
                   ))}
                 </select>
                 {formErrors.employeeId && (
-                  <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.employeeId}</p>
+                  <p className="text-red-500 text-[10px] font-bold mt-1">
+                    {formErrors.employeeId}
+                  </p>
                 )}
               </div>
 
@@ -774,7 +844,9 @@ export function Attendance() {
                     onChange={(e) => setFormDate(e.target.value)}
                   />
                   {formErrors.date && (
-                    <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.date}</p>
+                    <p className="text-red-500 text-[10px] font-bold mt-1">
+                      {formErrors.date}
+                    </p>
                   )}
                 </div>
 
@@ -794,7 +866,9 @@ export function Attendance() {
                     ))}
                   </select>
                   {formErrors.status && (
-                    <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.status}</p>
+                    <p className="text-red-500 text-[10px] font-bold mt-1">
+                      {formErrors.status}
+                    </p>
                   )}
                 </div>
               </div>
@@ -812,7 +886,9 @@ export function Attendance() {
                       onChange={(e) => setFormCheckIn(e.target.value)}
                     />
                     {formErrors.checkIn && (
-                      <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.checkIn}</p>
+                      <p className="text-red-500 text-[10px] font-bold mt-1">
+                        {formErrors.checkIn}
+                      </p>
                     )}
                   </div>
 
@@ -827,7 +903,9 @@ export function Attendance() {
                       onChange={(e) => setFormCheckOut(e.target.value)}
                     />
                     {formErrors.checkOut && (
-                      <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.checkOut}</p>
+                      <p className="text-red-500 text-[10px] font-bold mt-1">
+                        {formErrors.checkOut}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -894,7 +972,10 @@ export function Attendance() {
             >
               <div className="flex items-center gap-2">
                 <CalendarIcon className="text-[#00B87C]" size={20} />
-                <h3 id="edit-modal-title" className="text-lg font-extrabold text-slate-900 dark:text-slate-100">
+                <h3
+                  id="edit-modal-title"
+                  className="text-lg font-extrabold text-slate-900 dark:text-slate-100"
+                >
                   Edit Attendance Record
                 </h3>
               </div>
@@ -943,7 +1024,9 @@ export function Attendance() {
                     onChange={(e) => setFormDate(e.target.value)}
                   />
                   {formErrors.date && (
-                    <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.date}</p>
+                    <p className="text-red-500 text-[10px] font-bold mt-1">
+                      {formErrors.date}
+                    </p>
                   )}
                 </div>
 
@@ -963,7 +1046,9 @@ export function Attendance() {
                     ))}
                   </select>
                   {formErrors.status && (
-                    <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.status}</p>
+                    <p className="text-red-500 text-[10px] font-bold mt-1">
+                      {formErrors.status}
+                    </p>
                   )}
                 </div>
               </div>
@@ -981,7 +1066,9 @@ export function Attendance() {
                       onChange={(e) => setFormCheckIn(e.target.value)}
                     />
                     {formErrors.checkIn && (
-                      <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.checkIn}</p>
+                      <p className="text-red-500 text-[10px] font-bold mt-1">
+                        {formErrors.checkIn}
+                      </p>
                     )}
                   </div>
 
@@ -996,7 +1083,9 @@ export function Attendance() {
                       onChange={(e) => setFormCheckOut(e.target.value)}
                     />
                     {formErrors.checkOut && (
-                      <p className="text-red-500 text-[10px] font-bold mt-1">{formErrors.checkOut}</p>
+                      <p className="text-red-500 text-[10px] font-bold mt-1">
+                        {formErrors.checkOut}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -1061,11 +1150,18 @@ export function Attendance() {
             <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950/40 text-rose-600 flex items-center justify-center mx-auto mb-4">
               <AlertCircle size={24} />
             </div>
-            <h3 id="delete-modal-title" className="text-lg font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+            <h3
+              id="delete-modal-title"
+              className="text-lg font-extrabold text-slate-900 dark:text-slate-100 mb-2"
+            >
               Delete Attendance Record
             </h3>
-            <p id="delete-modal-description" className="text-xs text-muted-foreground mb-5">
-              Are you sure you want to delete this record? This action cannot be undone.
+            <p
+              id="delete-modal-description"
+              className="text-xs text-muted-foreground mb-5"
+            >
+              Are you sure you want to delete this record? This action cannot be
+              undone.
             </p>
             <div className="flex gap-3">
               <button
@@ -1139,7 +1235,10 @@ export function Attendance() {
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[var(--primary)]">
                         <img
-                          src={selectedDayRecord.employeeAvatar || employees[0].avatar}
+                          src={
+                            selectedDayRecord.employeeAvatar ||
+                            employees[0].avatar
+                          }
                           alt=""
                           className="w-full h-full object-cover"
                         />
@@ -1152,7 +1251,9 @@ export function Attendance() {
                           {selectedDayRecord.employeeName}
                         </p>
                         <p className="text-[10px] text-muted-foreground font-bold">
-                          {employees.find((e) => e.id === selectedDayRecord.employeeId)?.role || "Senior Developer"}
+                          {employees.find(
+                            (e) => e.id === selectedDayRecord.employeeId,
+                          )?.role || "Senior Developer"}
                         </p>
                       </div>
                     </div>
@@ -1176,8 +1277,14 @@ export function Attendance() {
                       >
                         {selectedDayRecord.checkIn}
                       </p>
-                      <p className={`text-[9px] font-bold mt-1 ${selectedDayRecord.status === "Late" ? "text-amber-500" : "text-emerald-600"}`}>
-                        {selectedDayRecord.checkIn !== "--:--" ? (selectedDayRecord.status === "Late" ? "Late" : "On time") : "No log"}
+                      <p
+                        className={`text-[9px] font-bold mt-1 ${selectedDayRecord.status === "Late" ? "text-amber-500" : "text-emerald-600"}`}
+                      >
+                        {selectedDayRecord.checkIn !== "--:--"
+                          ? selectedDayRecord.status === "Late"
+                            ? "Late"
+                            : "On time"
+                          : "No log"}
                       </p>
                     </div>
                     <div
@@ -1200,7 +1307,9 @@ export function Attendance() {
                         {selectedDayRecord.checkOut}
                       </p>
                       <p className="text-[9px] text-muted-foreground font-bold mt-1">
-                        {selectedDayRecord.checkOut !== "--:--" ? "Recorded" : "No log"}
+                        {selectedDayRecord.checkOut !== "--:--"
+                          ? "Recorded"
+                          : "No log"}
                       </p>
                     </div>
                   </div>
@@ -1239,7 +1348,9 @@ export function Attendance() {
                         )}
                       </div>
                     ) : (
-                      <p className="text-xs font-bold text-muted-foreground italic">No punch activity recorded for this day.</p>
+                      <p className="text-xs font-bold text-muted-foreground italic">
+                        No punch activity recorded for this day.
+                      </p>
                     )}
                   </div>
                 </>
@@ -1682,7 +1793,8 @@ export function Attendance() {
                   <span className="text-foreground">
                     {Math.min(filteredLogs.length, itemsPerPage)}
                   </span>{" "}
-                  of <span className="text-foreground">{filteredLogs.length}</span>
+                  of{" "}
+                  <span className="text-foreground">{filteredLogs.length}</span>
                 </div>
               </div>
 
@@ -1741,7 +1853,9 @@ export function Attendance() {
                         currentPage * itemsPerPage,
                       )
                       .map((log) => {
-                        const emp = employees.find((e) => e.id === log.employeeId) || employees[0];
+                        const emp =
+                          employees.find((e) => e.id === log.employeeId) ||
+                          employees[0];
 
                         return (
                           <tr
@@ -2029,7 +2143,11 @@ export function Attendance() {
                       );
 
                     const isWeekend = i % 7 === 0 || i % 7 === 6;
-                    const dateStr = formatDate(day, selectedMonth, selectedYear);
+                    const dateStr = formatDate(
+                      day,
+                      selectedMonth,
+                      selectedYear,
+                    );
                     let status = "Present";
                     if (isWeekend) {
                       status = "Weekend";

@@ -249,11 +249,16 @@ const Modal = ({
 
 const getRequestStatusStyle = (status: ShiftRequest["status"]): string => {
   switch (status) {
-    case "Pending": return "bg-amber-500/10 text-amber-600 border-amber-500/20";
-    case "Approved": return "bg-emerald-500/10 text-primary border-primary/20";
-    case "Rejected": return "bg-red-500/10 text-red-600 border-red-500/20";
-    case "Cancelled": return "bg-secondary text-muted-foreground border-border";
-    default: return "bg-secondary text-muted-foreground border-border";
+    case "Pending":
+      return "bg-amber-500/10 text-amber-600 border-amber-500/20";
+    case "Approved":
+      return "bg-emerald-500/10 text-primary border-primary/20";
+    case "Rejected":
+      return "bg-red-500/10 text-red-600 border-red-500/20";
+    case "Cancelled":
+      return "bg-secondary text-muted-foreground border-border";
+    default:
+      return "bg-secondary text-muted-foreground border-border";
   }
 };
 

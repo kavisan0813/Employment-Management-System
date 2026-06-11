@@ -28,9 +28,7 @@ import {
   Edit3,
 } from "lucide-react";
 import { recruitmentPipeline } from "../data/mockData";
-import { useRecruitment } from "../context/AppContext";
 import type {
-  Candidate as ContextCandidate,
   JobPosting,
   ScheduledInterview,
 } from "../context/AppContext";
@@ -746,9 +744,9 @@ function MessageModal({
     
     // Save message
     const saved = localStorage.getItem("nexus_recruitment_messages");
-    let messagesMap: Record<string, any> = {};
+    let messagesMap: Record<string, Array<{ sender: "recruiter" | "candidate"; text: string; timestamp: string }>> = {};
     if (saved) {
-      try { messagesMap = JSON.parse(saved); } catch (e) {}
+      try { messagesMap = JSON.parse(saved); } catch { /* ignore */ }
     }
     const currentList = [...messages, newMsg];
     messagesMap[candidate.id] = currentList;
@@ -2116,7 +2114,7 @@ function CandidateDetailSidePanel({
       role: editForm.role.trim(),
       location: editForm.location,
       type: editForm.type,
-      source: editForm.source as any,
+      source: editForm.source as "LinkedIn" | "Indeed" | "Referral",
       initials,
     });
     setIsEditing(false);
@@ -4605,8 +4603,9 @@ export function Recruitment() {
           ...pipeline,
           [foundStage]: (pipeline[foundStage] || []).map((x) => {
             if (x.id === iv.candidateId) {
-              const { interviewDate, ...rest } = x;
-              return rest;
+              const copy = { ...x };
+              delete copy.interviewDate;
+              return copy;
             }
             return x;
           }),

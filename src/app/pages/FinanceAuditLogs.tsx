@@ -9,13 +9,9 @@ import {
   ChevronLeft,
   ChevronDown,
   ShieldAlert,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Globe,
   Flag,
   CheckCircle2,
   AlertTriangle,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  UserX,
   Ban,
   Info,
   Check,
@@ -100,11 +96,20 @@ function KPICard({ title, value, sub, color, icon: Icon }: { title: string; valu
 }
 
 function FilterSelect({ label }: { label: string }) {
+  const [value, setValue] = useState(label);
   return (
-    <div className="relative">
-      <button className="flex items-center gap-2.5 px-4 py-2.5 bg-card border border-border rounded-xl text-[12px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm whitespace-nowrap">
-        {label} <ChevronDown size={14} className="text-muted-foreground" />
-      </button>
+    <div className="relative group">
+      <select
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        className="appearance-none flex items-center gap-2.5 px-4 pr-10 py-2.5 bg-card border border-border rounded-xl text-[12px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer"
+      >
+        <option value={label}>{label}</option>
+        <option value="Option 1">Option 1</option>
+        <option value="Option 2">Option 2</option>
+        <option value="Option 3">Option 3</option>
+      </select>
+      <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none group-hover:text-[#00B87C] transition-colors" />
     </div>
   );
 }
@@ -119,11 +124,7 @@ export function FinanceAuditLogs() {
 
   const todayLogs = LOGS.filter(l => l.timestamp.startsWith("Today")).length;
   const flaggedCount = LOGS.filter(l => l.isFlagged).length;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const payrollEvents = LOGS.filter(l => l.module === "Payroll").length;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const expenseApprovals = LOGS.filter(l => l.module === "Expenses").length;
-
+  
   const displayedLogs = flaggedFilter ? LOGS.filter(l => l.isFlagged) : LOGS;
 
   return (

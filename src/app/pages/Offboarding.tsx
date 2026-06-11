@@ -14,30 +14,24 @@ import {
   Briefcase,
   Laptop,
   ShieldCheck,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  BookOpen,
   Star,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  AlertTriangle,
   ArrowLeft,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Building2,
   FileText,
   Mail,
   Send,
   CheckCircle2,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  HelpCircle,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ThumbsUp,
   MessageSquare,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 /* ─── Types ─── */
-type ExitType = "Resignation" | "Termination" | "Retirement" | "Contract End" | "Other";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type ExitStatus = "Active" | "Completed" | "Scheduled";
+type ExitType =
+  | "Resignation"
+  | "Termination"
+  | "Retirement"
+  | "Contract End"
+  | "Other";
+
 type ClearanceStatus = "cleared" | "pending" | "not_started";
 type TabType = "Active" | "Completed" | "Scheduled" | "Exit Analytics";
 
@@ -106,22 +100,69 @@ const EXITS: ExitEmployee[] = [
     acceptedDate: "Apr 2, 2026",
     noticePeriodDays: 30,
     timeline: [
-      { label: "Resignation Letter Received", date: "Apr 1, 2026", status: "done" },
+      {
+        label: "Resignation Letter Received",
+        date: "Apr 1, 2026",
+        status: "done",
+      },
       { label: "Resignation Accepted", date: "Apr 2", status: "done" },
       { label: "Notice Period Started", date: "Apr 2", status: "done" },
-      { label: "Knowledge Transfer Plan Created", date: "Apr 3", status: "done" },
+      {
+        label: "Knowledge Transfer Plan Created",
+        date: "Apr 3",
+        status: "done",
+      },
       { label: "Clearances In Progress", date: "Apr 4", status: "active" },
       { label: "Exit Interview Scheduled", date: "Pending", status: "pending" },
-      { label: "Final Settlement Processed", date: "Pending", status: "pending" },
+      {
+        label: "Final Settlement Processed",
+        date: "Pending",
+        status: "pending",
+      },
       { label: "Relieving Letter Issued", date: "Pending", status: "pending" },
       { label: "Exit Complete", date: "Pending", status: "pending" },
     ],
     clearance: [
-      { dept: "Manager", person: "Rahul Sharma", status: "cleared", icon: User, color: "#00B87C", bgColor: "#DCFCE7" },
-      { dept: "IT", person: "IT Team", status: "cleared", icon: Laptop, color: "#0EA5E9", bgColor: "#E0F2FE" },
-      { dept: "Finance", person: "Finance Team", status: "pending", icon: Briefcase, color: "#F59E0B", bgColor: "#FEF3C7" },
-      { dept: "HR", person: "HR Team", status: "pending", icon: User, color: "#8B5CF6", bgColor: "#EDE9FE" },
-      { dept: "Admin", person: "Admin Team", status: "cleared", icon: ShieldCheck, color: "#14B8A6", bgColor: "#CCFBF1" },
+      {
+        dept: "Manager",
+        person: "Rahul Sharma",
+        status: "cleared",
+        icon: User,
+        color: "#00B87C",
+        bgColor: "#DCFCE7",
+      },
+      {
+        dept: "IT",
+        person: "IT Team",
+        status: "cleared",
+        icon: Laptop,
+        color: "#0EA5E9",
+        bgColor: "#E0F2FE",
+      },
+      {
+        dept: "Finance",
+        person: "Finance Team",
+        status: "pending",
+        icon: Briefcase,
+        color: "#F59E0B",
+        bgColor: "#FEF3C7",
+      },
+      {
+        dept: "HR",
+        person: "HR Team",
+        status: "pending",
+        icon: User,
+        color: "#8B5CF6",
+        bgColor: "#EDE9FE",
+      },
+      {
+        dept: "Admin",
+        person: "Admin Team",
+        status: "cleared",
+        icon: ShieldCheck,
+        color: "#14B8A6",
+        bgColor: "#CCFBF1",
+      },
     ],
     assets: [
       { name: "Laptop Dell XPS", status: "returned", detail: "Returned Apr 5" },
@@ -157,24 +198,75 @@ const EXITS: ExitEmployee[] = [
     acceptedDate: "Mar 26, 2026",
     noticePeriodDays: 45,
     timeline: [
-      { label: "Resignation Letter Received", date: "Mar 25, 2026", status: "done" },
+      {
+        label: "Resignation Letter Received",
+        date: "Mar 25, 2026",
+        status: "done",
+      },
       { label: "Resignation Accepted", date: "Mar 26", status: "done" },
       { label: "Notice Period Started", date: "Mar 26", status: "done" },
-      { label: "Knowledge Transfer Plan Created", date: "Mar 28", status: "done" },
+      {
+        label: "Knowledge Transfer Plan Created",
+        date: "Mar 28",
+        status: "done",
+      },
       { label: "Clearances In Progress", date: "Apr 2", status: "active" },
       { label: "Exit Interview Scheduled", date: "Pending", status: "pending" },
-      { label: "Final Settlement Processed", date: "Pending", status: "pending" },
+      {
+        label: "Final Settlement Processed",
+        date: "Pending",
+        status: "pending",
+      },
       { label: "Exit Complete", date: "Pending", status: "pending" },
     ],
     clearance: [
-      { dept: "Manager", person: "Priya Patel", status: "cleared", icon: User, color: "#00B87C", bgColor: "#DCFCE7" },
-      { dept: "IT", person: "IT Team", status: "pending", icon: Laptop, color: "#0EA5E9", bgColor: "#E0F2FE" },
-      { dept: "Finance", person: "Finance Team", status: "not_started", icon: Briefcase, color: "#F59E0B", bgColor: "#FEF3C7" },
-      { dept: "HR", person: "HR Team", status: "pending", icon: User, color: "#8B5CF6", bgColor: "#EDE9FE" },
-      { dept: "Admin", person: "Admin Team", status: "not_started", icon: ShieldCheck, color: "#14B8A6", bgColor: "#CCFBF1" },
+      {
+        dept: "Manager",
+        person: "Priya Patel",
+        status: "cleared",
+        icon: User,
+        color: "#00B87C",
+        bgColor: "#DCFCE7",
+      },
+      {
+        dept: "IT",
+        person: "IT Team",
+        status: "pending",
+        icon: Laptop,
+        color: "#0EA5E9",
+        bgColor: "#E0F2FE",
+      },
+      {
+        dept: "Finance",
+        person: "Finance Team",
+        status: "not_started",
+        icon: Briefcase,
+        color: "#F59E0B",
+        bgColor: "#FEF3C7",
+      },
+      {
+        dept: "HR",
+        person: "HR Team",
+        status: "pending",
+        icon: User,
+        color: "#8B5CF6",
+        bgColor: "#EDE9FE",
+      },
+      {
+        dept: "Admin",
+        person: "Admin Team",
+        status: "not_started",
+        icon: ShieldCheck,
+        color: "#14B8A6",
+        bgColor: "#CCFBF1",
+      },
     ],
     assets: [
-      { name: "Laptop MacBook Pro", status: "pending", detail: "Pending return" },
+      {
+        name: "Laptop MacBook Pro",
+        status: "pending",
+        detail: "Pending return",
+      },
       { name: "iPad Pro", status: "pending", detail: "Pending" },
     ],
     documents: [
@@ -205,25 +297,72 @@ const EXITS: ExitEmployee[] = [
     acceptedDate: "Jan 16, 2026",
     noticePeriodDays: 90,
     timeline: [
-      { label: "Retirement Notice Received", date: "Jan 15, 2026", status: "done" },
+      {
+        label: "Retirement Notice Received",
+        date: "Jan 15, 2026",
+        status: "done",
+      },
       { label: "Retirement Accepted", date: "Jan 16", status: "done" },
       { label: "Notice Period Started", date: "Jan 16", status: "done" },
-      { label: "Knowledge Transfer Plan Created", date: "Feb 1", status: "done" },
+      {
+        label: "Knowledge Transfer Plan Created",
+        date: "Feb 1",
+        status: "done",
+      },
       { label: "Clearances In Progress", date: "Mar 1", status: "active" },
       { label: "Exit Interview Scheduled", date: "Pending", status: "pending" },
-      { label: "Final Settlement Processed", date: "Pending", status: "pending" },
+      {
+        label: "Final Settlement Processed",
+        date: "Pending",
+        status: "pending",
+      },
       { label: "Exit Complete", date: "Pending", status: "pending" },
     ],
     clearance: [
-      { dept: "Manager", person: "Anil Menon", status: "not_started", icon: User, color: "#00B87C", bgColor: "#DCFCE7" },
-      { dept: "IT", person: "IT Team", status: "not_started", icon: Laptop, color: "#0EA5E9", bgColor: "#E0F2FE" },
-      { dept: "Finance", person: "Finance Team", status: "not_started", icon: Briefcase, color: "#F59E0B", bgColor: "#FEF3C7" },
-      { dept: "HR", person: "HR Team", status: "cleared", icon: User, color: "#8B5CF6", bgColor: "#EDE9FE" },
-      { dept: "Admin", person: "Admin Team", status: "not_started", icon: ShieldCheck, color: "#14B8A6", bgColor: "#CCFBF1" },
+      {
+        dept: "Manager",
+        person: "Anil Menon",
+        status: "not_started",
+        icon: User,
+        color: "#00B87C",
+        bgColor: "#DCFCE7",
+      },
+      {
+        dept: "IT",
+        person: "IT Team",
+        status: "not_started",
+        icon: Laptop,
+        color: "#0EA5E9",
+        bgColor: "#E0F2FE",
+      },
+      {
+        dept: "Finance",
+        person: "Finance Team",
+        status: "not_started",
+        icon: Briefcase,
+        color: "#F59E0B",
+        bgColor: "#FEF3C7",
+      },
+      {
+        dept: "HR",
+        person: "HR Team",
+        status: "cleared",
+        icon: User,
+        color: "#8B5CF6",
+        bgColor: "#EDE9FE",
+      },
+      {
+        dept: "Admin",
+        person: "Admin Team",
+        status: "not_started",
+        icon: ShieldCheck,
+        color: "#14B8A6",
+        bgColor: "#CCFBF1",
+      },
     ],
     assets: [
       { name: "Laptop HP EliteBook", status: "pending", detail: "Pending" },
-      { name: "Monitor Dell 27\"", status: "pending", detail: "Pending" },
+      { name: 'Monitor Dell 27"', status: "pending", detail: "Pending" },
       { name: "Access Card", status: "pending", detail: "Pending" },
     ],
     documents: [
@@ -264,11 +403,46 @@ const EXITS: ExitEmployee[] = [
       { label: "Exit Complete", date: "Pending", status: "pending" },
     ],
     clearance: [
-      { dept: "Manager", person: "Vikram Seth", status: "cleared", icon: User, color: "#00B87C", bgColor: "#DCFCE7" },
-      { dept: "IT", person: "IT Team", status: "cleared", icon: Laptop, color: "#0EA5E9", bgColor: "#E0F2FE" },
-      { dept: "Finance", person: "Finance Team", status: "pending", icon: Briefcase, color: "#F59E0B", bgColor: "#FEF3C7" },
-      { dept: "HR", person: "HR Team", status: "cleared", icon: User, color: "#8B5CF6", bgColor: "#EDE9FE" },
-      { dept: "Admin", person: "Admin Team", status: "cleared", icon: ShieldCheck, color: "#14B8A6", bgColor: "#CCFBF1" },
+      {
+        dept: "Manager",
+        person: "Vikram Seth",
+        status: "cleared",
+        icon: User,
+        color: "#00B87C",
+        bgColor: "#DCFCE7",
+      },
+      {
+        dept: "IT",
+        person: "IT Team",
+        status: "cleared",
+        icon: Laptop,
+        color: "#0EA5E9",
+        bgColor: "#E0F2FE",
+      },
+      {
+        dept: "Finance",
+        person: "Finance Team",
+        status: "pending",
+        icon: Briefcase,
+        color: "#F59E0B",
+        bgColor: "#FEF3C7",
+      },
+      {
+        dept: "HR",
+        person: "HR Team",
+        status: "cleared",
+        icon: User,
+        color: "#8B5CF6",
+        bgColor: "#EDE9FE",
+      },
+      {
+        dept: "Admin",
+        person: "Admin Team",
+        status: "cleared",
+        icon: ShieldCheck,
+        color: "#14B8A6",
+        bgColor: "#CCFBF1",
+      },
     ],
     assets: [
       { name: "Laptop ThinkPad", status: "returned", detail: "Returned Apr 3" },
@@ -309,55 +483,98 @@ const progressColor = (pct: number) => {
 const exitTypeChip = (type: ExitType) => {
   switch (type) {
     case "Resignation":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0] text-[11px] font-semibold uppercase tracking-wider">Resignation</span>;
+      return (
+        <span className="inline-flex px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0] text-[11px] font-semibold uppercase tracking-wider">
+          Resignation
+        </span>
+      );
     case "Termination":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] text-[11px] font-semibold uppercase tracking-wider">Termination</span>;
+      return (
+        <span className="inline-flex px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] text-[11px] font-semibold uppercase tracking-wider">
+          Termination
+        </span>
+      );
     case "Retirement":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0D9488] border border-[#99F6E4] text-[11px] font-semibold uppercase tracking-wider">Retirement</span>;
+      return (
+        <span className="inline-flex px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0D9488] border border-[#99F6E4] text-[11px] font-semibold uppercase tracking-wider">
+          Retirement
+        </span>
+      );
     default:
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#EDE9FE] text-[#7C3AED] border border-[#DDD6FE] text-[11px] font-semibold uppercase tracking-wider">{type}</span>;
+      return (
+        <span className="inline-flex px-2 py-0.5 rounded-full bg-[#EDE9FE] text-[#7C3AED] border border-[#DDD6FE] text-[11px] font-semibold uppercase tracking-wider">
+          {type}
+        </span>
+      );
   }
 };
 
 const clearanceChip = (status: ClearanceStatus) => {
   switch (status) {
-    case "cleared": return <span className="text-[11px] font-black text-[#00B87C] flex items-center gap-1"><Check size={12} /> Done</span>;
-    case "pending": return <span className="text-[11px] font-black text-amber-500 flex items-center gap-1"><Clock size={12} /> Pending</span>;
-    case "not_started": return <span className="text-[11px] font-semibold text-[#94A3B8] flex items-center gap-1"><X size={12} /> Not Started</span>;
+    case "cleared":
+      return (
+        <span className="text-[11px] font-black text-[#00B87C] flex items-center gap-1">
+          <Check size={12} /> Done
+        </span>
+      );
+    case "pending":
+      return (
+        <span className="text-[11px] font-black text-amber-500 flex items-center gap-1">
+          <Clock size={12} /> Pending
+        </span>
+      );
+    case "not_started":
+      return (
+        <span className="text-[11px] font-semibold text-[#94A3B8] flex items-center gap-1">
+          <X size={12} /> Not Started
+        </span>
+      );
   }
 };
 
 /* ─── MAIN COMPONENT ─── */
 export function Offboarding() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("Active");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [activeExitId, setActiveExitId] = useState<string | null>(null);
+
   const [showInitiateModal, setShowInitiateModal] = useState(false);
   const [showDetail, setShowDetail] = useState<string | null>(null);
   const [showReminder, setShowReminder] = useState<string | null>(null);
   const [showComplete, setShowComplete] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [showInterview, setShowInterview] = useState<string | null>(null);
-  const [showSchedule, setShowSchedule] = useState<{id: string; type: "interview" | "clearance"} | null>(null);
 
-  const activeExits = EXITS.filter(e => e.progress !== 100);
-  const completedExits: ExitEmployee[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const scheduledExits: ExitEmployee[] = [];
+  const [showSchedule, setShowSchedule] = useState<{
+    id: string;
+    type: "interview" | "clearance";
+  } | null>(null);
+
+  const activeExits = EXITS.filter((e) => e.progress !== 100);
+  // const completedExits: ExitEmployee[] = [];
+
+  // const scheduledExits: ExitEmployee[] = [];
 
   const stats = {
     activeExits: activeExits.length,
     completedThisMonth: 2,
-    pendingFF: EXITS.filter(e => e.ffStatus === "Awaiting Finance Clearance" || e.ffStatus === "Pending").length,
-    assetsPending: EXITS.filter(e => e.assets.some(a => a.status === "pending")).length,
-    docsPending: EXITS.filter(e => e.documents.some(d => d.status === "pending" || d.status === "not_generated")).length,
-    interviewsDone: `${EXITS.filter(e => e.interviewDone).length}/${EXITS.length}`,
+    pendingFF: EXITS.filter(
+      (e) =>
+        e.ffStatus === "Awaiting Finance Clearance" || e.ffStatus === "Pending",
+    ).length,
+    assetsPending: EXITS.filter((e) =>
+      e.assets.some((a) => a.status === "pending"),
+    ).length,
+    docsPending: EXITS.filter((e) =>
+      e.documents.some(
+        (d) => d.status === "pending" || d.status === "not_generated",
+      ),
+    ).length,
+    interviewsDone: `${EXITS.filter((e) => e.interviewDone).length}/${EXITS.length}`,
   };
 
-  const currentExit = showDetail ? EXITS.find(e => e.id === showDetail) : null;
-  const completeExit = showComplete ? EXITS.find(e => e.id === showComplete) : null;
+  const currentExit = showDetail
+    ? EXITS.find((e) => e.id === showDetail)
+    : null;
+  const completeExit = showComplete
+    ? EXITS.find((e) => e.id === showComplete)
+    : null;
 
   const handleExportCSV = () => {
     const a = document.createElement("a");
@@ -375,8 +592,12 @@ export function Offboarding() {
             <LogOut size={22} className="text-[#EF4444]" />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight">Offboarding / Exit Management</h1>
-            <p className="text-[13px] font-semibold text-muted-foreground">Manage employee exits, clearances and F&F settlements</p>
+            <h1 className="text-[26px] font-black text-foreground tracking-tight">
+              Offboarding / Exit Management
+            </h1>
+            <p className="text-[13px] font-semibold text-muted-foreground">
+              Manage employee exits, clearances and F&F settlements
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -401,45 +622,114 @@ export function Offboarding() {
       <div className="bg-card border border-border rounded-2xl p-4 flex flex-wrap items-center gap-6 shadow-sm">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#EF4444]" />
-          <span className="text-[12px] font-bold text-foreground">{stats.activeExits} active exits in progress</span>
+          <span className="text-[12px] font-bold text-foreground">
+            {stats.activeExits} active exits in progress
+          </span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-amber-500" />
-          <span className="text-[12px] font-bold text-foreground">{stats.pendingFF} final settlements pending Finance clearance</span>
+          <span className="text-[12px] font-bold text-foreground">
+            {stats.pendingFF} final settlements pending Finance clearance
+          </span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-teal-500" />
-          <span className="text-[12px] font-bold text-foreground">1 exit completing this week — James Carter (Apr 10)</span>
+          <span className="text-[12px] font-bold text-foreground">
+            1 exit completing this week — James Carter (Apr 10)
+          </span>
         </div>
       </div>
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <KpiCard icon={User} bgColor="#FEE2E2" iconColor="#EF4444" label="ACTIVE EXITS" value={`${stats.activeExits}`} valueColor="text-[#EF4444]" sub="in progress" />
-        <KpiCard icon={Check} bgColor="#DCFCE7" iconColor="#00B87C" label="COMPLETED THIS MONTH" value={`${stats.completedThisMonth}`} valueColor="text-[#00B87C]" sub="fully settled" />
-        <KpiCard icon={Clock} bgColor="#FEF3C7" iconColor="#F59E0B" label="PENDING F&F SETTLEMENT" value={`${stats.pendingFF}`} valueColor="text-amber-500" sub="awaiting Finance" />
-        <KpiCard icon={Laptop} bgColor="#E0F2FE" iconColor="#0EA5E9" label="ASSETS PENDING RETURN" value={`${stats.assetsPending}`} valueColor="text-[#0EA5E9]" sub="from exiting employees" />
-        <KpiCard icon={FileText} bgColor="#EDE9FE" iconColor="#8B5CF6" label="DOCS PENDING SIGNATURE" value={`${stats.docsPending}`} valueColor="text-[#8B5CF6]" sub="exit docs unsigned" />
-        <KpiCard icon={Star} bgColor="#DCFCE7" iconColor="#00B87C" label="EXIT INTERVIEWS DONE" value={stats.interviewsDone} valueColor="text-[#00B87C]" sub="this cycle" />
+        <KpiCard
+          icon={User}
+          bgColor="#FEE2E2"
+          iconColor="#EF4444"
+          label="ACTIVE EXITS"
+          value={`${stats.activeExits}`}
+          valueColor="text-[#EF4444]"
+          sub="in progress"
+        />
+        <KpiCard
+          icon={Check}
+          bgColor="#DCFCE7"
+          iconColor="#00B87C"
+          label="COMPLETED THIS MONTH"
+          value={`${stats.completedThisMonth}`}
+          valueColor="text-[#00B87C]"
+          sub="fully settled"
+        />
+        <KpiCard
+          icon={Clock}
+          bgColor="#FEF3C7"
+          iconColor="#F59E0B"
+          label="PENDING F&F SETTLEMENT"
+          value={`${stats.pendingFF}`}
+          valueColor="text-amber-500"
+          sub="awaiting Finance"
+        />
+        <KpiCard
+          icon={Laptop}
+          bgColor="#E0F2FE"
+          iconColor="#0EA5E9"
+          label="ASSETS PENDING RETURN"
+          value={`${stats.assetsPending}`}
+          valueColor="text-[#0EA5E9]"
+          sub="from exiting employees"
+        />
+        <KpiCard
+          icon={FileText}
+          bgColor="#EDE9FE"
+          iconColor="#8B5CF6"
+          label="DOCS PENDING SIGNATURE"
+          value={`${stats.docsPending}`}
+          valueColor="text-[#8B5CF6]"
+          sub="exit docs unsigned"
+        />
+        <KpiCard
+          icon={Star}
+          bgColor="#DCFCE7"
+          iconColor="#00B87C"
+          label="EXIT INTERVIEWS DONE"
+          value={stats.interviewsDone}
+          valueColor="text-[#00B87C]"
+          sub="this cycle"
+        />
       </div>
 
       {/* TABS */}
       <div className="space-y-6">
         <div className="flex items-center border-b border-border overflow-x-auto scrollbar-hide">
-          {(["Active", "Completed", "Scheduled", "Exit Analytics"] as TabType[]).map((tab) => {
+          {(
+            ["Active", "Completed", "Scheduled", "Exit Analytics"] as TabType[]
+          ).map((tab) => {
             const isActive = activeTab === tab;
-            const count = tab === "Active" ? stats.activeExits : tab === "Completed" ? stats.completedThisMonth : tab === "Scheduled" ? 0 : null;
+            const count =
+              tab === "Active"
+                ? stats.activeExits
+                : tab === "Completed"
+                  ? stats.completedThisMonth
+                  : tab === "Scheduled"
+                    ? 0
+                    : null;
             return (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-6 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap ${
-                  isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
+                  isActive
+                    ? "text-[#00B87C]"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {tab}{count !== null ? ` (${count})` : ""}
+                {tab}
+                {count !== null ? ` (${count})` : ""}
                 {isActive && (
-                  <motion.div layoutId="offboardingTab" className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#00B87C]" />
+                  <motion.div
+                    layoutId="offboardingTab"
+                    className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#00B87C]"
+                  />
                 )}
               </button>
             );
@@ -464,7 +754,9 @@ export function Offboarding() {
                     onViewDetail={() => setShowDetail(exit.id)}
                     onSendReminder={() => setShowReminder(exit.id)}
                     onComplete={() => setShowComplete(exit.id)}
-                    onScheduleInterview={() => setShowSchedule({id: exit.id, type: "interview"})}
+                    onScheduleInterview={() =>
+                      setShowSchedule({ id: exit.id, type: "interview" })
+                    }
                   />
                 ))}
               </div>
@@ -491,25 +783,39 @@ export function Offboarding() {
       {/* ─── MODALS ─── */}
 
       {/* INITIATE EXIT MODAL */}
-      {showInitiateModal && <InitiateExitModal onClose={() => setShowInitiateModal(false)} />}
+      {showInitiateModal && (
+        <InitiateExitModal onClose={() => setShowInitiateModal(false)} />
+      )}
 
       {/* OFFBOARDING DETAIL SCREEN */}
       {showDetail && currentExit && (
         <OffboardingDetail
           exit={currentExit}
           onClose={() => setShowDetail(null)}
-          onSignOff={(dept) => { alert(`Signing off ${dept} clearance...`); }}
-          onGenerateDoc={(doc) => { alert(`Generating ${doc}...`); }}
-          onSendReminder={() => { setShowDetail(null); setShowReminder(currentExit.id); }}
-          onScheduleInterview={() => { setShowDetail(null); setShowSchedule({id: currentExit.id, type: "interview"}); }}
-          onSendToFinance={() => { alert("F&F sent to Finance for approval"); }}
+          onSignOff={(dept) => {
+            alert(`Signing off ${dept} clearance...`);
+          }}
+          onGenerateDoc={(doc) => {
+            alert(`Generating ${doc}...`);
+          }}
+          onSendReminder={() => {
+            setShowDetail(null);
+            setShowReminder(currentExit.id);
+          }}
+          onScheduleInterview={() => {
+            setShowDetail(null);
+            setShowSchedule({ id: currentExit.id, type: "interview" });
+          }}
+          onSendToFinance={() => {
+            alert("F&F sent to Finance for approval");
+          }}
         />
       )}
 
       {/* SEND REMINDER MODAL */}
       {showReminder && (
         <ReminderModal
-          exitName={EXITS.find(e => e.id === showReminder)?.name || ""}
+          exitName={EXITS.find((e) => e.id === showReminder)?.name || ""}
           onClose={() => setShowReminder(null)}
         />
       )}
@@ -519,34 +825,54 @@ export function Offboarding() {
         <CompleteExitModal
           exit={completeExit}
           onClose={() => setShowComplete(null)}
-          onConfirm={() => { alert(`Exit completed for ${completeExit.name}`); setShowComplete(null); }}
+          onConfirm={() => {
+            alert(`Exit completed for ${completeExit.name}`);
+            setShowComplete(null);
+          }}
         />
       )}
 
       {/* EXIT INTERVIEW MODAL */}
-      {showSchedule && (() => {
-        const emp = EXITS.find(e => e.id === showSchedule.id);
-        if (!emp) return null;
-        if (showSchedule.type === "interview") {
-          return (
-            <ExitInterviewModal
-              employeeName={emp.name}
-              interviewDone={emp.interviewDone}
-              onClose={() => setShowSchedule(null)}
-              onComplete={() => { alert("Interview marked as completed"); setShowSchedule(null); }}
-            />
-          );
-        }
-        return null;
-      })()}
+      {showSchedule &&
+        (() => {
+          const emp = EXITS.find((e) => e.id === showSchedule.id);
+          if (!emp) return null;
+          if (showSchedule.type === "interview") {
+            return (
+              <ExitInterviewModal
+                employeeName={emp.name}
+                interviewDone={emp.interviewDone}
+                onClose={() => setShowSchedule(null)}
+                onComplete={() => {
+                  alert("Interview marked as completed");
+                  setShowSchedule(null);
+                }}
+              />
+            );
+          }
+          return null;
+        })()}
     </div>
   );
 }
 
 /* ─── KPI CARD ─── */
-function KpiCard({ icon: Icon, bgColor, iconColor, label, value, valueColor, sub }: {
-  icon: React.ElementType; bgColor: string; iconColor: string;
-  label: string; value: string; valueColor: string; sub: string;
+function KpiCard({
+  icon: Icon,
+  bgColor,
+  iconColor,
+  label,
+  value,
+  valueColor,
+  sub,
+}: {
+  icon: React.ElementType;
+  bgColor: string;
+  iconColor: string;
+  label: string;
+  value: string;
+  valueColor: string;
+  sub: string;
 }) {
   return (
     <motion.div
@@ -555,21 +881,36 @@ function KpiCard({ icon: Icon, bgColor, iconColor, label, value, valueColor, sub
       className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
     >
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">{label}</p>
-        <div className="w-9 h-9 rounded-[10px] flex items-center justify-center" style={{ backgroundColor: bgColor }}>
+        <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+          {label}
+        </p>
+        <div
+          className="w-9 h-9 rounded-[10px] flex items-center justify-center"
+          style={{ backgroundColor: bgColor }}
+        >
           <Icon size={16} style={{ color: iconColor }} />
         </div>
       </div>
-      <h3 className={`text-[28px] font-black tracking-tighter ${valueColor}`}>{value}</h3>
+      <h3 className={`text-[28px] font-black tracking-tighter ${valueColor}`}>
+        {value}
+      </h3>
       <p className="text-[12px] font-bold text-[#6B7280] mt-1">{sub}</p>
     </motion.div>
   );
 }
 
 /* ─── EXIT CARD ─── */
-function ExitCard({ exit, onViewDetail, onSendReminder, onComplete }: {
-  exit: ExitEmployee; onViewDetail: () => void; onSendReminder: () => void;
-  onComplete: () => void; onScheduleInterview: () => void;
+function ExitCard({
+  exit,
+  onViewDetail,
+  onSendReminder,
+  onComplete,
+}: {
+  exit: ExitEmployee;
+  onViewDetail: () => void;
+  onSendReminder: () => void;
+  onComplete: () => void;
+  onScheduleInterview: () => void;
 }) {
   const colors = progressColor(exit.progress);
   const isOverdue = exit.lwd.includes("OVERDUE");
@@ -584,15 +925,24 @@ function ExitCard({ exit, onViewDetail, onSendReminder, onComplete }: {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-[#EDE9FE] flex items-center justify-center text-[#8B5CF6] font-black text-sm shrink-0">
-            {exit.name.split(" ").map(n => n[0]).join("")}
+            {exit.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")}
           </div>
           <div>
-            <h4 className="text-[14px] font-bold text-foreground">{exit.name}</h4>
-            <p className="text-[12px] font-medium text-muted-foreground">{exit.designation}</p>
+            <h4 className="text-[14px] font-bold text-foreground">
+              {exit.name}
+            </h4>
+            <p className="text-[12px] font-medium text-muted-foreground">
+              {exit.designation}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[11px] font-semibold uppercase tracking-wider">LWD: {exit.lwd.replace(" (OVERDUE!)", "")}</span>
+          <span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[11px] font-semibold uppercase tracking-wider">
+            LWD: {exit.lwd.replace(" (OVERDUE!)", "")}
+          </span>
           {exitTypeChip(exit.type)}
         </div>
       </div>
@@ -601,37 +951,99 @@ function ExitCard({ exit, onViewDetail, onSendReminder, onComplete }: {
       <div className="flex items-start gap-4 mb-4">
         <div className="relative w-12 h-12 shrink-0">
           <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
-            <circle cx="24" cy="24" r="20" fill="none" stroke="var(--border)" strokeWidth="4" />
-            <circle cx="24" cy="24" r="20" fill="none" stroke={colors.bar} strokeWidth="4" strokeDasharray={`${2 * Math.PI * 20}`} strokeDashoffset={`${2 * Math.PI * 20 * (1 - exit.progress / 100)}`} strokeLinecap="round" />
+            <circle
+              cx="24"
+              cy="24"
+              r="20"
+              fill="none"
+              stroke="var(--border)"
+              strokeWidth="4"
+            />
+            <circle
+              cx="24"
+              cy="24"
+              r="20"
+              fill="none"
+              stroke={colors.bar}
+              strokeWidth="4"
+              strokeDasharray={`${2 * Math.PI * 20}`}
+              strokeDashoffset={`${2 * Math.PI * 20 * (1 - exit.progress / 100)}`}
+              strokeLinecap="round"
+            />
           </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold" style={{ color: colors.text }}>{exit.progress}%</span>
+          <span
+            className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold"
+            style={{ color: colors.text }}
+          >
+            {exit.progress}%
+          </span>
         </div>
         <div className="flex-1 min-w-0">
           {/* Progress Stepper */}
           <div className="flex items-center gap-0">
             {[
-              { label: "Notice", done: exit.timeline.slice(0, 3).every(t => t.status === "done") },
-              { label: "Clearances", done: exit.clearance.every(c => c.status === "cleared") },
-              { label: "F&F", done: exit.timeline.slice(5, 7).every(t => t.status === "done") },
-              { label: "Complete", done: exit.timeline[exit.timeline.length - 1].status === "done" },
+              {
+                label: "Notice",
+                done: exit.timeline
+                  .slice(0, 3)
+                  .every((t) => t.status === "done"),
+              },
+              {
+                label: "Clearances",
+                done: exit.clearance.every((c) => c.status === "cleared"),
+              },
+              {
+                label: "F&F",
+                done: exit.timeline
+                  .slice(5, 7)
+                  .every((t) => t.status === "done"),
+              },
+              {
+                label: "Complete",
+                done: exit.timeline[exit.timeline.length - 1].status === "done",
+              },
             ].map((step, idx, arr) => {
-              const isActiveStep = !step.done && (idx === 0 || arr[idx - 1].done);
+              const isActiveStep =
+                !step.done && (idx === 0 || arr[idx - 1].done);
               return (
-                <div key={idx} className="flex items-center flex-1 last:flex-none">
+                <div
+                  key={idx}
+                  className="flex items-center flex-1 last:flex-none"
+                >
                   <div className="flex flex-col items-center">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold border-2 transition-all ${
-                      step.done ? "bg-[#00B87C] border-[#00B87C] text-white" :
-                      isActiveStep ? "border-[#14B8A6] text-[#14B8A6] bg-[#CCFBF1]" :
-                      "border-border text-muted-foreground bg-card"
-                    }`}>
-                      {step.done ? <Check size={12} /> : isActiveStep ? <Clock size={10} /> : idx + 1}
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold border-2 transition-all ${
+                        step.done
+                          ? "bg-[#00B87C] border-[#00B87C] text-white"
+                          : isActiveStep
+                            ? "border-[#14B8A6] text-[#14B8A6] bg-[#CCFBF1]"
+                            : "border-border text-muted-foreground bg-card"
+                      }`}
+                    >
+                      {step.done ? (
+                        <Check size={12} />
+                      ) : isActiveStep ? (
+                        <Clock size={10} />
+                      ) : (
+                        idx + 1
+                      )}
                     </div>
-                    <span className={`text-[8px] font-black uppercase tracking-wider mt-1 ${
-                      step.done ? "text-[#00B87C]" : isActiveStep ? "text-[#14B8A6]" : "text-muted-foreground"
-                    }`}>{step.label}</span>
+                    <span
+                      className={`text-[8px] font-black uppercase tracking-wider mt-1 ${
+                        step.done
+                          ? "text-[#00B87C]"
+                          : isActiveStep
+                            ? "text-[#14B8A6]"
+                            : "text-muted-foreground"
+                      }`}
+                    >
+                      {step.label}
+                    </span>
                   </div>
                   {idx < arr.length - 1 && (
-                    <div className={`flex-1 h-[2px] mx-1 mt-[-16px] ${step.done ? "bg-[#00B87C]" : "bg-border"}`} />
+                    <div
+                      className={`flex-1 h-[2px] mx-1 mt-[-16px] ${step.done ? "bg-[#00B87C]" : "bg-border"}`}
+                    />
                   )}
                 </div>
               );
@@ -643,7 +1055,10 @@ function ExitCard({ exit, onViewDetail, onSendReminder, onComplete }: {
       {/* CLEARANCE STATUS ROW */}
       <div className="flex flex-wrap items-center gap-3 mb-4 px-1">
         {exit.clearance.map((c, i) => (
-          <div key={i} className="flex items-center gap-1.5 text-[11px] font-semibold">
+          <div
+            key={i}
+            className="flex items-center gap-1.5 text-[11px] font-semibold"
+          >
             <span className="text-muted-foreground">{c.dept}</span>
             {c.status === "cleared" ? (
               <Check size={12} className="text-[#00B87C]" />
@@ -670,7 +1085,7 @@ function ExitCard({ exit, onViewDetail, onSendReminder, onComplete }: {
         >
           Send Reminder
         </button>
-        {exit.clearance.every(c => c.status === "cleared") && (
+        {exit.clearance.every((c) => c.status === "cleared") && (
           <button
             onClick={onComplete}
             className="px-4 py-2 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm"
@@ -688,23 +1103,45 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
   const [exitType, setExitType] = useState<ExitType>("Resignation");
   const [step, setStep] = useState<"form" | "preview" | "success">("form");
 
-  const exitTypes: ExitType[] = ["Resignation", "Retirement", "Termination", "Contract End", "Other"];
-  const reasonCategories = ["Personal", "Career Growth", "Relocation", "Work Culture", "Compensation", "Health", "Education", "Other"];
+  const exitTypes: ExitType[] = [
+    "Resignation",
+    "Retirement",
+    "Termination",
+    "Contract End",
+    "Other",
+  ];
+  const reasonCategories = [
+    "Personal",
+    "Career Growth",
+    "Relocation",
+    "Work Culture",
+    "Compensation",
+    "Health",
+    "Education",
+    "Other",
+  ];
 
   if (step === "success") {
     return (
-      <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="w-full max-w-md bg-card rounded-[32px] p-10 text-center shadow-2xl border border-border"
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="w-16 h-16 rounded-full bg-[#DCFCE7] flex items-center justify-center mx-auto mb-5">
             <CheckCircle2 size={32} className="text-[#00B87C]" />
           </div>
-          <h3 className="text-lg font-black text-foreground tracking-tight mb-2">Exit Initiated Successfully</h3>
-          <p className="text-[13px] font-medium text-muted-foreground mb-6">Checklist tasks have been auto-assigned and notifications sent.</p>
+          <h3 className="text-lg font-black text-foreground tracking-tight mb-2">
+            Exit Initiated Successfully
+          </h3>
+          <p className="text-[13px] font-medium text-muted-foreground mb-6">
+            Checklist tasks have been auto-assigned and notifications sent.
+          </p>
           <button
             onClick={onClose}
             className="px-8 py-3 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all"
@@ -717,12 +1154,15 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         className="w-full max-w-[520px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-8 py-6 border-b border-border flex items-center justify-between">
@@ -730,9 +1170,14 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
             <div className="w-10 h-10 rounded-xl bg-[#FEE2E2] flex items-center justify-center">
               <LogOut size={20} className="text-[#EF4444]" />
             </div>
-            <h3 className="text-[18px] font-bold text-foreground tracking-tight">Initiate Employee Exit</h3>
+            <h3 className="text-[18px] font-bold text-foreground tracking-tight">
+              Initiate Employee Exit
+            </h3>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-all">
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-all"
+          >
             <X size={16} className="text-muted-foreground" />
           </button>
         </div>
@@ -741,9 +1186,14 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
         <div className="px-8 py-6 space-y-5 max-h-[60vh] overflow-y-auto">
           {/* Employee Search */}
           <div>
-            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">SELECT EMPLOYEE</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+              SELECT EMPLOYEE
+            </label>
             <div className="relative">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Search
+                size={16}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
               <input
                 type="text"
                 placeholder="Search employee name..."
@@ -754,7 +1204,9 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
 
           {/* Exit Type */}
           <div>
-            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">EXIT TYPE</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+              EXIT TYPE
+            </label>
             <div className="flex flex-wrap gap-2">
               {exitTypes.map((t) => (
                 <button
@@ -775,30 +1227,55 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
           {/* Date Row */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">LAST WORKING DATE</label>
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+                LAST WORKING DATE
+              </label>
               <div className="relative">
-                <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input type="date" className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+                <Calendar
+                  size={16}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  type="date"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                />
               </div>
             </div>
             <div>
-              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">RESIGNATION DATE</label>
+              <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+                RESIGNATION DATE
+              </label>
               <div className="relative">
-                <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input type="date" defaultValue="2026-04-06" className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+                <Calendar
+                  size={16}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  type="date"
+                  defaultValue="2026-04-06"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                />
               </div>
             </div>
           </div>
 
           {/* Notice Period */}
           <div>
-            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">NOTICE PERIOD (DAYS)</label>
-            <input type="number" defaultValue={30} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+              NOTICE PERIOD (DAYS)
+            </label>
+            <input
+              type="number"
+              defaultValue={30}
+              className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+            />
           </div>
 
           {/* Reason Category */}
           <div>
-            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">REASON CATEGORY</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+              REASON CATEGORY
+            </label>
             <div className="flex flex-wrap gap-2">
               {reasonCategories.map((r) => (
                 <button
@@ -813,33 +1290,68 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
 
           {/* Reason Details */}
           <div>
-            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">REASON DETAILS (OPTIONAL)</label>
-            <textarea rows={3} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all resize-none" placeholder="Add details..." />
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+              REASON DETAILS (OPTIONAL)
+            </label>
+            <textarea
+              rows={3}
+              className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all resize-none"
+              placeholder="Add details..."
+            />
           </div>
 
           {/* Assigned HR Owner */}
           <div>
-            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">ASSIGNED HR OWNER</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+              ASSIGNED HR OWNER
+            </label>
             <div className="relative">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input type="text" placeholder="Search HR employee..." className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+              <Search
+                size={16}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
+              <input
+                type="text"
+                placeholder="Search HR employee..."
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+              />
             </div>
           </div>
 
           {/* Notifications */}
           <div>
-            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">SEND NOTIFICATIONS TO</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+              SEND NOTIFICATIONS TO
+            </label>
             <div className="space-y-2.5">
               {[
-                { label: "Employee (confirmation email)", defaultChecked: true },
+                {
+                  label: "Employee (confirmation email)",
+                  defaultChecked: true,
+                },
                 { label: "Direct Manager", defaultChecked: true },
-                { label: "IT Team (access deactivation reminder)", defaultChecked: true },
-                { label: "Finance (F&F settlement kickoff)", defaultChecked: true },
+                {
+                  label: "IT Team (access deactivation reminder)",
+                  defaultChecked: true,
+                },
+                {
+                  label: "Finance (F&F settlement kickoff)",
+                  defaultChecked: true,
+                },
                 { label: "All Department Heads", defaultChecked: false },
               ].map((item, i) => (
-                <label key={i} className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" defaultChecked={item.defaultChecked} className="w-4 h-4 rounded border-border text-[#00B87C] focus:ring-[#00B87C]" />
-                  <span className="text-[12px] font-bold text-foreground">{item.label}</span>
+                <label
+                  key={i}
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    defaultChecked={item.defaultChecked}
+                    className="w-4 h-4 rounded border-border text-[#00B87C] focus:ring-[#00B87C]"
+                  />
+                  <span className="text-[12px] font-bold text-foreground">
+                    {item.label}
+                  </span>
                 </label>
               ))}
             </div>
@@ -848,11 +1360,17 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
 
         {/* Footer */}
         <div className="px-8 py-5 border-t border-border flex items-center justify-between">
-          <button onClick={onClose} className="px-5 py-2.5 rounded-xl text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider hover:text-foreground transition-all">
+          <button
+            onClick={onClose}
+            className="px-5 py-2.5 rounded-xl text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider hover:text-foreground transition-all"
+          >
             Cancel
           </button>
           <div className="flex items-center gap-3">
-            <button onClick={() => setStep("preview")} className="px-5 py-2.5 rounded-xl border border-border text-[12px] font-black text-foreground uppercase tracking-widest hover:bg-muted transition-all">
+            <button
+              onClick={() => setStep("preview")}
+              className="px-5 py-2.5 rounded-xl border border-border text-[12px] font-black text-foreground uppercase tracking-widest hover:bg-muted transition-all"
+            >
               Preview Checklist
             </button>
             <button
@@ -869,8 +1387,17 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
 }
 
 /* ─── OFFBOARDING DETAIL SCREEN ─── */
-function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendReminder, onScheduleInterview, onSendToFinance }: {
-  exit: ExitEmployee; onClose: () => void;
+function OffboardingDetail({
+  exit,
+  onClose,
+  onSignOff,
+  onGenerateDoc,
+  onSendReminder,
+  onScheduleInterview,
+  onSendToFinance,
+}: {
+  exit: ExitEmployee;
+  onClose: () => void;
   onSignOff: (dept: string) => void;
   onGenerateDoc: (doc: string) => void;
   onSendReminder: () => void;
@@ -880,38 +1407,75 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
   const colors = progressColor(exit.progress);
 
   return (
-    <div className="fixed inset-0 z-[2000] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[2000] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.98, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         className="w-full max-w-6xl max-h-[90vh] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden flex flex-col"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-8 py-5 border-b border-border flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4">
-            <button onClick={onClose} className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted transition-all">
+            <button
+              onClick={onClose}
+              className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted transition-all"
+            >
               <ArrowLeft size={16} className="text-muted-foreground" />
             </button>
             <div className="w-10 h-10 rounded-full bg-[#EDE9FE] flex items-center justify-center text-[#8B5CF6] font-black text-sm">
-              {exit.name.split(" ").map(n => n[0]).join("")}
+              {exit.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </div>
             <div>
-              <h2 className="text-[18px] font-black text-foreground tracking-tight">{exit.name}</h2>
-              <p className="text-[12px] font-medium text-muted-foreground">{exit.designation} · {exit.department}</p>
+              <h2 className="text-[18px] font-black text-foreground tracking-tight">
+                {exit.name}
+              </h2>
+              <p className="text-[12px] font-medium text-muted-foreground">
+                {exit.designation} · {exit.department}
+              </p>
             </div>
             <div className="flex items-center gap-2 ml-4">
               {exitTypeChip(exit.type)}
-<span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[11px] font-semibold uppercase tracking-wider">LWD: {exit.lwd.replace(" (OVERDUE!)", "")}</span>
+              <span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[11px] font-semibold uppercase tracking-wider">
+                LWD: {exit.lwd.replace(" (OVERDUE!)", "")}
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <svg className="w-10 h-10 -rotate-90" viewBox="0 0 40 40">
-                <circle cx="20" cy="20" r="16" fill="none" stroke="var(--border)" strokeWidth="3" />
-                <circle cx="20" cy="20" r="16" fill="none" stroke={colors.bar} strokeWidth="3" strokeDasharray={`${2 * Math.PI * 16}`} strokeDashoffset={`${2 * Math.PI * 16 * (1 - exit.progress / 100)}`} strokeLinecap="round" />
+                <circle
+                  cx="20"
+                  cy="20"
+                  r="16"
+                  fill="none"
+                  stroke="var(--border)"
+                  strokeWidth="3"
+                />
+                <circle
+                  cx="20"
+                  cy="20"
+                  r="16"
+                  fill="none"
+                  stroke={colors.bar}
+                  strokeWidth="3"
+                  strokeDasharray={`${2 * Math.PI * 16}`}
+                  strokeDashoffset={`${2 * Math.PI * 16 * (1 - exit.progress / 100)}`}
+                  strokeLinecap="round"
+                />
               </svg>
-              <span className="text-[12px] font-black" style={{ color: colors.text }}>{exit.progress}%</span>
+              <span
+                className="text-[12px] font-black"
+                style={{ color: colors.text }}
+              >
+                {exit.progress}%
+              </span>
             </div>
           </div>
         </div>
@@ -920,27 +1484,43 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
         <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-[30%_40%_30%] divide-x divide-border">
           {/* LEFT: Timeline */}
           <div className="p-6 space-y-4">
-            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">EXIT TIMELINE</h3>
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+              EXIT TIMELINE
+            </h3>
             <div className="space-y-0">
               {exit.timeline.map((item, i) => (
                 <div key={i} className="flex gap-3">
                   <div className="flex flex-col items-center">
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 shrink-0 ${
-                      item.status === "done" ? "bg-[#00B87C] border-[#00B87C]" :
-                      item.status === "active" ? "bg-[#CCFBF1] border-[#14B8A6]" :
-                      "bg-card border-border"
-                    }`}>
-                      {item.status === "done" ? <Check size={10} className="text-white" /> :
-                       item.status === "active" ? <Clock size={9} className="text-[#14B8A6]" /> :
-                       <div className="w-1.5 h-1.5 rounded-full bg-border" />}
+                    <div
+                      className={`w-5 h-5 rounded-full flex items-center justify-center border-2 shrink-0 ${
+                        item.status === "done"
+                          ? "bg-[#00B87C] border-[#00B87C]"
+                          : item.status === "active"
+                            ? "bg-[#CCFBF1] border-[#14B8A6]"
+                            : "bg-card border-border"
+                      }`}
+                    >
+                      {item.status === "done" ? (
+                        <Check size={10} className="text-white" />
+                      ) : item.status === "active" ? (
+                        <Clock size={9} className="text-[#14B8A6]" />
+                      ) : (
+                        <div className="w-1.5 h-1.5 rounded-full bg-border" />
+                      )}
                     </div>
-                    {i < exit.timeline.length - 1 && <div className="w-[2px] flex-1 bg-border min-h-[24px]" />}
+                    {i < exit.timeline.length - 1 && (
+                      <div className="w-[2px] flex-1 bg-border min-h-[24px]" />
+                    )}
                   </div>
                   <div className="pb-5">
-                    <p className={`text-[12px] font-bold ${item.status === "done" ? "text-[#00B87C]" : item.status === "active" ? "text-[#14B8A6]" : "text-muted-foreground"}`}>
+                    <p
+                      className={`text-[12px] font-bold ${item.status === "done" ? "text-[#00B87C]" : item.status === "active" ? "text-[#14B8A6]" : "text-muted-foreground"}`}
+                    >
                       {item.label}
                     </p>
-                    <p className="text-[11px] font-medium text-muted-foreground">{item.date}</p>
+                    <p className="text-[11px] font-medium text-muted-foreground">
+                      {item.date}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -951,17 +1531,29 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
           <div className="p-6 space-y-6 overflow-y-auto">
             {/* Clearances */}
             <div>
-              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">DEPARTMENT CLEARANCES</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">
+                DEPARTMENT CLEARANCES
+              </h3>
               <div className="space-y-2">
                 {exit.clearance.map((c, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-[#00B87C]/[0.08] transition-all border border-transparent hover:border-[#DCFCE7]">
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-3 rounded-xl hover:bg-[#00B87C]/[0.08] transition-all border border-transparent hover:border-[#DCFCE7]"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: c.bgColor }}>
+                      <div
+                        className="w-7 h-7 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: c.bgColor }}
+                      >
                         <c.icon size={14} style={{ color: c.color }} />
                       </div>
                       <div>
-                        <p className="text-[12px] font-bold text-foreground">{c.dept}</p>
-                        <p className="text-[11px] font-medium text-muted-foreground">{c.person}</p>
+                        <p className="text-[12px] font-bold text-foreground">
+                          {c.dept}
+                        </p>
+                        <p className="text-[11px] font-medium text-muted-foreground">
+                          {c.person}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -984,21 +1576,37 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
 
             {/* Assets */}
             <div>
-              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">ASSET RECOVERY CHECKLIST</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">
+                ASSET RECOVERY CHECKLIST
+              </h3>
               <div className="space-y-2">
                 {exit.assets.map((a, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-border/50">
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-3 rounded-xl border border-border/50"
+                  >
                     <div className="flex items-center gap-3">
                       <Laptop size={14} className="text-muted-foreground" />
                       <div>
-                        <p className="text-[12px] font-bold text-foreground">{a.name}</p>
-                        <p className="text-[11px] font-medium text-muted-foreground">{a.detail}</p>
+                        <p className="text-[12px] font-bold text-foreground">
+                          {a.name}
+                        </p>
+                        <p className="text-[11px] font-medium text-muted-foreground">
+                          {a.detail}
+                        </p>
                       </div>
                     </div>
                     {a.status === "returned" ? (
-                      <span className="text-[11px] font-black text-[#00B87C]">✓ Returned</span>
+                      <span className="text-[11px] font-black text-[#00B87C]">
+                        ✓ Returned
+                      </span>
                     ) : (
-                      <button onClick={onSendReminder} className="text-[11px] font-black text-amber-500 hover:underline">Send Reminder</button>
+                      <button
+                        onClick={onSendReminder}
+                        className="text-[11px] font-black text-amber-500 hover:underline"
+                      >
+                        Send Reminder
+                      </button>
                     )}
                   </div>
                 ))}
@@ -1007,20 +1615,36 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
 
             {/* Documents */}
             <div>
-              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">DOCUMENT CHECKLIST</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">
+                DOCUMENT CHECKLIST
+              </h3>
               <div className="space-y-2">
                 {exit.documents.map((d, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-border/50">
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-3 rounded-xl border border-border/50"
+                  >
                     <div className="flex items-center gap-3">
                       <FileText size={14} className="text-muted-foreground" />
-                      <p className="text-[12px] font-bold text-foreground">{d.name}</p>
+                      <p className="text-[12px] font-bold text-foreground">
+                        {d.name}
+                      </p>
                     </div>
                     {d.status === "uploaded" ? (
-                      <span className="text-[11px] font-black text-[#00B87C]">✓ Uploaded</span>
+                      <span className="text-[11px] font-black text-[#00B87C]">
+                        ✓ Uploaded
+                      </span>
                     ) : d.status === "not_generated" ? (
-                      <button onClick={() => onGenerateDoc(d.name)} className="text-[11px] font-black text-[#00B87C] hover:underline">Generate</button>
+                      <button
+                        onClick={() => onGenerateDoc(d.name)}
+                        className="text-[11px] font-black text-[#00B87C] hover:underline"
+                      >
+                        Generate
+                      </button>
                     ) : (
-                      <span className="text-[11px] font-black text-amber-500">Pending</span>
+                      <span className="text-[11px] font-black text-amber-500">
+                        Pending
+                      </span>
                     )}
                   </div>
                 ))}
@@ -1032,37 +1656,75 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
           <div className="p-6 space-y-6">
             {/* F&F Settlement */}
             <div>
-              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">F&F SETTLEMENT CALCULATION</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">
+                F&F SETTLEMENT CALCULATION
+              </h3>
               <div className="p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-foreground">Last Working Month Salary</span>
-                  <span className="text-[11px] font-black text-foreground">{formatCurrency(exit.salary)}</span>
+                  <span className="text-[11px] font-bold text-foreground">
+                    Last Working Month Salary
+                  </span>
+                  <span className="text-[11px] font-black text-foreground">
+                    {formatCurrency(exit.salary)}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-foreground">Gratuity ({Math.round(exit.gratuity / 10800)} yrs)</span>
-                  <span className="text-[11px] font-black text-foreground">{formatCurrency(exit.gratuity)}</span>
+                  <span className="text-[11px] font-bold text-foreground">
+                    Gratuity ({Math.round(exit.gratuity / 10800)} yrs)
+                  </span>
+                  <span className="text-[11px] font-black text-foreground">
+                    {formatCurrency(exit.gratuity)}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-foreground">Leave Encashment ({Math.round(exit.leaveEncashment / 2333)} days)</span>
-                  <span className="text-[11px] font-black text-foreground">{formatCurrency(exit.leaveEncashment)}</span>
+                  <span className="text-[11px] font-bold text-foreground">
+                    Leave Encashment ({Math.round(exit.leaveEncashment / 2333)}{" "}
+                    days)
+                  </span>
+                  <span className="text-[11px] font-black text-foreground">
+                    {formatCurrency(exit.leaveEncashment)}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-foreground">Pending Reimbursements</span>
-                  <span className="text-[11px] font-black text-foreground">{formatCurrency(exit.reimbursements)}</span>
+                  <span className="text-[11px] font-bold text-foreground">
+                    Pending Reimbursements
+                  </span>
+                  <span className="text-[11px] font-black text-foreground">
+                    {formatCurrency(exit.reimbursements)}
+                  </span>
                 </div>
                 <hr className="border-border" />
                 <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-black text-foreground">Gross F&F Amount</span>
-                  <span className="text-[12px] font-black text-foreground">{formatCurrency(exit.salary + exit.gratuity + exit.leaveEncashment + exit.reimbursements)}</span>
+                  <span className="text-[12px] font-black text-foreground">
+                    Gross F&F Amount
+                  </span>
+                  <span className="text-[12px] font-black text-foreground">
+                    {formatCurrency(
+                      exit.salary +
+                        exit.gratuity +
+                        exit.leaveEncashment +
+                        exit.reimbursements,
+                    )}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-muted-foreground">Asset Loss Deductions</span>
-                  <span className="text-[11px] font-semibold text-[#94A3B8]">{exit.deductions > 0 ? `-${formatCurrency(exit.deductions)}` : "-₹0"}</span>
+                  <span className="text-[11px] font-bold text-muted-foreground">
+                    Asset Loss Deductions
+                  </span>
+                  <span className="text-[11px] font-semibold text-[#94A3B8]">
+                    {exit.deductions > 0
+                      ? `-${formatCurrency(exit.deductions)}`
+                      : "-₹0"}
+                  </span>
                 </div>
                 <hr className="border-border" />
                 <div className="flex items-center justify-between">
-                  <span className="text-[13px] font-black text-foreground">NET F&F AMOUNT</span>
-                  <span className="text-[13px] font-black text-[#00B87C]">{formatCurrency(exit.netAmount)}</span>
+                  <span className="text-[13px] font-black text-foreground">
+                    NET F&F AMOUNT
+                  </span>
+                  <span className="text-[13px] font-black text-[#00B87C]">
+                    {formatCurrency(exit.netAmount)}
+                  </span>
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-between">
@@ -1080,11 +1742,17 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
 
             {/* Exit Interview */}
             <div>
-              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">EXIT INTERVIEW</h3>
+              <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">
+                EXIT INTERVIEW
+              </h3>
               <div className="p-4 rounded-2xl border border-border space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-foreground">Conducted by</span>
-                  <span className="text-[11px] font-medium text-muted-foreground">{exit.interviewDone ? "HR Team" : "Not Done yet"}</span>
+                  <span className="text-[11px] font-bold text-foreground">
+                    Conducted by
+                  </span>
+                  <span className="text-[11px] font-medium text-muted-foreground">
+                    {exit.interviewDone ? "HR Team" : "Not Done yet"}
+                  </span>
                 </div>
                 {!exit.interviewDone ? (
                   <button
@@ -1095,7 +1763,10 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
                   </button>
                 ) : (
                   <div className="p-3 rounded-xl bg-muted/30">
-                    <p className="text-[11px] font-medium text-muted-foreground italic">"Good experience overall. Recommend better cross-team collaboration tools."</p>
+                    <p className="text-[11px] font-medium text-muted-foreground italic">
+                      "Good experience overall. Recommend better cross-team
+                      collaboration tools."
+                    </p>
                   </div>
                 )}
               </div>
@@ -1108,23 +1779,36 @@ function OffboardingDetail({ exit, onClose, onSignOff, onGenerateDoc, onSendRemi
 }
 
 /* ─── SEND REMINDER MODAL ─── */
-function ReminderModal({ exitName, onClose }: { exitName: string; onClose: () => void }) {
+function ReminderModal({
+  exitName,
+  onClose,
+}: {
+  exitName: string;
+  onClose: () => void;
+}) {
   const [sent, setSent] = useState(false);
 
   if (sent) {
     return (
-      <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="w-full max-w-sm bg-card rounded-[32px] p-8 text-center shadow-2xl border border-border"
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="w-14 h-14 rounded-full bg-[#DCFCE7] flex items-center justify-center mx-auto mb-4">
             <Send size={24} className="text-[#00B87C]" />
           </div>
-          <h3 className="text-lg font-black text-foreground mb-2">Reminder Sent!</h3>
-          <p className="text-[13px] font-medium text-muted-foreground mb-5">Notification sent to all pending departments.</p>
+          <h3 className="text-lg font-black text-foreground mb-2">
+            Reminder Sent!
+          </h3>
+          <p className="text-[13px] font-medium text-muted-foreground mb-5">
+            Notification sent to all pending departments.
+          </p>
           <button
             onClick={onClose}
             className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest"
@@ -1137,42 +1821,78 @@ function ReminderModal({ exitName, onClose }: { exitName: string; onClose: () =>
   }
 
   return (
-    <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-md bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 py-5 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#FEF3C7] flex items-center justify-center">
               <Mail size={18} className="text-amber-500" />
             </div>
-            <h3 className="text-[15px] font-bold text-foreground">Send Reminder — {exitName}</h3>
+            <h3 className="text-[15px] font-bold text-foreground">
+              Send Reminder — {exitName}
+            </h3>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center"><X size={16} className="text-muted-foreground" /></button>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center"
+          >
+            <X size={16} className="text-muted-foreground" />
+          </button>
         </div>
         <div className="px-6 py-5 space-y-4">
           <div>
-            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">REMIND DEPARTMENT</label>
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+              REMIND DEPARTMENT
+            </label>
             <div className="space-y-2">
               {["IT Team", "Finance Team", "HR Team", "Admin Team"].map((d) => (
-                <label key={d} className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-border text-[#00B87C] focus:ring-[#00B87C]" />
-                  <span className="text-[12px] font-bold text-foreground">{d}</span>
+                <label
+                  key={d}
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    className="w-4 h-4 rounded border-border text-[#00B87C] focus:ring-[#00B87C]"
+                  />
+                  <span className="text-[12px] font-bold text-foreground">
+                    {d}
+                  </span>
                 </label>
               ))}
             </div>
           </div>
           <div>
-            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">MESSAGE (OPTIONAL)</label>
-            <textarea rows={3} className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-amber-500/20 transition-all resize-none" placeholder="Reminder message..." defaultValue="Please complete pending clearances for this exit at the earliest." />
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+              MESSAGE (OPTIONAL)
+            </label>
+            <textarea
+              rows={3}
+              className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-amber-500/20 transition-all resize-none"
+              placeholder="Reminder message..."
+              defaultValue="Please complete pending clearances for this exit at the earliest."
+            />
           </div>
         </div>
         <div className="px-6 pb-5 flex items-center justify-between">
-          <button onClick={onClose} className="px-4 py-2 rounded-xl text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Cancel</button>
-          <button onClick={() => setSent(true)} className="px-5 py-2.5 rounded-xl bg-amber-500 text-white text-[11px] font-semibold uppercase tracking-wider hover:bg-amber-600 transition-all flex items-center gap-2">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-xl text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => setSent(true)}
+            className="px-5 py-2.5 rounded-xl bg-amber-500 text-white text-[11px] font-semibold uppercase tracking-wider hover:bg-amber-600 transition-all flex items-center gap-2"
+          >
             <Send size={14} /> Send Reminder
           </button>
         </div>
@@ -1182,26 +1902,53 @@ function ReminderModal({ exitName, onClose }: { exitName: string; onClose: () =>
 }
 
 /* ─── COMPLETE EXIT MODAL ─── */
-function CompleteExitModal({ exit, onClose, onConfirm }: { exit: ExitEmployee; onClose: () => void; onConfirm: () => void }) {
+function CompleteExitModal({
+  exit,
+  onClose,
+  onConfirm,
+}: {
+  exit: ExitEmployee;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
   return (
-    <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-sm bg-card rounded-[32px] p-8 text-center shadow-2xl border border-border"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="w-16 h-16 rounded-full bg-[#DCFCE7] flex items-center justify-center mx-auto mb-5">
           <CheckCircle2 size={32} className="text-[#00B87C]" />
         </div>
-        <h3 className="text-lg font-black text-foreground tracking-tight mb-2">Complete Exit</h3>
+        <h3 className="text-lg font-black text-foreground tracking-tight mb-2">
+          Complete Exit
+        </h3>
         <p className="text-[13px] font-medium text-muted-foreground mb-2">
-          Are you sure you want to mark <strong className="text-foreground">{exit.name}</strong>'s exit as complete?
+          Are you sure you want to mark{" "}
+          <strong className="text-foreground">{exit.name}</strong>'s exit as
+          complete?
         </p>
-        <p className="text-[11px] font-bold text-amber-500 mb-6">This will finalize all records and generate the relieving letter.</p>
+        <p className="text-[11px] font-bold text-amber-500 mb-6">
+          This will finalize all records and generate the relieving letter.
+        </p>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl border border-border text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider hover:text-foreground transition-all">Cancel</button>
-          <button onClick={onConfirm} className="flex-1 px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all">Confirm Complete</button>
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2.5 rounded-xl border border-border text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider hover:text-foreground transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all"
+          >
+            Confirm Complete
+          </button>
         </div>
       </motion.div>
     </div>
@@ -1209,25 +1956,45 @@ function CompleteExitModal({ exit, onClose, onConfirm }: { exit: ExitEmployee; o
 }
 
 /* ─── EXIT INTERVIEW MODAL ─── */
-function ExitInterviewModal({ employeeName, interviewDone, onClose, onComplete }: {
-  employeeName: string; interviewDone: boolean; onClose: () => void; onComplete: () => void;
+function ExitInterviewModal({
+  employeeName,
+  interviewDone,
+  onClose,
+  onComplete,
+}: {
+  employeeName: string;
+  interviewDone: boolean;
+  onClose: () => void;
+  onComplete: () => void;
 }) {
   const [ratings, setRatings] = useState<Record<string, number>>({});
   const [reason, setReason] = useState<string>("");
 
   if (interviewDone) {
     return (
-      <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="w-full max-w-md bg-card rounded-[32px] p-8 text-center shadow-2xl border border-border"
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           <CheckCircle2 size={40} className="text-[#00B87C] mx-auto mb-4" />
-          <h3 className="text-lg font-black text-foreground mb-2">Interview Already Completed</h3>
-          <p className="text-[13px] font-medium text-muted-foreground mb-5">This exit interview has already been recorded.</p>
-          <button onClick={onClose} className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest">Done</button>
+          <h3 className="text-lg font-black text-foreground mb-2">
+            Interview Already Completed
+          </h3>
+          <p className="text-[13px] font-medium text-muted-foreground mb-5">
+            This exit interview has already been recorded.
+          </p>
+          <button
+            onClick={onClose}
+            className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest"
+          >
+            Done
+          </button>
         </motion.div>
       </div>
     );
@@ -1235,38 +2002,57 @@ function ExitInterviewModal({ employeeName, interviewDone, onClose, onComplete }
 
   const questions = [
     { id: "overall", label: "Overall experience at NexusHR?", type: "rating" },
-    { id: "recommend", label: "Would you recommend NexusHR to others?", type: "choice", options: ["Yes", "Maybe", "No"] },
+    {
+      id: "recommend",
+      label: "Would you recommend NexusHR to others?",
+      type: "choice",
+      options: ["Yes", "Maybe", "No"],
+    },
     { id: "manager", label: "Manager support quality?", type: "rating" },
     { id: "wlb", label: "Work-life balance satisfaction?", type: "rating" },
   ];
 
   return (
-    <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-[500px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 py-5 border-b border-border flex items-center justify-between">
           <h3 className="text-[15px] font-bold text-foreground flex items-center gap-2">
             <MessageSquare size={18} className="text-[#8B5CF6]" />
             Exit Interview — {employeeName}
           </h3>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center"><X size={16} className="text-muted-foreground" /></button>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center"
+          >
+            <X size={16} className="text-muted-foreground" />
+          </button>
         </div>
         <div className="px-6 py-5 space-y-5 max-h-[55vh] overflow-y-auto">
           {questions.map((q) => (
             <div key={q.id}>
-              <p className="text-[12px] font-bold text-foreground mb-2">{q.label}</p>
+              <p className="text-[12px] font-bold text-foreground mb-2">
+                {q.label}
+              </p>
               {q.type === "rating" ? (
                 <div className="flex items-center gap-2">
                   {[1, 2, 3, 4, 5].map((r) => (
                     <button
                       key={r}
-                      onClick={() => setRatings(prev => ({ ...prev, [q.id]: r }))}
+                      onClick={() =>
+                        setRatings((prev) => ({ ...prev, [q.id]: r }))
+                      }
                       className={`w-9 h-9 rounded-xl text-[12px] font-black border transition-all ${
-                        ratings[q.id] === r ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-muted-foreground hover:border-[#00B87C]/30"
+                        ratings[q.id] === r
+                          ? "bg-[#00B87C] text-white border-[#00B87C]"
+                          : "border-border text-muted-foreground hover:border-[#00B87C]/30"
                       }`}
                     >
                       {r}
@@ -1278,9 +2064,18 @@ function ExitInterviewModal({ employeeName, interviewDone, onClose, onComplete }
                   {(q.options || []).map((o) => (
                     <button
                       key={o}
-                      onClick={() => setReason(o === "Yes" || o === "Maybe" ? "positive" : "negative")}
+                      onClick={() =>
+                        setReason(
+                          o === "Yes" || o === "Maybe"
+                            ? "positive"
+                            : "negative",
+                        )
+                      }
                       className={`px-4 py-2 rounded-xl text-[11px] font-black border transition-all ${
-                        (o === "Yes" && reason === "positive") || (o === "No" && reason === "negative") ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-muted-foreground hover:border-[#00B87C]/30"
+                        (o === "Yes" && reason === "positive") ||
+                        (o === "No" && reason === "negative")
+                          ? "bg-[#00B87C] text-white border-[#00B87C]"
+                          : "border-border text-muted-foreground hover:border-[#00B87C]/30"
                       }`}
                     >
                       {o}
@@ -1291,29 +2086,71 @@ function ExitInterviewModal({ employeeName, interviewDone, onClose, onComplete }
             </div>
           ))}
           <div>
-            <p className="text-[12px] font-bold text-foreground mb-2">Primary reason for leaving?</p>
+            <p className="text-[12px] font-bold text-foreground mb-2">
+              Primary reason for leaving?
+            </p>
             <div className="flex flex-wrap gap-2">
-              {["Career Growth", "Compensation", "Work Culture", "Relocation", "Personal", "Health", "Education", "Other"].map((r) => (
-                <button key={r} className="px-3 py-1.5 rounded-lg border border-border text-[11px] font-bold text-muted-foreground hover:border-[#00B87C]/30 transition-all">{r}</button>
+              {[
+                "Career Growth",
+                "Compensation",
+                "Work Culture",
+                "Relocation",
+                "Personal",
+                "Health",
+                "Education",
+                "Other",
+              ].map((r) => (
+                <button
+                  key={r}
+                  className="px-3 py-1.5 rounded-lg border border-border text-[11px] font-bold text-muted-foreground hover:border-[#00B87C]/30 transition-all"
+                >
+                  {r}
+                </button>
               ))}
             </div>
           </div>
           <div>
-            <p className="text-[12px] font-bold text-foreground mb-2">What did you enjoy most?</p>
-            <textarea rows={2} className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all resize-none" placeholder="Share your thoughts..." />
+            <p className="text-[12px] font-bold text-foreground mb-2">
+              What did you enjoy most?
+            </p>
+            <textarea
+              rows={2}
+              className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all resize-none"
+              placeholder="Share your thoughts..."
+            />
           </div>
           <div>
-            <p className="text-[12px] font-bold text-foreground mb-2">What could be improved?</p>
-            <textarea rows={2} className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all resize-none" placeholder="Suggestions..." />
+            <p className="text-[12px] font-bold text-foreground mb-2">
+              What could be improved?
+            </p>
+            <textarea
+              rows={2}
+              className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all resize-none"
+              placeholder="Suggestions..."
+            />
           </div>
           <div>
-            <p className="text-[12px] font-bold text-foreground mb-2">Any other feedback?</p>
-            <textarea rows={2} className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all resize-none" placeholder="Additional feedback..." />
+            <p className="text-[12px] font-bold text-foreground mb-2">
+              Any other feedback?
+            </p>
+            <textarea
+              rows={2}
+              className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all resize-none"
+              placeholder="Additional feedback..."
+            />
           </div>
         </div>
         <div className="px-6 pb-5 flex items-center justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2.5 rounded-xl text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">Cancel</button>
-          <button onClick={onComplete} className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all">
+          <button
+            onClick={onClose}
+            className="px-4 py-2.5 rounded-xl text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onComplete}
+            className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all"
+          >
             <Check size={14} className="inline mr-1" /> Mark as Completed
           </button>
         </div>

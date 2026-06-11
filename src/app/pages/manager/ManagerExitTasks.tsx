@@ -46,12 +46,56 @@ const EXIT_MEMBERS: ExitMember[] = [
     lwd: "Apr 10, 2026",
     initial: "JC",
     tasks: [
-      { id: "t1", label: "Accept resignation letter", assignedTo: "You", dueDate: "Done Apr 2", status: "done" },
-      { id: "t2", label: "Confirm last working date", assignedTo: "You", dueDate: "Done Apr 2", status: "done" },
-      { id: "t3", label: "Create knowledge transfer plan", assignedTo: "You", dueDate: "Due Apr 7", status: "pending", actionLabel: "Create Plan", actionType: "link" },
-      { id: "t4", label: "Complete knowledge transfer", assignedTo: "You", dueDate: "Due Apr 9", status: "pending", actionLabel: "Mark Done", actionType: "btn" },
-      { id: "t5", label: "Sign manager clearance", assignedTo: "You", dueDate: "Due Apr 10", status: "pending", actionLabel: "Sign Off", actionType: "signoff" },
-      { id: "t6", label: "Write recommendation (optional)", assignedTo: "You", dueDate: "—", status: "pending", actionLabel: "Write", actionType: "link" },
+      {
+        id: "t1",
+        label: "Accept resignation letter",
+        assignedTo: "You",
+        dueDate: "Done Apr 2",
+        status: "done",
+      },
+      {
+        id: "t2",
+        label: "Confirm last working date",
+        assignedTo: "You",
+        dueDate: "Done Apr 2",
+        status: "done",
+      },
+      {
+        id: "t3",
+        label: "Create knowledge transfer plan",
+        assignedTo: "You",
+        dueDate: "Due Apr 7",
+        status: "pending",
+        actionLabel: "Create Plan",
+        actionType: "link",
+      },
+      {
+        id: "t4",
+        label: "Complete knowledge transfer",
+        assignedTo: "You",
+        dueDate: "Due Apr 9",
+        status: "pending",
+        actionLabel: "Mark Done",
+        actionType: "btn",
+      },
+      {
+        id: "t5",
+        label: "Sign manager clearance",
+        assignedTo: "You",
+        dueDate: "Due Apr 10",
+        status: "pending",
+        actionLabel: "Sign Off",
+        actionType: "signoff",
+      },
+      {
+        id: "t6",
+        label: "Write recommendation (optional)",
+        assignedTo: "You",
+        dueDate: "—",
+        status: "pending",
+        actionLabel: "Write",
+        actionType: "link",
+      },
     ],
   },
   {
@@ -63,11 +107,47 @@ const EXIT_MEMBERS: ExitMember[] = [
     lwd: "Apr 20, 2026",
     initial: "RK",
     tasks: [
-      { id: "t7", label: "Accept resignation letter", assignedTo: "You", dueDate: "Done Mar 26", status: "done" },
-      { id: "t8", label: "Confirm last working date", assignedTo: "You", dueDate: "Done Mar 26", status: "done" },
-      { id: "t9", label: "Create knowledge transfer plan", assignedTo: "You", dueDate: "Due Apr 5", status: "done", actionLabel: "View Plan", actionType: "link" },
-      { id: "t10", label: "Complete knowledge transfer", assignedTo: "You", dueDate: "Due Apr 15", status: "pending", actionLabel: "Mark Done", actionType: "btn" },
-      { id: "t11", label: "Sign manager clearance", assignedTo: "You", dueDate: "Due Apr 18", status: "pending", actionLabel: "Sign Off", actionType: "signoff" },
+      {
+        id: "t7",
+        label: "Accept resignation letter",
+        assignedTo: "You",
+        dueDate: "Done Mar 26",
+        status: "done",
+      },
+      {
+        id: "t8",
+        label: "Confirm last working date",
+        assignedTo: "You",
+        dueDate: "Done Mar 26",
+        status: "done",
+      },
+      {
+        id: "t9",
+        label: "Create knowledge transfer plan",
+        assignedTo: "You",
+        dueDate: "Due Apr 5",
+        status: "done",
+        actionLabel: "View Plan",
+        actionType: "link",
+      },
+      {
+        id: "t10",
+        label: "Complete knowledge transfer",
+        assignedTo: "You",
+        dueDate: "Due Apr 15",
+        status: "pending",
+        actionLabel: "Mark Done",
+        actionType: "btn",
+      },
+      {
+        id: "t11",
+        label: "Sign manager clearance",
+        assignedTo: "You",
+        dueDate: "Due Apr 18",
+        status: "pending",
+        actionLabel: "Sign Off",
+        actionType: "signoff",
+      },
     ],
   },
 ];
@@ -75,11 +155,23 @@ const EXIT_MEMBERS: ExitMember[] = [
 const exitTypeChip = (type: ExitType) => {
   switch (type) {
     case "Resignation":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0] text-[11px] font-bold uppercase tracking-wider">Resignation</span>;
+      return (
+        <span className="inline-flex px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#00B87C] border border-[#A7F3D0] text-[11px] font-bold uppercase tracking-wider">
+          Resignation
+        </span>
+      );
     case "Termination":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] text-[11px] font-bold uppercase tracking-wider">Termination</span>;
+      return (
+        <span className="inline-flex px-2 py-0.5 rounded-full bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] text-[11px] font-bold uppercase tracking-wider">
+          Termination
+        </span>
+      );
     case "Retirement":
-      return <span className="inline-flex px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0D9488] border border-[#99F6E4] text-[11px] font-bold uppercase tracking-wider">Retirement</span>;
+      return (
+        <span className="inline-flex px-2 py-0.5 rounded-full bg-[#CCFBF1] text-[#0D9488] border border-[#99F6E4] text-[11px] font-bold uppercase tracking-wider">
+          Retirement
+        </span>
+      );
   }
 };
 
@@ -89,35 +181,54 @@ export function ManagerExitTasks() {
   const [showSignOff, setShowSignOff] = useState<string | null>(null);
   const [showWriteModal, setShowWriteModal] = useState<string | null>(null);
   const [members, setMembers] = useState<ExitMember[]>(EXIT_MEMBERS);
-  const [ktPlans, setKtPlans] = useState<Record<string, Record<string, string>>>({});
+  const [ktPlans, setKtPlans] = useState<
+    Record<string, Record<string, string>>
+  >({});
 
   const totalTasks = members.reduce((s, m) => s + m.tasks.length, 0);
-  const doneTasks = members.reduce((s, m) => s + m.tasks.filter(t => t.status === "done").length, 0);
+  const doneTasks = members.reduce(
+    (s, m) => s + m.tasks.filter((t) => t.status === "done").length,
+    0,
+  );
 
   const handleToggleTask = (memberId: string, taskId: string) => {
-    setMembers(prev => prev.map(m => {
-      if (m.id !== memberId) return m;
-      return {
-        ...m,
-        tasks: m.tasks.map(t =>
-          t.id === taskId
-            ? { ...t, status: t.status === "done" ? "pending" : "done" as TaskStatus }
-            : t
-        ),
-      };
-    }));
+    setMembers((prev) =>
+      prev.map((m) => {
+        if (m.id !== memberId) return m;
+        return {
+          ...m,
+          tasks: m.tasks.map((t) =>
+            t.id === taskId
+              ? {
+                  ...t,
+                  status:
+                    t.status === "done" ? "pending" : ("done" as TaskStatus),
+                }
+              : t,
+          ),
+        };
+      }),
+    );
   };
 
   const handleMarkDone = (memberId: string, taskId: string) => {
-    setMembers(prev => prev.map(m => {
-      if (m.id !== memberId) return m;
-      return {
-        ...m,
-        tasks: m.tasks.map(t =>
-          t.id === taskId ? { ...t, status: "done" as TaskStatus, dueDate: `Done ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}` } : t
-        ),
-      };
-    }));
+    setMembers((prev) =>
+      prev.map((m) => {
+        if (m.id !== memberId) return m;
+        return {
+          ...m,
+          tasks: m.tasks.map((t) =>
+            t.id === taskId
+              ? {
+                  ...t,
+                  status: "done" as TaskStatus,
+                  dueDate: `Done ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}`,
+                }
+              : t,
+          ),
+        };
+      }),
+    );
   };
 
   return (
@@ -129,13 +240,19 @@ export function ManagerExitTasks() {
             <LogOut size={22} />
           </div>
           <div>
-            <h1 className="text-[26px] font-bold text-foreground tracking-tight">Team Exit Tasks</h1>
-            <p className="text-[13px] text-[#6B7280]">Your responsibilities for team member exits</p>
+            <h1 className="text-[26px] font-bold text-foreground tracking-tight">
+              Team Exit Tasks
+            </h1>
+            <p className="text-[13px] text-[#6B7280]">
+              Your responsibilities for team member exits
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border shadow-sm w-fit">
           <div className="w-2 h-2 rounded-full bg-amber-500" />
-          <span className="text-[12px] font-bold text-amber-500 uppercase tracking-wider">Manager Access</span>
+          <span className="text-[12px] font-bold text-amber-500 uppercase tracking-wider">
+            Manager Access
+          </span>
         </div>
       </div>
 
@@ -143,7 +260,15 @@ export function ManagerExitTasks() {
       <div className="flex flex-wrap items-center gap-6 mb-8 px-5 py-3 bg-card border border-[#FDE68A] rounded-2xl shadow-sm">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-amber-500" />
-          <span className="text-[13px] font-bold text-foreground">James Carter (Finance) is exiting Apr 10 — {members.find(m => m.name === "James Carter")?.tasks.filter(t => t.status === "pending").length} tasks need your action</span>
+          <span className="text-[13px] font-bold text-foreground">
+            James Carter (Finance) is exiting Apr 10 —{" "}
+            {
+              members
+                .find((m) => m.name === "James Carter")
+                ?.tasks.filter((t) => t.status === "pending").length
+            }{" "}
+            tasks need your action
+          </span>
         </div>
       </div>
 
@@ -153,17 +278,25 @@ export function ManagerExitTasks() {
           <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
             MY EXIT RESPONSIBILITIES
           </h3>
-          <span className="text-[11px] font-bold text-[#00B87C]">{doneTasks}/{totalTasks} tasks completed</span>
+          <span className="text-[11px] font-bold text-[#00B87C]">
+            {doneTasks}/{totalTasks} tasks completed
+          </span>
         </div>
 
         <div className="divide-y divide-border">
           {members.map((member) => {
-            const progress = Math.round((member.tasks.filter(t => t.status === "done").length / member.tasks.length) * 100);
+            const progress = Math.round(
+              (member.tasks.filter((t) => t.status === "done").length /
+                member.tasks.length) *
+                100,
+            );
             return (
               <div key={member.id} className="p-6">
                 <div
                   className="rounded-2xl border border-border overflow-hidden"
-                  style={{ borderLeft: `3px solid ${member.tasks.filter(t => t.status === "pending").length >= 3 ? "#EF4444" : "#F59E0B"}` }}
+                  style={{
+                    borderLeft: `3px solid ${member.tasks.filter((t) => t.status === "pending").length >= 3 ? "#EF4444" : "#F59E0B"}`,
+                  }}
                 >
                   {/* Employee Header */}
                   <div className="flex items-center gap-4 p-5 pb-3 bg-[#FFFDF5] border-b border-border">
@@ -171,11 +304,17 @@ export function ManagerExitTasks() {
                       {member.initial}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-[14px] font-bold text-foreground">{member.name}</h4>
-                      <p className="text-[12px] font-medium text-muted-foreground">{member.designation}</p>
+                      <h4 className="text-[14px] font-bold text-foreground">
+                        {member.name}
+                      </h4>
+                      <p className="text-[12px] font-medium text-muted-foreground">
+                        {member.designation}
+                      </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[11px] font-bold uppercase tracking-wider">LWD: {member.lwd}</span>
+                      <span className="px-2.5 py-1 rounded-lg bg-[#EDE9FE] text-[#8B5CF6] text-[11px] font-bold uppercase tracking-wider">
+                        LWD: {member.lwd}
+                      </span>
                       {exitTypeChip(member.type)}
                     </div>
                   </div>
@@ -196,55 +335,74 @@ export function ManagerExitTasks() {
                               : "border-muted-foreground/40 hover:border-[#00B87C]"
                           }`}
                         >
-                          {task.status === "done" && <Check size={12} className="text-white" strokeWidth={3} />}
+                          {task.status === "done" && (
+                            <Check
+                              size={12}
+                              className="text-white"
+                              strokeWidth={3}
+                            />
+                          )}
                         </button>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-[13px] font-bold ${task.status === "done" ? "text-muted-foreground line-through" : "text-foreground"}`}>
+                          <p
+                            className={`text-[13px] font-bold ${task.status === "done" ? "text-muted-foreground line-through" : "text-foreground"}`}
+                          >
                             {task.label}
                           </p>
-                          <p className="text-[11px] font-medium text-muted-foreground">{task.assignedTo}</p>
+                          <p className="text-[11px] font-medium text-muted-foreground">
+                            {task.assignedTo}
+                          </p>
                         </div>
                         <div className="flex items-center gap-3 shrink-0">
-                          <span className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg ${
-                            task.status === "done"
-                              ? "text-[#00B87C] bg-[#DCFCE7]"
-                              : task.dueDate.startsWith("Due")
-                              ? "text-amber-500 bg-[#FEF3C7]"
-                              : "text-muted-foreground bg-muted"
-                          }`}>
+                          <span
+                            className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg ${
+                              task.status === "done"
+                                ? "text-[#00B87C] bg-[#DCFCE7]"
+                                : task.dueDate.startsWith("Due")
+                                  ? "text-amber-500 bg-[#FEF3C7]"
+                                  : "text-muted-foreground bg-muted"
+                            }`}
+                          >
                             {task.dueDate}
                           </span>
 
-                          {task.status !== "done" && task.actionType === "link" && (
-                            <button
-                              onClick={() => {
-                                if (task.id === "t3") setShowKTModal(member.id);
-                                else if (task.id === "t6") setShowWriteModal(member.id);
-                                else handleMarkDone(member.id, task.id);
-                              }}
-                              className="text-[11px] font-bold text-[#00B87C] hover:underline whitespace-nowrap"
-                            >
-                              {task.actionLabel} →
-                            </button>
-                          )}
+                          {task.status !== "done" &&
+                            task.actionType === "link" && (
+                              <button
+                                onClick={() => {
+                                  if (task.id === "t3")
+                                    setShowKTModal(member.id);
+                                  else if (task.id === "t6")
+                                    setShowWriteModal(member.id);
+                                  else handleMarkDone(member.id, task.id);
+                                }}
+                                className="text-[11px] font-bold text-[#00B87C] hover:underline whitespace-nowrap"
+                              >
+                                {task.actionLabel} →
+                              </button>
+                            )}
 
-                          {task.status !== "done" && task.actionType === "btn" && (
-                            <button
-                              onClick={() => handleMarkDone(member.id, task.id)}
-                              className="px-3 py-1.5 rounded-lg border border-[#00B87C]/30 text-[#00B87C] text-[11px] font-bold uppercase tracking-wider hover:bg-[#00B87C]/5 transition-all whitespace-nowrap"
-                            >
-                              {task.actionLabel}
-                            </button>
-                          )}
+                          {task.status !== "done" &&
+                            task.actionType === "btn" && (
+                              <button
+                                onClick={() =>
+                                  handleMarkDone(member.id, task.id)
+                                }
+                                className="px-3 py-1.5 rounded-lg border border-[#00B87C]/30 text-[#00B87C] text-[11px] font-bold uppercase tracking-wider hover:bg-[#00B87C]/5 transition-all whitespace-nowrap"
+                              >
+                                {task.actionLabel}
+                              </button>
+                            )}
 
-                          {task.status !== "done" && task.actionType === "signoff" && (
-                            <button
-                              onClick={() => setShowSignOff(member.id)}
-                              className="px-3 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all whitespace-nowrap shadow-sm"
-                            >
-                              {task.actionLabel}
-                            </button>
-                          )}
+                          {task.status !== "done" &&
+                            task.actionType === "signoff" && (
+                              <button
+                                onClick={() => setShowSignOff(member.id)}
+                                className="px-3 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all whitespace-nowrap shadow-sm"
+                              >
+                                {task.actionLabel}
+                              </button>
+                            )}
 
                           {task.status === "done" && (
                             <div className="flex items-center gap-2">
@@ -256,7 +414,10 @@ export function ManagerExitTasks() {
                                   View Plan →
                                 </button>
                               )}
-                              <CheckCircle2 size={16} className="text-[#00B87C]" />
+                              <CheckCircle2
+                                size={16}
+                                className="text-[#00B87C]"
+                              />
                             </div>
                           )}
                         </div>
@@ -267,8 +428,13 @@ export function ManagerExitTasks() {
                   {/* Progress Bar */}
                   <div className="px-5 py-3 bg-[#F0FDF4]/30 border-t border-border">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Overall Manager Progress</span>
-                      <span className="text-[11px] font-bold text-[#00B87C]">{member.tasks.filter(t => t.status === "done").length}/{member.tasks.length} tasks</span>
+                      <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                        Overall Manager Progress
+                      </span>
+                      <span className="text-[11px] font-bold text-[#00B87C]">
+                        {member.tasks.filter((t) => t.status === "done").length}
+                        /{member.tasks.length} tasks
+                      </span>
                     </div>
                     <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                       <div
@@ -288,13 +454,18 @@ export function ManagerExitTasks() {
       <AnimatePresence>
         {showKTModal && (
           <KTModal
-            memberName={members.find(m => m.id === showKTModal)?.name || ""}
+            memberName={members.find((m) => m.id === showKTModal)?.name || ""}
             onClose={() => setShowKTModal(null)}
             onSave={(formData) => {
               const mid = showKTModal;
-              const tid = members.find(m => m.id === mid)?.tasks.find(t => t.actionType === "link" && t.label.startsWith("Create"))?.id;
+              const tid = members
+                .find((m) => m.id === mid)
+                ?.tasks.find(
+                  (t) =>
+                    t.actionType === "link" && t.label.startsWith("Create"),
+                )?.id;
               if (tid) {
-                setKtPlans(prev => ({ ...prev, [mid]: formData }));
+                setKtPlans((prev) => ({ ...prev, [mid]: formData }));
                 handleMarkDone(mid, tid);
               }
               setShowKTModal(null);
@@ -308,11 +479,13 @@ export function ManagerExitTasks() {
       <AnimatePresence>
         {showSignOff && (
           <SignOffModal
-            memberName={members.find(m => m.id === showSignOff)?.name || ""}
+            memberName={members.find((m) => m.id === showSignOff)?.name || ""}
             onClose={() => setShowSignOff(null)}
             onConfirm={() => {
               const mid = showSignOff;
-              const tid = members.find(m => m.id === mid)?.tasks.find(t => t.actionType === "signoff")?.id;
+              const tid = members
+                .find((m) => m.id === mid)
+                ?.tasks.find((t) => t.actionType === "signoff")?.id;
               if (tid) handleMarkDone(mid, tid);
               setShowSignOff(null);
             }}
@@ -324,11 +497,17 @@ export function ManagerExitTasks() {
       <AnimatePresence>
         {showWriteModal && (
           <WriteRecommendationModal
-            memberName={members.find(m => m.id === showWriteModal)?.name || ""}
+            memberName={
+              members.find((m) => m.id === showWriteModal)?.name || ""
+            }
             onClose={() => setShowWriteModal(null)}
             onSave={() => {
               const mid = showWriteModal;
-              const tid = members.find(m => m.id === mid)?.tasks.find(t => t.actionType === "link" && t.label.startsWith("Write"))?.id;
+              const tid = members
+                .find((m) => m.id === mid)
+                ?.tasks.find(
+                  (t) => t.actionType === "link" && t.label.startsWith("Write"),
+                )?.id;
               if (tid) handleMarkDone(mid, tid);
               setShowWriteModal(null);
             }}
@@ -340,7 +519,17 @@ export function ManagerExitTasks() {
 }
 
 /* ─── KNOWLEDGE TRANSFER MODAL ─── */
-function KTModal({ memberName, onClose, onSave, initialData }: { memberName: string; onClose: () => void; onSave?: (data: Record<string, string>) => void; initialData?: Record<string, string> }) {
+function KTModal({
+  memberName,
+  onClose,
+  onSave,
+  initialData,
+}: {
+  memberName: string;
+  onClose: () => void;
+  onSave?: (data: Record<string, string>) => void;
+  initialData?: Record<string, string>;
+}) {
   const isViewOnly = !!initialData;
   const [ktForm, setKtForm] = useState<Record<string, string>>(() => ({
     ongoingProjects: initialData?.ongoingProjects || "",
@@ -382,41 +571,76 @@ function KTModal({ memberName, onClose, onSave, initialData }: { memberName: str
   };
 
   const sections = [
-    { key: "ongoingProjects", label: "Ongoing Projects", placeholder: "List current projects, their status, and next steps..." },
-    { key: "keyContacts", label: "Key Contacts", placeholder: "Client names, stakeholder contacts, vendor info..." },
-    { key: "systemCredentials", label: "System Credentials", placeholder: "URLs, login info, access permissions (encrypted)..." },
-    { key: "pendingTasks", label: "Pending Tasks", placeholder: "Open tickets, pending deliverables, upcoming deadlines..." },
-    { key: "handoverPerson", label: "Handover Person", placeholder: "Who will take over responsibilities after exit..." },
+    {
+      key: "ongoingProjects",
+      label: "Ongoing Projects",
+      placeholder: "List current projects, their status, and next steps...",
+    },
+    {
+      key: "keyContacts",
+      label: "Key Contacts",
+      placeholder: "Client names, stakeholder contacts, vendor info...",
+    },
+    {
+      key: "systemCredentials",
+      label: "System Credentials",
+      placeholder: "URLs, login info, access permissions (encrypted)...",
+    },
+    {
+      key: "pendingTasks",
+      label: "Pending Tasks",
+      placeholder: "Open tickets, pending deliverables, upcoming deadlines...",
+    },
+    {
+      key: "handoverPerson",
+      label: "Handover Person",
+      placeholder: "Who will take over responsibilities after exit...",
+    },
   ];
 
   return (
-    <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         className="w-full max-w-[500px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 py-5 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] flex items-center justify-center">
               <FileText size={18} className="text-[#00B87C]" />
             </div>
-            <h3 className="text-[15px] font-bold text-foreground tracking-tight">Knowledge Transfer Plan — {memberName}</h3>
+            <h3 className="text-[15px] font-bold text-foreground tracking-tight">
+              Knowledge Transfer Plan — {memberName}
+            </h3>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-all">
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-all"
+          >
             <X size={16} className="text-muted-foreground" />
           </button>
         </div>
         <div className="px-6 py-5 space-y-4 max-h-[55vh] overflow-y-auto">
           {sections.map((section, i) => (
             <div key={i}>
-              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">{section.label}</label>
+              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                {section.label}
+              </label>
               <textarea
                 rows={3}
                 value={ktForm[section.key]}
-                onChange={(e) => setKtForm(prev => ({ ...prev, [section.key]: e.target.value }))}
+                onChange={(e) =>
+                  setKtForm((prev) => ({
+                    ...prev,
+                    [section.key]: e.target.value,
+                  }))
+                }
                 className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all resize-none"
                 placeholder={section.placeholder}
                 readOnly={isViewOnly}
@@ -457,27 +681,51 @@ function KTModal({ memberName, onClose, onSave, initialData }: { memberName: str
 }
 
 /* ─── SIGN OFF CONFIRMATION MODAL ─── */
-function SignOffModal({ memberName, onClose, onConfirm }: { memberName: string; onClose: () => void; onConfirm: () => void }) {
+function SignOffModal({
+  memberName,
+  onClose,
+  onConfirm,
+}: {
+  memberName: string;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
   return (
-    <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         className="w-full max-w-sm bg-card rounded-[32px] p-8 text-center shadow-2xl border border-border"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="w-14 h-14 rounded-full bg-[#DCFCE7] flex items-center justify-center mx-auto mb-4">
           <LogOut size={24} className="text-[#00B87C]" />
         </div>
-        <h3 className="text-lg font-bold text-foreground tracking-tight mb-2">Sign Manager Clearance</h3>
+        <h3 className="text-lg font-bold text-foreground tracking-tight mb-2">
+          Sign Manager Clearance
+        </h3>
         <p className="text-[13px] font-medium text-muted-foreground mb-1">
-          Are you sure you want to sign off clearance for <strong className="text-foreground">{memberName}</strong>?
+          Are you sure you want to sign off clearance for{" "}
+          <strong className="text-foreground">{memberName}</strong>?
         </p>
-        <p className="text-[11px] font-bold text-amber-500 mb-6">This confirms all manager-level tasks are complete.</p>
+        <p className="text-[11px] font-bold text-amber-500 mb-6">
+          This confirms all manager-level tasks are complete.
+        </p>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl border border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-all">Cancel</button>
-          <button onClick={onConfirm} className="flex-1 px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all flex items-center justify-center gap-1.5">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2.5 rounded-xl border border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all flex items-center justify-center gap-1.5"
+          >
             <CheckCircle2 size={14} /> Sign Off
           </button>
         </div>
@@ -487,29 +735,47 @@ function SignOffModal({ memberName, onClose, onConfirm }: { memberName: string; 
 }
 
 /* ─── WRITE RECOMMENDATION MODAL ─── */
-function WriteRecommendationModal({ memberName, onClose, onSave }: { memberName: string; onClose: () => void; onSave: () => void }) {
+function WriteRecommendationModal({
+  memberName,
+  onClose,
+  onSave,
+}: {
+  memberName: string;
+  onClose: () => void;
+  onSave: () => void;
+}) {
   return (
-    <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         className="w-full max-w-[500px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 py-5 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#EDE9FE] flex items-center justify-center">
               <User size={18} className="text-[#8B5CF6]" />
             </div>
-            <h3 className="text-[15px] font-bold text-foreground tracking-tight">Recommendation — {memberName}</h3>
+            <h3 className="text-[15px] font-bold text-foreground tracking-tight">
+              Recommendation — {memberName}
+            </h3>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-all">
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-all"
+          >
             <X size={16} className="text-muted-foreground" />
           </button>
         </div>
         <div className="px-6 py-5 space-y-4">
-          <p className="text-[11px] font-medium text-muted-foreground">Write a brief recommendation for this employee's future roles.</p>
+          <p className="text-[11px] font-medium text-muted-foreground">
+            Write a brief recommendation for this employee's future roles.
+          </p>
           <textarea
             rows={5}
             className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all resize-none"
@@ -517,8 +783,16 @@ function WriteRecommendationModal({ memberName, onClose, onSave }: { memberName:
           />
         </div>
         <div className="px-6 py-5 border-t border-border flex items-center justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2.5 rounded-xl text-[11px] font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-all">Cancel</button>
-          <button onClick={onSave} className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5">
+          <button
+            onClick={onClose}
+            className="px-4 py-2.5 rounded-xl text-[11px] font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onSave}
+            className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5"
+          >
             <Check size={14} /> Save Recommendation
           </button>
         </div>

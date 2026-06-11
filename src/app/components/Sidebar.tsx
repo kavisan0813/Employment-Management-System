@@ -49,11 +49,11 @@ const ALL_NAV_ITEMS: {
   section?: "MAIN MENU" | "MY WORKSPACE";
 }[] = [
   { icon: Sparkles, label: "Smart Search", path: "/smart-search" },
-  { 
-    icon: LayoutDashboard, 
-    label: "Dashboard", 
-    path: "/", 
-    roles: ["Super Admin", "HR Manager", "Finance", "Manager"] 
+  {
+    icon: LayoutDashboard,
+    label: "Dashboard",
+    path: "/",
+    roles: ["Super Admin", "HR Manager", "Finance", "Manager"],
   },
 
   // Admin / HR Items
@@ -336,13 +336,21 @@ const MANAGER_TEAM_ITEMS = [
 const MANAGER_WORKSPACE_ITEMS = [
   { icon: Home, label: "My Dashboard", path: "/manager/my-dashboard" },
   { icon: LogOut, label: "My Exit", path: "/my-exit" },
-  { icon: CalendarCheck, label: "My Attendance", path: "/manager/my-attendance" },
+  {
+    icon: CalendarCheck,
+    label: "My Attendance",
+    path: "/manager/my-attendance",
+  },
   { icon: CalendarDays, label: "My Leaves", path: "/manager/my-leaves" },
   { icon: IndianRupee, label: "My Payslips", path: "/manager/my-payslips" },
   { icon: Folder, label: "My Documents", path: "/manager/my-documents" },
   { icon: Receipt, label: "My Expenses", path: "/manager/my-expenses" },
   { icon: Star, label: "My Goals", path: "/manager/my-goals" },
-  { icon: TrendingUp, label: "My Performance", path: "/manager/my-performance" },
+  {
+    icon: TrendingUp,
+    label: "My Performance",
+    path: "/manager/my-performance",
+  },
   { icon: User, label: "My Profile", path: "/profile" },
   { icon: Megaphone, label: "Notifications", path: "/manager/notifications" },
   { icon: Megaphone, label: "Announcements", path: "/manager/announcements" },
@@ -351,14 +359,14 @@ const MANAGER_WORKSPACE_ITEMS = [
   { icon: Settings, label: "Settings", path: "/manager/settings" },
 ];
 
-
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
   const currentRole = user?.role as UserRole | undefined;
-  const isNewJoinee = currentRole === "Employee" && location.pathname === "/my-onboarding";
+  const isNewJoinee =
+    currentRole === "Employee" && location.pathname === "/my-onboarding";
 
   // Filter nav items based on current user's role and section
   const mainItems = ALL_NAV_ITEMS.filter((item) => {
@@ -373,7 +381,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     if (!item.roles) return true;
     if (!currentRole) return false;
     return item.roles.includes(currentRole);
-  }).map(item => {
+  }).map((item) => {
     if (item.label === "My Expenses" && currentRole === "Finance") {
       return { ...item, path: "/finance/my-expenses" };
     }
@@ -382,27 +390,33 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   const isActive = (path: string) => {
     const currentPath = location.pathname;
-    
+
     // Root dashboard handling
     if (path === "/") {
-      return currentPath === "/" || 
-             currentPath === "/admin/dashboard" || 
-             currentPath === "/hr/dashboard" || 
-             currentPath === "/finance/dashboard" || 
-             currentPath === "/manager/dashboard";
+      return (
+        currentPath === "/" ||
+        currentPath === "/admin/dashboard" ||
+        currentPath === "/hr/dashboard" ||
+        currentPath === "/finance/dashboard" ||
+        currentPath === "/manager/dashboard"
+      );
     }
-    
+
     // Exact match for employee dashboard to avoid double highlighting
     if (path === "/employee/dashboard") {
       return currentPath === "/employee/dashboard";
     }
 
     if (path === "/appraisal") {
-      return currentPath === "/appraisal" || currentPath === "/increment-approvals";
+      return (
+        currentPath === "/appraisal" || currentPath === "/increment-approvals"
+      );
     }
 
     if (path === "/payroll") {
-      const isFinanceDash = currentPath === "/finance/dashboard" || (currentPath === "/" && currentRole === "Finance");
+      const isFinanceDash =
+        currentPath === "/finance/dashboard" ||
+        (currentPath === "/" && currentRole === "Finance");
       return currentPath === "/payroll" && !isFinanceDash;
     }
 
@@ -410,7 +424,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       return currentPath === "/settings";
     }
 
-    return currentPath === path || (path !== "/" && currentPath.startsWith(path + "/")) || currentPath.startsWith(path);
+    return (
+      currentPath === path ||
+      (path !== "/" && currentPath.startsWith(path + "/")) ||
+      currentPath.startsWith(path)
+    );
   };
 
   const handleLogout = () => {
@@ -473,68 +491,89 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </div>
 
       {/* HR Manager / Super Admin User Card */}
-      {!collapsed && (currentRole === "HR Manager" || currentRole === "Super Admin") && (
-        <div className="mx-4 mt-5 mb-2">
-          <div className="flex items-center gap-3 p-1">
-            <div 
-              className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-sm"
+      {!collapsed &&
+        (currentRole === "HR Manager" || currentRole === "Super Admin") && (
+          <div className="mx-4 mt-5 mb-2">
+            <div className="flex items-center gap-3 p-1">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-sm"
+                style={{
+                  background:
+                    currentRole === "Super Admin"
+                      ? "linear-gradient(135deg, #8B5CF6, #6D28D9)"
+                      : "linear-gradient(135deg, #00B87C, #059669)",
+                  color: "white",
+                }}
+              >
+                {currentRole === "Super Admin" ? "SA" : "RP"}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[14px] font-black text-foreground truncate leading-tight">
+                  {currentRole === "Super Admin" ? "Super Admin" : "Ryan Park"}
+                </p>
+                <p className="text-[11px] font-bold text-muted-foreground truncate">
+                  {currentRole === "Super Admin"
+                    ? "System Administrator"
+                    : "HR Manager"}
+                </p>
+              </div>
+            </div>
+            <div
+              className="mt-2 px-2.5 py-1 rounded-full inline-flex items-center gap-1.5"
               style={{
-                background: currentRole === "Super Admin"
-                  ? "linear-gradient(135deg, #8B5CF6, #6D28D9)"
-                  : "linear-gradient(135deg, #00B87C, #059669)",
-                color: "white",
+                backgroundColor:
+                  currentRole === "Super Admin"
+                    ? "rgba(139,92,246,0.1)"
+                    : "rgba(0,184,124,0.1)",
               }}
             >
-              {currentRole === "Super Admin" ? "SA" : "RP"}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[14px] font-black text-foreground truncate leading-tight">
-                {currentRole === "Super Admin" ? "Super Admin" : "Ryan Park"}
-              </p>
-              <p className="text-[11px] font-bold text-muted-foreground truncate">
-                {currentRole === "Super Admin" ? "System Administrator" : "HR Manager"}
-              </p>
+              <div
+                className="w-1.5 h-1.5 rounded-full"
+                style={{
+                  backgroundColor:
+                    currentRole === "Super Admin" ? "#8B5CF6" : "#00B87C",
+                }}
+              />
+              <span
+                className="text-[10px] font-black uppercase tracking-widest"
+                style={{
+                  color: currentRole === "Super Admin" ? "#8B5CF6" : "#00B87C",
+                }}
+              >
+                {currentRole}
+              </span>
             </div>
           </div>
-          <div 
-            className="mt-2 px-2.5 py-1 rounded-full inline-flex items-center gap-1.5"
-            style={{ backgroundColor: currentRole === "Super Admin" ? "rgba(139,92,246,0.1)" : "rgba(0,184,124,0.1)" }}
-          >
-            <div 
-              className="w-1.5 h-1.5 rounded-full"
-              style={{ backgroundColor: currentRole === "Super Admin" ? "#8B5CF6" : "#00B87C" }}
-            />
-            <span 
-              className="text-[10px] font-black uppercase tracking-widest"
-              style={{ color: currentRole === "Super Admin" ? "#8B5CF6" : "#00B87C" }}
-            >
-              {currentRole}
-            </span>
-          </div>
-        </div>
-      )}
+        )}
 
       {/* Manager User Card */}
       {!collapsed && currentRole === "Manager" && (
         <div className="mx-4 mt-6 mb-2">
           <div className="flex items-center gap-3 p-1">
-            <div 
+            <div
               className="w-10 h-10 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-[#92400E] font-black text-sm shrink-0 shadow-sm"
-              style={{ border: '1px solid #FDE68A' }}
+              style={{ border: "1px solid #FDE68A" }}
             >
               SI
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[14px] font-black text-foreground truncate leading-tight">Suresh Iyer</p>
-              <p className="text-[11px] font-bold text-muted-foreground truncate">Engineering Manager</p>
+              <p className="text-[14px] font-black text-foreground truncate leading-tight">
+                Suresh Iyer
+              </p>
+              <p className="text-[11px] font-bold text-muted-foreground truncate">
+                Engineering Manager
+              </p>
             </div>
           </div>
-          <div 
+          <div
             className="mt-3 px-2.5 py-1 rounded-full inline-flex items-center gap-1.5"
             style={{ backgroundColor: "#FEF3C7" }}
           >
             <div className="w-1.5 h-1.5 rounded-full bg-[#92400E]" />
-            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: "#92400E" }}>
+            <span
+              className="text-[10px] font-black uppercase tracking-widest"
+              style={{ color: "#92400E" }}
+            >
               Manager
             </span>
           </div>
@@ -542,26 +581,37 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       )}
 
       {/* Role Badge (Non-Manager, Non-HR, Non-SuperAdmin, Non-NewJoinee) */}
-      {!collapsed && roleConf && currentRole !== "Manager" && currentRole !== "HR Manager" && currentRole !== "Super Admin" && !isNewJoinee && (
-        <div
-          className="mx-3 mt-3 px-3 py-2 rounded-xl flex items-center gap-2"
-          style={{ 
-            backgroundColor: currentRole === "Finance" ? "#E0F2FE" : roleConf.bg,
-            border: currentRole === "Finance" ? "1px solid #BAE6FD" : "none"
-          }}
-        >
-          <ShieldCheck
-            size={14}
-            style={{ color: currentRole === "Finance" ? "#0369A1" : roleConf.color, flexShrink: 0 }}
-          />
-          <span
-            className="text-[11px] font-black uppercase tracking-widest whitespace-nowrap"
-            style={{ color: currentRole === "Finance" ? "#0369A1" : roleConf.color }}
+      {!collapsed &&
+        roleConf &&
+        currentRole !== "Manager" &&
+        currentRole !== "HR Manager" &&
+        currentRole !== "Super Admin" &&
+        !isNewJoinee && (
+          <div
+            className="mx-3 mt-3 px-3 py-2 rounded-xl flex items-center gap-2"
+            style={{
+              backgroundColor:
+                currentRole === "Finance" ? "#E0F2FE" : roleConf.bg,
+              border: currentRole === "Finance" ? "1px solid #BAE6FD" : "none",
+            }}
           >
-            {currentRole}
-          </span>
-        </div>
-      )}
+            <ShieldCheck
+              size={14}
+              style={{
+                color: currentRole === "Finance" ? "#0369A1" : roleConf.color,
+                flexShrink: 0,
+              }}
+            />
+            <span
+              className="text-[11px] font-black uppercase tracking-widest whitespace-nowrap"
+              style={{
+                color: currentRole === "Finance" ? "#0369A1" : roleConf.color,
+              }}
+            >
+              {currentRole}
+            </span>
+          </div>
+        )}
 
       {/* Navigation */}
       <nav className="flex-1 py-3 overflow-y-auto no-scrollbar">
@@ -569,23 +619,42 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           <>
             {/* Welcome User Card */}
             {!collapsed && (
-              <div className="mx-3 mb-4 p-3 rounded-xl border border-[#00B87C]/20" style={{ backgroundColor: "rgba(0,184,124,0.08)" }}>
+              <div
+                className="mx-3 mb-4 p-3 rounded-xl border border-[#00B87C]/20"
+                style={{ backgroundColor: "rgba(0,184,124,0.08)" }}
+              >
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00B87C] to-[#059669] flex items-center justify-center text-white text-[11px] font-black shrink-0">PS</div>
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00B87C] to-[#059669] flex items-center justify-center text-white text-[11px] font-black shrink-0">
+                    PS
+                  </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[14px] font-bold text-foreground truncate">Priya Sharma</p>
-                    <p className="text-[11px] text-muted-foreground truncate">Frontend Developer · Engineering</p>
+                    <p className="text-[14px] font-bold text-foreground truncate">
+                      Priya Sharma
+                    </p>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      Frontend Developer · Engineering
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 mb-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C] animate-pulse" />
-                  <span className="text-[10px] font-bold text-[#00B87C]">Onboarding in Progress</span>
+                  <span className="text-[10px] font-bold text-[#00B87C]">
+                    Onboarding in Progress
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--muted)" }}>
-                    <div className="h-full bg-[#00B87C] rounded-full" style={{ width: "45%" }} />
+                  <div
+                    className="flex-1 h-1.5 rounded-full overflow-hidden"
+                    style={{ backgroundColor: "var(--muted)" }}
+                  >
+                    <div
+                      className="h-full bg-[#00B87C] rounded-full"
+                      style={{ width: "45%" }}
+                    />
                   </div>
-                  <span className="text-[9px] font-bold text-[#00B87C] shrink-0">45%</span>
+                  <span className="text-[9px] font-bold text-[#00B87C] shrink-0">
+                    45%
+                  </span>
                 </div>
               </div>
             )}
@@ -593,7 +662,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             {/* MY JOURNEY Section */}
             <div className="mb-4">
               {!collapsed && (
-                <p className="px-4 mb-2" style={{ color: "var(--sidebar-foreground)", opacity: 0.6, fontSize: "10px", fontWeight: 700, letterSpacing: "1px" }}>
+                <p
+                  className="px-4 mb-2"
+                  style={{
+                    color: "var(--sidebar-foreground)",
+                    opacity: 0.6,
+                    fontSize: "10px",
+                    fontWeight: 700,
+                    letterSpacing: "1px",
+                  }}
+                >
                   MY JOURNEY
                 </p>
               )}
@@ -619,13 +697,33 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         }}
                         className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
                       >
-                        <item.icon size={18} style={{ color: active ? "white" : "inherit", flexShrink: 0 }} />
+                        <item.icon
+                          size={18}
+                          style={{
+                            color: active ? "white" : "inherit",
+                            flexShrink: 0,
+                          }}
+                        />
                         {!collapsed && (
-                          <span style={{ fontSize: "13px", fontWeight: active ? 600 : 500, whiteSpace: "nowrap", overflow: "hidden" }}>
-                            {item.label === "My Onboarding" ? "🌱 My Onboarding" : item.label}
+                          <span
+                            style={{
+                              fontSize: "13px",
+                              fontWeight: active ? 600 : 500,
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                            }}
+                          >
+                            {item.label === "My Onboarding"
+                              ? "🌱 My Onboarding"
+                              : item.label}
                           </span>
                         )}
-                        {active && !collapsed && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white" style={{ flexShrink: 0 }} />}
+                        {active && !collapsed && (
+                          <span
+                            className="ml-auto w-1.5 h-1.5 rounded-full bg-white"
+                            style={{ flexShrink: 0 }}
+                          />
+                        )}
                       </NavLink>
                     </li>
                   );
@@ -636,7 +734,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             {/* I'LL SEE MORE ONCE ONBOARDED Section */}
             <div>
               {!collapsed && (
-                <p className="px-4 mb-2" style={{ color: "var(--sidebar-foreground)", opacity: 0.35, fontSize: "10px", fontWeight: 700, letterSpacing: "1px" }}>
+                <p
+                  className="px-4 mb-2"
+                  style={{
+                    color: "var(--sidebar-foreground)",
+                    opacity: 0.35,
+                    fontSize: "10px",
+                    fontWeight: 700,
+                    letterSpacing: "1px",
+                  }}
+                >
                   I'LL SEE MORE ONCE ONBOARDED
                 </p>
               )}
@@ -660,21 +767,50 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         }}
                         className="group"
                       >
-                        {collapsed ? <Lock size={14} style={{ color: "var(--muted-foreground)", flexShrink: 0 }} /> : (
+                        {collapsed ? (
+                          <Lock
+                            size={14}
+                            style={{
+                              color: "var(--muted-foreground)",
+                              flexShrink: 0,
+                            }}
+                          />
+                        ) : (
                           <div className="relative">
-                            <item.icon size={18} style={{ color: "var(--muted-foreground)", flexShrink: 0 }} />
-                            <Lock size={10} className="absolute -top-1 -right-1" style={{ color: "var(--muted-foreground)" }} />
+                            <item.icon
+                              size={18}
+                              style={{
+                                color: "var(--muted-foreground)",
+                                flexShrink: 0,
+                              }}
+                            />
+                            <Lock
+                              size={10}
+                              className="absolute -top-1 -right-1"
+                              style={{ color: "var(--muted-foreground)" }}
+                            />
                           </div>
                         )}
                         {!collapsed && (
-                          <span style={{ fontSize: "13px", fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", color: "var(--muted-foreground)" }}>
+                          <span
+                            style={{
+                              fontSize: "13px",
+                              fontWeight: 500,
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              color: "var(--muted-foreground)",
+                            }}
+                          >
                             {item.label}
                           </span>
                         )}
                       </div>
                       {!collapsed && (
                         <div className="absolute left-12 right-3 hidden group-hover:block">
-                          <div className="px-2 py-1 rounded-md bg-gray-800 text-white text-[9px] whitespace-nowrap shadow-lg" style={{ marginTop: "-24px" }}>
+                          <div
+                            className="px-2 py-1 rounded-md bg-gray-800 text-white text-[9px] whitespace-nowrap shadow-lg"
+                            style={{ marginTop: "-24px" }}
+                          >
                             Available after onboarding
                           </div>
                         </div>
@@ -789,8 +925,12 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                           borderRadius: "10px",
                           textDecoration: "none",
                           transition: "all 0.15s ease",
-                          backgroundColor: active ? "var(--sidebar-primary)" : "transparent",
-                          color: active ? "var(--sidebar-primary-foreground)" : "var(--sidebar-foreground)",
+                          backgroundColor: active
+                            ? "var(--sidebar-primary)"
+                            : "transparent",
+                          color: active
+                            ? "var(--sidebar-primary-foreground)"
+                            : "var(--sidebar-foreground)",
                           justifyContent: collapsed ? "center" : "flex-start",
                         }}
                         className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
@@ -798,7 +938,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         <item.icon
                           size={18}
                           style={{
-                            color: active ? "var(--sidebar-primary-foreground)" : "inherit",
+                            color: active
+                              ? "var(--sidebar-primary-foreground)"
+                              : "inherit",
                             flexShrink: 0,
                           }}
                         />
@@ -857,10 +999,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                             textDecoration: "none",
                             transition: "all 0.15s ease",
                             backgroundColor: active
-                              ? (item.label === "Finance Dashboard" || (item.path === "/" && currentRole === "Finance") ? "#00B87C" : "var(--sidebar-primary)")
+                              ? item.label === "Finance Dashboard" ||
+                                (item.path === "/" && currentRole === "Finance")
+                                ? "#00B87C"
+                                : "var(--sidebar-primary)"
                               : "transparent",
                             color: active
-                              ? (item.label === "Finance Dashboard" || (item.path === "/" && currentRole === "Finance") ? "white" : "var(--sidebar-primary-foreground)")
+                              ? item.label === "Finance Dashboard" ||
+                                (item.path === "/" && currentRole === "Finance")
+                                ? "white"
+                                : "var(--sidebar-primary-foreground)"
                               : "var(--sidebar-foreground)",
                             justifyContent: collapsed ? "center" : "flex-start",
                           }}
@@ -870,7 +1018,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                             size={18}
                             style={{
                               color: active
-                                ? (item.label === "Finance Dashboard" || (item.path === "/" && currentRole === "Finance") ? "white" : "var(--sidebar-primary-foreground)")
+                                ? item.label === "Finance Dashboard" ||
+                                  (item.path === "/" &&
+                                    currentRole === "Finance")
+                                  ? "white"
+                                  : "var(--sidebar-primary-foreground)"
                                 : "inherit",
                               flexShrink: 0,
                             }}
@@ -884,18 +1036,32 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                                 overflow: "hidden",
                               }}
                             >
-                              {item.label === "Dashboard" && currentRole === "Finance" ? "Finance Dashboard" : 
-                               item.label === "Dashboard" && (currentRole as UserRole) === "Manager" ? "Team Dashboard" :
-                               item.label === "Expenses" && currentRole === "Finance" && item.section !== "MY WORKSPACE" ? "Expense Approvals" :
-                               item.label === "Employees" && currentRole === "Finance" ? "Employees (view)" :
-                               item.label}
+                              {item.label === "Dashboard" &&
+                              currentRole === "Finance"
+                                ? "Finance Dashboard"
+                                : item.label === "Dashboard" &&
+                                    (currentRole as UserRole) === "Manager"
+                                  ? "Team Dashboard"
+                                  : item.label === "Expenses" &&
+                                      currentRole === "Finance" &&
+                                      item.section !== "MY WORKSPACE"
+                                    ? "Expense Approvals"
+                                    : item.label === "Employees" &&
+                                        currentRole === "Finance"
+                                      ? "Employees (view)"
+                                      : item.label}
                             </span>
                           )}
                           {active && !collapsed && (
                             <span
                               className="ml-auto w-1.5 h-1.5 rounded-full"
                               style={{
-                                backgroundColor: item.label === "Finance Dashboard" || (item.path === "/" && currentRole === "Finance") ? "white" : "var(--sidebar-primary-foreground)",
+                                backgroundColor:
+                                  item.label === "Finance Dashboard" ||
+                                  (item.path === "/" &&
+                                    currentRole === "Finance")
+                                    ? "white"
+                                    : "var(--sidebar-primary-foreground)",
                                 flexShrink: 0,
                               }}
                             />
@@ -976,7 +1142,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                             <span
                               className="ml-auto w-1.5 h-1.5 rounded-full"
                               style={{
-                                backgroundColor: "var(--sidebar-primary-foreground)",
+                                backgroundColor:
+                                  "var(--sidebar-primary-foreground)",
                                 flexShrink: 0,
                               }}
                             />
@@ -1107,48 +1274,53 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         )}
 
         {/* User info card (Finance/Employee only — HR Manager & Super Admin have top profile cards) */}
-        {!collapsed && user && currentRole !== "Manager" && currentRole !== "HR Manager" && currentRole !== "Super Admin" && !isNewJoinee && (
-          <div
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-2"
-            style={{ backgroundColor: "var(--sidebar-accent)" }}
-          >
+        {!collapsed &&
+          user &&
+          currentRole !== "Manager" &&
+          currentRole !== "HR Manager" &&
+          currentRole !== "Super Admin" &&
+          !isNewJoinee && (
             <div
-              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-              style={{
-                background: "linear-gradient(135deg, #00B87C, #059669)",
-              }}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-2"
+              style={{ backgroundColor: "var(--sidebar-accent)" }}
             >
-              <span
-                style={{ color: "white", fontSize: "12px", fontWeight: 700 }}
-              >
-                {user.initials}
-              </span>
-            </div>
-            <div className="overflow-hidden flex-1">
-              <p
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
                 style={{
-                  color: "var(--foreground)",
-                  fontSize: "12px",
-                  fontWeight: 600,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
+                  background: "linear-gradient(135deg, #00B87C, #059669)",
                 }}
               >
-                {user.name}
-              </p>
-              <p
-                style={{
-                  color: "var(--muted-foreground)",
-                  fontSize: "10px",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {currentRole === "Finance" ? "Finance Officer" : user.role}
-              </p>
+                <span
+                  style={{ color: "white", fontSize: "12px", fontWeight: 700 }}
+                >
+                  {user.initials}
+                </span>
+              </div>
+              <div className="overflow-hidden flex-1">
+                <p
+                  style={{
+                    color: "var(--foreground)",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {user.name}
+                </p>
+                <p
+                  style={{
+                    color: "var(--muted-foreground)",
+                    fontSize: "10px",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {currentRole === "Finance" ? "Finance Officer" : user.role}
+                </p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Logout button */}
         <button

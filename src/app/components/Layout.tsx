@@ -77,7 +77,7 @@ export function Layout() {
   if (basePath === "/schedule" && user?.role === "Finance") {
     title = "My Schedule";
   }
-  
+
   const defaultSidebarWidth = user?.role === "Manager" ? 235 : 240;
   const sidebarWidth = collapsed ? 72 : defaultSidebarWidth;
 

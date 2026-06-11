@@ -1,8 +1,6 @@
 import { useState } from "react";
 import {
   Settings,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Lock,
   User,
   Bell,
   Globe,
@@ -11,8 +9,6 @@ import {
   Eye,
   EyeOff,
   Check,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Info,
   Download,
   Sliders,
   ShieldAlert,
@@ -36,7 +32,9 @@ export function FinanceSettings() {
   const [lastName, setLastName] = useState("Sharma");
   const [email, setEmail] = useState("ananya.sharma@nexushr.com");
   const [phone, setPhone] = useState("+91 98765 43210");
-  const [bio, setBio] = useState("Senior Finance Manager overseeing payroll and expense approvals.");
+  const [bio, setBio] = useState(
+    "Senior Finance Manager overseeing payroll and expense approvals.",
+  );
 
   // States: Notification Preferences
   const [notifPayrollAlerts, setNotifPayrollAlerts] = useState(true);
@@ -64,7 +62,9 @@ export function FinanceSettings() {
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
 
   // States: Appearance
-  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "system");
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("theme") || "system",
+  );
 
   // Password Strength Calculations
   const hasMinLength = newPassword.length >= 8;
@@ -112,7 +112,9 @@ export function FinanceSettings() {
       } else if (theme === "light") {
         document.documentElement.classList.remove("dark");
       } else {
-        const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const isSystemDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
         if (isSystemDark) {
           document.documentElement.classList.add("dark");
         } else {
@@ -130,7 +132,9 @@ export function FinanceSettings() {
       setLastName("Sharma");
       setEmail("ananya.sharma@nexushr.com");
       setPhone("+91 98765 43210");
-      setBio("Senior Finance Manager overseeing payroll and expense approvals.");
+      setBio(
+        "Senior Finance Manager overseeing payroll and expense approvals.",
+      );
     } else if (activeTab === "Notification Preferences") {
       setNotifPayrollAlerts(true);
       setNotifExpenseRequests(true);
@@ -156,7 +160,11 @@ export function FinanceSettings() {
   };
 
   const handleDownloadExport = () => {
-    showToast("Download Started", "info", "Your data export is being generated and will download shortly.");
+    showToast(
+      "Download Started",
+      "info",
+      "Your data export is being generated and will download shortly.",
+    );
   };
 
   // Custom UI Toggle Component
@@ -173,7 +181,9 @@ export function FinanceSettings() {
   }) => (
     <div className="flex items-start justify-between py-4 border-b border-border last:border-0 gap-8">
       <div className="flex-1">
-        <p className="text-[13px] font-black text-foreground leading-tight">{label}</p>
+        <p className="text-[13px] font-black text-foreground leading-tight">
+          {label}
+        </p>
         <p className="text-[11px] font-bold text-muted-foreground mt-1 max-w-[500px]">
           {description}
         </p>
@@ -212,9 +222,15 @@ export function FinanceSettings() {
 
       {/* ─── Access Notice Banner (emerald) ────────────────────────── */}
       <div className="w-full bg-emerald-500/10 rounded-[20px] border border-emerald-500/20 px-6 py-4 flex items-start gap-3.5 dark:bg-emerald-500/5">
-        <ShieldAlert size={18} className="text-emerald-600 dark:text-emerald-500 flex-shrink-0 mt-0.5" />
+        <ShieldAlert
+          size={18}
+          className="text-emerald-600 dark:text-emerald-500 flex-shrink-0 mt-0.5"
+        />
         <p className="text-[13px] font-bold text-emerald-700 dark:text-emerald-500/90 leading-relaxed">
-          <span className="font-black">Finance role active.</span> You can manage your personal preferences and limited payroll configuration settings. System-level settings and integrations require Super Admin access.
+          <span className="font-black">Finance role active.</span> You can
+          manage your personal preferences and limited payroll configuration
+          settings. System-level settings and integrations require Super Admin
+          access.
         </p>
       </div>
 
@@ -260,26 +276,26 @@ export function FinanceSettings() {
               PAYROLL SCOPE
             </p>
             <ul className="space-y-1">
-              {[
-                { label: "Payroll Configuration", icon: Sliders },
-              ].map((item) => {
-                const isActive = activeTab === item.label;
-                return (
-                  <li key={item.label}>
-                    <button
-                      onClick={() => setActiveTab(item.label as SettingsTab)}
-                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-black transition-all text-left ${
-                        isActive
-                          ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/15"
-                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                      }`}
-                    >
-                      <item.icon size={16} className="flex-shrink-0" />
-                      {item.label}
-                    </button>
-                  </li>
-                );
-              })}
+              {[{ label: "Payroll Configuration", icon: Sliders }].map(
+                (item) => {
+                  const isActive = activeTab === item.label;
+                  return (
+                    <li key={item.label}>
+                      <button
+                        onClick={() => setActiveTab(item.label as SettingsTab)}
+                        className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-black transition-all text-left ${
+                          isActive
+                            ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/15"
+                            : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                        }`}
+                      >
+                        <item.icon size={16} className="flex-shrink-0" />
+                        {item.label}
+                      </button>
+                    </li>
+                  );
+                },
+              )}
             </ul>
           </div>
 
@@ -320,7 +336,9 @@ export function FinanceSettings() {
           {activeTab === "Profile Settings" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Profile Settings</h2>
+                <h2 className="text-[18px] font-black text-foreground">
+                  Profile Settings
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Update your personal information and profile picture
                 </p>
@@ -332,13 +350,17 @@ export function FinanceSettings() {
                   AS
                 </div>
                 <div>
-                  <button 
+                  <button
                     onClick={() => {
                       const input = document.createElement("input");
                       input.type = "file";
                       input.accept = "image/*";
                       input.onchange = () => {
-                        showToast("Photo Updated", "success", "Your profile photo was updated successfully.");
+                        showToast(
+                          "Photo Updated",
+                          "success",
+                          "Your profile photo was updated successfully.",
+                        );
                       };
                       input.click();
                     }}
@@ -417,7 +439,9 @@ export function FinanceSettings() {
           {activeTab === "Notification Preferences" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Notification Preferences</h2>
+                <h2 className="text-[18px] font-black text-foreground">
+                  Notification Preferences
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Choose what events you want to be notified about
                 </p>
@@ -456,7 +480,9 @@ export function FinanceSettings() {
           {activeTab === "Appearance" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Appearance Settings</h2>
+                <h2 className="text-[18px] font-black text-foreground">
+                  Appearance Settings
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Customize the look and feel of your workspace
                 </p>
@@ -494,7 +520,9 @@ export function FinanceSettings() {
           {activeTab === "Language & Region" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Language & Region</h2>
+                <h2 className="text-[18px] font-black text-foreground">
+                  Language & Region
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Set your localization preferences for the interface
                 </p>
@@ -538,9 +566,15 @@ export function FinanceSettings() {
                     onChange={(e) => setTimeZone(e.target.value)}
                     className="w-full h-11 px-4 rounded-xl border border-border bg-card text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C]"
                   >
-                    <option value="IST (UTC +5:30)">India Standard Time (UTC +5:30)</option>
-                    <option value="GMT (UTC +0:00)">Greenwich Mean Time (UTC +0:00)</option>
-                    <option value="EST (UTC -5:00)">Eastern Standard Time (UTC -5:00)</option>
+                    <option value="IST (UTC +5:30)">
+                      India Standard Time (UTC +5:30)
+                    </option>
+                    <option value="GMT (UTC +0:00)">
+                      Greenwich Mean Time (UTC +0:00)
+                    </option>
+                    <option value="EST (UTC -5:00)">
+                      Eastern Standard Time (UTC -5:00)
+                    </option>
                   </select>
                 </div>
               </div>
@@ -551,7 +585,9 @@ export function FinanceSettings() {
           {activeTab === "Payroll Configuration" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Payroll Settings</h2>
+                <h2 className="text-[18px] font-black text-foreground">
+                  Payroll Settings
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Manage personal payroll preferences and cut-off dates
                 </p>
@@ -602,7 +638,9 @@ export function FinanceSettings() {
           {activeTab === "Security & Password" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Security & Password</h2>
+                <h2 className="text-[18px] font-black text-foreground">
+                  Security & Password
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Update your password and manage security settings
                 </p>
@@ -625,7 +663,11 @@ export function FinanceSettings() {
                       onClick={() => setShowCurrentPass(!showCurrentPass)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      {showCurrentPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showCurrentPass ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -667,7 +709,11 @@ export function FinanceSettings() {
                       onClick={() => setShowConfirmPass(!showConfirmPass)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      {showConfirmPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showConfirmPass ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -676,18 +722,28 @@ export function FinanceSettings() {
               {/* Password Requirements */}
               {newPassword && (
                 <div className="max-w-md bg-secondary/50 rounded-xl p-4 border border-border">
-                  <p className="text-[11px] font-bold text-foreground mb-3">Password Requirements:</p>
+                  <p className="text-[11px] font-bold text-foreground mb-3">
+                    Password Requirements:
+                  </p>
                   <div className="grid grid-cols-2 gap-2 text-[11px] font-bold">
-                    <div className={`flex items-center gap-2 ${hasMinLength ? "text-[#00B87C]" : "text-muted-foreground"}`}>
+                    <div
+                      className={`flex items-center gap-2 ${hasMinLength ? "text-[#00B87C]" : "text-muted-foreground"}`}
+                    >
                       <Check size={14} /> At least 8 characters
                     </div>
-                    <div className={`flex items-center gap-2 ${hasUppercase ? "text-[#00B87C]" : "text-muted-foreground"}`}>
+                    <div
+                      className={`flex items-center gap-2 ${hasUppercase ? "text-[#00B87C]" : "text-muted-foreground"}`}
+                    >
                       <Check size={14} /> One uppercase letter
                     </div>
-                    <div className={`flex items-center gap-2 ${hasNumber ? "text-[#00B87C]" : "text-muted-foreground"}`}>
+                    <div
+                      className={`flex items-center gap-2 ${hasNumber ? "text-[#00B87C]" : "text-muted-foreground"}`}
+                    >
                       <Check size={14} /> One number
                     </div>
-                    <div className={`flex items-center gap-2 ${hasSpecial ? "text-[#00B87C]" : "text-muted-foreground"}`}>
+                    <div
+                      className={`flex items-center gap-2 ${hasSpecial ? "text-[#00B87C]" : "text-muted-foreground"}`}
+                    >
                       <Check size={14} /> One special character
                     </div>
                   </div>
@@ -709,7 +765,9 @@ export function FinanceSettings() {
           {activeTab === "Data Export" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h2 className="text-[18px] font-black text-foreground">Data Export</h2>
+                <h2 className="text-[18px] font-black text-foreground">
+                  Data Export
+                </h2>
                 <p className="text-[12px] font-bold text-muted-foreground mt-0.5">
                   Download an archive of your personal data and settings
                 </p>
@@ -717,12 +775,16 @@ export function FinanceSettings() {
 
               <div className="bg-[#F0FDF4] border border-[#00B87C]/20 rounded-2xl p-6 dark:bg-[#00B87C]/5 flex flex-col gap-4">
                 <div>
-                  <h3 className="text-[14px] font-black text-foreground">Request Data Archive</h3>
+                  <h3 className="text-[14px] font-black text-foreground">
+                    Request Data Archive
+                  </h3>
                   <p className="text-[12px] font-bold text-muted-foreground mt-1 max-w-[500px]">
-                    This will generate a compressed ZIP file containing your profile information, attendance logs, and personal documents.
+                    This will generate a compressed ZIP file containing your
+                    profile information, attendance logs, and personal
+                    documents.
                   </p>
                 </div>
-                
+
                 <button
                   onClick={handleDownloadExport}
                   className="w-fit flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-[#00B87C]/30 text-[#00B87C] text-[13px] font-bold shadow-sm hover:bg-[#00B87C]/5 transition-colors dark:bg-transparent"

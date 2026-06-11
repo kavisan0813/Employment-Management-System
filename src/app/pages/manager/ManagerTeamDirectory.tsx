@@ -254,8 +254,12 @@ export function ManagerTeamDirectory() {
     availability: "All Availability",
   });
 
-  const [selectedColleague, setSelectedColleague] = useState<Colleague | null>(null);
-  const [targetColleague, setTargetColleague] = useState<Colleague | null>(null);
+  const [selectedColleague, setSelectedColleague] = useState<Colleague | null>(
+    null,
+  );
+  const [targetColleague, setTargetColleague] = useState<Colleague | null>(
+    null,
+  );
   const [messageText, setMessageText] = useState("");
   const [showMessageModal, setShowMessageModal] = useState(false);
 
@@ -291,7 +295,13 @@ export function ManagerTeamDirectory() {
         filters.availability === "All Availability" ||
         c.availability === filters.availability;
 
-      return matchesSearch && matchesDept && matchesLocation && matchesStatus && matchesAvail;
+      return (
+        matchesSearch &&
+        matchesDept &&
+        matchesLocation &&
+        matchesStatus &&
+        matchesAvail
+      );
     });
   };
 
@@ -319,7 +329,11 @@ export function ManagerTeamDirectory() {
 
   const handleSendMessage = () => {
     if (!messageText.trim()) return;
-    showToast("Message Sent", "success", `Message sent to ${targetColleague?.name}`);
+    showToast(
+      "Message Sent",
+      "success",
+      `Message sent to ${targetColleague?.name}`,
+    );
     setMessageText("");
     setShowMessageModal(false);
   };
@@ -346,7 +360,11 @@ export function ManagerTeamDirectory() {
           {/* Export Button */}
           <button
             onClick={() =>
-              showToast("Exporting", "success", "Directory list exported successfully.")
+              showToast(
+                "Exporting",
+                "success",
+                "Directory list exported successfully.",
+              )
             }
             className="px-4 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:bg-secondary transition-all flex items-center gap-2"
           >
@@ -414,7 +432,14 @@ export function ManagerTeamDirectory() {
             },
             {
               key: "location",
-              options: ["All Locations", "Bangalore", "Mumbai", "Pune", "London", "San Francisco"],
+              options: [
+                "All Locations",
+                "Bangalore",
+                "Mumbai",
+                "Pune",
+                "London",
+                "San Francisco",
+              ],
             },
             {
               key: "status",
@@ -422,7 +447,13 @@ export function ManagerTeamDirectory() {
             },
             {
               key: "availability",
-              options: ["All Availability", "Available", "Busy", "In Meeting", "Away"],
+              options: [
+                "All Availability",
+                "Available",
+                "Busy",
+                "In Meeting",
+                "Away",
+              ],
             },
           ].map((filter) => (
             <div key={filter.key} className="relative">
@@ -459,7 +490,8 @@ export function ManagerTeamDirectory() {
             No colleagues found
           </h3>
           <p className="text-[14px] font-bold text-muted-foreground">
-            Try adjusting your search or filters to find what you're looking for.
+            Try adjusting your search or filters to find what you're looking
+            for.
           </p>
           <button
             onClick={clearFilters}
@@ -663,7 +695,9 @@ function ColleagueCard({
     <div
       onClick={onSelect}
       className={`bg-card p-6 rounded-[28px] border transition-all hover:shadow-xl hover:-translate-y-1.5 cursor-pointer group flex flex-col items-center text-center h-full relative overflow-hidden ${
-        colleague.isDirectReport ? "border-[#00B87C]/30 shadow-emerald-500/[0.02]" : "border-border"
+        colleague.isDirectReport
+          ? "border-[#00B87C]/30 shadow-emerald-500/[0.02]"
+          : "border-border"
       }`}
     >
       {colleague.isDirectReport && (
@@ -676,7 +710,11 @@ function ColleagueCard({
       <div className="relative mb-5 mt-2">
         <div className="w-18 h-18 rounded-3xl bg-emerald-500/5 flex items-center justify-center text-xl font-bold text-[#00B87C] border-2 border-card shadow-sm overflow-hidden group-hover:border-[#00B87C] transition-all">
           {colleague.avatar ? (
-            <img src={colleague.avatar} alt={colleague.name} className="w-full h-full object-cover" />
+            <img
+              src={colleague.avatar}
+              alt={colleague.name}
+              className="w-full h-full object-cover"
+            />
           ) : (
             colleague.initials
           )}
@@ -686,10 +724,10 @@ function ColleagueCard({
             colleague.availability === "Available"
               ? "bg-emerald-500"
               : colleague.availability === "Busy"
-              ? "bg-red-500"
-              : colleague.availability === "In Meeting"
-              ? "bg-amber-500"
-              : "bg-slate-400"
+                ? "bg-red-500"
+                : colleague.availability === "In Meeting"
+                  ? "bg-amber-500"
+                  : "bg-slate-400"
           }`}
         />
       </div>
@@ -801,7 +839,11 @@ function ColleagueTable({
                     <div className="relative flex-shrink-0">
                       <div className="w-9 h-9 rounded-[10px] bg-emerald-500/5 flex items-center justify-center text-[12px] font-bold text-[#00B87C] border border-border shadow-sm overflow-hidden group-hover:border-[#00B87C] transition-all">
                         {c.avatar ? (
-                          <img src={c.avatar} alt={c.name} className="w-full h-full object-cover" />
+                          <img
+                            src={c.avatar}
+                            alt={c.name}
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           c.initials
                         )}
@@ -811,10 +853,10 @@ function ColleagueTable({
                           c.availability === "Available"
                             ? "bg-emerald-500"
                             : c.availability === "Busy"
-                            ? "bg-red-500"
-                            : c.availability === "In Meeting"
-                            ? "bg-amber-500"
-                            : "bg-slate-400"
+                              ? "bg-red-500"
+                              : c.availability === "In Meeting"
+                                ? "bg-amber-500"
+                                : "bg-slate-400"
                         }`}
                       />
                     </div>
@@ -851,7 +893,8 @@ function ColleagueTable({
                 </td>
                 <td className="py-4 px-6">
                   <p className="text-[13px] font-bold text-muted-foreground flex items-center gap-1.5">
-                    <MapPin size={14} className="text-muted-foreground/60" /> {c.location}
+                    <MapPin size={14} className="text-muted-foreground/60" />{" "}
+                    {c.location}
                   </p>
                 </td>
                 <td className="py-4 px-6">
@@ -933,7 +976,11 @@ function ColleagueSlidePanel({
           <div className="relative mb-6">
             <div className="w-24 h-24 rounded-[32px] bg-emerald-500/5 flex items-center justify-center text-3xl font-bold text-[#00B87C] border-2 border-border shadow-sm overflow-hidden">
               {colleague.avatar ? (
-                <img src={colleague.avatar} alt={colleague.name} className="w-full h-full object-cover" />
+                <img
+                  src={colleague.avatar}
+                  alt={colleague.name}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 colleague.initials
               )}
@@ -943,10 +990,10 @@ function ColleagueSlidePanel({
                 colleague.availability === "Available"
                   ? "bg-emerald-500"
                   : colleague.availability === "Busy"
-                  ? "bg-red-500"
-                  : colleague.availability === "In Meeting"
-                  ? "bg-amber-500"
-                  : "bg-slate-400"
+                    ? "bg-red-500"
+                    : colleague.availability === "In Meeting"
+                      ? "bg-amber-500"
+                      : "bg-slate-400"
               }`}
             />
           </div>
@@ -976,32 +1023,49 @@ function ColleagueSlidePanel({
           {/* Section: General Info */}
           <div className="space-y-4">
             <h3 className="text-[12px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-              <Briefcase size={14} className="text-muted-foreground/60" /> Job Information
+              <Briefcase size={14} className="text-muted-foreground/60" /> Job
+              Information
             </h3>
             <div className="bg-secondary/30 p-5 rounded-2xl border border-border/50 space-y-4">
               <div className="flex justify-between items-center text-[13px]">
-                <span className="font-bold text-muted-foreground">Employee ID</span>
-                <span className="font-bold text-foreground">{colleague.id}</span>
+                <span className="font-bold text-muted-foreground">
+                  Employee ID
+                </span>
+                <span className="font-bold text-foreground">
+                  {colleague.id}
+                </span>
               </div>
               <div className="flex justify-between items-center text-[13px]">
                 <span className="font-bold text-muted-foreground">Manager</span>
-                <span className="font-bold text-foreground">{colleague.manager}</span>
-              </div>
-              <div className="flex justify-between items-center text-[13px]">
-                <span className="font-bold text-muted-foreground">Date Joined</span>
-                <span className="font-bold text-foreground flex items-center gap-1">
-                  <Calendar size={13} className="text-[#00B87C]" /> {colleague.joinedDate}
+                <span className="font-bold text-foreground">
+                  {colleague.manager}
                 </span>
               </div>
               <div className="flex justify-between items-center text-[13px]">
-                <span className="font-bold text-muted-foreground">Timezone</span>
+                <span className="font-bold text-muted-foreground">
+                  Date Joined
+                </span>
                 <span className="font-bold text-foreground flex items-center gap-1">
-                  <Clock size={13} className="text-blue-500" /> {colleague.timezone}
+                  <Calendar size={13} className="text-[#00B87C]" />{" "}
+                  {colleague.joinedDate}
                 </span>
               </div>
               <div className="flex justify-between items-center text-[13px]">
-                <span className="font-bold text-muted-foreground">Work Hours</span>
-                <span className="font-bold text-foreground">{colleague.workSchedule}</span>
+                <span className="font-bold text-muted-foreground">
+                  Timezone
+                </span>
+                <span className="font-bold text-foreground flex items-center gap-1">
+                  <Clock size={13} className="text-blue-500" />{" "}
+                  {colleague.timezone}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-[13px]">
+                <span className="font-bold text-muted-foreground">
+                  Work Hours
+                </span>
+                <span className="font-bold text-foreground">
+                  {colleague.workSchedule}
+                </span>
               </div>
             </div>
           </div>
@@ -1009,7 +1073,8 @@ function ColleagueSlidePanel({
           {/* Section: Contact & Social */}
           <div className="space-y-4">
             <h3 className="text-[12px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-              <UserCheck size={14} className="text-muted-foreground/60" /> Contact Details
+              <UserCheck size={14} className="text-muted-foreground/60" />{" "}
+              Contact Details
             </h3>
             <div className="space-y-3">
               {/* Email */}
@@ -1052,7 +1117,9 @@ function ColleagueSlidePanel({
                   </div>
                 </div>
                 <button
-                  onClick={() => showToast("Calling", "info", `Calling ${colleague.phone}`)}
+                  onClick={() =>
+                    showToast("Calling", "info", `Calling ${colleague.phone}`)
+                  }
                   className="p-2 hover:bg-[#00B87C] hover:text-white rounded-lg text-muted-foreground transition-all border border-border/30 shadow-sm"
                   title="Call"
                 >
@@ -1071,7 +1138,8 @@ function ColleagueSlidePanel({
                       LinkedIn Profile
                     </p>
                     <p className="text-[13px] font-bold text-foreground truncate mt-0.5">
-                      linkedin.com/in/{colleague.name.toLowerCase().replace(" ", "")}
+                      linkedin.com/in/
+                      {colleague.name.toLowerCase().replace(" ", "")}
                     </p>
                   </div>
                 </div>
@@ -1079,7 +1147,11 @@ function ColleagueSlidePanel({
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    showToast("Redirecting", "info", "Opening LinkedIn Profile...");
+                    showToast(
+                      "Redirecting",
+                      "info",
+                      "Opening LinkedIn Profile...",
+                    );
                   }}
                   className="p-2 hover:bg-blue-500 hover:text-white rounded-lg text-muted-foreground transition-all border border-border/30 shadow-sm"
                   title="Open Link"
@@ -1093,7 +1165,8 @@ function ColleagueSlidePanel({
           {/* Section: Skills & Competencies */}
           <div className="space-y-4">
             <h3 className="text-[12px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-              <CheckCircle size={14} className="text-muted-foreground/60" /> Skills & Competencies
+              <CheckCircle size={14} className="text-muted-foreground/60" />{" "}
+              Skills & Competencies
             </h3>
             <div className="flex flex-wrap gap-2">
               {colleague.skills.map((skill) => (

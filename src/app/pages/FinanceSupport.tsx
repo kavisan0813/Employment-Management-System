@@ -12,14 +12,20 @@ import {
   Paperclip,
   ShieldCheck,
   FileCode,
-  Zap
+  Zap,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "motion/react";
 
 interface TimelineEntry {
   id: string;
-  type: "created" | "comment" | "status_change" | "attachment" | "resolved" | "cancelled";
+  type:
+    | "created"
+    | "comment"
+    | "status_change"
+    | "attachment"
+    | "resolved"
+    | "cancelled";
   user: string;
   timestamp: string;
   comment?: string;
@@ -68,10 +74,22 @@ const INITIAL_TICKETS: Ticket[] = [
     priorityBg: "rgba(239, 68, 68, 0.1)",
     statusColor: "#F59E0B",
     statusBg: "rgba(245, 158, 11, 0.1)",
-    description: "Unable to log in to the government TDS portal using the company credentials. Access seems to be blocked or password expired.",
+    description:
+      "Unable to log in to the government TDS portal using the company credentials. Access seems to be blocked or password expired.",
     timeline: [
-      { id: "1", type: "created", user: "Finance Officer", timestamp: "Apr 5, 2026, 09:00 AM" },
-      { id: "2", type: "status_change", user: "IT Support", timestamp: "Apr 5, 2026, 10:30 AM", newStatus: "In Progress" },
+      {
+        id: "1",
+        type: "created",
+        user: "Finance Officer",
+        timestamp: "Apr 5, 2026, 09:00 AM",
+      },
+      {
+        id: "2",
+        type: "status_change",
+        user: "IT Support",
+        timestamp: "Apr 5, 2026, 10:30 AM",
+        newStatus: "In Progress",
+      },
     ],
     attachments: [],
   },
@@ -88,10 +106,22 @@ const INITIAL_TICKETS: Ticket[] = [
     priorityBg: "rgba(245, 158, 11, 0.1)",
     statusColor: "#00B87C",
     statusBg: "rgba(0, 184, 124, 0.1)",
-    description: "Need help configuring the new VPN client for remote access to the finance servers.",
+    description:
+      "Need help configuring the new VPN client for remote access to the finance servers.",
     timeline: [
-      { id: "1", type: "created", user: "Finance Officer", timestamp: "Mar 28, 2026, 10:00 AM" },
-      { id: "2", type: "resolved", user: "IT Support", timestamp: "Mar 29, 2026, 11:00 AM", comment: "VPN configured successfully." },
+      {
+        id: "1",
+        type: "created",
+        user: "Finance Officer",
+        timestamp: "Mar 28, 2026, 10:00 AM",
+      },
+      {
+        id: "2",
+        type: "resolved",
+        user: "IT Support",
+        timestamp: "Mar 29, 2026, 11:00 AM",
+        comment: "VPN configured successfully.",
+      },
     ],
     attachments: [],
   },
@@ -143,17 +173,46 @@ export function FinanceSupport() {
       created: "Today",
       catColor: "#0D9488",
       catBg: "rgba(13, 148, 136, 0.1)",
-      priorityColor: priority === "Critical" || priority === "High" ? "#EF4444" : priority === "Medium" ? "#F59E0B" : "#6B7280",
-      priorityBg: priority === "Critical" || priority === "High" ? "rgba(239, 68, 68, 0.1)" : priority === "Medium" ? "rgba(245, 158, 11, 0.1)" : "rgba(107, 114, 128, 0.1)",
+      priorityColor:
+        priority === "Critical" || priority === "High"
+          ? "#EF4444"
+          : priority === "Medium"
+            ? "#F59E0B"
+            : "#6B7280",
+      priorityBg:
+        priority === "Critical" || priority === "High"
+          ? "rgba(239, 68, 68, 0.1)"
+          : priority === "Medium"
+            ? "rgba(245, 158, 11, 0.1)"
+            : "rgba(107, 114, 128, 0.1)",
       statusColor: "#3B82F6",
       statusBg: "rgba(59, 130, 246, 0.1)",
       description,
-      timeline: [{ id: "1", type: "created", user: "Finance Officer", timestamp: "Just now" }],
-      attachments: file ? [{ name: file.name, size: (file.size / 1024).toFixed(1) + " KB", type: file.type }] : [],
+      timeline: [
+        {
+          id: "1",
+          type: "created",
+          user: "Finance Officer",
+          timestamp: "Just now",
+        },
+      ],
+      attachments: file
+        ? [
+            {
+              name: file.name,
+              size: (file.size / 1024).toFixed(1) + " KB",
+              type: file.type,
+            },
+          ]
+        : [],
     };
 
     setTickets([newTicket, ...tickets]);
-    showToast("Ticket Raised", "success", "Your support ticket has been submitted successfully.");
+    showToast(
+      "Ticket Raised",
+      "success",
+      "Your support ticket has been submitted successfully.",
+    );
     setActiveTab("My Tickets");
     // Reset form
     setSubject("");
@@ -201,7 +260,7 @@ export function FinanceSupport() {
 
       {/* ─── Ticket Stats Cards ──────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div 
+        <div
           className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
           onClick={() => {
             setActiveTab("My Tickets");
@@ -209,11 +268,17 @@ export function FinanceSupport() {
           }}
         >
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">OPEN TICKETS</p>
-          <p className="text-[32px] font-black" style={{ color: "#F59E0B" }}>1</p>
-          <p className="text-[13px] font-bold text-muted-foreground mt-3">In progress / Open</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
+            OPEN TICKETS
+          </p>
+          <p className="text-[32px] font-black" style={{ color: "#F59E0B" }}>
+            1
+          </p>
+          <p className="text-[13px] font-bold text-muted-foreground mt-3">
+            In progress / Open
+          </p>
         </div>
-        <div 
+        <div
           className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative cursor-pointer active:scale-[0.98]"
           onClick={() => {
             setActiveTab("My Tickets");
@@ -221,15 +286,27 @@ export function FinanceSupport() {
           }}
         >
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">RESOLVED</p>
-          <p className="text-[32px] font-black" style={{ color: "#00B87C" }}>5</p>
-          <p className="text-[13px] font-bold text-muted-foreground mt-3">total resolved</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
+            RESOLVED
+          </p>
+          <p className="text-[32px] font-black" style={{ color: "#00B87C" }}>
+            5
+          </p>
+          <p className="text-[13px] font-bold text-muted-foreground mt-3">
+            total resolved
+          </p>
         </div>
         <div className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden relative">
           <div className="absolute -right-4 -top-4 w-24 h-24 bg-teal-500/5 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">AVG RESOLUTION</p>
-          <p className="text-[32px] font-black" style={{ color: "#0D9488" }}>1.2 days</p>
-          <p className="text-[13px] font-bold text-muted-foreground mt-3">response time</p>
+          <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
+            AVG RESOLUTION
+          </p>
+          <p className="text-[32px] font-black" style={{ color: "#0D9488" }}>
+            1.2 days
+          </p>
+          <p className="text-[13px] font-bold text-muted-foreground mt-3">
+            response time
+          </p>
         </div>
       </div>
 
@@ -279,7 +356,10 @@ export function FinanceSupport() {
                     ))}
                   </div>
                   <div className="relative">
-                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <Search
+                      size={16}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    />
                     <input
                       type="text"
                       placeholder="Search tickets..."
@@ -295,38 +375,84 @@ export function FinanceSupport() {
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="bg-secondary/30">
-                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">TICKET ID</th>
-                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">SUBJECT</th>
-                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">CATEGORY</th>
-                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">PRIORITY</th>
-                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">STATUS</th>
-                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">CREATED</th>
-                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-right">ACTION</th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                            TICKET ID
+                          </th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                            SUBJECT
+                          </th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                            CATEGORY
+                          </th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                            PRIORITY
+                          </th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                            STATUS
+                          </th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                            CREATED
+                          </th>
+                          <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider text-right">
+                            ACTION
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
                         {filteredTickets.map((row) => (
-                          <tr key={row.id} className="hover:bg-secondary/50 transition-colors group cursor-pointer">
-                            <td className="px-6 py-4 font-mono text-[12px] font-bold text-muted-foreground">{row.id}</td>
-                            <td className="px-6 py-4 text-[14px] font-bold text-foreground">{row.subject}</td>
+                          <tr
+                            key={row.id}
+                            className="hover:bg-secondary/50 transition-colors group cursor-pointer"
+                          >
+                            <td className="px-6 py-4 font-mono text-[12px] font-bold text-muted-foreground">
+                              {row.id}
+                            </td>
+                            <td className="px-6 py-4 text-[14px] font-bold text-foreground">
+                              {row.subject}
+                            </td>
                             <td className="px-6 py-4">
-                              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest border" style={{ backgroundColor: row.catBg, color: row.catColor, borderColor: "transparent" }}>
+                              <span
+                                className="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest border"
+                                style={{
+                                  backgroundColor: row.catBg,
+                                  color: row.catColor,
+                                  borderColor: "transparent",
+                                }}
+                              >
                                 {row.category}
                               </span>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest border" style={{ backgroundColor: row.priorityBg, color: row.priorityColor, borderColor: "transparent" }}>
+                              <span
+                                className="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest border"
+                                style={{
+                                  backgroundColor: row.priorityBg,
+                                  color: row.priorityColor,
+                                  borderColor: "transparent",
+                                }}
+                              >
                                 {row.priority}
                               </span>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest border" style={{ backgroundColor: row.statusBg, color: row.statusColor, borderColor: "transparent" }}>
+                              <span
+                                className="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest border"
+                                style={{
+                                  backgroundColor: row.statusBg,
+                                  color: row.statusColor,
+                                  borderColor: "transparent",
+                                }}
+                              >
                                 {row.status}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-[13px] font-medium text-muted-foreground">{row.created}</td>
+                            <td className="px-6 py-4 text-[13px] font-medium text-muted-foreground">
+                              {row.created}
+                            </td>
                             <td className="px-6 py-4 text-right">
-                              <button className="text-primary text-[13px] font-bold hover:underline">View ›</button>
+                              <button className="text-primary text-[13px] font-bold hover:underline">
+                                View ›
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -341,20 +467,34 @@ export function FinanceSupport() {
               <div className="max-w-2xl mx-auto bg-card rounded-[32px] border border-border shadow-sm overflow-hidden p-8">
                 <form onSubmit={handleRaiseTicket} className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">CATEGORY</label>
+                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
+                      CATEGORY
+                    </label>
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
                       className="w-full bg-secondary/50 border border-border rounded-2xl px-5 py-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary appearance-none transition-all"
                     >
-                      {["IT Access", "IT Hardware", "IT Software", "HR Request", "Payroll Query", "Finance Tool", "Other"].map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
+                      {[
+                        "IT Access",
+                        "IT Hardware",
+                        "IT Software",
+                        "HR Request",
+                        "Payroll Query",
+                        "Finance Tool",
+                        "Other",
+                      ].map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
                       ))}
                     </select>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">PRIORITY</label>
+                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
+                      PRIORITY
+                    </label>
                     <div className="grid grid-cols-4 gap-3">
                       {["Low", "Medium", "High", "Critical"].map((level) => (
                         <button
@@ -374,7 +514,9 @@ export function FinanceSupport() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">SUBJECT</label>
+                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
+                      SUBJECT
+                    </label>
                     <input
                       type="text"
                       placeholder="Brief summary of the issue..."
@@ -386,7 +528,9 @@ export function FinanceSupport() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">DESCRIPTION</label>
+                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
+                      DESCRIPTION
+                    </label>
                     <textarea
                       placeholder="Detailed description of your issue..."
                       value={description}
@@ -398,20 +542,24 @@ export function FinanceSupport() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">ATTACHMENTS</label>
-                    <div 
+                    <label className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
+                      ATTACHMENTS
+                    </label>
+                    <div
                       onClick={() => fileInputRef.current?.click()}
                       className="border-2 border-dashed border-border rounded-2xl p-8 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-secondary/50 hover:border-primary/30 transition-all"
                     >
                       <Paperclip className="text-muted-foreground" size={24} />
                       <p className="text-[13px] font-bold text-muted-foreground">
-                        {file ? file.name : "Drag & drop files or click to upload"}
+                        {file
+                          ? file.name
+                          : "Drag & drop files or click to upload"}
                       </p>
-                      <input 
-                        type="file" 
-                        ref={fileInputRef} 
+                      <input
+                        type="file"
+                        ref={fileInputRef}
                         onChange={(e) => setFile(e.target.files?.[0] || null)}
-                        className="hidden" 
+                        className="hidden"
                       />
                     </div>
                   </div>
@@ -433,7 +581,10 @@ export function FinanceSupport() {
             {activeTab === "Knowledge Base" && (
               <div className="space-y-8">
                 <div className="max-w-xl mx-auto relative group">
-                  <Search size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Search
+                    size={20}
+                    className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors"
+                  />
                   <input
                     type="text"
                     placeholder="Search FAQs, tools, and guides..."
@@ -451,8 +602,12 @@ export function FinanceSupport() {
                       <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                         <cat.icon size={28} />
                       </div>
-                      <h3 className="text-[17px] font-black text-foreground tracking-tight mb-1">{cat.name}</h3>
-                      <p className="text-[13px] font-bold text-muted-foreground">{cat.count} articles</p>
+                      <h3 className="text-[17px] font-black text-foreground tracking-tight mb-1">
+                        {cat.name}
+                      </h3>
+                      <p className="text-[13px] font-bold text-muted-foreground">
+                        {cat.count} articles
+                      </p>
                       <div className="mt-4 flex items-center gap-1.5 text-primary text-[12px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">
                         Explore <ChevronRight size={14} />
                       </div>

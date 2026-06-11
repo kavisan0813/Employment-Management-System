@@ -41,9 +41,7 @@ export function ManagerTeamSchedule() {
             >
               Team Schedule
             </h1>
-            <p
-              className="text-[13px] text-[#6B7280] mt-1"
-            >
+            <p className="text-[13px] text-[#6B7280] mt-1">
               Efficiently manage workforce rotations and coverage.
             </p>
           </div>
@@ -136,7 +134,10 @@ export function ManagerTeamSchedule() {
 
         <div className="flex items-center gap-3">
           <div className="relative group">
-            <Filter size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Filter
+              size={14}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
             <select
               className="pl-9 pr-6 py-2 rounded-xl border border-border bg-background text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none appearance-none cursor-pointer"
               value={selectedDept}
@@ -145,7 +146,10 @@ export function ManagerTeamSchedule() {
               <option>All Departments</option>
               <option>Engineering</option>
             </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <ChevronDown
+              size={14}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+            />
           </div>
           <div className="flex p-1 bg-secondary rounded-xl">
             {["Week", "Month", "Day"].map((v) => (
@@ -167,10 +171,16 @@ export function ManagerTeamSchedule() {
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="rounded-2xl p-5 border shadow-sm bg-white dark:bg-zinc-900 group" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="rounded-2xl p-5 border shadow-sm bg-white dark:bg-zinc-900 group"
+          style={{ borderColor: "var(--border)" }}
+        >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "var(--muted-foreground)" }}>
+              <p
+                className="text-xs font-bold uppercase tracking-wider mb-2"
+                style={{ color: "var(--muted-foreground)" }}
+              >
                 Team Shifts
               </p>
               <p className="text-3xl font-bold tracking-tight text-emerald-600">
@@ -182,18 +192,27 @@ export function ManagerTeamSchedule() {
             </div>
           </div>
         </div>
-        
-        <div className="rounded-2xl p-5 border shadow-sm bg-white dark:bg-zinc-900 group" style={{ borderColor: "var(--border)" }}>
+
+        <div
+          className="rounded-2xl p-5 border shadow-sm bg-white dark:bg-zinc-900 group"
+          style={{ borderColor: "var(--border)" }}
+        >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "var(--muted-foreground)" }}>
+              <p
+                className="text-xs font-bold uppercase tracking-wider mb-2"
+                style={{ color: "var(--muted-foreground)" }}
+              >
                 Coverage Target
               </p>
               <p className="text-3xl font-bold tracking-tight text-emerald-600">
                 91%
               </p>
               <div className="w-28 h-1.5 bg-secondary rounded-full mt-3 overflow-hidden">
-                <div className="h-full bg-emerald-500 rounded-full" style={{ width: "91%" }}></div>
+                <div
+                  className="h-full bg-emerald-500 rounded-full"
+                  style={{ width: "91%" }}
+                ></div>
               </div>
             </div>
             <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 group-hover:bg-emerald-100">
@@ -202,10 +221,16 @@ export function ManagerTeamSchedule() {
           </div>
         </div>
 
-        <div className="rounded-2xl p-5 border shadow-sm bg-white dark:bg-zinc-900 group" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="rounded-2xl p-5 border shadow-sm bg-white dark:bg-zinc-900 group"
+          style={{ borderColor: "var(--border)" }}
+        >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "var(--muted-foreground)" }}>
+              <p
+                className="text-xs font-bold uppercase tracking-wider mb-2"
+                style={{ color: "var(--muted-foreground)" }}
+              >
                 Overtime
               </p>
               <p className="text-3xl font-bold tracking-tight text-amber-600">
@@ -218,10 +243,16 @@ export function ManagerTeamSchedule() {
           </div>
         </div>
 
-        <div className="rounded-2xl p-5 border shadow-sm bg-white dark:bg-zinc-900 group" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="rounded-2xl p-5 border shadow-sm bg-white dark:bg-zinc-900 group"
+          style={{ borderColor: "var(--border)" }}
+        >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "var(--muted-foreground)" }}>
+              <p
+                className="text-xs font-bold uppercase tracking-wider mb-2"
+                style={{ color: "var(--muted-foreground)" }}
+              >
                 Swap Requests
               </p>
               <p className="text-3xl font-bold tracking-tight text-teal-600">
@@ -261,15 +292,23 @@ export function ManagerTeamSchedule() {
             ].map((type) => (
               <div
                 key={type.type}
-                onClick={() => setActiveBrush(activeBrush === type.type ? null : type.type)}
+                onClick={() =>
+                  setActiveBrush(activeBrush === type.type ? null : type.type)
+                }
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all hover:bg-secondary select-none ${
-                  activeBrush === type.type ? "bg-[#E8F5E9] dark:bg-emerald-900/20 border border-[#00B87C]/20" : ""
+                  activeBrush === type.type
+                    ? "bg-[#E8F5E9] dark:bg-emerald-900/20 border border-[#00B87C]/20"
+                    : ""
                 }`}
               >
-                <div className={`w-7 h-7 rounded-full ${type.color} flex items-center justify-center text-white text-[9px] font-bold shadow-sm`}>
+                <div
+                  className={`w-7 h-7 rounded-full ${type.color} flex items-center justify-center text-white text-[9px] font-bold shadow-sm`}
+                >
                   {type.label}
                 </div>
-                <span className="text-xs font-bold text-foreground pr-1">{type.type}</span>
+                <span className="text-xs font-bold text-foreground pr-1">
+                  {type.type}
+                </span>
               </div>
             ))}
           </div>
@@ -298,7 +337,9 @@ export function ManagerTeamSchedule() {
               key={day}
               className={`px-3 py-3 text-center border-l border-border flex flex-col justify-center ${day === "Mon" ? "bg-primary/5" : ""}`}
             >
-              <span className={`text-xs font-bold ${day === "Mon" ? "text-primary border-b-2 border-[#00B87C] pb-0.5 inline-block mx-auto" : "text-foreground"}`}>
+              <span
+                className={`text-xs font-bold ${day === "Mon" ? "text-primary border-b-2 border-[#00B87C] pb-0.5 inline-block mx-auto" : "text-foreground"}`}
+              >
                 {day}
               </span>
               <span className="text-[11px] text-muted-foreground font-bold mt-1">
@@ -307,11 +348,15 @@ export function ManagerTeamSchedule() {
             </div>
           ))}
         </div>
-        
+
         <div className="grid-body divide-y divide-border">
           {/* Arjun Mehta */}
           <div className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
-            <EmployeeCell name="Arjun Mehta" dept="Engineering" avatar="https://i.pravatar.cc/150?u=Arjun" />
+            <EmployeeCell
+              name="Arjun Mehta"
+              dept="Engineering"
+              avatar="https://i.pravatar.cc/150?u=Arjun"
+            />
             <ShiftCell type="Morning" time="06:00-14:00" />
             <EmptyCell />
             <ShiftCell type="Evening" time="14:00-22:00" isOT />
@@ -323,7 +368,11 @@ export function ManagerTeamSchedule() {
 
           {/* Sneha Rao */}
           <div className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
-            <EmployeeCell name="Sneha Rao" dept="Engineering" avatar="https://i.pravatar.cc/150?u=Sneha" />
+            <EmployeeCell
+              name="Sneha Rao"
+              dept="Engineering"
+              avatar="https://i.pravatar.cc/150?u=Sneha"
+            />
             <EmptyCell />
             <ShiftCell type="Night" time="22:00-06:00" />
             <ShiftCell type="Morning" time="06:00-14:00" />
@@ -335,7 +384,11 @@ export function ManagerTeamSchedule() {
 
           {/* Dev Patel */}
           <div className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
-            <EmployeeCell name="Dev Patel" dept="Engineering" avatar="https://i.pravatar.cc/150?u=Dev" />
+            <EmployeeCell
+              name="Dev Patel"
+              dept="Engineering"
+              avatar="https://i.pravatar.cc/150?u=Dev"
+            />
             <ShiftCell type="Night" time="22:00-06:00" />
             <EmptyCell />
             <ShiftCell type="Morning" time="06:00-14:00" isOT />
@@ -347,9 +400,16 @@ export function ManagerTeamSchedule() {
 
           {/* Priya Sharma */}
           <div className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
-            <EmployeeCell name="Priya Sharma" dept="Engineering" avatar="https://i.pravatar.cc/150?u=Priya" />
+            <EmployeeCell
+              name="Priya Sharma"
+              dept="Engineering"
+              avatar="https://i.pravatar.cc/150?u=Priya"
+            />
             <div className="col-span-5 border-l border-border/50 p-1">
-              <div className="w-full h-full rounded-xl flex items-center justify-center text-[11px] font-bold tracking-widest text-[#F59E0B] border-l-4 border-l-[#F59E0B]" style={{ backgroundColor: "#FEF3C7" }}>
+              <div
+                className="w-full h-full rounded-xl flex items-center justify-center text-[11px] font-bold tracking-widest text-[#F59E0B] border-l-4 border-l-[#F59E0B]"
+                style={{ backgroundColor: "#FEF3C7" }}
+              >
                 ON APPROVED LEAVE Apr 6-10
               </div>
             </div>
@@ -366,7 +426,10 @@ export function ManagerTeamSchedule() {
           <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-card rounded-t-2xl flex-shrink-0">
             <div className="flex items-center gap-3">
               <ArrowLeftRight color="#00B87C" size={18} />
-              <h3 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>
+              <h3
+                className="text-lg font-bold"
+                style={{ color: "var(--foreground)" }}
+              >
                 Shift Swap Requests
               </h3>
             </div>
@@ -380,8 +443,12 @@ export function ManagerTeamSchedule() {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center -space-x-2">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#059669]">AM</div>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#2563EB]">DP</div>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#059669]">
+                      AM
+                    </div>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#2563EB]">
+                      DP
+                    </div>
                   </div>
                   <div>
                     <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
@@ -415,8 +482,12 @@ export function ManagerTeamSchedule() {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center -space-x-2">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#7C3AED]">SR</div>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#DB2777]">PS</div>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#7C3AED]">
+                      SR
+                    </div>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#DB2777]">
+                      PS
+                    </div>
                   </div>
                   <div>
                     <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
@@ -453,7 +524,10 @@ export function ManagerTeamSchedule() {
           <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-card rounded-t-2xl">
             <div className="flex items-center gap-3">
               <Clock color="#F59E0B" size={18} />
-              <h3 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>
+              <h3
+                className="text-lg font-bold"
+                style={{ color: "var(--foreground)" }}
+              >
                 Overtime Monitoring
               </h3>
             </div>
@@ -463,9 +537,27 @@ export function ManagerTeamSchedule() {
           </div>
           <div className="p-4 space-y-3 overflow-y-auto max-h-[400px]">
             {[
-              { name: "Dev Patel", hrs: 12, limit: 15, color: "#F59E0B", avatar: "DP" },
-              { name: "Arjun Mehta", hrs: 8, limit: 15, color: "var(--primary)", avatar: "AM" },
-              { name: "Sneha Rao", hrs: 4, limit: 15, color: "var(--primary)", avatar: "SR" },
+              {
+                name: "Dev Patel",
+                hrs: 12,
+                limit: 15,
+                color: "#F59E0B",
+                avatar: "DP",
+              },
+              {
+                name: "Arjun Mehta",
+                hrs: 8,
+                limit: 15,
+                color: "var(--primary)",
+                avatar: "AM",
+              },
+              {
+                name: "Sneha Rao",
+                hrs: 4,
+                limit: 15,
+                color: "var(--primary)",
+                avatar: "SR",
+              },
             ].map((item) => (
               <div key={item.name} className="group">
                 <div className="flex justify-between items-center mb-1">
@@ -473,14 +565,28 @@ export function ManagerTeamSchedule() {
                     <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[9px] font-bold text-primary">
                       {item.avatar}
                     </div>
-                    <span className="text-xs font-bold text-foreground">{item.name}</span>
+                    <span className="text-xs font-bold text-foreground">
+                      {item.name}
+                    </span>
                   </div>
-                  <span className="text-xs font-bold" style={{ color: item.color }}>
-                    {item.hrs}h <span className="text-[11px] font-medium text-muted-foreground ml-1">/ {item.limit}h</span>
+                  <span
+                    className="text-xs font-bold"
+                    style={{ color: item.color }}
+                  >
+                    {item.hrs}h{" "}
+                    <span className="text-[11px] font-medium text-muted-foreground ml-1">
+                      / {item.limit}h
+                    </span>
                   </span>
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden">
-                  <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(item.hrs / 20) * 100}%`, backgroundColor: item.color }} />
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${(item.hrs / 20) * 100}%`,
+                      backgroundColor: item.color,
+                    }}
+                  />
                 </div>
               </div>
             ))}
@@ -496,33 +602,54 @@ export function ManagerTeamSchedule() {
       {/* Add Shift Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="w-full max-w-[460px] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border animate-in zoom-in-95" style={{ borderColor: "var(--border)" }}>
-            <div className="p-6 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
+          <div
+            className="w-full max-w-[460px] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border animate-in zoom-in-95"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <div
+              className="p-6 border-b flex items-center justify-between"
+              style={{ borderColor: "var(--border)" }}
+            >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-[10px] bg-secondary flex items-center justify-center text-primary">
                   <CalendarPlus size={20} />
                 </div>
-                <h3 className="text-[16px] font-bold text-foreground">Assign New Shift</h3>
+                <h3 className="text-[16px] font-bold text-foreground">
+                  Assign New Shift
+                </h3>
               </div>
-              <button onClick={() => setShowAddModal(false)} className="text-muted-foreground hover:text-foreground">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="text-muted-foreground hover:text-foreground"
+              >
                 <X size={20} />
               </button>
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Employee</label>
+                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                  Employee
+                </label>
                 <input
                   type="text"
                   placeholder="Search team member..."
                   className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors"
-                  style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+                  style={{
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                  }}
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Shift Type</label>
+                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                  Shift Type
+                </label>
                 <select
                   className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none"
-                  style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+                  style={{
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                  }}
                 >
                   <option>Morning (06:00 - 14:00)</option>
                   <option>Evening (14:00 - 22:00)</option>
@@ -531,36 +658,57 @@ export function ManagerTeamSchedule() {
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Department</label>
+                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                  Department
+                </label>
                 <select
                   className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none"
-                  style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+                  style={{
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                  }}
                 >
                   <option>Engineering</option>
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Shift Date</label>
+                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                  Shift Date
+                </label>
                 <input
                   type="date"
                   className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors"
-                  style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+                  style={{
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                  }}
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Notes</label>
+                <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                  Notes
+                </label>
                 <textarea
                   placeholder="Optional notes..."
                   className="w-full h-20 p-4 rounded-xl border bg-transparent text-[13px] outline-none focus:border-[#00B87C] transition-colors resize-none"
-                  style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+                  style={{
+                    borderColor: "var(--border)",
+                    color: "var(--foreground)",
+                  }}
                 />
               </div>
             </div>
-            <div className="p-6 border-t flex items-center justify-end gap-3 bg-neutral-50 dark:bg-zinc-800/50 rounded-b-2xl" style={{ borderColor: "var(--border)" }}>
+            <div
+              className="p-6 border-t flex items-center justify-end gap-3 bg-neutral-50 dark:bg-zinc-800/50 rounded-b-2xl"
+              style={{ borderColor: "var(--border)" }}
+            >
               <button
                 onClick={() => setShowAddModal(false)}
                 className="px-5 py-2.5 rounded-xl border text-[13px] font-bold transition-colors hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-900"
-                style={{ borderColor: "var(--border)", color: "var(--muted-foreground)" }}
+                style={{
+                  borderColor: "var(--border)",
+                  color: "var(--muted-foreground)",
+                }}
               >
                 Cancel
               </button>
@@ -580,16 +728,31 @@ export function ManagerTeamSchedule() {
 }
 
 // Subcomponents for Table Grid
-function EmployeeCell({ name, dept, avatar }: { name: string; dept: string; avatar: string }) {
+function EmployeeCell({
+  name,
+  dept,
+  avatar,
+}: {
+  name: string;
+  dept: string;
+  avatar: string;
+}) {
   return (
     <div className="px-4 py-2 flex items-center gap-3 border-r border-border/50">
       <div className="relative flex-shrink-0">
-        <img src={avatar} className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-800 shadow-sm" />
+        <img
+          src={avatar}
+          className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-800 shadow-sm"
+        />
         <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full"></div>
       </div>
       <div className="flex flex-col min-w-0">
-        <span className="text-sm font-bold text-foreground leading-tight">{name}</span>
-        <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-tight mt-0.5">{dept}</span>
+        <span className="text-sm font-bold text-foreground leading-tight">
+          {name}
+        </span>
+        <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-tight mt-0.5">
+          {dept}
+        </span>
       </div>
     </div>
   );
@@ -605,24 +768,48 @@ function EmptyCell() {
   );
 }
 
-function ShiftCell({ type, time, isOT }: { type: string; time: string; isOT?: boolean }) {
+function ShiftCell({
+  type,
+  time,
+  isOT,
+}: {
+  type: string;
+  time: string;
+  isOT?: boolean;
+}) {
   let styleClass = "";
-  if (type === "Morning") styleClass = "bg-[#DCFCE7] text-[#00B87C] border-l-[#00B87C]";
-  if (type === "Evening") styleClass = "bg-[#FEF3C7] text-[#F59E0B] border-l-[#F59E0B]";
-  if (type === "Night") styleClass = "bg-[#EDE9FE] text-[#7C3AED] border-l-[#7C3AED]";
-  if (type === "Full Day") styleClass = "bg-[#DBEAFE] text-[#3B82F6] border-l-[#3B82F6]";
-  if (type === "Off Day") styleClass = "bg-slate-100 text-[#90A4AE] border-l-[#90A4AE]";
+  if (type === "Morning")
+    styleClass = "bg-[#DCFCE7] text-[#00B87C] border-l-[#00B87C]";
+  if (type === "Evening")
+    styleClass = "bg-[#FEF3C7] text-[#F59E0B] border-l-[#F59E0B]";
+  if (type === "Night")
+    styleClass = "bg-[#EDE9FE] text-[#7C3AED] border-l-[#7C3AED]";
+  if (type === "Full Day")
+    styleClass = "bg-[#DBEAFE] text-[#3B82F6] border-l-[#3B82F6]";
+  if (type === "Off Day")
+    styleClass = "bg-slate-100 text-[#90A4AE] border-l-[#90A4AE]";
 
   return (
     <div className="border-l border-border/50 p-1 flex items-stretch">
-      <div className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group border-l-4 ${styleClass}`}>
+      <div
+        className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group border-l-4 ${styleClass}`}
+      >
         <div className="flex items-center justify-between mb-0.5">
-          <span className="text-[11px] font-bold uppercase tracking-tight">{type}</span>
-          {isOT && <span className="text-[8px] bg-red-500 text-white px-1.5 rounded-full font-bold animate-pulse">OT</span>}
+          <span className="text-[11px] font-bold uppercase tracking-tight">
+            {type}
+          </span>
+          {isOT && (
+            <span className="text-[8px] bg-red-500 text-white px-1.5 rounded-full font-bold animate-pulse">
+              OT
+            </span>
+          )}
         </div>
         <span className="text-[11px] font-bold opacity-80">{time}</span>
         <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <MoreIcon size={12} className="text-current opacity-70 hover:opacity-100" />
+          <MoreIcon
+            size={12}
+            className="text-current opacity-70 hover:opacity-100"
+          />
         </div>
       </div>
     </div>

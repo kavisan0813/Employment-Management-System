@@ -6,8 +6,6 @@ import {
   X,
   CalendarDays,
   FileText,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  AlertCircle,
   MoreVertical,
   CheckCircle2,
   Calendar,
@@ -43,8 +41,6 @@ interface LeaveRecord {
 export function FinanceLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { user } = useAuth();
   
   const [activeTab, setActiveTab] = useState<LeaveTab>("My Requests");
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
@@ -421,10 +417,7 @@ export function FinanceLeaves() {
                     const startDate = startOfWeek(monthStart);
                     const endDate = endOfWeek(monthEnd);
                     const dateFormat = "d";
-                    const rows = [];
 
-                    let days = [];
-                    let day = startDate;
                     let formattedDate = "";
 
                     const calendarDays = eachDayOfInterval({

@@ -144,12 +144,7 @@ const trendData = [
   { name: "May", score: 92 },
 ];
 
-const distributionData = [
-  { name: "Exceptional", value: 15, color: "#10B981" },
-  { name: "Exceeds", value: 35, color: "#14B8A6" },
-  { name: "Meets", value: 40, color: "#F59E0B" },
-  { name: "Below", value: 10, color: "#EF4444" },
-];
+
 
 /* ─── Components ─────────────────────────────────────────── */
 

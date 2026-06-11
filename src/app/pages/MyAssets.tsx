@@ -194,7 +194,10 @@ function AssetDetailModal({
           </div>
 
           <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4 flex items-start gap-3">
-            <AlertTriangle size={18} className="text-amber-500 shrink-0 mt-0.5" />
+            <AlertTriangle
+              size={18}
+              className="text-amber-500 shrink-0 mt-0.5"
+            />
             <p className="text-[12px] font-bold text-amber-600 dark:text-amber-400">
               Report any damage or issues with this asset immediately.
             </p>
@@ -359,7 +362,8 @@ function ReportIssueModal({
           <div className="bg-secondary/50 border border-border rounded-2xl p-4 flex items-start gap-3">
             <Flag size={18} className="text-primary shrink-0 mt-0.5" />
             <p className="text-[12px] font-bold text-muted-foreground">
-              Urgent issues will be escalated to the IT support team immediately.
+              Urgent issues will be escalated to the IT support team
+              immediately.
             </p>
           </div>
 
@@ -677,7 +681,10 @@ export function MyAssets() {
                   {/* Detail row */}
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-1.5 mt-4 pt-3 border-t border-border text-[11px] font-bold text-muted-foreground">
                     <span className="flex items-center gap-1.5">
-                      <Calendar size={13} className="text-muted-foreground/60" />
+                      <Calendar
+                        size={13}
+                        className="text-muted-foreground/60"
+                      />
                       Assigned: {asset.assignedDate}
                     </span>
                     <span className="flex items-center gap-1.5">
@@ -692,7 +699,10 @@ export function MyAssets() {
                       Condition: {asset.condition}
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <FileText size={13} className="text-muted-foreground/60" />
+                      <FileText
+                        size={13}
+                        className="text-muted-foreground/60"
+                      />
                       Warranty: {asset.warrantyLabel}
                     </span>
                   </div>

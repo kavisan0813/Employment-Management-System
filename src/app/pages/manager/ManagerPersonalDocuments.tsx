@@ -601,7 +601,9 @@ export function ManagerPersonalDocuments() {
                   <h3 className="text-[15px] font-bold text-foreground">
                     {viewingDoc}
                   </h3>
-                  <p className="text-[11px] font-bold text-[#00B87C]">Preview</p>
+                  <p className="text-[11px] font-bold text-[#00B87C]">
+                    Preview
+                  </p>
                 </div>
               </div>
               <button
