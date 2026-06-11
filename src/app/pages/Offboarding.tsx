@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { showToast } from "../components/workflow/ToastNotification";
 import {
   LogOut,
   Download,
@@ -321,6 +322,14 @@ const clearanceChip = (status: ClearanceStatus) => {
   }
 };
 
+const ACTIVE_EMPLOYEES = [
+  { id: "ae1", name: "Vikram Malhotra", role: "Product Manager", dept: "Product" },
+  { id: "ae2", name: "Neha Sen", role: "Senior HR Specialist", dept: "HR" },
+  { id: "ae3", name: "Kunal Kapoor", role: "Data Engineer", dept: "Analytics" },
+  { id: "ae4", name: "Ananya Roy", role: "Content Writer", dept: "Marketing" },
+  { id: "ae5", name: "Amit Goel", role: "Infrastructure Architect", dept: "IT" },
+];
+
 /* ─── MAIN COMPONENT ─── */
 export function Offboarding() {
   const navigate = useNavigate();
@@ -333,27 +342,148 @@ export function Offboarding() {
   const [showInterview, setShowInterview] = useState<string | null>(null);
   const [showSchedule, setShowSchedule] = useState<{id: string; type: "interview" | "clearance"} | null>(null);
 
-  const activeExits = EXITS.filter(e => e.progress !== 100);
-  const completedExits: ExitEmployee[] = [];
-  const scheduledExits: ExitEmployee[] = [];
+  const [exits, setExits] = useState<ExitEmployee[]>(EXITS);
+
+  const activeExits = exits.filter(e => e.progress < 100);
+  const completedExits = exits.filter(e => e.progress === 100);
+  const scheduledExits = exits.filter(e => e.progress < 30 && e.progress > 0);
 
   const stats = {
     activeExits: activeExits.length,
-    completedThisMonth: 2,
-    pendingFF: EXITS.filter(e => e.ffStatus === "Awaiting Finance Clearance" || e.ffStatus === "Pending").length,
-    assetsPending: EXITS.filter(e => e.assets.some(a => a.status === "pending")).length,
-    docsPending: EXITS.filter(e => e.documents.some(d => d.status === "pending" || d.status === "not_generated")).length,
-    interviewsDone: `${EXITS.filter(e => e.interviewDone).length}/${EXITS.length}`,
+    completedThisMonth: completedExits.length,
+    pendingFF: exits.filter(e => e.ffStatus === "Awaiting Finance Clearance" || e.ffStatus === "Pending").length,
+    assetsPending: exits.filter(e => e.assets.some(a => a.status === "pending")).length,
+    docsPending: exits.filter(e => e.documents.some(d => d.status === "pending" || d.status === "not_generated")).length,
+    interviewsDone: `${exits.filter(e => e.interviewDone).length}/${exits.length}`,
   };
 
-  const currentExit = showDetail ? EXITS.find(e => e.id === showDetail) : null;
-  const completeExit = showComplete ? EXITS.find(e => e.id === showComplete) : null;
+  const currentExit = showDetail ? exits.find(e => e.id === showDetail) : null;
+  const completeExit = showComplete ? exits.find(e => e.id === showComplete) : null;
 
   const handleExportCSV = () => {
+    const content = `Offboarding Report\nName,Designation,Department,LWD,Progress,InterviewDone,F&F Status\n${exits.map(e => `"${e.name}","${e.designation}","${e.department}","${e.lwd}",${e.progress}%,${e.interviewDone},"${e.ffStatus}"`).join("\n")}`;
+    const blob = new Blob([content], { type: "text/csv" });
     const a = document.createElement("a");
-    a.href = "#";
+    a.href = URL.createObjectURL(blob);
+    a.download = `Offboarding_Report_${Date.now()}.csv`;
     a.click();
-    alert("Exporting Offboarding CSV...");
+    showToast("Export Completed", "success", "Offboarding report CSV downloaded.");
+  };
+
+  const handleSignOff = (exitId: string, dept: string) => {
+    setExits(prev => prev.map(e => {
+      if (e.id !== exitId) return e;
+      const clearance = e.clearance.map(c => c.dept === dept ? { ...c, status: "cleared" as const } : c);
+      
+      const clearedCount = clearance.filter(c => c.status === "cleared").length;
+      const clearanceWeight = (clearedCount / clearance.length) * 50;
+
+      const returnedAssets = e.assets.filter(a => a.status === "returned").length;
+      const assetsWeight = e.assets.length > 0 ? (returnedAssets / e.assets.length) * 25 : 25;
+
+      const uploadedDocs = e.documents.filter(d => d.status === "uploaded").length;
+      const docsWeight = e.documents.length > 0 ? (uploadedDocs / e.documents.length) * 25 : 25;
+
+      const progress = Math.round(clearanceWeight + assetsWeight + docsWeight);
+      return { ...e, clearance, progress };
+    }));
+    showToast("Clearance Sign-Off", "success", `${dept} clearance signed off.`);
+  };
+
+  const handleGenerateDoc = (exitId: string, docName: string) => {
+    setExits(prev => prev.map(e => {
+      if (e.id !== exitId) return e;
+      const documents = e.documents.map(d => d.name === docName ? { ...d, status: "uploaded" as const } : d);
+
+      const clearedCount = e.clearance.filter(c => c.status === "cleared").length;
+      const clearanceWeight = (clearedCount / e.clearance.length) * 50;
+
+      const returnedAssets = e.assets.filter(a => a.status === "returned").length;
+      const assetsWeight = e.assets.length > 0 ? (returnedAssets / e.assets.length) * 25 : 25;
+
+      const uploadedDocs = documents.filter(d => d.status === "uploaded").length;
+      const docsWeight = documents.length > 0 ? (uploadedDocs / documents.length) * 25 : 25;
+
+      const progress = Math.round(clearanceWeight + assetsWeight + docsWeight);
+      return { ...e, documents, progress };
+    }));
+    showToast("Document Generated", "success", `${docName} generated successfully.`);
+  };
+
+  const handleSendToFinance = (exitId: string) => {
+    setExits(prev => prev.map(e => {
+      if (e.id !== exitId) return e;
+      return { ...e, ffStatus: "Approved & Processed" };
+    }));
+    showToast("F&F Settlement", "success", "F&F settlement approved and sent to bank.");
+  };
+
+  const handleConfirmComplete = (exitId: string) => {
+    setExits(prev => prev.map(e => {
+      if (e.id !== exitId) return e;
+      const timeline = e.timeline.map(t => ({ ...t, status: "done" as const }));
+      return { ...e, progress: 100, timeline };
+    }));
+    showToast("Exit Completed", "success", "Employee exit process marked as completed.");
+    setShowComplete(null);
+  };
+
+  const handleCompleteInterview = (exitId: string) => {
+    setExits(prev => prev.map(e => {
+      if (e.id !== exitId) return e;
+      const documents = e.documents.map(d => d.name === "Exit Interview Form" ? { ...d, status: "uploaded" as const } : d);
+      return { ...e, interviewDone: true, documents };
+    }));
+    showToast("Interview Completed", "success", "Exit interview recorded successfully.");
+    setShowSchedule(null);
+  };
+
+  const handleInitiateExit = (name: string, type: ExitType, lwd: string, noticeDays: number) => {
+    const formattedLWD = lwd ? new Date(lwd).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "May 10, 2026";
+    const newExit: ExitEmployee = {
+      id: `exit${Date.now()}`,
+      name,
+      designation: "Software Engineer",
+      department: "Engineering",
+      type,
+      lwd: formattedLWD,
+      progress: 10,
+      resumptionDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      acceptedDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      noticePeriodDays: noticeDays || 30,
+      timeline: [
+        { label: "Resignation Letter Received", date: "Today", status: "done" },
+        { label: "Resignation Accepted", date: "Today", status: "done" },
+        { label: "Notice Period Started", date: "Today", status: "active" },
+        { label: "Clearances In Progress", date: "Pending", status: "pending" },
+        { label: "Exit Complete", date: "Pending", status: "pending" },
+      ],
+      clearance: [
+        { dept: "Manager", person: "Rahul Sharma", status: "cleared", icon: User, color: "#00B87C", bgColor: "#DCFCE7" },
+        { dept: "IT", person: "IT Team", status: "pending", icon: Laptop, color: "#0EA5E9", bgColor: "#E0F2FE" },
+        { dept: "Finance", person: "Finance Team", status: "pending", icon: Briefcase, color: "#F59E0B", bgColor: "#FEF3C7" },
+        { dept: "HR", person: "HR Team", status: "pending", icon: User, color: "#8B5CF6", bgColor: "#EDE9FE" },
+        { dept: "Admin", person: "Admin Team", status: "cleared", icon: ShieldCheck, color: "#14B8A6", bgColor: "#CCFBF1" },
+      ],
+      assets: [
+        { name: "Laptop", status: "pending", detail: "Pending return" },
+        { name: "Access Card", status: "pending", detail: "Pending" },
+      ],
+      documents: [
+        { name: "Resignation Letter", status: "uploaded" },
+        { name: "Relieving Letter", status: "not_generated" },
+        { name: "Experience Letter", status: "pending" },
+      ],
+      salary: 95000,
+      gratuity: 0,
+      leaveEncashment: 15000,
+      reimbursements: 2000,
+      deductions: 0,
+      netAmount: 112000,
+      ffStatus: "Pending",
+      interviewDone: false,
+    };
+    setExits(prev => [newExit, ...prev]);
   };
 
   return (
@@ -418,7 +548,7 @@ export function Offboarding() {
         <div className="flex items-center border-b border-border overflow-x-auto scrollbar-hide">
           {(["Active", "Completed", "Scheduled", "Exit Analytics"] as TabType[]).map((tab) => {
             const isActive = activeTab === tab;
-            const count = tab === "Active" ? stats.activeExits : tab === "Completed" ? stats.completedThisMonth : tab === "Scheduled" ? 0 : null;
+            const count = tab === "Active" ? stats.activeExits : tab === "Completed" ? stats.completedThisMonth : tab === "Scheduled" ? scheduledExits.length : null;
             return (
               <button
                 key={tab}
@@ -460,13 +590,41 @@ export function Offboarding() {
               </div>
             )}
             {activeTab === "Completed" && (
-              <div className="flex items-center justify-center h-40 text-muted-foreground font-bold text-sm">
-                No completed exits this period.
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {completedExits.map((exit) => (
+                  <ExitCard
+                    key={exit.id}
+                    exit={exit}
+                    onViewDetail={() => setShowDetail(exit.id)}
+                    onSendReminder={() => setShowReminder(exit.id)}
+                    onComplete={() => setShowComplete(exit.id)}
+                    onScheduleInterview={() => setShowSchedule({id: exit.id, type: "interview"})}
+                  />
+                ))}
+                {completedExits.length === 0 && (
+                  <div className="col-span-2 flex items-center justify-center h-40 text-muted-foreground font-bold text-sm">
+                    No completed exits this period.
+                  </div>
+                )}
               </div>
             )}
             {activeTab === "Scheduled" && (
-              <div className="flex items-center justify-center h-40 text-muted-foreground font-bold text-sm">
-                No scheduled exits.
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {scheduledExits.map((exit) => (
+                  <ExitCard
+                    key={exit.id}
+                    exit={exit}
+                    onViewDetail={() => setShowDetail(exit.id)}
+                    onSendReminder={() => setShowReminder(exit.id)}
+                    onComplete={() => setShowComplete(exit.id)}
+                    onScheduleInterview={() => setShowSchedule({id: exit.id, type: "interview"})}
+                  />
+                ))}
+                {scheduledExits.length === 0 && (
+                  <div className="col-span-2 flex items-center justify-center h-40 text-muted-foreground font-bold text-sm">
+                    No scheduled exits.
+                  </div>
+                )}
               </div>
             )}
             {activeTab === "Exit Analytics" && (
@@ -481,25 +639,30 @@ export function Offboarding() {
       {/* ─── MODALS ─── */}
 
       {/* INITIATE EXIT MODAL */}
-      {showInitiateModal && <InitiateExitModal onClose={() => setShowInitiateModal(false)} />}
+      {showInitiateModal && (
+        <InitiateExitModal 
+          onClose={() => setShowInitiateModal(false)} 
+          onInitiate={handleInitiateExit} 
+        />
+      )}
 
       {/* OFFBOARDING DETAIL SCREEN */}
       {showDetail && currentExit && (
         <OffboardingDetail
           exit={currentExit}
           onClose={() => setShowDetail(null)}
-          onSignOff={(dept) => { alert(`Signing off ${dept} clearance...`); }}
-          onGenerateDoc={(doc) => { alert(`Generating ${doc}...`); }}
+          onSignOff={(dept) => handleSignOff(currentExit.id, dept)}
+          onGenerateDoc={(doc) => handleGenerateDoc(currentExit.id, doc)}
           onSendReminder={() => { setShowDetail(null); setShowReminder(currentExit.id); }}
           onScheduleInterview={() => { setShowDetail(null); setShowSchedule({id: currentExit.id, type: "interview"}); }}
-          onSendToFinance={() => { alert("F&F sent to Finance for approval"); }}
+          onSendToFinance={() => handleSendToFinance(currentExit.id)}
         />
       )}
 
       {/* SEND REMINDER MODAL */}
       {showReminder && (
         <ReminderModal
-          exitName={EXITS.find(e => e.id === showReminder)?.name || ""}
+          exitName={exits.find(e => e.id === showReminder)?.name || ""}
           onClose={() => setShowReminder(null)}
         />
       )}
@@ -509,13 +672,13 @@ export function Offboarding() {
         <CompleteExitModal
           exit={completeExit}
           onClose={() => setShowComplete(null)}
-          onConfirm={() => { alert(`Exit completed for ${completeExit.name}`); setShowComplete(null); }}
+          onConfirm={() => handleConfirmComplete(completeExit.id)}
         />
       )}
 
       {/* EXIT INTERVIEW MODAL */}
       {showSchedule && (() => {
-        const emp = EXITS.find(e => e.id === showSchedule.id);
+        const emp = exits.find(e => e.id === showSchedule.id);
         if (!emp) return null;
         if (showSchedule.type === "interview") {
           return (
@@ -523,7 +686,7 @@ export function Offboarding() {
               employeeName={emp.name}
               interviewDone={emp.interviewDone}
               onClose={() => setShowSchedule(null)}
-              onComplete={() => { alert("Interview marked as completed"); setShowSchedule(null); }}
+              onComplete={() => handleCompleteInterview(emp.id)}
             />
           );
         }
@@ -673,10 +836,15 @@ function ExitCard({ exit, onViewDetail, onSendReminder, onComplete }: {
   );
 }
 
-/* ─── INITIATE EXIT MODAL ─── */
-function InitiateExitModal({ onClose }: { onClose: () => void }) {
+function InitiateExitModal({ onClose, onInitiate }: { onClose: () => void; onInitiate: (name: string, type: ExitType, lwd: string, noticeDays: number) => void }) {
   const [exitType, setExitType] = useState<ExitType>("Resignation");
   const [step, setStep] = useState<"form" | "preview" | "success">("form");
+
+  const [empName, setEmpName] = useState("");
+  const [lwdDate, setLwdDate] = useState("");
+  const [resDate, setResDate] = useState("2026-04-06");
+  const [noticeDays, setNoticeDays] = useState(30);
+  const [hrOwner, setHrOwner] = useState("");
 
   const exitTypes: ExitType[] = ["Resignation", "Retirement", "Termination", "Contract End", "Other"];
   const reasonCategories = ["Personal", "Career Growth", "Relocation", "Work Culture", "Compensation", "Health", "Education", "Other"];
@@ -737,9 +905,23 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
               <input
                 type="text"
                 placeholder="Search employee name..."
+                value={empName}
+                onChange={e => setEmpName(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
               />
             </div>
+            {empName && (
+              <div className="mt-2 space-y-1 max-h-32 overflow-y-auto bg-muted/20 rounded-xl p-1">
+                {ACTIVE_EMPLOYEES.filter(emp => emp.name.toLowerCase().includes(empName.toLowerCase())).map(emp => (
+                  <button key={emp.id} onClick={() => {
+                    setEmpName(emp.name);
+                  }} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted transition-all text-left">
+                    <div className="w-7 h-7 rounded-full bg-[#EF4444]/10 flex items-center justify-center text-[#EF4444] text-[9px] font-black">{emp.name.split(" ").map(n=>n[0]).join("")}</div>
+                    <div><p className="text-[12px] font-bold text-foreground">{emp.name}</p><p className="text-[11px] text-muted-foreground">{emp.role} · {emp.dept}</p></div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Exit Type */}
@@ -768,14 +950,14 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
               <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">LAST WORKING DATE</label>
               <div className="relative">
                 <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input type="date" className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+                <input type="date" value={lwdDate} onChange={e => setLwdDate(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
               </div>
             </div>
             <div>
               <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">RESIGNATION DATE</label>
               <div className="relative">
                 <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input type="date" defaultValue="2026-04-06" className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+                <input type="date" value={resDate} onChange={e => setResDate(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
               </div>
             </div>
           </div>
@@ -783,7 +965,7 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
           {/* Notice Period */}
           <div>
             <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">NOTICE PERIOD (DAYS)</label>
-            <input type="number" defaultValue={30} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+            <input type="number" value={noticeDays} onChange={e => setNoticeDays(parseInt(e.target.value) || 0)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
           </div>
 
           {/* Reason Category */}
@@ -812,7 +994,7 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
             <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">ASSIGNED HR OWNER</label>
             <div className="relative">
               <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input type="text" placeholder="Search HR employee..." className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+              <input type="text" placeholder="Search HR employee..." value={hrOwner} onChange={e => setHrOwner(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
             </div>
           </div>
 
@@ -846,7 +1028,14 @@ function InitiateExitModal({ onClose }: { onClose: () => void }) {
               Preview Checklist
             </button>
             <button
-              onClick={() => setStep("success")}
+              onClick={() => {
+                if (!empName.trim()) {
+                  showToast("Validation Error", "error", "Please select or enter an employee name.");
+                  return;
+                }
+                onInitiate(empName, exitType, lwdDate, noticeDays);
+                setStep("success");
+              }}
               className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[12px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20"
             >
               Initiate Exit
@@ -1203,7 +1392,7 @@ function ExitInterviewModal({ employeeName, interviewDone, onClose, onComplete }
   employeeName: string; interviewDone: boolean; onClose: () => void; onComplete: () => void;
 }) {
   const [ratings, setRatings] = useState<Record<string, number>>({});
-  const [reason, setReason] = useState<string>("");
+  const [recommendVal, setRecommendVal] = useState<string>("");
 
   if (interviewDone) {
     return (
@@ -1268,9 +1457,9 @@ function ExitInterviewModal({ employeeName, interviewDone, onClose, onComplete }
                   {(q.options || []).map((o) => (
                     <button
                       key={o}
-                      onClick={() => setReason(o === "Yes" || o === "Maybe" ? "positive" : "negative")}
+                      onClick={() => setRecommendVal(o)}
                       className={`px-4 py-2 rounded-xl text-[11px] font-black border transition-all ${
-                        (o === "Yes" && reason === "positive") || (o === "No" && reason === "negative") ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-muted-foreground hover:border-[#00B87C]/30"
+                        recommendVal === o ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-muted-foreground hover:border-[#00B87C]/30"
                       }`}
                     >
                       {o}
