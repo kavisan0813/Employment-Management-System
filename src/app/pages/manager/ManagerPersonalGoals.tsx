@@ -1,4 +1,4 @@
-import { useState, forwardRef } from "react";
+import { useState, forwardRef, useEffect } from "react";
 import {
   Target,
   Plus,
@@ -106,17 +106,39 @@ const goalsData: Goal[] = [
 export function ManagerPersonalGoals() {
   const [activeTab, setActiveTab] = useState<GoalStatus>("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [goals, setGoals] = useState<Goal[]>(goalsData);
+  const [selectedGoalForDetails, setSelectedGoalForDetails] = useState<Goal | null>(null);
+  const [selectedGoalForCheckIn, setSelectedGoalForCheckIn] = useState<Goal | null>(null);
+  const [activeMenuGoalId, setActiveMenuGoalId] = useState<string | null>(null);
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
 
-  const filteredGoals = goalsData.filter(
+  const filteredGoals = goals.filter(
     (goal) => activeTab === "All" || goal.status === activeTab,
   );
 
-  const handleAddGoal = () => {
-    showToast(
-      "Added!",
-      "success",
-      "Your personal goal has been added successfully.",
-    );
+  const handleAddGoal = (newGoalData: any) => {
+    if (editingGoal) {
+      // update
+      setGoals(prev => prev.map(g => g.id === editingGoal.id ? { ...g, ...newGoalData, lastUpdated: "Today" } : g));
+      showToast("Updated!", "success", "Goal updated successfully.");
+      setEditingGoal(null);
+    } else {
+      // add new
+      const newGoal: Goal = {
+        id: (goals.length + 1).toString(),
+        title: newGoalData.title || "New Goal",
+        category: newGoalData.category || "Technical",
+        priority: newGoalData.priority || "Medium",
+        progress: 0,
+        deadline: newGoalData.deadline || "Q2 Target",
+        kr: newGoalData.kr || "Key result details",
+        lastUpdated: "Today",
+        manager: "Rajan Kumar",
+        status: "In Progress",
+      };
+      setGoals(prev => [...prev, newGoal]);
+      showToast("Added!", "success", "Your personal goal has been added successfully.");
+    }
     setIsModalOpen(false);
   };
 
@@ -152,33 +174,40 @@ export function ManagerPersonalGoals() {
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard label="GOALS SET" value="5" color="default" />
-        <KPICard label="COMPLETED" value="2" color="green" />
-        <KPICard label="IN PROGRESS" value="2" color="teal" />
-        <KPICard label="AT RISK" value="1" color="red" />
+        <KPICard label="GOALS SET" value={goals.length.toString()} color="default" />
+        <KPICard label="COMPLETED" value={goals.filter(g => g.status === "Completed").length.toString()} color="green" />
+        <KPICard label="IN PROGRESS" value={goals.filter(g => g.status === "In Progress").length.toString()} color="teal" />
+        <KPICard label="AT RISK" value={goals.filter(g => g.status === "At Risk").length.toString()} color="red" />
       </div>
 
       {/* OVERALL PROGRESS */}
-      <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <BarChart3 size={18} className="text-[#00B87C]" />
-            <span className="text-[15px] font-bold text-foreground tracking-tight">
-              Overall Progress: 72%
-            </span>
+      {(() => {
+        const totalGoals = goals.length;
+        const onTrackCount = goals.filter(g => g.status !== "At Risk").length;
+        const avgProgress = totalGoals > 0 ? Math.round(goals.reduce((acc, g) => acc + g.progress, 0) / totalGoals) : 0;
+        return (
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <BarChart3 size={18} className="text-[#00B87C]" />
+                <span className="text-[15px] font-bold text-foreground tracking-tight">
+                  Overall Progress: {avgProgress}%
+                </span>
+              </div>
+              <span className="text-[12px] font-bold text-muted-foreground">
+                {onTrackCount} / {totalGoals} goals on track
+              </span>
+            </div>
+            <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${avgProgress}%` }}
+                className="h-full bg-[#00B87C] rounded-full"
+              />
+            </div>
           </div>
-          <span className="text-[12px] font-bold text-muted-foreground">
-            4 / 5 goals on track
-          </span>
-        </div>
-        <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: "72%" }}
-            className="h-full bg-[#00B87C] rounded-full"
-          />
-        </div>
-      </div>
+        );
+      })()}
 
       {/* GOALS LIST */}
       <div className="bg-card border border-border rounded-[32px] p-2 md:p-4 shadow-sm min-h-[500px]">
@@ -216,7 +245,26 @@ export function ManagerPersonalGoals() {
         <div className="grid grid-cols-1 gap-4 px-2">
           <AnimatePresence mode="popLayout">
             {filteredGoals.map((goal) => (
-              <GoalItem key={goal.id} goal={goal} />
+              <GoalItem
+                key={goal.id}
+                goal={goal}
+                onViewDetails={() => setSelectedGoalForDetails(goal)}
+                onCheckIn={() => setSelectedGoalForCheckIn(goal)}
+                isMenuOpen={activeMenuGoalId === goal.id}
+                onMenuToggle={() => setActiveMenuGoalId(activeMenuGoalId === goal.id ? null : goal.id)}
+                onDelete={() => {
+                  setGoals(prev => prev.filter(g => g.id !== goal.id));
+                  showToast("Deleted!", "info", "Goal has been deleted.");
+                }}
+                onMarkCompleted={() => {
+                  setGoals(prev => prev.map(g => g.id === goal.id ? { ...g, progress: 100, status: "Completed" } : g));
+                  showToast("Success", "success", "Goal marked as Completed!");
+                }}
+                onEdit={() => {
+                  setEditingGoal(goal);
+                  setIsModalOpen(true);
+                }}
+              />
             ))}
           </AnimatePresence>
         </div>
@@ -225,9 +273,177 @@ export function ManagerPersonalGoals() {
       {/* ADD GOAL MODAL */}
       <AddGoalModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingGoal(null);
+        }}
         onSubmit={handleAddGoal}
+        editingGoal={editingGoal}
       />
+
+      {/* CHECK-IN GOAL MODAL */}
+      {selectedGoalForCheckIn && (() => {
+        const [progress, setProgress] = useState(selectedGoalForCheckIn.progress);
+        const [status, setStatus] = useState(selectedGoalForCheckIn.status);
+        const [checkInComment, setCheckInComment] = useState("");
+
+        const handleSaveCheckIn = () => {
+          setGoals((prev) =>
+            prev.map((g) =>
+              g.id === selectedGoalForCheckIn.id
+                ? {
+                    ...g,
+                    progress,
+                    status,
+                    lastUpdated: "Today",
+                  }
+                : g
+            )
+          );
+          showToast("Saved!", "success", "Progress checked in successfully.");
+          setSelectedGoalForCheckIn(null);
+        };
+
+        return (
+          <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
+            <div onClick={() => setSelectedGoalForCheckIn(null)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+            <div className="relative w-full max-w-[440px] bg-card border border-border rounded-[32px] shadow-2xl p-6 animate-in zoom-in-95 flex flex-col">
+              <div className="flex items-center justify-between pb-4 border-b border-border">
+                <h3 className="text-base font-bold text-foreground">Goal Check-in</h3>
+                <button onClick={() => setSelectedGoalForCheckIn(null)} className="text-muted-foreground hover:text-foreground">
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="py-6 space-y-4 text-sm flex-1">
+                <div>
+                  <span className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Goal</span>
+                  <p className="font-bold text-foreground text-sm">{selectedGoalForCheckIn.title}</p>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                    Progress: {progress}%
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={progress}
+                    onChange={(e) => setProgress(parseInt(e.target.value))}
+                    className="w-full accent-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                    Goal Status
+                  </label>
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value as GoalStatus)}
+                    className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none appearance-none cursor-pointer focus:border-[#00B87C] bg-card text-foreground dark:bg-zinc-900"
+                  >
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="At Risk">At Risk</option>
+                    <option value="Not Started">Not Started</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                    Check-in Comments
+                  </label>
+                  <textarea
+                    value={checkInComment}
+                    onChange={(e) => setCheckInComment(e.target.value)}
+                    placeholder="What updates do you have on this goal?"
+                    className="w-full h-20 p-3 rounded-xl border bg-transparent text-xs outline-none resize-none focus:border-[#00B87C] text-foreground"
+                  />
+                </div>
+              </div>
+              <div className="pt-4 border-t border-border flex items-center justify-end gap-3 bg-secondary/10 rounded-b-2xl">
+                <button
+                  onClick={() => setSelectedGoalForCheckIn(null)}
+                  className="px-4 py-2.5 rounded-xl border text-xs font-bold text-muted-foreground hover:bg-secondary"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveCheckIn}
+                  className="px-5 py-2.5 rounded-xl text-white text-xs font-bold bg-[#00B87C] hover:opacity-90 shadow-lg shadow-emerald-500/20"
+                >
+                  Save Check-in
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* VIEW DETAILS GOAL MODAL */}
+      {selectedGoalForDetails && (
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
+          <div onClick={() => setSelectedGoalForDetails(null)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+          <div className="relative w-full max-w-[480px] bg-card border border-border rounded-[32px] shadow-2xl p-8 animate-in zoom-in-95 flex flex-col">
+            <div className="flex items-center justify-between pb-4 border-b border-border">
+              <div className="flex items-center gap-2">
+                <Target className="text-[#00B87C]" size={20} />
+                <h3 className="text-lg font-bold text-foreground">Goal Details</h3>
+              </div>
+              <button onClick={() => setSelectedGoalForDetails(null)} className="text-muted-foreground hover:text-foreground">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="py-6 space-y-5 text-sm">
+              <div>
+                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Objective</span>
+                <p className="font-bold text-foreground text-[15px]">{selectedGoalForDetails.title}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Category</span>
+                  <span className="px-2 py-0.5 bg-secondary text-foreground text-[10px] font-bold uppercase rounded">
+                    {selectedGoalForDetails.category}
+                  </span>
+                </div>
+                <div>
+                  <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Priority</span>
+                  <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${
+                    selectedGoalForDetails.priority === "High" ? "bg-rose-500/10 text-rose-500 border-rose-200" : "bg-amber-500/10 text-amber-500 border-amber-200"
+                  }`}>
+                    {selectedGoalForDetails.priority}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Key Results (KRs)</span>
+                <p className="text-xs font-semibold text-foreground bg-secondary/40 p-3 rounded-xl border border-border italic leading-relaxed">
+                  {selectedGoalForDetails.kr}
+                </p>
+              </div>
+              <div>
+                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Progress</span>
+                <div className="flex items-center gap-3">
+                  <div className="h-2 w-full bg-secondary rounded-full overflow-hidden flex-1 border">
+                    <div className="h-full bg-primary rounded-full" style={{ width: `${selectedGoalForDetails.progress}%` }} />
+                  </div>
+                  <span className="text-xs font-bold text-primary">{selectedGoalForDetails.progress}%</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t text-[11px] font-bold text-muted-foreground uppercase">
+                <span>Deadline: {selectedGoalForDetails.deadline}</span>
+                <span>Last Updated: {selectedGoalForDetails.lastUpdated}</span>
+              </div>
+            </div>
+            <div className="pt-4 border-t border-border flex items-center justify-end">
+              <button
+                onClick={() => setSelectedGoalForDetails(null)}
+                className="px-6 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:opacity-90 shadow-lg shadow-[#00B87C]/20"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -264,7 +480,27 @@ function KPICard({
   );
 }
 
-const GoalItem = forwardRef<HTMLDivElement, { goal: Goal }>(({ goal }, ref) => {
+interface GoalItemProps {
+  goal: Goal;
+  onViewDetails: () => void;
+  onCheckIn: () => void;
+  onMenuToggle: () => void;
+  isMenuOpen: boolean;
+  onDelete: () => void;
+  onMarkCompleted: () => void;
+  onEdit: () => void;
+}
+
+const GoalItem = forwardRef<HTMLDivElement, GoalItemProps>(({
+  goal,
+  onViewDetails,
+  onCheckIn,
+  onMenuToggle,
+  isMenuOpen,
+  onDelete,
+  onMarkCompleted,
+  onEdit
+}, ref) => {
   const statusIcon =
     goal.status === "Completed" ? (
       <CheckCircle2 size={16} className="text-emerald-500" />
@@ -288,7 +524,7 @@ const GoalItem = forwardRef<HTMLDivElement, { goal: Goal }>(({ goal }, ref) => {
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
-      className="p-4 rounded-2xl border border-border bg-card hover:border-[#00B87C]/30 transition-all space-y-4 group"
+      className="p-4 rounded-2xl border border-border bg-card hover:border-[#00B87C]/30 transition-all space-y-4 group relative"
     >
       {/* TOP ROW */}
       <div className="flex items-center justify-between">
@@ -297,7 +533,7 @@ const GoalItem = forwardRef<HTMLDivElement, { goal: Goal }>(({ goal }, ref) => {
           <h4 className="text-[14px] font-bold text-foreground tracking-tight">
             {goal.title}
           </h4>
-          <span className="px-2 py-0.5 rounded-md bg-muted text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+          <span className="px-2 py-0.5 rounded-md bg-secondary text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
             {goal.category}
           </span>
           <span
@@ -306,9 +542,49 @@ const GoalItem = forwardRef<HTMLDivElement, { goal: Goal }>(({ goal }, ref) => {
             {goal.priority}
           </span>
         </div>
-        <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
-          <MoreVertical size={16} />
-        </button>
+        <div className="relative">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onMenuToggle();
+            }}
+            className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground transition-all"
+          >
+            <MoreVertical size={16} />
+          </button>
+          {isMenuOpen && (
+            <div className="absolute right-0 mt-1 w-36 bg-card border border-border rounded-xl shadow-lg z-50 py-1.5 overflow-hidden animate-in fade-in duration-200">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit();
+                }}
+                className="w-full px-4 py-2 text-left text-xs font-bold text-foreground hover:bg-secondary transition-all"
+              >
+                Edit Goal
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMarkCompleted();
+                }}
+                className="w-full px-4 py-2 text-left text-xs font-bold text-emerald-600 hover:bg-secondary transition-all"
+              >
+                Mark Completed
+              </button>
+              <div className="h-[1px] bg-border my-1" />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete();
+                }}
+                className="w-full px-4 py-2 text-left text-xs font-bold text-rose-600 hover:bg-rose-500/10 transition-all animate-in"
+              >
+                Delete Goal
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* PROGRESS ROW */}
@@ -350,21 +626,13 @@ const GoalItem = forwardRef<HTMLDivElement, { goal: Goal }>(({ goal }, ref) => {
         {/* ACTION ROW */}
         <div className="flex items-center gap-3">
           <button
-            onClick={() =>
-              showToast("Info", "info", "Goal details check-in is up-to-date.")
-            }
+            onClick={onViewDetails}
             className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider hover:underline flex items-center gap-1"
           >
             View Details <ChevronRight size={14} />
           </button>
           <button
-            onClick={() =>
-              showToast(
-                "Success",
-                "success",
-                "Checked in goal progress successfully.",
-              )
-            }
+            onClick={onCheckIn}
             className="px-4 py-1.5 rounded-lg border border-border text-[11px] font-bold uppercase tracking-wider hover:bg-muted transition-all"
           >
             Check-in
@@ -384,12 +652,53 @@ function AddGoalModal({
   isOpen,
   onClose,
   onSubmit,
+  editingGoal,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (goal: any) => void;
+  editingGoal: Goal | null;
 }) {
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState<Category>("Technical");
+  const [priority, setPriority] = useState<Priority>("Medium");
+  const [deadline, setDeadline] = useState("");
+  const [kr, setKr] = useState("");
+  const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    if (editingGoal) {
+      setTitle(editingGoal.title);
+      setCategory(editingGoal.category);
+      setPriority(editingGoal.priority);
+      setDeadline(editingGoal.deadline);
+      setKr(editingGoal.kr);
+      setDescription("");
+    } else {
+      setTitle("");
+      setCategory("Technical");
+      setPriority("Medium");
+      setDeadline("");
+      setKr("");
+      setDescription("");
+    }
+  }, [editingGoal, isOpen]);
+
   if (!isOpen) return null;
+
+  const handleSubmit = () => {
+    if (!title.trim()) {
+      showToast("Error", "error", "Goal title is required.");
+      return;
+    }
+    onSubmit({
+      title,
+      category,
+      priority,
+      deadline: deadline || "Q2 Target",
+      kr: kr || "Key result details",
+    });
+  };
 
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
@@ -409,7 +718,7 @@ function AddGoalModal({
         <div className="p-8 space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold text-foreground tracking-tight">
-              Add New Goal
+              {editingGoal ? "Edit Goal" : "Add New Goal"}
             </h3>
             <button
               onClick={onClose}
@@ -426,8 +735,10 @@ function AddGoalModal({
               </label>
               <input
                 type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Implement TDS Automation"
-                className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold"
+                className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold text-foreground"
               />
             </div>
 
@@ -442,15 +753,23 @@ function AddGoalModal({
                   "Strategy",
                   "Personal",
                   "Technical",
-                ].map((cat) => (
-                  <button
-                    key={cat}
-                    type="button"
-                    className="px-4 py-2 rounded-xl border border-border text-[11px] font-bold uppercase tracking-wider hover:border-[#00B87C] transition-all"
-                  >
-                    {cat}
-                  </button>
-                ))}
+                ].map((cat) => {
+                  const isActive = category === cat;
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setCategory(cat as Category)}
+                      className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-wider transition-all ${
+                        isActive
+                          ? "bg-[#00B87C] text-white border-[#00B87C]"
+                          : "border-border hover:border-[#00B87C] text-foreground bg-transparent"
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -459,42 +778,53 @@ function AddGoalModal({
                 Priority
               </label>
               <div className="flex gap-2">
-                {["High", "Medium", "Low"].map((p) => (
-                  <button
-                    key={p}
-                    type="button"
-                    className={`flex-1 py-2 rounded-xl border border-border text-[11px] font-bold uppercase tracking-wider hover:border-[#00B87C] transition-all ${p === "High" ? "text-rose-600" : p === "Medium" ? "text-amber-600" : "text-blue-600"}`}
-                  >
-                    {p}
-                  </button>
-                ))}
+                {(["High", "Medium", "Low"] as Priority[]).map((p) => {
+                  const isActive = priority === p;
+                  let colorClasses = "";
+                  if (isActive) {
+                    if (p === "High") colorClasses = "bg-rose-600 text-white border-rose-600";
+                    else if (p === "Medium") colorClasses = "bg-amber-600 text-white border-amber-600";
+                    else colorClasses = "bg-blue-600 text-white border-blue-600";
+                  } else {
+                    colorClasses = "border-border hover:border-[#00B87C] text-foreground bg-transparent";
+                  }
+                  return (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setPriority(p)}
+                      className={`flex-1 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-wider transition-all ${colorClasses}`}
+                    >
+                      {p}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
-                Target Date
+                Target Date / Deadline
               </label>
               <input
-                type="date"
-                className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold"
+                type="text"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+                placeholder="e.g. Q2 Target or 2026-12-31"
+                className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold text-foreground"
               />
             </div>
 
             <div className="space-y-2">
               <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1 flex justify-between">
                 Key Results
-                <button
-                  type="button"
-                  className="text-[#00B87C] hover:underline flex items-center gap-1 normal-case font-bold"
-                >
-                  <PlusCircle size={12} /> Add Key Result
-                </button>
               </label>
               <input
                 type="text"
+                value={kr}
+                onChange={(e) => setKr(e.target.value)}
                 placeholder="Result 1..."
-                className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold"
+                className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold text-foreground"
               />
             </div>
 
@@ -503,8 +833,10 @@ function AddGoalModal({
                 Description
               </label>
               <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe your goal..."
-                className="w-full h-24 px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold resize-none"
+                className="w-full h-24 px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold resize-none text-foreground"
               />
             </div>
           </div>
@@ -519,10 +851,10 @@ function AddGoalModal({
             </button>
             <button
               type="button"
-              onClick={onSubmit}
+              onClick={handleSubmit}
               className="flex-2 px-8 py-3 rounded-2xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20"
             >
-              Add Goal
+              {editingGoal ? "Update Goal" : "Add Goal"}
             </button>
           </div>
         </div>

@@ -20,11 +20,313 @@ import {
   MoreVertical as MoreIcon,
 } from "lucide-react";
 
+interface ShiftDetails {
+  type: string;
+  time: string;
+  isOT?: boolean;
+}
+
+interface EmployeeScheduleRow {
+  name: string;
+  dept: string;
+  avatar: string;
+  shifts: (ShiftDetails | null)[];
+}
+
+const INITIAL_SCHEDULE: EmployeeScheduleRow[] = [
+  {
+    name: "Arjun Mehta",
+    dept: "Engineering",
+    avatar: "https://i.pravatar.cc/150?u=Arjun",
+    shifts: [
+      { type: "Morning", time: "06:00-14:00" },
+      null,
+      { type: "Evening", time: "14:00-22:00", isOT: true },
+      null,
+      { type: "Morning", time: "06:00-14:00" },
+      { type: "Full Day", time: "09:00-18:00" },
+      { type: "Off Day", time: "Rest Day" },
+    ],
+  },
+  {
+    name: "Sneha Rao",
+    dept: "Engineering",
+    avatar: "https://i.pravatar.cc/150?u=Sneha",
+    shifts: [
+      null,
+      { type: "Night", time: "22:00-06:00" },
+      { type: "Morning", time: "06:00-14:00" },
+      null,
+      { type: "Evening", time: "14:00-22:00", isOT: true },
+      null,
+      null,
+    ],
+  },
+  {
+    name: "Dev Patel",
+    dept: "Engineering",
+    avatar: "https://i.pravatar.cc/150?u=Dev",
+    shifts: [
+      { type: "Night", time: "22:00-06:00" },
+      null,
+      { type: "Morning", time: "06:00-14:00", isOT: true },
+      { type: "Evening", time: "14:00-22:00" },
+      null,
+      null,
+      null,
+    ],
+  },
+  {
+    name: "Priya Sharma",
+    dept: "Engineering",
+    avatar: "https://i.pravatar.cc/150?u=Priya",
+    shifts: [
+      { type: "Leave", time: "ON APPROVED LEAVE" },
+      { type: "Leave", time: "ON APPROVED LEAVE" },
+      { type: "Leave", time: "ON APPROVED LEAVE" },
+      { type: "Leave", time: "ON APPROVED LEAVE" },
+      { type: "Leave", time: "ON APPROVED LEAVE" },
+      null,
+      null,
+    ],
+  },
+  {
+    name: "Aisha Khan",
+    dept: "Design",
+    avatar: "https://i.pravatar.cc/150?u=Aisha",
+    shifts: [
+      { type: "Full Day", time: "09:00-18:00" },
+      { type: "Full Day", time: "09:00-18:00" },
+      null,
+      { type: "Morning", time: "06:00-14:00" },
+      { type: "Morning", time: "06:00-14:00" },
+      null,
+      { type: "Off Day", time: "Rest Day" },
+    ],
+  },
+];
+
+const BRUSH_SHIFTS: Record<string, ShiftDetails> = {
+  "Morning": { type: "Morning", time: "06:00-14:00" },
+  "Evening": { type: "Evening", time: "14:00-22:00" },
+  "Night": { type: "Night", time: "22:00-06:00" },
+  "Full Day": { type: "Full Day", time: "09:00-18:00" },
+};
+
 export function ManagerTeamSchedule() {
   const [selectedDept, setSelectedDept] = useState("All Departments");
   const [view, setView] = useState<"Week" | "Month" | "Day">("Week");
   const [showAddModal, setShowAddModal] = useState(false);
   const [activeBrush, setActiveBrush] = useState<string | null>(null);
+
+  // Week navigation state
+  const [weekStartDate, setWeekStartDate] = useState<Date>(new Date(2026, 3, 6)); // Apr 6, 2026
+  const [scheduleData, setScheduleData] = useState<EmployeeScheduleRow[]>(INITIAL_SCHEDULE);
+  const [isPainting, setIsPainting] = useState(false);
+
+  // Shift Swap Requests State
+  const [swapRequests, setSwapRequests] = useState([
+    {
+      id: "s1",
+      emp1: "Arjun M.",
+      emp2: "Dev P.",
+      avatar1: "AM",
+      avatar2: "DP",
+      color1: "#059669",
+      color2: "#2563EB",
+      details: "Morning ↔ Night",
+      dateText: "Wed Apr 8 Evening ↔ Wed Apr 8 Morning",
+      reason: "Personal appointment clash on Wednesday morning.",
+    },
+    {
+      id: "s2",
+      emp1: "Sneha R.",
+      emp2: "Priya S.",
+      avatar1: "SR",
+      avatar2: "PS",
+      color1: "#7C3AED",
+      color2: "#DB2777",
+      details: "Night ↔ Evening",
+      dateText: "Tue Apr 7 Night ↔ Wed Apr 8 Evening",
+      reason: "Medical check-up scheduled for Tuesday night.",
+    }
+  ]);
+  const [viewingSwap, setViewingSwap] = useState<(typeof swapRequests)[0] | null>(null);
+
+  const handleApproveSwap = (id: string) => {
+    const swap = swapRequests.find((s) => s.id === id);
+    if (!swap) return;
+    alert(`Shift swap approved between ${swap.emp1} and ${swap.emp2}`);
+    setSwapRequests((prev) => prev.filter((s) => s.id !== id));
+  };
+
+  const handleRejectSwap = (id: string) => {
+    const swap = swapRequests.find((s) => s.id === id);
+    if (!swap) return;
+    alert(`Shift swap rejected between ${swap.emp1} and ${swap.emp2}`);
+    setSwapRequests((prev) => prev.filter((s) => s.id !== id));
+  };
+
+  const handleCellDrop = (empName: string, dayIndex: number, shiftType: string) => {
+    const shiftInfo = BRUSH_SHIFTS[shiftType];
+    if (!shiftInfo) return;
+    setScheduleData((prev) =>
+      prev.map((row) => {
+        if (row.name === empName) {
+          const newShifts = [...row.shifts];
+          newShifts[dayIndex] = { ...shiftInfo };
+          return { ...row, shifts: newShifts };
+        }
+        return row;
+      })
+    );
+  };
+
+  // Modal specific fields
+  const [selectedEmployeeForModal, setSelectedEmployeeForModal] = useState("");
+  const [selectedDayIndexForModal, setSelectedDayIndexForModal] = useState<number | null>(null);
+  const [newShiftType, setNewShiftType] = useState("Morning (06:00 - 14:00)");
+  const [newShiftDate, setNewShiftDate] = useState("");
+  const [newShiftNotes, setNewShiftNotes] = useState("");
+
+  // Attach a global mouseup listener to stop painting if mouse button is released outside cells
+  React.useEffect(() => {
+    const handleGlobalMouseUp = () => {
+      setIsPainting(false);
+    };
+    window.addEventListener("mouseup", handleGlobalMouseUp);
+    return () => window.removeEventListener("mouseup", handleGlobalMouseUp);
+  }, []);
+
+  const handleCellPaint = (empName: string, dayIndex: number) => {
+    if (!activeBrush) return;
+    const shiftInfo = BRUSH_SHIFTS[activeBrush];
+    if (!shiftInfo) return;
+
+    setScheduleData((prev) =>
+      prev.map((row) => {
+        if (row.name === empName) {
+          const newShifts = [...row.shifts];
+          newShifts[dayIndex] = { ...shiftInfo };
+          return { ...row, shifts: newShifts };
+        }
+        return row;
+      })
+    );
+  };
+
+  const handleCellClick = (empName: string, dayIndex: number) => {
+    if (activeBrush) {
+      handleCellPaint(empName, dayIndex);
+    } else {
+      setSelectedEmployeeForModal(empName);
+      setSelectedDayIndexForModal(dayIndex);
+      const dateObj = new Date(weekStartDate);
+      dateObj.setDate(weekStartDate.getDate() + dayIndex);
+      const dateStr = dateObj.toISOString().split("T")[0];
+      setNewShiftDate(dateStr);
+      setNewShiftType("Morning (06:00 - 14:00)");
+      setShowAddModal(true);
+    }
+  };
+
+  const handleAddShiftConfirm = () => {
+    if (selectedEmployeeForModal && selectedDayIndexForModal !== null) {
+      let type = "Morning";
+      let time = "06:00-14:00";
+      if (newShiftType.includes("Evening")) {
+        type = "Evening";
+        time = "14:00-22:00";
+      } else if (newShiftType.includes("Night")) {
+        type = "Night";
+        time = "22:00-06:00";
+      } else if (newShiftType.includes("Full Day")) {
+        type = "Full Day";
+        time = "09:00-18:00";
+      }
+
+      setScheduleData((prev) =>
+        prev.map((row) => {
+          if (row.name === selectedEmployeeForModal) {
+            const newShifts = [...row.shifts];
+            newShifts[selectedDayIndexForModal] = { type, time };
+            return { ...row, shifts: newShifts };
+          }
+          return row;
+        })
+      );
+      setShowAddModal(false);
+      setSelectedEmployeeForModal("");
+      setSelectedDayIndexForModal(null);
+      setNewShiftNotes("");
+    } else if (selectedEmployeeForModal) {
+      // Find day index from date input
+      const dateObj = new Date(newShiftDate);
+      const diffTime = Math.abs(dateObj.getTime() - weekStartDate.getTime());
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const dayIdx = diffDays >= 0 && diffDays < 7 ? diffDays : 0;
+
+      let type = "Morning";
+      let time = "06:00-14:00";
+      if (newShiftType.includes("Evening")) {
+        type = "Evening";
+        time = "14:00-22:00";
+      } else if (newShiftType.includes("Night")) {
+        type = "Night";
+        time = "22:00-06:00";
+      } else if (newShiftType.includes("Full Day")) {
+        type = "Full Day";
+        time = "09:00-18:00";
+      }
+
+      setScheduleData((prev) =>
+        prev.map((row) => {
+          if (row.name.toLowerCase().includes(selectedEmployeeForModal.toLowerCase())) {
+            const newShifts = [...row.shifts];
+            newShifts[dayIdx] = { type, time };
+            return { ...row, shifts: newShifts };
+          }
+          return row;
+        })
+      );
+      setShowAddModal(false);
+      setSelectedEmployeeForModal("");
+      setNewShiftNotes("");
+    }
+  };
+
+  const handlePrevWeek = () => {
+    const newDate = new Date(weekStartDate);
+    newDate.setDate(weekStartDate.getDate() - 7);
+    setWeekStartDate(newDate);
+  };
+
+  const handleNextWeek = () => {
+    const newDate = new Date(weekStartDate);
+    newDate.setDate(weekStartDate.getDate() + 7);
+    setWeekStartDate(newDate);
+  };
+
+  const handleTodayWeek = () => {
+    setWeekStartDate(new Date(2026, 3, 6));
+  };
+
+  const filteredScheduleData = scheduleData.filter((row) => {
+    if (selectedDept === "All Departments") return true;
+    return row.dept === selectedDept;
+  });
+
+  const getWeekRangeLabel = () => {
+    const startStr = weekStartDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const endDate = new Date(weekStartDate);
+    endDate.setDate(weekStartDate.getDate() + 6);
+    const endStr = endDate.toLocaleDateString("en-US", {
+      month: weekStartDate.getMonth() === endDate.getMonth() ? undefined : "short",
+      day: "numeric",
+      year: "numeric",
+    });
+    return `${startStr} - ${endStr}`;
+  };
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">
@@ -54,13 +356,22 @@ export function ManagerTeamSchedule() {
             <Download size={16} /> Export
           </button>
           <button
-            className="px-4 py-2.5 text-sm font-bold rounded-xl border transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800 active:scale-95 flex items-center gap-2"
-            style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+            onClick={() => setActiveBrush(activeBrush ? null : "Morning")}
+            className={`px-4 py-2.5 text-sm font-bold rounded-xl border transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800 active:scale-95 flex items-center gap-2 ${
+              activeBrush ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]" : ""
+            }`}
+            style={activeBrush ? {} : { borderColor: "var(--border)", color: "var(--foreground)" }}
           >
             <CalendarPlus size={16} /> Shift Painter
           </button>
           <button
-            onClick={() => setShowAddModal(true)}
+            onClick={() => {
+              setSelectedEmployeeForModal(filteredScheduleData[0]?.name || "");
+              setSelectedDayIndexForModal(0);
+              const dateStr = weekStartDate.toISOString().split("T")[0];
+              setNewShiftDate(dateStr);
+              setShowAddModal(true);
+            }}
             className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-white shadow-lg shadow-emerald-600/20 transition-all hover:opacity-90 active:scale-95"
             style={{ backgroundColor: "#00B87C" }}
           >
@@ -117,17 +428,26 @@ export function ManagerTeamSchedule() {
       <div className="bg-card p-4 rounded-2xl border border-border shadow-sm flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 p-1 bg-secondary rounded-xl">
-            <button className="p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] transition-colors text-muted-foreground hover:text-primary active:scale-90">
+            <button
+              onClick={handlePrevWeek}
+              className="p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] transition-colors text-muted-foreground hover:text-primary active:scale-90"
+            >
               <ChevronLeft size={18} />
             </button>
             <span className="text-sm font-bold px-3 text-foreground min-w-[180px] text-center">
-              Apr 6 - Apr 12, 2026
+              {getWeekRangeLabel()}
             </span>
-            <button className="p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] transition-colors text-muted-foreground hover:text-primary active:scale-90">
+            <button
+              onClick={handleNextWeek}
+              className="p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] transition-colors text-muted-foreground hover:text-primary active:scale-90"
+            >
               <ChevronRight size={18} />
             </button>
           </div>
-          <button className="px-4 py-2 text-sm font-bold text-primary bg-secondary border border-primary/20 rounded-xl hover:bg-primary/10 transition-colors active:scale-95">
+          <button
+            onClick={handleTodayWeek}
+            className="px-4 py-2 text-sm font-bold text-primary bg-secondary border border-primary/20 rounded-xl hover:bg-primary/10 transition-colors active:scale-95"
+          >
             Today
           </button>
         </div>
@@ -139,12 +459,13 @@ export function ManagerTeamSchedule() {
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
             />
             <select
-              className="pl-9 pr-6 py-2 rounded-xl border border-border bg-background text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none appearance-none cursor-pointer"
+              className="pl-9 pr-6 py-2 rounded-xl border border-border bg-background text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none appearance-none cursor-pointer text-foreground"
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}
             >
-              <option>All Departments</option>
-              <option>Engineering</option>
+              <option value="All Departments">All Departments</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Design">Design</option>
             </select>
             <ChevronDown
               size={14}
@@ -292,6 +613,10 @@ export function ManagerTeamSchedule() {
             ].map((type) => (
               <div
                 key={type.type}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData("shiftType", type.type);
+                }}
                 onClick={() =>
                   setActiveBrush(activeBrush === type.type ? null : type.type)
                 }
@@ -326,98 +651,180 @@ export function ManagerTeamSchedule() {
         </div>
       </div>
 
-      {/* SCHEDULE GRID */}
-      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8 bg-white dark:bg-zinc-900">
-        <div className="grid grid-cols-[240px_repeat(7,1fr)] bg-secondary/50 border-b border-border">
-          <div className="px-4 py-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center">
-            Employee
-          </div>
-          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => (
-            <div
-              key={day}
-              className={`px-3 py-3 text-center border-l border-border flex flex-col justify-center ${day === "Mon" ? "bg-primary/5" : ""}`}
-            >
-              <span
-                className={`text-xs font-bold ${day === "Mon" ? "text-primary border-b-2 border-[#00B87C] pb-0.5 inline-block mx-auto" : "text-foreground"}`}
-              >
-                {day}
-              </span>
-              <span className="text-[11px] text-muted-foreground font-bold mt-1">
-                Apr {6 + i}
-              </span>
+      {/* VIEW RENDERERS */}
+      {view === "Week" && (
+        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8 bg-white dark:bg-zinc-900">
+          <div className="grid grid-cols-[240px_repeat(7,1fr)] bg-secondary/50 border-b border-border">
+            <div className="px-4 py-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center">
+              Employee
             </div>
-          ))}
-        </div>
-
-        <div className="grid-body divide-y divide-border">
-          {/* Arjun Mehta */}
-          <div className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
-            <EmployeeCell
-              name="Arjun Mehta"
-              dept="Engineering"
-              avatar="https://i.pravatar.cc/150?u=Arjun"
-            />
-            <ShiftCell type="Morning" time="06:00-14:00" />
-            <EmptyCell />
-            <ShiftCell type="Evening" time="14:00-22:00" isOT />
-            <EmptyCell />
-            <ShiftCell type="Morning" time="06:00-14:00" />
-            <ShiftCell type="Full Day" time="09:00-18:00" />
-            <ShiftCell type="Off Day" time="Rest Day" />
+            {Array.from({ length: 7 }).map((_, i) => {
+              const dateObj = new Date(weekStartDate);
+              dateObj.setDate(weekStartDate.getDate() + i);
+              const dayLabel = dateObj.toLocaleDateString("en-US", { weekday: "short" });
+              const monthLabel = dateObj.toLocaleDateString("en-US", { month: "short" });
+              const dateNum = dateObj.getDate();
+              return (
+                <div
+                  key={i}
+                  className={`px-3 py-3 text-center border-l border-border flex flex-col justify-center ${dayLabel === "Mon" ? "bg-[#00B87C]/5" : ""}`}
+                >
+                  <span
+                    className={`text-xs font-bold ${dayLabel === "Mon" ? "text-[#00B87C] border-b-2 border-[#00B87C] pb-0.5 inline-block mx-auto" : "text-foreground"}`}
+                  >
+                    {dayLabel}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground font-bold mt-1">
+                    {monthLabel} {dateNum}
+                  </span>
+                </div>
+              );
+            })}
           </div>
 
-          {/* Sneha Rao */}
-          <div className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
-            <EmployeeCell
-              name="Sneha Rao"
-              dept="Engineering"
-              avatar="https://i.pravatar.cc/150?u=Sneha"
-            />
-            <EmptyCell />
-            <ShiftCell type="Night" time="22:00-06:00" />
-            <ShiftCell type="Morning" time="06:00-14:00" />
-            <EmptyCell />
-            <ShiftCell type="Evening" time="14:00-22:00" isOT />
-            <EmptyCell />
-            <EmptyCell />
-          </div>
+          <div className="grid-body divide-y divide-border">
+            {filteredScheduleData.map((emp) => (
+              <div key={emp.name} className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
+                <EmployeeCell name={emp.name} dept={emp.dept} avatar={emp.avatar} />
+                {emp.shifts.map((shift, dayIdx) => {
+                  if (shift?.type === "Leave") {
+                    if (emp.name === "Priya Sharma") {
+                      if (dayIdx === 0) {
+                        return (
+                          <div key={dayIdx} className="col-span-5 border-l border-border/50 p-1">
+                            <div
+                              className="w-full h-full rounded-xl flex items-center justify-center text-[11px] font-bold tracking-widest text-[#F59E0B] border-l-4 border-l-[#F59E0B]"
+                              style={{ backgroundColor: "#FEF3C7" }}
+                            >
+                              ON APPROVED LEAVE
+                            </div>
+                          </div>
+                        );
+                      } else if (dayIdx < 5) {
+                        return null;
+                      }
+                    }
+                    return (
+                      <div key={dayIdx} className="border-l border-border/50 p-1 flex items-stretch">
+                        <div className="flex-1 rounded-xl p-2 flex flex-col justify-center text-left bg-[#FEF3C7] text-[#F59E0B] border-l-4 border-l-[#F59E0B]">
+                          <span className="text-[11px] font-bold uppercase tracking-tight">Leave</span>
+                          <span className="text-[11px] font-bold opacity-80">{shift.time}</span>
+                        </div>
+                      </div>
+                    );
+                  }
 
-          {/* Dev Patel */}
-          <div className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
-            <EmployeeCell
-              name="Dev Patel"
-              dept="Engineering"
-              avatar="https://i.pravatar.cc/150?u=Dev"
-            />
-            <ShiftCell type="Night" time="22:00-06:00" />
-            <EmptyCell />
-            <ShiftCell type="Morning" time="06:00-14:00" isOT />
-            <ShiftCell type="Evening" time="14:00-22:00" />
-            <EmptyCell />
-            <EmptyCell />
-            <EmptyCell />
-          </div>
+                  if (!shift) {
+                    return (
+                      <EmptyCell
+                        key={dayIdx}
+                        onMouseDown={() => {
+                          setIsPainting(true);
+                          handleCellPaint(emp.name, dayIdx);
+                        }}
+                        onMouseEnter={() => {
+                          if (isPainting) handleCellPaint(emp.name, dayIdx);
+                        }}
+                        onClick={() => handleCellClick(emp.name, dayIdx)}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          const shiftType = e.dataTransfer.getData("shiftType");
+                          if (shiftType) handleCellDrop(emp.name, dayIdx, shiftType);
+                        }}
+                      />
+                    );
+                  }
 
-          {/* Priya Sharma */}
-          <div className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
-            <EmployeeCell
-              name="Priya Sharma"
-              dept="Engineering"
-              avatar="https://i.pravatar.cc/150?u=Priya"
-            />
-            <div className="col-span-5 border-l border-border/50 p-1">
-              <div
-                className="w-full h-full rounded-xl flex items-center justify-center text-[11px] font-bold tracking-widest text-[#F59E0B] border-l-4 border-l-[#F59E0B]"
-                style={{ backgroundColor: "#FEF3C7" }}
-              >
-                ON APPROVED LEAVE Apr 6-10
+                  return (
+                    <ShiftCell
+                      key={dayIdx}
+                      type={shift.type}
+                      time={shift.time}
+                      isOT={shift.isOT}
+                      onMouseDown={() => {
+                        setIsPainting(true);
+                        handleCellPaint(emp.name, dayIdx);
+                      }}
+                      onMouseEnter={() => {
+                        if (isPainting) handleCellPaint(emp.name, dayIdx);
+                      }}
+                      onClick={() => handleCellClick(emp.name, dayIdx)}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        const shiftType = e.dataTransfer.getData("shiftType");
+                        if (shiftType) handleCellDrop(emp.name, dayIdx, shiftType);
+                      }}
+                    />
+                  );
+                })}
               </div>
-            </div>
-            <EmptyCell />
-            <EmptyCell />
+            ))}
           </div>
         </div>
-      </div>
+      )}
+
+      {view === "Day" && (
+        <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-6 mb-8 bg-white dark:bg-zinc-900">
+          <h3 className="text-sm font-bold text-foreground mb-4">
+            Shifts for {weekStartDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+          </h3>
+          <div className="divide-y divide-border">
+            {filteredScheduleData.map((emp) => {
+              const todayShift = emp.shifts[0];
+              return (
+                <div key={emp.name} className="py-3.5 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <img src={emp.avatar} className="w-8 h-8 rounded-full border" />
+                    <div>
+                      <p className="text-xs font-bold text-foreground">{emp.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{emp.dept}</p>
+                    </div>
+                  </div>
+                  <div>
+                    {todayShift ? (
+                      <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20">
+                        {todayShift.type} ({todayShift.time})
+                      </span>
+                    ) : (
+                      <span className="text-xs text-muted-foreground italic">No shift assigned</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {view === "Month" && (
+        <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-6 mb-8 bg-white dark:bg-zinc-900">
+          <h3 className="text-sm font-bold text-foreground mb-4">Monthly Shift Coverage Summary</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredScheduleData.map((emp) => {
+              const shiftCount = emp.shifts.filter((s) => s && s.type !== "Off Day" && s.type !== "Leave").length * 4;
+              return (
+                <div key={emp.name} className="p-4 rounded-xl border border-border bg-card space-y-3" style={{ borderColor: "var(--border)" }}>
+                  <div className="flex items-center gap-3">
+                    <img src={emp.avatar} className="w-8 h-8 rounded-full border" />
+                    <div>
+                      <p className="text-xs font-bold text-foreground">{emp.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{emp.dept}</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center text-xs pt-1 border-t" style={{ borderColor: "var(--border)" }}>
+                    <span className="text-muted-foreground">Scheduled Shifts</span>
+                    <span className="font-bold text-foreground">{shiftCount} shifts this month</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-muted-foreground">Monthly Rest Days</span>
+                    <span className="font-bold text-foreground">8 days</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* BOTTOM PANELS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
@@ -434,88 +841,71 @@ export function ManagerTeamSchedule() {
               </h3>
             </div>
             <span className="px-3 py-1 bg-amber-50/50 text-amber-600 text-[11px] font-bold rounded-full border border-amber-200">
-              2 PENDING
+              {swapRequests.length} PENDING
             </span>
           </div>
           <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-            {/* Swap 1 */}
-            <div className="pb-4 border-b border-border/50 group">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center -space-x-2">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#059669]">
-                      AM
+            {swapRequests.map((swap) => (
+              <div key={swap.id} className="pb-4 border-b border-border/50 group">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center -space-x-2">
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm"
+                        style={{ backgroundColor: swap.color1 }}
+                      >
+                        {swap.avatar1}
+                      </div>
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm"
+                        style={{ backgroundColor: swap.color2 }}
+                      >
+                        {swap.avatar2}
+                      </div>
                     </div>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#2563EB]">
-                      DP
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
-                      Arjun M. ↔ Dev P.
-                    </span>
-                    <p className="text-xs text-muted-foreground font-medium mt-0.5">
-                      Morning ↔ Night
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <button className="w-8 h-8 flex items-center justify-center bg-neutral-50 text-muted-foreground rounded-full border border-border hover:bg-neutral-100 transition-colors">
-                    <X size={14} />
-                  </button>
-                  <button className="w-8 h-8 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-100 transition-colors">
-                    <Check size={14} />
-                  </button>
-                </div>
-              </div>
-              <div className="bg-[#F4FBF7] dark:bg-zinc-800/50 px-4 py-3 rounded-2xl flex items-center justify-between">
-                <p className="text-[12px] font-medium text-muted-foreground">
-                  Wed Apr 8 Evening ↔ Wed Apr 8 Morning
-                </p>
-                <button className="text-[12px] font-bold text-[#00B87C] hover:underline">
-                  Details
-                </button>
-              </div>
-            </div>
-            {/* Swap 2 */}
-            <div className="pb-4 border-b border-border/50 group">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center -space-x-2">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#7C3AED]">
-                      SR
-                    </div>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm bg-[#DB2777]">
-                      PS
+                    <div>
+                      <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
+                        {swap.emp1} ↔ {swap.emp2}
+                      </span>
+                      <p className="text-xs text-muted-foreground font-medium mt-0.5">
+                        {swap.details}
+                      </p>
                     </div>
                   </div>
-                  <div>
-                    <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
-                      Sneha R. ↔ Priya S.
-                    </span>
-                    <p className="text-xs text-muted-foreground font-medium mt-0.5">
-                      Night ↔ Evening
-                    </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleRejectSwap(swap.id)}
+                      className="w-8 h-8 flex items-center justify-center bg-neutral-50 text-muted-foreground rounded-full border border-border hover:bg-neutral-100 transition-colors"
+                    >
+                      <X size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleApproveSwap(swap.id)}
+                      className="w-8 h-8 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-100 transition-colors"
+                    >
+                      <Check size={14} />
+                    </button>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <button className="w-8 h-8 flex items-center justify-center bg-neutral-50 text-muted-foreground rounded-full border border-border hover:bg-neutral-100 transition-colors">
-                    <X size={14} />
-                  </button>
-                  <button className="w-8 h-8 flex items-center justify-center bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-100 transition-colors">
-                    <Check size={14} />
+                <div className="bg-[#F4FBF7] dark:bg-zinc-800/50 px-4 py-3 rounded-2xl flex items-center justify-between">
+                  <p className="text-[12px] font-medium text-muted-foreground">
+                    {swap.dateText}
+                  </p>
+                  <button
+                    onClick={() => setViewingSwap(swap)}
+                    className="text-[12px] font-bold text-[#00B87C] hover:underline"
+                  >
+                    Details
                   </button>
                 </div>
               </div>
-              <div className="bg-[#F4FBF7] dark:bg-zinc-800/50 px-4 py-3 rounded-2xl flex items-center justify-between">
-                <p className="text-[12px] font-medium text-muted-foreground">
-                  Tue Apr 7 Night ↔ Wed Apr 8 Evening
-                </p>
-                <button className="text-[12px] font-bold text-[#00B87C] hover:underline">
-                  Details
-                </button>
+            ))}
+            {swapRequests.length === 0 && (
+              <div className="h-full flex flex-col items-center justify-center text-muted-foreground text-xs py-8">
+                <Check size={28} className="text-emerald-500 mb-2" />
+                No pending shift swap requests
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -632,11 +1022,12 @@ export function ManagerTeamSchedule() {
                 </label>
                 <input
                   type="text"
+                  value={selectedEmployeeForModal}
+                  onChange={(e) => setSelectedEmployeeForModal(e.target.value)}
                   placeholder="Search team member..."
-                  className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors"
+                  className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors text-foreground"
                   style={{
                     borderColor: "var(--border)",
-                    color: "var(--foreground)",
                   }}
                 />
               </div>
@@ -645,10 +1036,11 @@ export function ManagerTeamSchedule() {
                   Shift Type
                 </label>
                 <select
-                  className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none"
+                  value={newShiftType}
+                  onChange={(e) => setNewShiftType(e.target.value)}
+                  className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none text-foreground bg-white dark:bg-zinc-900"
                   style={{
                     borderColor: "var(--border)",
-                    color: "var(--foreground)",
                   }}
                 >
                   <option>Morning (06:00 - 14:00)</option>
@@ -662,13 +1054,13 @@ export function ManagerTeamSchedule() {
                   Department
                 </label>
                 <select
-                  className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none"
+                  className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none text-foreground bg-white dark:bg-zinc-900"
                   style={{
                     borderColor: "var(--border)",
-                    color: "var(--foreground)",
                   }}
                 >
                   <option>Engineering</option>
+                  <option>Design</option>
                 </select>
               </div>
               <div>
@@ -677,10 +1069,11 @@ export function ManagerTeamSchedule() {
                 </label>
                 <input
                   type="date"
-                  className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors"
+                  value={newShiftDate}
+                  onChange={(e) => setNewShiftDate(e.target.value)}
+                  className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors text-foreground"
                   style={{
                     borderColor: "var(--border)",
-                    color: "var(--foreground)",
                   }}
                 />
               </div>
@@ -689,11 +1082,12 @@ export function ManagerTeamSchedule() {
                   Notes
                 </label>
                 <textarea
+                  value={newShiftNotes}
+                  onChange={(e) => setNewShiftNotes(e.target.value)}
                   placeholder="Optional notes..."
-                  className="w-full h-20 p-4 rounded-xl border bg-transparent text-[13px] outline-none focus:border-[#00B87C] transition-colors resize-none"
+                  className="w-full h-20 p-4 rounded-xl border bg-transparent text-[13px] outline-none focus:border-[#00B87C] transition-colors resize-none text-foreground"
                   style={{
                     borderColor: "var(--border)",
-                    color: "var(--foreground)",
                   }}
                 />
               </div>
@@ -713,7 +1107,7 @@ export function ManagerTeamSchedule() {
                 Cancel
               </button>
               <button
-                onClick={() => setShowAddModal(false)}
+                onClick={handleAddShiftConfirm}
                 className="px-5 py-2.5 rounded-xl text-white text-[13px] font-bold shadow-lg shadow-[#10B981]/20 hover:opacity-90"
                 style={{ backgroundColor: "#00B87C" }}
               >
@@ -723,6 +1117,177 @@ export function ManagerTeamSchedule() {
           </div>
         </div>
       )}
+
+      {/* Swap Details Modal */}
+      {viewingSwap && (
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm">
+          <div className="w-full max-w-[420px] bg-card rounded-2xl shadow-2xl border border-border animate-in zoom-in-95">
+            <div className="p-6 border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <ArrowLeftRight className="text-[#00B87C]" size={20} />
+                <h3 className="text-base font-bold text-foreground">
+                  Shift Swap Details
+                </h3>
+              </div>
+              <button
+                onClick={() => setViewingSwap(null)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4 text-sm">
+              <div className="flex justify-between items-center bg-secondary/30 p-3 rounded-xl border border-border">
+                <div className="text-center flex-1">
+                  <p className="font-bold text-foreground">{viewingSwap.emp1}</p>
+                  <p className="text-xs text-muted-foreground">Original Shift</p>
+                  <span className="mt-1 inline-block px-2 py-0.5 bg-[#DCFCE7] text-[#00B87C] text-[10px] font-bold rounded">
+                    {viewingSwap.details.split(" ↔ ")[0]}
+                  </span>
+                </div>
+                <div className="text-muted-foreground px-2">↔</div>
+                <div className="text-center flex-1">
+                  <p className="font-bold text-foreground">{viewingSwap.emp2}</p>
+                  <p className="text-xs text-muted-foreground">Original Shift</p>
+                  <span className="mt-1 inline-block px-2 py-0.5 bg-[#EDE9FE] text-[#7C3AED] text-[10px] font-bold rounded">
+                    {viewingSwap.details.split(" ↔ ")[1]}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <span className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                  Proposed Timing
+                </span>
+                <p className="text-xs text-foreground font-semibold bg-secondary/40 p-2.5 rounded-lg border">
+                  {viewingSwap.dateText}
+                </p>
+              </div>
+              <div>
+                <span className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                  Reason for Request
+                </span>
+                <p className="text-xs text-muted-foreground leading-relaxed bg-secondary/40 p-2.5 rounded-lg border">
+                  {viewingSwap.reason}
+                </p>
+              </div>
+            </div>
+            <div className="p-6 border-t border-border flex items-center justify-end gap-3 bg-secondary/20 rounded-b-2xl">
+              <button
+                onClick={() => {
+                  handleRejectSwap(viewingSwap.id);
+                  setViewingSwap(null);
+                }}
+                className="px-4 py-2 rounded-xl border border-border text-xs font-bold text-muted-foreground hover:bg-secondary transition-colors"
+              >
+                Reject Request
+              </button>
+              <button
+                onClick={() => {
+                  handleApproveSwap(viewingSwap.id);
+                  setViewingSwap(null);
+                }}
+                className="px-5 py-2 rounded-xl text-white text-xs font-bold bg-[#00B87C] hover:opacity-90 shadow-lg shadow-emerald-500/20"
+              >
+                Approve Swap
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function EmptyCell({
+  onMouseDown,
+  onMouseEnter,
+  onClick,
+  onDragOver,
+  onDrop,
+}: {
+  onMouseDown?: (e: React.MouseEvent) => void;
+  onMouseEnter?: (e: React.MouseEvent) => void;
+  onClick?: () => void;
+  onDragOver?: (e: React.DragEvent) => void;
+  onDrop?: (e: React.DragEvent) => void;
+}) {
+  return (
+    <div
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onClick={onClick}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      className="border-l border-border/50 p-1 flex items-stretch select-none"
+    >
+      <div className="flex-1 rounded-xl border border-dashed border-border/60 hover:border-emerald-500/50 hover:bg-emerald-50/20 transition-colors flex items-center justify-center text-muted-foreground/40 hover:text-emerald-500 cursor-pointer">
+        <Plus size={12} />
+      </div>
+    </div>
+  );
+}
+
+function ShiftCell({
+  type,
+  time,
+  isOT,
+  onMouseDown,
+  onMouseEnter,
+  onClick,
+  onDragOver,
+  onDrop,
+}: {
+  type: string;
+  time: string;
+  isOT?: boolean;
+  onMouseDown?: (e: React.MouseEvent) => void;
+  onMouseEnter?: (e: React.MouseEvent) => void;
+  onClick?: () => void;
+  onDragOver?: (e: React.DragEvent) => void;
+  onDrop?: (e: React.DragEvent) => void;
+}) {
+  let styleClass = "";
+  if (type === "Morning")
+    styleClass = "bg-[#DCFCE7] text-[#00B87C] border-l-[#00B87C]";
+  if (type === "Evening")
+    styleClass = "bg-[#FEF3C7] text-[#F59E0B] border-l-[#F59E0B]";
+  if (type === "Night")
+    styleClass = "bg-[#EDE9FE] text-[#7C3AED] border-l-[#7C3AED]";
+  if (type === "Full Day")
+    styleClass = "bg-[#DBEAFE] text-[#3B82F6] border-l-[#3B82F6]";
+  if (type === "Off Day")
+    styleClass = "bg-slate-100 text-[#90A4AE] border-l-[#90A4AE]";
+
+  return (
+    <div
+      onMouseDown={onMouseDown}
+      onMouseEnter={onMouseEnter}
+      onClick={onClick}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      className="border-l border-border/50 p-1 flex items-stretch select-none"
+    >
+      <div
+        className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group border-l-4 ${styleClass}`}
+      >
+        <div className="flex items-center justify-between mb-0.5">
+          <span className="text-[11px] font-bold uppercase tracking-tight">
+            {type}
+          </span>
+          {isOT && (
+            <span className="text-[8px] bg-red-500 text-white px-1.5 rounded-full font-bold animate-pulse">
+              OT
+            </span>
+          )}
+        </div>
+        <span className="text-[11px] font-bold opacity-80">{time}</span>
+        <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <MoreIcon
+            size={12}
+            className="text-current opacity-70 hover:opacity-100"
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -758,60 +1323,5 @@ function EmployeeCell({
   );
 }
 
-function EmptyCell() {
-  return (
-    <div className="border-l border-border/50 p-1 flex items-stretch">
-      <div className="flex-1 rounded-xl border border-dashed border-border/60 hover:border-emerald-500/50 hover:bg-emerald-50/20 transition-colors flex items-center justify-center text-muted-foreground/40 hover:text-emerald-500 cursor-pointer">
-        <Plus size={12} />
-      </div>
-    </div>
-  );
-}
 
-function ShiftCell({
-  type,
-  time,
-  isOT,
-}: {
-  type: string;
-  time: string;
-  isOT?: boolean;
-}) {
-  let styleClass = "";
-  if (type === "Morning")
-    styleClass = "bg-[#DCFCE7] text-[#00B87C] border-l-[#00B87C]";
-  if (type === "Evening")
-    styleClass = "bg-[#FEF3C7] text-[#F59E0B] border-l-[#F59E0B]";
-  if (type === "Night")
-    styleClass = "bg-[#EDE9FE] text-[#7C3AED] border-l-[#7C3AED]";
-  if (type === "Full Day")
-    styleClass = "bg-[#DBEAFE] text-[#3B82F6] border-l-[#3B82F6]";
-  if (type === "Off Day")
-    styleClass = "bg-slate-100 text-[#90A4AE] border-l-[#90A4AE]";
 
-  return (
-    <div className="border-l border-border/50 p-1 flex items-stretch">
-      <div
-        className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group border-l-4 ${styleClass}`}
-      >
-        <div className="flex items-center justify-between mb-0.5">
-          <span className="text-[11px] font-bold uppercase tracking-tight">
-            {type}
-          </span>
-          {isOT && (
-            <span className="text-[8px] bg-red-500 text-white px-1.5 rounded-full font-bold animate-pulse">
-              OT
-            </span>
-          )}
-        </div>
-        <span className="text-[11px] font-bold opacity-80">{time}</span>
-        <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <MoreIcon
-            size={12}
-            className="text-current opacity-70 hover:opacity-100"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}

@@ -1,21 +1,33 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Receipt,
   Download,
-  FileText,
-  X,
-  CheckCircle2,
-  AlertTriangle,
-  FileWarning,
-  Info,
   Building,
   Plane,
   Monitor,
   Coffee,
+  X,
 } from "lucide-react";
+import { showToast } from "../../components/workflow/ToastNotification";
+
+// --- TYPES ---
+type ExpenseStatus = "Pending" | "Approved" | "Rejected";
+
+interface ExpenseItem {
+  id: string;
+  empName: string;
+  avatar: string;
+  designation: string;
+  description: string;
+  category: string;
+  amount: string;
+  receiptStatus: string;
+  date: string;
+  status: ExpenseStatus;
+}
 
 // --- MOCK DATA ---
-const MOCK_PENDING_EXPENSES = [
+const INITIAL_EXPENSES: ExpenseItem[] = [
   {
     id: "e1",
     empName: "Arjun Mehta",
@@ -26,7 +38,7 @@ const MOCK_PENDING_EXPENSES = [
     amount: "₹2,800",
     receiptStatus: "Attached",
     date: "Apr 5, 2026",
-    status: "Pending L1",
+    status: "Pending",
   },
   {
     id: "e2",
@@ -38,7 +50,7 @@ const MOCK_PENDING_EXPENSES = [
     amount: "₹999",
     receiptStatus: "Attached",
     date: "Apr 4, 2026",
-    status: "Pending L1",
+    status: "Pending",
   },
   {
     id: "e3",
@@ -50,7 +62,7 @@ const MOCK_PENDING_EXPENSES = [
     amount: "₹1,400",
     receiptStatus: "Missing",
     date: "Apr 3, 2026",
-    status: "Pending L1",
+    status: "Pending",
   },
   {
     id: "e4",
@@ -62,22 +74,48 @@ const MOCK_PENDING_EXPENSES = [
     amount: "₹3,200",
     receiptStatus: "Attached",
     date: "Apr 6, 2026",
-    status: "Pending L1",
+    status: "Pending",
   },
 ];
 
 export function ManagerExpenseApprovals() {
-  const [activeTab, setActiveTab] = useState<
-    "Pending" | "Approved" | "Sent to Finance" | "Rejected"
-  >("Pending");
+  const [expenses, setExpenses] = useState<ExpenseItem[]>(INITIAL_EXPENSES);
+  const [activeTab, setActiveTab] = useState<ExpenseStatus>("Pending");
   const [approveModalOpen, setApproveModalOpen] = useState(false);
-  const [selectedExpense, setSelectedExpense] = useState<
-    (typeof MOCK_PENDING_EXPENSES)[0] | null
-  >(null);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState<ExpenseItem | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
 
-  const handleApproveClick = (expense: (typeof MOCK_PENDING_EXPENSES)[0]) => {
+  const handleApproveClick = (expense: ExpenseItem) => {
     setSelectedExpense(expense);
     setApproveModalOpen(true);
+  };
+
+  const handleRejectClick = (expense: ExpenseItem) => {
+    setSelectedExpense(expense);
+    setRejectReason("");
+    setRejectModalOpen(true);
+  };
+
+  const confirmApprove = () => {
+    if (!selectedExpense) return;
+    setExpenses((prev) =>
+      prev.map((e) => (e.id === selectedExpense.id ? { ...e, status: "Approved" as ExpenseStatus } : e))
+    );
+    setApproveModalOpen(false);
+    setSelectedExpense(null);
+    showToast("Expense Approved", "success", `${selectedExpense.empName}'s expense has been approved and sent to Finance.`);
+  };
+
+  const confirmReject = () => {
+    if (!selectedExpense) return;
+    setExpenses((prev) =>
+      prev.map((e) => (e.id === selectedExpense.id ? { ...e, status: "Rejected" as ExpenseStatus } : e))
+    );
+    setRejectModalOpen(false);
+    setSelectedExpense(null);
+    setRejectReason("");
+    showToast("Expense Rejected", "error", `${selectedExpense.empName}'s expense has been rejected.`);
   };
 
   const getCategoryIcon = (cat: string) => {
@@ -90,9 +128,20 @@ export function ManagerExpenseApprovals() {
   const getCategoryColor = (cat: string) => {
     if (cat === "Food") return "text-amber-600 bg-amber-50 border-amber-100";
     if (cat === "Travel") return "text-teal-600 bg-teal-50 border-teal-100";
-    if (cat === "Equipment")
-      return "text-purple-600 bg-purple-50 border-purple-100";
+    if (cat === "Equipment") return "text-purple-600 bg-purple-50 border-purple-100";
     return "text-teal-600 bg-teal-50 border-teal-100";
+  };
+
+  const filteredExpenses = expenses.filter((e) => e.status === activeTab);
+  const pendingCount = expenses.filter((e) => e.status === "Pending").length;
+  const approvedCount = expenses.filter((e) => e.status === "Approved").length;
+  const rejectedCount = expenses.filter((e) => e.status === "Rejected").length;
+
+  const TABS: ExpenseStatus[] = ["Pending", "Approved", "Rejected"];
+  const tabCounts: Record<ExpenseStatus, number> = {
+    Pending: pendingCount,
+    Approved: approvedCount,
+    Rejected: rejectedCount,
   };
 
   return (
@@ -117,293 +166,236 @@ export function ManagerExpenseApprovals() {
         </button>
       </div>
 
-      {/* INFO BADGE */}
-      <div className="flex items-start gap-3 p-4 mb-6 bg-amber-50 border border-amber-200 rounded-xl">
-        <AlertTriangle size={20} className="text-amber-600 shrink-0 mt-0.5" />
-        <div>
-          <h4 className="text-sm font-bold text-amber-900">
-            Important Policy Reminder
-          </h4>
-          <p className="text-xs font-medium text-amber-700 mt-0.5">
-            Your approvals go to Finance for final processing. Approve only
-            valid business expenses with receipts.
-          </p>
-        </div>
-      </div>
-
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
+        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:border-amber-300 transition-all">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
             Pending My Approval
           </p>
-          <div className="flex items-end gap-3">
-            <p className="text-3xl font-bold text-amber-500 leading-none">4</p>
-            <p className="text-sm font-bold text-amber-600/70 mb-0.5">
-              need your action
-            </p>
-          </div>
+          <p className="text-3xl font-bold text-amber-500 leading-none">{pendingCount}</p>
+          <p className="text-xs text-muted-foreground mt-1">need your action</p>
         </div>
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
+        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:border-emerald-300 transition-all">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-            Approved This Month
+            Approved
           </p>
-          <div className="flex items-end gap-3">
-            <p className="text-3xl font-bold text-emerald-600 leading-none">
-              ₹12,400
-            </p>
-            <p className="text-sm font-bold text-emerald-600/70 mb-0.5">
-              sent to Finance
-            </p>
-          </div>
+          <p className="text-3xl font-bold text-emerald-600 leading-none">{approvedCount}</p>
+          <p className="text-xs text-muted-foreground mt-1">sent to Finance</p>
         </div>
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group">
+        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:border-rose-300 transition-all">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-            Sent to Finance
+            Rejected
           </p>
-          <div className="flex items-end gap-3">
-            <p className="text-3xl font-bold text-teal-600 leading-none">6</p>
-            <p className="text-sm font-bold text-teal-600/70 mb-0.5">
-              awaiting Finance L2
-            </p>
-          </div>
+          <p className="text-3xl font-bold text-rose-500 leading-none">{rejectedCount}</p>
+          <p className="text-xs text-muted-foreground mt-1">returned to employee</p>
         </div>
       </div>
 
       {/* TABS */}
       <div className="flex items-center gap-1 border-b border-border mb-6 overflow-x-auto no-scrollbar">
-        {(["Pending", "Approved", "Sent to Finance", "Rejected"] as const).map(
-          (tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-5 py-3 text-sm font-bold transition-all relative whitespace-nowrap ${
-                activeTab === tab
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-t-lg"
-              }`}
-            >
-              {tab} {tab === "Pending" && "(4)"}
-              {activeTab === tab && (
-                <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#00B87C] rounded-t-full" />
-              )}
-            </button>
-          ),
-        )}
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-5 py-3 text-sm font-bold transition-all relative whitespace-nowrap ${
+              activeTab === tab
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-t-lg"
+            }`}
+          >
+            {tab} ({tabCounts[tab]})
+            {activeTab === tab && (
+              <div className="absolute bottom-0 left-0 w-full h-[3px] bg-[#00B87C] rounded-t-full" />
+            )}
+          </button>
+        ))}
       </div>
 
-      {/* TAB CONTENT: PENDING EXPENSES */}
-      {activeTab === "Pending" && (
-        <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
+      {/* TABLE */}
+      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
+              <tr>
+                <th className="px-6 py-4 border-b border-border">Employee</th>
+                <th className="px-6 py-4 border-b border-border">Description</th>
+                <th className="px-6 py-4 border-b border-border">Category</th>
+                <th className="px-6 py-4 border-b border-border">Amount</th>
+                <th className="px-6 py-4 border-b border-border">Receipt</th>
+                <th className="px-6 py-4 border-b border-border">Date</th>
+                <th className="px-6 py-4 border-b border-border">Status</th>
+                {activeTab === "Pending" && (
+                  <th className="px-6 py-4 border-b border-border text-right">Action</th>
+                )}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filteredExpenses.length === 0 ? (
                 <tr>
-                  <th className="px-6 py-4 border-b border-border">Employee</th>
-                  <th className="px-6 py-4 border-b border-border">
-                    Description
-                  </th>
-                  <th className="px-6 py-4 border-b border-border">Category</th>
-                  <th className="px-6 py-4 border-b border-border">Amount</th>
-                  <th className="px-6 py-4 border-b border-border">Receipt</th>
-                  <th className="px-6 py-4 border-b border-border">Date</th>
-                  <th className="px-6 py-4 border-b border-border">Status</th>
-                  <th className="px-6 py-4 border-b border-border text-right">
-                    Action
-                  </th>
+                  <td colSpan={activeTab === "Pending" ? 8 : 7} className="px-6 py-12 text-center text-muted-foreground font-medium">
+                    No {activeTab.toLowerCase()} expenses
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {MOCK_PENDING_EXPENSES.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="hover:bg-[#00B87C]/[0.08] transition-colors h-[64px]"
-                  >
+              ) : (
+                filteredExpenses.map((row) => (
+                  <tr key={row.id} className="hover:bg-[#00B87C]/[0.04] transition-colors h-[64px]">
                     <td className="px-6 py-2">
                       <div className="flex items-center gap-3">
-                        <img
-                          src={row.avatar}
-                          className="w-9 h-9 rounded-full border border-border"
-                        />
+                        <img src={row.avatar} className="w-9 h-9 rounded-full border border-border" />
                         <div>
-                          <p className="text-sm font-bold text-foreground">
-                            {row.empName}
-                          </p>
+                          <p className="text-sm font-bold text-foreground">{row.empName}</p>
+                          <p className="text-xs text-muted-foreground">{row.designation}</p>
                         </div>
                       </div>
                     </td>
-                    <td
-                      className="px-6 py-2 font-semibold text-foreground max-w-[200px] truncate"
-                      title={row.description}
-                    >
+                    <td className="px-6 py-2 font-semibold text-foreground max-w-[200px] truncate" title={row.description}>
                       {row.description}
                     </td>
                     <td className="px-6 py-2">
-                      <span
-                        className={`px-2 py-1 flex items-center gap-1.5 w-max rounded-md text-[11px] font-bold border ${getCategoryColor(row.category)}`}
-                      >
-                        {getCategoryIcon(row.category)}
-                        {row.category}
+                      <span className={`px-2 py-1 flex items-center gap-1.5 w-max rounded-md text-[11px] font-bold border ${getCategoryColor(row.category)}`}>
+                        {getCategoryIcon(row.category)} {row.category}
                       </span>
                     </td>
-                    <td className="px-6 py-2 font-bold text-foreground">
-                      {row.amount}
-                    </td>
+                    <td className="px-6 py-2 font-bold text-foreground">{row.amount}</td>
                     <td className="px-6 py-2">
-                      {row.receiptStatus === "Attached" ? (
-                        <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600">
-                          <CheckCircle2 size={14} /> Attached
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1.5 text-xs font-bold text-red-600">
-                          <FileWarning size={14} /> Missing
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-2 text-xs font-semibold text-muted-foreground">
-                      {row.date}
-                    </td>
-                    <td className="px-6 py-2">
-                      <span className="flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-md border border-amber-100 w-max">
-                        Pending L1
+                      <span className={`text-xs font-bold ${row.receiptStatus === "Attached" ? "text-emerald-600" : "text-red-500"}`}>
+                        {row.receiptStatus}
                       </span>
                     </td>
-                    <td className="px-6 py-2 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button className="px-3 py-1.5 text-xs font-bold text-rose-600 border border-rose-600/20 hover:bg-rose-50 rounded-lg transition-colors">
-                          Reject
-                        </button>
-                        <button
-                          onClick={() => handleApproveClick(row)}
-                          disabled={row.receiptStatus === "Missing"}
-                          title={
-                            row.receiptStatus === "Missing"
-                              ? "Receipt required for approval"
-                              : ""
-                          }
-                          className={`px-3 py-1.5 text-xs font-bold rounded-lg shadow-sm transition-all ${
-                            row.receiptStatus === "Missing"
-                              ? "bg-secondary text-muted-foreground border border-border cursor-not-allowed opacity-50"
-                              : "bg-[#00B87C] text-white hover:bg-[#00a36d] active:scale-95"
-                          }`}
-                        >
-                          Approve
-                        </button>
-                      </div>
+                    <td className="px-6 py-2 text-xs font-semibold text-muted-foreground">{row.date}</td>
+                    <td className="px-6 py-2">
+                      <span className={`text-[11px] font-bold px-2 py-1 rounded-md border w-max ${
+                        row.status === "Approved"
+                          ? "text-emerald-600 bg-emerald-50 border-emerald-100"
+                          : row.status === "Rejected"
+                            ? "text-red-600 bg-red-50 border-red-100"
+                            : "text-amber-600 bg-amber-50 border-amber-100"
+                      }`}>
+                        {row.status === "Approved" ? "Approved → Finance" : row.status === "Rejected" ? "Rejected" : "Pending L1"}
+                      </span>
                     </td>
+                    {activeTab === "Pending" && (
+                      <td className="px-6 py-2 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleRejectClick(row)}
+                            className="px-3 py-1.5 text-xs font-bold text-rose-600 border border-rose-600/20 hover:bg-rose-50 rounded-lg transition-colors"
+                          >
+                            Reject
+                          </button>
+                          <button
+                            onClick={() => handleApproveClick(row)}
+                            disabled={row.receiptStatus === "Missing"}
+                            title={row.receiptStatus === "Missing" ? "Receipt required for approval" : ""}
+                            className={`px-3 py-1.5 text-xs font-bold rounded-lg shadow-sm transition-all ${
+                              row.receiptStatus === "Missing"
+                                ? "bg-secondary text-muted-foreground border border-border cursor-not-allowed opacity-50"
+                                : "bg-[#00B87C] text-white hover:bg-[#00a36d] active:scale-95"
+                            }`}
+                          >
+                            Approve
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
+      </div>
 
-      {/* APPROVE MODAL */}
+      {/* APPROVE CONFIRMATION MODAL */}
       {approveModalOpen && selectedExpense && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="w-full max-w-[420px] bg-card rounded-2xl shadow-2xl border border-border flex flex-col animate-in zoom-in-95">
-            {/* Header */}
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-secondary/30 rounded-t-2xl">
-              <h3 className="text-lg font-bold text-foreground">
-                Approve Expense Claim
-              </h3>
-              <button
-                onClick={() => setApproveModalOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-800 text-muted-foreground transition-colors"
-              >
-                <X size={20} />
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          onClick={() => setApproveModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-[400px] bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-emerald-50/50">
+              <h3 className="text-[15px] font-bold text-foreground">Confirm Approval</h3>
+              <button onClick={() => setApproveModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
+                <X size={16} className="text-muted-foreground" />
               </button>
             </div>
-
-            {/* Body */}
-            <div className="p-6 space-y-6">
-              {/* Employee Card */}
-              <div className="flex items-center gap-3">
-                <img
-                  src={selectedExpense.avatar}
-                  className="w-12 h-12 rounded-full border border-border shadow-sm"
-                />
-                <div>
-                  <h4 className="text-sm font-bold text-foreground">
-                    {selectedExpense.empName}
-                  </h4>
-                  <p className="text-xs text-muted-foreground font-medium">
-                    {selectedExpense.designation}
-                  </p>
-                </div>
-              </div>
-
-              {/* Expense Summary */}
-              <div className="bg-secondary/50 rounded-xl border border-border p-4 space-y-3">
-                <div className="flex items-center justify-between border-b border-border/50 pb-3">
-                  <span
-                    className={`px-2 py-1 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider border ${getCategoryColor(selectedExpense.category)}`}
-                  >
-                    {getCategoryIcon(selectedExpense.category)}
-                    {selectedExpense.category}
-                  </span>
-                  <span className="text-xl font-bold text-foreground">
-                    {selectedExpense.amount}
-                  </span>
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-muted-foreground mb-1">
-                    Description
-                  </p>
-                  <p className="text-sm font-semibold text-foreground">
-                    {selectedExpense.description}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 pt-2">
-                  <div className="w-8 h-8 rounded bg-background border border-border flex items-center justify-center">
-                    <FileText size={16} className="text-emerald-600" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-foreground">
-                      receipt.pdf
-                    </p>
-                    <p className="text-[11px] text-muted-foreground">
-                      Attached by {selectedExpense.empName}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Note */}
-              <div>
-                <label className="block text-xs font-bold text-foreground mb-1.5">
-                  Manager Note (Optional)
-                </label>
-                <textarea
-                  placeholder="Add a note for Finance..."
-                  className="w-full p-3 bg-background border border-border rounded-xl text-sm outline-none focus:border-primary min-h-[80px] resize-none"
-                ></textarea>
-              </div>
-
-              {/* Info Badge */}
-              <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/50 rounded-lg">
-                <Info size={16} className="text-blue-600 mt-0.5 shrink-0" />
-                <p className="text-xs font-semibold text-blue-800 dark:text-blue-300">
-                  Approving sends this to Finance for final processing (Level
-                  2).
-                </p>
-              </div>
+            <div className="p-6">
+              <p className="text-sm text-muted-foreground mb-2">
+                You are approving{" "}
+                <strong className="text-foreground">{selectedExpense.empName}</strong>'s expense claim of{" "}
+                <strong className="text-foreground">{selectedExpense.amount}</strong>.
+              </p>
+              <p className="text-xs text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-100 mt-4">
+                This will send the claim to Finance for Level 2 processing.
+              </p>
             </div>
-
-            {/* Footer */}
-            <div className="p-6 border-t border-border bg-secondary/30 rounded-b-2xl flex items-center justify-end gap-3">
+            <div className="px-6 py-4 border-t border-border bg-secondary/20 flex items-center justify-end gap-3">
               <button
                 onClick={() => setApproveModalOpen(false)}
-                className="px-5 py-2.5 text-sm font-bold text-muted-foreground border border-border bg-background rounded-xl hover:bg-secondary transition-colors"
+                className="px-4 py-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors"
               >
                 Cancel
               </button>
               <button
-                onClick={() => setApproveModalOpen(false)}
-                className="px-6 py-2.5 text-sm font-bold text-white bg-[#00B87C] rounded-xl hover:bg-[#00a36d] shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+                onClick={confirmApprove}
+                className="px-5 py-2.5 text-sm font-bold text-white bg-[#00B87C] rounded-xl hover:bg-[#00a36d] shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
               >
                 Approve & Send to Finance
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* REJECT MODAL */}
+      {rejectModalOpen && selectedExpense && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          onClick={() => setRejectModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-[400px] bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-red-50/50">
+              <h3 className="text-[15px] font-bold text-foreground">Reject Expense</h3>
+              <button onClick={() => setRejectModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
+                <X size={16} className="text-muted-foreground" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Rejecting{" "}
+                <strong className="text-foreground">{selectedExpense.empName}</strong>'s expense of{" "}
+                <strong className="text-foreground">{selectedExpense.amount}</strong> for "{selectedExpense.description}".
+              </p>
+              <div>
+                <label className="block text-xs font-bold text-foreground mb-1.5">
+                  Reason for Rejection <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  placeholder="Explain why this expense is being rejected..."
+                  className="w-full p-3 bg-background border border-border rounded-xl text-sm outline-none focus:border-red-400 min-h-[90px] resize-none"
+                />
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t border-border bg-secondary/20 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setRejectModalOpen(false)}
+                className="px-4 py-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmReject}
+                className="px-5 py-2.5 text-sm font-bold text-white bg-red-500 rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all active:scale-95"
+              >
+                Confirm Reject
               </button>
             </div>
           </div>

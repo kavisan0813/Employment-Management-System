@@ -169,6 +169,10 @@ export function ManagerTeamTraining() {
   >("My Team");
   const [assignModalOpen, setAssignModalOpen] = useState(false);
 
+  // Filters State
+  const [catalogFilter, setCatalogFilter] = useState("All");
+  const [assignmentSearch, setAssignmentSearch] = useState("");
+
   // Assign Modal State
   const [courseSearch, setCourseSearch] = useState("");
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
@@ -370,7 +374,13 @@ export function ManagerTeamTraining() {
                       {row.certs} certs
                     </td>
                     <td className="px-6 py-2 text-right">
-                      <button className="px-3 py-1.5 text-xs font-bold text-primary border border-primary/20 hover:bg-primary/10 rounded-lg transition-colors">
+                      <button
+                        onClick={() => {
+                          setSelectedAssignees([row.id]);
+                          setAssignModalOpen(true);
+                        }}
+                        className="px-3 py-1.5 text-xs font-bold text-primary border border-primary/20 hover:bg-primary/10 rounded-lg transition-colors"
+                      >
                         {row.actionLabel}
                       </button>
                     </td>
@@ -384,121 +394,164 @@ export function ManagerTeamTraining() {
 
       {/* TAB CONTENT: TRAINING CATALOG */}
       {activeTab === "Training Catalog" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {MOCK_CATALOG.map((course) => (
-            <div
-              key={course.id}
-              className="bg-card border border-border rounded-2xl overflow-hidden hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-shadow flex flex-col"
-            >
-              <div
-                className={`h-24 bg-gradient-to-r ${course.color} p-4 flex flex-col justify-between shrink-0`}
-              >
-                <span className="w-max px-2 py-1 bg-white/20 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider rounded">
-                  {course.category}
-                </span>
-              </div>
-              <div className="p-5 flex flex-col flex-1">
-                <h3 className="text-base font-bold text-foreground mb-1 line-clamp-1">
-                  {course.title}
-                </h3>
-                <p className="text-xs font-semibold text-muted-foreground mb-4">
-                  {course.provider}
-                </p>
-
-                <div className="flex items-center gap-4 mt-auto mb-5 text-xs font-bold text-foreground">
-                  <div className="flex items-center gap-1.5">
-                    <Clock size={14} className="text-muted-foreground" />{" "}
-                    {course.duration}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Star
-                      size={14}
-                      className="text-amber-400"
-                      fill="currentColor"
-                    />{" "}
-                    {course.rating}
-                  </div>
-                </div>
-
+        <div className="space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-card p-3 rounded-2xl border border-border shadow-sm">
+            <div className="flex gap-2">
+              {["All", "Engineering", "Frontend", "Security", "DevOps", "Compliance"].map((cat) => (
                 <button
-                  onClick={() => setAssignModalOpen(true)}
-                  className="w-full py-2 bg-secondary text-foreground text-sm font-bold rounded-xl border border-border hover:border-primary hover:text-primary transition-colors"
+                  key={cat}
+                  onClick={() => setCatalogFilter(cat)}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-xl border transition-all ${
+                    catalogFilter === cat
+                      ? "bg-primary text-white border-primary shadow-sm"
+                      : "bg-background text-foreground border-border hover:bg-secondary"
+                  }`}
                 >
-                  Assign to Team
+                  {cat}
                 </button>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {MOCK_CATALOG.filter((c) => catalogFilter === "All" || c.category === catalogFilter).map((course) => (
+              <div
+                key={course.id}
+                className="bg-card border border-border rounded-2xl overflow-hidden hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-shadow flex flex-col"
+              >
+                <div
+                  className={`h-24 bg-gradient-to-r ${course.color} p-4 flex flex-col justify-between shrink-0`}
+                >
+                  <span className="w-max px-2 py-1 bg-white/20 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider rounded">
+                    {course.category}
+                  </span>
+                </div>
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="text-base font-bold text-foreground mb-1 line-clamp-1">
+                    {course.title}
+                  </h3>
+                  <p className="text-xs font-semibold text-muted-foreground mb-4">
+                    {course.provider}
+                  </p>
+
+                  <div className="flex items-center gap-4 mt-auto mb-5 text-xs font-bold text-foreground">
+                    <div className="flex items-center gap-1.5">
+                      <Clock size={14} className="text-muted-foreground" />{" "}
+                      {course.duration}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Star
+                        size={14}
+                        className="text-amber-400"
+                        fill="currentColor"
+                      />{" "}
+                      {course.rating}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setCourseSearch(course.title);
+                      setSelectedAssignees([]);
+                      setAssignModalOpen(true);
+                    }}
+                    className="w-full py-2 bg-secondary text-foreground text-sm font-bold rounded-xl border border-border hover:border-primary hover:text-primary transition-colors"
+                  >
+                    Assign to Team
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       {/* TAB CONTENT: ASSIGNMENTS */}
       {activeTab === "Assignments" && (
-        <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
-                <tr>
-                  <th className="px-6 py-4 border-b border-border">Employee</th>
-                  <th className="px-6 py-4 border-b border-border">Course</th>
-                  <th className="px-6 py-4 border-b border-border">
-                    Assigned On
-                  </th>
-                  <th className="px-6 py-4 border-b border-border">Due Date</th>
-                  <th className="px-6 py-4 border-b border-border">Progress</th>
-                  <th className="px-6 py-4 border-b border-border">Status</th>
-                  <th className="px-6 py-4 border-b border-border text-right">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {MOCK_ASSIGNMENTS.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="hover:bg-[#00B87C]/[0.08] transition-colors h-[64px]"
-                  >
-                    <td className="px-6 py-2 font-bold text-foreground">
-                      {row.emp}
-                    </td>
-                    <td className="px-6 py-2 font-semibold text-muted-foreground">
-                      {row.course}
-                    </td>
-                    <td className="px-6 py-2 text-xs text-muted-foreground">
-                      {row.assignedOn}
-                    </td>
-                    <td className="px-6 py-2 text-xs font-bold text-foreground">
-                      {row.dueDate}
-                    </td>
-                    <td className="px-6 py-2">
-                      <div className="w-24">
-                        <div className="flex items-center justify-between text-[11px] font-bold mb-1">
-                          <span>{row.progress}%</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${row.progress === 100 ? "bg-emerald-500" : "bg-primary"}`}
-                            style={{ width: `${row.progress}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-2">
-                      <span
-                        className={`px-2 py-1 rounded-md text-[11px] font-bold border ${getStatusColor(row.status)}`}
-                      >
-                        {row.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-2 text-right">
-                      <button className="p-1.5 text-muted-foreground hover:bg-secondary rounded-lg transition-colors">
-                        <MoreHorizontal size={16} />
-                      </button>
-                    </td>
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 bg-card p-3 rounded-2xl border border-border shadow-sm">
+            <div className="relative flex-1 max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+              <input
+                type="text"
+                placeholder="Search assignments..."
+                value={assignmentSearch}
+                onChange={(e) => setAssignmentSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded-xl text-xs font-semibold outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
+                  <tr>
+                    <th className="px-6 py-4 border-b border-border">Employee</th>
+                    <th className="px-6 py-4 border-b border-border">Course</th>
+                    <th className="px-6 py-4 border-b border-border">
+                      Assigned On
+                    </th>
+                    <th className="px-6 py-4 border-b border-border">Due Date</th>
+                    <th className="px-6 py-4 border-b border-border">Progress</th>
+                    <th className="px-6 py-4 border-b border-border">Status</th>
+                    <th className="px-6 py-4 border-b border-border text-right">
+                      Action
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {MOCK_ASSIGNMENTS.filter((a) => {
+                    const query = assignmentSearch.toLowerCase();
+                    return a.emp.toLowerCase().includes(query) || a.course.toLowerCase().includes(query);
+                  }).map((row) => (
+                    <tr
+                      key={row.id}
+                      className="hover:bg-[#00B87C]/[0.08] transition-colors h-[64px]"
+                    >
+                      <td className="px-6 py-2 font-bold text-foreground">
+                        {row.emp}
+                      </td>
+                      <td className="px-6 py-2 font-semibold text-muted-foreground">
+                        {row.course}
+                      </td>
+                      <td className="px-6 py-2 text-xs text-muted-foreground">
+                        {row.assignedOn}
+                      </td>
+                      <td className="px-6 py-2 text-xs font-bold text-foreground">
+                        {row.dueDate}
+                      </td>
+                      <td className="px-6 py-2">
+                        <div className="w-24">
+                          <div className="flex items-center justify-between text-[11px] font-bold mb-1">
+                            <span>{row.progress}%</span>
+                          </div>
+                          <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${row.progress === 100 ? "bg-emerald-500" : "bg-primary"}`}
+                              style={{ width: `${row.progress}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-2">
+                        <span
+                          className={`px-2 py-1 rounded-md text-[11px] font-bold border ${getStatusColor(row.status)}`}
+                        >
+                          {row.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-2 text-right">
+                        <button
+                          onClick={() => alert(`Managing details for ${row.emp}'s assignment.`)}
+                          className="p-1.5 text-muted-foreground hover:bg-secondary rounded-lg transition-colors"
+                        >
+                          <MoreHorizontal size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -662,7 +715,16 @@ export function ManagerTeamTraining() {
                 Cancel
               </button>
               <button
-                onClick={() => setAssignModalOpen(false)}
+                onClick={() => {
+                  if (selectedAssignees.length === 0) {
+                    alert("Please select at least one team member.");
+                    return;
+                  }
+                  alert("Successfully assigned training to selected team members!");
+                  setAssignModalOpen(false);
+                  setSelectedAssignees([]);
+                  setCourseSearch("");
+                }}
                 className="px-6 py-2.5 text-sm font-bold text-white bg-[#00B87C] rounded-xl hover:bg-[#00a36d] shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
               >
                 Assign to Team

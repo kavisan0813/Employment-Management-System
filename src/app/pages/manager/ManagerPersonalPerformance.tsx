@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Clock,
   Plus,
+  X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -20,6 +21,55 @@ import {
 import { showToast } from "../../components/workflow/ToastNotification";
 
 type PerformanceTab = "My Goals" | "Self Review" | "Feedback" | "History";
+
+interface PersonalGoal {
+  id: string;
+  title: string;
+  category: string;
+  progress: number;
+  status: string;
+  isComplete?: boolean;
+}
+
+const initialPersonalGoals: PersonalGoal[] = [
+  {
+    id: "1",
+    title: "Lead Architecture Review",
+    category: "Technical",
+    progress: 80,
+    status: "On track",
+  },
+  {
+    id: "2",
+    title: "Grow Team to 15 Members",
+    category: "Leadership",
+    progress: 60,
+    status: "On track",
+  },
+  {
+    id: "3",
+    title: "PMP Certification",
+    category: "Strategy",
+    progress: 100,
+    status: "Completed",
+    isComplete: true,
+  },
+  {
+    id: "4",
+    title: "Improve Team Sprint Velocity",
+    category: "Strategy",
+    progress: 95,
+    status: "Completed",
+    isComplete: true,
+  },
+  {
+    id: "5",
+    title: "Establish DevOps CI/CD Best Practices",
+    category: "Technical",
+    progress: 25,
+    status: "At risk",
+  },
+];
 
 const radarData = [
   { subject: "Leadership", self: 95, manager: 90, peers: 92, fullMark: 150 },
@@ -50,6 +100,8 @@ const radarData = [
 
 export function ManagerPersonalPerformance() {
   const [activeTab, setActiveTab] = useState<PerformanceTab>("My Goals");
+  const [personalGoals, setPersonalGoals] = useState<PersonalGoal[]>(initialPersonalGoals);
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
 
   const handleSubmitSelfReview = () => {
     showToast(
@@ -58,6 +110,23 @@ export function ManagerPersonalPerformance() {
       "Your self assessment has been successfully submitted to your manager.",
     );
     setActiveTab("My Goals");
+  };
+
+  const handleRequestGoalSubmit = (title: string, category: string, description: string) => {
+    const newGoal: PersonalGoal = {
+      id: (personalGoals.length + 1).toString(),
+      title,
+      category,
+      progress: 0,
+      status: "Pending",
+    };
+    setPersonalGoals((prev) => [...prev, newGoal]);
+    showToast(
+      "Request Sent!",
+      "success",
+      `Your request to add "${title}" has been sent for approval.`
+    );
+    setIsRequestModalOpen(false);
   };
 
   return (
@@ -141,13 +210,11 @@ export function ManagerPersonalPerformance() {
                 <div className="flex items-center gap-3">
                   <SectionTitle title="FY 2025-26 GOALS" />
                   <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-bold text-[#00B87C] uppercase tracking-wider">
-                    5 goals
+                    {personalGoals.length} goals
                   </span>
                 </div>
                 <button
-                  onClick={() =>
-                    showToast("Info", "info", "Goal requests are sent to HR.")
-                  }
+                  onClick={() => setIsRequestModalOpen(true)}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[#00B87C] text-[#00B87C] font-bold text-[11px] uppercase tracking-wider hover:bg-[#00B87C]/5 transition-all"
                 >
                   <Plus size={14} /> Request Add Goal
@@ -155,38 +222,16 @@ export function ManagerPersonalPerformance() {
               </div>
 
               <div className="bg-card border border-border rounded-[32px] overflow-hidden shadow-sm">
-                <GoalRow
-                  title="Lead Architecture Review"
-                  category="Technical"
-                  progress={80}
-                  status="On track"
-                />
-                <GoalRow
-                  title="Grow Team to 15 Members"
-                  category="Leadership"
-                  progress={60}
-                  status="On track"
-                />
-                <GoalRow
-                  title="PMP Certification"
-                  category="Strategy"
-                  progress={100}
-                  status="Completed"
-                  isComplete
-                />
-                <GoalRow
-                  title="Improve Team Sprint Velocity"
-                  category="Strategy"
-                  progress={95}
-                  status="Completed"
-                  isComplete
-                />
-                <GoalRow
-                  title="Establish DevOps CI/CD Best Practices"
-                  category="Technical"
-                  progress={25}
-                  status="At risk"
-                />
+                {personalGoals.map((goal) => (
+                  <GoalRow
+                    key={goal.id}
+                    title={goal.title}
+                    category={goal.category}
+                    progress={goal.progress}
+                    status={goal.status}
+                    isComplete={goal.isComplete}
+                  />
+                ))}
               </div>
             </motion.div>
           )}
@@ -362,6 +407,12 @@ export function ManagerPersonalPerformance() {
           )}
         </AnimatePresence>
       </div>
+
+      <RequestGoalModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        onSubmit={handleRequestGoalSubmit}
+      />
     </div>
   );
 }
@@ -430,10 +481,10 @@ function GoalRow({
   isComplete?: boolean;
 }) {
   const statusColor =
-    status === "On track"
+    status === "On track" || status === "Completed"
       ? "text-emerald-600 bg-emerald-500/10 border-emerald-500/20"
-      : status === "Completed"
-        ? "text-emerald-600 bg-emerald-500/10 border-emerald-500/20"
+      : status === "Pending"
+        ? "text-amber-600 bg-amber-500/10 border-amber-500/20"
         : "text-rose-600 bg-rose-500/10 border-rose-500/20";
 
   return (
@@ -475,7 +526,8 @@ function GoalRow({
             className={`px-2.5 py-1 rounded-lg text-[9px] font-bold border uppercase tracking-wider ${statusColor}`}
           >
             {status} {status === "Completed" && "✅"}{" "}
-            {status === "At risk" && "⚠"}
+            {status === "At risk" && "⚠"}{" "}
+            {status === "Pending" && "⏳"}
           </span>
           <ChevronRight
             size={16}
@@ -604,5 +656,104 @@ function HistoryRow({
         </button>
       </td>
     </tr>
+  );
+}
+
+interface RequestGoalModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (title: string, category: string, description: string) => void;
+}
+
+function RequestGoalModal({ isOpen, onClose, onSubmit }: RequestGoalModalProps) {
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("Technical");
+  const [description, setDescription] = useState("");
+
+  if (!isOpen) return null;
+
+  const handleSubmit = () => {
+    if (!title.trim()) {
+      showToast("Error", "error", "Goal title is required.");
+      return;
+    }
+    onSubmit(title, category, description);
+    setTitle("");
+    setCategory("Technical");
+    setDescription("");
+  };
+
+  return (
+    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
+      <div onClick={onClose} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+        className="relative w-full max-w-[460px] bg-card border border-border rounded-[32px] shadow-2xl p-6 flex flex-col"
+      >
+        <div className="flex items-center justify-between pb-4 border-b border-border">
+          <h3 className="text-base font-bold text-foreground">Request Add Goal</h3>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+            <X size={20} />
+          </button>
+        </div>
+        <div className="py-6 space-y-4 text-sm flex-1">
+          <div className="space-y-2">
+            <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+              Goal Title
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Implement TDS Automation"
+              className="w-full px-4 py-3 rounded-2xl bg-secondary/50 border border-border focus:border-[#00B87C] outline-none text-sm font-bold text-foreground"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+              Category
+            </label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none appearance-none cursor-pointer focus:border-[#00B87C] bg-card text-foreground dark:bg-zinc-900"
+            >
+              <option value="Technical">Technical</option>
+              <option value="Leadership">Leadership</option>
+              <option value="Strategy">Strategy</option>
+              <option value="Compliance">Compliance</option>
+              <option value="Personal">Personal</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+              Justification / Description
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Why do you want to add this goal?"
+              className="w-full h-24 p-3 rounded-xl border bg-transparent text-xs outline-none resize-none focus:border-[#00B87C] text-foreground"
+            />
+          </div>
+        </div>
+        <div className="pt-4 border-t border-border flex items-center justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2.5 rounded-xl border text-xs font-bold text-muted-foreground hover:bg-secondary"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="px-5 py-2.5 rounded-xl text-white text-xs font-bold bg-[#00B87C] hover:opacity-90 shadow-lg shadow-emerald-500/20"
+          >
+            Submit Request
+          </button>
+        </div>
+      </motion.div>
+    </div>
   );
 }

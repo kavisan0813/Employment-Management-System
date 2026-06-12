@@ -127,6 +127,27 @@ export function ManagerLeaveApprovals() {
   const [activeTab, setActiveTab] = useState<TabType>("Pending");
   const [pendingRequests, setPendingRequests] = useState(MOCK_PENDING_REQUESTS);
 
+  const [calendarMonth, setCalendarMonth] = useState("April 2026");
+
+  const handlePrevCalendarMonth = () => {
+    if (calendarMonth === "April 2026") setCalendarMonth("March 2026");
+    else if (calendarMonth === "May 2026") setCalendarMonth("April 2026");
+  };
+  const handleNextCalendarMonth = () => {
+    if (calendarMonth === "April 2026") setCalendarMonth("May 2026");
+    else if (calendarMonth === "March 2026") setCalendarMonth("April 2026");
+  };
+
+  const [historySearch, setHistorySearch] = useState("");
+  const [historyStatusFilter, setHistoryStatusFilter] = useState("All Statuses");
+
+  const filteredHistory = MOCK_HISTORY.filter((row) => {
+    const matchesSearch = row.emp.toLowerCase().includes(historySearch.toLowerCase());
+    const matchesStatus =
+      historyStatusFilter === "All Statuses" || row.status === historyStatusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
   // Reject Modal State
   const [rejectingRequest, setRejectingRequest] = useState<
     (typeof MOCK_PENDING_REQUESTS)[0] | null
@@ -198,7 +219,10 @@ export function ManagerLeaveApprovals() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <button className="px-4 py-2.5 text-sm font-bold rounded-xl border border-border hover:bg-secondary transition-colors active:scale-95 flex items-center gap-2">
+          <button
+            onClick={() => setActiveTab("Calendar")}
+            className="px-4 py-2.5 text-sm font-bold rounded-xl border border-border hover:bg-secondary transition-colors active:scale-95 flex items-center gap-2"
+          >
             <Calendar size={16} /> View Calendar
           </button>
           <button className="px-4 py-2.5 text-sm font-bold rounded-xl border border-dashed border-border hover:bg-secondary transition-colors active:scale-95 flex items-center gap-2">
@@ -411,15 +435,24 @@ export function ManagerLeaveApprovals() {
       {activeTab === "Calendar" && (
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-foreground">April 2026</h3>
+            <h3 className="text-lg font-bold text-foreground">{calendarMonth}</h3>
             <div className="flex items-center gap-2">
-              <button className="p-2 border border-border rounded-lg hover:bg-secondary transition-colors">
+              <button
+                onClick={handlePrevCalendarMonth}
+                className="p-2 border border-border rounded-lg hover:bg-secondary transition-colors"
+              >
                 <ChevronLeft size={16} />
               </button>
-              <button className="px-3 py-1.5 text-sm font-bold border border-border rounded-lg hover:bg-secondary transition-colors">
+              <button
+                onClick={() => setCalendarMonth("April 2026")}
+                className="px-3 py-1.5 text-sm font-bold border border-border rounded-lg hover:bg-secondary transition-colors"
+              >
                 Today
               </button>
-              <button className="p-2 border border-border rounded-lg hover:bg-secondary transition-colors">
+              <button
+                onClick={handleNextCalendarMonth}
+                className="p-2 border border-border rounded-lg hover:bg-secondary transition-colors"
+              >
                 <ChevronRight size={16} />
               </button>
             </div>
@@ -512,12 +545,19 @@ export function ManagerLeaveApprovals() {
               <input
                 type="text"
                 placeholder="Search employee..."
+                value={historySearch}
+                onChange={(e) => setHistorySearch(e.target.value)}
                 className="px-3 py-1.5 text-sm bg-background border border-border rounded-lg outline-none focus:border-primary"
               />
-              <select className="px-3 py-1.5 text-sm bg-background border border-border rounded-lg outline-none focus:border-primary">
-                <option>All Statuses</option>
-                <option>Approved</option>
-                <option>Rejected</option>
+              <select
+                value={historyStatusFilter}
+                onChange={(e) => setHistoryStatusFilter(e.target.value)}
+                className="px-3 py-1.5 text-sm bg-background border border-border rounded-lg outline-none focus:border-primary"
+              >
+                <option value="All Statuses">All Statuses</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Cancelled">Cancelled</option>
               </select>
             </div>
           </div>
@@ -540,7 +580,7 @@ export function ManagerLeaveApprovals() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {MOCK_HISTORY.map((row) => (
+                {filteredHistory.map((row) => (
                   <tr
                     key={row.id}
                     className="hover:bg-[#00B87C]/[0.08] transition-colors group"

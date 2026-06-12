@@ -5,6 +5,7 @@ import {
   ChevronRight,
   ChevronDown,
   Clock,
+  X,
 } from "lucide-react";
 
 // Mock Data for the table
@@ -86,9 +87,19 @@ const MOCK_HEATMAP = Array.from({ length: 5 }, () =>
   Array.from({ length: 30 }, () => Math.floor(Math.random() * 4)),
 );
 
+const MONTH_CONFIGS: Record<string, { days: number; offset: number; label: string }> = {
+  "Feb 2026": { days: 28, offset: 0, label: "February 2026" },
+  "Mar 2026": { days: 31, offset: 0, label: "March 2026" },
+  "Apr 2026": { days: 30, offset: 3, label: "April 2026" },
+  "May 2026": { days: 31, offset: 5, label: "May 2026" },
+  "Jun 2026": { days: 30, offset: 1, label: "June 2026" },
+};
+const MONTH_LIST = ["Feb 2026", "Mar 2026", "Apr 2026", "May 2026", "Jun 2026"];
+
 export function ManagerAttendance() {
   const [activeTab, setActiveTab] = useState("All");
   const [showRegularizeModal, setShowRegularizeModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] =
     useState<AttendanceRow | null>(null);
 
@@ -97,9 +108,73 @@ export function ManagerAttendance() {
   const [reason, setReason] = useState("Technical issue");
   const [notes, setNotes] = useState("");
 
+  // Month navigation state
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(2); // Apr 2026
+  const activeMonthStr = MONTH_LIST[currentMonthIndex];
+  const activeMonthConfig = MONTH_CONFIGS[activeMonthStr];
+
+  // Dropdown & filtering states
+  const [showRegularizeDropdown, setShowRegularizeDropdown] = useState(false);
+  const [regularizeFilter, setRegularizeFilter] = useState("All");
+  const [attendanceData, setAttendanceData] = useState(TEAM_ATTENDANCE_DATA);
+
+  const handlePrevMonth = () => {
+    if (currentMonthIndex > 0) {
+      setCurrentMonthIndex(currentMonthIndex - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (currentMonthIndex < MONTH_LIST.length - 1) {
+      setCurrentMonthIndex(currentMonthIndex + 1);
+    }
+  };
+
+  const filteredData = attendanceData.filter((row) => {
+    // Tab filter
+    let tabMatch = true;
+    if (activeTab === "Present") tabMatch = row.status.includes("Present");
+    else if (activeTab === "Late") tabMatch = row.status === "Late";
+    else if (activeTab === "On Leave") tabMatch = row.status === "On Leave";
+    else if (activeTab === "Absent") tabMatch = row.status === "Absent";
+
+    // Regularize filter
+    let regMatch = true;
+    if (regularizeFilter === "Needs Regularization") {
+      regMatch = row.action === "Regularize";
+    } else if (regularizeFilter === "Regularized") {
+      regMatch = (row.id === "EMP-0145" || row.id === "EMP-0151") && row.status === "Present";
+    }
+
+    return tabMatch && regMatch;
+  });
+
   const handleRegularizeClick = (emp: AttendanceRow) => {
     setSelectedEmployee(emp);
     setShowRegularizeModal(true);
+  };
+
+  const handleDetailsClick = (emp: AttendanceRow) => {
+    setSelectedEmployee(emp);
+    setShowDetailsModal(true);
+  };
+
+  const handleConfirmRegularize = () => {
+    if (selectedEmployee) {
+      setAttendanceData(prev => prev.map(row => {
+        if (row.id === selectedEmployee.id) {
+          return {
+            ...row,
+            status: "Present",
+            action: "Details",
+            checkIn: correctedTime,
+            isLate: false
+          };
+        }
+        return row;
+      }));
+      setShowRegularizeModal(false);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -133,7 +208,7 @@ export function ManagerAttendance() {
               className="text-[13px] text-[#6B7280] mt-1"
               style={{ color: "var(--muted-foreground)" }}
             >
-              Engineering Team · April 2026
+              Engineering Team · {activeMonthConfig.label}
             </p>
           </div>
         </div>
@@ -142,25 +217,64 @@ export function ManagerAttendance() {
             className="flex items-center gap-3 px-1 py-1 rounded-full border bg-white dark:bg-zinc-900"
             style={{ borderColor: "var(--border)" }}
           >
-            <button className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors">
+            <button
+              onClick={handlePrevMonth}
+              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors"
+            >
               <ChevronLeft size={16} className="text-muted-foreground" />
             </button>
             <span
               className="text-[13px] font-bold"
               style={{ color: "var(--foreground)" }}
             >
-              Apr 2026
+              {activeMonthStr}
             </span>
-            <button className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors">
+            <button
+              onClick={handleNextMonth}
+              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors"
+            >
               <ChevronRight size={16} className="text-muted-foreground" />
             </button>
           </div>
-          <button
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border text-[13px] font-bold transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800 bg-white dark:bg-zinc-900 shadow-sm"
-            style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
-          >
-            Regularize <ChevronDown size={14} />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowRegularizeDropdown(!showRegularizeDropdown)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border text-[13px] font-bold transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800 bg-white dark:bg-zinc-900 shadow-sm"
+              style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+            >
+              Filter: {regularizeFilter === "All" ? "All" : regularizeFilter} <ChevronDown size={14} />
+            </button>
+            {showRegularizeDropdown && (
+              <>
+                <div
+                  className="fixed inset-0 z-[1000]"
+                  onClick={() => setShowRegularizeDropdown(false)}
+                />
+                <div className="absolute right-0 mt-2 w-56 rounded-xl border bg-white dark:bg-zinc-900 shadow-lg z-[1001] p-1.5 space-y-0.5" style={{ borderColor: "var(--border)" }}>
+                  {[
+                    { value: "All", label: "All Records" },
+                    { value: "Needs Regularization", label: "Needs Regularization" },
+                    { value: "Regularized", label: "Regularized Only" },
+                  ].map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => {
+                        setRegularizeFilter(opt.value);
+                        setShowRegularizeDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors ${
+                        regularizeFilter === opt.value
+                          ? "bg-[#00B87C]/10 text-[#00B87C]"
+                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -239,7 +353,7 @@ export function ManagerAttendance() {
               className="divide-y"
               style={{ borderColor: "var(--border)" }}
             >
-              {TEAM_ATTENDANCE_DATA.map((row) => {
+              {filteredData.map((row) => {
                 const statusColors = getStatusColor(row.status);
                 return (
                   <tr
@@ -324,7 +438,10 @@ export function ManagerAttendance() {
                           Regularize
                         </button>
                       ) : (
-                        <button className="text-[12px] font-bold text-muted-foreground hover:text-foreground transition-colors">
+                        <button
+                          onClick={() => handleDetailsClick(row)}
+                          className="text-[12px] font-bold text-muted-foreground hover:text-foreground transition-colors"
+                        >
                           Details
                         </button>
                       )}
@@ -360,13 +477,13 @@ export function ManagerAttendance() {
         </div>
         <div className="grid grid-cols-7 gap-2">
           {/* Mock empty cells for offset */}
-          {Array.from({ length: 3 }).map((_, i) => (
+          {Array.from({ length: activeMonthConfig.offset }).map((_, i) => (
             <div key={`empty-${i}`} className="h-10"></div>
           ))}
-          {Array.from({ length: 30 }).map((_, i) => {
+          {Array.from({ length: activeMonthConfig.days }).map((_, i) => {
             const date = i + 1;
-            const isToday = date === 15;
-            const isWeekend = (date + 3) % 7 === 0 || (date + 3) % 7 === 6;
+            const isToday = activeMonthStr === "Apr 2026" && date === 15;
+            const isWeekend = (date + activeMonthConfig.offset) % 7 === 0 || (date + activeMonthConfig.offset) % 7 === 6;
             const isLeave = date === 8;
 
             let bg;
@@ -611,11 +728,94 @@ export function ManagerAttendance() {
                 Cancel
               </button>
               <button
-                onClick={() => setShowRegularizeModal(false)}
+                onClick={handleConfirmRegularize}
                 className="px-5 py-2.5 rounded-xl text-white text-[13px] font-bold shadow-lg shadow-[#10B981]/20 hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: "#00B87C" }}
               >
                 Approve Regularization
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Details Modal ── */}
+      {showDetailsModal && selectedEmployee && (
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div
+            className="w-full max-w-[500px] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-border animate-in zoom-in-95 p-6 space-y-6"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <div className="flex justify-between items-start border-b pb-4" style={{ borderColor: "var(--border)" }}>
+              <div className="flex items-center gap-3">
+                <img src={selectedEmployee.avatar} className="w-10 h-10 rounded-full" />
+                <div>
+                  <h3 className="text-base font-bold text-foreground">{selectedEmployee.name}</h3>
+                  <p className="text-xs text-muted-foreground">{selectedEmployee.id}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="text-muted-foreground hover:text-foreground p-1 hover:bg-secondary rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Status</span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">{selectedEmployee.status}</p>
+                </div>
+                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Date</span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">{activeMonthStr === "Apr 2026" ? "April 6, 2026" : "Selected Month Day"}</p>
+                </div>
+                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Check-in</span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">{selectedEmployee.checkIn}</p>
+                </div>
+                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Check-out</span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">{selectedEmployee.checkOut}</p>
+                </div>
+                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Hours Worked</span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">{selectedEmployee.hours}</p>
+                </div>
+                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Overtime</span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">{selectedEmployee.overtime}</p>
+                </div>
+              </div>
+
+              <div className="border-t pt-4" style={{ borderColor: "var(--border)" }}>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider mb-2">Today's Logs</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-xs py-1">
+                    <span className="text-muted-foreground">08:45 AM</span>
+                    <span className="font-semibold text-foreground">Swipe In (Office Gate)</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs py-1">
+                    <span className="text-muted-foreground">01:00 PM</span>
+                    <span className="font-semibold text-foreground">Swipe Out (Lunch Break)</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs py-1">
+                    <span className="text-muted-foreground">02:00 PM</span>
+                    <span className="font-semibold text-foreground">Swipe In (Back to Desk)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t pt-4 flex justify-end" style={{ borderColor: "var(--border)" }}>
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="px-5 py-2.5 rounded-xl text-white text-xs font-bold shadow-md hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: "#00B87C" }}
+              >
+                Close Details
               </button>
             </div>
           </div>

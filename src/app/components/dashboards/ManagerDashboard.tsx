@@ -28,7 +28,16 @@ import { useNavigate } from "react-router";
 
 // ─── MOCK DATA ───────────────────────────────────
 
-const ATTENDANCE_TREND = [
+const ATTENDANCE_TREND_6M = [
+  { date: "Dec", rate: 91 },
+  { date: "Jan", rate: 90 },
+  { date: "Feb", rate: 94 },
+  { date: "Mar", rate: 89 },
+  { date: "Apr", rate: 93 },
+  { date: "May", rate: 91.6 },
+];
+
+const ATTENDANCE_TREND_1Y = [
   { date: "01 May", rate: 92 },
   { date: "02 May", rate: 88 },
   { date: "03 May", rate: 94 },
@@ -194,6 +203,35 @@ export function ManagerDashboard() {
   const [showAddShiftModal, setShowAddShiftModal] = useState(false);
   const navigate = useNavigate();
 
+  const [selectedEmployee, setSelectedEmployee] = useState<(typeof TEAM_MEMBERS)[0] | null>(TEAM_MEMBERS[3]); // Default to Sanya Gupta
+  const [pendingApprovals, setPendingApprovals] = useState(PENDING_APPROVALS);
+  const [teamToday, setTeamToday] = useState(TEAM_TODAY);
+
+  const presentTodayCount = teamToday.filter((m) => m.status === "present" || m.status === "wfh").length;
+  const totalTodayCount = teamToday.length;
+
+  const chartData = activeRange === "6M" ? ATTENDANCE_TREND_6M : ATTENDANCE_TREND_1Y;
+
+  const handleApproveApproval = (name: string) => {
+    setPendingApprovals((prev) => prev.filter((a) => a.name !== name));
+  };
+
+  const handleRejectApproval = (name: string) => {
+    setPendingApprovals((prev) => prev.filter((a) => a.name !== name));
+  };
+
+  const handleAddTeamMember = () => {
+    const nextId = teamToday.length + 1;
+    const statuses = ["present", "wfh", "leave"];
+    const status = statuses[Math.floor(Math.random() * statuses.length)];
+    const newMember = {
+      id: nextId,
+      status: status,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${nextId}`,
+    };
+    setTeamToday([...teamToday, newMember]);
+  };
+
   const handleAction = (label: string) => {
     if (label === "Approve Leaves") setShowApproveModal(true);
     else if (label === "Add Shift") setShowAddShiftModal(true);
@@ -246,7 +284,7 @@ export function ManagerDashboard() {
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-amber-500" />
           <span className="text-[12px] font-bold text-foreground/80 tracking-tight">
-            3 leave requests need approval
+            {pendingApprovals.filter((a) => a.badge === "Leave").length} leave request{pendingApprovals.filter((a) => a.badge === "Leave").length !== 1 ? "s" : ""} need approval
           </span>
         </div>
         <div className="flex items-center gap-2 md:border-l border-border md:pl-8">
@@ -268,6 +306,59 @@ export function ManagerDashboard() {
           </span>
         </div>
       </div>
+
+      {/* Selected Employee Detail Bar (matching the 1st screenshot) */}
+      {selectedEmployee && (
+        <div className="w-full p-4 rounded-2xl bg-[#E0FDF4] dark:bg-emerald-950/20 border border-[#A7F3D0] dark:border-emerald-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-[#00B87C]/20 flex items-center justify-center text-[#00B87C] font-black text-xs shrink-0">
+              {selectedEmployee.avatar}
+            </div>
+            <div>
+              <p className="text-[13px] font-black text-foreground">
+                {selectedEmployee.name}
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                {selectedEmployee.dept}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-6 sm:gap-12">
+            <span className="text-[13px] font-black text-foreground">
+              {selectedEmployee.attendance}
+            </span>
+            <span
+              className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"
+              style={{
+                backgroundColor: selectedEmployee.shiftColor,
+                color: selectedEmployee.shiftText,
+              }}
+            >
+              {selectedEmployee.shift}
+            </span>
+            <div className="flex items-center gap-1.5">
+              <div
+                className={`w-1.5 h-1.5 rounded-full ${
+                  selectedEmployee.status === "Present"
+                    ? "bg-[#00B87C]"
+                    : selectedEmployee.status === "WFH"
+                      ? "bg-[#0EA5E9]"
+                      : "bg-red-500 animate-pulse"
+                }`}
+              />
+              <span className="text-[11px] font-bold text-foreground">
+                {selectedEmployee.status}
+              </span>
+            </div>
+            <button
+              onClick={() => setSelectedEmployee(null)}
+              className="p-1 rounded-lg hover:bg-secondary text-muted-foreground transition-all"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ═══ KPI CARDS ═══ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -369,7 +460,7 @@ export function ManagerDashboard() {
           </div>
           <div className="h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={ATTENDANCE_TREND}>
+              <LineChart data={chartData}>
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
@@ -507,7 +598,8 @@ export function ManagerDashboard() {
                 {TEAM_MEMBERS.map((emp, i) => (
                   <tr
                     key={i}
-                    className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08]"
+                    onClick={() => setSelectedEmployee(emp)}
+                    className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] cursor-pointer"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -649,7 +741,7 @@ export function ManagerDashboard() {
               </button>
             </div>
             <div className="p-6 space-y-4">
-              {PENDING_APPROVALS.filter((a) => a.badge === "Leave").map(
+              {pendingApprovals.filter((a) => a.badge === "Leave").map(
                 (item, i) => (
                   <div
                     key={i}
@@ -669,15 +761,26 @@ export function ManagerDashboard() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button className="px-3 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-bold">
+                      <button
+                        onClick={() => handleApproveApproval(item.name)}
+                        className="px-3 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-bold"
+                      >
                         Approve
                       </button>
-                      <button className="px-3 py-1.5 rounded-lg bg-rose-500 text-white text-[11px] font-bold">
+                      <button
+                        onClick={() => handleRejectApproval(item.name)}
+                        className="px-3 py-1.5 rounded-lg bg-rose-500 text-white text-[11px] font-bold"
+                      >
                         Reject
                       </button>
                     </div>
                   </div>
                 ),
+              )}
+              {pendingApprovals.filter((a) => a.badge === "Leave").length === 0 && (
+                <p className="text-center text-sm font-bold text-muted-foreground py-4">
+                  No pending leave requests
+                </p>
               )}
             </div>
             <div className="p-6 bg-secondary/10 flex justify-end gap-3">
@@ -687,7 +790,10 @@ export function ManagerDashboard() {
               >
                 Close
               </button>
-              <button className="px-6 py-2 rounded-xl bg-[#00B87C] text-white text-sm font-bold">
+              <button
+                onClick={() => setPendingApprovals((prev) => prev.filter((a) => a.badge !== "Leave"))}
+                className="px-6 py-2 rounded-xl bg-[#00B87C] text-white text-sm font-bold"
+              >
                 Approve All
               </button>
             </div>
@@ -843,7 +949,7 @@ export function ManagerDashboard() {
               </button>
             </div>
             <div className="p-4 space-y-4 flex-1">
-              {PENDING_APPROVALS.map((item, i) => (
+              {pendingApprovals.map((item, i) => (
                 <div
                   key={i}
                   className="p-4 rounded-2xl border border-border bg-secondary/20 hover:bg-secondary/40 transition-all group"
@@ -878,15 +984,26 @@ export function ManagerDashboard() {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
-                    <button className="py-2 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90">
+                    <button
+                      onClick={() => handleApproveApproval(item.name)}
+                      className="py-2 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90"
+                    >
                       Approve
                     </button>
-                    <button className="py-2 rounded-xl bg-card border border-border text-foreground text-[11px] font-black uppercase tracking-widest hover:bg-secondary">
+                    <button
+                      onClick={() => handleRejectApproval(item.name)}
+                      className="py-2 rounded-xl bg-card border border-border text-foreground text-[11px] font-black uppercase tracking-widest hover:bg-secondary"
+                    >
                       Reject
                     </button>
                   </div>
                 </div>
               ))}
+              {pendingApprovals.length === 0 && (
+                <p className="text-center text-xs font-bold text-muted-foreground py-6">
+                  No pending approvals
+                </p>
+              )}
             </div>
           </div>
 
@@ -897,11 +1014,11 @@ export function ManagerDashboard() {
                 Team Today
               </h3>
               <span className="text-[11px] font-black text-[#00B87C]">
-                10 / 12
+                {presentTodayCount} / {totalTodayCount}
               </span>
             </div>
             <div className="grid grid-cols-3 gap-y-6 gap-x-2">
-              {TEAM_TODAY.map((member) => (
+              {teamToday.map((member) => (
                 <div
                   key={member.id}
                   className="flex flex-col items-center gap-2"
@@ -932,7 +1049,10 @@ export function ManagerDashboard() {
                   </div>
                 </div>
               ))}
-              <button className="w-12 h-12 rounded-full border-2 border-dashed border-border flex items-center justify-center text-muted-foreground hover:border-[#00B87C] hover:text-[#00B87C] transition-all">
+              <button
+                onClick={handleAddTeamMember}
+                className="w-12 h-12 rounded-full border-2 border-dashed border-border flex items-center justify-center text-muted-foreground hover:border-[#00B87C] hover:text-[#00B87C] transition-all"
+              >
                 <Plus size={20} />
               </button>
             </div>

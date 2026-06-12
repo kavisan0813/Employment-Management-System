@@ -13,6 +13,7 @@ import {
   MessageSquare,
   ExternalLink,
   Clock,
+  UserCheck,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 
@@ -196,153 +197,243 @@ export function ManagerTeam() {
         </div>
       </div>
 
-      {/* ─── TEAM TABLE ─── */}
-      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-border bg-secondary/10">
-          <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
-            Direct Reports
-          </h3>
+      {/* ─── TEAM GRID / LIST RENDERER ─── */}
+      {viewMode === "grid" ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {filteredTeam.map((emp) => (
+            <div
+              key={emp.id}
+              className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-[#00B87C] transition-all flex flex-col group"
+            >
+              {/* Card Header Background Block */}
+              <div className="h-2 bg-[#00B87C]/15" style={{ backgroundColor: emp.color + "20" }} />
+              
+              <div className="p-6 flex-1 flex flex-col">
+                {/* Employee Info Header */}
+                <div className="flex items-start gap-4 mb-5">
+                  <div
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-xs shrink-0 shadow-sm border border-border bg-secondary overflow-hidden"
+                  >
+                    <img
+                      src={emp.avatar}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-base font-bold text-foreground truncate">{emp.name}</h3>
+                    <p className="text-xs text-muted-foreground font-semibold">{emp.designation}</p>
+                    <span className="text-[10px] font-bold text-slate-400">#{emp.id}</span>
+                  </div>
+                </div>
+
+                {/* Status Badge */}
+                <div className="mb-5">
+                  <span className={`px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider border ${
+                    emp.status === "Active"
+                      ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 border border-emerald-100"
+                      : emp.status === "WFH"
+                      ? "bg-teal-50 text-teal-600 dark:bg-teal-500/10 border border-teal-100"
+                      : "bg-red-50 text-red-600 dark:bg-red-500/10 border border-red-100"
+                  }`}>
+                    <span className={`w-1 h-1 rounded-full ${
+                      emp.status === "Active"
+                        ? "bg-emerald-600"
+                        : emp.status === "WFH"
+                        ? "bg-teal-600"
+                        : "bg-red-600"
+                    }`} />
+                    {emp.status}
+                  </span>
+                </div>
+
+                {/* Details Metrics Grid */}
+                <div className="grid grid-cols-3 gap-2 py-3 border-y border-border/60 text-center mb-5">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Attendance</span>
+                    <span className={`text-sm font-bold block mt-0.5 ${parseInt(emp.attendance) < 85 ? "text-amber-500" : "text-[#00B87C]"}`}>
+                      {emp.attendance}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Leave Bal</span>
+                    <span className="text-sm font-bold text-foreground block mt-0.5">{emp.leaveBal}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Performance</span>
+                    <span className="text-sm font-bold text-foreground flex items-center justify-center gap-0.5 mt-0.5">
+                      <Star size={11} className="fill-amber-400 text-amber-400" />
+                      {emp.performance}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Monthly CTC & Actions */}
+                <div className="flex items-center justify-between mt-auto pt-2">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Compensation</span>
+                    <span className="text-xs font-bold text-foreground">{emp.ctc} / yr</span>
+                  </div>
+                  <button
+                    onClick={() => setSelectedEmployee(emp)}
+                    className="px-3.5 py-1.5 bg-[#00B87C]/10 text-[#00B87C] hover:bg-[#00B87C] hover:text-white transition-all text-xs font-bold rounded-xl flex items-center gap-1"
+                  >
+                    Profile <ChevronRight size={12} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[1000px]">
-            <thead>
-              <tr className="bg-secondary/20">
-                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                  Employee
-                </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                  Designation
-                </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">
-                  Attendance
-                </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">
-                  Leave Bal.
-                </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">
-                  Performance
-                </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">
-                  CTC
-                </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {filteredTeam.map((emp) => (
-                <tr
-                  key={emp.id}
-                  className="hover:bg-[#00B87C]/[0.08] transition-colors h-16 group"
-                >
-                  <td className="px-6 py-3">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 shadow-sm border border-border"
-                        style={{
-                          backgroundColor: emp.color + "15",
-                          color: emp.color,
-                        }}
-                      >
-                        <img
-                          src={emp.avatar}
-                          alt=""
-                          className="w-full h-full rounded-xl object-cover"
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[14px] font-bold text-foreground truncate">
-                          {emp.name}
-                        </p>
-                        <p className="text-[11px] font-bold text-muted-foreground">
-                          #{emp.id}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-3">
-                    <span className="text-[13px] font-bold text-muted-foreground">
-                      {emp.designation}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3 text-center">
-                    <div className="flex flex-col items-center">
-                      <span
-                        className={`text-[13px] font-bold ${parseInt(emp.attendance) < 85 ? "text-amber-500" : "text-[#00B87C]"}`}
-                      >
-                        {emp.attendance}
-                      </span>
-                      <div className="w-12 h-1 bg-secondary rounded-full mt-1 overflow-hidden">
-                        <div
-                          className={`h-full rounded-full ${parseInt(emp.attendance) < 85 ? "bg-amber-500" : "bg-[#00B87C]"}`}
-                          style={{ width: emp.attendance }}
-                        />
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-3 text-center">
-                    <span className="text-[13px] font-bold text-foreground">
-                      {emp.leaveBal}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3 text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <Star
-                        size={12}
-                        className="fill-amber-400 text-amber-400"
-                      />
-                      <span className="text-[13px] font-bold text-foreground">
-                        {emp.performance}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-3 text-right">
-                    <span className="text-[13px] font-bold text-foreground">
-                      {emp.ctc}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3">
-                    <div
-                      className={`px-3 py-1 rounded-full inline-flex items-center gap-1.5 ${
-                        emp.status === "Active"
-                          ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10"
-                          : emp.status === "WFH"
-                            ? "bg-teal-50 text-teal-600 dark:bg-teal-500/10"
-                            : "bg-red-50 text-red-600 dark:bg-red-500/10"
-                      }`}
-                    >
-                      <div
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          emp.status === "Active"
-                            ? "bg-emerald-600"
-                            : emp.status === "WFH"
-                              ? "bg-teal-600"
-                              : "bg-red-600"
-                        }`}
-                      />
-                      <span className="text-[11px] font-bold uppercase tracking-wider">
-                        {emp.status}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-3 text-right">
-                    <button
-                      onClick={() => setSelectedEmployee(emp)}
-                      className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider flex items-center gap-1 ml-auto hover:gap-2 transition-all"
-                    >
-                      Profile <ChevronRight size={14} />
-                    </button>
-                  </td>
+      ) : (
+        /* ─── TEAM TABLE ─── */
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-border bg-secondary/10">
+            <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+              Direct Reports
+            </h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[1000px]">
+              <thead>
+                <tr className="bg-secondary/20">
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Employee
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Designation
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">
+                    Attendance
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">
+                    Leave Bal.
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-center">
+                    Performance
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">
+                    CTC
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider text-right">
+                    Action
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filteredTeam.map((emp) => (
+                  <tr
+                    key={emp.id}
+                    className="hover:bg-[#00B87C]/[0.08] transition-colors h-16 group"
+                  >
+                    <td className="px-6 py-3">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 shadow-sm border border-border"
+                          style={{
+                            backgroundColor: emp.color + "15",
+                            color: emp.color,
+                          }}
+                        >
+                          <img
+                            src={emp.avatar}
+                            alt=""
+                            className="w-full h-full rounded-xl object-cover"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[14px] font-bold text-foreground truncate">
+                            {emp.name}
+                          </p>
+                          <p className="text-[11px] font-bold text-muted-foreground">
+                            #{emp.id}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-3">
+                      <span className="text-[13px] font-bold text-muted-foreground">
+                        {emp.designation}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3 text-center">
+                      <div className="flex flex-col items-center">
+                        <span
+                          className={`text-[13px] font-bold ${parseInt(emp.attendance) < 85 ? "text-amber-500" : "text-[#00B87C]"}`}
+                        >
+                          {emp.attendance}
+                        </span>
+                        <div className="w-12 h-1 bg-secondary rounded-full mt-1 overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${parseInt(emp.attendance) < 85 ? "bg-amber-500" : "bg-[#00B87C]"}`}
+                            style={{ width: emp.attendance }}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-3 text-center">
+                      <span className="text-[13px] font-bold text-foreground">
+                        {emp.leaveBal}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3 text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <Star
+                          size={12}
+                          className="fill-amber-400 text-amber-400"
+                        />
+                        <span className="text-[13px] font-bold text-foreground">
+                          {emp.performance}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-3 text-right">
+                      <span className="text-[13px] font-bold text-foreground">
+                        {emp.ctc}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3">
+                      <div
+                        className={`px-3 py-1 rounded-full inline-flex items-center gap-1.5 ${
+                          emp.status === "Active"
+                            ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10"
+                            : emp.status === "WFH"
+                              ? "bg-teal-50 text-teal-600 dark:bg-teal-500/10"
+                              : "bg-red-50 text-red-600 dark:bg-red-500/10"
+                        }`}
+                      >
+                        <div
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            emp.status === "Active"
+                              ? "bg-emerald-600"
+                              : emp.status === "WFH"
+                                ? "bg-teal-600"
+                                : "bg-red-600"
+                          }`}
+                        />
+                        <span className="text-[11px] font-bold uppercase tracking-wider">
+                          {emp.status}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-3 text-right">
+                      <button
+                        onClick={() => setSelectedEmployee(emp)}
+                        className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider flex items-center gap-1 ml-auto hover:gap-2 transition-all"
+                      >
+                        Profile <ChevronRight size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ─── EMPLOYEE PROFILE PANEL (SLIDE-OUT) ─── */}
       <AnimatePresence>
@@ -810,7 +901,13 @@ export function ManagerTeam() {
                       </div>
                     </div>
 
-                    <button className="w-full py-4 rounded-2xl bg-[#00B87C]/10 text-[#00B87C] text-[12px] font-bold uppercase tracking-wider hover:bg-[#00B87C] hover:text-white transition-all flex items-center justify-center gap-2 mt-4 border border-[#00B87C]/20">
+                    <button
+                      onClick={() => {
+                        setSelectedEmployee(null);
+                        navigate("/performance");
+                      }}
+                      className="w-full py-4 rounded-2xl bg-[#00B87C]/10 text-[#00B87C] text-[12px] font-bold uppercase tracking-wider hover:bg-[#00B87C] hover:text-white transition-all flex items-center justify-center gap-2 mt-4 border border-[#00B87C]/20"
+                    >
                       Write Performance Review <ChevronRight size={16} />
                     </button>
                   </div>
@@ -836,28 +933,3 @@ export function ManagerTeam() {
     </div>
   );
 }
-
-// Re-using UserCheck from lucide-react if needed, otherwise use icon
-const UserCheck = ({
-  size,
-  className,
-}: {
-  size?: number;
-  className?: string;
-}) => (
-  <svg
-    width={size || 24}
-    height={size || 24}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <polyline points="16 11 18 13 22 9" />
-  </svg>
-);
