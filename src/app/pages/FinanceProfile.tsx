@@ -19,10 +19,8 @@ import {
   ChevronDown,
   Linkedin,
   X,
-  CheckCircle2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { useAuth } from "../context/AuthContext";
 import { showToast } from "../components/workflow/ToastNotification";
 
 type ProfileTab =
@@ -33,7 +31,6 @@ type ProfileTab =
   | "Settings";
 
 export function FinanceProfile() {
-  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<ProfileTab>("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -311,7 +308,7 @@ export function FinanceProfile() {
               <EmergencyContactTab isEditing={isEditing} />
             )}
             {activeTab === "Settings" && (
-              <SettingsTab onTabChange={setActiveTab} />
+              <SettingsTab />
             )}
           </motion.div>
         </AnimatePresence>
@@ -720,11 +717,7 @@ function EmergencyContactTab({ isEditing }: { isEditing: boolean }) {
   );
 }
 
-function SettingsTab({
-  onTabChange,
-}: {
-  onTabChange: (tab: ProfileTab) => void;
-}) {
+function SettingsTab() {
   return (
     <div className="space-y-6">
       <div className="bg-card border border-border rounded-[32px] p-8 shadow-sm">

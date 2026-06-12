@@ -4,7 +4,6 @@ import {
   Camera,
   MapPin,
   Edit3,
-  Save,
   X,
   Shield,
   AlertCircle,
@@ -17,9 +16,7 @@ import {
   TrendingUp,
   Star,
   Calendar,
-  MessageSquare,
   MoreHorizontal,
-  ShieldCheck,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "motion/react";

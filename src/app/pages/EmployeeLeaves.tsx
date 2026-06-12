@@ -6,7 +6,6 @@ import {
   X,
   CalendarDays,
   FileText,
-  AlertCircle,
   MoreVertical,
   CheckCircle2,
   Calendar,
@@ -16,7 +15,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
 import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -54,17 +52,14 @@ interface LeaveRecord {
 export function EmployeeLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
-  
   const [activeTab, setActiveTab] = useState<LeaveTab>("My Requests");
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState<string | null>(
     null,
   );
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedHistoryLeave, setSelectedHistoryLeave] = useState<LeaveRecord | null>(null);
-
-  // Form state for Apply Leave modal
+  const [selectedHistoryLeave, setSelectedHistoryLeave] =
+    useState<LeaveRecord | null>(null);
   const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveType>("CL");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -94,7 +89,7 @@ export function EmployeeLeaves() {
       reason: "Viral fever, resting at home",
       status: "Pending",
       appliedOn: "Apr 17, 2026",
-    }
+    },
   ]);
 
   const approvedLeaves: LeaveRecord[] = [
@@ -146,40 +141,70 @@ export function EmployeeLeaves() {
       reason: "Winter vacation",
       status: "Approved",
       appliedOn: "Dec 15, 2025",
-    }
+    },
   ]);
 
   const leaveTypeLabels: Record<LeaveType, string> = {
-    CL: "Casual Leave", EL: "Earned Leave", SL: "Sick Leave", CO: "Comp Off"
+    CL: "Casual Leave",
+    EL: "Earned Leave",
+    SL: "Sick Leave",
+    CO: "Comp Off",
   };
 
   const handleCancelRequest = (id: string) => {
-    setPendingRequests(prev => prev.filter(r => r.id !== id));
-    showToast("Request Cancelled", "info", "Your leave request has been cancelled.");
+    setPendingRequests((prev) => prev.filter((r) => r.id !== id));
+    showToast(
+      "Request Cancelled",
+      "info",
+      "Your leave request has been cancelled.",
+    );
     setShowCancelConfirm(null);
   };
 
   const handleSubmitLeave = () => {
     if (!fromDate || !toDate) {
-      showToast("Missing Dates", "error", "Please select both from and to dates.");
+      showToast(
+        "Missing Dates",
+        "error",
+        "Please select both from and to dates.",
+      );
       return;
     }
     const from = new Date(fromDate);
     const to = new Date(toDate);
-    const days = Math.max(1, Math.round((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+    const days = Math.max(
+      1,
+      Math.round((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+    );
     const newReq: LeaveRecord = {
       id: `LR-${Math.floor(1000 + Math.random() * 9000)}`,
       type: selectedLeaveType,
       typeFull: leaveTypeLabels[selectedLeaveType],
-      from: from.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
-      to: to.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+      from: from.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }),
+      to: to.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }),
       days,
       reason: leaveReason || "No reason provided",
       status: "Pending",
-      appliedOn: new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+      appliedOn: new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }),
     };
-    setPendingRequests(prev => [newReq, ...prev]);
-    showToast("Leave Applied!", "success", `${leaveTypeLabels[selectedLeaveType]} request submitted for ${days} day(s).`);
+    setPendingRequests((prev) => [newReq, ...prev]);
+    showToast(
+      "Leave Applied!",
+      "success",
+      `${leaveTypeLabels[selectedLeaveType]} request submitted for ${days} day(s).`,
+    );
     setIsApplyModalOpen(false);
     setFromDate("");
     setToDate("");
@@ -939,11 +964,13 @@ export function EmployeeLeaves() {
                   </label>
                   <div className="flex gap-2 p-1 rounded-xl bg-muted border border-border">
                     {(["CL", "EL", "SL", "CO"] as LeaveType[]).map((type) => (
-                      <button 
+                      <button
                         key={type}
                         onClick={() => setSelectedLeaveType(type)}
                         className={`flex-1 py-2 rounded-lg text-[12px] font-bold uppercase tracking-widest transition-all ${
-                          selectedLeaveType === type ? "bg-[#00B87C] text-white shadow-sm" : "text-muted-foreground hover:bg-card/50"
+                          selectedLeaveType === type
+                            ? "bg-[#00B87C] text-white shadow-sm"
+                            : "text-muted-foreground hover:bg-card/50"
                         }`}
                       >
                         {type}
@@ -955,12 +982,26 @@ export function EmployeeLeaves() {
                 {/* Dates */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">From Date</label>
-                    <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground" />
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                      From Date
+                    </label>
+                    <input
+                      type="date"
+                      value={fromDate}
+                      onChange={(e) => setFromDate(e.target.value)}
+                      className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">To Date</label>
-                    <input type="date" value={toDate} onChange={e => setToDate(e.target.value)} className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground" />
+                    <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                      To Date
+                    </label>
+                    <input
+                      type="date"
+                      value={toDate}
+                      onChange={(e) => setToDate(e.target.value)}
+                      className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground"
+                    />
                   </div>
                 </div>
 
@@ -997,24 +1038,30 @@ export function EmployeeLeaves() {
 
                 {/* Reason */}
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Reason (Optional)</label>
-                  <textarea 
+                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                    Reason (Optional)
+                  </label>
+                  <textarea
                     value={leaveReason}
-                    onChange={e => setLeaveReason(e.target.value)}
-                    placeholder="Brief reason for your leave..." 
+                    onChange={(e) => setLeaveReason(e.target.value)}
+                    placeholder="Brief reason for your leave..."
                     className="w-full h-20 px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground resize-none"
                   />
                 </div>
 
                 {/* Toggles */}
                 <div className="flex items-center justify-between p-1">
-                  <span className="text-[13px] font-bold text-foreground">Notify Manager</span>
+                  <span className="text-[13px] font-bold text-foreground">
+                    Notify Manager
+                  </span>
                   <button
                     type="button"
-                    onClick={() => setNotifyManager(v => !v)}
-                    className={`w-10 h-6 rounded-full relative transition-colors duration-200 ${notifyManager ? 'bg-[#00B87C]' : 'bg-gray-300'}`}
+                    onClick={() => setNotifyManager((v) => !v)}
+                    className={`w-10 h-6 rounded-full relative transition-colors duration-200 ${notifyManager ? "bg-[#00B87C]" : "bg-gray-300"}`}
                   >
-                    <div className={`absolute top-1 bottom-1 w-4 bg-white rounded-full shadow-sm transition-all duration-200 ${notifyManager ? 'right-1' : 'left-1'}`} />
+                    <div
+                      className={`absolute top-1 bottom-1 w-4 bg-white rounded-full shadow-sm transition-all duration-200 ${notifyManager ? "right-1" : "left-1"}`}
+                    />
                   </button>
                 </div>
               </div>
@@ -1027,7 +1074,7 @@ export function EmployeeLeaves() {
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   onClick={handleSubmitLeave}
                   className="flex-1 px-6 py-3 rounded-2xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20"
                 >
@@ -1043,54 +1090,104 @@ export function EmployeeLeaves() {
       <AnimatePresence>
         {selectedHistoryLeave && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedHistoryLeave(null)} className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="relative w-full max-w-[400px] bg-card border border-border rounded-2xl shadow-2xl overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedHistoryLeave(null)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-[400px] bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+            >
               <div className="p-5 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] flex items-center justify-center text-[#00B87C]"><FileText size={18} /></div>
+                  <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] flex items-center justify-center text-[#00B87C]">
+                    <FileText size={18} />
+                  </div>
                   <div>
-                    <h3 className="text-[15px] font-black text-foreground">{selectedHistoryLeave.typeFull}</h3>
-                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">{selectedHistoryLeave.id}</p>
+                    <h3 className="text-[15px] font-black text-foreground">
+                      {selectedHistoryLeave.typeFull}
+                    </h3>
+                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                      {selectedHistoryLeave.id}
+                    </p>
                   </div>
                 </div>
-                <button onClick={() => setSelectedHistoryLeave(null)} className="p-2 rounded-xl hover:bg-muted text-muted-foreground"><X size={18} /></button>
+                <button
+                  onClick={() => setSelectedHistoryLeave(null)}
+                  className="p-2 rounded-xl hover:bg-muted text-muted-foreground"
+                >
+                  <X size={18} />
+                </button>
               </div>
               <div className="p-5 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   {[
                     { label: "From", val: selectedHistoryLeave.from },
                     { label: "To", val: selectedHistoryLeave.to },
-                    { label: "Days", val: `${selectedHistoryLeave.days} day(s)` },
-                    { label: "Applied On", val: selectedHistoryLeave.appliedOn },
-                  ].map(f => (
+                    {
+                      label: "Days",
+                      val: `${selectedHistoryLeave.days} day(s)`,
+                    },
+                    {
+                      label: "Applied On",
+                      val: selectedHistoryLeave.appliedOn,
+                    },
+                  ].map((f) => (
                     <div key={f.label}>
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{f.label}</p>
-                      <p className="text-[13px] font-bold text-foreground">{f.val}</p>
+                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                        {f.label}
+                      </p>
+                      <p className="text-[13px] font-bold text-foreground">
+                        {f.val}
+                      </p>
                     </div>
                   ))}
                 </div>
                 <div className="bg-muted/30 rounded-xl p-3">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Reason</p>
-                  <p className="text-[13px] font-bold text-foreground">{selectedHistoryLeave.reason}</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                    Reason
+                  </p>
+                  <p className="text-[13px] font-bold text-foreground">
+                    {selectedHistoryLeave.reason}
+                  </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">Status</span>
-                  <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 ${
-                    selectedHistoryLeave.status === 'Approved' ? 'bg-emerald-500/10 text-[#00B87C]' : 'bg-rose-500/10 text-rose-600'
-                  }`}>
-                    {selectedHistoryLeave.status === 'Approved' ? <CheckCircle2 size={12} /> : <X size={12} />}
+                  <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Status
+                  </span>
+                  <span
+                    className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 ${
+                      selectedHistoryLeave.status === "Approved"
+                        ? "bg-emerald-500/10 text-[#00B87C]"
+                        : "bg-rose-500/10 text-rose-600"
+                    }`}
+                  >
+                    {selectedHistoryLeave.status === "Approved" ? (
+                      <CheckCircle2 size={12} />
+                    ) : (
+                      <X size={12} />
+                    )}
                     {selectedHistoryLeave.status}
                   </span>
                 </div>
               </div>
               <div className="p-5 border-t border-border">
-                <button onClick={() => setSelectedHistoryLeave(null)} className="w-full py-3 rounded-xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest hover:bg-[#009966] transition-all">Close</button>
+                <button
+                  onClick={() => setSelectedHistoryLeave(null)}
+                  className="w-full py-3 rounded-xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest hover:bg-[#009966] transition-all"
+                >
+                  Close
+                </button>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
-
     </div>
   );
 }

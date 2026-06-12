@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { toast } from "sonner";
 import {
   Folder,
@@ -248,7 +248,7 @@ export function Documents() {
   };
 
   const getFileIconColor = (type: string) => {
-    return "bg-[#00B87C] text-white";
+    return type ? "bg-[#00B87C] text-white" : "bg-[#00B87C] text-white";
   };
 
   // Filter Calculations
@@ -359,7 +359,7 @@ export function Documents() {
             <div
               className={`absolute -right-4 -top-4 w-20 h-20 rounded-full bg-[#00B87C]/5 group-hover:scale-150 transition-transform duration-500`}
             />
-            
+
             <div className="relative flex items-center gap-3">
               <div
                 className={`w-10 h-10 rounded-xl flex items-center justify-center ${kpi.bg} dark:bg-zinc-800/50 ${kpi.color}`}
@@ -375,7 +375,7 @@ export function Documents() {
                 </p>
               </div>
             </div>
-            
+
             <div className="mt-4 w-full h-1 bg-muted/50 rounded-full overflow-hidden relative z-10">
               <div
                 className={`h-full ${kpi.colorName === "amber" ? "bg-amber-500" : "bg-[#00B87C]"} transition-all duration-1000`}
@@ -514,9 +514,13 @@ export function Documents() {
                       >
                         <FileText size={18} />
                       </div>
-                      <span className="truncate max-w-[180px] font-black text-foreground">{doc.name}</span>
+                      <span className="truncate max-w-[180px] font-black text-foreground">
+                        {doc.name}
+                      </span>
                     </td>
-                    <td className="px-4 py-4 text-slate-500 font-bold">{doc.category}</td>
+                    <td className="px-4 py-4 text-slate-500 font-bold">
+                      {doc.category}
+                    </td>
                     <td className="px-4 py-4">
                       {doc.linkedEmployee ? (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/10 text-[10px] font-black uppercase tracking-wider">
@@ -529,8 +533,12 @@ export function Documents() {
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-foreground/80">{doc.uploadedBy}</td>
-                    <td className="px-4 py-4 text-slate-400 font-medium">{doc.date}</td>
+                    <td className="px-4 py-4 text-foreground/80">
+                      {doc.uploadedBy}
+                    </td>
+                    <td className="px-4 py-4 text-slate-400 font-medium">
+                      {doc.date}
+                    </td>
                     <td className="px-4 py-4 text-slate-400 font-medium">
                       {doc.expiry || "-"}
                     </td>
@@ -668,9 +676,13 @@ export function Documents() {
 
             <form onSubmit={handleUploadSubmit} className="space-y-4">
               <div className="border-2 border-dashed border-border rounded-2xl bg-[#F0FDF4]/30 dark:bg-emerald-500/5 p-6 flex flex-col items-center text-center relative hover:border-[#00B87C] transition-all cursor-pointer group">
-                <UploadCloud size={32} className="text-[#00B87C] mb-1 group-hover:scale-105 transition-transform" />
+                <UploadCloud
+                  size={32}
+                  className="text-[#00B87C] mb-1 group-hover:scale-105 transition-transform"
+                />
                 <p className="text-xs font-black text-slate-800 dark:text-slate-200">
-                  Drag files here or <span className="text-[#00B87C] hover:underline">Browse</span>
+                  Drag files here or{" "}
+                  <span className="text-[#00B87C] hover:underline">Browse</span>
                 </p>
                 <span className="text-[9px] text-slate-400 mt-1 uppercase tracking-widest font-bold">
                   Max 25MB · PDF, DOC, XLS
@@ -708,7 +720,7 @@ export function Documents() {
                     onChange={(e) =>
                       setUploadForm({
                         ...uploadForm,
-                        category: e.target.value as any,
+                        category: e.target.value as DocItem["category"],
                       })
                     }
                   >

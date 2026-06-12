@@ -12,7 +12,6 @@ import {
   ChevronDown,
   ShieldAlert,
   Globe,
-  Eye,
   Flag,
   CheckCircle2,
   AlertTriangle,
@@ -299,41 +298,24 @@ export function AuditLogs() {
   const [flaggedFilter, setFlaggedFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const logsPerPage = 4;
-
   const [searchQuery, setSearchQuery] = useState("");
-
   const [moduleDropdownOpen, setModuleDropdownOpen] = useState(false);
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
   const [severityDropdownOpen, setSeverityDropdownOpen] = useState(false);
-
   const [moduleFilter, setModuleFilter] = useState("All");
   const [actionFilter, setActionFilter] = useState("All");
   const [userFilter, setUserFilter] = useState("All");
   const [dateFilter, setDateFilter] = useState("All");
   const [severityFilter, setSeverityFilter] = useState("All");
-
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [blockedIPs, setBlockedIPs] = useState<string[]>([]);
-
   const [alertAction, setAlertAction] = useState("Any Action");
   const [alertModule, setAlertModule] = useState("Any Module");
-  const [alertThresholdCount, setAlertThresholdCount] = useState(3);
-  const [alertThresholdMins, setAlertThresholdMins] = useState(10);
-  const [alertSeverity, setAlertSeverity] = useState("Critical");
-  const [alertViaEmail, setAlertViaEmail] = useState(true);
-  const [alertViaPush, setAlertViaPush] = useState(true);
-  const [alertViaSMS, setAlertViaSMS] = useState(false);
-
   const [exportFromDate, setExportFromDate] = useState("");
   const [exportToDate, setExportToDate] = useState("");
-  const [exportSelectedModules, setExportSelectedModules] = useState<string[]>([
-    "All",
-  ]);
   const [exportFormat, setExportFormat] = useState("CSV");
-  const [exportSeverity, setExportSeverity] = useState("All");
-
   const todayLogsCount = useMemo(
     () => logs.filter((l) => l.timestamp.startsWith("Today")).length,
     [logs],

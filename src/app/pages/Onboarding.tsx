@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
   UserPlus,
@@ -87,22 +87,26 @@ interface Template {
 }
 
 /* ─── Helpers ─── */
-function safeGet<T>(obj: any, key: string | number): T | undefined {
-  if (!obj || key === "__proto__" || key === "constructor" || key === "prototype") {
+function safeGet<T>(obj: unknown, key: string | number): T | undefined {
+  if (!obj || typeof obj !== "object" || key === "__proto__" || key === "constructor" || key === "prototype") {
     return undefined;
   }
   const desc = Object.getOwnPropertyDescriptor(obj, key);
-  return desc ? desc.value : undefined;
+  return desc ? (desc.value as T) : undefined;
 }
 
-function safeSet(obj: any, key: string | number, value: any): any {
+function safeSet(
+  obj: Record<string | number, unknown>,
+  key: string | number,
+  value: unknown,
+): Record<string | number, unknown> {
   const updated = { ...obj };
   if (key !== "__proto__" && key !== "constructor" && key !== "prototype") {
     Object.defineProperty(updated, key, {
       value,
       writable: true,
       enumerable: true,
-      configurable: true
+      configurable: true,
     });
   }
   return updated;
@@ -904,7 +908,7 @@ export function Onboarding() {
       ]}
     ];
 
-    setPhasesData(prev => safeSet(prev, newId, newPhases));
+    setPhasesData(prev => safeSet(prev, newId, newPhases) as Record<string, OnboardingPhase[]>);
     setNewHires(prev => [newHire, ...prev]);
     setSelectedId(newId);
     
@@ -969,11 +973,15 @@ export function Onboarding() {
     setShowEscalateModal(false);
   };
   const handleDuplicateTemplate = (id: string) => {
-    showToast("Template Duplicated", "success", "Template duplicated successfully.");
+    if (id) {
+      showToast("Template Duplicated", "success", "Template duplicated successfully.");
+    }
     setShowTemplateMenu(null);
   };
-  const handleDeleteTemplate = (_id: string) => {
-    showToast("Template Deleted", "success", "Template deleted.");
+  const handleDeleteTemplate = (id: string) => {
+    if (id) {
+      showToast("Template Deleted", "success", "Template deleted.");
+    }
     setShowTemplateMenu(null);
   };
 

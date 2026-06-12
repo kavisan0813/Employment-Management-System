@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { toast } from "sonner";
+import { motion } from "motion/react";
 import {
   BookOpen,
   Download,
@@ -491,7 +490,9 @@ function CoursePlayerModal({
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="font-medium text-slate-400">Department Target:</span>
+              <span className="font-medium text-slate-400">
+                Department Target:
+              </span>
               <span className="font-extrabold text-slate-800 dark:text-slate-200">
                 {course.department}
               </span>
@@ -653,13 +654,13 @@ export function Training() {
         </span>
         <div className="hidden md:block w-[1px] h-4 bg-border" />
         <span className="flex items-center gap-2 text-[12px] font-black text-emerald-600 dark:text-primary">
-          <span className="w-2 h-2 rounded-full bg-[#00B87C] inline-block" />
-          8 courses completed this year
+          <span className="w-2 h-2 rounded-full bg-[#00B87C] inline-block" />8
+          courses completed this year
         </span>
         <div className="hidden md:block w-[1px] h-4 bg-border" />
         <span className="flex items-center gap-2 text-[12px] font-black text-amber-600 dark:text-amber-500">
-          <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
-          2 certifications expiring soon
+          <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />2
+          certifications expiring soon
         </span>
       </div>
 
@@ -721,7 +722,7 @@ export function Training() {
             <div
               className={`absolute -right-4 -top-4 w-20 h-20 rounded-full bg-[#00B87C]/5 group-hover:scale-150 transition-transform duration-500`}
             />
-            
+
             <div className="relative flex items-center gap-3">
               <div
                 className={`w-10 h-10 rounded-xl flex items-center justify-center ${kpi.bg} dark:bg-zinc-800/50 ${kpi.color}`}
@@ -737,7 +738,7 @@ export function Training() {
                 </p>
               </div>
             </div>
-            
+
             <div className="mt-4 w-full h-1 bg-muted/50 rounded-full overflow-hidden relative z-10">
               <div
                 className={`h-full ${kpi.colorName === "rose" ? "bg-rose-500" : "bg-[#00B87C]"} transition-all duration-1000`}
@@ -865,7 +866,9 @@ export function Training() {
                               style={{ width: `${course.progress}%` }}
                             />
                           </div>
-                          <span className="text-foreground/80">{course.progress}%</span>
+                          <span className="text-foreground/80">
+                            {course.progress}%
+                          </span>
                         </div>
 
                         <div className="flex items-center justify-between pt-3 border-t border-border/80">

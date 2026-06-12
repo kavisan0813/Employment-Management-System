@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import { showToast } from "../components/workflow/ToastNotification";
 import {
   LogOut,
@@ -15,24 +14,18 @@ import {
   Briefcase,
   Laptop,
   ShieldCheck,
-  BookOpen,
   Star,
-  AlertTriangle,
   ArrowLeft,
-  Building2,
   FileText,
   Mail,
   Send,
   CheckCircle2,
-  HelpCircle,
-  ThumbsUp,
   MessageSquare,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 /* ─── Types ─── */
 type ExitType = "Resignation" | "Termination" | "Retirement" | "Contract End" | "Other";
-type ExitStatus = "Active" | "Completed" | "Scheduled";
 type ClearanceStatus = "cleared" | "pending" | "not_started";
 type TabType = "Active" | "Completed" | "Scheduled" | "Exit Analytics";
 
@@ -543,22 +536,16 @@ const ACTIVE_EMPLOYEES = [
 
 /* ─── MAIN COMPONENT ─── */
 export function Offboarding() {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("Active");
-  const [activeExitId, setActiveExitId] = useState<string | null>(null);
   const [showInitiateModal, setShowInitiateModal] = useState(false);
   const [showDetail, setShowDetail] = useState<string | null>(null);
   const [showReminder, setShowReminder] = useState<string | null>(null);
   const [showComplete, setShowComplete] = useState<string | null>(null);
-  const [showInterview, setShowInterview] = useState<string | null>(null);
   const [showSchedule, setShowSchedule] = useState<{id: string; type: "interview" | "clearance"} | null>(null);
-
   const [exits, setExits] = useState<ExitEmployee[]>(EXITS);
-
   const activeExits = exits.filter(e => e.progress < 100);
   const completedExits = exits.filter(e => e.progress === 100);
   const scheduledExits = exits.filter(e => e.progress < 30 && e.progress > 0);
-
   const stats = {
     activeExits: activeExits.length,
     completedThisMonth: completedExits.length,
@@ -567,10 +554,8 @@ export function Offboarding() {
     docsPending: exits.filter(e => e.documents.some(d => d.status === "pending" || d.status === "not_generated")).length,
     interviewsDone: `${exits.filter(e => e.interviewDone).length}/${exits.length}`,
   };
-
   const currentExit = showDetail ? exits.find(e => e.id === showDetail) : null;
   const completeExit = showComplete ? exits.find(e => e.id === showComplete) : null;
-
   const handleExportCSV = () => {
     const content = `Offboarding Report\nName,Designation,Department,LWD,Progress,InterviewDone,F&F Status\n${exits.map(e => `"${e.name}","${e.designation}","${e.department}","${e.lwd}",${e.progress}%,${e.interviewDone},"${e.ffStatus}"`).join("\n")}`;
     const blob = new Blob([content], { type: "text/csv" });
