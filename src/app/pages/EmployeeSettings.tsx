@@ -1,6 +1,5 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
-import { motion, AnimatePresence } from "motion/react";
 import {
   Settings,
   User,
@@ -15,20 +14,13 @@ import {
   HelpCircle,
   Headphones,
   ChevronRight,
-  Camera,
-  X,
   Eye,
   EyeOff,
-  Shield,
   AlertTriangle,
   Sun,
   Monitor,
   Search,
-  Phone,
-  Mail,
   Smartphone,
-  MapPin,
-  Linkedin,
   Clock,
   Calendar,
   FileText,
@@ -42,7 +34,6 @@ import {
   LogOut,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
-import { useAuth } from "../context/AuthContext";
 
 type SectionKey =
   | "security"
@@ -125,48 +116,17 @@ function Breadcrumb({ active }: { active: string }) {
   );
 }
 
-interface ModalProps {
-  open: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
 
-function Modal({ open, onClose, title, children }: ModalProps) {
-  return (
-    <AnimatePresence>
-      {open && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[3000] bg-background/60 backdrop-blur-sm"
-            onClick={onClose}
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-0 z-[3001] flex items-center justify-center p-4"
-          >
-            <div className="relative bg-card w-full max-w-[520px] rounded-[32px] shadow-2xl border border-border overflow-hidden">
-              <div className="px-6 py-5 border-b border-border flex items-center justify-between">
-                <h3 className="text-[16px] font-black text-foreground">{title}</h3>
-                <button onClick={onClose} className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors">
-                  <X size={18} />
-                </button>
-              </div>
-              <div className="p-6">{children}</div>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  );
-}
 
-function Toggle({ on, onChange, disabled }: { on: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {
+function Toggle({
+  on,
+  onChange,
+  disabled,
+}: {
+  on: boolean;
+  onChange: (v: boolean) => void;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
@@ -183,7 +143,7 @@ function Toggle({ on, onChange, disabled }: { on: boolean; onChange: (v: boolean
 
 export default function EmployeeSettings() {
   const [activeSection, setActiveSection] = useState<SectionKey>("security");
-  const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [, setActiveModal] = useState<string | null>(null);
   const navigate = useNavigate();
 
   return (
@@ -248,7 +208,7 @@ export default function EmployeeSettings() {
         <div className="flex-1 min-w-0 space-y-6">
           <div className="bg-card rounded-2xl border border-border shadow-sm p-8">
             {activeSection === "security" && (
-              <AccountSecurity onModal={setActiveModal} />
+              <AccountSecurity />
             )}
             {activeSection === "privacy" && (
               <PrivacySettings onModal={setActiveModal} />
@@ -280,7 +240,7 @@ export default function EmployeeSettings() {
 /* ═══════════════════════════════════════════
    SECTION: ACCOUNT & SECURITY
    ═══════════════════════════════════════════ */
-function AccountSecurity({ onModal }: { onModal: (m: string | null) => void }) {
+function AccountSecurity() {
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");

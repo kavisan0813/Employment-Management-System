@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Settings,
-  Lock,
   User,
   Bell,
   Globe,
@@ -10,7 +9,6 @@ import {
   Eye,
   EyeOff,
   Check,
-  Info,
   Download,
   Sliders,
   ShieldAlert,

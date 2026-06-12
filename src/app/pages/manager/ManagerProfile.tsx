@@ -4,7 +4,6 @@ import {
   User,
   Camera,
   MapPin,
-  Edit3,
   X,
   Plus,
   Mail,
@@ -14,7 +13,6 @@ import {
   Download,
   Check,
   ChevronDown,
-  Sparkles,
   Info,
   Lock,
   Calendar,
@@ -24,7 +22,6 @@ import {
   TrendingUp,
   MessageSquare,
   MoreHorizontal,
-  ShieldCheck,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../components/workflow/ToastNotification";
@@ -296,7 +293,9 @@ export function ManagerProfile() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <span className="text-4xl font-black text-[#00B87C]">SI</span>
+                    <span className="text-4xl font-black text-[#00B87C]">
+                      SI
+                    </span>
                   )}
                 </div>
                 <div className="absolute inset-0 rounded-[40px] bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px] m-[6px]">

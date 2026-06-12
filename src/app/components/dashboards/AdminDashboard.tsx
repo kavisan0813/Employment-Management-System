@@ -221,6 +221,22 @@ const INITIAL_ROLE_DIST = [
   },
 ];
 
+interface RoleDistItem {
+  role: string;
+  count: number;
+  status: string;
+  color: string;
+  bg: string;
+}
+
+interface PendingActionItem {
+  icon: React.ElementType;
+  title: string;
+  urgency: string;
+  color: string;
+  bg: string;
+}
+
 export function AdminDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -242,8 +258,9 @@ export function AdminDashboard() {
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [isPostAnnouncementOpen, setIsPostAnnouncementOpen] = useState(false);
   const [isManageRoleOpen, setIsManageRoleOpen] = useState(false);
-  const [selectedRoleToManage, setSelectedRoleToManage] = useState<any>(null);
-  const [activePendingAction, setActivePendingAction] = useState<any>(null);
+  const [selectedRoleToManage, setSelectedRoleToManage] = useState<RoleDistItem | null>(null);
+  const [activePendingAction, setActivePendingAction] = useState<PendingActionItem | null>(null);
+
 
   // System actions (loading state)
   const [systemTaskType, setSystemTaskType] = useState<
@@ -1266,7 +1283,7 @@ export function AdminDashboard() {
                     onChange={(e) =>
                       setSelectedRoleToManage({
                         ...selectedRoleToManage,
-                        count: e.target.value,
+                        count: parseInt(e.target.value) || 0,
                       })
                     }
                   />

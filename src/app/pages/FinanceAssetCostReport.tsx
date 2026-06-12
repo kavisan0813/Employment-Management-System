@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
   BarChart3,
@@ -25,14 +25,8 @@ import {
   RefreshCw,
   X,
   Eye,
-  XCircle,
   PieChart,
-  FileText,
   Shield,
-  DollarSign,
-  Percent,
-  Home,
-  Trash2,
   ExternalLink,
   TrendingDown,
 } from "lucide-react";
@@ -44,11 +38,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
-  Cell,
-  PieChart as RechartsPieChart,
-  Pie,
-  Sector
 } from "recharts";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../components/workflow/ToastNotification";
@@ -486,16 +475,22 @@ export function FinanceAssetCostReport() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedDept, setSelectedDept] = useState<string | null>(null);
   const [activeKPIModal, setActiveKPIModal] = useState<KPIModalType>(null);
-  const [activeChartIndex, setActiveChartIndex] = useState<number | null>(null);
-  const [exportLoading, setExportLoading] = useState<"pdf" | "csv" | null>(null);
+  const [exportLoading, setExportLoading] = useState<"pdf" | "csv" | null>(
+    null,
+  );
   const [selectedFY, setSelectedFY] = useState("FY 2025-26");
   const [selectedCatFilter, setSelectedCatFilter] = useState("All Categories");
   const [showFYDropdown, setShowFYDropdown] = useState(false);
   const [showCatDropdown, setShowCatDropdown] = useState(false);
-  const csvRef = useRef<HTMLAnchorElement>(null);
 
-  const totalAssetValue = ASSET_COST_BY_CATEGORY.reduce((s, c) => s + c.totalValue, 0);
-  const totalDepreciation = ASSET_COST_BY_CATEGORY.reduce((s, c) => s + c.annualDepreciation, 0);
+  const totalAssetValue = ASSET_COST_BY_CATEGORY.reduce(
+    (s, c) => s + c.totalValue,
+    0,
+  );
+  const totalDepreciation = ASSET_COST_BY_CATEGORY.reduce(
+    (s, c) => s + c.annualDepreciation,
+    0,
+  );
   const totalMaintenance = 800000;
   const replacementDue = 14;
 

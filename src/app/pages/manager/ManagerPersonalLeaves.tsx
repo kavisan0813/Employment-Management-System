@@ -15,7 +15,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
 import { motion, AnimatePresence } from "motion/react";
 import {
   format,
@@ -52,8 +51,6 @@ interface LeaveRecord {
 export function ManagerPersonalLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
-
   const [activeTab, setActiveTab] = useState<LeaveTab>("My Requests");
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState<string | null>(

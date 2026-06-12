@@ -13,15 +13,7 @@ import {
   ChevronRight,
   BarChart as BarChartIcon,
   Settings,
-  Database,
   Package,
-  Laptop,
-  Smartphone,
-  Monitor,
-  Printer,
-  Wifi,
-  Watch,
-  Car,
   IndianRupee,
   AlertTriangle,
   TrendingUp,
@@ -35,7 +27,6 @@ import {
   X,
   Send,
   Mail,
-  MoreVertical,
 } from "lucide-react";
 import {
   AreaChart,
@@ -105,99 +96,6 @@ const YOY_GROWTH_DATA = [
   { month: "Apr", lastYear: 24.8, currentYear: 28.4 },
 ];
 
-const ASSET_COST_BY_CATEGORY = [
-  {
-    id: "cat1",
-    category: "Laptops",
-    count: 142,
-    totalValue: 18500000,
-    annualDepreciation: 3700000,
-    bookValue: 14800000,
-    icon: "Laptop",
-    status: "Active",
-  },
-  {
-    id: "cat2",
-    category: "Smartphones",
-    count: 85,
-    totalValue: 4250000,
-    annualDepreciation: 850000,
-    bookValue: 3400000,
-    icon: "Smartphone",
-    status: "Active",
-  },
-  {
-    id: "cat3",
-    category: "Monitors",
-    count: 68,
-    totalValue: 2040000,
-    annualDepreciation: 340000,
-    bookValue: 1700000,
-    icon: "Monitor",
-    status: "Active",
-  },
-  {
-    id: "cat4",
-    category: "Printers",
-    count: 24,
-    totalValue: 960000,
-    annualDepreciation: 160000,
-    bookValue: 800000,
-    icon: "Printer",
-    status: "Depreciating",
-  },
-  {
-    id: "cat5",
-    category: "Servers & Networking",
-    count: 43,
-    totalValue: 6200000,
-    annualDepreciation: 1240000,
-    bookValue: 4960000,
-    icon: "Wifi",
-    status: "Critical",
-  },
-  {
-    id: "cat6",
-    category: "Accessories",
-    count: 120,
-    totalValue: 1200000,
-    annualDepreciation: 240000,
-    bookValue: 960000,
-    icon: "Watch",
-    status: "Active",
-  },
-  {
-    id: "cat7",
-    category: "Vehicles",
-    count: 12,
-    totalValue: 7200000,
-    annualDepreciation: 1200000,
-    bookValue: 6000000,
-    icon: "Car",
-    status: "Depreciating",
-  },
-];
-
-const DEPT_ASSET_DIST_DATA = [
-  { department: "Engineering", value: 35, color: "#00B87C" },
-  { department: "Sales", value: 18, color: "#8B5CF6" },
-  { department: "Operations", value: 15, color: "#F59E0B" },
-  { department: "Marketing", value: 12, color: "#3B82F6" },
-  { department: "Finance", value: 10, color: "#EC4899" },
-  { department: "HR", value: 6, color: "#EF4444" },
-  { department: "Legal", value: 4, color: "#14B8A6" },
-];
-
-const ASSET_VALUE_BY_DEPT = [
-  { department: "Engineering", total: 85, depreciated: 32, current: 53 },
-  { department: "Sales", total: 42, depreciated: 15, current: 27 },
-  { department: "Operations", total: 35, depreciated: 14, current: 21 },
-  { department: "Marketing", total: 28, depreciated: 9, current: 19 },
-  { department: "Finance", total: 22, depreciated: 8, current: 14 },
-  { department: "HR", total: 15, depreciated: 5, current: 10 },
-  { department: "Legal", total: 10, depreciated: 3, current: 7 },
-];
-
 type ReportTab =
   | "Dashboards"
   | "Payroll Reports"
@@ -206,6 +104,16 @@ type ReportTab =
   | "Asset Reports"
   | "Custom Builder"
   | "Report History";
+
+export interface ReportItem {
+  id?: number | string;
+  name: string;
+  category?: string;
+  date?: string;
+  status?: string;
+  desc?: string;
+  last?: string;
+}
 
 export function FinanceReports() {
   const location = useLocation();
@@ -216,9 +124,9 @@ export function FinanceReports() {
   const [isExporting, setIsExporting] = useState(false);
 
   const [activeModal, setActiveModal] = useState<string | null>(null);
-  const [selectedReport, setSelectedReport] = useState<any>(null);
+  const [selectedReport, setSelectedReport] = useState<ReportItem | null>(null);
 
-  const [reportsHistory, setReportsHistory] = useState<any[]>([
+  const [reportsHistory, setReportsHistory] = useState<ReportItem[]>([
     {
       id: 1,
       name: "April Payroll Summary",
@@ -263,7 +171,7 @@ export function FinanceReports() {
 
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleFilterChange = (setter: any) => (e: any) => {
+  const handleFilterChange = (setter: (val: string) => void) => (e: React.ChangeEvent<HTMLSelectElement>) => {
     setter(e.target.value);
     setRefreshKey((prev) => prev + 1);
   };
@@ -926,8 +834,8 @@ function ReportCatalogTab({
 }: {
   section: string;
   type: "payroll" | "expense" | "tax";
-  setActiveModal?: any;
-  setSelectedReport?: any;
+  setActiveModal?: (modal: string | null) => void;
+  setSelectedReport?: (report: ReportItem | null) => void;
 }) {
   const reports = {
     payroll: [
@@ -1071,7 +979,13 @@ function ReportCatalogTab({
 
 /* ─── ASSET REPORTS TAB ─── */
 
-function AssetReportsTab({ setActiveModal, setSelectedReport }: any) {
+function AssetReportsTab({
+  setActiveModal,
+  setSelectedReport,
+}: {
+  setActiveModal?: (modal: string | null) => void;
+  setSelectedReport?: (report: ReportItem | null) => void;
+}) {
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -1259,7 +1173,12 @@ function ReportHistoryTab({
   setActiveModal,
   setSelectedReport,
   setShowExportModal,
-}: any) {
+}: {
+  reportsHistory: ReportItem[];
+  setActiveModal: (modal: string | null) => void;
+  setSelectedReport: (report: ReportItem | null) => void;
+  setShowExportModal: (show: boolean) => void;
+}) {
   return (
     <div className="bg-card border border-border rounded-[32px] p-6 shadow-sm">
       <div className="flex items-center justify-between mb-6">
@@ -1279,7 +1198,7 @@ function ReportHistoryTab({
             </tr>
           </thead>
           <tbody>
-            {reportsHistory.map((report: any) => (
+            {reportsHistory.map((report) => (
               <tr
                 key={report.id}
                 className="border-b border-border/50 hover:bg-muted/20 transition-colors group"
@@ -1404,7 +1323,7 @@ function FilterSelect({
   options = ["Option 1", "Option 2"],
 }: {
   value: string;
-  onChange: (e: any) => void;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   icon?: React.ElementType;
   options?: string[];
 }) {
@@ -1467,8 +1386,8 @@ function ReportCard({
   name: string;
   desc: string;
   last: string;
-  setActiveModal?: any;
-  setSelectedReport?: any;
+  setActiveModal?: (modal: string | null) => void;
+  setSelectedReport?: (report: ReportItem | null) => void;
 }) {
   const navigate = useNavigate();
   const handleGenerate = () => {
@@ -1559,42 +1478,7 @@ function ReportCard({
   );
 }
 
-function FieldGroup({
-  title,
-  items,
-  color,
-}: {
-  title: string;
-  items: string[];
-  color: "blue" | "emerald";
-}) {
-  const bg =
-    color === "blue"
-      ? "bg-sky-500/5 hover:bg-sky-500/10"
-      : "bg-emerald-500/5 hover:bg-emerald-500/10";
-  const text = color === "blue" ? "text-sky-600" : "text-emerald-600";
-  const border =
-    color === "blue" ? "border-sky-500/20" : "border-emerald-500/20";
 
-  return (
-    <div className="space-y-3">
-      <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider px-2">
-        {title}
-      </p>
-      <div className="space-y-2">
-        {items.map((item, i) => (
-          <div
-            key={i}
-            className={`px-3 py-2.5 rounded-xl border ${border} ${bg} ${text} text-[12px] font-bold flex items-center justify-between cursor-grab active:cursor-grabbing transition-all hover:translate-x-1`}
-          >
-            {item}
-            <Plus size={14} className="opacity-40" />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 /* ─── MODAL COMPONENTS ─── */
 
@@ -1737,7 +1621,7 @@ function ViewReportModal({
   report,
   onClose,
 }: {
-  report: any;
+  report: ReportItem;
   onClose: () => void;
 }) {
   return (
@@ -1885,7 +1769,7 @@ function ScheduleReportModal({
   report,
   onClose,
 }: {
-  report: any;
+  report: ReportItem;
   onClose: () => void;
 }) {
   return (

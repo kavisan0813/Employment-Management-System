@@ -13,7 +13,6 @@ import {
   Flag,
   CheckCircle2,
   AlertTriangle,
-  UserX,
   Ban,
   Info,
   Check,
@@ -284,7 +283,6 @@ const ALL_MODULES: ModuleType[] = ["Employees", "Leave", "Attendance", "Recruitm
 const ALL_ACTIONS: ActionType[] = ["APPROVE", "DELETE", "UPDATE", "EXPORT", "CREATE", "VIEW", "REJECT", "SUBMIT"];
 const ALL_USERS = [...new Set(LOGS.map(l => l.user))];
 const DATE_OPTIONS = ["Today", "Last 7 Days", "Last 30 Days", "All Time"];
-const SEVERITY_OPTIONS: Severity[] = ["critical", "warning", "info"];
 
 /* ─── KPI Card ─── */
 function KPICard({ title, value, sub, color, icon: Icon }: { title: string; value: string; sub: string; color: "green" | "red" | "teal" | "amber"; icon: React.ElementType }) {

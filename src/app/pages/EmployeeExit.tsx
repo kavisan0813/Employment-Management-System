@@ -7,13 +7,9 @@ import {
   UploadCloud,
   FileText,
   Calendar,
-  IndianRupee,
   AlertCircle,
   Check,
   Pen,
-  Download,
-  ChevronRight,
-  User,
   ShieldCheck,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";

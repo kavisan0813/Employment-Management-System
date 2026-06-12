@@ -390,7 +390,7 @@ export function AssetManagement() {
         a.id === selectedAsset.id 
           ? { 
               ...a, 
-              status: newStatus as any, 
+              status: newStatus as Asset["status"], 
               assignedTo: null, 
               department: null, 
               assignedDate: null, 
@@ -1185,7 +1185,7 @@ export function AssetManagement() {
                     <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">CATEGORY</label>
                     <select 
                       value={newAssetCategory}
-                      onChange={(e) => setNewAssetCategory(e.target.value as any)}
+                      onChange={(e) => setNewAssetCategory(e.target.value as Asset["category"])}
                       className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none appearance-none" 
                       required
                     >

@@ -6,7 +6,6 @@ import {
   X,
   CalendarDays,
   FileText,
-  AlertCircle,
   MoreVertical,
   CheckCircle2,
   Calendar,
@@ -16,7 +15,6 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "motion/react";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isToday } from "date-fns";
 
@@ -42,8 +40,6 @@ interface LeaveRecord {
 export function FinanceLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
-  
   const [activeTab, setActiveTab] = useState<LeaveTab>("My Requests");
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState<string | null>(null);
