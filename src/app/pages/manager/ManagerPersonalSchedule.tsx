@@ -9,7 +9,7 @@ import {
   AlertCircle,
   X,
 } from "lucide-react";
-import { showToast } from "../components/workflow/ToastNotification";
+import { showToast } from "../../components/workflow/ToastNotification";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types                                                           */
@@ -43,48 +43,59 @@ interface ShiftRequest {
 /* ─────────────────────────────────────────────────────────────── */
 const UPCOMING_SHIFTS: Shift[] = [
   {
-    id: "fs1",
+    id: "ms1",
     date: "Apr 06",
     day: "Mon",
     type: "Morning",
-    time: "06:00 AM - 02:00 PM",
+    time: "09:00 AM - 05:00 PM",
     hours: "8h",
     location: "Head Office, BLR",
-    department: "Finance",
-    manager: "Rajan Kumar",
+    department: "Management",
+    manager: "Ryan Park",
   },
   {
-    id: "fs2",
+    id: "ms2",
     date: "Apr 07",
     day: "Tue",
     type: "Morning",
-    time: "06:00 AM - 02:00 PM",
-    hours: "8h (+2h OT)",
+    time: "09:00 AM - 05:00 PM",
+    hours: "8h",
     location: "Head Office, BLR",
-    department: "Finance",
-    manager: "Rajan Kumar",
+    department: "Management",
+    manager: "Ryan Park",
   },
   {
-    id: "fs4",
-    date: "Apr 09",
-    day: "Thu",
-    type: "Evening",
-    time: "02:00 PM - 10:00 PM",
+    id: "ms3",
+    date: "Apr 08",
+    day: "Wed",
+    type: "Morning",
+    time: "09:00 AM - 05:00 PM",
     hours: "8h",
     location: "Remote",
-    department: "Finance",
-    manager: "Rajan Kumar",
+    department: "Management",
+    manager: "Ryan Park",
   },
   {
-    id: "fs5",
+    id: "ms4",
+    date: "Apr 09",
+    day: "Thu",
+    type: "Morning",
+    time: "09:00 AM - 05:00 PM",
+    hours: "8h",
+    location: "Remote",
+    department: "Management",
+    manager: "Ryan Park",
+  },
+  {
+    id: "ms5",
     date: "Apr 10",
     day: "Fri",
     type: "Morning",
-    time: "06:00 AM - 02:00 PM",
+    time: "09:00 AM - 05:00 PM",
     hours: "8h",
     location: "Head Office, BLR",
-    department: "Finance",
-    manager: "Rajan Kumar",
+    department: "Management",
+    manager: "Ryan Park",
   },
 ];
 
@@ -264,7 +275,7 @@ const StatusBadge = ({ status }: { status: ShiftRequest["status"] }) => {
 /* ─────────────────────────────────────────────────────────────── */
 /* Main Page Component                                             */
 /* ─────────────────────────────────────────────────────────────── */
-export function FinanceSchedule() {
+export function ManagerPersonalSchedule() {
   const [view, setView] = useState<"Week" | "Month" | "Day">("Week");
   const [currentPage, setCurrentPage] = useState<"calendar" | "requests">(
     "calendar",
@@ -600,10 +611,10 @@ export function FinanceSchedule() {
                       </div>
                       <div>
                         <p className="text-[14px] font-black text-foreground">
-                          Arjun Das
+                          Suresh Iyer
                         </p>
                         <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                          Finance
+                          Management
                         </p>
                       </div>
                     </div>
@@ -640,8 +651,8 @@ export function FinanceSchedule() {
                           time: "N/A",
                           hours: "0h",
                           location: "N/A",
-                          department: "Finance",
-                          manager: "Rajan Kumar",
+                          department: "Management",
+                          manager: "Ryan Park",
                         });
                         setShowDetailsModal(true);
                       }}
@@ -763,7 +774,7 @@ export function FinanceSchedule() {
             <div className="space-y-4">
               <div className="bg-card rounded-2xl border border-border shadow-sm p-6 space-y-4">
                 <h4 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">Shift Details</h4>
-                {[{label:"Shift Type",val:"Morning Shift"},{label:"Timing",val:"08:00 AM – 04:00 PM"},{label:"Duration",val:"8 hours"},{label:"Location",val:"Head Office, BLR"},{label:"Manager",val:"Rajan Kumar"}].map(f => (
+                {[{label:"Shift Type",val:"Morning Shift"},{label:"Timing",val:"08:00 AM – 04:00 PM"},{label:"Duration",val:"8 hours"},{label:"Location",val:"Head Office, BLR"},{label:"Manager",val:"Ryan Park"}].map(f => (
                   <div key={f.label} className="flex justify-between items-center py-1 border-b border-border last:border-0">
                     <span className="text-[13px] font-bold text-muted-foreground">{f.label}</span>
                     <span className="text-[13px] font-black text-foreground">{f.val}</span>

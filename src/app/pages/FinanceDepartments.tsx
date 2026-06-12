@@ -305,13 +305,13 @@ export function FinanceDepartments() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search departments..."
-              className="pl-10 pr-4 py-2.5 bg-card border border-border rounded-full text-[13px] font-bold text-foreground focus:outline-none focus:border-[#00B87C] w-[260px] shadow-sm transition-colors"
+              className="pl-10 pr-4 py-2.5 bg-background border border-border rounded-full text-[13px] font-bold text-foreground focus:outline-none focus:border-[#00B87C] w-[260px] shadow-sm transition-colors"
             />
           </div>
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
-            className="bg-card border border-border text-foreground text-[13px] font-bold rounded-xl px-4 py-2.5 outline-none focus:border-[#00B87C] shadow-sm cursor-pointer appearance-none pr-8 relative"
+            className="bg-background border border-border text-foreground text-[13px] font-bold rounded-xl px-4 py-2.5 outline-none focus:border-[#00B87C] shadow-sm cursor-pointer appearance-none pr-8 relative"
           >
             <option>Sort: Budget</option>
             <option>Sort: Name</option>
@@ -320,13 +320,13 @@ export function FinanceDepartments() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-card border border-border text-foreground text-[13px] font-bold rounded-xl px-4 py-2.5 outline-none focus:border-[#00B87C] shadow-sm cursor-pointer appearance-none pr-8 relative"
+            className="bg-background border border-border text-foreground text-[13px] font-bold rounded-xl px-4 py-2.5 outline-none focus:border-[#00B87C] shadow-sm cursor-pointer appearance-none pr-8 relative"
           >
             <option>Status: Active</option>
             <option>Status: All</option>
           </select>
         </div>
-        <div className="flex items-center p-1 bg-card border border-border rounded-xl shadow-sm">
+        <div className="flex items-center p-1 bg-background border border-border rounded-xl shadow-sm">
           <button
             onClick={() => setViewMode("grid")}
             className={`p-1.5 rounded-lg transition-colors ${
@@ -355,7 +355,7 @@ export function FinanceDepartments() {
         {filteredAndSortedDepts.map((dept) => (
           <div
             key={dept.id}
-            className="bg-white dark:bg-zinc-900 rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
+            className="bg-card rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
           >
             {/* Status / Actions */}
             <div className="absolute top-4 right-4 flex items-center gap-2">

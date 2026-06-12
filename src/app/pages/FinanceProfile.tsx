@@ -132,12 +132,12 @@ export function FinanceProfile() {
                 </div>
               </div>
 
-              <div className="text-center md:text-left pb-2">
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-1">
+              <div className="flex-1 pt-4">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-5">
                   <h1 className="text-2xl font-black text-foreground tracking-tight">
                     {"Ananya Sharma"}
                   </h1>
-                  <span className="px-2.5 py-1 rounded-lg bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)] text-[11px] font-semibold uppercase tracking-widest text-white">
+                  <span className="px-2.5  rounded-lg bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)] text-[11px] font-semibold uppercase tracking-widest text-white">
                     ● Active
                   </span>
                 </div>

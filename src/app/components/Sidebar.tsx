@@ -343,6 +343,7 @@ const MANAGER_WORKSPACE_ITEMS = [
   },
   { icon: CalendarDays, label: "My Leaves", path: "/manager/my-leaves" },
   { icon: IndianRupee, label: "My Payslips", path: "/manager/my-payslips" },
+  { icon: Clock, label: "My Schedule", path: "/manager/my-schedule" },
   { icon: Folder, label: "My Documents", path: "/manager/my-documents" },
   { icon: Receipt, label: "My Expenses", path: "/manager/my-expenses" },
   { icon: Star, label: "My Goals", path: "/manager/my-goals" },

@@ -248,20 +248,20 @@ export default function EmployeeSettings() {
         <div className="flex-1 min-w-0 space-y-6">
           <div className="bg-card rounded-2xl border border-border shadow-sm p-8">
             {activeSection === "security" && (
-              <AccountSecurity onModal={_setActiveModal} />
+              <AccountSecurity onModal={setActiveModal} />
             )}
             {activeSection === "privacy" && (
-              <PrivacySettings onModal={_setActiveModal} />
+              <PrivacySettings onModal={setActiveModal} />
             )}
             {activeSection === "notifications" && (
-              <NotificationSettings onModal={_setActiveModal} />
+              <NotificationSettings onModal={setActiveModal} />
             )}
             {activeSection === "appearance" && <AppearanceSettings />}
             {activeSection === "language" && (
-              <LanguageRegion onModal={_setActiveModal} />
+              <LanguageRegion onModal={setActiveModal} />
             )}
             {activeSection === "devices" && (
-              <ConnectedDevices onModal={_setActiveModal} />
+              <ConnectedDevices onModal={setActiveModal} />
             )}
             {activeSection === "data" && (
               <DataDownloads onModal={setActiveModal} />

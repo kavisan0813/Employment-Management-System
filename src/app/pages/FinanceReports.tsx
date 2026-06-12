@@ -32,6 +32,10 @@ import {
   Wrench,
   Activity,
   ShieldCheck,
+  X,
+  Send,
+  Mail,
+  MoreVertical,
 } from "lucide-react";
 import {
   AreaChart,
@@ -52,6 +56,7 @@ import {
 } from "recharts";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../components/workflow/ToastNotification";
+import { FinanceCustomBuilder } from "./FinanceCustomBuilder";
 
 /* ─── Mock Data ─── */
 const PAYROLL_TREND_DATA = [
@@ -97,17 +102,80 @@ const YOY_GROWTH_DATA = [
   { month: "Jan", lastYear: 24.2, currentYear: 27.9 },
   { month: "Feb", lastYear: 24.5, currentYear: 28.5 },
   { month: "Mar", lastYear: 25.1, currentYear: 29.2 },
-  { month: "Apr", lastYear: 24.8, currentYear: 28.4 }
+  { month: "Apr", lastYear: 24.8, currentYear: 28.4 },
 ];
 
 const ASSET_COST_BY_CATEGORY = [
-  { id: "cat1", category: "Laptops", count: 142, totalValue: 18500000, annualDepreciation: 3700000, bookValue: 14800000, icon: "Laptop", status: "Active" },
-  { id: "cat2", category: "Smartphones", count: 85, totalValue: 4250000, annualDepreciation: 850000, bookValue: 3400000, icon: "Smartphone", status: "Active" },
-  { id: "cat3", category: "Monitors", count: 68, totalValue: 2040000, annualDepreciation: 340000, bookValue: 1700000, icon: "Monitor", status: "Active" },
-  { id: "cat4", category: "Printers", count: 24, totalValue: 960000, annualDepreciation: 160000, bookValue: 800000, icon: "Printer", status: "Depreciating" },
-  { id: "cat5", category: "Servers & Networking", count: 43, totalValue: 6200000, annualDepreciation: 1240000, bookValue: 4960000, icon: "Wifi", status: "Critical" },
-  { id: "cat6", category: "Accessories", count: 120, totalValue: 1200000, annualDepreciation: 240000, bookValue: 960000, icon: "Watch", status: "Active" },
-  { id: "cat7", category: "Vehicles", count: 12, totalValue: 7200000, annualDepreciation: 1200000, bookValue: 6000000, icon: "Car", status: "Depreciating" },
+  {
+    id: "cat1",
+    category: "Laptops",
+    count: 142,
+    totalValue: 18500000,
+    annualDepreciation: 3700000,
+    bookValue: 14800000,
+    icon: "Laptop",
+    status: "Active",
+  },
+  {
+    id: "cat2",
+    category: "Smartphones",
+    count: 85,
+    totalValue: 4250000,
+    annualDepreciation: 850000,
+    bookValue: 3400000,
+    icon: "Smartphone",
+    status: "Active",
+  },
+  {
+    id: "cat3",
+    category: "Monitors",
+    count: 68,
+    totalValue: 2040000,
+    annualDepreciation: 340000,
+    bookValue: 1700000,
+    icon: "Monitor",
+    status: "Active",
+  },
+  {
+    id: "cat4",
+    category: "Printers",
+    count: 24,
+    totalValue: 960000,
+    annualDepreciation: 160000,
+    bookValue: 800000,
+    icon: "Printer",
+    status: "Depreciating",
+  },
+  {
+    id: "cat5",
+    category: "Servers & Networking",
+    count: 43,
+    totalValue: 6200000,
+    annualDepreciation: 1240000,
+    bookValue: 4960000,
+    icon: "Wifi",
+    status: "Critical",
+  },
+  {
+    id: "cat6",
+    category: "Accessories",
+    count: 120,
+    totalValue: 1200000,
+    annualDepreciation: 240000,
+    bookValue: 960000,
+    icon: "Watch",
+    status: "Active",
+  },
+  {
+    id: "cat7",
+    category: "Vehicles",
+    count: 12,
+    totalValue: 7200000,
+    annualDepreciation: 1200000,
+    bookValue: 6000000,
+    icon: "Car",
+    status: "Depreciating",
+  },
 ];
 
 const DEPT_ASSET_DIST_DATA = [
@@ -130,7 +198,14 @@ const ASSET_VALUE_BY_DEPT = [
   { department: "Legal", total: 10, depreciated: 3, current: 7 },
 ];
 
-type ReportTab = "Dashboards" | "Payroll Reports" | "Expense Reports" | "Tax Reports" | "Asset Reports" | "Custom Builder";
+type ReportTab =
+  | "Dashboards"
+  | "Payroll Reports"
+  | "Expense Reports"
+  | "Tax Reports"
+  | "Asset Reports"
+  | "Custom Builder"
+  | "Report History";
 
 export function FinanceReports() {
   const location = useLocation();
@@ -139,6 +214,59 @@ export function FinanceReports() {
   );
   const [showExportModal, setShowExportModal] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+
+  const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [selectedReport, setSelectedReport] = useState<any>(null);
+
+  const [reportsHistory, setReportsHistory] = useState<any[]>([
+    {
+      id: 1,
+      name: "April Payroll Summary",
+      category: "Payroll",
+      date: "Apr 6, 2026",
+      status: "Completed",
+    },
+    {
+      id: 2,
+      name: "Q1 Travel Expenses",
+      category: "Expense",
+      date: "Apr 5, 2026",
+      status: "Completed",
+    },
+    {
+      id: 3,
+      name: "FY25 Tax Deductions",
+      category: "Tax",
+      date: "Apr 4, 2026",
+      status: "Completed",
+    },
+    {
+      id: 4,
+      name: "Asset Depreciation Report",
+      category: "Asset",
+      date: "Apr 3, 2026",
+      status: "Failed",
+    },
+    {
+      id: 5,
+      name: "Employee Overtime Cost",
+      category: "Custom",
+      date: "Apr 2, 2026",
+      status: "Completed",
+    },
+  ]);
+
+  const [dateFilter, setDateFilter] = useState("This Month");
+  const [deptFilter, setDeptFilter] = useState("All Departments");
+  const [branchFilter, setBranchFilter] = useState("All Branches");
+  const [categoryFilter, setCategoryFilter] = useState("All Categories");
+
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleFilterChange = (setter: any) => (e: any) => {
+    setter(e.target.value);
+    setRefreshKey((prev) => prev + 1);
+  };
 
   const executeExport = () => {
     setIsExporting(true);
@@ -224,26 +352,46 @@ export function FinanceReports() {
       <div className="bg-card border border-border rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
           <FilterSelect
-            label="This Month"
+            value={dateFilter}
+            onChange={handleFilterChange(setDateFilter)}
             icon={Calendar}
             options={["This Month", "Last Month", "This Quarter", "This Year"]}
           />
           <FilterSelect
-            label="All Departments"
-            options={["All Departments", "Engineering", "Sales", "Marketing"]}
+            value={deptFilter}
+            onChange={handleFilterChange(setDeptFilter)}
+            options={[
+              "All Departments",
+              "Engineering",
+              "Sales",
+              "Marketing",
+              "HR",
+              "Finance",
+            ]}
           />
           <FilterSelect
-            label="All Pay Bands"
-            options={["All Pay Bands", "Band A", "Band B", "Band C"]}
+            value={branchFilter}
+            onChange={handleFilterChange(setBranchFilter)}
+            options={["All Branches", "New York", "London", "Remote"]}
+          />
+          <FilterSelect
+            value={categoryFilter}
+            onChange={handleFilterChange(setCategoryFilter)}
+            options={["All Categories", "Payroll", "Expense", "Tax", "Asset"]}
           />
           <button
-            onClick={() =>
+            onClick={() => {
+              setDateFilter("This Month");
+              setDeptFilter("All Departments");
+              setBranchFilter("All Branches");
+              setCategoryFilter("All Categories");
+              setRefreshKey((prev) => prev + 1);
               showToast(
                 "Filters Reset",
                 "success",
                 "All dashboard filters cleared.",
-              )
-            }
+              );
+            }}
             className="flex items-center gap-2 px-4 py-2.5 text-xs font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest"
           >
             <RotateCcw size={16} />
@@ -257,12 +405,42 @@ export function FinanceReports() {
 
       {/* HEADLINE KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <MiniKPICard title="Monthly Payroll" value="₹28.4L" color="purple" />
-        <MiniKPICard title="Employees Paid" value="1,248" color="green" />
-        <MiniKPICard title="Total Deductions" value="₹4.2L" color="red" />
-        <MiniKPICard title="Net Disbursement" value="₹24.2L" color="green" />
-        <MiniKPICard title="Pending Expenses" value="₹42.8K" color="amber" />
-        <MiniKPICard title="YTD Cost" value="₹3.2Cr" color="gray" />
+        <MiniKPICard
+          title="Employee Cost"
+          value={refreshKey % 2 === 0 ? "₹28.4L" : "₹29.1L"}
+          color="purple"
+          onClick={() => setActiveModal("EmployeeCost")}
+        />
+        <MiniKPICard
+          title="Department Cost"
+          value={refreshKey % 2 === 0 ? "₹14.2L" : "₹14.8L"}
+          color="green"
+          onClick={() => setActiveModal("DepartmentCost")}
+        />
+        <MiniKPICard
+          title="Tax Liabilities"
+          value={refreshKey % 2 === 0 ? "₹4.2L" : "₹4.5L"}
+          color="red"
+          onClick={() => setActiveModal("TaxLiabilities")}
+        />
+        <MiniKPICard
+          title="Asset Value"
+          value={refreshKey % 2 === 0 ? "₹4.8Cr" : "₹4.9Cr"}
+          color="amber"
+          onClick={() => setActiveModal("AssetValue")}
+        />
+        <MiniKPICard
+          title="Pending Expenses"
+          value={refreshKey % 2 === 0 ? "₹42.8K" : "₹39.1K"}
+          color="gray"
+          onClick={() => setActiveModal("PendingExpenses")}
+        />
+        <MiniKPICard
+          title="Net Disbursement"
+          value={refreshKey % 2 === 0 ? "₹24.2L" : "₹24.6L"}
+          color="green"
+          onClick={() => setActiveModal("NetDisbursement")}
+        />
       </div>
 
       {/* TABS */}
@@ -275,6 +453,7 @@ export function FinanceReports() {
             "Tax Reports",
             "Asset Reports",
             "Custom Builder",
+            "Report History",
           ].map((tab) => {
             const isActive = activeTab === tab;
             return (
@@ -311,17 +490,63 @@ export function FinanceReports() {
             >
               {activeTab === "Dashboards" && <DashboardsTab />}
               {activeTab === "Payroll Reports" && (
-                <ReportCatalogTab section="PAYROLL REPORTS" type="payroll" />
+                <ReportCatalogTab
+                  section="PAYROLL REPORTS"
+                  type="payroll"
+                  setActiveModal={setActiveModal}
+                  setSelectedReport={setSelectedReport}
+                />
               )}
               {activeTab === "Expense Reports" && (
-                <ReportCatalogTab section="EXPENSE REPORTS" type="expense" />
+                <ReportCatalogTab
+                  section="EXPENSE REPORTS"
+                  type="expense"
+                  setActiveModal={setActiveModal}
+                  setSelectedReport={setSelectedReport}
+                />
               )}
               {activeTab === "Tax Reports" && (
-                <ReportCatalogTab section="TAX REPORTS" type="tax" />
+                <ReportCatalogTab
+                  section="TAX REPORTS"
+                  type="tax"
+                  setActiveModal={setActiveModal}
+                  setSelectedReport={setSelectedReport}
+                />
               )}
-              {activeTab === "Asset Reports" && <AssetReportsTab />}
+              {activeTab === "Asset Reports" && (
+                <AssetReportsTab
+                  setActiveModal={setActiveModal}
+                  setSelectedReport={setSelectedReport}
+                />
+              )}
               {activeTab === "Custom Builder" && (
-                <CustomBuilderTab onExport={() => setShowExportModal(true)} />
+                <FinanceCustomBuilder
+                  onExportTriggered={() => setShowExportModal(true)}
+                  onEmailTriggered={() => {}}
+                  onSaveReport={(reportData) => {
+                    const newReport = {
+                      id: Date.now(),
+                      name: reportData.name,
+                      category: reportData.category,
+                      date: new Date().toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      }),
+                      status: "Completed",
+                    };
+                    setReportsHistory([newReport, ...reportsHistory]);
+                    setActiveTab("Report History");
+                  }}
+                />
+              )}
+              {activeTab === "Report History" && (
+                <ReportHistoryTab
+                  reportsHistory={reportsHistory}
+                  setActiveModal={setActiveModal}
+                  setSelectedReport={setSelectedReport}
+                  setShowExportModal={setShowExportModal}
+                />
               )}
             </motion.div>
           </AnimatePresence>
@@ -391,6 +616,39 @@ export function FinanceReports() {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* OTHER MODALS */}
+      <AnimatePresence>
+        {activeModal &&
+          [
+            "EmployeeCost",
+            "DepartmentCost",
+            "TaxLiabilities",
+            "AssetValue",
+            "PendingExpenses",
+            "NetDisbursement",
+          ].includes(activeModal) && (
+            <KPIModal type={activeModal} onClose={() => setActiveModal(null)} />
+          )}
+        {activeModal === "ViewReport" && selectedReport && (
+          <ViewReportModal
+            report={selectedReport}
+            onClose={() => {
+              setActiveModal(null);
+              setSelectedReport(null);
+            }}
+          />
+        )}
+        {activeModal === "ScheduleReport" && selectedReport && (
+          <ScheduleReportModal
+            report={selectedReport}
+            onClose={() => {
+              setActiveModal(null);
+              setSelectedReport(null);
+            }}
+          />
         )}
       </AnimatePresence>
     </div>
@@ -663,9 +921,13 @@ function DashboardsTab() {
 function ReportCatalogTab({
   section,
   type,
+  setActiveModal,
+  setSelectedReport,
 }: {
   section: string;
   type: "payroll" | "expense" | "tax";
+  setActiveModal?: any;
+  setSelectedReport?: any;
 }) {
   const reports = {
     payroll: [
@@ -795,109 +1057,13 @@ function ReportCatalogTab({
       </h4>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {currentReports.map((report, i) => (
-          <ReportCard key={i} {...report} />
+          <ReportCard
+            key={i}
+            {...report}
+            setActiveModal={setActiveModal}
+            setSelectedReport={setSelectedReport}
+          />
         ))}
-      </div>
-    </div>
-  );
-}
-
-function CustomBuilderTab({ onExport }: { onExport?: () => void }) {
-  return (
-    <div className="flex flex-col lg:flex-row gap-6 h-full min-h-[600px]">
-      {/* Field Picker */}
-      <div className="lg:w-[320px] bg-card border border-border rounded-[32px] p-6 shadow-sm flex flex-col">
-        <h3 className="text-[14px] font-black text-foreground tracking-tight uppercase mb-6 flex items-center gap-2">
-          <Database size={16} className="text-[#00B87C]" />
-          Field Picker
-        </h3>
-        <div className="flex-1 overflow-y-auto space-y-6 pr-2">
-          <FieldGroup
-            title="Dimensions"
-            items={[
-              "Employee Name",
-              "Department",
-              "Location",
-              "Band",
-              "Joining Date",
-            ]}
-            color="blue"
-          />
-          <FieldGroup
-            title="Measures"
-            items={["Basic", "Gross", "Net", "Deductions", "TDS", "PF"]}
-            color="emerald"
-          />
-        </div>
-      </div>
-
-      {/* Preview Canvas */}
-      <div className="flex-1 bg-card border border-border rounded-[32px] overflow-hidden shadow-sm flex flex-col">
-        <div className="p-6 border-b border-border flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4 bg-muted/30 p-1 rounded-xl border border-border">
-            <button className="px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg bg-card shadow-sm text-foreground">
-              Table Preview
-            </button>
-            <button className="px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg text-muted-foreground hover:text-foreground transition-all">
-              Chart Preview
-            </button>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() =>
-                showToast(
-                  "Report Generated",
-                  "success",
-                  "Custom report generated successfully.",
-                )
-              }
-              className="px-5 py-2 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-md"
-            >
-              Generate
-            </button>
-            <button
-              onClick={() =>
-                showToast(
-                  "Report Saved",
-                  "success",
-                  "Custom report saved to your catalog.",
-                )
-              }
-              className="px-4 py-2 rounded-xl border border-border text-foreground font-black text-[11px] uppercase tracking-widest hover:bg-muted transition-all"
-            >
-              Save Report
-            </button>
-            <button
-              onClick={() =>
-                onExport
-                  ? onExport()
-                  : showToast(
-                      "Download Started",
-                      "info",
-                      "Downloading custom report data...",
-                    )
-              }
-              className="p-2 rounded-xl border border-border text-foreground hover:bg-muted transition-all"
-            >
-              <Download size={18} />
-            </button>
-          </div>
-        </div>
-        <div className="flex-1 flex items-center justify-center p-12 bg-muted/10">
-          <div className="text-center space-y-4">
-            <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto opacity-50">
-              <BarChartIcon size={40} className="text-muted-foreground" />
-            </div>
-            <div>
-              <p className="text-[15px] font-black text-foreground tracking-tight uppercase">
-                Custom Builder Canvas
-              </p>
-              <p className="text-[12px] font-semibold text-muted-foreground mt-1">
-                Select fields from the left to start building your report
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -905,7 +1071,7 @@ function CustomBuilderTab({ onExport }: { onExport?: () => void }) {
 
 /* ─── ASSET REPORTS TAB ─── */
 
-function AssetReportsTab() {
+function AssetReportsTab({ setActiveModal, setSelectedReport }: any) {
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -1008,13 +1174,15 @@ function AssetReportsTab() {
               </div>
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() =>
-                    showToast(
-                      "Schedule Created",
-                      "success",
-                      `Scheduled ${report.name}`,
-                    )
-                  }
+                  onClick={() => {
+                    if (setActiveModal && setSelectedReport) {
+                      setSelectedReport({
+                        name: report.name,
+                        category: "Asset",
+                      });
+                      setActiveModal("ScheduleReport");
+                    }
+                  }}
                   className="p-2 hover:bg-muted rounded-xl transition-all text-muted-foreground"
                   title="Schedule"
                 >
@@ -1056,7 +1224,14 @@ function AssetReportsTab() {
               </div>
               <button
                 onClick={() => {
-                  if (report.path !== "#") {
+                  if (setActiveModal && setSelectedReport) {
+                    setSelectedReport({
+                      name: report.name,
+                      category: "Asset",
+                      date: new Date().toLocaleDateString(),
+                    });
+                    setActiveModal("ViewReport");
+                  } else if (report.path !== "#") {
                     navigate(report.path);
                   } else {
                     showToast(
@@ -1078,16 +1253,124 @@ function AssetReportsTab() {
   );
 }
 
+/* ─── REPORT HISTORY TAB ─── */
+function ReportHistoryTab({
+  reportsHistory,
+  setActiveModal,
+  setSelectedReport,
+  setShowExportModal,
+}: any) {
+  return (
+    <div className="bg-card border border-border rounded-[32px] p-6 shadow-sm">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-[15px] font-black text-foreground tracking-tight uppercase">
+          Recent Reports
+        </h3>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b border-border/50 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              <th className="py-3 px-4">Report Name</th>
+              <th className="py-3 px-4">Category</th>
+              <th className="py-3 px-4">Date Generated</th>
+              <th className="py-3 px-4">Status</th>
+              <th className="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reportsHistory.map((report: any) => (
+              <tr
+                key={report.id}
+                className="border-b border-border/50 hover:bg-muted/20 transition-colors group"
+              >
+                <td className="py-4 px-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center">
+                      <FileText
+                        size={14}
+                        className="text-muted-foreground group-hover:text-[#00B87C] transition-colors"
+                      />
+                    </div>
+                    <span className="text-[13px] font-bold text-foreground group-hover:text-[#00B87C] transition-colors">
+                      {report.name}
+                    </span>
+                  </div>
+                </td>
+                <td className="py-4 px-4 text-[13px] font-medium text-muted-foreground">
+                  {report.category}
+                </td>
+                <td className="py-4 px-4 text-[12px] font-semibold text-muted-foreground">
+                  {report.date}
+                </td>
+                <td className="py-4 px-4">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                      report.status === "Completed"
+                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                        : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                    }`}
+                  >
+                    {report.status === "Completed" ? (
+                      <CheckCircle2 size={12} />
+                    ) : (
+                      <AlertTriangle size={12} />
+                    )}
+                    {report.status}
+                  </span>
+                </td>
+                <td className="py-4 px-4">
+                  <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => {
+                        setSelectedReport(report);
+                        setActiveModal("ViewReport");
+                      }}
+                      className="p-1.5 hover:bg-muted rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                      title="View"
+                    >
+                      <Search size={14} />
+                    </button>
+                    <button
+                      onClick={() => setShowExportModal(true)}
+                      className="p-1.5 hover:bg-muted rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                      title="Download"
+                    >
+                      <Download size={14} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedReport(report);
+                        setActiveModal("ScheduleReport");
+                      }}
+                      className="p-1.5 hover:bg-muted rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                      title="Schedule"
+                    >
+                      <Clock size={14} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 /* ─── UI COMPONENTS ─── */
 
 function MiniKPICard({
   title,
   value,
   color,
+  onClick,
 }: {
   title: string;
   value: string;
   color: string;
+  onClick?: () => void;
 }) {
   const colorMap: Record<string, string> = {
     purple: "text-[#8B5CF6]",
@@ -1098,12 +1381,15 @@ function MiniKPICard({
   };
 
   return (
-    <div className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all">
-      <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[1.5px] mb-1">
+    <div
+      onClick={onClick}
+      className={`p-6 bg-card border border-border rounded-[24px] shadow-sm flex flex-col justify-center min-h-[100px] transition-all ${onClick ? "cursor-pointer hover:-translate-y-[4px] hover:border-[#00B87C] hover:shadow-[0_0_20px_rgba(0,184,124,0.3)] group" : "hover:-translate-y-[4px] hover:border-[#00B87C] hover:shadow-[0_0_20px_rgba(0,184,124,0.3)]"}`}
+    >
+      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[1.5px] mb-2 group-hover:text-[#00B87C] transition-colors truncate">
         {title}
       </p>
       <h3
-        className={`text-lg font-black tracking-tighter ${colorMap[color] || "text-foreground"}`}
+        className={`text-2xl font-black tracking-tighter ${colorMap[color] || "text-foreground"}`}
       >
         {value}
       </h3>
@@ -1112,16 +1398,16 @@ function MiniKPICard({
 }
 
 function FilterSelect({
-  label,
+  value,
+  onChange,
   icon: Icon,
   options = ["Option 1", "Option 2"],
 }: {
-  label: string;
+  value: string;
+  onChange: (e: any) => void;
   icon?: React.ElementType;
   options?: string[];
 }) {
-  const [value, setValue] = useState(label);
-
   return (
     <div className="relative group">
       {Icon && (
@@ -1132,10 +1418,9 @@ function FilterSelect({
       )}
       <select
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={onChange}
         className={`appearance-none flex items-center gap-2.5 ${Icon ? "pl-10" : "pl-4"} pr-10 py-2 bg-card border border-border rounded-xl text-[12px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer`}
       >
-        <option value={label}>{label}</option>
         {options.map((opt, i) => (
           <option key={i} value={opt}>
             {opt}
@@ -1176,25 +1461,42 @@ function ReportCard({
   name,
   desc,
   last,
+  setActiveModal,
+  setSelectedReport,
 }: {
   name: string;
   desc: string;
   last: string;
+  setActiveModal?: any;
+  setSelectedReport?: any;
 }) {
   const navigate = useNavigate();
   const handleGenerate = () => {
-    if (
-      name.includes("Payroll") ||
-      name.includes("Salary") ||
-      name.includes("Earnings")
-    ) {
-      navigate("/payroll");
-    } else if (name.includes("Expense") || name.includes("Claims")) {
-      navigate("/expenses");
-    } else if (name.includes("Department")) {
-      navigate("/departments");
+    if (setActiveModal && setSelectedReport) {
+      setSelectedReport({
+        name,
+        category: "Report",
+        date: new Date().toLocaleDateString(),
+      });
+      setActiveModal("ViewReport");
     } else {
-      showToast("Report Generated", "success", `Generating ${name} report...`);
+      if (
+        name.includes("Payroll") ||
+        name.includes("Salary") ||
+        name.includes("Earnings")
+      ) {
+        navigate("/payroll");
+      } else if (name.includes("Expense") || name.includes("Claims")) {
+        navigate("/expenses");
+      } else if (name.includes("Department")) {
+        navigate("/departments");
+      } else {
+        showToast(
+          "Report Generated",
+          "success",
+          `Generating ${name} report...`,
+        );
+      }
     }
   };
 
@@ -1212,6 +1514,12 @@ function ReportCard({
         </div>
         <div className="flex items-center gap-1">
           <button
+            onClick={() => {
+              if (setActiveModal && setSelectedReport) {
+                setSelectedReport({ name, category: "Report" });
+                setActiveModal("ScheduleReport");
+              }
+            }}
             className="p-2 hover:bg-muted rounded-xl transition-all text-muted-foreground"
             title="Schedule"
           >
@@ -1284,6 +1592,427 @@ function FieldGroup({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+/* ─── MODAL COMPONENTS ─── */
+
+function KPIModal({ type, onClose }: { type: string; onClose: () => void }) {
+  const getModalContent = () => {
+    switch (type) {
+      case "EmployeeCost":
+        return {
+          title: "Employee Cost Breakdown",
+          desc: "Detailed analysis of employee related expenditures.",
+          icon: <IndianRupee size={24} className="text-[#8B5CF6]" />,
+          color: "purple",
+        };
+      case "DepartmentCost":
+        return {
+          title: "Department Cost Distribution",
+          desc: "Expenditures mapped by department.",
+          icon: <Building2 size={24} className="text-[#00B87C]" />,
+          color: "green",
+        };
+      case "TaxLiabilities":
+        return {
+          title: "Tax Liabilities Summary",
+          desc: "Current tax obligations and statutory dues.",
+          icon: <AlertTriangle size={24} className="text-rose-500" />,
+          color: "red",
+        };
+      case "AssetValue":
+        return {
+          title: "Asset Value Summary",
+          desc: "Current valuation of all company assets.",
+          icon: <Package size={24} className="text-amber-500" />,
+          color: "amber",
+        };
+      case "PendingExpenses":
+        return {
+          title: "Pending Expenses",
+          desc: "Employee claims pending approval and payment.",
+          icon: <Clock size={24} className="text-slate-500" />,
+          color: "gray",
+        };
+      case "NetDisbursement":
+        return {
+          title: "Net Disbursement",
+          desc: "Actual cash outflow post deductions.",
+          icon: <TrendingUp size={24} className="text-[#00B87C]" />,
+          color: "green",
+        };
+      default:
+        return {
+          title: "KPI Details",
+          desc: "Detailed view for the selected metric.",
+          icon: <BarChartIcon size={24} />,
+          color: "gray",
+        };
+    }
+  };
+
+  const content = getModalContent();
+
+  return (
+    <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      ></motion.div>
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.95, opacity: 0, y: 20 }}
+        className="relative bg-card w-full max-w-[600px] rounded-[32px] overflow-hidden shadow-2xl flex flex-col max-h-[85vh]"
+      >
+        <div className="p-6 border-b border-border flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-muted/50 border border-border`}
+            >
+              {content.icon}
+            </div>
+            <div>
+              <h3 className="text-[18px] font-black text-foreground tracking-tight">
+                {content.title}
+              </h3>
+              <p className="text-[12px] text-muted-foreground font-medium">
+                {content.desc}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-muted rounded-xl transition-all text-muted-foreground"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <div className="p-6 overflow-y-auto flex-1 bg-muted/10">
+          <div className="h-[300px] bg-card rounded-2xl border border-border p-4 flex items-center justify-center mb-6">
+            <span className="text-muted-foreground text-sm font-bold">
+              Detailed Chart View for {content.title}
+            </span>
+          </div>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="bg-card rounded-xl border border-border p-4 flex items-center justify-between"
+              >
+                <div className="flex flex-col">
+                  <span className="text-[13px] font-bold text-foreground">
+                    Detail Item {i}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    Additional subtext
+                  </span>
+                </div>
+                <span className="text-[14px] font-black text-foreground">
+                  ₹{(Math.random() * 10).toFixed(1)}L
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="p-6 border-t border-border flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-6 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all"
+          >
+            Close
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function ViewReportModal({
+  report,
+  onClose,
+}: {
+  report: any;
+  onClose: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      ></motion.div>
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.95, opacity: 0, y: 20 }}
+        className="relative bg-card w-full max-w-[1000px] rounded-[32px] overflow-hidden shadow-2xl flex flex-col h-[90vh]"
+      >
+        <div className="p-6 border-b border-border flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+              <FileText
+                size={24}
+                className="text-emerald-600 dark:text-emerald-400"
+              />
+            </div>
+            <div>
+              <h3 className="text-[20px] font-black text-foreground tracking-tight">
+                {report.name || "Detailed Report"}
+              </h3>
+              <p className="text-[13px] text-muted-foreground font-medium flex items-center gap-2">
+                <span>Category: {report.category || "General"}</span>
+                <span>•</span>
+                <span>Generated: {report.date || "Just now"}</span>
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() =>
+                showToast(
+                  "Exporting PDF",
+                  "info",
+                  "Generating PDF for download",
+                )
+              }
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-foreground font-black text-[11px] uppercase tracking-widest hover:bg-muted transition-all"
+            >
+              <Download size={14} /> PDF
+            </button>
+            <button
+              onClick={() =>
+                showToast(
+                  "Exporting Excel",
+                  "info",
+                  "Generating XLSX for download",
+                )
+              }
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-foreground font-black text-[11px] uppercase tracking-widest hover:bg-muted transition-all"
+            >
+              <Download size={14} /> Excel
+            </button>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-muted rounded-xl transition-all text-muted-foreground"
+            >
+              <X size={20} />
+            </button>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto bg-muted/10 p-6 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-card p-4 rounded-2xl border border-border shadow-sm">
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                Total Records
+              </p>
+              <h4 className="text-2xl font-black text-foreground">1,248</h4>
+            </div>
+            <div className="bg-card p-4 rounded-2xl border border-border shadow-sm">
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                Total Value
+              </p>
+              <h4 className="text-2xl font-black text-foreground">₹14.2L</h4>
+            </div>
+            <div className="bg-card p-4 rounded-2xl border border-border shadow-sm">
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                Variance
+              </p>
+              <h4 className="text-2xl font-black text-emerald-500">+2.4%</h4>
+            </div>
+          </div>
+          <div className="bg-card p-6 rounded-[32px] border border-border shadow-sm h-[300px] flex items-center justify-center">
+            <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
+              Chart Visualization
+            </p>
+          </div>
+          <div className="bg-card rounded-[32px] border border-border shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-border">
+              <h4 className="text-[14px] font-black text-foreground uppercase tracking-widest">
+                Data Extract
+              </h4>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-muted/30 border-b border-border text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    <th className="p-4">ID</th>
+                    <th className="p-4">Description</th>
+                    <th className="p-4">Amount</th>
+                    <th className="p-4">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <tr
+                      key={i}
+                      className="border-b border-border/50 hover:bg-muted/20 transition-colors"
+                    >
+                      <td className="p-4 text-[12px] font-bold text-muted-foreground">
+                        #{1000 + i}
+                      </td>
+                      <td className="p-4 text-[13px] font-bold text-foreground">
+                        Transaction Entry {i}
+                      </td>
+                      <td className="p-4 text-[13px] font-black text-foreground">
+                        ₹{(Math.random() * 5).toFixed(2)}L
+                      </td>
+                      <td className="p-4">
+                        <span className="px-2 py-1 rounded bg-emerald-500/10 text-emerald-600 text-[10px] font-bold uppercase">
+                          Cleared
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function ScheduleReportModal({
+  report,
+  onClose,
+}: {
+  report: any;
+  onClose: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      ></motion.div>
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.95, opacity: 0, y: 20 }}
+        className="relative bg-card w-full max-w-[480px] rounded-[32px] overflow-hidden shadow-2xl flex flex-col"
+      >
+        <div className="p-6 border-b border-border flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center border border-sky-500/20">
+              <Clock size={20} className="text-sky-500" />
+            </div>
+            <div>
+              <h3 className="text-[16px] font-black text-foreground tracking-tight">
+                Schedule Report
+              </h3>
+              <p className="text-[12px] text-muted-foreground font-medium">
+                {report.name || "Automated Delivery"}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-muted rounded-xl transition-all text-muted-foreground"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <div className="p-6 space-y-6">
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              Delivery Frequency
+            </label>
+            <select className="w-full bg-card border border-border rounded-xl px-4 py-3 text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-colors appearance-none">
+              <option>Daily at 8:00 AM</option>
+              <option>Weekly (Every Monday)</option>
+              <option>Monthly (1st of Month)</option>
+              <option>Quarterly</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              Email Recipients
+            </label>
+            <div className="relative">
+              <Mail
+                size={16}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
+              <input
+                type="text"
+                placeholder="finance@nexus.hr, execs@nexus.hr"
+                className="w-full bg-card border border-border rounded-xl pl-11 pr-4 py-3 text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-colors placeholder:font-normal placeholder:text-muted-foreground/50"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+              Export Format
+            </label>
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="format"
+                  className="accent-[#00B87C]"
+                  defaultChecked
+                />
+                <span className="text-[13px] font-bold text-foreground">
+                  PDF
+                </span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="format"
+                  className="accent-[#00B87C]"
+                />
+                <span className="text-[13px] font-bold text-foreground">
+                  Excel (XLSX)
+                </span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="format"
+                  className="accent-[#00B87C]"
+                />
+                <span className="text-[13px] font-bold text-foreground">
+                  CSV
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div className="p-6 border-t border-border flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 py-3 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              showToast(
+                "Schedule Saved",
+                "success",
+                "Report delivery schedule configured.",
+              );
+              onClose();
+            }}
+            className="flex-1 py-3 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2"
+          >
+            <Send size={16} /> Save Schedule
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 }

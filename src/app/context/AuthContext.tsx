@@ -147,6 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/manager/my-documents",
         "/manager/my-expenses",
         "/manager/my-goals",
+        "/manager/my-schedule",
         "/manager/my-performance",
         "/manager/notifications",
         "/manager/announcements",

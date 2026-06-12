@@ -259,6 +259,9 @@ const ManagerPersonalGoals = lazy(() =>
 const ManagerPersonalPerformance = lazy(() =>
   import("./pages/manager/ManagerPersonalPerformance").then((m) => ({ default: m.ManagerPersonalPerformance })),
 );
+const ManagerPersonalSchedule = lazy(() =>
+  import("./pages/manager/ManagerPersonalSchedule").then((m) => ({ default: m.ManagerPersonalSchedule })),
+);
 const ManagerPersonalPayslips = lazy(() =>
   import("./pages/manager/ManagerPersonalPayslips").then((m) => ({ default: m.ManagerPersonalPayslips })),
 );
@@ -685,6 +688,7 @@ export const router = createBrowserRouter([
       { path: "manager/my-documents", element: protectedRoute(ManagerPersonalDocuments) },
       { path: "manager/my-expenses", element: protectedRoute(ManagerPersonalExpenses) },
       { path: "manager/my-goals", element: protectedRoute(ManagerPersonalGoals) },
+      { path: "manager/my-schedule", element: protectedRoute(ManagerPersonalSchedule) },
       { path: "manager/my-performance", element: protectedRoute(ManagerPersonalPerformance) },
       { path: "manager/notifications", element: protectedRoute(ManagerNotifications) },
       { path: "manager/announcements", element: protectedRoute(ManagerAnnouncements) },

@@ -20,6 +20,11 @@ import {
   Calendar,
   AlertTriangle,
   Star,
+  Briefcase,
+  TrendingUp,
+  MessageSquare,
+  MoreHorizontal,
+  ShieldCheck,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../components/workflow/ToastNotification";
@@ -267,57 +272,23 @@ export function ManagerProfile() {
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-24 space-y-6 animate-in fade-in duration-500">
-      {/* ─── Page Header ─────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-[10px] bg-[#DCFCE7] dark:bg-emerald-950/40 flex items-center justify-center shadow-sm">
-            <User size={22} className="text-[#00B87C]" />
-          </div>
-          <div>
-            <h1 className="text-[26px] font-bold text-foreground tracking-tight">
-              My Profile
-            </h1>
-            <p className="text-[13px] text-[#6B7280]">
-              View and manage your personal information
-            </p>
-          </div>
-        </div>
-        <div>
-          <button
-            onClick={() => setIsEditing(true)}
-            disabled={isEditing}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border font-bold text-[12px] uppercase tracking-wider transition-all shadow-sm ${
-              isEditing
-                ? "bg-muted border-border text-muted-foreground cursor-not-allowed"
-                : "border-[#00B87C] text-[#00B87C] hover:bg-[#00B87C]/5 active:scale-95"
-            }`}
-          >
-            <Edit3 size={15} />
-            Edit Profile
-          </button>
-        </div>
-      </div>
-
       {/* ─── Profile Hero Card ────────────────────────────────────── */}
-      <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden relative">
-        {/* Top Banner Gradient Strip */}
-        <div
-          className="h-[100px] w-full"
-          style={{
-            background: "linear-gradient(135deg, #00B87C 0%, #009966 100%)",
-          }}
-        />
+      <div className="bg-card border border-border rounded-[32px] shadow-sm overflow-hidden relative">
+        {/* Gradient Banner */}
+        <div className="h-[100px] w-full bg-gradient-to-r from-[#00B87C] to-[#009966] relative">
+          <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px] opacity-20" />
+        </div>
 
-        {/* Hero Details */}
-        <div className="px-6 md:px-8 pb-8">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 -mt-10 relative z-10">
-            <div className="flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
+        {/* Hero Content */}
+        <div className="px-8 pb-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 -mt-10 relative z-10">
+            <div className="flex flex-col md:flex-row items-center md:items-end gap-6">
               {/* Avatar Section */}
-              <div className="relative group shrink-0">
-                <div
-                  className="w-24 h-24 rounded-full border-[4px] border-card flex items-center justify-center font-bold text-3xl text-white shadow-xl overflow-hidden"
-                  style={{ backgroundColor: "#F59E0B" }}
-                >
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="relative group cursor-pointer"
+              >
+                <div className="w-32 h-32 rounded-[40px] bg-emerald-100 dark:bg-emerald-500/10 border-[6px] border-card shadow-xl overflow-hidden flex items-center justify-center">
                   {avatarPreview ? (
                     <img
                       src={avatarPreview}
@@ -325,14 +296,11 @@ export function ManagerProfile() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    "SI"
+                    <span className="text-4xl font-black text-[#00B87C]">SI</span>
                   )}
                 </div>
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer backdrop-blur-[2px]"
-                >
-                  <Camera size={22} className="text-white" />
+                <div className="absolute inset-0 rounded-[40px] bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px] m-[6px]">
+                  <Camera size={24} className="text-white" />
                 </div>
                 <input
                   type="file"
@@ -344,44 +312,40 @@ export function ManagerProfile() {
               </div>
 
               {/* Name & Title Content */}
-              <div className="pb-1">
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3.5 mb-1.5">
-                  <h2 className="text-2xl font-bold text-foreground tracking-tight">
+              <div className="flex-1 pt-4 text-center md:text-left">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-5">
+                  <h1 className="text-2xl font-black text-foreground tracking-tight">
                     {fullName}
-                  </h2>
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span className="text-[11px] font-bold uppercase tracking-wider">
-                      Active
-                    </span>
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-muted/60 border border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                    Full-time
+                  </h1>
+                  <span className="px-2.5 rounded-lg bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)] text-[11px] font-semibold uppercase tracking-widest text-white">
+                    ● Active
                   </span>
                 </div>
                 <p className="text-[#00B87C] font-bold text-sm mb-3">
-                  Engineering Manager
+                  {"Engineering Manager"}
                 </p>
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
-                  <span className="px-3 py-1 rounded-full bg-muted/50 border border-border text-[11px] font-bold text-muted-foreground">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                  <span className="px-3 py-1 rounded-full bg-muted/50 border border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                     #EMP-0042
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-[#DCFCE7] dark:bg-emerald-950/30 border border-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[11px] font-bold">
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-bold text-emerald-600 uppercase tracking-wider">
                     Engineering
                   </span>
-                  <span className="flex items-center gap-1 text-[11px] font-bold text-muted-foreground">
-                    <MapPin size={13} className="text-muted-foreground/60" />{" "}
-                    Chennai, India
-                  </span>
-                  <span className="text-[11px] font-bold text-muted-foreground">
-                    Since Jan 2019
+                  <div className="flex items-center gap-1.5 px-3 py-1 text-[11px] font-bold text-muted-foreground">
+                    <MapPin size={13} /> Chennai, India
+                  </div>
+                  <div className="flex items-center gap-1.5 px-3 py-1 text-[11px] font-bold text-muted-foreground">
+                    <Calendar size={13} /> Since Jan 2019
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                    Full-time
                   </span>
                 </div>
               </div>
             </div>
 
             {/* Quick Hero Actions */}
-            <div className="flex items-center justify-center gap-2.5 mb-1">
+            <div className="flex items-center gap-3 mb-2 shrink-0 justify-center w-full md:w-auto">
               <button
                 onClick={() =>
                   showToast(
@@ -390,10 +354,35 @@ export function ManagerProfile() {
                     "Routing to HR correspondence desk...",
                   )
                 }
-                className="px-5 py-2.5 rounded-xl border border-border text-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all shadow-sm active:scale-95"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all shadow-sm bg-transparent"
               >
+                <MessageSquare size={16} />
                 Message HR
               </button>
+              {!isEditing ? (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all shadow-sm bg-transparent"
+                >
+                  <User size={16} />
+                  Edit Profile
+                </button>
+              ) : (
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCancelChanges}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-muted-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all bg-transparent"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveAllChanges}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:shadow-[0_8px_20px_rgba(0,184,124,0.3)] transition-all"
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
               <button
                 onClick={() =>
                   showToast(
@@ -402,51 +391,51 @@ export function ManagerProfile() {
                     "Profile settings options details loading...",
                   )
                 }
-                className="px-4 py-2.5 rounded-xl border border-border text-foreground font-bold text-[12px] uppercase tracking-wider hover:bg-muted/50 transition-all shadow-sm active:scale-95"
+                className="p-2.5 rounded-xl border border-border text-foreground hover:bg-muted/50 transition-all shadow-sm bg-transparent"
               >
-                More ▾
+                <MoreHorizontal size={20} />
               </button>
             </div>
           </div>
 
-          {/* Three Horizontal Stat Boxes */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8 pt-6 border-t border-border">
-            <div className="flex items-center justify-center sm:justify-start gap-4 px-4 py-2">
-              <div className="w-11 h-11 rounded-2xl bg-muted/60 flex items-center justify-center text-muted-foreground shrink-0 shadow-sm border border-border/40">
-                <Calendar size={20} />
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 pt-8 border-t border-border">
+            <div className="flex items-center gap-4 px-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] shadow-inner">
+                <Briefcase size={22} />
               </div>
               <div>
-                <p className="text-xl font-bold text-foreground tracking-tight">
+                <p className="text-xl font-black text-foreground tracking-tight">
                   7.2 yrs
                 </p>
-                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
                   Tenure
                 </p>
               </div>
             </div>
-            <div className="flex items-center justify-center sm:justify-start gap-4 px-4 py-2 border-y sm:border-y-0 sm:border-x border-border">
-              <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] shrink-0 shadow-sm border border-emerald-500/10">
-                <Sparkles size={20} />
+            <div className="flex items-center gap-4 px-4 border-x border-border">
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-600 shadow-inner">
+                <TrendingUp size={22} />
               </div>
               <div>
-                <p className="text-xl font-bold text-[#00B87C] tracking-tight">
+                <p className="text-xl font-black text-foreground tracking-tight">
                   94%
                 </p>
-                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
                   Attendance
                 </p>
               </div>
             </div>
-            <div className="flex items-center justify-center sm:justify-start gap-4 px-4 py-2">
-              <div className="w-11 h-11 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0 shadow-sm border border-amber-500/10">
-                <Star size={20} fill="currentColor" />
+            <div className="flex items-center gap-4 px-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 shadow-inner">
+                <Star size={22} fill="currentColor" />
               </div>
               <div>
-                <p className="text-xl font-bold text-amber-500 tracking-tight">
+                <p className="text-xl font-black text-foreground tracking-tight">
                   4.6★
                 </p>
-                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                  My Rating
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                  Rating
                 </p>
               </div>
             </div>

@@ -13,6 +13,13 @@ import {
   ShieldAlert,
   ChevronRight,
   Paperclip,
+  Briefcase,
+  TrendingUp,
+  Star,
+  Calendar,
+  MessageSquare,
+  MoreHorizontal,
+  ShieldCheck,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "motion/react";
@@ -29,6 +36,7 @@ export function EmployeeSelfProfile() {
   const [activeTab, setActiveTab] = useState("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [avatarInitials, setAvatarInitials] = useState("PS");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
@@ -41,50 +49,7 @@ export function EmployeeSelfProfile() {
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
-      {/* ─── Page Header ─────────────────────────────────────────── */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-[12px] bg-secondary flex items-center justify-center shadow-sm">
-            <User size={22} className="text-primary" />
-          </div>
-          <h1 className="text-[26px] font-black text-foreground leading-none">
-            My Profile
-          </h1>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setShowUpdateModal(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all bg-primary text-white shadow-lg shadow-emerald-500/20 hover:opacity-90 active:scale-95"
-          >
-            <Edit3 size={16} /> Request Update
-          </button>
-          {!isEditing ? (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all border border-primary text-primary hover:bg-primary/10 active:scale-95"
-            >
-              <User size={16} /> Edit Profile
-            </button>
-          ) : (
-            <div className="flex gap-3">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all border border-border text-muted-foreground hover:bg-secondary active:scale-95"
-              >
-                <X size={16} /> Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all bg-primary text-white shadow-lg shadow-emerald-500/20 hover:opacity-90 active:scale-95"
-              >
-                <Save size={16} /> Save Changes
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
+    <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20 text-foreground">
       <AnimatePresence>
         {showUpdateModal && (
           <ProfileUpdateModal onClose={() => setShowUpdateModal(false)} />
@@ -92,28 +57,29 @@ export function EmployeeSelfProfile() {
       </AnimatePresence>
 
       {/* ─── Profile Hero Card ────────────────────────────────────── */}
-      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-        {/* Top Gradient Strip */}
-        <div
-          className="h-[100px] w-full"
-          style={{
-            background:
-              "linear-gradient(135deg, var(--primary) 0%, #065F46 100%)",
-          }}
-        ></div>
+      <div className="bg-card border border-border rounded-[32px] shadow-sm overflow-hidden relative">
+        {/* Gradient Banner */}
+        <div className="h-[100px] w-full bg-gradient-to-r from-[#00B87C] to-[#009966] relative">
+          <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px] opacity-20" />
+        </div>
 
-        <div className="px-8 pb-8 relative">
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Avatar Section */}
-            <div className="relative -mt-10">
-              <div className="relative group">
-                <div className="w-24 h-24 rounded-full border-[4px] border-card bg-primary flex items-center justify-center text-white font-black text-3xl shadow-xl overflow-hidden">
-                  PS
+        {/* Hero Content */}
+        <div className="px-8 pb-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 -mt-10 relative z-10">
+            <div className="flex flex-col md:flex-row items-center md:items-end gap-6">
+              {/* Avatar with Upload Overlay */}
+              <div
+                onClick={() => {
+                  fileInputRef.current?.click();
+                }}
+                className="relative group cursor-pointer"
+              >
+                <div className="w-32 h-32 rounded-[40px] bg-emerald-100 dark:bg-emerald-500/10 border-[6px] border-card shadow-xl overflow-hidden flex items-center justify-center">
+                  <span className="text-4xl font-black text-[#00B87C]">
+                    {avatarInitials}
+                  </span>
                 </div>
-                <div
-                  className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
-                  onClick={() => fileInputRef.current?.click()}
-                >
+                <div className="absolute inset-0 rounded-[40px] bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px] m-[6px]">
                   <Camera size={24} className="text-white" />
                 </div>
                 <input
@@ -121,79 +87,136 @@ export function EmployeeSelfProfile() {
                   type="file"
                   className="hidden"
                   accept="image/*"
+                  onChange={() => {
+                    setAvatarInitials("PS");
+                    showToast(
+                      "Avatar Updated",
+                      "success",
+                      "Your profile photo has been updated successfully.",
+                    );
+                  }}
                 />
               </div>
-            </div>
 
-            {/* Profile Detail Content */}
-            <div className="flex-1 pt-4">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-[26px] font-black text-foreground tracking-tight">
-                    Priya Sharma
-                  </h2>
-                  <p className="text-[15px] font-bold text-primary mt-0.5">
-                    Senior Frontend Developer
-                  </p>
-
-                  <div className="flex flex-wrap items-center gap-3 mt-4">
-                    <span className="px-3 py-1 rounded-lg bg-secondary text-muted-foreground text-[11px] font-black uppercase tracking-wider border border-border shadow-sm">
-                      #EMP-0142
-                    </span>
-                    <span className="px-3 py-1 rounded-lg bg-primary/10 text-primary text-[11px] font-black uppercase tracking-wider border border-primary/20 shadow-sm">
-                      Engineering
-                    </span>
-                    <span className="flex items-center gap-1.5 text-muted-foreground text-[13px] font-bold">
-                      <MapPin size={14} className="text-primary" /> Chennai,
-                      India
-                    </span>
-                    <span className="text-muted-foreground text-[13px] font-bold">
-                      Since Mar 2021
-                    </span>
-                  </div>
+              <div className="flex-1 pt-4 text-center md:text-left">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-5">
+                  <h1 className="text-2xl font-black text-foreground tracking-tight">
+                    {"Priya Sharma"}
+                  </h1>
+                  <span className="px-2.5 rounded-lg bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)] text-[11px] font-semibold uppercase tracking-widest text-white">
+                    ● Active
+                  </span>
                 </div>
-
-                <div className="flex flex-col items-end gap-2">
-                  <div className="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
-                    <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                    <span className="text-[12px] font-black text-primary uppercase tracking-wider">
-                      Active
-                    </span>
+                <p className="text-[#00B87C] font-bold text-sm mb-3">
+                  {"Senior Frontend Developer"}
+                </p>
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                  <span className="px-3 py-1 rounded-full bg-muted/50 border border-border text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                    #EMP-0142
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-bold text-emerald-600 uppercase tracking-wider">
+                    Engineering
+                  </span>
+                  <div className="flex items-center gap-1.5 px-3 py-1 text-[11px] font-bold text-muted-foreground">
+                    <MapPin size={13} /> Chennai, India
                   </div>
-                  <span className="px-4 py-1 rounded-full bg-secondary text-muted-foreground text-[11px] font-semibold uppercase tracking-wider border border-border shadow-sm">
+                  <div className="flex items-center gap-1.5 px-3 py-1 text-[11px] font-bold text-muted-foreground">
+                    <Calendar size={13} /> Since Mar 2021
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-bold text-blue-600 uppercase tracking-wider">
                     Full-time
                   </span>
                 </div>
               </div>
+            </div>
 
-              {/* Stat Boxes */}
-              <div className="flex items-center gap-10 mt-8 pt-6 border-t border-border">
-                <div className="flex flex-col">
-                  <p className="text-[24px] font-black text-foreground tracking-tight">
-                    4.2 yrs
-                  </p>
-                  <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                    Tenure
-                  </p>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3 mb-2 shrink-0 justify-center w-full md:w-auto">
+              <button
+                onClick={() => setShowUpdateModal(true)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all shadow-sm bg-transparent"
+              >
+                <Edit3 size={16} />
+                Request Update
+              </button>
+              {!isEditing ? (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all shadow-sm bg-transparent"
+                >
+                  <User size={16} />
+                  Edit Profile
+                </button>
+              ) : (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-muted-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all bg-transparent"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:shadow-[0_8px_20px_rgba(0,184,124,0.3)] transition-all"
+                  >
+                    Save
+                  </button>
                 </div>
-                <div className="w-px h-10 bg-border"></div>
-                <div className="flex flex-col">
-                  <p className="text-[24px] font-black text-foreground tracking-tight">
-                    92%
-                  </p>
-                  <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                    Attendance
-                  </p>
-                </div>
-                <div className="w-px h-10 bg-border"></div>
-                <div className="flex flex-col">
-                  <p className="text-[24px] font-black text-foreground tracking-tight">
-                    4.5 ★
-                  </p>
-                  <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                    Rating
-                  </p>
-                </div>
+              )}
+              <button
+                onClick={() =>
+                  showToast(
+                    "Info",
+                    "info",
+                    "Role permissions: Employee workspace.",
+                  )
+                }
+                className="p-2.5 rounded-xl border border-border text-foreground hover:bg-muted/50 transition-all shadow-sm bg-transparent"
+              >
+                <MoreHorizontal size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 pt-8 border-t border-border">
+            <div className="flex items-center gap-4 px-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] shadow-inner">
+                <Briefcase size={22} />
+              </div>
+              <div>
+                <p className="text-xl font-black text-foreground tracking-tight">
+                  4.2 yrs
+                </p>
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                  Tenure
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 px-4 border-x border-border">
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-600 shadow-inner">
+                <TrendingUp size={22} />
+              </div>
+              <div>
+                <p className="text-xl font-black text-foreground tracking-tight">
+                  92%
+                </p>
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                  Attendance
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 px-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 shadow-inner">
+                <Star size={22} fill="currentColor" />
+              </div>
+              <div>
+                <p className="text-xl font-black text-foreground tracking-tight">
+                  4.5★
+                </p>
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                  Rating
+                </p>
               </div>
             </div>
           </div>
