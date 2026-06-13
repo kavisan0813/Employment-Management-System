@@ -297,19 +297,34 @@ function KPICard({
   );
 }
 
-function FilterSelect({ label }: { label: string }) {
-  const [value, setValue] = useState(label);
+function FilterSelect({
+  label,
+  options = ["Option 1", "Option 2"],
+  value: externalValue,
+  onChange: externalOnChange,
+}: {
+  label: string;
+  options?: string[];
+  value?: string;
+  onChange?: (val: string) => void;
+}) {
+  const [internalValue, setInternalValue] = useState(label);
+  const value = externalValue !== undefined ? externalValue : internalValue;
+  const onChange = externalOnChange !== undefined ? externalOnChange : setInternalValue;
+
   return (
     <div className="relative group">
       <select
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         className="appearance-none flex items-center gap-2.5 px-4 pr-10 py-2.5 bg-card border border-border rounded-xl text-[12px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer"
       >
         <option value={label}>{label}</option>
-        <option value="Option 1">Option 1</option>
-        <option value="Option 2">Option 2</option>
-        <option value="Option 3">Option 3</option>
+        {options.filter((opt) => opt !== label).map((opt, i) => (
+          <option key={i} value={opt}>
+            {opt}
+          </option>
+        ))}
       </select>
       <ChevronDown
         size={14}
@@ -326,9 +341,55 @@ export function FinanceAuditLogs() {
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [showFlags, setShowFlags] = useState(true);
   const [flaggedFilter, setFlaggedFilter] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [moduleFilter, setModuleFilter] = useState("All Modules");
+  const [actionFilter, setActionFilter] = useState("All Actions");
+  const [userFilter, setUserFilter] = useState("All Users");
+  const [dateFilter, setDateFilter] = useState("All Dates");
+  const [severityFilter, setSeverityFilter] = useState("All Severities");
+
   const todayLogs = LOGS.filter((l) => l.timestamp.startsWith("Today")).length;
   const flaggedCount = LOGS.filter((l) => l.isFlagged).length;
-  const displayedLogs = flaggedFilter ? LOGS.filter((l) => l.isFlagged) : LOGS;
+
+  const displayedLogs = LOGS.filter((log) => {
+    // Flagged filter
+    if (flaggedFilter && !log.isFlagged) return false;
+
+    // Search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const matchSearch =
+        log.user.toLowerCase().includes(query) ||
+        log.action.toLowerCase().includes(query) ||
+        log.module.toLowerCase().includes(query) ||
+        log.record.toLowerCase().includes(query) ||
+        log.ip.toLowerCase().includes(query);
+      if (!matchSearch) return false;
+    }
+
+    // Module
+    if (moduleFilter !== "All Modules" && log.module !== moduleFilter) return false;
+
+    // Action
+    if (actionFilter !== "All Actions" && log.action !== actionFilter) return false;
+
+    // User
+    if (userFilter !== "All Users" && log.user !== userFilter) return false;
+
+    // Date
+    if (dateFilter !== "All Dates") {
+      if (dateFilter === "Today" && !log.timestamp.startsWith("Today")) return false;
+      if (dateFilter === "Yesterday" && !log.timestamp.startsWith("Yesterday")) return false;
+      if (dateFilter === "Older" && (log.timestamp.startsWith("Today") || log.timestamp.startsWith("Yesterday"))) return false;
+    }
+
+    // Severity
+    if (severityFilter !== "All Severities" && log.severity !== severityFilter.toLowerCase()) return false;
+
+    return true;
+  });
+
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
@@ -428,16 +489,49 @@ export function FinanceAuditLogs() {
           <input
             type="text"
             placeholder="Search by user, action, module, IP..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-card border border-border rounded-xl pl-10 pr-4 py-2.5 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all font-bold"
           />
         </div>
-        <FilterSelect label="All Modules" />
-        <FilterSelect label="All Actions" />
-        <FilterSelect label="All Users" />
-        <FilterSelect label="Date: Today" />
-        <FilterSelect label="Severity" />
+        <FilterSelect
+          label="All Modules"
+          options={["All Modules", "Payroll", "Expenses", "Increment", "Finance Reports", "Payroll Settings", "F&F Settlement"]}
+          value={moduleFilter}
+          onChange={setModuleFilter}
+        />
+        <FilterSelect
+          label="All Actions"
+          options={["All Actions", "APPROVE", "DELETE", "UPDATE", "EXPORT", "CREATE", "VIEW", "REJECT", "RUN", "PROCESS"]}
+          value={actionFilter}
+          onChange={setActionFilter}
+        />
+        <FilterSelect
+          label="All Users"
+          options={["All Users", "Ananya Das", "Rahul Verma", "Suresh Iyer", "Unknown"]}
+          value={userFilter}
+          onChange={setUserFilter}
+        />
+        <FilterSelect
+          label="All Dates"
+          options={["All Dates", "Today", "Yesterday", "Older"]}
+          value={dateFilter}
+          onChange={setDateFilter}
+        />
+        <FilterSelect
+          label="All Severities"
+          options={["All Severities", "Info", "Warning", "Critical"]}
+          value={severityFilter}
+          onChange={setSeverityFilter}
+        />
         <button
           onClick={() => {
+            setSearchQuery("");
+            setModuleFilter("All Modules");
+            setActionFilter("All Actions");
+            setUserFilter("All Users");
+            setDateFilter("All Dates");
+            setSeverityFilter("All Severities");
             setFlaggedFilter(false);
             showToast(
               "Filters Reset",

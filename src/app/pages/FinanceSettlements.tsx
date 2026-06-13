@@ -184,6 +184,7 @@ function StatusChip({ status }: { status: string }) {
 
 /* ─── Main Component ─── */
 export function FinanceSettlements() {
+  const [settlements, setSettlements] = useState<FFSettlement[]>(SETTLEMENTS);
   const [selectedSettlement, setSelectedSettlement] =
     useState<FFSettlement | null>(null);
   const [rejectingSettlement, setRejectingSettlement] =
@@ -194,11 +195,11 @@ export function FinanceSettlements() {
   const [rejectReason, setRejectReason] = useState("");
   const [transferRef, setTransferRef] = useState("");
 
-  const pendingCount = SETTLEMENTS.filter((s) => s.status === "Pending").length;
-  const approvedThisMonth = SETTLEMENTS.filter(
+  const pendingCount = settlements.filter((s) => s.status === "Pending").length;
+  const approvedThisMonth = settlements.filter(
     (s) => s.status === "Approved",
   ).length;
-  const totalDisbursed = SETTLEMENTS.filter(
+  const totalDisbursed = settlements.filter(
     (s) => s.status === "Approved",
   ).reduce((sum, s) => sum + s.netFF, 0);
 
@@ -207,6 +208,13 @@ export function FinanceSettlements() {
     setApprovalLoading(true);
     setTimeout(() => {
       setApprovalLoading(false);
+      setSettlements((prev) =>
+        prev.map((s) =>
+          s.id === processingSettlement.id
+            ? { ...s, status: "Approved" }
+            : s
+        )
+      );
       showToast(
         "Settlement Processed",
         "success",
@@ -220,6 +228,13 @@ export function FinanceSettlements() {
 
   const handleReject = () => {
     if (rejectingSettlement) {
+      setSettlements((prev) =>
+        prev.map((s) =>
+          s.id === rejectingSettlement.id
+            ? { ...s, status: "Rejected" }
+            : s
+        )
+      );
       showToast(
         "Settlement Rejected",
         "success",
@@ -325,7 +340,7 @@ export function FinanceSettlements() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {SETTLEMENTS.map((item, i) => (
+              {settlements.map((item, i) => (
                 <motion.tr
                   key={item.id}
                   initial={{ opacity: 0, y: 10 }}

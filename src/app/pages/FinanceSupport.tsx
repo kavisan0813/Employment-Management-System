@@ -13,6 +13,9 @@ import {
   ShieldCheck,
   FileCode,
   Zap,
+  X,
+  Clock,
+  Send,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "motion/react";
@@ -142,6 +145,37 @@ export function FinanceSupport() {
   const [tickets, setTickets] = useState<Ticket[]>(INITIAL_TICKETS);
   const [searchQuery, setSearchQuery] = useState("");
   const [ticketStatusTab, setTicketStatusTab] = useState("All Requests");
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+
+  const handleAddReply = (ticketId: string, replyText: string) => {
+    if (!replyText.trim()) return;
+    const newComment: TimelineEntry = {
+      id: Date.now().toString(),
+      type: "comment",
+      user: "Finance Officer",
+      timestamp: "Just now",
+      comment: replyText,
+    };
+
+    setTickets((prevTickets) =>
+      prevTickets.map((t) => {
+        if (t.id === ticketId) {
+          const updatedTicket = {
+            ...t,
+            timeline: [...t.timeline, newComment],
+          };
+          setSelectedTicket(updatedTicket);
+          return updatedTicket;
+        }
+        return t;
+      })
+    );
+    showToast(
+      "Reply Sent",
+      "success",
+      "Your reply has been added to the ticket.",
+    );
+  };
 
   // New Ticket Form State
   const [subject, setSubject] = useState("");
@@ -403,6 +437,7 @@ export function FinanceSupport() {
                           <tr
                             key={row.id}
                             className="hover:bg-secondary/50 transition-colors group cursor-pointer"
+                            onClick={() => setSelectedTicket(row)}
                           >
                             <td className="px-6 py-4 font-mono text-[12px] font-bold text-muted-foreground">
                               {row.id}
@@ -450,7 +485,13 @@ export function FinanceSupport() {
                               {row.created}
                             </td>
                             <td className="px-6 py-4 text-right">
-                              <button className="text-primary text-[13px] font-bold hover:underline">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedTicket(row);
+                                }}
+                                className="text-primary text-[13px] font-bold hover:underline bg-transparent border-0 cursor-pointer"
+                              >
                                 View ›
                               </button>
                             </td>
@@ -618,6 +659,232 @@ export function FinanceSupport() {
             )}
           </motion.div>
         </AnimatePresence>
+      </div>
+
+      <AnimatePresence>
+        {selectedTicket && (
+          <TicketDetailsModal
+            ticket={selectedTicket}
+            onClose={() => setSelectedTicket(null)}
+            onSendReply={(replyText) => handleAddReply(selectedTicket.id, replyText)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ─── TICKET DETAILS MODAL ─── */
+interface TicketDetailsModalProps {
+  ticket: Ticket;
+  onClose: () => void;
+  onSendReply: (replyText: string) => void;
+}
+
+function TicketDetailsModal({
+  ticket,
+  onClose,
+  onSendReply,
+}: TicketDetailsModalProps) {
+  const [replyText, setReplyText] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!replyText.trim()) return;
+    onSendReply(replyText);
+    setReplyText("");
+  };
+
+  return (
+    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-[#031B17]/85 backdrop-blur-sm" onClick={onClose} />
+      
+      {/* Modal Card */}
+      <div className="relative bg-card w-full max-w-[600px] rounded-[32px] shadow-2xl border border-border overflow-hidden flex flex-col max-h-[85vh] text-foreground">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-border">
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-[14px] font-bold text-muted-foreground">{ticket.id}</span>
+            <span
+              className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+              style={{
+                backgroundColor: ticket.statusBg,
+                color: ticket.statusColor,
+              }}
+            >
+              {ticket.status}
+            </span>
+          </div>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground bg-transparent border-0 cursor-pointer p-1">
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Scrollable Body */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar">
+          {/* Subject & Description */}
+          <div>
+            <h3 className="text-lg font-black leading-snug mb-2">{ticket.subject}</h3>
+            <p className="text-[14px] text-muted-foreground bg-secondary/30 p-4 rounded-2xl border border-border/50 whitespace-pre-wrap leading-relaxed">
+              {ticket.description}
+            </p>
+          </div>
+
+          {/* Details Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 bg-secondary/20 p-4 rounded-2xl border border-border/30">
+            <div>
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block mb-1">Category</span>
+              <span
+                className="px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wide inline-block"
+                style={{
+                  backgroundColor: ticket.catBg,
+                  color: ticket.catColor,
+                }}
+              >
+                {ticket.category}
+              </span>
+            </div>
+            <div>
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block mb-1">Priority</span>
+              <span
+                className="px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wide inline-block"
+                style={{
+                  backgroundColor: ticket.priorityBg,
+                  color: ticket.priorityColor,
+                }}
+              >
+                {ticket.priority}
+              </span>
+            </div>
+            <div>
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block mb-1">Created</span>
+              <span className="text-sm font-bold text-foreground block mt-0.5">{ticket.created}</span>
+            </div>
+          </div>
+
+          {/* Attachments Section */}
+          {ticket.attachments && ticket.attachments.length > 0 && (
+            <div className="space-y-2">
+              <span className="text-[10px] font-black text-[#94A3B8] uppercase tracking-widest block">Attachments</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {ticket.attachments.map((att, idx) => (
+                  <div key={idx} className="flex items-center gap-2 p-3 bg-secondary/30 border border-border rounded-xl">
+                    <Paperclip size={16} className="text-muted-foreground shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-bold truncate text-foreground">{att.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{att.size}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Timeline Section */}
+          <div className="space-y-4 border-t border-border pt-6">
+            <div className="flex items-center gap-2 mb-2">
+              <Clock size={16} className="text-muted-foreground" />
+              <span className="text-[11px] font-black text-[#94A3B8] uppercase tracking-widest">Activity History</span>
+            </div>
+
+            <div className="relative border-l border-border pl-4 ml-2 space-y-6">
+              {ticket.timeline.map((entry) => {
+                let bulletBg = "bg-border";
+                let descriptionNode = null;
+
+                switch (entry.type) {
+                  case "created":
+                    bulletBg = "bg-blue-500";
+                    descriptionNode = (
+                      <span className="text-muted-foreground">
+                        Ticket created by <strong className="text-foreground">{entry.user}</strong>
+                      </span>
+                    );
+                    break;
+                  case "status_change":
+                    bulletBg = "bg-amber-500";
+                    descriptionNode = (
+                      <span className="text-muted-foreground">
+                        Status changed to <strong className="text-foreground">{entry.newStatus}</strong> by <strong className="text-foreground">{entry.user}</strong>
+                      </span>
+                    );
+                    break;
+                  case "comment":
+                    bulletBg = "bg-emerald-500";
+                    descriptionNode = (
+                      <div className="space-y-1">
+                        <span className="text-muted-foreground">
+                          <strong className="text-foreground">{entry.user}</strong> replied:
+                        </span>
+                        <div className="bg-secondary/40 p-3 rounded-xl border border-border/40 text-sm text-foreground whitespace-pre-wrap leading-relaxed mt-1">
+                          {entry.comment}
+                        </div>
+                      </div>
+                    );
+                    break;
+                  case "resolved":
+                    bulletBg = "bg-emerald-600";
+                    descriptionNode = (
+                      <div className="space-y-1">
+                        <span className="text-muted-foreground">
+                          Ticket resolved by <strong className="text-foreground">{entry.user}</strong>
+                        </span>
+                        {entry.comment && (
+                          <div className="bg-emerald-500/5 p-3 rounded-xl border border-emerald-500/10 text-sm text-foreground whitespace-pre-wrap mt-1">
+                            {entry.comment}
+                          </div>
+                        )}
+                      </div>
+                    );
+                    break;
+                  default:
+                    descriptionNode = (
+                      <span className="text-muted-foreground">
+                        {entry.type} event by <strong className="text-foreground">{entry.user}</strong>
+                      </span>
+                    );
+                }
+
+                return (
+                  <div key={entry.id} className="relative group">
+                    <div className={`absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full border border-card ${bulletBg}`} />
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
+                      <div className="text-[13px]">{descriptionNode}</div>
+                      <span className="text-[10px] text-muted-foreground font-bold shrink-0 self-start sm:self-center">{entry.timestamp}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Reply Form */}
+        <form onSubmit={handleSubmit} className="border-t border-border p-4 bg-card flex gap-2 items-end">
+          <textarea
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            placeholder="Type your reply here..."
+            className="flex-1 bg-secondary/50 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-all resize-none max-h-[80px]"
+            rows={1}
+            style={{ height: "40px" }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
+          />
+          <button
+            type="submit"
+            disabled={!replyText.trim()}
+            className="h-10 w-10 rounded-xl bg-[#00B87C] text-white flex items-center justify-center transition-all hover:opacity-95 active:scale-95 disabled:opacity-50 disabled:scale-100 cursor-pointer shrink-0 border-0"
+          >
+            <Send size={16} />
+          </button>
+        </form>
       </div>
     </div>
   );

@@ -130,6 +130,9 @@ const MOCK_APPRAISALS: AppraisalEmployee[] = [
 export function FinanceIncrement() {
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState(location.state?.search || "");
+  const [deptFilter, setDeptFilter] = useState("All Departments");
+  const [incrementFilter, setIncrementFilter] = useState("Any Increment");
+  const [performanceFilter, setPerformanceFilter] = useState("Any Rating");
   const [approvingEmployee, setApprovingEmployee] = useState<AppraisalEmployee | null>(() => {
     if (location.state?.employeeId) {
       const found = MOCK_APPRAISALS.find(emp => emp.id === location.state.employeeId);
@@ -187,10 +190,20 @@ export function FinanceIncrement() {
     }, 1500);
   };
 
-  const filteredAppraisals = MOCK_APPRAISALS.filter(emp => 
-    emp.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    emp.department.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredAppraisals = MOCK_APPRAISALS.filter(emp => {
+    const matchesSearch = emp.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      emp.department.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDept = deptFilter === "All Departments" || emp.department === deptFilter;
+    const matchesIncrement = incrementFilter === "Any Increment" ||
+      (incrementFilter === "> 10%" && emp.recommendedIncrement > 10) ||
+      (incrementFilter === "5% - 10%" && emp.recommendedIncrement >= 5 && emp.recommendedIncrement <= 10) ||
+      (incrementFilter === "< 5%" && emp.recommendedIncrement < 5);
+    const matchesPerformance = performanceFilter === "Any Rating" ||
+      (performanceFilter === "> 4.5" && emp.managerRating > 4.5) ||
+      (performanceFilter === "4.0 - 4.5" && emp.managerRating >= 4.0 && emp.managerRating <= 4.5) ||
+      (performanceFilter === "< 4.0" && emp.managerRating < 4.0);
+    return matchesSearch && matchesDept && matchesIncrement && matchesPerformance;
+  });
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
@@ -249,12 +262,30 @@ export function FinanceIncrement() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <FilterSelect label="All Departments" options={["All Departments", "Engineering", "Sales", "Design", "Product"]} />
-        <FilterSelect label="Increment %" options={["Any Increment", "> 10%", "5% - 10%", "< 5%"]} />
-        <FilterSelect label="Performance Rating" options={["Any Rating", "> 4.5", "4.0 - 4.5", "< 4.0"]} />
+        <FilterSelect 
+          label="All Departments" 
+          options={["All Departments", "Engineering", "Sales", "Design", "Product"]}
+          value={deptFilter}
+          onChange={setDeptFilter}
+        />
+        <FilterSelect 
+          label="Increment %" 
+          options={["Any Increment", "> 10%", "5% - 10%", "< 5%"]}
+          value={incrementFilter}
+          onChange={setIncrementFilter}
+        />
+        <FilterSelect 
+          label="Performance Rating" 
+          options={["Any Rating", "> 4.5", "4.0 - 4.5", "< 4.0"]}
+          value={performanceFilter}
+          onChange={setPerformanceFilter}
+        />
         <button 
           onClick={() => {
             setSearchQuery("");
+            setDeptFilter("All Departments");
+            setIncrementFilter("Any Increment");
+            setPerformanceFilter("Any Rating");
             showToast("Filters Reset", "success", "All search filters have been cleared.");
           }}
           className="flex items-center gap-2 px-4 py-2.5 text-sm font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest"
@@ -701,14 +732,16 @@ function KPICard({ title, value, color, icon: Icon }: { title: string, value: st
   );
 }
 
-function FilterSelect({ label, options = ["Option 1", "Option 2"] }: { label: string, options?: string[] }) {
-  const [value, setValue] = useState(label);
+function FilterSelect({ label, options = ["Option 1", "Option 2"], value: externalValue, onChange: externalOnChange }: { label: string, options?: string[], value?: string, onChange?: (val: string) => void }) {
+  const [internalValue, setInternalValue] = useState(label);
+  const value = externalValue ?? internalValue;
+  const onChange = externalOnChange ?? setInternalValue;
   
   return (
     <div className="relative group">
       <select
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         className="appearance-none flex items-center gap-2.5 px-5 pr-12 py-2.5 bg-muted/20 border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer"
       >
         <option value={label}>{label}</option>

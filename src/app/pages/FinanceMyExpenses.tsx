@@ -441,6 +441,23 @@ export function FinanceMyExpenses() {
   const [newExpenseDesc, setNewExpenseDesc] = useState("");
   const [newExpenseCat, setNewExpenseCat] = useState("Travel");
 
+  // Controlled states for new expense form
+  const [expenses, setExpenses] = useState<Expense[]>(MOCK_EXPENSES);
+  const [newExpenseTitle, setNewExpenseTitle] = useState("");
+  const [newExpenseAmount, setNewExpenseAmount] = useState("");
+  const [newExpenseDate, setNewExpenseDate] = useState("");
+  const [newExpensePaymentMode, setNewExpensePaymentMode] = useState("Personal Card");
+
+  const categoryMap: Record<string, ExpenseCategory> = {
+    Travel: "Travel",
+    Food: "Food",
+    Equipment: "Equipment",
+    Stay: "Accommodation",
+    Medical: "Medical",
+    Training: "Training",
+    Other: "Other"
+  };
+
   const handleExport = () => {
     const rows = filteredExpenses.map((e) =>
       [
@@ -468,7 +485,7 @@ export function FinanceMyExpenses() {
   };
 
   const filteredExpenses = useMemo(() => {
-    return MOCK_EXPENSES.filter((e) => {
+    return expenses.filter((e) => {
       const tabMatch = activeTab === "All" || e.status === activeTab;
       const catMatch =
         selectedCategory === "All Categories" ||
@@ -482,7 +499,28 @@ export function FinanceMyExpenses() {
         );
       return tabMatch && catMatch && statusMatch && monthMatch;
     });
-  }, [activeTab, selectedCategory, selectedMonth, selectedStatus]);
+  }, [expenses, activeTab, selectedCategory, selectedMonth, selectedStatus]);
+
+  // Dynamic calculations
+  const totalClaimedThisMonth = useMemo(() => {
+    return expenses
+      .filter((e) => e.status !== "Rejected" && e.status !== "Draft")
+      .reduce((sum, e) => sum + e.amount, 0);
+  }, [expenses]);
+
+  const totalApproved = useMemo(() => {
+    return expenses
+      .filter((e) => e.status === "Approved")
+      .reduce((sum, e) => sum + e.amount, 0);
+  }, [expenses]);
+
+  const totalPending = useMemo(() => {
+    return expenses
+      .filter((e) => e.status === "Pending")
+      .reduce((sum, e) => sum + e.amount, 0);
+  }, [expenses]);
+
+  const percentUsed = Math.min(Math.round((totalClaimedThisMonth / 15000) * 100), 100);
 
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
@@ -542,8 +580,8 @@ export function FinanceMyExpenses() {
           color="text-amber-500"
           bg="bg-amber-500/10"
           label="CLAIMED THIS MONTH"
-          value="₹8,750"
-          subValue="4 expense claims"
+          value={`₹${totalClaimedThisMonth.toLocaleString()}`}
+          subValue={`${expenses.filter(e => e.status !== "Draft" && e.status !== "Rejected").length} expense claims`}
           chip="↑ ₹1,200 vs last month"
           chipColor="amber"
         />
@@ -552,8 +590,8 @@ export function FinanceMyExpenses() {
           color="text-primary"
           bg="bg-emerald-500/10"
           label="APPROVED"
-          value="₹4,200"
-          subValue="2 claims approved"
+          value={`₹${totalApproved.toLocaleString()}`}
+          subValue={`${expenses.filter(e => e.status === "Approved").length} claims approved`}
           chip="Credited Apr 1"
           chipColor="green"
         />
@@ -562,8 +600,8 @@ export function FinanceMyExpenses() {
           color="text-sky-500"
           bg="bg-sky-500/10"
           label="PENDING REVIEW"
-          value="₹3,550"
-          subValue="2 claims in review"
+          value={`₹${totalPending.toLocaleString()}`}
+          subValue={`${expenses.filter(e => e.status === "Pending").length} claims in review`}
           chip="Avg 2 days response"
           chipColor="sky"
         />
@@ -573,9 +611,9 @@ export function FinanceMyExpenses() {
           bg="bg-purple-500/10"
           label="MONTHLY LIMIT"
           value="₹15,000"
-          subValue="₹6,250 remaining"
-          progress={58}
-          chip="58% used"
+          subValue={`₹${Math.max(15000 - totalClaimedThisMonth, 0).toLocaleString()} remaining`}
+          progress={percentUsed}
+          chip={`${percentUsed}% used`}
           chipColor="amber"
         />
       </div>
@@ -827,31 +865,31 @@ export function FinanceMyExpenses() {
               {[
                 {
                   label: "Travel",
-                  val: 4200,
+                  val: expenses.filter(e => e.category === "Travel" && e.status !== "Rejected").reduce((sum, e) => sum + e.amount, 0),
                   limit: 15000,
                   color: "text-sky-500",
                   bar: "bg-sky-500",
                 },
                 {
                   label: "Food",
-                  val: 2150,
+                  val: expenses.filter(e => e.category === "Food" && e.status !== "Rejected").reduce((sum, e) => sum + e.amount, 0),
                   limit: 15000,
                   color: "text-amber-500",
                   bar: "bg-amber-500",
                 },
                 {
                   label: "Equipment",
-                  val: 1400,
+                  val: expenses.filter(e => e.category === "Equipment" && e.status !== "Rejected").reduce((sum, e) => sum + e.amount, 0),
                   limit: 15000,
                   color: "text-purple-500",
                   bar: "bg-purple-500",
                 },
                 {
-                  label: "Transport",
-                  val: 1000,
+                  label: "Accommodation",
+                  val: expenses.filter(e => e.category === "Accommodation" && e.status !== "Rejected").reduce((sum, e) => sum + e.amount, 0),
                   limit: 15000,
-                  color: "text-rose-500",
-                  bar: "bg-rose-500",
+                  color: "text-emerald-500",
+                  bar: "bg-emerald-500",
                 },
               ].map((item) => (
                 <div key={item.label} className="space-y-2">
@@ -864,28 +902,28 @@ export function FinanceMyExpenses() {
                   <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full ${item.bar}`}
-                      style={{ width: `${(item.val / item.limit) * 100}%` }}
+                      style={{ width: `${Math.min((item.val / item.limit) * 100, 100)}%` }}
                     />
                   </div>
                   <p className="text-[11px] font-bold text-muted-foreground/60 text-right uppercase tracking-tighter">
-                    ₹{(item.limit - item.val).toLocaleString()} remaining
+                    ₹{Math.max(item.limit - item.val, 0).toLocaleString()} remaining
                   </p>
                 </div>
               ))}
             </div>
             <div className="mt-8 pt-6 border-t border-border">
               <div className="flex items-center justify-between mb-3 text-[13px] font-semibold uppercase tracking-wider">
-                <span className="text-foreground">Used: ₹8,750</span>
-                <span className="text-primary">Left: ₹6,250</span>
+                <span className="text-foreground">Used: ₹{totalClaimedThisMonth.toLocaleString()}</span>
+                <span className="text-primary">Left: ₹{Math.max(15000 - totalClaimedThisMonth, 0).toLocaleString()}</span>
               </div>
               <div className="h-2 w-full bg-secondary rounded-full overflow-hidden mb-2">
                 <div
                   className="h-full bg-amber-500 rounded-full"
-                  style={{ width: "58%" }}
+                  style={{ width: `${percentUsed}%` }}
                 />
               </div>
               <p className="text-[11px] font-black text-amber-500 text-right">
-                58% OF BUDGET EXPENDED
+                {percentUsed}% OF BUDGET EXPENDED
               </p>
             </div>
           </div>
@@ -1070,7 +1108,10 @@ export function FinanceMyExpenses() {
                     <input
                       type="text"
                       placeholder="e.g. Flight to Delhi"
+                      value={newExpenseTitle}
+                      onChange={(e) => setNewExpenseTitle(e.target.value)}
                       className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
@@ -1080,7 +1121,10 @@ export function FinanceMyExpenses() {
                     <input
                       type="number"
                       placeholder="0.00"
+                      value={newExpenseAmount}
+                      onChange={(e) => setNewExpenseAmount(e.target.value)}
                       className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-black text-foreground outline-none focus:border-primary transition-colors"
+                      required
                     />
                   </div>
                 </div>
@@ -1092,18 +1136,25 @@ export function FinanceMyExpenses() {
                     </label>
                     <input
                       type="date"
+                      value={newExpenseDate}
+                      onChange={(e) => setNewExpenseDate(e.target.value)}
                       className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       PAYMENT MODE
                     </label>
-                    <select className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors">
-                      <option>Personal Card</option>
-                      <option>Cash</option>
-                      <option>UPI / Bank Transfer</option>
-                      <option>Corporate Card</option>
+                    <select 
+                      value={newExpensePaymentMode}
+                      onChange={(e) => setNewExpensePaymentMode(e.target.value)}
+                      className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
+                    >
+                      <option value="Personal Card">Personal Card</option>
+                      <option value="Cash">Cash</option>
+                      <option value="UPI / Bank Transfer">UPI / Bank Transfer</option>
+                      <option value="Corporate Card">Corporate Card</option>
                     </select>
                   </div>
                 </div>
@@ -1148,12 +1199,49 @@ export function FinanceMyExpenses() {
               </button>
               <button
                 onClick={() => {
+                  if (!newExpenseTitle.trim() || !newExpenseAmount || !newExpenseDate) {
+                    showToast("Validation Error", "error", "Please fill in all required fields.");
+                    return;
+                  }
+
+                  let formattedDate = "Apr 12, 2026";
+                  if (newExpenseDate) {
+                    const parts = newExpenseDate.split("-");
+                    if (parts.length === 3) {
+                      const year = parts[0];
+                      const monthIndex = parseInt(parts[1], 10) - 1;
+                      const day = parseInt(parts[2], 10);
+                      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                      formattedDate = `${monthNames[monthIndex]} ${day}, ${year}`;
+                    }
+                  }
+
+                  const newExp: Expense = {
+                    id: `EXP-0${Math.floor(Math.random() * 900) + 100}`,
+                    title: newExpenseTitle,
+                    vendor: newExpensePaymentMode + " · Pending Verification",
+                    category: categoryMap[newExpenseCat] || "Other",
+                    date: formattedDate,
+                    amount: parseFloat(newExpenseAmount),
+                    receiptStatus: "Attached",
+                    status: "Pending",
+                    description: newExpenseDesc,
+                    project: "NexusHR Internal",
+                    paymentMode: newExpensePaymentMode
+                  };
+
+                  setExpenses([newExp, ...expenses]);
                   showToast(
                     "Expense Submitted",
                     "success",
-                    "Your expense claim has been submitted for review.",
+                    "Your expense claim has been submitted for review."
                   );
+
                   setShowAddModal(false);
+                  setNewExpenseTitle("");
+                  setNewExpenseAmount("");
+                  setNewExpenseDate("");
+                  setNewExpensePaymentMode("Personal Card");
                   setNewExpenseDesc("");
                   setNewExpenseCat("Travel");
                 }}

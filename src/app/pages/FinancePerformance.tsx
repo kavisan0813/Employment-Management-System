@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Clock,
   Plus,
+  X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -17,8 +18,22 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import { showToast } from "../components/workflow/ToastNotification";
 
 type PerformanceTab = "My Goals" | "Self Review" | "Feedback" | "History";
+
+interface PerformanceGoal {
+  id: string;
+  title: string;
+  category: string;
+  progress: number;
+  status: string;
+  kr: string;
+  deadline: string;
+  lastUpdated: string;
+  manager: string;
+  isComplete?: boolean;
+}
 
 const radarData = [
   {
@@ -37,6 +52,109 @@ const radarData = [
 
 export function FinancePerformance() {
   const [activeTab, setActiveTab] = useState<PerformanceTab>("My Goals");
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState<PerformanceGoal | null>(null);
+  const [goals, setGoals] = useState<PerformanceGoal[]>([
+    {
+      id: "g1",
+      title: "Complete TDS automation workflow",
+      category: "Finance",
+      progress: 80,
+      status: "On track",
+      kr: "Automate TDS calculation and upload validation",
+      deadline: "Q2 Target",
+      lastUpdated: "Apr 5",
+      manager: "Rajan Kumar",
+    },
+    {
+      id: "g2",
+      title: "Reduce payroll errors to < 0.5%",
+      category: "Finance",
+      progress: 95,
+      status: "Completed",
+      isComplete: true,
+      kr: "Achieve 99.5% accuracy in salary calculations",
+      deadline: "Q2 Target",
+      lastUpdated: "Apr 10",
+      manager: "Rajan Kumar",
+    },
+    {
+      id: "g3",
+      title: "Implement new salary band structure",
+      category: "Finance",
+      progress: 40,
+      status: "At risk",
+      kr: "Review and deploy updated salary bands",
+      deadline: "Q3 Target",
+      lastUpdated: "Apr 2",
+      manager: "Rajan Kumar",
+    },
+    {
+      id: "g4",
+      title: "Get certified in GST compliance",
+      category: "Compliance",
+      progress: 100,
+      status: "Completed",
+      isComplete: true,
+      kr: "Pass the GST practitioner certification exam",
+      deadline: "Q1 Target",
+      lastUpdated: "Mar 15",
+      manager: "Rajan Kumar",
+    },
+    {
+      id: "g5",
+      title: "Mentor junior finance analyst",
+      category: "Leadership",
+      progress: 60,
+      status: "On track",
+      kr: "Weekly coaching sessions and training",
+      deadline: "Q4 Target",
+      lastUpdated: "Apr 6",
+      manager: "Rajan Kumar",
+    },
+  ]);
+
+  const handleUpdateProgress = (goalId: string, newProgress: number) => {
+    setGoals((prev) =>
+      prev.map((g) => {
+        if (g.id !== goalId) return g;
+        const isCompleted = newProgress === 100;
+        const newStatus = isCompleted ? "Completed" : g.status === "Completed" ? "On track" : g.status;
+        showToast(
+          "Progress Updated",
+          "success",
+          `Goal "${g.title}" progress updated to ${newProgress}%.`
+        );
+        return {
+          ...g,
+          progress: newProgress,
+          status: newStatus,
+          isComplete: isCompleted,
+          lastUpdated: "Today",
+        };
+      })
+    );
+  };
+
+  const handleRequestAddGoal = (data: { title: string; category: string; kr: string; deadline: string }) => {
+    const newGoal: PerformanceGoal = {
+      id: `g-${Date.now()}`,
+      title: data.title,
+      category: data.category,
+      progress: 0,
+      status: "On track",
+      kr: data.kr,
+      deadline: data.deadline,
+      lastUpdated: "Today",
+      manager: "Rajan Kumar",
+    };
+    setGoals((prev) => [...prev, newGoal]);
+    showToast(
+      "Goal Request Submitted",
+      "success",
+      `Your request for "${data.title}" has been submitted to your manager.`
+    );
+  };
 
   return (
     <div className="w-full px-4 md:px-8 py-6 space-y-6 animate-in fade-in duration-500">
@@ -87,7 +205,7 @@ export function FinancePerformance() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-4 text-[13px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${
+            className={`pb-4 text-[12px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${
               activeTab === tab
                 ? "text-[#00B87C]"
                 : "text-muted-foreground hover:text-foreground"
@@ -119,47 +237,29 @@ export function FinancePerformance() {
                 <div className="flex items-center gap-3">
                   <SectionTitle title="FY 2025-26 GOALS" />
                   <span className="px-2 py-0.5 rounded-md bg-muted text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                    10 goals
+                    {goals.length} goals
                   </span>
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[#00B87C] text-[#00B87C] font-black text-[11px] uppercase tracking-widest hover:bg-[#00B87C]/5 transition-all">
+                <button 
+                  onClick={() => setIsRequestModalOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[#00B87C] text-[#00B87C] font-black text-[11px] uppercase tracking-widest hover:bg-[#00B87C]/5 transition-all bg-transparent"
+                >
                   <Plus size={14} /> Request Add Goal
                 </button>
               </div>
 
               <div className="bg-card border border-border rounded-[32px] overflow-hidden">
-                <GoalRow
-                  title="Complete TDS automation workflow"
-                  category="Finance"
-                  progress={80}
-                  status="On track"
-                />
-                <GoalRow
-                  title="Reduce payroll errors to < 0.5%"
-                  category="Finance"
-                  progress={95}
-                  status="Completed"
-                  isComplete
-                />
-                <GoalRow
-                  title="Implement new salary band structure"
-                  category="Finance"
-                  progress={40}
-                  status="At risk"
-                />
-                <GoalRow
-                  title="Get certified in GST compliance"
-                  category="Compliance"
-                  progress={100}
-                  status="Completed"
-                  isComplete
-                />
-                <GoalRow
-                  title="Mentor junior finance analyst"
-                  category="Leadership"
-                  progress={60}
-                  status="On track"
-                />
+                {goals.map((g) => (
+                  <GoalRow
+                    key={g.id}
+                    title={g.title}
+                    category={g.category}
+                    progress={g.progress}
+                    status={g.status}
+                    isComplete={g.progress === 100}
+                    onClick={() => setSelectedGoal(g)}
+                  />
+                ))}
               </div>
             </motion.div>
           )}
@@ -181,7 +281,14 @@ export function FinancePerformance() {
                 <RatingSection label="Compliance Knowledge" />
                 <RatingSection label="Leadership" />
 
-                <button className="w-full py-4 rounded-2xl bg-[#00B87C] text-white font-black text-[14px] uppercase tracking-[2px] hover:bg-[#009966] transition-all shadow-xl shadow-[#00B87C]/20">
+                <button 
+                  type="button"
+                  onClick={() => {
+                    showToast("Self Review Submitted", "success", "Your self-assessment has been successfully logged.");
+                    setActiveTab("My Goals");
+                  }}
+                  className="w-full py-4 rounded-2xl bg-[#00B87C] text-white font-black text-[14px] uppercase tracking-[2px] hover:bg-[#009966] transition-all shadow-xl shadow-[#00B87C]/20 border-0"
+                >
                   Submit Self Review
                 </button>
               </div>
@@ -331,6 +438,23 @@ export function FinancePerformance() {
             </motion.div>
           )}
         </AnimatePresence>
+      {/* MODALS */}
+      <AnimatePresence>
+        {isRequestModalOpen && (
+          <RequestAddGoalModal
+            isOpen={isRequestModalOpen}
+            onClose={() => setIsRequestModalOpen(false)}
+            onSubmit={handleRequestAddGoal}
+          />
+        )}
+        {selectedGoal && (
+          <GoalDetailsModal
+            goal={selectedGoal}
+            onClose={() => setSelectedGoal(null)}
+            onUpdateProgress={handleUpdateProgress}
+          />
+        )}
+      </AnimatePresence>
       </div>
     </div>
   );
@@ -392,12 +516,14 @@ function GoalRow({
   progress,
   status,
   isComplete,
+  onClick,
 }: {
   title: string;
   category: string;
   progress: number;
   status: string;
   isComplete?: boolean;
+  onClick?: () => void;
 }) {
   const statusColor =
     status === "On track"
@@ -407,7 +533,10 @@ function GoalRow({
         : "text-rose-600 bg-rose-500/10";
 
   return (
-    <div className="flex items-center justify-between p-6 h-[72px] hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all group border-b border-border last:border-0 cursor-pointer">
+    <div 
+      onClick={onClick}
+      className="flex items-center justify-between p-6 h-[72px] hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all group border-b border-border last:border-0 cursor-pointer"
+    >
       <div className="flex items-center gap-4 flex-1">
         <div
           className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isComplete ? "bg-[#00B87C] border-[#00B87C]" : "border-border group-hover:border-[#00B87C]"}`}
@@ -564,5 +693,207 @@ function HistoryRow({
         </button>
       </td>
     </tr>
+  );
+}
+
+/* ─── MODAL COMPONENTS ─── */
+function GoalDetailsModal({
+  goal,
+  onClose,
+  onUpdateProgress,
+}: {
+  goal: any;
+  onClose: () => void;
+  onUpdateProgress: (id: string, newProgress: number) => void;
+}) {
+  const [prog, setProg] = useState(goal.progress);
+
+  return (
+    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-[#031B17]/85 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-card w-full max-w-[500px] rounded-[32px] shadow-2xl border border-border overflow-hidden p-6 text-foreground">
+        <div className="flex items-center justify-between pb-4 border-b border-border mb-6">
+          <h3 className="text-[16px] font-black text-foreground uppercase tracking-wider">Goal Details</h3>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground bg-transparent border-0 cursor-pointer">
+            <X size={18} />
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          <div>
+            <span className="text-[9px] font-black text-[#94A3B8] uppercase tracking-widest block mb-1">Objective</span>
+            <p className="text-sm font-bold text-foreground">{goal.title}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <span className="text-[9px] font-black text-[#94A3B8] uppercase tracking-widest block mb-1">Category</span>
+              <span className="px-2 py-0.5 rounded-md bg-muted text-[10px] font-bold text-foreground uppercase tracking-wide">
+                {goal.category}
+              </span>
+            </div>
+            <div>
+              <span className="text-[9px] font-black text-[#94A3B8] uppercase tracking-widest block mb-1">Deadline</span>
+              <span className="text-sm font-bold text-foreground">{goal.deadline}</span>
+            </div>
+          </div>
+          <div>
+            <span className="text-[9px] font-black text-[#94A3B8] uppercase tracking-widest block mb-1">Key Result (KR)</span>
+            <p className="text-xs font-semibold text-muted-foreground">{goal.kr}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-4 border-t border-border pt-4">
+            <div>
+              <span className="text-[9px] font-black text-[#94A3B8] uppercase tracking-widest block mb-1">Manager</span>
+              <p className="text-xs font-bold text-foreground">{goal.manager}</p>
+            </div>
+            <div>
+              <span className="text-[9px] font-black text-[#94A3B8] uppercase tracking-widest block mb-1">Last Updated</span>
+              <p className="text-xs font-bold text-foreground">{goal.lastUpdated}</p>
+            </div>
+          </div>
+
+          <div className="border-t border-border pt-4 space-y-3">
+            <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-widest">
+              <span>Track Progress</span>
+              <span className="text-[#00B87C]">{prog}%</span>
+            </div>
+            <input 
+              type="range" 
+              min="0" 
+              max="100" 
+              step="5"
+              value={prog}
+              onChange={(e) => setProg(Number(e.target.value))}
+              className="w-full accent-[#00B87C] bg-muted h-2 rounded-lg cursor-pointer appearance-none"
+            />
+            <div className="flex gap-2 justify-end pt-2">
+              <button
+                onClick={() => {
+                  const checkInProg = Math.min(prog + 10, 100);
+                  setProg(checkInProg);
+                }}
+                className="px-3 py-1.5 rounded-lg border border-border text-[11px] font-bold uppercase tracking-wider hover:bg-muted bg-transparent transition-all"
+              >
+                +10% Check-in
+              </button>
+              <button
+                onClick={() => {
+                  onUpdateProgress(goal.id, prog);
+                  onClose();
+                }}
+                className="px-5 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-md"
+              >
+                Save Progress
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RequestAddGoalModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: { title: string; category: string; kr: string; deadline: string }) => void;
+}) {
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("Finance");
+  const [kr, setKr] = useState("");
+  const [deadline, setDeadline] = useState("Q2 Target");
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-[#031B17]/85 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl border border-border overflow-hidden p-6 text-foreground">
+        <div className="flex items-center justify-between pb-4 border-b border-border mb-6">
+          <h3 className="text-[16px] font-black text-foreground uppercase tracking-wider">Request New Goal</h3>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground bg-transparent border-0 cursor-pointer">
+            <X size={18} />
+          </button>
+        </div>
+        
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          if (!title.trim() || !kr.trim()) return;
+          onSubmit({ title, category, kr, deadline });
+          setTitle("");
+          setKr("");
+          onClose();
+        }} className="space-y-4">
+          <div>
+            <label className="block text-[11px] font-black text-[#94A3B8] uppercase tracking-widest mb-1.5">Goal Objective</label>
+            <input 
+              type="text" 
+              required
+              placeholder="e.g. Optimize tax compliance workflow"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[11px] font-black text-[#94A3B8] uppercase tracking-widest mb-1.5">Category</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all cursor-pointer"
+              >
+                <option>Finance</option>
+                <option>Compliance</option>
+                <option>Leadership</option>
+                <option>Operations</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-[11px] font-black text-[#94A3B8] uppercase tracking-widest mb-1.5">Target Deadline</label>
+              <select
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all cursor-pointer"
+              >
+                <option>Q1 Target</option>
+                <option>Q2 Target</option>
+                <option>Q3 Target</option>
+                <option>Q4 Target</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-[11px] font-black text-[#94A3B8] uppercase tracking-widest mb-1.5">Key Result (KR)</label>
+            <textarea 
+              required
+              rows={3}
+              placeholder="Describe how success will be measured..."
+              value={kr}
+              onChange={(e) => setKr(e.target.value)}
+              className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all resize-none font-medium"
+            />
+          </div>
+          <div className="flex gap-3 pt-4 border-t border-border">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-3 border border-border text-[11px] font-bold uppercase tracking-widest rounded-xl hover:bg-secondary transition-all text-foreground bg-transparent"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 py-3 bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-widest rounded-xl hover:opacity-90 transition-all shadow-lg shadow-emerald-500/20"
+            >
+              Send Request
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }

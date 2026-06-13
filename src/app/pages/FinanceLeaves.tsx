@@ -13,10 +13,13 @@ import {
   Clock,
   Users,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Download,
+  Filter,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isToday } from "date-fns";
+import { showToast } from "../components/workflow/ToastNotification";
 
 // Types
 type LeaveTab = "My Requests" | "Calendar" | "History" | "Policy";
@@ -37,6 +40,20 @@ interface LeaveRecord {
   startsIn?: string;
 }
 
+const LEAVE_TYPE_LABELS: Record<LeaveType, string> = {
+  CL: "Casual Leave",
+  EL: "Earned Leave",
+  SL: "Sick Leave",
+  CO: "Comp Off",
+};
+
+const LEAVE_TYPE_COLORS: Record<LeaveType, string> = {
+  CL: "#00B87C",
+  EL: "#0EA5E9",
+  SL: "#EF4444",
+  CO: "#8B5CF6",
+};
+
 export function FinanceLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,6 +62,16 @@ export function FinanceLeaves() {
   const [showCancelConfirm, setShowCancelConfirm] = useState<string | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  // Modal state
+  const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveType>("CL");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [leaveReason, setLeaveReason] = useState("");
+  const [notifyManager, setNotifyManager] = useState(true);
+
+  // History filter
+  const [historyFilter, setHistoryFilter] = useState<"All" | "Approved" | "Rejected">("All");
+
   // Initialize from navigation state if present
   useEffect(() => {
     if (location.state?.activeTab) {
@@ -52,13 +79,12 @@ export function FinanceLeaves() {
     }
     if (location.state?.openApplyModal) {
       setIsApplyModalOpen(true);
-      // Clear state so it doesn't reopen on refresh
       navigate(location.pathname, { replace: true });
     }
   }, [location, navigate]);
 
   // Mock Data
-  const pendingRequests: LeaveRecord[] = [
+  const [pendingRequests, setPendingRequests] = useState<LeaveRecord[]>([
     {
       id: "LR-1002",
       type: "SL",
@@ -69,8 +95,8 @@ export function FinanceLeaves() {
       reason: "Viral fever, resting at home",
       status: "Pending",
       appliedOn: "Apr 17, 2026",
-    }
-  ];
+    },
+  ]);
 
   const approvedLeaves: LeaveRecord[] = [
     {
@@ -85,7 +111,7 @@ export function FinanceLeaves() {
       appliedOn: "Apr 05, 2026",
       approvedBy: "Ryan Park",
       startsIn: "Starts in 12 days",
-    }
+    },
   ];
 
   const historyLeaves: LeaveRecord[] = [
@@ -121,13 +147,64 @@ export function FinanceLeaves() {
       reason: "Winter vacation",
       status: "Approved",
       appliedOn: "Dec 15, 2025",
-    }
+    },
+    {
+      id: "LR-0650",
+      type: "SL",
+      typeFull: "Sick Leave",
+      from: "Dec 01, 2025",
+      to: "Dec 02, 2025",
+      days: 2,
+      reason: "Medical check-up",
+      status: "Rejected",
+      appliedOn: "Nov 30, 2025",
+    },
   ];
 
+  const filteredHistory = historyFilter === "All"
+    ? historyLeaves
+    : historyLeaves.filter(l => l.status === historyFilter);
+
   const handleCancelRequest = (id: string) => {
-    // In a real app this would call an API
-    console.log("Canceling request", id);
+    setPendingRequests(prev => prev.filter(r => r.id !== id));
     setShowCancelConfirm(null);
+    showToast("Request Cancelled", "success", "Leave request has been cancelled.");
+  };
+
+  const handleSubmitLeave = () => {
+    if (!fromDate || !toDate) {
+      showToast("Missing Dates", "error", "Please select both from and to dates.");
+      return;
+    }
+    const newRequest: LeaveRecord = {
+      id: `LR-${Date.now()}`,
+      type: selectedLeaveType,
+      typeFull: LEAVE_TYPE_LABELS[selectedLeaveType],
+      from: new Date(fromDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      to: new Date(toDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      days: Math.max(1, Math.ceil((new Date(toDate).getTime() - new Date(fromDate).getTime()) / (1000 * 60 * 60 * 24)) + 1),
+      reason: leaveReason,
+      status: "Pending",
+      appliedOn: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+    };
+    setPendingRequests(prev => [newRequest, ...prev]);
+    setIsApplyModalOpen(false);
+    setFromDate("");
+    setToDate("");
+    setLeaveReason("");
+    setSelectedLeaveType("CL");
+    showToast("Leave Applied", "success", `${LEAVE_TYPE_LABELS[selectedLeaveType]} request submitted successfully.`);
+  };
+
+  const computedDays = fromDate && toDate
+    ? Math.max(0, Math.ceil((new Date(toDate).getTime() - new Date(fromDate).getTime()) / (1000 * 60 * 60 * 24)) + 1)
+    : 0;
+
+  const leaveBalances: Record<LeaveType, { used: number; total: number }> = {
+    CL: { used: 6, total: 12 },
+    EL: { used: 6, total: 24 },
+    SL: { used: 4, total: 12 },
+    CO: { used: 3, total: 5 },
   };
 
   return (
@@ -144,7 +221,26 @@ export function FinanceLeaves() {
             <p className="text-[13px] text-[#6B7280]">Manage your leave requests and balance</p>
           </div>
         </div>
-        <div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              const csvContent = [
+                "ID,Type,From,To,Days,Reason,Status,Applied On",
+                ...historyLeaves.map(l => `${l.id},${l.typeFull},${l.from},${l.to},${l.days},"${l.reason}",${l.status},${l.appliedOn}`)
+              ].join("\n");
+              const blob = new Blob([csvContent], { type: "text/csv" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "leave_history.csv";
+              a.click();
+              showToast("Exported", "success", "Leave history downloaded as CSV.");
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-foreground font-bold text-sm hover:bg-muted/50 transition-all"
+          >
+            <Download size={16} />
+            Export
+          </button>
           <button 
             onClick={() => setIsApplyModalOpen(true)}
             className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20 flex items-center gap-2"
@@ -156,85 +252,33 @@ export function FinanceLeaves() {
 
       {/* ═══════ LEAVE BALANCE CARDS ═══════ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1 */}
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group hover:border-[#00B87C]/30 transition-all">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] flex items-center justify-center text-[#00B87C]">
-              <Calendar size={18} />
+        {(["CL", "EL", "SL", "CO"] as LeaveType[]).map(type => {
+          const bal = leaveBalances[type];
+          const remaining = bal.total - bal.used;
+          const pct = Math.round((remaining / bal.total) * 100);
+          const color = LEAVE_TYPE_COLORS[type];
+          const typeLabels: Record<LeaveType, string> = { CL: "CASUAL LEAVE", EL: "EARNED LEAVE", SL: "SICK LEAVE", CO: "COMP OFF" };
+          return (
+            <div key={type} className="bg-card border border-border rounded-2xl p-5 shadow-sm group hover:border-[#00B87C]/30 transition-all">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs" style={{ backgroundColor: `${color}20`, color }}>
+                  {type}
+                </div>
+                <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">{typeLabels[type]}</span>
+              </div>
+              <div className="flex items-end gap-2">
+                <span className="text-[32px] font-black tracking-tight leading-none" style={{ color }}>{remaining}</span>
+                <span className="text-[16px] font-bold text-muted-foreground mb-1">/ {bal.total} days</span>
+              </div>
+              <div className="mt-4">
+                <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: color }} />
+                </div>
+                <p className="text-[12px] font-bold text-muted-foreground mt-2">{bal.used} days used this year</p>
+              </div>
             </div>
-            <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">CASUAL LEAVE</span>
-          </div>
-          <div className="flex items-end gap-2">
-            <span className="text-[32px] font-black tracking-tight text-[#00B87C] leading-none">6</span>
-            <span className="text-[16px] font-bold text-muted-foreground mb-1">/ 12 days</span>
-          </div>
-          <div className="mt-4">
-            <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
-              <div className="h-full bg-[#00B87C] rounded-full" style={{ width: "50%" }} />
-            </div>
-            <p className="text-[12px] font-bold text-muted-foreground mt-2">6 days used this year</p>
-          </div>
-        </div>
-
-        {/* Card 2 */}
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group hover:border-[#00B87C]/30 transition-all">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] flex items-center justify-center text-[#00B87C]">
-              <CalendarDays size={18} />
-            </div>
-            <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">EARNED LEAVE</span>
-          </div>
-          <div className="flex items-end gap-2">
-            <span className="text-[32px] font-black tracking-tight text-[#00B87C] leading-none">18</span>
-            <span className="text-[16px] font-bold text-muted-foreground mb-1">/ 24 days</span>
-          </div>
-          <div className="mt-4">
-            <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
-              <div className="h-full bg-[#00B87C] rounded-full" style={{ width: "75%" }} />
-            </div>
-            <p className="text-[12px] font-bold text-muted-foreground mt-2">6 days used this year</p>
-          </div>
-        </div>
-
-        {/* Card 3 */}
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group hover:border-[#0EA5E9]/30 transition-all">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 rounded-xl bg-sky-500/10 flex items-center justify-center text-[#0EA5E9] font-black text-xs">
-              SL
-            </div>
-            <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">SICK LEAVE</span>
-          </div>
-          <div className="flex items-end gap-2">
-            <span className="text-[32px] font-black tracking-tight text-[#0EA5E9] leading-none">8</span>
-            <span className="text-[16px] font-bold text-muted-foreground mb-1">/ 12 days</span>
-          </div>
-          <div className="mt-4">
-            <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
-              <div className="h-full bg-[#0EA5E9] rounded-full" style={{ width: "66%" }} />
-            </div>
-            <p className="text-[12px] font-bold text-muted-foreground mt-2">4 days used this year</p>
-          </div>
-        </div>
-
-        {/* Card 4 */}
-        <div className="bg-card border border-border rounded-2xl p-5 shadow-sm group hover:border-[#8B5CF6]/30 transition-all">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 rounded-xl bg-violet-500/10 flex items-center justify-center text-[#8B5CF6] font-black text-xs">
-              CO
-            </div>
-            <span className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">COMP OFF</span>
-          </div>
-          <div className="flex items-end gap-2">
-            <span className="text-[32px] font-black tracking-tight text-[#8B5CF6] leading-none">2</span>
-            <span className="text-[16px] font-bold text-muted-foreground mb-1">/ 5 days</span>
-          </div>
-          <div className="mt-4">
-            <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
-              <div className="h-full bg-[#8B5CF6] rounded-full" style={{ width: "40%" }} />
-            </div>
-            <p className="text-[12px] font-bold text-muted-foreground mt-2">3 days used this year</p>
-          </div>
-        </div>
+          );
+        })}
       </div>
 
       {/* ═══════ MAIN CONTENT AREA ═══════ */}
@@ -271,19 +315,14 @@ export function FinanceLeaves() {
                 <div className="space-y-3">
                   {pendingRequests.map(req => (
                     <div key={req.id} className="relative bg-card border border-border rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#00B87C]/[0.08] transition-colors group overflow-hidden">
-                      <div className={`absolute left-0 top-0 bottom-0 w-1 ${
-                        req.type === 'CL' ? 'bg-[#00B87C]' : 
-                        req.type === 'EL' ? 'bg-[#0EA5E9]' : 
-                        req.type === 'SL' ? 'bg-[#EF4444]' : 'bg-[#8B5CF6]'
-                      }`} />
+                      <div className={`absolute left-0 top-0 bottom-0 w-1`} style={{ backgroundColor: LEAVE_TYPE_COLORS[req.type] }} />
                       
                       <div className="flex items-start md:items-center gap-4 pl-2">
-                        <div className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border ${
-                          req.type === 'CL' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 
-                          req.type === 'EL' ? 'bg-sky-500/10 text-sky-600 border-sky-500/20' : 
-                          req.type === 'SL' ? 'bg-rose-500/10 text-rose-600 border-rose-500/20' : 
-                          'bg-violet-500/10 text-violet-600 border-violet-500/20'
-                        }`}>
+                        <div className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border`} style={{ 
+                          backgroundColor: `${LEAVE_TYPE_COLORS[req.type]}15`, 
+                          color: LEAVE_TYPE_COLORS[req.type], 
+                          borderColor: `${LEAVE_TYPE_COLORS[req.type]}30`
+                        }}>
                           {req.type}
                         </div>
                         <div>
@@ -322,6 +361,9 @@ export function FinanceLeaves() {
                   ))}
                   {pendingRequests.length === 0 && (
                     <div className="bg-card border border-border border-dashed rounded-2xl p-8 text-center">
+                      <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-3">
+                        <CheckCircle2 size={24} className="text-muted-foreground/30" />
+                      </div>
                       <p className="text-[13px] font-bold text-muted-foreground">No pending requests</p>
                     </div>
                   )}
@@ -337,12 +379,7 @@ export function FinanceLeaves() {
                       <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#00B87C]" />
                       
                       <div className="flex items-start md:items-center gap-4 pl-2">
-                        <div className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border ${
-                          req.type === 'CL' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 
-                          req.type === 'EL' ? 'bg-sky-500/10 text-sky-600 border-sky-500/20' : 
-                          req.type === 'SL' ? 'bg-rose-500/10 text-rose-600 border-rose-500/20' : 
-                          'bg-violet-500/10 text-violet-600 border-violet-500/20'
-                        }`}>
+                        <div className="px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border bg-sky-500/10 text-sky-600 border-sky-500/20">
                           {req.type}
                         </div>
                         <div>
@@ -381,19 +418,19 @@ export function FinanceLeaves() {
                   <div className="flex items-center gap-2">
                     <button 
                       onClick={() => setCurrentDate(subMonths(currentDate, 1))}
-                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted text-muted-foreground"
+                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted text-muted-foreground transition-colors"
                     >
                       <ChevronLeft size={16} />
                     </button>
                     <button 
                       onClick={() => setCurrentDate(new Date())}
-                      className="px-3 py-1.5 rounded-lg border border-border text-[12px] font-bold uppercase hover:bg-muted text-foreground tracking-widest"
+                      className="px-3 py-1.5 rounded-lg border border-border text-[12px] font-bold uppercase hover:bg-muted text-foreground tracking-widest transition-colors"
                     >
                       Today
                     </button>
                     <button 
                       onClick={() => setCurrentDate(addMonths(currentDate, 1))}
-                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted text-muted-foreground"
+                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted text-muted-foreground transition-colors"
                     >
                       <ChevronRight size={16} />
                     </button>
@@ -414,17 +451,11 @@ export function FinanceLeaves() {
                     const monthEnd = endOfMonth(monthStart);
                     const startDate = startOfWeek(monthStart);
                     const endDate = endOfWeek(monthEnd);
-                    const dateFormat = "d";
 
-                    let formattedDate = "";
-
-                    const calendarDays = eachDayOfInterval({
-                      start: startDate,
-                      end: endDate
-                    });
+                    const calendarDays = eachDayOfInterval({ start: startDate, end: endDate });
 
                     return calendarDays.map((calDay, i) => {
-                      formattedDate = format(calDay, dateFormat);
+                      const formattedDate = format(calDay, "d");
                       const isCurrentMonth = isSameMonth(calDay, monthStart);
                       const isCurrentDay = isToday(calDay);
                       const dateNum = parseInt(formattedDate);
@@ -440,7 +471,6 @@ export function FinanceLeaves() {
                         );
                       }
 
-                      // Dummy logic for leaves based on the day number to show UI
                       if (dateNum === 5) {
                         bgClass = "bg-[#0EA5E9]/5 border-[#0EA5E9]/20";
                         content = <div className="mt-1 px-1.5 py-0.5 bg-[#0EA5E9] text-white text-[10px] font-bold rounded uppercase tracking-wider truncate text-center">Holiday</div>;
@@ -476,54 +506,81 @@ export function FinanceLeaves() {
           )}
 
           {activeTab === "History" && (
-            <div className="animate-in fade-in duration-300 overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">LEAVE TYPE</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">FROM</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">TO</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">DAYS</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest hidden md:table-cell">REASON</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">STATUS</th>
-                    <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest hidden md:table-cell">APPLIED ON</th>
-                    <th className="py-4 px-4 w-10"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {historyLeaves.map(leave => (
-                    <tr key={leave.id} className="hover:bg-muted/50 transition-colors cursor-pointer group">
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          <span className={`w-2 h-2 rounded-full ${leave.type === 'CL' ? 'bg-[#00B87C]' : leave.type === 'EL' ? 'bg-[#0EA5E9]' : leave.type === 'SL' ? 'bg-[#EF4444]' : 'bg-[#8B5CF6]'}`} />
-                          <span className="text-[13px] font-bold text-foreground">{leave.typeFull}</span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4 text-[13px] font-bold text-foreground">{leave.from}</td>
-                      <td className="py-4 px-4 text-[13px] font-bold text-foreground">{leave.to}</td>
-                      <td className="py-4 px-4 text-[13px] font-bold text-muted-foreground">{leave.days}</td>
-                      <td className="py-4 px-4 text-[13px] font-bold text-muted-foreground truncate max-w-[150px] hidden md:table-cell">{leave.reason}</td>
-                      <td className="py-4 px-4">
-                        <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 w-fit ${
-                          leave.status === 'Approved' ? 'bg-emerald-500/10 text-[#00B87C]' : 
-                          leave.status === 'Rejected' ? 'bg-rose-500/10 text-rose-600' : 
-                          'bg-muted text-muted-foreground'
-                        }`}>
-                          {leave.status === 'Approved' && <CheckCircle2 size={12} />}
-                          {leave.status === 'Rejected' && <X size={12} />}
-                          {leave.status}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4 text-[12px] font-bold text-muted-foreground hidden md:table-cell">{leave.appliedOn}</td>
-                      <td className="py-4 px-4 text-right">
-                        <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground opacity-0 group-hover:opacity-100 transition-all">
-                          <MoreVertical size={16} />
-                        </button>
-                      </td>
+            <div className="animate-in fade-in duration-300 space-y-4">
+              {/* Filter chips */}
+              <div className="flex items-center gap-2 flex-wrap">
+                {(["All", "Approved", "Rejected"] as const).map(f => (
+                  <button
+                    key={f}
+                    onClick={() => setHistoryFilter(f)}
+                    className={`px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all border ${
+                      historyFilter === f
+                        ? "bg-[#00B87C] text-white border-[#00B87C]"
+                        : "bg-card text-muted-foreground border-border hover:border-[#00B87C]/50"
+                    }`}
+                  >
+                    {f}
+                  </button>
+                ))}
+                <span className="text-[12px] font-bold text-muted-foreground ml-2">{filteredHistory.length} records</span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">LEAVE TYPE</th>
+                      <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">FROM</th>
+                      <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">TO</th>
+                      <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">DAYS</th>
+                      <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest hidden md:table-cell">REASON</th>
+                      <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">STATUS</th>
+                      <th className="py-4 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest hidden md:table-cell">APPLIED ON</th>
+                      <th className="py-4 px-4 w-10"></th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {filteredHistory.map(leave => (
+                      <tr key={leave.id} className="hover:bg-muted/50 transition-colors cursor-pointer group">
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: LEAVE_TYPE_COLORS[leave.type] }} />
+                            <span className="text-[13px] font-bold text-foreground">{leave.typeFull}</span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-[13px] font-bold text-foreground">{leave.from}</td>
+                        <td className="py-4 px-4 text-[13px] font-bold text-foreground">{leave.to}</td>
+                        <td className="py-4 px-4 text-[13px] font-bold text-muted-foreground">{leave.days}</td>
+                        <td className="py-4 px-4 text-[13px] font-bold text-muted-foreground truncate max-w-[150px] hidden md:table-cell">{leave.reason}</td>
+                        <td className="py-4 px-4">
+                          <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 w-fit ${
+                            leave.status === 'Approved' ? 'bg-emerald-500/10 text-[#00B87C]' : 
+                            leave.status === 'Rejected' ? 'bg-rose-500/10 text-rose-600' : 
+                            'bg-muted text-muted-foreground'
+                          }`}>
+                            {leave.status === 'Approved' && <CheckCircle2 size={12} />}
+                            {leave.status === 'Rejected' && <X size={12} />}
+                            {leave.status}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-[12px] font-bold text-muted-foreground hidden md:table-cell">{leave.appliedOn}</td>
+                        <td className="py-4 px-4 text-right">
+                          <button className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground opacity-0 group-hover:opacity-100 transition-all">
+                            <MoreVertical size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {filteredHistory.length === 0 && (
+                      <tr>
+                        <td colSpan={8} className="py-12 text-center text-[13px] font-bold text-muted-foreground">
+                          No {historyFilter.toLowerCase()} leave records found
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
@@ -564,6 +621,13 @@ export function FinanceLeaves() {
                         <td className="py-3 px-4 text-[13px] font-bold">Sick Leave (SL)</td>
                         <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">12</td>
                         <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">Annual Frontload</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
+                      </tr>
+                      <tr>
+                        <td className="py-3 px-4 text-[13px] font-bold">Comp Off (CO)</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">5</td>
+                        <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">On Request</td>
                         <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
                         <td className="py-3 px-4 text-[13px] font-bold text-muted-foreground">No</td>
                       </tr>
@@ -614,7 +678,7 @@ export function FinanceLeaves() {
                   </div>
                   <h2 className="text-[18px] font-black text-foreground tracking-tight">Apply for Leave</h2>
                 </div>
-                <button onClick={() => setIsApplyModalOpen(false)} className="p-2 rounded-xl hover:bg-muted text-muted-foreground">
+                <button onClick={() => setIsApplyModalOpen(false)} className="p-2 rounded-xl hover:bg-muted text-muted-foreground bg-transparent transition-colors">
                   <X size={20} />
                 </button>
               </div>
@@ -626,38 +690,60 @@ export function FinanceLeaves() {
                 <div className="space-y-2">
                   <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Leave Type</label>
                   <div className="flex gap-2 p-1 rounded-xl bg-muted border border-border">
-                    {["CL", "EL", "SL", "CO"].map((type) => (
+                    {(["CL", "EL", "SL", "CO"] as LeaveType[]).map((type) => (
                       <button 
                         key={type}
+                        onClick={() => setSelectedLeaveType(type)}
                         className={`flex-1 py-2 rounded-lg text-[12px] font-bold uppercase tracking-widest transition-all ${
-                          type === "CL" ? "bg-[#00B87C] text-white shadow-sm" : "text-muted-foreground hover:bg-card/50"
+                          selectedLeaveType === type 
+                            ? "text-white shadow-sm" 
+                            : "text-muted-foreground hover:bg-card/50"
                         }`}
+                        style={selectedLeaveType === type ? { backgroundColor: LEAVE_TYPE_COLORS[type] } : {}}
                       >
                         {type}
                       </button>
                     ))}
                   </div>
+                  <p className="text-[11px] font-bold text-muted-foreground ml-1">
+                    {LEAVE_TYPE_LABELS[selectedLeaveType]} — Balance: <span className="text-foreground font-black">{leaveBalances[selectedLeaveType].total - leaveBalances[selectedLeaveType].used} days remaining</span>
+                  </p>
                 </div>
 
                 {/* Dates */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">From Date</label>
-                    <input type="date" className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground" />
+                    <input 
+                      type="date" 
+                      value={fromDate}
+                      onChange={e => setFromDate(e.target.value)}
+                      className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground transition-colors" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">To Date</label>
-                    <input type="date" className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground" />
+                    <input 
+                      type="date" 
+                      value={toDate}
+                      onChange={e => setToDate(e.target.value)}
+                      min={fromDate}
+                      className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground transition-colors" 
+                    />
                   </div>
                 </div>
 
                 {/* Auto Duration & Balance */}
                 <div className="bg-[#F0FDF4] border border-[#00B87C]/30 rounded-xl p-4 flex flex-col items-center justify-center text-center dark:bg-[#00B87C]/5">
-                  <span className="text-[18px] font-black text-[#00B87C]">3 Working Days</span>
+                  <span className="text-[18px] font-black text-[#00B87C]">
+                    {computedDays > 0 ? `${computedDays} Working Day${computedDays !== 1 ? "s" : ""}` : "Select dates above"}
+                  </span>
                   <span className="text-[11px] font-bold text-muted-foreground">Excludes weekends & holidays</span>
-                  <div className="mt-3 pt-3 border-t border-[#00B87C]/20 w-full text-[12px] font-bold text-[#00B87C]">
-                    CL Balance: 6 days → <span className="font-black">After this: 3 days remaining</span>
-                  </div>
+                  {computedDays > 0 && (
+                    <div className="mt-3 pt-3 border-t border-[#00B87C]/20 w-full text-[12px] font-bold text-[#00B87C]">
+                      {selectedLeaveType} Balance: {leaveBalances[selectedLeaveType].total - leaveBalances[selectedLeaveType].used} days → <span className="font-black">After this: {Math.max(0, leaveBalances[selectedLeaveType].total - leaveBalances[selectedLeaveType].used - computedDays)} days remaining</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Team Overlap */}
@@ -673,17 +759,22 @@ export function FinanceLeaves() {
                 <div className="space-y-2">
                   <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">Reason (Optional)</label>
                   <textarea 
+                    value={leaveReason}
+                    onChange={e => setLeaveReason(e.target.value)}
                     placeholder="Brief reason for your leave..." 
-                    className="w-full h-20 px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground resize-none"
+                    className="w-full h-20 px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-[13px] font-bold text-foreground resize-none transition-colors"
                   />
                 </div>
 
-                {/* Toggles */}
+                {/* Notify Manager Toggle */}
                 <div className="flex items-center justify-between p-1">
                   <span className="text-[13px] font-bold text-foreground">Notify Manager</span>
-                  <div className="w-10 h-6 rounded-full bg-[#00B87C] relative cursor-pointer">
-                    <div className="absolute right-1 top-1 bottom-1 w-4 bg-white rounded-full shadow-sm" />
-                  </div>
+                  <button
+                    onClick={() => setNotifyManager(!notifyManager)}
+                    className={`w-10 h-6 rounded-full relative transition-all duration-300 ${notifyManager ? "bg-[#00B87C]" : "bg-muted"}`}
+                  >
+                    <div className={`absolute top-1 bottom-1 w-4 bg-white rounded-full shadow-sm transition-all duration-300 ${notifyManager ? "right-1" : "left-1"}`} />
+                  </button>
                 </div>
 
               </div>
@@ -697,11 +788,9 @@ export function FinanceLeaves() {
                   Cancel
                 </button>
                 <button 
-                  onClick={() => {
-                    alert("Leave request submitted!");
-                    setIsApplyModalOpen(false);
-                  }}
-                  className="flex-1 px-6 py-3 rounded-2xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20"
+                  onClick={handleSubmitLeave}
+                  disabled={!fromDate || !toDate}
+                  className="flex-1 px-6 py-3 rounded-2xl bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest hover:bg-[#009966] transition-all shadow-lg shadow-[#00B87C]/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Submit Request
                 </button>

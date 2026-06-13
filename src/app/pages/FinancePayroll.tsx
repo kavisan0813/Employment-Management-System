@@ -117,13 +117,32 @@ export function FinancePayroll() {
   const [runModalStep, setRunModalStep] = useState<1 | 2>(1);
   const [genericModalTitle, setGenericModalTitle] = useState("");
   const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("All Departments");
+  const [statusFilter, setStatusFilter] = useState("Status: All");
+  const [payBandFilter, setPayBandFilter] = useState("Pay Band: All");
 
   const handleExport = (type: string) => {
     setExportDropdownOpen(false);
-    setToastMessage(`Exporting ${type} CSV...`);
-    setTimeout(() => setToastMessage(""), 3000);
+    // Build CSV
+    const headers = "Employee,Department,Basic,HRA,Allowances,Gross,Deductions,Net,Status";
+    const rows = MOCK_RECORDS.map(r => `"${r.name}",${r.department},${r.basic},${r.hra},${r.allowances},${r.gross},${r.deductions},${r.net},${r.status}`);
+    const csvContent = [headers, ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `payroll_${type.toLowerCase().replace(/ /g, "_")}.csv`;
+    link.click();
+    showToast(`${type} exported successfully.`);
   };
+
+  const filteredRecords = MOCK_RECORDS.filter(rec => {
+    const matchesSearch = rec.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      rec.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      rec.id.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDept = departmentFilter === "All Departments" || rec.department === departmentFilter;
+    const matchesStatus = statusFilter === "Status: All" || rec.status === statusFilter.replace("Status: ", "");
+    return matchesSearch && matchesDept && matchesStatus;
+  });
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
@@ -236,13 +255,35 @@ export function FinancePayroll() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <FilterSelect label="2025-2026" options={["2025-2026", "2024-2025", "2023-2024"]} />
-        <FilterSelect label="All Departments" options={["All Departments", "Engineering", "Sales", "Marketing"]} />
-        <FilterSelect label="Status: All" options={["Status: All", "Processed", "Pending", "On Hold"]} />
-        <FilterSelect label="Pay Band: All" options={["Pay Band: All", "Band A", "Band B", "Band C"]} />
+        <div className="relative group">
+          <select
+            value={departmentFilter}
+            onChange={(e) => setDepartmentFilter(e.target.value)}
+            className="appearance-none flex items-center gap-2.5 px-5 pr-12 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer"
+          >
+            {["All Departments", "Engineering", "Product", "Design", "Human Resources"].map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+          <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+        </div>
+        <div className="relative group">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="appearance-none flex items-center gap-2.5 px-5 pr-12 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer"
+          >
+            {["Status: All", "Processed", "Pending", "On Hold"].map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+          <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+        </div>
         <button 
           onClick={() => {
             setSearchQuery("");
+            setDepartmentFilter("All Departments");
+            setStatusFilter("Status: All");
             showToast("Filters Reset");
           }}
           className="flex items-center gap-2 px-4 py-2.5 text-sm font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest"
@@ -260,8 +301,8 @@ export function FinancePayroll() {
       <div className="bg-card border border-border rounded-[32px] overflow-hidden shadow-sm">
         <div className="p-6 flex items-center justify-between border-b border-border bg-card">
           <div>
-            <h2 className="text-lg font-black text-foreground tracking-tight">Payroll Register — April 2026</h2>
-            <p className="text-[13px] font-semibold text-muted-foreground">1,284 employees · Click row to view slip</p>
+            <h2 className="text-lg font-black text-foreground tracking-tight">Payroll Register — {departmentFilter === "All Departments" ? "All Departments" : departmentFilter}</h2>
+            <p className="text-[13px] font-semibold text-muted-foreground">{filteredRecords.length} of {MOCK_RECORDS.length} employees · Click row to view slip</p>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-[12px] font-bold text-muted-foreground uppercase tracking-widest">Page 1 of 52</span>
@@ -288,7 +329,7 @@ export function FinancePayroll() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {MOCK_RECORDS.map((rec, i) => (
+              {filteredRecords.map((rec, i) => (
                 <motion.tr 
                   key={rec.id} 
                   initial={{ opacity: 0, x: -10 }}
@@ -372,8 +413,7 @@ export function FinancePayroll() {
                   </button>
                   <button 
                     onClick={() => {
-                      setToastMessage("Downloading Salary Slip PDF...");
-                      setTimeout(() => setToastMessage(""), 3000);
+                      showToast("Downloading Salary Slip PDF...");
                     }}
                     className="flex items-center gap-2 px-4 py-2 bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest rounded-xl shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all"
                   >
@@ -450,8 +490,7 @@ export function FinancePayroll() {
               <div className="p-6 border-t border-border grid grid-cols-2 gap-4 bg-muted/5">
                 <button 
                   onClick={() => {
-                    setToastMessage("Preparing slip for printing...");
-                    setTimeout(() => setToastMessage(""), 3000);
+                    showToast("Preparing slip for printing...");
                   }}
                   className="flex items-center justify-center gap-2 py-4 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all active:scale-95"
                 >
@@ -460,8 +499,7 @@ export function FinancePayroll() {
                 </button>
                 <button 
                   onClick={() => {
-                    setToastMessage(`Salary Slip emailed to ${selectedEmployee.name}.`);
-                    setTimeout(() => setToastMessage(""), 3000);
+                    showToast(`Salary Slip emailed to ${selectedEmployee.name}.`);
                   }}
                   className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20 active:scale-95"
                 >
@@ -628,8 +666,7 @@ export function FinancePayroll() {
                       setRunModalStep(2);
                     } else {
                       setShowRunModal(false);
-                      setToastMessage("Payroll processing started successfully.");
-                      setTimeout(() => setToastMessage(""), 3000);
+                      showToast("Payroll processing started successfully.");
                     }
                   }}
                   className={`flex-1 py-4 rounded-[20px] text-white font-black text-[13px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg active:scale-95 ${runModalStep === 2 ? "bg-[#8B5CF6] shadow-[#8B5CF6]/20" : "bg-[#00B87C] shadow-[#00B87C]/20"}`}
@@ -663,27 +700,10 @@ export function FinancePayroll() {
           </div>
         </div>
       )}
-
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {toastMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-6 right-6 z-[6000] bg-card text-foreground px-6 py-4 rounded-xl shadow-2xl border border-border flex items-center gap-3"
-          >
-            <CheckCircle2 size={20} className="text-[#00B87C]" />
-            <span className="text-[13px] font-bold">{toastMessage}</span>
-            <button onClick={() => setToastMessage("")} className="ml-4 text-muted-foreground hover:text-foreground">
-              <X size={16} />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
+
 
 function KPICard({ title, value, subValue, color, icon: Icon }: { title: string, value: string, subValue?: string, color: 'purple' | 'green' | 'red', icon: React.ElementType }) {
   const colors = {

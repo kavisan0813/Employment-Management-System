@@ -46,11 +46,19 @@ interface RegularizationReq {
   status: "Pending" | "Approved";
 }
 
+const EMPLOYEES = [
+  { id: "EMP001", name: "Ananya Sharma", initials: "AS", color: "#10B981" },
+  { id: "EMP002", name: "Rohan Verma", initials: "RV", color: "#8B5CF6" },
+  { id: "EMP003", name: "Priya Patel", initials: "PP", color: "#F59E0B" },
+];
+
 export function FinanceAttendance() {
   const [selectedMonth, setSelectedMonth] = useState(3); // April
-  const [selectedYear] = useState(2026);
+  const [selectedYear, setSelectedYear] = useState(2026);
   const [isRegModalOpen, setIsRegModalOpen] = useState(false);
   const [regRequests, setRegRequests] = useState<RegularizationReq[]>([]);
+  const [selectedEmployee, setSelectedEmployee] = useState(EMPLOYEES[0]);
+  const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
 
   // Modal Fields
   const [regDate, setRegDate] = useState("2026-04-07");
@@ -103,23 +111,33 @@ export function FinanceAttendance() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-2 p-1 bg-card rounded-2xl border border-border shadow-sm w-fit">
           <button
-            onClick={() =>
-              setSelectedMonth((prev) => (prev === 0 ? 11 : prev - 1))
-            }
+            onClick={() => {
+              if (selectedMonth === 0) {
+                setSelectedMonth(11);
+                setSelectedYear(prev => prev - 1);
+              } else {
+                setSelectedMonth(prev => prev - 1);
+              }
+            }}
             className="p-1.5 hover:bg-secondary rounded-lg text-muted-foreground transition-colors"
           >
             <ChevronLeft size={18} />
           </button>
-          <div className="flex items-center gap-2 px-3 text-[14px] font-bold text-foreground min-w-[120px] justify-center">
+          <div className="flex items-center gap-2 px-3 text-[14px] font-bold text-foreground min-w-[140px] justify-center">
             <Calendar size={14} className="text-muted-foreground" />
             <span>
               {MONTH_NAMES[selectedMonth]} {selectedYear}
             </span>
           </div>
           <button
-            onClick={() =>
-              setSelectedMonth((prev) => (prev === 11 ? 0 : prev + 1))
-            }
+            onClick={() => {
+              if (selectedMonth === 11) {
+                setSelectedMonth(0);
+                setSelectedYear(prev => prev + 1);
+              } else {
+                setSelectedMonth(prev => prev + 1);
+              }
+            }}
             className="p-1.5 hover:bg-secondary rounded-lg text-muted-foreground transition-colors"
           >
             <ChevronRight size={18} />
@@ -133,15 +151,43 @@ export function FinanceAttendance() {
           >
             Apply Regularization
           </button>
-          <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-card hover:bg-secondary transition-all">
-            <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-[11px] font-semibold text-white">
-              AS
-            </div>
-            <span className="text-[13px] font-black text-foreground">
-              Ananya Sharma
-            </span>
-            <ChevronDown size={14} className="text-muted-foreground" />
-          </button>
+          {/* Employee selector */}
+          <div className="relative">
+            <button
+              onClick={() => setShowEmployeeDropdown(!showEmployeeDropdown)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-card hover:bg-secondary transition-all"
+            >
+              <div
+                className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold text-white"
+                style={{ backgroundColor: selectedEmployee.color }}
+              >
+                {selectedEmployee.initials}
+              </div>
+              <span className="text-[13px] font-black text-foreground">
+                {selectedEmployee.name}
+              </span>
+              <ChevronDown size={14} className="text-muted-foreground" />
+            </button>
+            {showEmployeeDropdown && (
+              <div className="absolute top-full right-0 mt-2 w-48 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden">
+                {EMPLOYEES.map(emp => (
+                  <button
+                    key={emp.id}
+                    onClick={() => { setSelectedEmployee(emp); setShowEmployeeDropdown(false); }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted transition-colors text-[13px] font-bold ${
+                      selectedEmployee.id === emp.id ? "text-[#00B87C]" : "text-foreground"
+                    }`}
+                  >
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ backgroundColor: emp.color }}>
+                      {emp.initials}
+                    </div>
+                    {emp.name}
+                    {selectedEmployee.id === emp.id && <span className="ml-auto text-[#00B87C]">✓</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -257,7 +303,7 @@ export function FinanceAttendance() {
                   Daily Log
                 </h3>
                 <span className="text-[14px] font-bold text-muted-foreground">
-                  April 2026
+                  {MONTH_NAMES[selectedMonth]} {selectedYear}
                 </span>
               </div>
             </div>

@@ -566,6 +566,9 @@ export function FinanceReports() {
 /* ─── TAB COMPONENTS ─── */
 
 function DashboardsTab() {
+  const [period, setPeriod] = useState<"1Y" | "6M">("1Y");
+  const chartData = period === "6M" ? PAYROLL_TREND_DATA.slice(-6) : PAYROLL_TREND_DATA;
+
   return (
     <div className="space-y-6">
       {/* Top Row: Payroll Cost & Dept Distribution */}
@@ -577,21 +580,32 @@ function DashboardsTab() {
                 Payroll Cost Trend
               </h3>
               <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
-                Last 12 Months Financial Performance
+                {period === "1Y" ? "Last 12 Months" : "Last 6 Months"} Financial Performance
               </p>
             </div>
             <div className="flex bg-muted/30 p-1 rounded-xl border border-border">
-              <button className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg bg-[#00B87C] text-white">
+              <button
+                onClick={() => setPeriod("1Y")}
+                className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all ${
+                  period === "1Y" ? "bg-[#00B87C] text-white" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
                 1Y
               </button>
-              <button className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg text-muted-foreground hover:text-foreground transition-all">
+              <button
+                onClick={() => setPeriod("6M")}
+                className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all ${
+                  period === "6M" ? "bg-[#00B87C] text-white" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
                 6M
               </button>
             </div>
           </div>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={PAYROLL_TREND_DATA}>
+              <AreaChart data={chartData}>
+
                 <defs>
                   <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.1} />

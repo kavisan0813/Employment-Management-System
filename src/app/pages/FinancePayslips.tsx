@@ -75,6 +75,14 @@ const payslipsData: Payslip[] = [
 export function FinancePayslips() {
   const [selectedPayslip, setSelectedPayslip] = useState<Payslip | null>(null);
   const [showViewer, setShowViewer] = useState(false);
+  const [yearFilter, setYearFilter] = useState("All");
+  const [monthFilter, setMonthFilter] = useState("All");
+
+  const filteredPayslips = payslipsData.filter((p) => {
+    const yearMatch = yearFilter === "All" || p.year === yearFilter;
+    const monthMatch = monthFilter === "All" || p.month === monthFilter;
+    return yearMatch && monthMatch;
+  });
 
   const handleView = (payslip: Payslip) => {
     setSelectedPayslip(payslip);
@@ -197,13 +205,32 @@ Thank you for your valuable contribution.
 
       {/* TABLE SECTION */}
       <div className="bg-card border border-border rounded-[32px] overflow-hidden shadow-sm">
-        <div className="p-6 border-b border-border flex items-center justify-between bg-muted/20">
+        <div className="p-6 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-muted/20">
           <h3 className="text-[14px] font-black text-foreground uppercase tracking-widest">
-            PAYSLIPS — FY 2025-26
+            PAYSLIPS HISTORY
           </h3>
           <div className="flex items-center gap-3">
-            <FilterDropdown label="FY 2025-26" />
-            <FilterDropdown label="All Months" />
+            <select
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+              className="px-4 py-2 rounded-xl border border-border bg-card text-[11px] font-semibold uppercase tracking-wider hover:bg-secondary outline-none transition-all cursor-pointer text-foreground"
+            >
+              <option value="All">All Years</option>
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+            </select>
+            <select
+              value={monthFilter}
+              onChange={(e) => setMonthFilter(e.target.value)}
+              className="px-4 py-2 rounded-xl border border-border bg-card text-[11px] font-semibold uppercase tracking-wider hover:bg-secondary outline-none transition-all cursor-pointer text-foreground"
+            >
+              <option value="All">All Months</option>
+              {["January", "February", "March", "October", "November", "December"].map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -232,7 +259,7 @@ Thank you for your valuable contribution.
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {payslipsData.map((payslip) => (
+              {filteredPayslips.map((payslip) => (
                 <tr
                   key={payslip.id}
                   className="h-14 hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all group"

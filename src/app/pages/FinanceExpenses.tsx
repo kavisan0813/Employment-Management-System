@@ -114,6 +114,9 @@ export function FinanceExpenses() {
   const [showExportModal, setShowExportModal] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [exportMode, setExportMode] = useState<"all" | "selected">("all");
+  const [categoryFilter, setCategoryFilter] = useState("All Categories");
+  const [departmentFilter, setDepartmentFilter] = useState("All Departments");
+  const [amountFilter, setAmountFilter] = useState("Any Amount");
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -158,7 +161,13 @@ export function FinanceExpenses() {
     const matchesTab = activeTab === "All" || exp.status === activeTab;
     const matchesSearch = exp.employee.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           exp.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesTab && matchesSearch;
+    const matchesCategory = categoryFilter === "All Categories" || exp.category === categoryFilter;
+    const matchesDept = departmentFilter === "All Departments" || exp.employee.department === departmentFilter;
+    const matchesAmount = amountFilter === "Any Amount" ||
+      (amountFilter === "< ₹1000" && exp.amount < 1000) ||
+      (amountFilter === "₹1000 - ₹5000" && exp.amount >= 1000 && exp.amount <= 5000) ||
+      (amountFilter === "> ₹5000" && exp.amount > 5000);
+    return matchesTab && matchesSearch && matchesCategory && matchesDept && matchesAmount;
   });
 
   const toggleRow = (id: string) => {
@@ -242,13 +251,15 @@ export function FinanceExpenses() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <FilterSelect label="All Categories" options={["All Categories", "Travel", "Food", "Equipment"]} />
-          <FilterSelect label="This Month" options={["This Month", "Last Month", "This Quarter", "This Year"]} />
-          <FilterSelect label="All Departments" options={["All Departments", "Engineering", "Sales", "Marketing"]} />
-          <FilterSelect label="₹ Amount Range" options={["Any Amount", "< ₹1000", "₹1000 - ₹5000", "> ₹5000"]} />
+          <FilterSelect label="All Categories" options={["All Categories", "Travel", "Food", "Equipment", "Transport", "Others"]} value={categoryFilter} onChange={setCategoryFilter} />
+          <FilterSelect label="All Departments" options={["All Departments", "Engineering", "Sales", "Product", "Operations"]} value={departmentFilter} onChange={setDepartmentFilter} />
+          <FilterSelect label="Any Amount" options={["Any Amount", "< ₹1000", "₹1000 - ₹5000", "> ₹5000"]} value={amountFilter} onChange={setAmountFilter} />
           <button 
             onClick={() => {
               setSearchQuery("");
+              setCategoryFilter("All Categories");
+              setDepartmentFilter("All Departments");
+              setAmountFilter("Any Amount");
               showToast("Filters Reset");
             }}
             className="flex items-center gap-2 px-4 py-2.5 text-sm font-black text-muted-foreground hover:text-foreground transition-all uppercase tracking-widest"
@@ -803,18 +814,20 @@ function KPICard({ title, value, subValue, color, icon: Icon }: { title: string,
   );
 }
 
-function FilterSelect({ label, options = ["Option 1", "Option 2"] }: { label: string, options?: string[] }) {
-  const [value, setValue] = useState(label);
+function FilterSelect({ label, options = ["Option 1", "Option 2"], value: externalValue, onChange: externalOnChange }: { label: string, options?: string[], value?: string, onChange?: (val: string) => void }) {
+  const [internalValue, setInternalValue] = useState(label);
+  const value = externalValue ?? internalValue;
+  const handleChange = externalOnChange ?? setInternalValue;
   
   return (
     <div className="relative group">
       <select
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
         className="appearance-none flex items-center gap-2.5 px-5 pr-12 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer"
       >
         <option value={label}>{label}</option>
-        {options.map((opt, i) => (
+        {options.filter(opt => opt !== label).map((opt, i) => (
           <option key={i} value={opt}>{opt}</option>
         ))}
       </select>
