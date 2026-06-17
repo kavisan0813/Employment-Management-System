@@ -252,17 +252,70 @@ function PayslipModal({
     { label: "Professional Tax",   amount: Math.round(employee.deductions * 0.1) },
   ];
 
+  const maxRows = Math.max(earnings.length, deductionBreakdown.length);
+  const rows = [];
+  for (let i = 0; i < maxRows; i++) {
+    rows.push({
+      earning: earnings[i] || null,
+      deduction: deductionBreakdown[i] || null,
+    });
+  }
+
+  // Convert Net Salary to Words
+  const netInWords = (() => {
+    const num = Math.round(employee.net);
+    if (num === 0) return "Zero";
+    const a = [
+      "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+      "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+    ];
+    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    
+    function g(n: number): string {
+      if (n < 20) return a[n];
+      const digit = n % 10;
+      return b[Math.floor(n / 10)] + (digit ? " " + a[digit] : "");
+    }
+    
+    function h(n: number): string {
+      if (n < 100) return g(n);
+      return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " and " + g(n % 100) : "");
+    }
+    
+    function c(n: number): string {
+      let parts: string[] = [];
+      if (n >= 10000000) {
+        parts.push(h(Math.floor(n / 10000000)) + " Crore");
+        n %= 10000000;
+      }
+      if (n >= 100000) {
+        parts.push(h(Math.floor(n / 100000)) + " Lakh");
+        n %= 100000;
+      }
+      if (n >= 1000) {
+        parts.push(h(Math.floor(n / 1000)) + " Thousand");
+        n %= 1000;
+      }
+      if (n > 0) {
+        parts.push(h(n));
+      }
+      return parts.join(" ");
+    }
+
+    return "Rupees " + c(num) + " Only";
+  })();
+
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div
-        className="w-full max-w-2xl bg-card rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] border border-emerald-500/10"
+        className="w-full max-w-2xl bg-card rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] border border-emerald-500/10 print-payslip-card"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Decorative header stripe */}
-        <div className="h-1 bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-600" />
+        <div className="h-1 bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-600 no-print" />
 
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between no-print">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
               <FileText size={20} className="text-emerald-500" />
@@ -286,102 +339,135 @@ function PayslipModal({
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {/* Branding Row */}
-          <div className="flex justify-between items-start">
+        <div className="flex-1 overflow-y-auto p-8 space-y-6">
+          {/* Corporate Header Section */}
+          <div className="flex justify-between items-start border-b border-neutral-300 pb-4">
             <div>
-              <h2 className="text-2xl font-black bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent">NexusHR</h2>
-              <p className="text-xs text-muted-foreground">Premium Enterprise Solutions · Silicon Valley, CA 94025</p>
+              <h1 className="text-2xl font-black text-foreground tracking-tight flex items-center gap-1.5">
+                <span className="bg-[#00B87C] text-white p-1.5 rounded-xl text-lg leading-none font-bold">N</span>
+                NexusHR Inc.
+              </h1>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                100 Marine Parkway, Redwood City, CA 94065<br />
+                Phone: +1 (650) 555-0199 | Email: payroll@nexushr.com
+              </p>
             </div>
-            <div className={`px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider border ${
-              employee.status === "Paid" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-              : employee.status === "On Hold" ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
-              : "bg-slate-500/10 text-slate-600 border-slate-500/20"
-            }`}>
-              {employee.status}
-            </div>
-          </div>
-
-          {/* Employee Info */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 rounded-2xl bg-muted/30 border border-border">
-            {[
-              { label: "Employee", value: employee.name },
-              { label: "Designation", value: employee.designation },
-              { label: "Department", value: employee.department },
-              { label: "Pay Period", value: `${month} ${year}` },
-            ].map((info) => (
-              <div key={info.label}>
-                <p className="text-[9px] uppercase font-black text-muted-foreground mb-1 tracking-wider">{info.label}</p>
-                <p className="text-sm font-bold text-foreground">{info.value}</p>
+            <div className="text-right">
+              <h2 className="text-lg font-black text-foreground uppercase tracking-wider">Salary Payslip</h2>
+              <p className="text-xs font-bold text-muted-foreground mt-1">Pay Period: {month} {year}</p>
+              <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border bg-emerald-500/10 text-[#00B87C] border-emerald-500/20">
+                <CheckCircle2 size={12} /> {employee.status}
               </div>
-            ))}
+            </div>
           </div>
 
-          {/* Earnings & Deductions */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="rounded-2xl border border-emerald-500/10 bg-emerald-500/5 p-4">
-              <h4 className="text-xs font-black text-emerald-600 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <ArrowUpRight size={14} /> Earnings
-              </h4>
-              <div className="space-y-2">
-                {earnings.map((e, i) => (
-                  <div key={i} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{e.label}</span>
-                    <span className="font-bold text-foreground">₹{e.amount.toLocaleString()}</span>
-                  </div>
+          {/* Employee Details Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-muted/20">
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Employee Name</p>
+              <p className="text-sm font-bold text-foreground">{employee.name}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Employee ID</p>
+              <p className="text-sm font-bold text-foreground">{employee.id}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Designation</p>
+              <p className="text-sm font-bold text-foreground">{employee.designation}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Department</p>
+              <p className="text-sm font-bold text-foreground">{employee.department}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Bank Name</p>
+              <p className="text-sm font-bold text-foreground">HDFC Bank</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Bank A/c No.</p>
+              <p className="text-sm font-bold text-foreground">{employee.bankAccount || "****0000"}</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">PF Number</p>
+              <p className="text-sm font-bold text-foreground">PF/{employee.id}/2026</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Tax Account (PAN)</p>
+              <p className="text-sm font-bold text-foreground">PAN/EMR/920</p>
+            </div>
+          </div>
+
+          {/* Earnings & Deductions Table */}
+          <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
+            <table className="w-full border-collapse text-xs">
+              <thead>
+                <tr className="bg-muted/50 border-b border-neutral-200 dark:border-neutral-800">
+                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-left font-black uppercase text-foreground">Earnings</th>
+                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-right font-black uppercase text-foreground">Amount</th>
+                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-left font-black uppercase text-foreground">Deductions</th>
+                  <th className="px-4 py-2.5 text-right font-black uppercase text-foreground">Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
+                {rows.map((row, index) => (
+                  <tr key={index} className="h-9">
+                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">{row.earning?.label || ""}</td>
+                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-right font-medium text-foreground">{row.earning ? `₹${row.earning.amount.toLocaleString()}` : ""}</td>
+                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">{row.deduction?.label || ""}</td>
+                    <td className="px-4 py-2 text-right font-medium text-red-500">{row.deduction ? `₹${row.deduction.amount.toLocaleString()}` : ""}</td>
+                  </tr>
                 ))}
-                <div className="pt-2 mt-2 border-t border-emerald-500/20 flex justify-between font-black text-emerald-600">
-                  <span>Gross Earnings</span>
-                  <span>₹{employee.gross.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-red-500/10 bg-red-500/5 p-4">
-              <h4 className="text-xs font-black text-red-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <ArrowDownRight size={14} /> Deductions
-              </h4>
-              <div className="space-y-2">
-                {deductionBreakdown.map((d, i) => (
-                  <div key={i} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{d.label}</span>
-                    <span className="font-bold text-red-500">₹{d.amount.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="pt-2 mt-2 border-t border-red-500/20 flex justify-between font-black text-red-500">
-                  <span>Total Deductions</span>
-                  <span>₹{employee.deductions.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
+                <tr className="bg-muted/20 font-bold border-t border-neutral-200 dark:border-neutral-800 h-10 text-foreground">
+                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800">Gross Earnings</td>
+                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-right font-black">₹{employee.gross.toLocaleString()}</td>
+                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800">Total Deductions</td>
+                  <td className="px-4 py-2.5 text-right font-black text-red-500">₹{employee.deductions.toLocaleString()}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          {/* Net Pay */}
-          <div className="relative rounded-3xl overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-emerald-500 to-cyan-500" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent)]" />
-            <div className="relative p-6 flex items-center justify-between text-white">
+          {/* Net Salary Summary */}
+          <div className="p-5 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.03] space-y-2">
+            <div className="flex justify-between items-center">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-emerald-100 mb-1">Net Payable Amount</p>
-                <h2 className="text-4xl font-black">₹{employee.net.toLocaleString()}</h2>
-                <p className="text-xs text-emerald-200 mt-1">Credited to {employee.bankAccount || "****0000"}</p>
+                <p className="text-[10px] font-black uppercase tracking-wider text-[#00B87C]">Net Take-Home Salary</p>
+                <h3 className="text-2xl font-black text-foreground mt-0.5">₹{employee.net.toLocaleString()}</h3>
               </div>
-              <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
-                <BadgeCheck size={32} />
+              <div className="text-right">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase">Payment Mode</p>
+                <p className="text-xs font-bold text-foreground mt-0.5">Direct Bank Transfer</p>
               </div>
+            </div>
+            <div className="pt-2 border-t border-dashed border-emerald-500/20 text-xs">
+              <span className="font-bold text-muted-foreground">Amount in Words: </span>
+              <span className="font-black text-foreground italic">{netInWords}</span>
             </div>
           </div>
 
-          <p className="text-center text-[10px] text-muted-foreground">
-            Computer-generated payslip — no signature required. © 2026 NexusHR Inc.
+          {/* Signatures Section */}
+          <div className="pt-8 grid grid-cols-2 gap-12 text-center text-xs">
+            <div className="space-y-12">
+              <div className="h-0.5 bg-neutral-300 w-3/4 mx-auto" />
+              <p className="font-bold text-muted-foreground uppercase tracking-wider">Employee Signature</p>
+            </div>
+            <div className="space-y-12">
+              <div className="h-0.5 bg-neutral-300 w-3/4 mx-auto" />
+              <p className="font-bold text-muted-foreground uppercase tracking-wider">Authorized Signatory<br /><span className="text-[10px] lowercase font-normal">for NexusHR Inc.</span></p>
+            </div>
+          </div>
+
+          <p className="text-center text-[9px] text-muted-foreground/60 italic pt-6 border-t border-dashed border-neutral-200 dark:border-neutral-800">
+            This is a system-generated payslip and does not require a physical stamp or signature.
           </p>
         </div>
 
-        <div className="px-6 py-4 border-t border-border flex justify-end gap-3 bg-muted/10">
-          <button onClick={onClose} className="px-5 py-2 rounded-xl text-sm font-bold border border-border hover:bg-muted transition-colors">
+        {/* Modal Footer Actions */}
+        <div className="px-6 py-4 border-t border-border flex justify-end gap-3 bg-muted/10 no-print">
+          <button onClick={onClose} className="px-5 py-2.5 rounded-xl text-sm font-bold border border-border hover:bg-muted transition-colors">
             Close
           </button>
-          <button onClick={() => window.print()} className="px-5 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:opacity-90 shadow-lg shadow-emerald-500/25 flex items-center gap-2 transition-all active:scale-95">
+          <button onClick={() => window.print()} className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#00B87C] hover:bg-[#00A06B] shadow-lg shadow-emerald-500/10 flex items-center gap-2 transition-all active:scale-95">
             <Download size={14} /> Download PDF
           </button>
         </div>

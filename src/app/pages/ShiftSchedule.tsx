@@ -165,7 +165,7 @@ export const ShiftSchedule: React.FC = () => {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   const [activeBrush, setActiveBrush] = useState<string | null>(null);
-  const [weekOffset, setWeekOffset] = useState(0);
+  const [currentDate, setCurrentDate] = useState<Date>(() => new Date(2026, 3, 6)); // Apr 6, 2026 (Monday)
   const [swaps, setSwaps] = useState<SwapItem[]>([
     {
       id: 1,
@@ -213,56 +213,87 @@ export const ShiftSchedule: React.FC = () => {
 
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+  // Modal State Variables
+  const [modalEmployeeName, setModalEmployeeName] = useState("");
+  const [modalShiftType, setModalShiftType] = useState("Morning");
+  const [modalDate, setModalDate] = useState("2026-04-06");
+  const [modalNotes, setModalNotes] = useState("");
+
+  const getDateString = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
   const dates = useMemo(() => {
-    const baseDate = new Date(2026, 3, 6); // Apr 6, 2026
     return days.map((_, i) => {
-      const d = new Date(baseDate);
-      d.setDate(baseDate.getDate() + weekOffset * 7 + i);
+      const d = new Date(currentDate);
+      d.setDate(currentDate.getDate() + i);
       return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
     });
-  }, [weekOffset]);
+  }, [currentDate]);
+
+  const weekDateStrings = useMemo(() => {
+    return days.map((_, i) => {
+      const d = new Date(currentDate);
+      d.setDate(currentDate.getDate() + i);
+      return getDateString(d);
+    });
+  }, [currentDate]);
 
   // Generate dynamic schedule from global data
   const [scheduleData, setScheduleData] = useState(() => {
-    return globalEmployees.map((emp) => ({
-      id: emp.id,
-      name: emp.name,
-      dept: emp.department,
-      initials: emp.name
-        .split(" ")
-        .map((n) => n[0])
-        .join(""),
-      avatar: emp.avatar,
-      shifts: days.reduce((acc, day) => {
-        const rand = Math.random();
-        if (rand > 0.3) {
-          const types: ("Morning" | "Evening" | "Night" | "Off Day")[] = [
-            "Morning",
-            "Evening",
-            "Night",
-            "Off Day",
-          ];
-          const type = types[Math.floor(Math.random() * types.length)];
-          const times: Record<string, string> = {
-            Morning: "06:00 – 14:00",
-            Evening: "14:00 – 22:00",
-            Night: "22:00 – 06:00",
-            "Off Day": "Rest Day",
-          };
-          if (type !== "Off Day") {
-            acc[day] = {
-              type: type as "Morning" | "Evening" | "Night" | "Full Day",
-              time: times[type],
-              isOT: Math.random() > 0.8,
-            };
-          }
-        }
-        return acc;
-      }, {} as ShiftMap),
-    }));
+    return globalEmployees.map((emp) => {
+      return {
+        id: emp.id,
+        name: emp.name,
+        dept: emp.department,
+        initials: emp.name
+          .split(" ")
+          .map((n) => n[0])
+          .join(""),
+        avatar: emp.avatar,
+        shifts: {} as ShiftMap,
+      };
+    });
   });
 
-  const handleDrop = (empId: string, day: string, shiftType: string) => {
+  const getShiftForDate = (empName: string, dateStr: string) => {
+    const emp = scheduleData.find((e) => e.name === empName);
+    if (emp && emp.shifts[dateStr] !== undefined) {
+      return emp.shifts[dateStr];
+    }
+
+    // Deterministic non-correlated mixed hash fallback
+    const seed = `${empName}_${dateStr}`;
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = (hash * 33) ^ seed.charCodeAt(i);
+    }
+    hash = Math.imul(hash ^ (hash >>> 16), 2246822507);
+    hash = Math.imul(hash ^ (hash >>> 13), 3266489909);
+    hash = hash ^ (hash >>> 16);
+    const rand = Math.abs(hash % 1000) / 1000;
+
+    if (rand > 0.35) {
+      const types = ["Morning", "Evening", "Night"];
+      const type = types[Math.floor(rand * 3)];
+      const times: Record<string, string> = {
+        Morning: "06:00 – 14:00",
+        Evening: "14:00 – 22:00",
+        Night: "22:00 – 06:00",
+      };
+      return {
+        type: type as "Morning" | "Evening" | "Night" | "Full Day",
+        time: times[type],
+        isOT: rand > 0.82,
+      };
+    }
+    return null; // Off Day
+  };
+
+  const handleDrop = (empId: string, dateStr: string, shiftType: string) => {
     setScheduleData((prev) =>
       prev.map((emp) => {
         if (emp.id === empId) {
@@ -274,9 +305,9 @@ export const ShiftSchedule: React.FC = () => {
           };
           const updatedShifts = { ...emp.shifts };
           if (shiftType === "Off Day") {
-            delete updatedShifts[day];
+            updatedShifts[dateStr] = null;
           } else {
-            updatedShifts[day] = {
+            updatedShifts[dateStr] = {
               type: shiftType as "Morning" | "Evening" | "Night" | "Full Day",
               time: times[shiftType] || "09:00 – 18:00",
               isOT: false,
@@ -287,6 +318,86 @@ export const ShiftSchedule: React.FC = () => {
         return emp;
       }),
     );
+  };
+
+  const handleAddShiftConfirm = () => {
+    const emp = scheduleData.find((e) =>
+      e.name.toLowerCase().includes(modalEmployeeName.toLowerCase()),
+    );
+    if (emp) {
+      const times: Record<string, string> = {
+        Morning: "06:00 – 14:00",
+        Evening: "14:00 – 22:00",
+        Night: "22:00 – 06:00",
+        "Full Day": "09:00 – 18:00",
+      };
+      setScheduleData((prev) =>
+        prev.map((e) => {
+          if (e.id === emp.id) {
+            return {
+              ...e,
+              shifts: {
+                ...e.shifts,
+                [modalDate]: {
+                  type: modalShiftType as any,
+                  time: times[modalShiftType] || "09:00 – 18:00",
+                  isOT: false,
+                },
+              },
+            };
+          }
+          return e;
+        }),
+      );
+    }
+    setShowAddModal(false);
+    setModalEmployeeName("");
+    setModalNotes("");
+  };
+
+  const handlePrev = () => {
+    setCurrentDate((prev) => {
+      const d = new Date(prev);
+      if (view === "Week") {
+        d.setDate(prev.getDate() - 7);
+      } else if (view === "Month") {
+        d.setMonth(prev.getMonth() - 1);
+      } else {
+        d.setDate(prev.getDate() - 1);
+      }
+      return d;
+    });
+  };
+
+  const handleNext = () => {
+    setCurrentDate((prev) => {
+      const d = new Date(prev);
+      if (view === "Week") {
+        d.setDate(prev.getDate() + 7);
+      } else if (view === "Month") {
+        d.setMonth(prev.getMonth() + 1);
+      } else {
+        d.setDate(prev.getDate() + 1);
+      }
+      return d;
+    });
+  };
+
+  const handleToday = () => {
+    setCurrentDate(new Date(2026, 3, 6));
+  };
+
+  const changeView = (v: "Week" | "Month" | "Day") => {
+    setView(v);
+    if (v === "Week") {
+      setCurrentDate((prev) => {
+        const d = new Date(prev);
+        const day = d.getDay();
+        const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        d.setDate(diff);
+        return d;
+      });
+    }
   };
 
   const departments = [
@@ -306,14 +417,35 @@ export const ShiftSchedule: React.FC = () => {
     }, 1500);
   };
 
-  const weekLabel = useMemo(() => {
-    if (weekOffset === 0) return "Apr 6 - Apr 12, 2026";
-    if (weekOffset === 1) return "Apr 13 - Apr 19, 2026";
-    if (weekOffset === -1) return "Mar 30 - Apr 5, 2026";
-    return weekOffset > 0
-      ? `Next ${weekOffset} Weeks`
-      : `Prev ${Math.abs(weekOffset)} Weeks`;
-  }, [weekOffset]);
+  const navLabel = useMemo(() => {
+    if (view === "Week") {
+      const startStr = currentDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      const endDate = new Date(currentDate);
+      endDate.setDate(currentDate.getDate() + 6);
+      const endStr = endDate.toLocaleDateString("en-US", {
+        month:
+          currentDate.getMonth() === endDate.getMonth() ? undefined : "short",
+        day: "numeric",
+        year: "numeric",
+      });
+      return `${startStr} - ${endStr}`;
+    } else if (view === "Month") {
+      return currentDate.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      });
+    } else {
+      return currentDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    }
+  }, [currentDate, view]);
 
   const dayBreakdown = useMemo(() => {
     const morning: typeof filteredSchedule = [];
@@ -321,8 +453,10 @@ export const ShiftSchedule: React.FC = () => {
     const night: typeof filteredSchedule = [];
     const off: typeof filteredSchedule = [];
 
+    const dateStr = getDateString(currentDate);
+
     filteredSchedule.forEach((emp) => {
-      const shift = emp.shifts["Mon"];
+      const shift = getShiftForDate(emp.name, dateStr);
       if (!shift) {
         off.push(emp);
       } else if (shift.type === "Morning") {
@@ -337,7 +471,7 @@ export const ShiftSchedule: React.FC = () => {
     });
 
     return { morning, evening, night, off };
-  }, [filteredSchedule]);
+  }, [filteredSchedule, currentDate, scheduleData]);
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">
@@ -429,23 +563,23 @@ export const ShiftSchedule: React.FC = () => {
           <div className="flex items-center gap-1.5 p-1 bg-secondary rounded-xl">
             <button
               className="p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] transition-colors text-muted-foreground hover:text-primary active:scale-90"
-              onClick={() => setWeekOffset((prev) => prev - 1)}
+              onClick={handlePrev}
             >
               <ChevronLeft size={18} />
             </button>
             <span className="text-sm font-bold px-3 text-foreground min-w-[180px] text-center">
-              {weekLabel}
+              {navLabel}
             </span>
             <button
               className="p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] transition-colors text-muted-foreground hover:text-primary active:scale-90"
-              onClick={() => setWeekOffset((prev) => prev + 1)}
+              onClick={handleNext}
             >
               <ChevronRight size={18} />
             </button>
           </div>
           <button
             className="px-4 py-2 text-sm font-bold text-primary bg-secondary border border-primary/20 rounded-xl hover:bg-primary/10 transition-colors active:scale-95"
-            onClick={() => setWeekOffset(0)}
+            onClick={handleToday}
           >
             Today
           </button>
@@ -476,7 +610,7 @@ export const ShiftSchedule: React.FC = () => {
               <button
                 key={v}
                 className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${view === v ? "bg-primary text-white shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                onClick={() => setView(v as "Week" | "Month" | "Day")}
+                onClick={() => changeView(v as "Week" | "Month" | "Day")}
               >
                 {v}
               </button>
@@ -661,10 +795,7 @@ export const ShiftSchedule: React.FC = () => {
           </div>
           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
         </div>
-      </div>
-
-      {/* Weekly Schedule Grid */}
-      {view === "Week" && (
+      </div>      {view === "Week" && (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8 animate-in fade-in duration-300">
           <div className="grid grid-cols-[240px_repeat(7,1fr)] bg-secondary/50 border-b border-border">
             <div className="px-4 py-3 text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center">
@@ -710,8 +841,9 @@ export const ShiftSchedule: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                {days.map((day) => {
-                  const shift = emp.shifts[day];
+                {days.map((day, i) => {
+                  const dateStr = weekDateStrings[i];
+                  const shift = getShiftForDate(emp.name, dateStr);
                   return (
                     <div
                       key={day}
@@ -721,13 +853,16 @@ export const ShiftSchedule: React.FC = () => {
                         e.preventDefault();
                         const shiftType = e.dataTransfer.getData("shiftType");
                         if (shiftType) {
-                          handleDrop(emp.id, day, shiftType);
+                          handleDrop(emp.id, dateStr, shiftType);
                         }
                       }}
                       onClick={() => {
                         if (activeBrush) {
-                          handleDrop(emp.id, day, activeBrush);
+                          handleDrop(emp.id, dateStr, activeBrush);
                         } else {
+                          setModalEmployeeName(emp.name);
+                          setModalDate(dateStr);
+                          setModalShiftType("Morning");
                           setShowAddModal(true);
                         }
                       }}
@@ -761,6 +896,9 @@ export const ShiftSchedule: React.FC = () => {
                             className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={(e) => {
                               e.stopPropagation();
+                              setModalEmployeeName(emp.name);
+                              setModalDate(dateStr);
+                              setModalShiftType(shift.type);
                               setShowAddModal(true);
                             }}
                           >
@@ -785,64 +923,98 @@ export const ShiftSchedule: React.FC = () => {
       )}
 
       {/* Monthly Coverage Calendar */}
-      {view === "Month" && (
-        <div className="bg-card border border-border rounded-2xl p-6 shadow-sm mb-8 animate-in fade-in duration-300">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-sm font-black text-foreground uppercase tracking-wider">April 2026 — Team Shift Coverage</h3>
-            <span className="text-xs font-bold text-muted-foreground">🟢 Morning | 🟡 Evening | 🟣 Night</span>
-          </div>
-          
-          <div className="grid grid-cols-7 gap-2">
-            {/* Weekday headers */}
-            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((w) => (
-              <div key={w} className="py-2.5 text-center text-xs font-black text-slate-400 uppercase tracking-wider bg-secondary/30 rounded-lg">
-                {w}
-              </div>
-            ))}
+      {view === "Month" && (() => {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const rawDay = firstDay.getDay();
+        const startOffset = rawDay === 0 ? 6 : rawDay - 1;
+        const totalDays = new Date(year, month + 1, 0).getDate();
+        const monthLabel = currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+        return (
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm mb-8 animate-in fade-in duration-300">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-sm font-black text-foreground uppercase tracking-wider">{monthLabel} — Team Shift Coverage</h3>
+              <span className="text-xs font-bold text-muted-foreground">🟢 Morning | 🟡 Evening | 🟣 Night</span>
+            </div>
             
-            {/* Empty days for Wed Apr 1 start */}
-            <div className="min-h-[90px] p-2 bg-secondary/10 rounded-xl border border-dashed border-border/40 opacity-30" />
-            <div className="min-h-[90px] p-2 bg-secondary/10 rounded-xl border border-dashed border-border/40 opacity-30" />
-            
-            {/* Month Days */}
-            {Array.from({ length: 30 }, (_, i) => {
-              const day = i + 1;
-              // Generate realistic headcount variations
-              const morningCount = Math.floor(18 + (Math.sin(day) * 4));
-              const eveningCount = Math.floor(12 + (Math.cos(day) * 3));
-              const nightCount = Math.floor(6 + (Math.sin(day * 1.5) * 2));
-              
-              return (
-                <div
-                  key={day}
-                  className="min-h-[90px] p-3 bg-secondary/20 hover:bg-[#00B87C]/[0.04] rounded-xl border border-border hover:border-primary/50 transition-all flex flex-col justify-between group cursor-pointer"
-                >
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-black text-foreground group-hover:text-primary transition-colors">{day}</span>
-                    {day === 6 && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary" title="Today" />
-                    )}
-                  </div>
-                  <div className="space-y-1 mt-2">
-                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
-                      <span>{morningCount} MOR</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
-                      <span>{eveningCount} EVE</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#7C3AED]" />
-                      <span>{nightCount} NGT</span>
-                    </div>
-                  </div>
+            <div className="grid grid-cols-7 gap-2">
+              {/* Weekday headers */}
+              {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((w) => (
+                <div key={w} className="py-2.5 text-center text-xs font-black text-slate-400 uppercase tracking-wider bg-secondary/30 rounded-lg">
+                  {w}
                 </div>
-              );
-            })}
+              ))}
+              
+              {/* Empty days offset */}
+              {Array.from({ length: startOffset }).map((_, idx) => (
+                <div key={`empty-${idx}`} className="min-h-[90px] p-2 bg-secondary/10 rounded-xl border border-dashed border-border/40 opacity-30" />
+              ))}
+              
+              {/* Month Days */}
+              {Array.from({ length: totalDays }, (_, i) => {
+                const day = i + 1;
+                const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                
+                // Aggregate shifts
+                let morningCount = 0;
+                let eveningCount = 0;
+                let nightCount = 0;
+                
+                filteredSchedule.forEach((emp) => {
+                  const shift = getShiftForDate(emp.name, dStr);
+                  if (shift) {
+                    if (shift.type === "Morning" || shift.type === "Full Day") {
+                      morningCount++;
+                    } else if (shift.type === "Evening") {
+                      eveningCount++;
+                    } else if (shift.type === "Night") {
+                      nightCount++;
+                    }
+                  }
+                });
+
+                const isToday = new Date().toDateString() === new Date(year, month, day).toDateString();
+                const isSelected = currentDate.getDate() === day && currentDate.getMonth() === month && currentDate.getFullYear() === year;
+                
+                return (
+                  <div
+                    key={day}
+                    onClick={() => {
+                      const newDate = new Date(year, month, day);
+                      setCurrentDate(newDate);
+                      setView("Day");
+                    }}
+                    className={`min-h-[90px] p-3 bg-secondary/20 hover:bg-[#00B87C]/[0.04] rounded-xl border hover:border-primary/50 transition-all flex flex-col justify-between group cursor-pointer ${isSelected ? "border-primary/70 ring-1 ring-primary/20" : "border-border"}`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs font-black group-hover:text-primary transition-colors ${isSelected ? "text-primary" : "text-foreground"}`}>{day}</span>
+                      {isToday && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary" title="Today" />
+                      )}
+                    </div>
+                    <div className="space-y-1 mt-2">
+                      <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
+                        <span>{morningCount} MOR</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+                        <span>{eveningCount} EVE</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#7C3AED]" />
+                        <span>{nightCount} NGT</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Daily Breakdown Columns */}
       {view === "Day" && (
@@ -1756,6 +1928,15 @@ export const ShiftSchedule: React.FC = () => {
                   className="w-full py-2 text-xs font-extrabold text-white bg-[#00B87C] rounded-xl hover:bg-[#00a36d] shadow-sm transition-colors active:scale-95"
                   onClick={() => {
                     const weekly = advancedApplyTemplate.weeklySchedule;
+                    const dayIndexMap: Record<string, number> = {
+                      Mon: 0,
+                      Tue: 1,
+                      Wed: 2,
+                      Thu: 3,
+                      Fri: 4,
+                      Sat: 5,
+                      Sun: 6
+                    };
 
                     setScheduleData((prev) =>
                       prev.map((emp) => {
@@ -1769,23 +1950,27 @@ export const ShiftSchedule: React.FC = () => {
                           };
 
                           Object.entries(weekly).forEach(([day, shiftType]) => {
+                            const offset = dayIndexMap[day] ?? 0;
+                            const d = new Date(currentDate);
+                            d.setDate(currentDate.getDate() + offset);
+                            const key = getDateString(d);
                             if (
                               applyConflictHandling === "skip" &&
-                              emp.shifts[day]
+                              emp.shifts[key]
                             ) {
                               return;
                             }
                             if (
                               applyConflictHandling === "fill" &&
-                              emp.shifts[day]
+                              emp.shifts[key]
                             ) {
                               return;
                             }
 
                             if (shiftType === "Off Day") {
-                              delete newShifts[day];
+                              newShifts[key] = null;
                             } else {
-                              newShifts[day] = {
+                              newShifts[key] = {
                                 type: shiftType as
                                   | "Morning"
                                   | "Evening"
@@ -2336,6 +2521,8 @@ export const ShiftSchedule: React.FC = () => {
                       color: "var(--foreground)",
                     }}
                     placeholder="Search name or ID..."
+                    value={modalEmployeeName}
+                    onChange={(e) => setModalEmployeeName(e.target.value)}
                   />
                 </div>
               </div>
@@ -2353,6 +2540,8 @@ export const ShiftSchedule: React.FC = () => {
                       borderColor: "var(--border)",
                       color: "var(--foreground)",
                     }}
+                    value={modalShiftType}
+                    onChange={(e) => setModalShiftType(e.target.value)}
                   >
                     <option value="Morning">Morning (06:00 - 14:00)</option>
                     <option value="Full Day">Full Day (09:00 - 18:00)</option>
@@ -2373,6 +2562,8 @@ export const ShiftSchedule: React.FC = () => {
                       borderColor: "var(--border)",
                       color: "var(--foreground)",
                     }}
+                    value={selectedDept}
+                    onChange={(e) => setSelectedDept(e.target.value)}
                   >
                     {departments
                       .filter((d) => d !== "All Departments")
@@ -2403,7 +2594,8 @@ export const ShiftSchedule: React.FC = () => {
                       borderColor: "var(--border)",
                       color: "var(--foreground)",
                     }}
-                    defaultValue="2026-04-06"
+                    value={modalDate}
+                    onChange={(e) => setModalDate(e.target.value)}
                   />
                 </div>
               </div>
@@ -2422,6 +2614,8 @@ export const ShiftSchedule: React.FC = () => {
                     color: "var(--foreground)",
                   }}
                   placeholder="Add any special instructions..."
+                  value={modalNotes}
+                  onChange={(e) => setModalNotes(e.target.value)}
                 ></textarea>
               </div>
             </div>
@@ -2440,7 +2634,7 @@ export const ShiftSchedule: React.FC = () => {
                 Cancel
               </button>
               <button
-                onClick={() => setShowAddModal(false)}
+                onClick={handleAddShiftConfirm}
                 className="px-6 py-2 rounded-xl text-sm font-bold text-white shadow-md hover:opacity-90 transition-opacity"
                 style={{
                   background: "linear-gradient(135deg, #059669, #047857)",

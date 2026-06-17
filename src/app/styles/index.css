@@ -1,3 +1,40 @@
 @import "./fonts.css";
 @import "./tailwind.css";
 @import "./theme.css";
+
+/* Print styles for professional payslip */
+@media print {
+  body {
+    visibility: hidden !important;
+    background: white !important;
+    color: black !important;
+  }
+  
+  .print-payslip-card,
+  .print-payslip-card * {
+    visibility: visible !important;
+  }
+  
+  .print-payslip-card {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

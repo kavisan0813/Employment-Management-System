@@ -250,11 +250,162 @@ export function Performance() {
     return employees.filter((e) => e.department === selectedDept);
   }, [selectedDept]);
 
-  const selectedEmployee = useMemo(() => {
-    if (modalMode === "create")
-      return employees.find((e) => e.id === selectedEmpId);
+  const mainSelectedEmployee = useMemo(() => {
+    return employees.find((e) => e.id === selectedEmpId);
+  }, [selectedEmpId]);
+
+  const modalEmployee = useMemo(() => {
+    if (modalMode === "create") {
+      return employees.find((e) => e.id === selectedEmpId) || employees[0];
+    }
     return employees.find((e) => e.name === activeReview?.employeeName);
   }, [selectedEmpId, activeReview, modalMode]);
+
+  // Calculate overall averages of history for fallback/"All Employees"
+  const averages = useMemo(() => {
+    if (history.length === 0) {
+      return {
+        performanceScore: 0,
+        attendanceScore: 0,
+        rating: 0,
+        productivity: 0,
+        teamwork: 0,
+        taskCompletion: 0,
+        lateCount: 0,
+        leaveCount: 0,
+        increment: "0%",
+        eligible: false,
+      };
+    }
+    const totalPerf = history.reduce((acc, r) => acc + r.performanceScore, 0);
+    const totalAtt = history.reduce((acc, r) => acc + r.attendanceScore, 0);
+    const totalRating = history.reduce((acc, r) => acc + r.rating, 0);
+    const count = history.length;
+
+    const avgPerf = Math.round(totalPerf / count);
+    const avgAtt = Math.round(totalAtt / count);
+    const avgRating = Number((totalRating / count).toFixed(1));
+    
+    const avgProd = Math.min(100, Math.max(0, avgPerf + 2));
+    const avgTeam = Math.min(100, Math.max(0, Math.round(avgPerf * 0.95)));
+    const avgTask = Math.min(100, Math.max(0, Math.round(avgPerf * 0.98 - 1)));
+
+    const avgLate = Math.round((100 - avgAtt) / 2);
+    const avgLeave = Math.round((100 - avgAtt) / 1.5);
+
+    let increment = "No Increment";
+    let eligible = false;
+    if (avgPerf >= 95) { increment = "15%"; eligible = true; }
+    else if (avgPerf >= 90) { increment = "12.5%"; eligible = true; }
+    else if (avgPerf >= 85) { increment = "10%"; eligible = true; }
+    else if (avgPerf >= 80) { increment = "8%"; eligible = true; }
+
+    return {
+      performanceScore: avgPerf,
+      attendanceScore: avgAtt,
+      rating: avgRating,
+      productivity: avgProd,
+      teamwork: avgTeam,
+      taskCompletion: avgTask,
+      lateCount: avgLate,
+      leaveCount: avgLeave,
+      increment,
+      eligible,
+    };
+  }, [history]);
+
+  // Find review metrics of selected employee if any, otherwise return averages
+  const currentEmployeeMetrics = useMemo(() => {
+    if (selectedEmpId === "All Employees" || !mainSelectedEmployee) {
+      return averages;
+    }
+
+    const review = history.find((r) => r.employeeId === mainSelectedEmployee.id);
+    if (review) {
+      const perf = review.performanceScore;
+      const att = review.attendanceScore;
+      
+      const prod = Math.min(100, Math.max(0, perf + 2));
+      const team = Math.min(100, Math.max(0, Math.round(perf * 0.95)));
+      const task = Math.min(100, Math.max(0, Math.round(perf * 0.98 - 1)));
+
+      const late = Math.round((100 - att) / 2);
+      const leave = Math.round((100 - att) / 1.5);
+
+      let increment = "No Increment";
+      let eligible = false;
+      if (perf >= 95) { increment = "15%"; eligible = true; }
+      else if (perf >= 90) { increment = "12.5%"; eligible = true; }
+      else if (perf >= 85) { increment = "10%"; eligible = true; }
+      else if (perf >= 80) { increment = "8%"; eligible = true; }
+
+      return {
+        performanceScore: perf,
+        attendanceScore: att,
+        rating: review.rating,
+        productivity: prod,
+        teamwork: team,
+        taskCompletion: task,
+        lateCount: late,
+        leaveCount: leave,
+        increment,
+        eligible,
+      };
+    }
+
+    // Generate from fallback mock details if no history record exists
+    const empPerf = mainSelectedEmployee.performance || 85;
+    const empAtt = 90;
+    const empRating = Number((empPerf / 20).toFixed(1));
+
+    const prod = Math.min(100, Math.max(0, empPerf + 2));
+    const team = Math.min(100, Math.max(0, Math.round(empPerf * 0.95)));
+    const task = Math.min(100, Math.max(0, Math.round(empPerf * 0.98 - 1)));
+
+    const late = Math.round((100 - empAtt) / 2);
+    const leave = Math.round((100 - empAtt) / 1.5);
+
+    let increment = "No Increment";
+    let eligible = false;
+    if (empPerf >= 95) { increment = "15%"; eligible = true; }
+    else if (empPerf >= 90) { increment = "12.5%"; eligible = true; }
+    else if (empPerf >= 85) { increment = "10%"; eligible = true; }
+    else if (empPerf >= 80) { increment = "8%"; eligible = true; }
+
+    return {
+      performanceScore: empPerf,
+      attendanceScore: empAtt,
+      rating: empRating,
+      productivity: prod,
+      teamwork: team,
+      taskCompletion: task,
+      lateCount: late,
+      leaveCount: leave,
+      increment,
+      eligible,
+    };
+  }, [selectedEmpId, mainSelectedEmployee, history, averages]);
+
+  const renderStars = (rating: number) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      if (rating >= i) {
+        stars.push(<Star key={i} size={16} fill="currentColor" className="text-amber-500" />);
+      } else if (rating >= i - 0.5) {
+        stars.push(
+          <div key={i} className="relative text-amber-500 inline-flex items-center justify-center w-4 h-4 shrink-0 select-none">
+            <Star size={16} fill="none" className="absolute" />
+            <div className="absolute top-0 left-0 overflow-hidden w-1/2 h-full">
+              <Star size={16} fill="currentColor" className="absolute top-0 left-0 text-amber-500" />
+            </div>
+          </div>
+        );
+      } else {
+        stars.push(<Star key={i} size={16} fill="none" className="text-amber-500" />);
+      }
+    }
+    return stars;
+  };
 
   const filteredHistory = useMemo(() => {
     return history.filter((r) => {
@@ -753,7 +904,7 @@ export function Performance() {
             </thead>
             <tbody>
               {filteredHistory.map((r) => (
-                <tr key={r.id} className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors">
+                <tr key={r.id} className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors cursor-pointer" onClick={() => setSelectedEmpId(r.employeeId)}>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center font-black text-muted-foreground text-xs uppercase">
@@ -829,19 +980,19 @@ export function Performance() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => handleView(r)}
+                        onClick={(e) => { e.stopPropagation(); handleView(r); }}
                         className="p-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-600 transition-all"
                       >
                         <FileText size={16} />
                       </button>
                       <button
-                        onClick={() => handleEdit(r)}
+                        onClick={(e) => { e.stopPropagation(); handleEdit(r); }}
                         className="p-2 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-500/10 text-muted-foreground hover:text-amber-600 transition-all"
                       >
                         <Edit3 size={16} />
                       </button>
                       <button
-                        onClick={() => handleDelete(r.id, r.employeeName)}
+                        onClick={(e) => { e.stopPropagation(); handleDelete(r.id, r.employeeName); }}
                         className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-muted-foreground hover:text-red-600 transition-all"
                       >
                         <Trash2 size={16} />
@@ -855,109 +1006,119 @@ export function Performance() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Employee Performance Summary Card (Always Visible) */}
-        <div className="lg:col-span-12">
-          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
-            <div className="flex items-center justify-between border-b border-border pb-6 mb-6">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-muted overflow-hidden border-2 border-emerald-50 dark:border-emerald-500/20 shrink-0">
-                  {selectedEmployee?.avatar ? (
-                    <img
-                      src={selectedEmployee.avatar}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-xl font-black text-muted-foreground">
-                      <Users size={32} />
+      {selectedEmpId === "All Employees" || !mainSelectedEmployee ? (
+        <div className="bg-card p-8 rounded-2xl border border-border shadow-sm text-center flex flex-col items-center justify-center min-h-[220px]">
+          <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-4 animate-pulse">
+            <Users size={32} />
+          </div>
+          <h3 className="text-lg font-black text-foreground mb-2">No Employee Selected</h3>
+          <p className="text-sm text-muted-foreground max-w-md">
+            Select an employee from the dropdown filter above or click on any employee's row in the Review History table below to view their detailed performance and overall score.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Employee Performance Summary Card (Always Visible when selected) */}
+            <div className="lg:col-span-12">
+              <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+                <div className="flex items-center justify-between border-b border-border pb-6 mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-muted overflow-hidden border-2 border-emerald-50 dark:border-emerald-500/20 shrink-0">
+                      {mainSelectedEmployee?.avatar ? (
+                        <img
+                          src={mainSelectedEmployee.avatar}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xl font-black text-muted-foreground">
+                          <Users size={32} />
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-lg font-black text-foreground">
-                    {selectedEmployee?.name || "Select Employee"}
-                  </h3>
-                  <p className="text-sm font-bold text-muted-foreground">
-                    {selectedEmployee?.id || "EMP---"}
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col items-end">
-                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
-                  Overall Performance Score
-                </p>
-                <div className="flex items-center gap-3">
-                  <h4 className="text-[28px] font-bold text-emerald-600">88.5</h4>
-                  <div className="flex items-center gap-1 text-amber-500">
-                    <Star size={16} fill="currentColor" />
-                    <Star size={16} fill="currentColor" />
-                    <Star size={16} fill="currentColor" />
-                    <Star size={16} fill="currentColor" />
-                    <Star size={16} fill="none" />
+                    <div>
+                      <h3 className="text-lg font-black text-foreground">
+                        {mainSelectedEmployee?.name}
+                      </h3>
+                      <p className="text-sm font-bold text-muted-foreground">
+                        {mainSelectedEmployee?.id}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
+                      Overall Performance Score
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <h4 className="text-[28px] font-bold text-emerald-600">{currentEmployeeMetrics.performanceScore}</h4>
+                      <div className="flex items-center gap-1 text-amber-500">
+                        {renderStars(currentEmployeeMetrics.rating)}
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                  <MetricItem label="Attendance Score" val={currentEmployeeMetrics.attendanceScore} icon={Calendar} />
+                  <MetricItem label="Productivity" val={currentEmployeeMetrics.productivity} icon={Activity} />
+                  <MetricItem label="Teamwork" val={currentEmployeeMetrics.teamwork} icon={Users} />
+                  <MetricItem label="Task Completion" val={currentEmployeeMetrics.taskCompletion} icon={Target} />
+                </div>
               </div>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <MetricItem label="Attendance Score" val={95} icon={Calendar} />
-              <MetricItem label="Productivity" val={92} icon={Activity} />
-              <MetricItem label="Teamwork" val={85} icon={Users} />
-              <MetricItem label="Task Completion" val={84} icon={Target} />
+          {/* ── Appraisal Eligibility Panel ── */}
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6 border-l-4 border-emerald-500 pl-3">
+              Appraisal Eligibility
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+              <div className="p-4 rounded-2xl bg-muted border border-border">
+                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
+                  Attendance %
+                </p>
+                <p className="text-xl font-black text-foreground">{currentEmployeeMetrics.attendanceScore}%</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-muted border border-border">
+                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
+                  Late Count
+                </p>
+                <p className="text-xl font-black text-amber-600">{String(currentEmployeeMetrics.lateCount).padStart(2, '0')}</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-muted border border-border">
+                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
+                  Leave Count
+                </p>
+                <p className="text-xl font-black text-foreground">{String(currentEmployeeMetrics.leaveCount).padStart(2, '0')}</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-muted border border-border">
+                <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
+                  Perf. Score
+                </p>
+                <p className="text-xl font-black text-emerald-600">{currentEmployeeMetrics.performanceScore}/100</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-muted border border-border lg:col-span-2">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Eligibility
+                  </p>
+                  <span className={`text-[9px] font-black px-2 py-0.5 rounded text-white ${currentEmployeeMetrics.eligible ? "bg-emerald-500" : "bg-red-500"}`}>
+                    {currentEmployeeMetrics.eligible ? "ELIGIBLE" : "NOT ELIGIBLE"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-lg font-black text-foreground">
+                    Suggested Increment
+                  </p>
+                  <p className="text-2xl font-black text-emerald-600">{currentEmployeeMetrics.increment}</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* ── Appraisal Eligibility Panel ── */}
-      <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
-        <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6 border-l-4 border-emerald-500 pl-3">
-          Appraisal Eligibility
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
-              Attendance %
-            </p>
-            <p className="text-xl font-black text-foreground">96.8%</p>
-          </div>
-          <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
-              Late Count
-            </p>
-            <p className="text-xl font-black text-amber-600">02</p>
-          </div>
-          <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
-              Leave Count
-            </p>
-            <p className="text-xl font-black text-foreground">04</p>
-          </div>
-          <div className="p-4 rounded-2xl bg-muted border border-border">
-            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
-              Perf. Score
-            </p>
-            <p className="text-xl font-black text-emerald-600">92/100</p>
-          </div>
-          <div className="p-4 rounded-2xl bg-muted border border-border lg:col-span-2">
-            <div className="flex items-center justify-between mb-1">
-              <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                Eligibility
-              </p>
-              <span className="text-[9px] font-black px-2 py-0.5 rounded bg-emerald-500 text-white">
-                ELIGIBLE
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <p className="text-lg font-black text-foreground">
-                Suggested Increment
-              </p>
-              <p className="text-2xl font-black text-emerald-600">12.5%</p>
-            </div>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
 
       {/* ── Charts Section ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -1147,7 +1308,7 @@ export function Performance() {
                 <Dialog.Description className="text-sm font-bold text-muted-foreground">
                   {modalMode === "view"
                     ? "Detailed performance analytics and ratings"
-                    : `Complete the appraisal for ${selectedEmployee?.name || "the employee"}`}
+                    : `Complete the appraisal for ${modalEmployee?.name || "the employee"}`}
                 </Dialog.Description>
               </div>
               <Dialog.Close className="p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-all">
@@ -1166,9 +1327,9 @@ export function Performance() {
                       </label>
                       <div className="relative">
                         <select
-                          value={selectedEmpId}
-                          onChange={(e) => setSelectedEmpId(e.target.value)}
-                          className="w-full appearance-none px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer bg-card"
+                           value={selectedEmpId}
+                           onChange={(e) => setSelectedEmpId(e.target.value)}
+                           className="w-full appearance-none px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer bg-card"
                         >
                           {employees.map((e) => (
                             <option key={e.id} value={e.id}>
@@ -1187,22 +1348,22 @@ export function Performance() {
                   <div className="p-6 rounded-2xl bg-muted border border-border">
                     <div className="flex items-center gap-4 mb-6">
                       <div className="w-12 h-12 rounded-xl bg-card border border-border overflow-hidden shrink-0 flex items-center justify-center font-black text-muted-foreground text-sm uppercase">
-                        {selectedEmployee?.avatar ? (
+                        {modalEmployee?.avatar ? (
                           <img
-                            src={selectedEmployee.avatar}
+                            src={modalEmployee.avatar}
                             alt=""
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          selectedEmployee?.name?.split(" ").map(n => n[0]).join("") || "EMP"
+                          modalEmployee?.name?.split(" ").map(n => n[0]).join("") || "EMP"
                         )}
                       </div>
                       <div>
                         <h4 className="font-black text-foreground">
-                          {selectedEmployee?.name || "Select Employee"}
+                          {modalEmployee?.name || "Select Employee"}
                         </h4>
                         <p className="text-xs font-bold text-muted-foreground">
-                          {selectedEmployee?.role || selectedEmployee?.designation || "Staff"}
+                          {modalEmployee?.role || modalEmployee?.designation || "Staff"}
                         </p>
                       </div>
                     </div>

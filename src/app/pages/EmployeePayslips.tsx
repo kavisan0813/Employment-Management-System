@@ -195,12 +195,66 @@ function PayslipModal({
     { label: "Conveyance Allowance", value: payslip.breakdown.conveyance },
     { label: "Medical Allowance", value: payslip.breakdown.medicalAllowance },
     { label: "Special Allowance", value: payslip.breakdown.specialAllowance },
-  ];
+  ].filter((e) => e.value > 0);
+
   const deductionItems = [
     { label: "Provident Fund (PF)", value: payslip.breakdown.providentFund },
     { label: "Professional Tax", value: payslip.breakdown.professionalTax },
     { label: "Income Tax (TDS)", value: payslip.breakdown.incomeTax },
-  ];
+  ].filter((d) => d.value > 0);
+
+  const maxRows = Math.max(earnings.length, deductionItems.length);
+  const rows = [];
+  for (let i = 0; i < maxRows; i++) {
+    rows.push({
+      earning: earnings[i] || null,
+      deduction: deductionItems[i] || null,
+    });
+  }
+
+  // Convert Net Salary to Words
+  const netInWords = (() => {
+    const num = Math.round(payslip.netPay);
+    if (num === 0) return "Zero";
+    const a = [
+      "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+      "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+    ];
+    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    
+    function g(n: number): string {
+      if (n < 20) return a[n];
+      const digit = n % 10;
+      return b[Math.floor(n / 10)] + (digit ? " " + a[digit] : "");
+    }
+    
+    function h(n: number): string {
+      if (n < 100) return g(n);
+      return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " and " + g(n % 100) : "");
+    }
+    
+    function c(n: number): string {
+      let parts: string[] = [];
+      if (n >= 10000000) {
+        parts.push(h(Math.floor(n / 10000000)) + " Crore");
+        n %= 10000000;
+      }
+      if (n >= 100000) {
+        parts.push(h(Math.floor(n / 100000)) + " Lakh");
+        n %= 100000;
+      }
+      if (n >= 1000) {
+        parts.push(h(Math.floor(n / 1000)) + " Thousand");
+        n %= 1000;
+      }
+      if (n > 0) {
+        parts.push(h(n));
+      }
+      return parts.join(" ");
+    }
+
+    return "Rupees " + c(num) + " Only";
+  })();
 
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
@@ -209,154 +263,172 @@ function PayslipModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="absolute inset-0 bg-background/40"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm no-print"
       />
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative bg-card w-full max-w-[580px] max-h-[90vh] rounded-[32px] shadow-2xl overflow-hidden flex flex-col border border-border"
+        className="relative bg-card w-full max-w-2xl max-h-[90vh] rounded-[32px] shadow-2xl overflow-hidden flex flex-col border border-border print-payslip-card"
       >
-        <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30 shrink-0">
+        {/* Modal Header */}
+        <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30 shrink-0 no-print">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
-              <IndianRupee size={20} className="text-indigo-500" />
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+              <FileText size={20} className="text-emerald-500" />
             </div>
             <div>
-              <h3 className="text-[18px] font-black text-foreground">
-                Payslip Preview
+              <h3 className="text-base font-black text-foreground">
+                Salary Payslip
               </h3>
-              <p className="text-[12px] font-bold text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {payslip.month} {payslip.year} · {payslip.id}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-card rounded-xl transition-colors text-muted-foreground"
+            className="p-2 hover:bg-red-500/10 rounded-xl text-muted-foreground hover:text-red-500 transition-colors ml-1"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 space-y-6 no-scrollbar">
-          <div className="p-5 bg-primary/5 rounded-2xl border border-primary/20 flex items-center justify-between">
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-8 space-y-6">
+          {/* Corporate Header Section */}
+          <div className="flex justify-between items-start border-b border-neutral-300 pb-4">
             <div>
-              <p className="text-[11px] font-black text-primary uppercase tracking-widest mb-1">
-                Employee
-              </p>
-              <p className="text-[15px] font-black text-foreground">
-                Priya Sharma
-              </p>
-              <p className="text-[12px] font-bold text-muted-foreground">
-                #EMP-0142 · Engineering Team
+              <h1 className="text-2xl font-black text-foreground tracking-tight flex items-center gap-1.5">
+                <span className="bg-[#00B87C] text-white p-1.5 rounded-xl text-lg leading-none font-bold">N</span>
+                NexusHR Inc.
+              </h1>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                100 Marine Parkway, Redwood City, CA 94065<br />
+                Phone: +1 (650) 555-0199 | Email: payroll@nexushr.com
               </p>
             </div>
             <div className="text-right">
-              <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1">
-                Pay Period
-              </p>
-              <p className="text-[15px] font-black text-foreground">
-                {payslip.month} {payslip.year}
-              </p>
-              <p className="text-[12px] font-bold text-muted-foreground">
-                Paid: {payslip.paidDate}
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-5">
-            <div className="space-y-3">
-              <h4 className="text-[11px] font-black text-primary uppercase tracking-widest flex items-center gap-1.5">
-                <TrendingUp size={12} /> Earnings
-              </h4>
-              <div className="bg-background rounded-2xl border border-border overflow-hidden">
-                {earnings.map((e, i) => (
-                  <div
-                    key={i}
-                    className={`flex justify-between px-4 py-3 text-[12px] ${i < earnings.length - 1 ? "border-b border-border" : ""}`}
-                  >
-                    <span className="font-medium text-muted-foreground">
-                      {e.label}
-                    </span>
-                    <span className="font-black text-foreground">
-                      ₹{e.value.toLocaleString()}
-                    </span>
-                  </div>
-                ))}
-                <div className="flex justify-between px-4 py-3 bg-primary/5 border-t border-primary/20">
-                  <span className="text-[12px] font-black text-primary">
-                    Gross Pay
-                  </span>
-                  <span className="text-[12px] font-black text-primary">
-                    ₹{payslip.grossPay.toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="text-[11px] font-black text-rose-500 uppercase tracking-widest flex items-center gap-1.5">
-                <ArrowDownCircle size={12} /> Deductions
-              </h4>
-              <div className="bg-background rounded-2xl border border-border overflow-hidden">
-                {deductionItems.map((d, i) => (
-                  <div
-                    key={i}
-                    className={`flex justify-between px-4 py-3 text-[12px] ${i < deductionItems.length - 1 ? "border-b border-border" : ""}`}
-                  >
-                    <span className="font-medium text-muted-foreground">
-                      {d.label}
-                    </span>
-                    <span className="font-black text-rose-500">
-                      ₹{d.value.toLocaleString()}
-                    </span>
-                  </div>
-                ))}
-                <div className="flex justify-between px-4 py-3 bg-rose-500/5 border-t border-rose-500/20">
-                  <span className="text-[12px] font-black text-rose-500">
-                    Total Deductions
-                  </span>
-                  <span className="text-[12px] font-black text-rose-500">
-                    ₹{payslip.deductions.toLocaleString()}
-                  </span>
-                </div>
+              <h2 className="text-lg font-black text-foreground uppercase tracking-wider">Salary Payslip</h2>
+              <p className="text-xs font-bold text-muted-foreground mt-1">Pay Period: {payslip.month} {payslip.year}</p>
+              <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border bg-emerald-500/10 text-[#00B87C] border-emerald-500/20">
+                <CheckCircle2 size={12} /> {payslip.status}
               </div>
             </div>
           </div>
 
-          <div className="p-6 bg-primary rounded-2xl flex items-center justify-between shadow-xl shadow-primary/20">
+          {/* Employee Details Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-muted/20">
             <div>
-              <p className="text-white/70 text-[11px] font-semibold uppercase tracking-wider mb-1">
-                Net Take-Home Pay
-              </p>
-              <p className="text-[28px] font-black text-white">
-                ₹{payslip.netPay.toLocaleString()}
-              </p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Employee Name</p>
+              <p className="text-sm font-bold text-foreground">Priya Sharma</p>
             </div>
-            <div className="text-right text-white/70 text-[12px] font-bold">
-              <p>Credited to</p>
-              <p className="font-black text-white">HDFC Bank ****4821</p>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Employee ID</p>
+              <p className="text-sm font-bold text-foreground">EMP-0142</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Designation</p>
+              <p className="text-sm font-bold text-foreground">Senior Software Engineer</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Department</p>
+              <p className="text-sm font-bold text-foreground">Engineering Team</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Bank Name</p>
+              <p className="text-sm font-bold text-foreground">HDFC Bank</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Bank A/c No.</p>
+              <p className="text-sm font-bold text-foreground">****4821</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">PF Number</p>
+              <p className="text-sm font-bold text-foreground">PF/EMP-0142/2026</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Tax Account (PAN)</p>
+              <p className="text-sm font-bold text-foreground">PAN/EMP/0142</p>
             </div>
           </div>
+
+          {/* Earnings & Deductions Table */}
+          <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
+            <table className="w-full border-collapse text-xs">
+              <thead>
+                <tr className="bg-muted/50 border-b border-neutral-200 dark:border-neutral-800">
+                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-left font-black uppercase text-foreground">Earnings</th>
+                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-right font-black uppercase text-foreground">Amount</th>
+                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-left font-black uppercase text-foreground">Deductions</th>
+                  <th className="px-4 py-2.5 text-right font-black uppercase text-foreground">Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
+                {rows.map((row, index) => (
+                  <tr key={index} className="h-9">
+                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">{row.earning?.label || ""}</td>
+                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-right font-medium text-foreground">{row.earning ? `₹${row.earning.value.toLocaleString()}` : ""}</td>
+                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">{row.deduction?.label || ""}</td>
+                    <td className="px-4 py-2 text-right font-medium text-red-500">{row.deduction ? `₹${row.deduction.value.toLocaleString()}` : ""}</td>
+                  </tr>
+                ))}
+                <tr className="bg-muted/20 font-bold border-t border-neutral-200 dark:border-neutral-800 h-10 text-foreground">
+                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800">Gross Earnings</td>
+                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-right font-black">₹{payslip.grossPay.toLocaleString()}</td>
+                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800">Total Deductions</td>
+                  <td className="px-4 py-2.5 text-right font-black text-red-500">₹{payslip.deductions.toLocaleString()}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Net Salary Summary */}
+          <div className="p-5 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.03] space-y-2">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-wider text-[#00B87C]">Net Take-Home Salary</p>
+                <h3 className="text-2xl font-black text-foreground mt-0.5">₹{payslip.netPay.toLocaleString()}</h3>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase">Payment Mode</p>
+                <p className="text-xs font-bold text-foreground mt-0.5">Direct Bank Transfer</p>
+              </div>
+            </div>
+            <div className="pt-2 border-t border-dashed border-emerald-500/20 text-xs">
+              <span className="font-bold text-muted-foreground">Amount in Words: </span>
+              <span className="font-black text-foreground italic">{netInWords}</span>
+            </div>
+          </div>
+
+          {/* Signatures Section */}
+          <div className="pt-8 grid grid-cols-2 gap-12 text-center text-xs">
+            <div className="space-y-12">
+              <div className="h-0.5 bg-neutral-300 w-3/4 mx-auto" />
+              <p className="font-bold text-muted-foreground uppercase tracking-wider">Employee Signature</p>
+            </div>
+            <div className="space-y-12">
+              <div className="h-0.5 bg-neutral-300 w-3/4 mx-auto" />
+              <p className="font-bold text-muted-foreground uppercase tracking-wider">Authorized Signatory<br /><span className="text-[10px] lowercase font-normal">for NexusHR Inc.</span></p>
+            </div>
+          </div>
+
+          <p className="text-center text-[9px] text-muted-foreground/60 italic pt-6 border-t border-dashed border-neutral-200 dark:border-neutral-800">
+            This is a system-generated payslip and does not require a physical stamp or signature.
+          </p>
         </div>
 
-        <div className="p-6 bg-secondary/30 flex gap-4 border-t border-border shrink-0">
+        {/* Modal Footer Actions */}
+        <div className="p-6 bg-secondary/30 flex gap-4 border-t border-border shrink-0 no-print">
           <button
             onClick={onClose}
-            className="flex-1 py-3.5 text-[13px] font-black text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
+            className="flex-1 py-3 text-[13px] font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider border border-border rounded-2xl hover:bg-card"
           >
             Close
           </button>
           <button
-            onClick={() =>
-              showToast(
-                "Downloading",
-                "success",
-                `${payslip.month} ${payslip.year} payslip PDF downloaded.`,
-              )
-            }
-            className="flex-[2] py-3.5 bg-primary text-white rounded-2xl text-[13px] font-semibold uppercase tracking-wider shadow-xl shadow-primary/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
+            onClick={() => window.print()}
+            className="flex-[2] py-3 bg-[#00B87C] text-white rounded-2xl text-[13px] font-bold uppercase tracking-wider shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
           >
             <Download size={16} /> Download PDF
           </button>

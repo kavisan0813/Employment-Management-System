@@ -121,7 +121,63 @@ export function ManagerTeamSchedule() {
 
   // Week navigation state
   const [weekStartDate, setWeekStartDate] = useState<Date>(new Date(2026, 3, 6)); // Apr 6, 2026
-  const [scheduleData, setScheduleData] = useState<EmployeeScheduleRow[]>(INITIAL_SCHEDULE);
+  const [shiftsByDate, setShiftsByDate] = useState<Record<string, Record<string, ShiftDetails | null>>>({});
+
+  const getShiftForDate = (empName: string, dateStr: string) => {
+    // Check user edits first
+    if (shiftsByDate[empName] && shiftsByDate[empName][dateStr] !== undefined) {
+      return shiftsByDate[empName][dateStr];
+    }
+
+    // Default mock data mapping for baseline week starting Apr 6, 2026
+    const baseDate = new Date(2026, 3, 6);
+    const dateObj = new Date(dateStr);
+    
+    // Check if it lies in the baseline week (Apr 6, 2026 to Apr 12, 2026)
+    const diffTime = dateObj.getTime() - baseDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    const emp = INITIAL_SCHEDULE.find((e) => e.name === empName);
+    if (emp && diffDays >= 0 && diffDays < 7) {
+      return emp.shifts[diffDays];
+    }
+
+    // Deterministic mixed hash for other weeks
+    const seed = `${empName}_${dateStr}`;
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = (hash * 33) ^ seed.charCodeAt(i);
+    }
+    hash = Math.imul(hash ^ (hash >>> 16), 2246822507);
+    hash = Math.imul(hash ^ (hash >>> 13), 3266489909);
+    hash = hash ^ (hash >>> 16);
+    const rand = Math.abs(hash % 1000) / 1000;
+
+    if (rand > 0.45) {
+      const types = ["Morning", "Evening", "Night", "Full Day"];
+      const type = types[Math.floor(rand * 4)];
+      return BRUSH_SHIFTS[type];
+    }
+    return null; // Off Day
+  };
+
+  const currentWeekScheduleData = useMemo(() => {
+    return INITIAL_SCHEDULE.map((emp) => {
+      const shiftsArray: (ShiftDetails | null)[] = Array.from({ length: 7 }).map((_, dayIdx) => {
+        const dateObj = new Date(weekStartDate);
+        dateObj.setDate(weekStartDate.getDate() + dayIdx);
+        const dateStr = dateObj.toISOString().split("T")[0];
+        return getShiftForDate(emp.name, dateStr);
+      });
+      
+      return {
+        name: emp.name,
+        dept: emp.dept,
+        avatar: emp.avatar,
+        shifts: shiftsArray,
+      };
+    });
+  }, [weekStartDate, shiftsByDate]);
   const [isPainting, setIsPainting] = useState(false);
 
   // Shift Swap Requests State
@@ -170,16 +226,18 @@ export function ManagerTeamSchedule() {
   const handleCellDrop = (empName: string, dayIndex: number, shiftType: string) => {
     const shiftInfo = BRUSH_SHIFTS[shiftType];
     if (!shiftInfo) return;
-    setScheduleData((prev) =>
-      prev.map((row) => {
-        if (row.name === empName) {
-          const newShifts = [...row.shifts];
-          newShifts[dayIndex] = { ...shiftInfo };
-          return { ...row, shifts: newShifts };
-        }
-        return row;
-      })
-    );
+    
+    const dateObj = new Date(weekStartDate);
+    dateObj.setDate(weekStartDate.getDate() + dayIndex);
+    const dateStr = dateObj.toISOString().split("T")[0];
+    
+    setShiftsByDate((prev) => ({
+      ...prev,
+      [empName]: {
+        ...(prev[empName] || {}),
+        [dateStr]: { ...shiftInfo },
+      },
+    }));
   };
 
   // Modal specific fields
@@ -203,16 +261,17 @@ export function ManagerTeamSchedule() {
     const shiftInfo = BRUSH_SHIFTS[activeBrush];
     if (!shiftInfo) return;
 
-    setScheduleData((prev) =>
-      prev.map((row) => {
-        if (row.name === empName) {
-          const newShifts = [...row.shifts];
-          newShifts[dayIndex] = { ...shiftInfo };
-          return { ...row, shifts: newShifts };
-        }
-        return row;
-      })
-    );
+    const dateObj = new Date(weekStartDate);
+    dateObj.setDate(weekStartDate.getDate() + dayIndex);
+    const dateStr = dateObj.toISOString().split("T")[0];
+
+    setShiftsByDate((prev) => ({
+      ...prev,
+      [empName]: {
+        ...(prev[empName] || {}),
+        [dateStr]: { ...shiftInfo },
+      },
+    }));
   };
 
   const handleCellClick = (empName: string, dayIndex: number) => {
@@ -245,26 +304,24 @@ export function ManagerTeamSchedule() {
         time = "09:00-18:00";
       }
 
-      setScheduleData((prev) =>
-        prev.map((row) => {
-          if (row.name === selectedEmployeeForModal) {
-            const newShifts = [...row.shifts];
-            newShifts[selectedDayIndexForModal] = { type, time };
-            return { ...row, shifts: newShifts };
-          }
-          return row;
-        })
-      );
+      const dateObj = new Date(weekStartDate);
+      dateObj.setDate(weekStartDate.getDate() + selectedDayIndexForModal);
+      const dateStr = dateObj.toISOString().split("T")[0];
+
+      setShiftsByDate((prev) => ({
+        ...prev,
+        [selectedEmployeeForModal]: {
+          ...(prev[selectedEmployeeForModal] || {}),
+          [dateStr]: { type, time },
+        },
+      }));
       setShowAddModal(false);
       setSelectedEmployeeForModal("");
       setSelectedDayIndexForModal(null);
       setNewShiftNotes("");
     } else if (selectedEmployeeForModal) {
-      // Find day index from date input
       const dateObj = new Date(newShiftDate);
-      const diffTime = Math.abs(dateObj.getTime() - weekStartDate.getTime());
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      const dayIdx = diffDays >= 0 && diffDays < 7 ? diffDays : 0;
+      const dateStr = dateObj.toISOString().split("T")[0];
 
       let type = "Morning";
       let time = "06:00-14:00";
@@ -279,16 +336,13 @@ export function ManagerTeamSchedule() {
         time = "09:00-18:00";
       }
 
-      setScheduleData((prev) =>
-        prev.map((row) => {
-          if (row.name.toLowerCase().includes(selectedEmployeeForModal.toLowerCase())) {
-            const newShifts = [...row.shifts];
-            newShifts[dayIdx] = { type, time };
-            return { ...row, shifts: newShifts };
-          }
-          return row;
-        })
-      );
+      setShiftsByDate((prev) => ({
+        ...prev,
+        [selectedEmployeeForModal]: {
+          ...(prev[selectedEmployeeForModal] || {}),
+          [dateStr]: { type, time },
+        },
+      }));
       setShowAddModal(false);
       setSelectedEmployeeForModal("");
       setNewShiftNotes("");
@@ -296,36 +350,58 @@ export function ManagerTeamSchedule() {
   };
 
   const handlePrevWeek = () => {
-    const newDate = new Date(weekStartDate);
-    newDate.setDate(weekStartDate.getDate() - 7);
-    setWeekStartDate(newDate);
+    setWeekStartDate((prev) => {
+      const d = new Date(prev);
+      if (view === "Week") {
+        d.setDate(prev.getDate() - 7);
+      } else if (view === "Month") {
+        d.setMonth(prev.getMonth() - 1);
+      } else {
+        d.setDate(prev.getDate() - 1);
+      }
+      return d;
+    });
   };
 
   const handleNextWeek = () => {
-    const newDate = new Date(weekStartDate);
-    newDate.setDate(weekStartDate.getDate() + 7);
-    setWeekStartDate(newDate);
+    setWeekStartDate((prev) => {
+      const d = new Date(prev);
+      if (view === "Week") {
+        d.setDate(prev.getDate() + 7);
+      } else if (view === "Month") {
+        d.setMonth(prev.getMonth() + 1);
+      } else {
+        d.setDate(prev.getDate() + 1);
+      }
+      return d;
+    });
   };
 
   const handleTodayWeek = () => {
     setWeekStartDate(new Date(2026, 3, 6));
   };
 
-  const filteredScheduleData = scheduleData.filter((row) => {
+  const filteredScheduleData = currentWeekScheduleData.filter((row) => {
     if (selectedDept === "All Departments") return true;
     return row.dept === selectedDept;
   });
 
   const getWeekRangeLabel = () => {
-    const startStr = weekStartDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-    const endDate = new Date(weekStartDate);
-    endDate.setDate(weekStartDate.getDate() + 6);
-    const endStr = endDate.toLocaleDateString("en-US", {
-      month: weekStartDate.getMonth() === endDate.getMonth() ? undefined : "short",
-      day: "numeric",
-      year: "numeric",
-    });
-    return `${startStr} - ${endStr}`;
+    if (view === "Week") {
+      const startStr = weekStartDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      const endDate = new Date(weekStartDate);
+      endDate.setDate(weekStartDate.getDate() + 6);
+      const endStr = endDate.toLocaleDateString("en-US", {
+        month: weekStartDate.getMonth() === endDate.getMonth() ? undefined : "short",
+        day: "numeric",
+        year: "numeric",
+      });
+      return `${startStr} - ${endStr}`;
+    } else if (view === "Month") {
+      return weekStartDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+    } else {
+      return weekStartDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", year: "numeric" });
+    }
   };
 
   return (
@@ -770,7 +846,8 @@ export function ManagerTeamSchedule() {
           </h3>
           <div className="divide-y divide-border">
             {filteredScheduleData.map((emp) => {
-              const todayShift = emp.shifts[0];
+              const dateStr = weekStartDate.toISOString().split("T")[0];
+              const todayShift = getShiftForDate(emp.name, dateStr);
               return (
                 <div key={emp.name} className="py-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -801,7 +878,23 @@ export function ManagerTeamSchedule() {
           <h3 className="text-sm font-bold text-foreground mb-4">Monthly Shift Coverage Summary</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredScheduleData.map((emp) => {
-              const shiftCount = emp.shifts.filter((s) => s && s.type !== "Off Day" && s.type !== "Leave").length * 4;
+              const year = weekStartDate.getFullYear();
+              const month = weekStartDate.getMonth();
+              const totalDays = new Date(year, month + 1, 0).getDate();
+              
+              let scheduledShiftsCount = 0;
+              let restDaysCount = 0;
+              
+              for (let d = 1; d <= totalDays; d++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+                const shift = getShiftForDate(emp.name, dateStr);
+                if (shift && shift.type !== "Off Day" && shift.type !== "Leave" && shift.type !== "Rest Day") {
+                  scheduledShiftsCount++;
+                } else {
+                  restDaysCount++;
+                }
+              }
+              
               return (
                 <div key={emp.name} className="p-4 rounded-xl border border-border bg-card space-y-3" style={{ borderColor: "var(--border)" }}>
                   <div className="flex items-center gap-3">
@@ -813,11 +906,11 @@ export function ManagerTeamSchedule() {
                   </div>
                   <div className="flex justify-between items-center text-xs pt-1 border-t" style={{ borderColor: "var(--border)" }}>
                     <span className="text-muted-foreground">Scheduled Shifts</span>
-                    <span className="font-bold text-foreground">{shiftCount} shifts this month</span>
+                    <span className="font-bold text-foreground">{scheduledShiftsCount} shifts this month</span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-muted-foreground">Monthly Rest Days</span>
-                    <span className="font-bold text-foreground">8 days</span>
+                    <span className="font-bold text-foreground">{restDaysCount} days</span>
                   </div>
                 </div>
               );

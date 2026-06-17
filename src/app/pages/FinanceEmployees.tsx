@@ -13,7 +13,9 @@ import {
   LayoutGrid,
   List,
   ChevronRight,
-  ExternalLink
+  ExternalLink,
+  FileText,
+  CheckCircle2
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { employees } from "../data/mockData";
@@ -108,92 +110,253 @@ function PayslipModal({
   const totalDeductions = fin.pfContribution + 6500; // PF + TDS
   const netPay = gross - totalDeductions;
 
+  const earnings = [
+    { label: "Basic Salary", value: fin.basic },
+    { label: "HRA", value: fin.hra },
+    { label: "Special Allowances", value: fin.allowances },
+  ].filter((e) => e.value > 0);
+
+  const deductionItems = [
+    { label: "PF (Employee)", value: fin.pfContribution },
+    { label: "TDS", value: 6500 },
+  ].filter((d) => d.value > 0);
+
+  const maxRows = Math.max(earnings.length, deductionItems.length);
+  const rows = [];
+  for (let i = 0; i < maxRows; i++) {
+    rows.push({
+      earning: earnings[i] || null,
+      deduction: deductionItems[i] || null,
+    });
+  }
+
+  // Convert Net Salary to Words
+  const netInWords = (() => {
+    const num = Math.round(netPay);
+    if (num === 0) return "Zero";
+    const a = [
+      "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+      "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+    ];
+    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    
+    function g(n: number): string {
+      if (n < 20) return a[n];
+      const digit = n % 10;
+      return b[Math.floor(n / 10)] + (digit ? " " + a[digit] : "");
+    }
+    
+    function h(n: number): string {
+      if (n < 100) return g(n);
+      return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " and " + g(n % 100) : "");
+    }
+    
+    function c(n: number): string {
+      let parts: string[] = [];
+      if (n >= 10000000) {
+        parts.push(h(Math.floor(n / 10000000)) + " Crore");
+        n %= 10000000;
+      }
+      if (n >= 100000) {
+        parts.push(h(Math.floor(n / 100000)) + " Lakh");
+        n %= 100000;
+      }
+      if (n >= 1000) {
+        parts.push(h(Math.floor(n / 1000)) + " Thousand");
+        n %= 1000;
+      }
+      if (n > 0) {
+        parts.push(h(n));
+      }
+      return parts.join(" ");
+    }
+
+    return "Rupees " + c(num) + " Only";
+  })();
+
+  const handlePrint = () => {
+    window.print();
+    addToast("success", `${month} payslip printed/downloaded for ${employee.name}.`);
+  };
+
   return (
     <AnimatePresence>
       {open && (
         <>
           <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-[200]"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[3000] no-print"
           />
           <motion.div
-            initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-full w-full max-w-[440px] border-l border-border shadow-2xl z-[201] overflow-y-auto"
-            style={{ backgroundColor: "var(--card)" }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="fixed inset-0 m-auto w-full max-w-2xl h-fit max-h-[90vh] bg-card rounded-[32px] border border-border shadow-2xl overflow-hidden flex flex-col z-[3001] print-payslip-card"
           >
-            <div className="p-7">
-              <div className="flex items-center justify-between mb-2">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30 shrink-0 no-print">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                  <FileText size={20} className="text-emerald-500" />
+                </div>
                 <div>
-                  <h2 className="text-[18px] font-black text-foreground">{month} — Payslip</h2>
-                  <p className="text-[12px] text-muted-foreground mt-0.5">{employee.name} · {employee.id}</p>
-                </div>
-                <button onClick={onClose} className="p-2 rounded-xl hover:bg-muted transition-colors text-muted-foreground"><X size={18} /></button>
-              </div>
-
-              <div className="space-y-4 mt-5">
-                {/* Earnings */}
-                <div className="rounded-xl border border-border overflow-hidden">
-                  <div className="px-4 py-2.5 bg-[#DCFCE7] dark:bg-emerald-500/10">
-                    <p className="text-[10px] font-black text-[#047857] uppercase tracking-widest">Earnings</p>
-                  </div>
-                  <div className="divide-y divide-border">
-                    {[
-                      { label: "Basic Salary", amount: fin.basic },
-                      { label: "HRA", amount: fin.hra },
-                      { label: "Special Allowances", amount: fin.allowances },
-                    ].map((r) => (
-                      <div key={r.label} className="flex justify-between px-4 py-2.5">
-                        <span className="text-[13px] text-muted-foreground font-semibold">{r.label}</span>
-                        <span className="text-[13px] font-bold text-foreground">₹{r.amount.toLocaleString()}</span>
-                      </div>
-                    ))}
-                    <div className="flex justify-between px-4 py-2.5 bg-muted/10">
-                      <span className="text-[13px] font-black text-foreground">Gross Earnings</span>
-                      <span className="text-[14px] font-black text-[#00B87C]">₹{gross.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Deductions */}
-                <div className="rounded-xl border border-border overflow-hidden">
-                  <div className="px-4 py-2.5 bg-red-50 dark:bg-red-500/10">
-                    <p className="text-[10px] font-black text-red-600 uppercase tracking-widest">Deductions</p>
-                  </div>
-                  <div className="divide-y divide-border">
-                    {[
-                      { label: "PF (Employee)", amount: fin.pfContribution },
-                      { label: "TDS", amount: 6500 },
-                    ].map((r) => (
-                      <div key={r.label} className="flex justify-between px-4 py-2.5">
-                        <span className="text-[13px] text-muted-foreground font-semibold">{r.label}</span>
-                        <span className="text-[13px] font-bold text-red-500">₹{r.amount.toLocaleString()}</span>
-                      </div>
-                    ))}
-                    <div className="flex justify-between px-4 py-2.5 bg-muted/10">
-                      <span className="text-[13px] font-black text-foreground">Total Deductions</span>
-                      <span className="text-[14px] font-black text-red-500">₹{totalDeductions.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Net Pay */}
-                <div className="rounded-xl bg-[#DCFCE7] dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 p-4 flex justify-between items-center">
-                  <span className="text-[15px] font-black text-[#047857]">Net Pay</span>
-                  <span className="text-[28px] font-black text-[#00B87C]">₹{netPay.toLocaleString()}</span>
-                </div>
-
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => { addToast("success", `${month} payslip downloaded for ${employee.name}.`); onClose(); }}
-                    className="flex-1 py-3 rounded-xl bg-[#00B87C] text-white font-bold text-[13px] hover:bg-[#009F6B] transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Download size={16} /> Download PDF
-                  </button>
-                  <button onClick={onClose} className="px-5 py-3 rounded-xl border border-border text-foreground font-bold text-[13px] hover:bg-muted transition-colors">✕ Close</button>
+                  <h3 className="text-base font-black text-foreground">
+                    Salary Payslip
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    {month} · {employee.id}
+                  </p>
                 </div>
               </div>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-red-500/10 rounded-xl text-muted-foreground hover:text-red-500 transition-colors ml-1"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto p-8 space-y-6">
+              {/* Corporate Header Section */}
+              <div className="flex justify-between items-start border-b border-neutral-300 pb-4">
+                <div>
+                  <h1 className="text-2xl font-black text-foreground tracking-tight flex items-center gap-1.5">
+                    <span className="bg-[#00B87C] text-white p-1.5 rounded-xl text-lg leading-none font-bold">N</span>
+                    NexusHR Inc.
+                  </h1>
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                    100 Marine Parkway, Redwood City, CA 94065<br />
+                    Phone: +1 (650) 555-0199 | Email: payroll@nexushr.com
+                  </p>
+                </div>
+                <div className="text-right">
+                  <h2 className="text-lg font-black text-foreground uppercase tracking-wider">Salary Payslip</h2>
+                  <p className="text-xs font-bold text-muted-foreground mt-1">Pay Period: {month}</p>
+                  <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border bg-emerald-500/10 text-[#00B87C] border-emerald-500/20">
+                    <CheckCircle2 size={12} /> Paid
+                  </div>
+                </div>
+              </div>
+
+              {/* Employee Details Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-muted/20">
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Employee Name</p>
+                  <p className="text-sm font-bold text-foreground">{employee.name}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Employee ID</p>
+                  <p className="text-sm font-bold text-foreground">{employee.id}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Designation</p>
+                  <p className="text-sm font-bold text-foreground">{employee.designation}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Department</p>
+                  <p className="text-sm font-bold text-foreground">{employee.department}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Bank Name</p>
+                  <p className="text-sm font-bold text-foreground">ICICI Bank</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Bank A/c No.</p>
+                  <p className="text-sm font-bold text-foreground">****9852</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">PF Number</p>
+                  <p className="text-sm font-bold text-foreground">PF/{employee.id}/2026</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Tax Account (PAN)</p>
+                  <p className="text-sm font-bold text-foreground">PAN/EMP/{employee.id.replace("EMP-", "")}</p>
+                </div>
+              </div>
+
+              {/* Earnings & Deductions Table */}
+              <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
+                <table className="w-full border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-muted/50 border-b border-neutral-200 dark:border-neutral-800">
+                      <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-left font-black uppercase text-foreground">Earnings</th>
+                      <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-right font-black uppercase text-foreground">Amount</th>
+                      <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-left font-black uppercase text-foreground">Deductions</th>
+                      <th className="px-4 py-2.5 text-right font-black uppercase text-foreground">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
+                    {rows.map((row, index) => (
+                      <tr key={index} className="h-9">
+                        <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">{row.earning?.label || ""}</td>
+                        <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-right font-medium text-foreground">{row.earning ? `₹${row.earning.value.toLocaleString()}` : ""}</td>
+                        <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">{row.deduction?.label || ""}</td>
+                        <td className="px-4 py-2 text-right font-medium text-red-500">{row.deduction ? `₹${row.deduction.value.toLocaleString()}` : ""}</td>
+                      </tr>
+                    ))}
+                    <tr className="bg-muted/20 font-bold border-t border-neutral-200 dark:border-neutral-800 h-10 text-foreground">
+                      <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800">Gross Earnings</td>
+                      <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-right font-black">₹{gross.toLocaleString()}</td>
+                      <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800">Total Deductions</td>
+                      <td className="px-4 py-2.5 text-right font-black text-red-500">₹{totalDeductions.toLocaleString()}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Net Salary Summary */}
+              <div className="p-5 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.03] space-y-2">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-[#00B87C]">Net Take-Home Salary</p>
+                    <h3 className="text-2xl font-black text-foreground mt-0.5">₹{netPay.toLocaleString()}</h3>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Payment Mode</p>
+                    <p className="text-xs font-bold text-foreground mt-0.5">Direct Bank Transfer</p>
+                  </div>
+                </div>
+                <div className="pt-2 border-t border-dashed border-emerald-500/20 text-xs">
+                  <span className="font-bold text-muted-foreground">Amount in Words: </span>
+                  <span className="font-black text-foreground italic">{netInWords}</span>
+                </div>
+              </div>
+
+              {/* Signatures Section */}
+              <div className="pt-8 grid grid-cols-2 gap-12 text-center text-xs">
+                <div className="space-y-12">
+                  <div className="h-0.5 bg-neutral-300 w-3/4 mx-auto" />
+                  <p className="font-bold text-muted-foreground uppercase tracking-wider">Employee Signature</p>
+                </div>
+                <div className="space-y-12">
+                  <div className="h-0.5 bg-neutral-300 w-3/4 mx-auto" />
+                  <p className="font-bold text-muted-foreground uppercase tracking-wider">Authorized Signatory<br /><span className="text-[10px] lowercase font-normal">for NexusHR Inc.</span></p>
+                </div>
+              </div>
+
+              <p className="text-center text-[9px] text-muted-foreground/60 italic pt-6 border-t border-dashed border-neutral-200 dark:border-neutral-800">
+                This is a system-generated payslip and does not require a physical stamp or signature.
+              </p>
+            </div>
+
+            {/* Modal Footer Actions */}
+            <div className="p-6 bg-secondary/30 flex gap-4 border-t border-border shrink-0 no-print">
+              <button
+                onClick={onClose}
+                className="flex-1 py-3 text-[13px] font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider border border-border rounded-2xl hover:bg-card"
+              >
+                Close
+              </button>
+              <button
+                onClick={handlePrint}
+                className="flex-[2] py-3 bg-[#00B87C] text-white rounded-2xl text-[13px] font-bold uppercase tracking-wider shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2"
+              >
+                <Download size={16} /> Download PDF
+              </button>
             </div>
           </motion.div>
         </>
