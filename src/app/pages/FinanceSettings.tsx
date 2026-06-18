@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Settings,
   User,
@@ -14,6 +14,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
+import { useAuth } from "../context/AuthContext";
 
 type SettingsTab =
   | "Profile Settings"
@@ -25,6 +26,7 @@ type SettingsTab =
   | "Data Export";
 
 export function FinanceSettings() {
+  const { user, login } = useAuth();
   const [activeTab, setActiveTab] = useState<SettingsTab>("Profile Settings");
 
   // States: Profile Settings
@@ -35,6 +37,15 @@ export function FinanceSettings() {
   const [bio, setBio] = useState(
     "Senior Finance Manager overseeing payroll and expense approvals.",
   );
+
+  useEffect(() => {
+    if (user) {
+      const parts = user.name.split(" ");
+      setFirstName(parts[0] || "");
+      setLastName(parts.slice(1).join(" ") || "");
+      setEmail(user.email || "");
+    }
+  }, [user]);
 
   // States: Notification Preferences
   const [notifPayrollAlerts, setNotifPayrollAlerts] = useState(true);
@@ -85,6 +96,45 @@ export function FinanceSettings() {
 
   // Handlers
   const handleSave = () => {
+    if (activeTab === "Profile Settings") {
+      if (user) {
+        const fullName = `${firstName} ${lastName}`.trim();
+        const updatedUser = {
+          ...user,
+          name: fullName,
+          email: email,
+          initials: fullName
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2) || "AS"
+        };
+        login(updatedUser);
+
+        try {
+          const registeredRaw = localStorage.getItem("nexus_registered_users");
+          if (registeredRaw) {
+            const users = JSON.parse(registeredRaw);
+            const updatedUsers = users.map((u: any) => {
+              if (u.email.toLowerCase() === user.email.toLowerCase()) {
+                return {
+                  ...u,
+                  name: updatedUser.name,
+                  email: updatedUser.email,
+                  initials: updatedUser.initials
+                };
+              }
+              return u;
+            });
+            localStorage.setItem("nexus_registered_users", JSON.stringify(updatedUsers));
+          }
+        } catch (err) {
+          // ignore
+        }
+      }
+    }
+
     if (activeTab === "Security & Password") {
       if (!currentPassword || !newPassword || !confirmPassword) {
         showToast("Error", "error", "Please fill in all password fields.");

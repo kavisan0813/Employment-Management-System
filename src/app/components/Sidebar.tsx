@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router";
 import {
   LayoutDashboard,
@@ -10,6 +11,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Zap,
   CalendarDays,
   Store,
@@ -40,325 +42,7 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
-// ─── All nav items with role restrictions ────────────────────
-const ALL_NAV_ITEMS: {
-  icon: React.ElementType;
-  label: string;
-  path: string;
-  roles?: UserRole[];
-  section?: "MAIN MENU" | "MY WORKSPACE";
-}[] = [
-  { icon: Sparkles, label: "Smart Search", path: "/smart-search" },
-  {
-    icon: LayoutDashboard,
-    label: "Dashboard",
-    path: "/",
-    roles: ["Super Admin", "HR Manager", "Finance", "Manager"],
-  },
-
-  // Admin / HR Items
-  {
-    icon: Users,
-    label: "Employees",
-    path: "/employees",
-    roles: ["Super Admin", "HR Manager", "Finance", "Manager"],
-  },
-  {
-    icon: Store,
-    label: "Departments",
-    path: "/departments",
-    roles: ["Super Admin", "HR Manager", "Finance"],
-  },
-  {
-    icon: CalendarCheck,
-    label: "Attendance",
-    path: "/attendance",
-    roles: ["Super Admin", "HR Manager", "Manager"],
-  },
-  {
-    icon: CalendarClock,
-    label: "Schedule",
-    path: "/schedule",
-    roles: ["Super Admin", "HR Manager", "Manager"],
-  },
-  {
-    icon: CalendarDays,
-    label: "Leave Management",
-    path: "/leave",
-    roles: ["Super Admin", "HR Manager", "Manager"],
-  },
-  {
-    icon: IndianRupee,
-    label: "Payroll",
-    path: "/payroll",
-    roles: ["Super Admin", "HR Manager", "Finance"],
-  },
-  {
-    icon: Receipt,
-    label: "Financial Onboarding",
-    path: "/finance/onboarding",
-    roles: ["Finance"],
-  },
-  {
-    icon: Briefcase,
-    label: "Recruitment",
-    path: "/recruitment",
-    roles: ["Super Admin", "HR Manager", "Manager"],
-  },
-  {
-    icon: UserPlus,
-    label: "Onboarding",
-    path: "/onboarding",
-    roles: ["Super Admin", "HR Manager"],
-  },
-  {
-    icon: LogOut,
-    label: "Offboarding",
-    path: "/offboarding",
-    roles: ["Super Admin", "HR Manager"],
-  },
-  {
-    icon: TrendingUp,
-    label: "Performance",
-    path: "/performance",
-    roles: ["Super Admin", "HR Manager", "Manager"],
-  },
-  {
-    icon: Award,
-    label: "Increment & Appraisal",
-    path: "/appraisal",
-    roles: ["Super Admin", "HR Manager", "Finance", "Manager"],
-  },
-  {
-    icon: BookOpen,
-    label: "Training",
-    path: "/training",
-    roles: ["Super Admin", "HR Manager", "Manager", "Employee"],
-  },
-  {
-    icon: Folder,
-    label: "Documents",
-    path: "/documents",
-    roles: ["Super Admin", "HR Manager"],
-  },
-  {
-    icon: Receipt,
-    label: "Expenses",
-    path: "/expenses",
-    roles: ["Super Admin", "HR Manager", "Finance", "Manager"],
-  },
-  {
-    icon: BarChart3,
-    label: "Reports & Analytics",
-    path: "/reports",
-    roles: ["Super Admin", "HR Manager", "Finance", "Manager"],
-  },
-  {
-    icon: Megaphone,
-    label: "Notifications",
-    path: "/notifications",
-    roles: ["Super Admin", "HR Manager", "Finance", "Manager", "Employee"],
-  },
-  {
-    icon: Package,
-    label: "Asset Management",
-    path: "/asset-management",
-    roles: ["Super Admin", "HR Manager"],
-  },
-  {
-    icon: BarChart3,
-    label: "Asset Cost Report",
-    path: "/finance/asset-cost-report",
-    roles: ["Finance"],
-  },
-  {
-    icon: IndianRupee,
-    label: "F&F Settlement",
-    path: "/finance/settlements",
-    roles: ["Finance", "Super Admin", "HR Manager"],
-  },
-  {
-    icon: Settings,
-    label: "Payroll Settings",
-    path: "/settings/payroll",
-    roles: ["Finance", "Super Admin"],
-  },
-
-  // My Workspace Items (for non-admins)
-  {
-    icon: UserPlus,
-    label: "My Onboarding",
-    path: "/my-onboarding",
-    roles: ["Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: Home,
-    label: "My Dashboard",
-    path: "/employee/dashboard",
-    roles: ["Finance", "Manager", "Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: CalendarCheck,
-    label: "My Attendance",
-    path: "/attendance",
-    roles: ["Finance", "Manager", "Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: CalendarDays,
-    label: "My Leaves",
-    path: "/leave",
-    roles: ["Finance", "Manager", "Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: LogOut,
-    label: "My Exit",
-    path: "/my-exit",
-    roles: ["Employee", "Finance", "Manager"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: IndianRupee,
-    label: "My Payslips",
-    path: "/payslips",
-    roles: ["Finance", "Manager", "Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: Folder,
-    label: "My Documents",
-    path: "/my-documents",
-    roles: ["Finance", "Manager", "Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: Package,
-    label: "My Assets",
-    path: "/my-assets",
-    roles: ["Finance", "Manager", "Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: Receipt,
-    label: "My Expenses",
-    path: "/expenses",
-    roles: ["Finance", "Manager", "Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: TrendingUp,
-    label: "My Performance",
-    path: "/performance",
-    roles: ["Finance", "Manager", "Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: Clock,
-    label: "My Schedule",
-    path: "/schedule",
-    roles: ["Finance", "Manager", "Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: Users,
-    label: "Directory",
-    path: "/employees",
-    roles: ["Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: HelpCircle,
-    label: "Support Ticket",
-    path: "/support",
-    roles: ["Employee", "Finance", "Manager"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: TrendingUp,
-    label: "My Goals",
-    path: "/goals",
-    roles: ["Finance", "Manager", "Employee"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: User,
-    label: "My Profile",
-    path: "/profile",
-    roles: ["Finance"],
-    section: "MY WORKSPACE",
-  },
-  {
-    icon: Settings,
-    label: "Settings",
-    path: "/settings",
-    roles: ["Finance", "Employee"],
-    section: "MY WORKSPACE",
-  },
-];
-
-// ─── New Joinee ESS nav items ────────────────────
-const NEW_JOINEE_JOURNEY_ITEMS = [
-  { icon: Sprout, label: "My Onboarding", path: "/my-onboarding" },
-  { icon: User, label: "My Profile", path: "/profile" },
-  { icon: Folder, label: "My Documents", path: "/my-documents" },
-  { icon: BookOpen, label: "My Training", path: "/training" },
-];
-
-const NEW_JOINEE_LOCKED_ITEMS = [
-  { icon: CalendarCheck, label: "My Attendance", path: "/attendance" },
-  { icon: CalendarDays, label: "My Leaves", path: "/leave" },
-  { icon: IndianRupee, label: "My Payslips", path: "/payslips" },
-  { icon: Clock, label: "My Schedule", path: "/schedule" },
-  { icon: TrendingUp, label: "My Performance", path: "/performance" },
-  { icon: Receipt, label: "My Expenses", path: "/expenses" },
-  { icon: Package, label: "My Assets", path: "/my-assets" },
-];
-
-// ─── Manager specific items ────────────────────
-const MANAGER_TEAM_ITEMS = [
-  { icon: LayoutDashboard, label: "Team Dashboard", path: "/" },
-  { icon: Users, label: "My Team", path: "/employees" },
-  { icon: CalendarCheck, label: "Team Attendance", path: "/attendance" },
-  { icon: CalendarClock, label: "Team Schedule", path: "/schedule" },
-  { icon: CalendarDays, label: "Leave Approvals", path: "/leave" },
-  { icon: TrendingUp, label: "Team Performance", path: "/performance" },
-  { icon: Award, label: "Team Appraisal", path: "/appraisal" },
-  { icon: BookOpen, label: "Team Training", path: "/training" },
-  { icon: Sprout, label: "Team Onboarding", path: "/manager/team-onboarding" },
-  { icon: Package, label: "Team Assets", path: "/manager/team-assets" },
-  { icon: LogOut, label: "Exit Tasks", path: "/manager/exit-tasks" },
-  { icon: Receipt, label: "Expense Approvals", path: "/expenses" },
-];
-
-const MANAGER_WORKSPACE_ITEMS = [
-  { icon: Home, label: "My Dashboard", path: "/manager/my-dashboard" },
-  { icon: LogOut, label: "My Exit", path: "/my-exit" },
-  {
-    icon: CalendarCheck,
-    label: "My Attendance",
-    path: "/manager/my-attendance",
-  },
-  { icon: CalendarDays, label: "My Leaves", path: "/manager/my-leaves" },
-  { icon: IndianRupee, label: "My Payslips", path: "/manager/my-payslips" },
-  { icon: Clock, label: "My Schedule", path: "/manager/my-schedule" },
-  { icon: Folder, label: "My Documents", path: "/manager/my-documents" },
-  { icon: Receipt, label: "My Expenses", path: "/manager/my-expenses" },
-  { icon: Star, label: "My Goals", path: "/manager/my-goals" },
-  {
-    icon: TrendingUp,
-    label: "My Performance",
-    path: "/manager/my-performance",
-  },
-  { icon: User, label: "My Profile", path: "/profile" },
-  { icon: Megaphone, label: "Notifications", path: "/manager/notifications" },
-  { icon: Megaphone, label: "Announcements", path: "/manager/announcements" },
-  { icon: Users, label: "Team Directory", path: "/manager/directory" },
-  { icon: HelpCircle, label: "Support Ticket", path: "/manager/support" },
-  { icon: Settings, label: "Settings", path: "/manager/settings" },
-];
+// Accordion-based navigation grouping is defined dynamically inside the Sidebar component.
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const location = useLocation();
@@ -369,25 +53,269 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const isNewJoinee =
     currentRole === "Employee" && location.pathname === "/my-onboarding";
 
-  // Filter nav items based on current user's role and section
-  const mainItems = ALL_NAV_ITEMS.filter((item) => {
-    if (item.section === "MY WORKSPACE") return false;
-    if (!item.roles) return true;
-    if (!currentRole) return false;
-    return item.roles.includes(currentRole);
-  });
+  // Accordion groups configuration based on active user role
+  let groups: {
+    label: string;
+    icon: React.ElementType;
+    items: { label: string; path: string; disabled?: boolean }[];
+  }[] = [];
 
-  const workspaceItems = ALL_NAV_ITEMS.filter((item) => {
-    if (item.section !== "MY WORKSPACE") return false;
-    if (!item.roles) return true;
-    if (!currentRole) return false;
-    return item.roles.includes(currentRole);
-  }).map((item) => {
-    if (item.label === "My Expenses" && currentRole === "Finance") {
-      return { ...item, path: "/finance/my-expenses" };
+  if (isNewJoinee) {
+    groups = [
+      {
+        label: "My Journey",
+        icon: Sprout,
+        items: [
+          { label: "🌱 My Onboarding", path: "/my-onboarding" },
+          { label: "My Profile", path: "/profile" },
+          { label: "My Documents", path: "/my-documents" },
+          { label: "My Training", path: "/training" },
+        ],
+      },
+      {
+        label: "Locked Items",
+        icon: Lock,
+        items: [
+          { label: "My Attendance", path: "/attendance", disabled: true },
+          { label: "My Leaves", path: "/leave", disabled: true },
+          { label: "My Payslips", path: "/payslips", disabled: true },
+          { label: "My Schedule", path: "/schedule", disabled: true },
+          { label: "My Performance", path: "/performance", disabled: true },
+          { label: "My Expenses", path: "/expenses", disabled: true },
+          { label: "My Assets", path: "/my-assets", disabled: true },
+        ],
+      },
+    ];
+  } else if (currentRole === "Super Admin" || currentRole === "HR Manager") {
+    groups = [
+      {
+        label: "Home",
+        icon: Home,
+        items: [
+          { label: "Smart Search", path: "/smart-search" },
+          { label: "Dashboard", path: "/" },
+          { label: "Notifications", path: "/notifications" },
+        ],
+      },
+      {
+        label: "Reports",
+        icon: BarChart3,
+        items: [
+          { label: "Reports & Analytics", path: "/reports" },
+        ],
+      },
+      {
+        label: "Team Management",
+        icon: Users,
+        items: [
+          { label: "Employees", path: "/employees" },
+          { label: "Departments", path: "/departments" },
+          { label: "Recruitment", path: "/recruitment" },
+          { label: "Onboarding", path: "/onboarding" },
+          { label: "Offboarding", path: "/offboarding" },
+        ],
+      },
+      {
+        label: "HR Operations",
+        icon: CalendarCheck,
+        items: [
+          { label: "Attendance", path: "/attendance" },
+          { label: "Schedule", path: "/schedule" },
+          { label: "Leave Management", path: "/leave" },
+          { label: "Performance", path: "/performance" },
+          { label: "Training", path: "/training" },
+          { label: "Documents", path: "/documents" },
+        ],
+      },
+      {
+        label: "Finance & Payroll",
+        icon: IndianRupee,
+        items: [
+          { label: "Payroll", path: "/payroll" },
+          { label: "Expenses", path: "/expenses" },
+          { label: "Asset Management", path: "/asset-management" },
+          { label: "F&F Settlement", path: "/finance/settlements" },
+          { label: "Increment & Appraisal", path: "/appraisal" },
+        ],
+      },
+    ];
+  } else if (currentRole === "Finance") {
+    groups = [
+      {
+        label: "Home",
+        icon: Home,
+        items: [
+          { label: "Smart Search", path: "/smart-search" },
+          { label: "Finance Dashboard", path: "/" },
+          { label: "Notifications", path: "/notifications" },
+        ],
+      },
+      {
+        label: "Reports",
+        icon: BarChart3,
+        items: [
+          { label: "Reports & Analytics", path: "/reports" },
+        ],
+      },
+      {
+        label: "Finance Ops",
+        icon: IndianRupee,
+        items: [
+          { label: "Employees (view)", path: "/employees" },
+          { label: "Departments", path: "/departments" },
+          { label: "Payroll", path: "/payroll" },
+          { label: "Financial Onboarding", path: "/finance/onboarding" },
+          { label: "Asset Cost Report", path: "/finance/asset-cost-report" },
+          { label: "F&F Settlement", path: "/finance/settlements" },
+          { label: "Expense Approvals", path: "/expenses" },
+          { label: "Increment & Appraisal", path: "/appraisal" },
+        ],
+      },
+      {
+        label: "My Workspace",
+        icon: Briefcase,
+        items: [
+          { label: "My Dashboard", path: "/employee/dashboard" },
+          { label: "My Attendance", path: "/attendance" },
+          { label: "My Leaves", path: "/leave" },
+          { label: "My Exit", path: "/my-exit" },
+          { label: "My Payslips", path: "/payslips" },
+          { label: "My Documents", path: "/my-documents" },
+          { label: "My Assets", path: "/my-assets" },
+          { label: "My Expenses", path: "/finance/my-expenses" },
+          { label: "My Performance", path: "/performance" },
+          { label: "My Schedule", path: "/schedule" },
+          { label: "My Goals", path: "/goals" },
+          { label: "My Profile", path: "/profile" },
+          { label: "Support Ticket", path: "/support" },
+        ],
+      },
+    ];
+  } else if (currentRole === "Manager") {
+    groups = [
+      {
+        label: "Home",
+        icon: Home,
+        items: [
+          { label: "Smart Search", path: "/smart-search" },
+          { label: "Team Dashboard", path: "/" },
+          { label: "Notifications", path: "/notifications" },
+        ],
+      },
+      {
+        label: "Reports",
+        icon: BarChart3,
+        items: [
+          { label: "Reports & Analytics", path: "/reports" },
+        ],
+      },
+      {
+        label: "My Team",
+        icon: Users,
+        items: [
+          { label: "Team Dashboard", path: "/" },
+          { label: "My Team", path: "/employees" },
+          { label: "Team Attendance", path: "/attendance" },
+          { label: "Team Schedule", path: "/schedule" },
+          { label: "Leave Approvals", path: "/leave" },
+          { label: "Team Performance", path: "/performance" },
+          { label: "Team Appraisal", path: "/appraisal" },
+          { label: "Team Training", path: "/training" },
+          { label: "Team Onboarding", path: "/manager/team-onboarding" },
+          { label: "Team Assets", path: "/manager/team-assets" },
+          { label: "Exit Tasks", path: "/manager/exit-tasks" },
+          { label: "Expense Approvals", path: "/expenses" },
+          { label: "Recruitment", path: "/recruitment" },
+        ],
+      },
+      {
+        label: "My Workspace",
+        icon: Briefcase,
+        items: [
+          { label: "My Dashboard", path: "/manager/my-dashboard" },
+          { label: "My Exit", path: "/my-exit" },
+          { label: "My Attendance", path: "/manager/my-attendance" },
+          { label: "My Leaves", path: "/manager/my-leaves" },
+          { label: "My Payslips", path: "/manager/my-payslips" },
+          { label: "My Schedule", path: "/manager/my-schedule" },
+          { label: "My Documents", path: "/manager/my-documents" },
+          { label: "My Expenses", path: "/manager/my-expenses" },
+          { label: "My Goals", path: "/manager/my-goals" },
+          { label: "My Performance", path: "/manager/my-performance" },
+          { label: "My Profile", path: "/profile" },
+          { label: "Team Directory", path: "/manager/directory" },
+          { label: "Support Ticket", path: "/manager/support" },
+          { label: "Announcements", path: "/manager/announcements" },
+          { label: "Notifications", path: "/manager/notifications" },
+        ],
+      },
+    ];
+  } else {
+    // Regular Employee role or fallback
+    groups = [
+      {
+        label: "Home & Profile",
+        icon: Home,
+        items: [
+          { label: "Smart Search", path: "/smart-search" },
+          { label: "My Dashboard", path: "/employee/dashboard" },
+          { label: "Notifications", path: "/notifications" },
+          { label: "My Profile", path: "/profile" },
+        ],
+      },
+      {
+        label: "My Workspace",
+        icon: Briefcase,
+        items: [
+          { label: "My Attendance", path: "/attendance" },
+          { label: "My Leaves", path: "/leave" },
+          { label: "My Exit", path: "/my-exit" },
+          { label: "My Payslips", path: "/payslips" },
+          { label: "My Documents", path: "/my-documents" },
+          { label: "My Assets", path: "/my-assets" },
+          { label: "My Expenses", path: "/expenses" },
+          { label: "My Performance", path: "/performance" },
+          { label: "My Schedule", path: "/schedule" },
+          { label: "Directory", path: "/employees" },
+          { label: "Support Ticket", path: "/support" },
+          { label: "My Goals", path: "/goals" },
+          { label: "My Training", path: "/training" },
+        ],
+      },
+    ];
+  }
+
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const activeGroup = groups.find(group => 
+      group.items.some(item => isActive(item.path) && !item.disabled)
+    );
+    if (activeGroup) {
+      setExpandedGroups(prev => {
+        if (prev[activeGroup.label]) return prev;
+        return {
+          ...prev,
+          [activeGroup.label]: true
+        };
+      });
     }
-    return item;
-  });
+  }, [location.pathname, currentRole]);
+
+  const toggleGroup = (groupLabel: string) => {
+    if (collapsed) {
+      onToggle(); // expand sidebar
+      setExpandedGroups(prev => ({
+        ...prev,
+        [groupLabel]: true
+      }));
+    } else {
+      setExpandedGroups(prev => ({
+        ...prev,
+        [groupLabel]: !prev[groupLabel]
+      }));
+    }
+  };
 
   const isActive = (path: string) => {
     const currentPath = location.pathname;
@@ -506,11 +434,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   color: "white",
                 }}
               >
-                {currentRole === "Super Admin" ? "SA" : "RP"}
+                {user?.initials || (currentRole === "Super Admin" ? "SA" : "RP")}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[14px] font-black text-foreground truncate leading-tight">
-                  {currentRole === "Super Admin" ? "Super Admin" : "Ryan Park"}
+                  {user?.name || (currentRole === "Super Admin" ? "Super Admin" : "Ryan Park")}
                 </p>
                 <p className="text-[11px] font-bold text-muted-foreground truncate">
                   {currentRole === "Super Admin"
@@ -555,11 +483,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               className="w-10 h-10 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-[#92400E] font-black text-sm shrink-0 shadow-sm"
               style={{ border: "1px solid #FDE68A" }}
             >
-              SI
+              {user?.initials || "SI"}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[14px] font-black text-foreground truncate leading-tight">
-                Suresh Iyer
+                {user?.name || "Suresh Iyer"}
               </p>
               <p className="text-[11px] font-bold text-muted-foreground truncate">
                 Engineering Manager
@@ -616,548 +544,200 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 py-3 overflow-y-auto no-scrollbar">
-        {isNewJoinee ? (
-          <>
-            {/* Welcome User Card */}
-            {!collapsed && (
+        {isNewJoinee && !collapsed && (
+          <div
+            className="mx-3 mb-4 p-3 rounded-xl border border-[#00B87C]/20"
+            style={{ backgroundColor: "rgba(0,184,124,0.08)" }}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00B87C] to-[#059669] flex items-center justify-center text-white text-[11px] font-black shrink-0">
+                PS
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] font-bold text-foreground truncate">
+                  Priya Sharma
+                </p>
+                <p className="text-[11px] text-muted-foreground truncate">
+                  Frontend Developer · Engineering
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 mb-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C] animate-pulse" />
+              <span className="text-[10px] font-bold text-[#00B87C]">
+                Onboarding in Progress
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
               <div
-                className="mx-3 mb-4 p-3 rounded-xl border border-[#00B87C]/20"
-                style={{ backgroundColor: "rgba(0,184,124,0.08)" }}
+                className="flex-1 h-1.5 rounded-full overflow-hidden"
+                style={{ backgroundColor: "var(--muted)" }}
               >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00B87C] to-[#059669] flex items-center justify-center text-white text-[11px] font-black shrink-0">
-                    PS
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[14px] font-bold text-foreground truncate">
-                      Priya Sharma
-                    </p>
-                    <p className="text-[11px] text-muted-foreground truncate">
-                      Frontend Developer · Engineering
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5 mb-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C] animate-pulse" />
-                  <span className="text-[10px] font-bold text-[#00B87C]">
-                    Onboarding in Progress
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div
-                    className="flex-1 h-1.5 rounded-full overflow-hidden"
-                    style={{ backgroundColor: "var(--muted)" }}
-                  >
-                    <div
-                      className="h-full bg-[#00B87C] rounded-full"
-                      style={{ width: "45%" }}
-                    />
-                  </div>
-                  <span className="text-[9px] font-bold text-[#00B87C] shrink-0">
-                    45%
-                  </span>
-                </div>
+                <div
+                  className="h-full bg-[#00B87C] rounded-full"
+                  style={{ width: "45%" }}
+                />
               </div>
-            )}
-
-            {/* MY JOURNEY Section */}
-            <div className="mb-4">
-              {!collapsed && (
-                <p
-                  className="px-4 mb-2"
-                  style={{
-                    color: "var(--sidebar-foreground)",
-                    opacity: 0.6,
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    letterSpacing: "1px",
-                  }}
-                >
-                  MY JOURNEY
-                </p>
-              )}
-              <ul className="space-y-0.5 px-2">
-                {NEW_JOINEE_JOURNEY_ITEMS.map((item) => {
-                  const active = isActive(item.path);
-                  return (
-                    <li key={item.label}>
-                      <NavLink
-                        to={item.path}
-                        title={collapsed ? item.label : undefined}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "12px",
-                          padding: collapsed ? "10px 14px" : "9px 12px",
-                          borderRadius: "10px",
-                          textDecoration: "none",
-                          transition: "all 0.15s ease",
-                          backgroundColor: active ? "#00B87C" : "transparent",
-                          color: active ? "white" : "var(--sidebar-foreground)",
-                          justifyContent: collapsed ? "center" : "flex-start",
-                        }}
-                        className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
-                      >
-                        <item.icon
-                          size={18}
-                          style={{
-                            color: active ? "white" : "inherit",
-                            flexShrink: 0,
-                          }}
-                        />
-                        {!collapsed && (
-                          <span
-                            style={{
-                              fontSize: "13px",
-                              fontWeight: active ? 600 : 500,
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                            }}
-                          >
-                            {item.label === "My Onboarding"
-                              ? "🌱 My Onboarding"
-                              : item.label}
-                          </span>
-                        )}
-                        {active && !collapsed && (
-                          <span
-                            className="ml-auto w-1.5 h-1.5 rounded-full bg-white"
-                            style={{ flexShrink: 0 }}
-                          />
-                        )}
-                      </NavLink>
-                    </li>
-                  );
-                })}
-              </ul>
+              <span className="text-[9px] font-bold text-[#00B87C] shrink-0">
+                45%
+              </span>
             </div>
+          </div>
+        )}
 
-            {/* I'LL SEE MORE ONCE ONBOARDED Section */}
-            <div>
-              {!collapsed && (
-                <p
-                  className="px-4 mb-2"
+        <div className="space-y-1.5">
+          {groups.map((group) => {
+            const isExpanded = expandedGroups[group.label] || false;
+            const GroupIcon = group.icon;
+
+            // Check if any child item inside this group is active
+            const isGroupActive = group.items.some(
+              (item) => !item.disabled && isActive(item.path)
+            );
+
+            return (
+              <div key={group.label} className="px-2">
+                {/* Group Header */}
+                <button
+                  onClick={() => toggleGroup(group.label)}
+                  title={collapsed ? group.label : undefined}
+                  className="w-full flex items-center gap-3 rounded-xl transition-all duration-200 border-none cursor-pointer"
                   style={{
-                    color: "var(--sidebar-foreground)",
-                    opacity: 0.35,
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    letterSpacing: "1px",
+                    padding: collapsed ? "10px 14px" : "9px 12px",
+                    backgroundColor: "transparent",
+                    color: isGroupActive ? "#00B87C" : "var(--sidebar-foreground)",
+                    justifyContent: collapsed ? "center" : "flex-start",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "var(--sidebar-accent)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
                   }}
                 >
-                  I'LL SEE MORE ONCE ONBOARDED
-                </p>
-              )}
-              <ul className="space-y-0.5 px-2">
-                {NEW_JOINEE_LOCKED_ITEMS.map((item) => {
-                  return (
-                    <li key={item.label}>
-                      <div
-                        title={collapsed ? item.label : undefined}
+                  <GroupIcon
+                    size={18}
+                    style={{
+                      color: isGroupActive ? "#00B87C" : "inherit",
+                      flexShrink: 0,
+                    }}
+                  />
+                  {!collapsed && (
+                    <>
+                      <span
                         style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "12px",
-                          padding: collapsed ? "10px 14px" : "9px 12px",
-                          borderRadius: "10px",
-                          textDecoration: "none",
-                          opacity: 0.45,
-                          cursor: "not-allowed",
-                          justifyContent: collapsed ? "center" : "flex-start",
-                          position: "relative",
+                          fontSize: "13px",
+                          fontWeight: 600,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          textAlign: "left",
+                          flex: 1,
                         }}
-                        className="group"
                       >
-                        {collapsed ? (
-                          <Lock
-                            size={14}
-                            style={{
-                              color: "var(--muted-foreground)",
-                              flexShrink: 0,
-                            }}
-                          />
-                        ) : (
-                          <div className="relative">
-                            <item.icon
-                              size={18}
-                              style={{
-                                color: "var(--muted-foreground)",
-                                flexShrink: 0,
-                              }}
-                            />
-                            <Lock
-                              size={10}
-                              className="absolute -top-1 -right-1"
-                              style={{ color: "var(--muted-foreground)" }}
-                            />
-                          </div>
-                        )}
-                        {!collapsed && (
-                          <span
-                            style={{
-                              fontSize: "13px",
-                              fontWeight: 500,
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              color: "var(--muted-foreground)",
-                            }}
-                          >
-                            {item.label}
-                          </span>
-                        )}
-                      </div>
-                      {!collapsed && (
-                        <div className="absolute left-12 right-3 hidden group-hover:block">
-                          <div
-                            className="px-2 py-1 rounded-md bg-gray-800 text-white text-[9px] whitespace-nowrap shadow-lg"
-                            style={{ marginTop: "-24px" }}
-                          >
-                            Available after onboarding
-                          </div>
-                        </div>
+                        {group.label}
+                      </span>
+                      {/* Chevron Indicator */}
+                      {isExpanded ? (
+                        <ChevronDown size={14} style={{ opacity: 0.7 }} />
+                      ) : (
+                        <ChevronRight size={14} style={{ opacity: 0.7 }} />
                       )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </>
-        ) : currentRole === "Manager" ? (
-          <>
-            {/* MY TEAM Section */}
-            <div className="mb-6">
-              {!collapsed && (
-                <p
-                  className="px-4 mb-2"
-                  style={{
-                    color: "var(--sidebar-foreground)",
-                    opacity: 0.6,
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    letterSpacing: "1px",
-                  }}
-                >
-                  MY TEAM
-                </p>
-              )}
-              <ul className="space-y-0.5 px-2">
-                {MANAGER_TEAM_ITEMS.map((item) => {
-                  const active = isActive(item.path);
-                  return (
-                    <li key={item.label}>
-                      <NavLink
-                        to={item.path}
-                        title={collapsed ? item.label : undefined}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "12px",
-                          padding: collapsed ? "10px 14px" : "9px 12px",
-                          borderRadius: "10px",
-                          textDecoration: "none",
-                          transition: "all 0.15s ease",
-                          backgroundColor: active ? "#00B87C" : "transparent",
-                          color: active ? "white" : "var(--sidebar-foreground)",
-                          justifyContent: collapsed ? "center" : "flex-start",
-                        }}
-                        className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
-                      >
-                        <item.icon
-                          size={18}
-                          style={{
-                            color: active ? "white" : "inherit",
-                            flexShrink: 0,
-                          }}
-                        />
-                        {!collapsed && (
-                          <span
-                            style={{
-                              fontSize: "13px",
-                              fontWeight: active ? 600 : 500,
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                            }}
-                          >
-                            {item.label}
-                          </span>
-                        )}
-                        {active && !collapsed && (
-                          <span
-                            className="ml-auto w-1.5 h-1.5 rounded-full bg-white"
-                            style={{ flexShrink: 0 }}
-                          />
-                        )}
-                      </NavLink>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+                    </>
+                  )}
+                </button>
 
-            {/* MY WORKSPACE Section */}
-            <div className="mb-4">
-              {!collapsed && (
-                <p
-                  className="px-4 mb-2"
-                  style={{
-                    color: "var(--sidebar-foreground)",
-                    opacity: 0.6,
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    letterSpacing: "1px",
-                  }}
-                >
-                  MY WORKSPACE
-                </p>
-              )}
-              <ul className="space-y-0.5 px-2">
-                {MANAGER_WORKSPACE_ITEMS.map((item) => {
-                  const active = isActive(item.path);
-                  return (
-                    <li key={item.label}>
-                      <NavLink
-                        to={item.path}
-                        title={collapsed ? item.label : undefined}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "12px",
-                          padding: collapsed ? "10px 14px" : "9px 12px",
-                          borderRadius: "10px",
-                          textDecoration: "none",
-                          transition: "all 0.15s ease",
-                          backgroundColor: active
-                            ? "var(--sidebar-primary)"
-                            : "transparent",
-                          color: active
-                            ? "var(--sidebar-primary-foreground)"
-                            : "var(--sidebar-foreground)",
-                          justifyContent: collapsed ? "center" : "flex-start",
-                        }}
-                        className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
-                      >
-                        <item.icon
-                          size={18}
-                          style={{
-                            color: active
-                              ? "var(--sidebar-primary-foreground)"
-                              : "inherit",
-                            flexShrink: 0,
-                          }}
-                        />
-                        {!collapsed && (
-                          <span
-                            style={{
-                              fontSize: "13px",
-                              fontWeight: active ? 600 : 500,
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                            }}
-                          >
-                            {item.label}
-                          </span>
-                        )}
-                      </NavLink>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </>
-        ) : (
-          <>
-            {/* MAIN MENU Section */}
-            {mainItems.length > 0 && (
-              <div className="mb-4">
-                {!collapsed && (
-                  <p
-                    className="px-4 mb-2"
-                    style={{
-                      color: "var(--sidebar-foreground)",
-                      opacity: 0.6,
-                      fontSize: "10px",
-                      fontWeight: 700,
-                      letterSpacing: "1px",
-                    }}
-                  >
-                    MAIN MENU
-                  </p>
-                )}
-                <ul className="space-y-0.5 px-2">
-                  {mainItems.map((item) => {
-                    const active = isActive(item.path);
-                    return (
-                      <li key={item.path}>
-                        <NavLink
-                          to={item.path}
-                          title={collapsed ? item.label : undefined}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "12px",
-                            padding: collapsed ? "10px 14px" : "9px 12px",
-                            borderRadius: "10px",
-                            textDecoration: "none",
-                            transition: "all 0.15s ease",
-                            backgroundColor: active
-                              ? item.label === "Finance Dashboard" ||
-                                (item.path === "/" && currentRole === "Finance")
-                                ? "#00B87C"
-                                : "var(--sidebar-primary)"
-                              : "transparent",
-                            color: active
-                              ? item.label === "Finance Dashboard" ||
-                                (item.path === "/" && currentRole === "Finance")
-                                ? "white"
-                                : "var(--sidebar-primary-foreground)"
-                              : "var(--sidebar-foreground)",
-                            justifyContent: collapsed ? "center" : "flex-start",
-                          }}
-                          className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
-                        >
-                          <item.icon
-                            size={18}
-                            style={{
-                              color: active
-                                ? item.label === "Finance Dashboard" ||
-                                  (item.path === "/" &&
-                                    currentRole === "Finance")
-                                  ? "white"
-                                  : "var(--sidebar-primary-foreground)"
-                                : "inherit",
-                              flexShrink: 0,
-                            }}
-                          />
-                          {!collapsed && (
-                            <span
+                {/* Sub-items list (if expanded and sidebar is not collapsed) */}
+                {!collapsed && isExpanded && (
+                  <ul className="mt-1 space-y-0.5" style={{ paddingLeft: "28px" }}>
+                    {group.items.map((item) => {
+                      if (item.disabled) {
+                        return (
+                          <li key={item.label}>
+                            <div
                               style={{
-                                fontSize: "13px",
-                                fontWeight: active ? 600 : 500,
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px",
+                                padding: "7px 12px",
+                                borderRadius: "8px",
+                                textDecoration: "none",
+                                opacity: 0.45,
+                                cursor: "not-allowed",
+                                position: "relative",
                               }}
+                              className="group"
                             >
-                              {item.label === "Dashboard" &&
-                              currentRole === "Finance"
-                                ? "Finance Dashboard"
-                                : item.label === "Dashboard" &&
-                                    (currentRole as UserRole) === "Manager"
-                                  ? "Team Dashboard"
-                                  : item.label === "Expenses" &&
-                                      currentRole === "Finance" &&
-                                      item.section !== "MY WORKSPACE"
-                                    ? "Expense Approvals"
-                                    : item.label === "Employees" &&
-                                        currentRole === "Finance"
-                                      ? "Employees (view)"
-                                      : item.label}
-                            </span>
-                          )}
-                          {active && !collapsed && (
-                            <span
-                              className="ml-auto w-1.5 h-1.5 rounded-full"
-                              style={{
-                                backgroundColor:
-                                  item.label === "Finance Dashboard" ||
-                                  (item.path === "/" &&
-                                    currentRole === "Finance")
-                                    ? "white"
-                                    : "var(--sidebar-primary-foreground)",
-                                flexShrink: 0,
-                              }}
-                            />
-                          )}
-                        </NavLink>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
+                              <div className="relative flex items-center">
+                                <Lock
+                                  size={12}
+                                  style={{
+                                    color: "var(--muted-foreground)",
+                                    marginRight: "6px",
+                                  }}
+                                />
+                                <span
+                                  style={{
+                                    fontSize: "13px",
+                                    fontWeight: 500,
+                                    color: "var(--muted-foreground)",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {item.label}
+                                </span>
+                              </div>
+                            </div>
+                          </li>
+                        );
+                      }
 
-            {/* MY WORKSPACE Section */}
-            {workspaceItems.length > 0 && (
-              <div>
-                {!collapsed && (
-                  <p
-                    className="px-4 mb-2 mt-2"
-                    style={{
-                      color: "var(--sidebar-foreground)",
-                      opacity: 0.6,
-                      fontSize: "10px",
-                      fontWeight: 700,
-                      letterSpacing: "1px",
-                    }}
-                  >
-                    MY WORKSPACE
-                  </p>
-                )}
-                <ul className="space-y-0.5 px-2">
-                  {workspaceItems.map((item) => {
-                    const active = isActive(item.path);
-                    return (
-                      <li key={item.path}>
-                        <NavLink
-                          to={item.path}
-                          title={collapsed ? item.label : undefined}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "12px",
-                            padding: collapsed ? "10px 14px" : "9px 12px",
-                            borderRadius: "10px",
-                            textDecoration: "none",
-                            transition: "all 0.15s ease",
-                            backgroundColor: active
-                              ? "var(--sidebar-primary)"
-                              : "transparent",
-                            color: active
-                              ? "var(--sidebar-primary-foreground)"
-                              : "var(--sidebar-foreground)",
-                            justifyContent: collapsed ? "center" : "flex-start",
-                          }}
-                          className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
-                        >
-                          <item.icon
-                            size={18}
+                      const active = isActive(item.path);
+                      return (
+                        <li key={item.label}>
+                          <NavLink
+                            to={item.path}
                             style={{
-                              color: active
-                                ? "var(--sidebar-primary-foreground)"
-                                : "inherit",
-                              flexShrink: 0,
+                              display: "flex",
+                              alignItems: "center",
+                              padding: "7px 12px",
+                              borderRadius: "8px",
+                              textDecoration: "none",
+                              transition: "all 0.15s ease",
+                              backgroundColor: active
+                                ? "rgba(0, 184, 124, 0.12)"
+                                : "transparent",
+                              color: active ? "#00B87C" : "var(--sidebar-foreground)",
                             }}
-                          />
-                          {!collapsed && (
+                            className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
+                          >
                             <span
                               style={{
                                 fontSize: "13px",
                                 fontWeight: active ? 600 : 500,
                                 whiteSpace: "nowrap",
                                 overflow: "hidden",
+                                textOverflow: "ellipsis",
                               }}
                             >
                               {item.label}
                             </span>
-                          )}
-                          {active && !collapsed && (
-                            <span
-                              className="ml-auto w-1.5 h-1.5 rounded-full"
-                              style={{
-                                backgroundColor:
-                                  "var(--sidebar-primary-foreground)",
-                                flexShrink: 0,
-                              }}
-                            />
-                          )}
-                        </NavLink>
-                      </li>
-                    );
-                  })}
-                </ul>
+                            {active && (
+                              <span
+                                className="ml-auto w-1.5 h-1.5 rounded-full bg-[#00B87C]"
+                                style={{ flexShrink: 0 }}
+                              />
+                            )}
+                          </NavLink>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </div>
-            )}
-          </>
-        )}
+            );
+          })}
+        </div>
       </nav>
 
       {/* Bottom section */}

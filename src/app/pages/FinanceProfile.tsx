@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   MapPin,
   TrendingUp,
@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../components/workflow/ToastNotification";
+import { useAuth } from "../context/AuthContext";
 
 type ProfileTab =
   | "Personal Info"
@@ -31,12 +32,60 @@ type ProfileTab =
   | "Settings";
 
 export function FinanceProfile() {
+  const { user, login } = useAuth();
   const [activeTab, setActiveTab] = useState<ProfileTab>("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // Profile data state
-  const [avatarInitials, setAvatarInitials] = useState("AS");
+  const [fullName, setFullName] = useState(() => user?.name || "Ananya Sharma");
+  const [email, setEmail] = useState(() => user?.email || "ananya.sharma@nexushr.com");
+
+  useEffect(() => {
+    if (user) {
+      setFullName(user.name);
+      setEmail(user.email);
+    }
+  }, [user]);
+
+  const avatarInitials = fullName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "AS";
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  useEffect(() => {
+    if (user?.email) {
+      const saved = localStorage.getItem(`nexus_avatar_${user.email}`);
+      if (saved) {
+        setAvatarPreview(saved);
+      }
+    }
+  }, [user]);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        if (uploadEvent.target?.result) {
+          const base64 = uploadEvent.target.result as string;
+          setAvatarPreview(base64);
+          if (user?.email) {
+            localStorage.setItem(`nexus_avatar_${user.email}`, base64);
+          }
+          showToast(
+            "Avatar Updated",
+            "success",
+            "Your profile photo has been updated successfully.",
+          );
+        }
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
   const [skills, setSkills] = useState([
     "Excel",
     "SAP",
@@ -51,6 +100,42 @@ export function FinanceProfile() {
   const [messageText, setMessageText] = useState("");
 
   const handleSave = () => {
+    if (user) {
+      const updatedUser = {
+        ...user,
+        name: fullName,
+        email: email,
+        initials: fullName
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2) || "AS"
+      };
+      login(updatedUser);
+
+      try {
+        const registeredRaw = localStorage.getItem("nexus_registered_users");
+        if (registeredRaw) {
+          const users = JSON.parse(registeredRaw);
+          const updatedUsers = users.map((u: any) => {
+            if (u.email.toLowerCase() === user.email.toLowerCase()) {
+              return {
+                ...u,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                initials: updatedUser.initials
+              };
+            }
+            return u;
+          });
+          localStorage.setItem("nexus_registered_users", JSON.stringify(updatedUsers));
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+
     setSaved(true);
     setIsEditing(false);
     showToast(
@@ -103,36 +188,38 @@ export function FinanceProfile() {
             <div className="flex flex-col md:flex-row items-center md:items-end gap-6">
               {/* Avatar with Upload Overlay */}
               <div
-                onClick={() => {
-                  const input = document.createElement("input");
-                  input.type = "file";
-                  input.accept = "image/*";
-                  input.onchange = () => {
-                    setAvatarInitials("AS");
-                    showToast(
-                      "Avatar Updated",
-                      "success",
-                      "Your profile photo has been updated successfully.",
-                    );
-                  };
-                  input.click();
-                }}
+                onClick={() => fileInputRef.current?.click()}
                 className="relative group cursor-pointer"
               >
                 <div className="w-32 h-32 rounded-[40px] bg-emerald-100 dark:bg-emerald-500/10 border-[6px] border-card shadow-xl overflow-hidden flex items-center justify-center">
-                  <span className="text-4xl font-black text-[#00B87C]">
-                    {avatarInitials}
-                  </span>
+                  {avatarPreview ? (
+                    <img
+                      src={avatarPreview}
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-4xl font-black text-[#00B87C]">
+                      {avatarInitials}
+                    </span>
+                  )}
                 </div>
                 <div className="absolute inset-0 rounded-[40px] bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px] m-[6px]">
                   <Camera size={24} className="text-white" />
                 </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                />
               </div>
 
               <div className="flex-1 pt-4">
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-5">
                   <h1 className="text-2xl font-black text-foreground tracking-tight">
-                    {"Ananya Sharma"}
+                    {fullName}
                   </h1>
                   <span className="px-2.5  rounded-lg bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)] text-[11px] font-semibold uppercase tracking-widest text-white">
                     ● Active
@@ -469,7 +556,8 @@ function PersonalInfoTab({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <EditField
               label="Full Name"
-              value="Ananya Sharma"
+              value={fullName}
+              onChange={setFullName}
               disabled={!isEditing}
             />
             <EditField
@@ -509,7 +597,8 @@ function PersonalInfoTab({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <EditField
               label="Personal Email"
-              value="ananya.sharma@email.com"
+              value={email}
+              onChange={setEmail}
               icon={<Mail size={14} />}
               disabled={!isEditing}
             />
@@ -793,13 +882,26 @@ function EditField({
   type = "text",
   icon,
   disabled,
+  onChange,
 }: {
   label: string;
   value: string;
   type?: string;
   icon?: React.ReactNode;
   disabled?: boolean;
+  onChange?: (val: string) => void;
 }) {
+  const [localValue, setLocalValue] = useState(value);
+  
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalValue(e.target.value);
+    onChange?.(e.target.value);
+  };
+
   return (
     <div className="space-y-2">
       <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
@@ -811,7 +913,8 @@ function EditField({
         {icon && <span className="text-muted-foreground">{icon}</span>}
         <input
           type={type}
-          defaultValue={value}
+          value={localValue}
+          onChange={handleChange}
           disabled={disabled}
           className="w-full bg-transparent border-none outline-none text-[14px] font-bold text-foreground placeholder:text-muted-foreground"
         />
@@ -825,12 +928,19 @@ function SelectField({
   value,
   options,
   disabled,
+  onChange,
 }: {
   label: string;
   value: string;
   options: string[];
   disabled?: boolean;
+  onChange?: (val: string) => void;
 }) {
+  const [localValue, setLocalValue] = useState(value);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
   return (
     <div className="space-y-2">
       <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
@@ -838,7 +948,11 @@ function SelectField({
       </label>
       <div className={`relative ${disabled ? "opacity-70" : ""}`}>
         <select
-          defaultValue={value}
+          value={localValue}
+          onChange={(e) => {
+            setLocalValue(e.target.value);
+            onChange?.(e.target.value);
+          }}
           disabled={disabled}
           className={`w-full appearance-none px-4 py-3 rounded-2xl border bg-muted/30 border-border text-[14px] font-bold text-foreground outline-none transition-all ${!disabled && "focus:border-[#00B87C] focus:ring-2 focus:ring-[#00B87C]/10 cursor-pointer"}`}
         >

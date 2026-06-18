@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Calendar,
   Clock,
@@ -192,6 +192,100 @@ export function EmployeeSelfService() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [hoveredAction, setHoveredAction] = useState<number | null>(null);
+
+  // Attendance Punch State
+  const [punchState, setPunchState] = useState<{
+    isPunchedIn: boolean;
+    punchInTime: string | null;
+    punchInTimestamp: number | null;
+    punchOutTime: string | null;
+    workedHours: string | null;
+  }>({
+    isPunchedIn: false,
+    punchInTime: null,
+    punchInTimestamp: null,
+    punchOutTime: null,
+    workedHours: null,
+  });
+
+  useEffect(() => {
+    if (user?.email) {
+      const saved = localStorage.getItem(`nexus_punch_${user.email}`);
+      if (saved) {
+        setPunchState(JSON.parse(saved));
+      }
+    }
+  }, [user]);
+
+  const handlePunchIn = () => {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const timestamp = Date.now();
+    const newState = {
+      isPunchedIn: true,
+      punchInTime: timeStr,
+      punchInTimestamp: timestamp,
+      punchOutTime: null,
+      workedHours: null,
+    };
+    setPunchState(newState);
+    if (user?.email) {
+      localStorage.setItem(`nexus_punch_${user.email}`, JSON.stringify(newState));
+    }
+    showToast(
+      "Punched In",
+      "success",
+      `Shift started successfully at ${timeStr}.`
+    );
+  };
+
+  const handlePunchOut = () => {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const elapsedMs = Date.now() - (punchState.punchInTimestamp || Date.now());
+    const elapsedSecs = Math.floor(elapsedMs / 1000);
+    const elapsedMins = Math.floor(elapsedSecs / 60);
+    
+    let workedStr = "";
+    if (elapsedMins < 1) {
+      workedStr = `${elapsedSecs} seconds`;
+    } else if (elapsedMins < 60) {
+      workedStr = `${elapsedMins} mins`;
+    } else {
+      workedStr = `${(elapsedMs / (1000 * 60 * 60)).toFixed(2)} hours`;
+    }
+
+    const newState = {
+      ...punchState,
+      isPunchedIn: false,
+      punchOutTime: timeStr,
+      workedHours: workedStr,
+    };
+    setPunchState(newState);
+    if (user?.email) {
+      localStorage.setItem(`nexus_punch_${user.email}`, JSON.stringify(newState));
+    }
+    showToast(
+      "Punched Out",
+      "success",
+      `Shift completed at ${timeStr}. Duration: ${workedStr}`
+    );
+  };
+
+  const handleResetPunch = () => {
+    const newState = {
+      isPunchedIn: false,
+      punchInTime: null,
+      punchInTimestamp: null,
+      punchOutTime: null,
+      workedHours: null,
+    };
+    setPunchState(newState);
+    if (user?.email) {
+      localStorage.removeItem(`nexus_punch_${user.email}`);
+    }
+    showToast("Shift Reset", "info", "You can now punch in for a new shift.");
+  };
 
   const handleQuickAction = (route: string) => {
     navigate(route);
@@ -443,27 +537,75 @@ export function EmployeeSelfService() {
           <div className="bg-card rounded-2xl p-7 border border-border shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[15px] font-black text-foreground">
-                Today's Schedule
+                Today's Shift Attendance
               </h3>
               <span className="text-[12px] font-bold text-muted-foreground bg-secondary px-3 py-1 rounded-lg border border-border">
-                April 6, 2026
+                {new Date().toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
               </span>
             </div>
 
-            <div className="bg-secondary/50 rounded-2xl p-6 border-l-[4px] border-primary flex items-center justify-between gap-4">
-              <div>
+            <div className="flex flex-col sm:flex-row gap-6 items-center justify-between bg-secondary/50 rounded-2xl p-6 border-l-[4px] border-primary">
+              <div className="flex-1">
                 <p className="text-[11px] font-black text-primary uppercase tracking-widest mb-1">
-                  MORNING SHIFT
+                  MORNING SHIFT (09:00 – 18:00)
                 </p>
-                <p className="text-[16px] font-black text-foreground">
-                  06:00 – 14:00
-                </p>
+                {punchState.isPunchedIn ? (
+                  <div className="flex flex-col gap-1 mt-1">
+                    <p className="text-[16px] font-black text-foreground flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping inline-block" />
+                      Active Shift In Progress
+                    </p>
+                    <p className="text-[13px] font-semibold text-muted-foreground">
+                      Punched in at: <span className="text-foreground font-bold">{punchState.punchInTime}</span>
+                    </p>
+                  </div>
+                ) : punchState.punchOutTime ? (
+                  <div className="flex flex-col gap-1 mt-1">
+                    <p className="text-[16px] font-black text-emerald-600 dark:text-emerald-500 flex items-center gap-2">
+                      ✓ Shift Completed
+                    </p>
+                    <p className="text-[13px] font-semibold text-muted-foreground">
+                      In: <span className="text-foreground font-bold">{punchState.punchInTime}</span> | Out: <span className="text-foreground font-bold">{punchState.punchOutTime}</span>
+                    </p>
+                    <p className="text-[13px] font-semibold text-muted-foreground">
+                      Total worked: <span className="text-primary font-black">{punchState.workedHours}</span>
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-1 mt-1">
+                    <p className="text-[16px] font-black text-muted-foreground">
+                      Not Punched In Yet
+                    </p>
+                    <p className="text-[13px] font-semibold text-muted-foreground">
+                      Please punch in to record your attendance.
+                    </p>
+                  </div>
+                )}
               </div>
-              <div className="flex items-center gap-3 bg-card px-4 py-2 rounded-xl border border-border shadow-sm">
-                <Clock size={16} className="text-primary" />
-                <span className="text-[13px] font-black text-primary">
-                  Punch in at 05:58
-                </span>
+
+              <div className="flex items-center gap-3 shrink-0">
+                {punchState.isPunchedIn ? (
+                  <button
+                    onClick={handlePunchOut}
+                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-black text-[13px] uppercase tracking-wider hover:shadow-lg hover:shadow-red-500/20 active:scale-[0.98] transition-all border-none cursor-pointer"
+                  >
+                    Punch Out
+                  </button>
+                ) : punchState.punchOutTime ? (
+                  <button
+                    onClick={handleResetPunch}
+                    className="px-6 py-3 rounded-xl bg-[#00B87C] hover:bg-[#009966] text-white font-black text-[13px] uppercase tracking-wider hover:shadow-lg active:scale-[0.98] transition-all border-none cursor-pointer"
+                  >
+                    Reset Shift
+                  </button>
+                ) : (
+                  <button
+                    onClick={handlePunchIn}
+                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#00B87C] to-[#009966] hover:from-[#00c987] hover:to-[#00a36d] text-white font-black text-[13px] uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all border-none cursor-pointer"
+                  >
+                    Punch In
+                  </button>
+                )}
               </div>
             </div>
           </div>

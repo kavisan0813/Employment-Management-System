@@ -64,7 +64,7 @@ export function Layout() {
     location.pathname !== "/employees";
   let title = isEmployeeProfile
     ? "Employee Profile"
-    : pageTitles[basePath] || "NexusHR EMS";
+    : pageTitles[basePath] || "NexusHR";
   if (basePath === "/notifications" && user?.role === "Finance") {
     title = "Notifications";
   }

@@ -1,5 +1,4 @@
-// Suresh Iyer - Manager Profile Page
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   User,
   Camera,
@@ -25,6 +24,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../components/workflow/ToastNotification";
+import { useAuth } from "../../context/AuthContext";
 
 type ProfileTab =
   | "Personal Info"
@@ -48,12 +48,36 @@ interface EmergencyContact {
 }
 
 export function ManagerProfile() {
+  const { user, login } = useAuth();
   const [activeTab, setActiveTab] = useState<ProfileTab>("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (user?.email) {
+      const saved = localStorage.getItem(`nexus_avatar_${user.email}`);
+      if (saved) {
+        setAvatarPreview(saved);
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      setFullName(user.name);
+      setPersonalEmail(user.email);
+    }
+  }, [user]);
+
+  const avatarInitials = fullName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "SI";
 
   // --- Form States (Personal Details) ---
   const [fullName, setFullName] = useState("Suresh Iyer");
@@ -128,7 +152,11 @@ export function ManagerProfile() {
       const reader = new FileReader();
       reader.onload = (uploadEvent) => {
         if (uploadEvent.target?.result) {
-          setAvatarPreview(uploadEvent.target.result as string);
+          const base64 = uploadEvent.target.result as string;
+          setAvatarPreview(base64);
+          if (user?.email) {
+            localStorage.setItem(`nexus_avatar_${user.email}`, base64);
+          }
           showToast(
             "Profile Picture",
             "success",
@@ -191,6 +219,42 @@ export function ManagerProfile() {
   };
 
   const handleSaveAllChanges = () => {
+    if (user) {
+      const updatedUser = {
+        ...user,
+        name: fullName,
+        email: personalEmail,
+        initials: fullName
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2) || "SI"
+      };
+      login(updatedUser);
+
+      try {
+        const registeredRaw = localStorage.getItem("nexus_registered_users");
+        if (registeredRaw) {
+          const users = JSON.parse(registeredRaw);
+          const updatedUsers = users.map((u: any) => {
+            if (u.email.toLowerCase() === user.email.toLowerCase()) {
+              return {
+                ...u,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                initials: updatedUser.initials
+              };
+            }
+            return u;
+          });
+          localStorage.setItem("nexus_registered_users", JSON.stringify(updatedUsers));
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+
     setIsEditing(false);
     showToast(
       "Profile Saved",
@@ -294,7 +358,7 @@ export function ManagerProfile() {
                     />
                   ) : (
                     <span className="text-4xl font-black text-[#00B87C]">
-                      SI
+                      {avatarInitials}
                     </span>
                   )}
                 </div>

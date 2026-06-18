@@ -11,10 +11,12 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { useAuth, ROLE_HOME_ROUTE, UserRole } from "../context/AuthContext";
 
 export function AuthSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   // Destructure state with fallbacks for manual page access
   const {
@@ -24,20 +26,16 @@ export function AuthSuccess() {
   } = location.state || {};
 
   const handleGoToDashboard = () => {
-    sessionStorage.setItem("isLoggedIn", "true");
-    sessionStorage.setItem("userRole", role);
+    const initials = name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) || "JD";
+    
+    login({
+      name,
+      email,
+      role: role as UserRole,
+      initials,
+    });
 
-    const roleRoutes: Record<string, string> = {
-      "Super Admin": "/",
-      "HR Admin": "/employees",
-      Manager: "/attendance",
-      "Team Lead": "/schedule",
-      Employee: "/",
-      "Payroll Admin": "/payroll",
-      Recruiter: "/recruitment",
-    };
-
-    navigate(roleRoutes[role] || "/");
+    navigate(ROLE_HOME_ROUTE[role as UserRole] || "/");
   };
 
   const getRoleSpecificPortal = () => {

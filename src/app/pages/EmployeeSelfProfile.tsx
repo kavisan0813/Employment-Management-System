@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   User,
   Camera,
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "motion/react";
+import { useAuth } from "../context/AuthContext";
 
 const TABS = [
   "Personal Info",
@@ -30,13 +31,97 @@ const TABS = [
 ];
 
 export function EmployeeSelfProfile() {
+  const { user, login } = useAuth();
   const [activeTab, setActiveTab] = useState("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [avatarInitials, setAvatarInitials] = useState("PS");
+  
+  const [fullName, setFullName] = useState(() => user?.name || "Priya Sharma");
+  const [email, setEmail] = useState(() => user?.email || "priya.sharma@gmail.com");
+
+  useEffect(() => {
+    if (user) {
+      setFullName(user.name);
+      setEmail(user.email);
+    }
+  }, [user]);
+
+  const avatarInitials = fullName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "PS";
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (user?.email) {
+      const saved = localStorage.getItem(`nexus_avatar_${user.email}`);
+      if (saved) {
+        setAvatarPreview(saved);
+      }
+    }
+  }, [user]);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        if (uploadEvent.target?.result) {
+          const base64 = uploadEvent.target.result as string;
+          setAvatarPreview(base64);
+          if (user?.email) {
+            localStorage.setItem(`nexus_avatar_${user.email}`, base64);
+          }
+          showToast(
+            "Avatar Updated",
+            "success",
+            "Your profile photo has been updated successfully.",
+          );
+        }
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
   const handleSave = () => {
+    if (user) {
+      const updatedUser = {
+        ...user,
+        name: fullName,
+        email: email,
+        initials: fullName
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2) || "PS"
+      };
+      login(updatedUser);
+
+      try {
+        const registeredRaw = localStorage.getItem("nexus_registered_users");
+        if (registeredRaw) {
+          const users = JSON.parse(registeredRaw);
+          const updatedUsers = users.map((u: any) => {
+            if (u.email.toLowerCase() === user.email.toLowerCase()) {
+              return {
+                ...u,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                initials: updatedUser.initials
+              };
+            }
+            return u;
+          });
+          localStorage.setItem("nexus_registered_users", JSON.stringify(updatedUsers));
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+
     setIsEditing(false);
     showToast(
       "Profile Updated",
@@ -72,9 +157,17 @@ export function EmployeeSelfProfile() {
                 className="relative group cursor-pointer"
               >
                 <div className="w-32 h-32 rounded-[40px] bg-emerald-100 dark:bg-emerald-500/10 border-[6px] border-card shadow-xl overflow-hidden flex items-center justify-center">
-                  <span className="text-4xl font-black text-[#00B87C]">
-                    {avatarInitials}
-                  </span>
+                  {avatarPreview ? (
+                    <img
+                      src={avatarPreview}
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-4xl font-black text-[#00B87C]">
+                      {avatarInitials}
+                    </span>
+                  )}
                 </div>
                 <div className="absolute inset-0 rounded-[40px] bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-[2px] m-[6px]">
                   <Camera size={24} className="text-white" />
@@ -84,21 +177,14 @@ export function EmployeeSelfProfile() {
                   type="file"
                   className="hidden"
                   accept="image/*"
-                  onChange={() => {
-                    setAvatarInitials("PS");
-                    showToast(
-                      "Avatar Updated",
-                      "success",
-                      "Your profile photo has been updated successfully.",
-                    );
-                  }}
+                  onChange={handleAvatarChange}
                 />
               </div>
 
               <div className="flex-1 pt-4 text-center md:text-left">
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-5">
                   <h1 className="text-2xl font-black text-foreground tracking-tight">
-                    {"Priya Sharma"}
+                    {fullName}
                   </h1>
                   <span className="px-2.5 rounded-lg bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)] text-[11px] font-semibold uppercase tracking-widest text-white">
                     ● Active
@@ -248,7 +334,13 @@ export function EmployeeSelfProfile() {
             transition={{ duration: 0.2 }}
           >
             {activeTab === "Personal Info" && (
-              <PersonalTab isEditing={isEditing} />
+              <PersonalTab
+                isEditing={isEditing}
+                fullName={fullName}
+                setFullName={setFullName}
+                email={email}
+                setEmail={setEmail}
+              />
             )}
             {activeTab === "Employment" && <EmploymentTab />}
             {activeTab === "Documents" && <DocumentsTab />}
@@ -310,6 +402,7 @@ interface InputFieldProps {
   placeholder?: string;
   type?: string;
   isTextarea?: boolean;
+  onChange?: (val: string) => void;
 }
 
 function InputField({
@@ -319,7 +412,19 @@ function InputField({
   placeholder = "",
   type = "text",
   isTextarea = false,
+  onChange,
 }: InputFieldProps) {
+  const [localValue, setLocalValue] = useState(value);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setLocalValue(e.target.value);
+    onChange?.(e.target.value);
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
@@ -328,7 +433,8 @@ function InputField({
       {isTextarea ? (
         <textarea
           disabled={disabled}
-          defaultValue={value}
+          value={localValue}
+          onChange={handleChange}
           placeholder={placeholder}
           className="w-full bg-background border border-border rounded-xl px-4 py-3 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all min-h-[120px] disabled:opacity-70 disabled:cursor-not-allowed custom-scrollbar"
         />
@@ -337,7 +443,8 @@ function InputField({
           <input
             type={type}
             disabled={disabled}
-            defaultValue={value}
+            value={localValue}
+            onChange={handleChange}
             placeholder={placeholder}
             className="w-full h-12 bg-background border border-border rounded-xl px-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
           />
@@ -352,6 +459,7 @@ interface DropdownFieldProps {
   value: string;
   options: string[];
   disabled: boolean;
+  onChange?: (val: string) => void;
 }
 
 function DropdownField({
@@ -359,7 +467,19 @@ function DropdownField({
   value,
   options,
   disabled,
+  onChange,
 }: DropdownFieldProps) {
+  const [localValue, setLocalValue] = useState(value);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLocalValue(e.target.value);
+    onChange?.(e.target.value);
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
@@ -368,7 +488,8 @@ function DropdownField({
       <div className="relative">
         <select
           disabled={disabled}
-          defaultValue={value}
+          value={localValue}
+          onChange={handleChange}
           className="w-full h-12 bg-background border border-border rounded-xl px-4 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary transition-all appearance-none disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {options.map((opt: string) => (
@@ -399,7 +520,19 @@ function DropdownField({
   );
 }
 
-function PersonalTab({ isEditing }: { isEditing: boolean }) {
+function PersonalTab({
+  isEditing,
+  fullName,
+  setFullName,
+  email,
+  setEmail,
+}: {
+  isEditing: boolean;
+  fullName: string;
+  setFullName: (val: string) => void;
+  email: string;
+  setEmail: (val: string) => void;
+}) {
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       {/* LEFT (65%) */}
@@ -409,7 +542,8 @@ function PersonalTab({ isEditing }: { isEditing: boolean }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
               label="Full Name"
-              value="Priya Sharma"
+              value={fullName}
+              onChange={setFullName}
               disabled={!isEditing}
             />
             <InputField
@@ -449,7 +583,8 @@ function PersonalTab({ isEditing }: { isEditing: boolean }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
               label="Personal Email"
-              value="priya.sharma@gmail.com"
+              value={email}
+              onChange={setEmail}
               disabled={!isEditing}
             />
             <InputField

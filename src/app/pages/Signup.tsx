@@ -20,10 +20,9 @@ import { toast } from "sonner";
 
 type UserRole =
   | "Super Admin"
-  | "HR Admin"
+  | "HR Manager"
+  | "Finance"
   | "Manager"
-  | "Payroll Admin"
-  | "Recruiter"
   | "Employee";
 
 interface PasswordStrength {
@@ -93,21 +92,35 @@ export function Signup() {
     setTimeout(() => {
       setIsLoading(false);
 
-      const needsApproval = ["HR Admin", "Manager", "Payroll Admin"].includes(
-        formData.role,
-      );
+      // Save user to localStorage registered users list
+      const newUser = {
+        name: formData.fullName,
+        email: formData.email,
+        role: formData.role || "Employee",
+        initials: formData.fullName
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2) || "JD",
+      };
 
-      if (needsApproval) {
-        setIsSuccess(true);
-      } else {
-        navigate("/signup-success", {
-          state: {
-            name: formData.fullName,
-            email: formData.email,
-            role: formData.role,
-          },
-        });
-      }
+      const existingUsersRaw = localStorage.getItem("nexus_registered_users");
+      const existingUsers = existingUsersRaw ? JSON.parse(existingUsersRaw) : [];
+      
+      // Prevent duplicates in registered users list
+      const filtered = existingUsers.filter((u: any) => u.email.toLowerCase() !== formData.email.toLowerCase());
+      filtered.push(newUser);
+      
+      localStorage.setItem("nexus_registered_users", JSON.stringify(filtered));
+
+      navigate("/signup-success", {
+        state: {
+          name: formData.fullName,
+          email: formData.email,
+          role: formData.role || "Employee",
+        },
+      });
     }, 1500);
   };
 
@@ -453,12 +466,10 @@ export function Signup() {
                   <option value="" disabled>
                     Select Role
                   </option>
-                  <option value="Super Admin">Super Admin</option>
-                  <option value="HR Admin">HR Admin</option>
+                  <option value="Super Admin">Admin</option>
                   <option value="Manager">Manager</option>
-                  <option value="Team Lead">Team Lead</option>
-                  <option value="Payroll Admin">Payroll Admin</option>
-                  <option value="Recruiter">Recruiter</option>
+                  <option value="HR Manager">HR</option>
+                  <option value="Finance">Finance</option>
                   <option value="Employee">Employee</option>
                 </select>
                 <ChevronDown

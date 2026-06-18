@@ -86,24 +86,79 @@ interface Toast {
 }
 
 /* ─── Helpers ────────────────────────────── */
-const loadFromStorage = (): PayrollEmployee[] => {
+const generateMockPayrollForMonthYear = (month: string, year: string): PayrollEmployee[] => {
+  const monthIdx = MONTHS.indexOf(month) + 1; // 1 to 12
+  const yearNum = parseInt(year);
+  
+  // Deterministic seed formula based on month index and year number
+  const seed = (monthIdx * 7 + (yearNum - 2024) * 13) % 100;
+  
+  return payrollEmployees.map((e, idx) => {
+    // Modify gross and deductions slightly based on seed and employee index
+    const variancePercent = ((seed + idx) % 15) - 7; // range: -7% to +7%
+    const newGross = Math.round(e.gross * (1 + variancePercent / 100));
+    
+    // Deductions also vary slightly
+    const deductionVariance = ((seed * 3 + idx) % 10) - 5; // range: -5% to +5%
+    const newDeductions = Math.round(e.deductions * (1 + deductionVariance / 100));
+    
+    const newNet = newGross - newDeductions;
+    
+    // Determine status deterministically based on whether period is past relative to "April 2026"
+    let status: "Paid" | "Pending" | "On Hold" = "Pending";
+    const currentYear = 2026;
+    const currentMonthIdx = 3; // April (0-indexed)
+    
+    if (yearNum < currentYear || (yearNum === currentYear && monthIdx - 1 < currentMonthIdx)) {
+      status = "Paid";
+    } else {
+      const statusSeed = (seed + idx) % 10;
+      if (statusSeed < 6) {
+        status = "Paid";
+      } else if (statusSeed < 9) {
+        status = "Pending";
+      } else {
+        status = "On Hold";
+      }
+    }
+    
+    return {
+      ...e,
+      gross: newGross,
+      deductions: newDeductions,
+      net: newNet,
+      status,
+      bonus: 0,
+      bankAccount: `****${Math.floor(1000 + ((seed * 17 + idx * 31) % 9000))}`,
+      transferProgress: status === "Paid" ? 100 : 0,
+    };
+  });
+};
+
+const loadFromStorage = (month: string, year: string): PayrollEmployee[] => {
+  const key = `nexus_payroll_records_${month.toLowerCase()}_${year}`;
   try {
-    const raw = localStorage.getItem(LS_KEY);
+    const raw = localStorage.getItem(key);
     if (raw) return JSON.parse(raw) as PayrollEmployee[];
   } catch {
     // ignore
   }
-  return payrollEmployees.map((e) => ({
-    ...e,
-    status: e.status as "Paid" | "Pending" | "On Hold",
-    bonus: 0,
-    bankAccount: `****${Math.floor(1000 + Math.random() * 9000)}`,
-    transferProgress: e.status === "Paid" ? 100 : 0,
-  }));
+  const generated = generateMockPayrollForMonthYear(month, year);
+  try {
+    localStorage.setItem(key, JSON.stringify(generated));
+  } catch {
+    // ignore
+  }
+  return generated;
 };
 
-const saveToStorage = (data: PayrollEmployee[]) => {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch { /* ignore */ }
+const saveToStorage = (month: string, year: string, data: PayrollEmployee[]) => {
+  const key = `nexus_payroll_records_${month.toLowerCase()}_${year}`;
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch {
+    // ignore
+  }
 };
 
 /* ─── Toast System ───────────────────────── */
@@ -872,9 +927,11 @@ export function Payroll() {
   if (user?.role === "Employee") return <EmployeePayslips />;
 
   /* ── State ── */
-  const [employeesData, setEmployeesData] = useState<PayrollEmployee[]>(loadFromStorage);
   const [selectedMonth, setSelectedMonth] = useState("April");
   const [selectedYear, setSelectedYear]   = useState("2026");
+  const [employeesData, setEmployeesData] = useState<PayrollEmployee[]>(() =>
+    loadFromStorage("April", "2026")
+  );
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
   const [showYearDropdown, setShowYearDropdown]   = useState(false);
   const [statusFilter, setStatusFilter]   = useState<"All" | "Paid" | "Pending" | "On Hold">("All");
@@ -895,8 +952,15 @@ export function Payroll() {
   const itemsPerPage = 8;
   const actionMenuRef = useRef<HTMLDivElement>(null);
 
+  // Sync to/from localStorage when month/year changes
+  useEffect(() => {
+    setEmployeesData(loadFromStorage(selectedMonth, selectedYear));
+  }, [selectedMonth, selectedYear]);
+
   /* ── Persist to localStorage ── */
-  useEffect(() => { saveToStorage(employeesData); }, [employeesData]);
+  useEffect(() => {
+    saveToStorage(selectedMonth, selectedYear, employeesData);
+  }, [employeesData, selectedMonth, selectedYear]);
 
   /* ── Close dropdowns on outside click ── */
   useEffect(() => {

@@ -1748,7 +1748,7 @@ function OffboardingDetail({
               <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">
                 F&F SETTLEMENT CALCULATION
               </h3>
-              <div className="p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] space-y-3">
+              <div className="p-4 rounded-2xl bg-[#F0FDF4] dark:bg-emerald-950/20 border border-[#DCFCE7] dark:border-emerald-900/30 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold text-foreground">
                     Last Working Month Salary

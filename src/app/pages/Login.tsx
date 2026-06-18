@@ -54,41 +54,81 @@ export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<UserRole | "">("");
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const detectRole = (emailVal: string): UserRole => {
+    // Check registered users list in localStorage first
+    try {
+      const registered = localStorage.getItem("nexus_registered_users");
+      if (registered) {
+        const users = JSON.parse(registered);
+        const match = users.find(
+          (u: any) => u.email.toLowerCase() === emailVal.toLowerCase()
+        );
+        if (match && match.role) {
+          return match.role as UserRole;
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    // Fallback to keyword detection
+    const lower = emailVal.toLowerCase();
+    if (lower.includes("admin")) return "Super Admin";
+    if (lower.includes("hr")) return "HR Manager";
+    if (lower.includes("finance")) return "Finance";
+    if (lower.includes("manager")) return "Manager";
+    return "Employee";
+  };
+
+  const detectedRole = detectRole(email);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     setTimeout(() => {
-      // Determine which role to use
-      const role: UserRole = selectedRole || "Employee";
-      const account = DEMO_ACCOUNTS[role];
+      const role: UserRole = detectRole(email);
+      
+      // Check registered users list for name/initials
+      let accountName = "";
+      let accountInitials = "";
+      try {
+        const registered = localStorage.getItem("nexus_registered_users");
+        if (registered) {
+          const users = JSON.parse(registered);
+          const match = users.find(
+            (u: any) => u.email.toLowerCase() === email.toLowerCase()
+          );
+          if (match) {
+            accountName = match.name;
+            accountInitials = match.initials;
+          }
+        }
+      } catch (err) {
+        // ignore
+      }
+
+      // Fallback to demo account details if not found in registered list
+      if (!accountName || !accountInitials) {
+        const demo = DEMO_ACCOUNTS[role];
+        accountName = demo.name;
+        accountInitials = demo.initials;
+      }
 
       login({
-        name: account.name,
-        email: email || account.email,
+        name: accountName,
+        email: email || DEMO_ACCOUNTS[role].email,
         role,
-        initials: account.initials,
+        initials: accountInitials,
       });
 
       navigate(ROLE_HOME_ROUTE[role], { replace: true });
       setIsLoading(false);
     }, 600);
-  };
-
-  const handleDemoLogin = (role: UserRole) => {
-    const account = DEMO_ACCOUNTS[role];
-    login({
-      name: account.name,
-      email: account.email,
-      role,
-      initials: account.initials,
-    });
-    navigate(ROLE_HOME_ROUTE[role], { replace: true });
   };
 
   const handleResetPassword = (e: React.FormEvent) => {
@@ -231,63 +271,6 @@ export function Login() {
         ) : (
           /* ── Login Form ── */
           <form onSubmit={handleLogin} className="space-y-5">
-            {/* Role selector */}
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "13px",
-                  fontWeight: 700,
-                  color: "var(--foreground)",
-                  marginBottom: "8px",
-                }}
-              >
-                Sign in as
-              </label>
-              <div className="relative">
-                <ShieldCheck
-                  size={18}
-                  className="absolute left-4 top-1/2 -translate-y-1/2"
-                  style={{ color: "var(--primary)" }}
-                />
-                <select
-                  value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                  className="w-full rounded-2xl pl-12 pr-10 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 appearance-none cursor-pointer"
-                  style={{
-                    background: "var(--background)",
-                    border: "1px solid var(--border)",
-                    color: "var(--foreground)",
-                  }}
-                >
-                  <option value="">Select your role…</option>
-                  {(Object.keys(DEMO_ACCOUNTS) as UserRole[]).map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  size={16}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"
-                  style={{ color: "var(--muted-foreground)" }}
-                />
-              </div>
-              {selectedRole && (
-                <div
-                  className="mt-2 flex items-center gap-2 px-3 py-1.5 rounded-xl"
-                  style={{ backgroundColor: ROLE_CONFIG[selectedRole].bg }}
-                >
-                  <span
-                    className="text-[11px] font-semibold uppercase tracking-wider"
-                    style={{ color: ROLE_CONFIG[selectedRole].color }}
-                  >
-                    {ROLE_CONFIG[selectedRole].label} access level selected
-                  </span>
-                </div>
-              )}
-            </div>
-
             {/* Email */}
             <div>
               <label
@@ -320,6 +303,19 @@ export function Login() {
                   }}
                 />
               </div>
+              {email && (
+                <div
+                  className="mt-2.5 flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all"
+                  style={{ backgroundColor: ROLE_CONFIG[detectedRole].bg }}
+                >
+                  <span
+                    className="text-[11px] font-bold uppercase tracking-wider"
+                    style={{ color: ROLE_CONFIG[detectedRole].color }}
+                  >
+                    Access Level: {ROLE_CONFIG[detectedRole].label}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Password */}
@@ -415,42 +411,9 @@ export function Login() {
               </span>
             </button>
           </form>
-        )}
+        )
+}
 
-        {/* Quick Demo Login chips */}
-        {!isForgotPassword && (
-          <div className="mt-6">
-            <p
-              style={{
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "var(--muted-foreground)",
-                textAlign: "center",
-                textTransform: "uppercase",
-                letterSpacing: "0.8px",
-                marginBottom: "10px",
-              }}
-            >
-              Quick demo access
-            </p>
-            <div className="flex flex-wrap gap-2 justify-center">
-              {(Object.keys(DEMO_ACCOUNTS) as UserRole[]).map((role) => (
-                <button
-                  key={role}
-                  onClick={() => handleDemoLogin(role)}
-                  className="px-3 py-1.5 rounded-xl text-[11px] font-black transition-all hover:scale-105 active:scale-95"
-                  style={{
-                    backgroundColor: ROLE_CONFIG[role].bg,
-                    color: ROLE_CONFIG[role].color,
-                    border: `1px solid ${ROLE_CONFIG[role].color}30`,
-                  }}
-                >
-                  {role}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className="mt-6 text-center space-y-3">
           <p

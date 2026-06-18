@@ -452,7 +452,7 @@ export function AdminDashboard() {
               {t("adminDashboard")}
             </h2>
             <p className="text-[13px] font-semibold text-muted-foreground">
-              {t("mondayDate")}
+              {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
             </p>
           </div>
         </div>
@@ -468,12 +468,6 @@ export function AdminDashboard() {
             className="px-4 py-2 rounded-xl bg-card border border-border text-[13px] font-bold hover:bg-secondary transition-colors cursor-pointer"
           >
             View Reports
-          </button>
-          <button
-            onClick={() => setIsAddEmployeeOpen(true)}
-            className="px-4 py-2 rounded-xl bg-primary text-white text-[13px] font-bold hover:opacity-90 shadow-lg shadow-primary/20 cursor-pointer"
-          >
-            + Add Employee
           </button>
         </div>
       </div>

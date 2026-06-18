@@ -108,7 +108,7 @@ export function Topbar({
             marginTop: "2px",
           }}
         >
-          Monday, April 6, 2026
+          {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
         </p>
       </div>
 
