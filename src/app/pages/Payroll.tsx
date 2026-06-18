@@ -43,7 +43,7 @@ import {
   Unlock,
   SendHorizonal,
 } from "lucide-react";
-import { payrollEmployees, leaveRequests } from "../data/mockData";
+import { payrollEmployees, leaveRequests, employees } from "../data/mockData";
 
 /* ─── Constants ─────────────────────────── */
 const MONTHS = [
@@ -305,6 +305,30 @@ function PayslipModal({
     return "Rupees " + c(num) + " Only";
   })();
 
+  const handleEmail = () => {
+    const empEmail = employees.find((e) => e.id === employee.id)?.email || `${employee.name.toLowerCase().replace(/\s+/g, '.')}@nexushr.com`;
+    const subject = encodeURIComponent(`Salary Payslip - ${month} ${year} - ${employee.name} (${employee.id})`);
+    const body = encodeURIComponent(
+      `Dear ${employee.name},\n\n` +
+      `Please find below the summary of your payslip for the pay period ${month} ${year}.\n\n` +
+      `Employee Details:\n` +
+      `------------------------------------------\n` +
+      `Employee ID: ${employee.id}\n` +
+      `Designation: ${employee.designation}\n` +
+      `Department: ${employee.department}\n\n` +
+      `Salary Breakdown:\n` +
+      `------------------------------------------\n` +
+      `Gross Earnings: ₹${employee.gross.toLocaleString()}\n` +
+      `Total Deductions: ₹${employee.deductions.toLocaleString()}\n` +
+      `Net Pay Disbursed: ₹${employee.net.toLocaleString()}\n\n` +
+      `Your payslip is also available for download in the NexusHR portal.\n\n` +
+      `Best regards,\n` +
+      `Finance Department\n` +
+      `NexusHR Inc.`
+    );
+    window.location.href = `mailto:${empEmail}?subject=${subject}&body=${body}`;
+  };
+
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div
@@ -329,7 +353,7 @@ function PayslipModal({
             <button onClick={() => window.print()} className="p-2 hover:bg-muted rounded-xl text-muted-foreground hover:text-foreground transition-colors" title="Print">
               <Printer size={16} />
             </button>
-            <button className="p-2 hover:bg-muted rounded-xl text-muted-foreground hover:text-foreground transition-colors" title="Email">
+            <button onClick={handleEmail} className="p-2 hover:bg-muted rounded-xl text-muted-foreground hover:text-foreground transition-colors" title="Email">
               <Mail size={16} />
             </button>
             <button onClick={onClose} className="p-2 hover:bg-red-500/10 rounded-xl text-muted-foreground hover:text-red-500 transition-colors ml-1">
@@ -1469,7 +1493,28 @@ export function Payroll() {
                                 </button>
                                 <button onClick={() => {
                                   setOpenActionId(null);
-                                  addToast({ type: "info", title: "Email Sent", message: `Payslip for ${emp.name} emailed to their registered address.` });
+                                  const empEmail = employees.find((e) => e.id === emp.id)?.email || `${emp.name.toLowerCase().replace(/\s+/g, '.')}@nexushr.com`;
+                                  const subject = encodeURIComponent(`Salary Payslip - ${selectedMonth} ${selectedYear} - ${emp.name} (${emp.id})`);
+                                  const body = encodeURIComponent(
+                                    `Dear ${emp.name},\n\n` +
+                                    `Please find below the summary of your payslip for the pay period ${selectedMonth} ${selectedYear}.\n\n` +
+                                    `Employee Details:\n` +
+                                    `------------------------------------------\n` +
+                                    `Employee ID: ${emp.id}\n` +
+                                    `Designation: ${emp.designation}\n` +
+                                    `Department: ${emp.department}\n\n` +
+                                    `Salary Breakdown:\n` +
+                                    `------------------------------------------\n` +
+                                    `Gross Earnings: ₹${emp.gross.toLocaleString()}\n` +
+                                    `Total Deductions: ₹${emp.deductions.toLocaleString()}\n` +
+                                    `Net Pay Disbursed: ₹${emp.net.toLocaleString()}\n\n` +
+                                    `Your payslip is also available for download in the NexusHR portal.\n\n` +
+                                    `Best regards,\n` +
+                                    `Finance Department\n` +
+                                    `NexusHR Inc.`
+                                  );
+                                  window.location.href = `mailto:${empEmail}?subject=${subject}&body=${body}`;
+                                  addToast({ type: "info", title: "Email Client Opened", message: `Drafting payslip email for ${emp.name}.` });
                                 }}
                                   className="w-full text-left px-4 py-2.5 text-sm text-foreground hover:bg-muted/50 transition-colors flex items-center gap-2.5 font-medium">
                                   <Mail size={14} className="text-sky-500" /> Email Payslip

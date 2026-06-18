@@ -160,6 +160,8 @@ const initialClaims = [
 ];
 
 const months = [
+  "Current Month",
+  "Last Month",
   "January",
   "February",
   "March",
@@ -173,7 +175,7 @@ const months = [
   "November",
   "December",
 ];
-const years = ["2024", "2025", "2026"];
+const years = ["Current Year", "Last Year", "2024", "2025", "2026"];
 
 interface Employee {
   name: string;
@@ -304,7 +306,38 @@ export function Expenses() {
   };
 
   const filteredClaims = useMemo(() => {
+    const today = new Date();
+    const currentMonthIdx = today.getMonth(); // 0 to 11
+    const currentYearVal = today.getFullYear(); // e.g. 2026
+
+    const monthsList = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    let targetMonthName = selectedMonth;
+    if (selectedMonth === "Current Month") {
+      targetMonthName = monthsList[currentMonthIdx];
+    } else if (selectedMonth === "Last Month") {
+      targetMonthName = monthsList[(currentMonthIdx - 1 + 12) % 12];
+    }
+
+    let targetYearStr = selectedYear;
+    if (selectedYear === "Current Year") {
+      targetYearStr = currentYearVal.toString();
+    } else if (selectedYear === "Last Year") {
+      targetYearStr = (currentYearVal - 1).toString();
+    }
+
     return claims.filter((c) => {
+      const dateParts = c.date.split("-");
+      const claimYearStr = dateParts[0];
+      const claimMonthIdx = parseInt(dateParts[1], 10) - 1;
+      const claimMonthName = monthsList[claimMonthIdx];
+
+      const matchesMonth = claimMonthName === targetMonthName;
+      const matchesYear = claimYearStr === targetYearStr;
+
       const matchesSearch =
         c.employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.id.toLowerCase().includes(searchQuery.toLowerCase());
@@ -316,9 +349,7 @@ export function Expenses() {
 
       let matchesDateRange = true;
       if (selectedDateRange !== "All") {
-        // Simple mock logic for date range filtering
         const claimDate = new Date(c.date);
-        const today = new Date();
         const diffDays = Math.floor(
           (today.getTime() - claimDate.getTime()) / (1000 * 3600 * 24),
         );
@@ -331,6 +362,8 @@ export function Expenses() {
       }
 
       return (
+        matchesMonth &&
+        matchesYear &&
         matchesSearch &&
         matchesTab &&
         matchesDept &&
@@ -345,46 +378,55 @@ export function Expenses() {
     selectedDept,
     selectedCategory,
     selectedDateRange,
+    selectedMonth,
+    selectedYear,
   ]);
 
-  const kpis = [
-    {
-      label: "Total Claims",
-      val: "248",
-      trend: "+12.5%",
-      isUp: true,
-      icon: <Receipt size={18} />,
-      color: "emerald",
-      desc: "Submitted this month",
-    },
-    {
-      label: "Pending Approval",
-      val: "36",
-      trend: "+2.4%",
-      isUp: true,
-      icon: <Clock size={18} />,
-      color: "amber",
-      desc: "Awaiting manager action",
-    },
-    {
-      label: "Approved Amount",
-      val: "₹1.84L",
-      trend: "+8.1%",
-      isUp: true,
-      icon: <CheckCircle2 size={18} />,
-      color: "sky",
-      desc: "Finalized for payment",
-    },
-    {
-      label: "Reimbursed",
-      val: "₹1.42L",
-      trend: "+5.3%",
-      isUp: true,
-      icon: <Banknote size={18} />,
-      color: "teal",
-      desc: "Completed disbursements",
-    },
-  ];
+  const kpis = useMemo(() => {
+    const totalCount = filteredClaims.length;
+    const pendingCount = filteredClaims.filter((c) => c.approvalStatus === "Pending").length;
+    const approvedSum = filteredClaims.filter((c) => c.approvalStatus === "Approved").reduce((sum, c) => sum + c.amount, 0);
+    const reimbursedSum = filteredClaims.filter((c) => c.reimbursementStatus === "Paid").reduce((sum, c) => sum + c.amount, 0);
+
+    return [
+      {
+        label: "Total Claims",
+        val: totalCount.toString(),
+        trend: "+12.5%",
+        isUp: true,
+        icon: <Receipt size={18} />,
+        color: "emerald",
+        desc: "Submitted this month",
+      },
+      {
+        label: "Pending Approval",
+        val: pendingCount.toString(),
+        trend: "+2.4%",
+        isUp: true,
+        icon: <Clock size={18} />,
+        color: "amber",
+        desc: "Awaiting manager action",
+      },
+      {
+        label: "Approved Amount",
+        val: formatCurrency(approvedSum),
+        trend: "+8.1%",
+        isUp: true,
+        icon: <CheckCircle2 size={18} />,
+        color: "sky",
+        desc: "Finalized for payment",
+      },
+      {
+        label: "Reimbursed",
+        val: formatCurrency(reimbursedSum),
+        trend: "+5.3%",
+        isUp: true,
+        icon: <Banknote size={18} />,
+        color: "teal",
+        desc: "Completed disbursements",
+      },
+    ];
+  }, [filteredClaims]);
 
   const categories = [
     "Travel",
@@ -396,6 +438,69 @@ export function Expenses() {
     "Medical",
     "Other",
   ];
+
+  const pendingApprovalsSum = useMemo(() => {
+    return filteredClaims.filter((c) => c.approvalStatus === "Pending").reduce((sum, c) => sum + c.amount, 0);
+  }, [filteredClaims]);
+
+  const managerActionCount = useMemo(() => {
+    return filteredClaims.filter((c) => c.approvalStatus === "Pending").length;
+  }, [filteredClaims]);
+
+  const dueTodayCount = useMemo(() => {
+    return filteredClaims.filter((c) => c.reimbursementStatus === "Processing").length;
+  }, [filteredClaims]);
+
+  const rejectedCount = useMemo(() => {
+    return filteredClaims.filter((c) => c.approvalStatus === "Rejected").length;
+  }, [filteredClaims]);
+
+  const categoryData = useMemo(() => {
+    if (filteredClaims.length === 0) {
+      return [{ name: "No Expenses", value: 1, color: "#E2E8F0" }];
+    }
+
+    const catMap: Record<string, number> = {
+      Travel: 0,
+      Food: 0,
+      Fuel: 0,
+      Accommodation: 0,
+      "Office Supplies": 0,
+      Training: 0,
+      Medical: 0,
+      Other: 0,
+    };
+    filteredClaims.forEach((c) => {
+      if (catMap[c.category] !== undefined) {
+        catMap[c.category] += c.amount;
+      } else {
+        catMap.Other += c.amount;
+      }
+    });
+
+    const colors: Record<string, string> = {
+      Travel: "#10B981",
+      Food: "#3B82F6",
+      Fuel: "#F59E0B",
+      Accommodation: "#8B5CF6",
+      "Office Supplies": "#EC4899",
+      Training: "#06B6D4",
+      Medical: "#EF4444",
+      Other: "#64748B",
+    };
+
+    return Object.entries(catMap)
+      .map(([name, value]) => ({
+        name,
+        value,
+        color: colors[name] || "#64748B",
+      }))
+      .filter((item) => item.value > 0);
+  }, [filteredClaims]);
+
+  const totalSpend = useMemo(() => {
+    return filteredClaims.reduce((sum, c) => sum + c.amount, 0);
+  }, [filteredClaims]);
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 font-inter">
@@ -467,7 +572,7 @@ export function Expenses() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full left-0 mt-2 w-32 bg-card border border-border rounded-xl shadow-2xl z-50 py-2"
+                  className="absolute top-full left-0 mt-2 w-32 bg-card border border-border rounded-2xl shadow-2xl z-50 py-2"
                 >
                   {years.map((y) => (
                     <button
@@ -551,22 +656,22 @@ export function Expenses() {
       <div className="mt-6 mb-8 bg-card border border-border rounded-2xl shadow-sm p-2 flex flex-wrap items-center gap-2">
         <StatusChip
           dotColor="bg-orange-500"
-          label="₹42K Pending Approvals"
+          label={`${formatCurrency(pendingApprovalsSum)} Pending Approvals`}
           onClick={() => setShowPendingApprovals(true)}
         />
         <StatusChip
           dotColor="bg-amber-400"
-          label="12 Claims Need Manager Action"
+          label={`${managerActionCount} Claims Need Manager Action`}
           onClick={() => setShowManagerQueue(true)}
         />
         <StatusChip
           dotColor="bg-emerald-500"
-          label="3 Reimbursements Due Today"
+          label={`${dueTodayCount} Reimbursements Due Today`}
           onClick={() => setShowDuePayments(true)}
         />
         <StatusChip
           dotColor="bg-rose-500"
-          label="2 Rejected Claims Need Resubmission"
+          label={`${rejectedCount} Rejected Claims Need Resubmission`}
           onClick={() => setShowRejectedResubmit(true)}
         />
       </div>
@@ -2536,7 +2641,7 @@ export function Expenses() {
                 Total
               </span>
               <span className="text-2xl font-black text-foreground">
-                ₹1.32L
+                {formatCurrency(totalSpend)}
               </span>
             </div>
           </div>
