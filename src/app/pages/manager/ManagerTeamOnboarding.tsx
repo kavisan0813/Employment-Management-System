@@ -198,6 +198,40 @@ export function ManagerTeamOnboarding() {
   const [buddyAssigned, setBuddyAssigned] = useState(false);
   const [selectedBuddy, setSelectedBuddy] = useState<string | null>(null);
 
+  const handleExport = () => {
+    const lines = [
+      `NexusHR Onboarding Report`,
+      `Employee ID: ${NEW_JOINER.id}`,
+      `Employee Name: ${NEW_JOINER.name}`,
+      `Role: ${NEW_JOINER.role}`,
+      `Department: ${NEW_JOINER.department}`,
+      `Joining Date: ${NEW_JOINER.joiningDate}`,
+      `Email: ${NEW_JOINER.email}`,
+      `Phone: ${NEW_JOINER.phone}`,
+      `Location: ${NEW_JOINER.location}`,
+      `----------------------------------------`,
+      `Onboarding Tasks & Status:`,
+    ];
+
+    TASKS_DATA.forEach((task) => {
+      const isDone = completedTasks.includes(task.id) || task.urgency === "green";
+      lines.push(`- ${task.title} [${isDone ? "Completed" : "Pending"}] (Due: ${task.due})`);
+    });
+
+    COMPLETED_TASKS.forEach((task) => {
+      lines.push(`- ${task.title} [Completed]`);
+    });
+
+    const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${NEW_JOINER.name.replace(/\s+/g, "_")}_onboarding_summary.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Exported!", "success", "Onboarding summary exported successfully.");
+  };
+
   const [scheduleTitle, setScheduleTitle] = useState(
     "Welcome 1:1 — Priya Sharma",
   );
@@ -316,7 +350,10 @@ export function ManagerTeamOnboarding() {
             </p>
           </div>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card text-[13px] font-bold text-foreground hover:bg-secondary transition-all shadow-sm">
+        <button
+          onClick={handleExport}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card text-[13px] font-bold text-foreground hover:bg-secondary transition-all shadow-sm"
+        >
           <Download size={16} /> EXPORT
         </button>
       </div>

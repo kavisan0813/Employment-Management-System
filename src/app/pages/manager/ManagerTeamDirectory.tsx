@@ -322,6 +322,42 @@ export function ManagerTeamDirectory() {
     filters.status !== "All Status" ||
     filters.availability !== "All Availability";
 
+  const handleExport = () => {
+    const headers = [
+      "ID", "Name", "Role", "Designation", "Department",
+      "Status", "Availability", "Email", "Phone", "Skills",
+      "Location", "Joined Date", "Manager", "Timezone", "Work Schedule", "Is Direct Report"
+    ];
+    const allMatching = [...directReports, ...otherEmployees];
+    const rows = allMatching.map((c) => [
+      c.id,
+      `"${c.name}"`,
+      `"${c.role}"`,
+      `"${c.designation}"`,
+      `"${c.department}"`,
+      c.status,
+      c.availability,
+      c.email,
+      `"${c.phone}"`,
+      `"${c.skills.join("; ")}"`,
+      `"${c.location}"`,
+      `"${c.joinedDate}"`,
+      `"${c.manager}"`,
+      `"${c.timezone}"`,
+      `"${c.workSchedule}"`,
+      c.isDirectReport ? "Yes" : "No",
+    ].join(","));
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "team_directory_export.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Exported!", "success", "Directory list exported successfully.");
+  };
+
   const handleCopyEmail = (email: string) => {
     navigator.clipboard.writeText(email);
     showToast("Copied", "success", "Email address copied to clipboard.");
@@ -359,13 +395,7 @@ export function ManagerTeamDirectory() {
         <div className="flex items-center gap-3">
           {/* Export Button */}
           <button
-            onClick={() =>
-              showToast(
-                "Exporting",
-                "success",
-                "Directory list exported successfully.",
-              )
-            }
+            onClick={handleExport}
             className="px-4 py-2.5 bg-card border border-border rounded-xl text-[13px] font-bold text-foreground hover:bg-secondary transition-all flex items-center gap-2"
           >
             <ExternalLink size={16} className="text-[#00B87C]" />

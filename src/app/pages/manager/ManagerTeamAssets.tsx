@@ -16,6 +16,7 @@ import {
   Send,
   Calendar,
 } from "lucide-react";
+import { showToast } from "../../components/workflow/ToastNotification";
 
 type AssetStatus =
   | "Assigned"
@@ -352,6 +353,32 @@ export function ManagerTeamAssets() {
     );
   });
 
+  const handleExport = () => {
+    const headers = ["Asset ID", "Asset Name", "Category", "Serial No", "Value", "Status", "Assigned Date", "Condition", "Employee ID", "Employee Name", "Notes"];
+    const rows = filteredAssets.map((item) => [
+      item.assetId,
+      `"${item.name}"`,
+      `"${item.category}"`,
+      `"${item.serialNo}"`,
+      `"${item.value}"`,
+      item.status,
+      `"${item.assignedDate}"`,
+      `"${item.condition}"`,
+      item.member.id,
+      `"${item.member.name}"`,
+      `"${item.notes || ""}"`,
+    ].join(","));
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "team_assets_export.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Exported!", "success", "Team assets report downloaded as CSV.");
+  };
+
   const totalValue = TEAM_DATA.reduce(
     (sum, m) =>
       sum +
@@ -418,7 +445,10 @@ export function ManagerTeamAssets() {
             <Package size={16} />
             Request for Team
           </button>
-          <button className="px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-bold text-foreground hover:bg-secondary transition-all shadow-sm flex items-center gap-2">
+          <button
+            onClick={handleExport}
+            className="px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-bold text-foreground hover:bg-secondary transition-all shadow-sm flex items-center gap-2"
+          >
             <Download size={16} />
             Export
           </button>

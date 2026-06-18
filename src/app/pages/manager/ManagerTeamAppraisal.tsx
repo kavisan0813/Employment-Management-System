@@ -15,6 +15,7 @@ import {
   X,
   Check,
 } from "lucide-react";
+import { showToast } from "../../components/workflow/ToastNotification";
 
 interface TeamAppraisalMember {
   id: string;
@@ -262,6 +263,39 @@ export function ManagerTeamAppraisal() {
     return matchesSearch && matchesStatus && matchesBand;
   });
 
+  const handleExport = () => {
+    const headers = [
+      "Employee ID", "Name", "Designation", "Department",
+      "Attendance %", "Leave Days", "Late Marks", "Performance Score", "KPI Score",
+      "Manager Rating", "Recommended Increment %", "Current Salary", "Revised Salary", "Status"
+    ];
+    const rows = filteredMembers.map((m) => [
+      m.id,
+      `"${m.name}"`,
+      `"${m.designation}"`,
+      `"${m.department}"`,
+      m.attendancePct,
+      m.leaveDays,
+      m.lateMarks,
+      m.performanceScore,
+      m.kpiScore,
+      m.managerRating,
+      `"${m.recommendedIncrement}"`,
+      m.currentSalary,
+      m.revisedSalary,
+      m.status,
+    ].join(","));
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "team_appraisal_export.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Exported!", "success", "Team appraisal report downloaded as CSV.");
+  };
+
   const selectedMember = members.find((m) => m.id === selectedMemberId);
 
   return (
@@ -308,7 +342,10 @@ export function ManagerTeamAppraisal() {
             </p>
           </div>
         </div>
-        <button className="px-4 py-2 border border-border rounded-xl text-sm font-bold hover:bg-muted transition-colors flex items-center gap-2">
+        <button
+          onClick={handleExport}
+          className="px-4 py-2 border border-border rounded-xl text-sm font-bold hover:bg-muted transition-colors flex items-center gap-2"
+        >
           <Download size={15} />
           Export
         </button>
@@ -562,7 +599,10 @@ export function ManagerTeamAppraisal() {
         </div>
 
         {/* Right side: Export button */}
-        <button className="px-4 py-2 bg-[#00B87C] hover:bg-[#00a36c] text-white text-sm font-bold rounded-xl shadow-md shadow-[#00B87C]/15 transition-all flex items-center justify-center gap-2">
+        <button
+          onClick={handleExport}
+          className="px-4 py-2 bg-[#00B87C] hover:bg-[#00a36c] text-white text-sm font-bold rounded-xl shadow-md shadow-[#00B87C]/15 transition-all flex items-center justify-center gap-2"
+        >
           <Download size={14} />
           Export CSV
         </button>

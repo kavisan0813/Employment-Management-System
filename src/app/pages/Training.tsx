@@ -82,35 +82,35 @@ const initialCourses: Course[] = [
     lastAccessed: "2026-04-26",
   },
   {
-    id: "C003",
-    title: "Global Data Compliance (GDPR)",
-    category: "Compliance",
-    trainer: "Legal Team",
-    duration: "3 hrs",
-    difficulty: "Beginner",
-    progress: 0,
-    dueDate: "Overdue",
-    mandatory: true,
-    type: "Compliance",
-    isEnrolled: true,
-    department: "All",
-    lastAccessed: "N/A",
-  },
-  {
     id: "C004",
-    title: "Cybersecurity Fundamentals",
+    title: "Security Awareness Training",
     category: "Technical",
-    trainer: "IT Security",
+    trainer: "IT Sec Team",
     duration: "4 hrs",
     difficulty: "Beginner",
     progress: 0,
-    dueDate: "5 days left",
+    dueDate: "2026-05-10",
     mandatory: true,
     type: "Technical",
     isEnrolled: false,
     department: "All",
     rating: 4.7,
     reviews: 128,
+  },
+  {
+    id: "C003",
+    title: "Global Compliance & Anti-Bribery",
+    category: "Compliance",
+    trainer: "Legal Counsel",
+    duration: "3 hrs",
+    difficulty: "Beginner",
+    progress: 0,
+    dueDate: "2026-04-15",
+    mandatory: true,
+    type: "Compliance",
+    isEnrolled: true,
+    department: "All",
+    lastAccessed: "N/A",
   },
   {
     id: "C005",
@@ -125,6 +125,21 @@ const initialCourses: Course[] = [
     department: "Management",
     rating: 4.5,
     reviews: 85,
+  },
+  {
+    id: "C006",
+    title: "Health & Safety Orientation",
+    category: "Compliance",
+    trainer: "HR Ops",
+    duration: "2 hrs",
+    difficulty: "Beginner",
+    progress: 100,
+    dueDate: "2026-04-20",
+    mandatory: true,
+    type: "Compliance",
+    isEnrolled: true,
+    department: "All",
+    lastAccessed: "2026-04-20",
   },
 ];
 
@@ -534,8 +549,24 @@ export function Training() {
     document.body.removeChild(link);
   };
 
-  const enrolledCourses = courses.filter(
+  const filteredCourses = courses.filter((c) => {
+    const matchesSearch =
+      c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.trainer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.difficulty.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === "All" || c.type === typeFilter;
+    const matchesDept = deptFilter === "All" || c.department === deptFilter;
+    return matchesSearch && matchesType && matchesDept;
+  });
+
+  const enrolledCourses = filteredCourses.filter(
     (c) => c.isEnrolled && c.progress < 100,
+  );
+
+  const filteredCertifications = initialCertifications.filter(
+    (cert) =>
+      cert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cert.authority.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getGradient = (type: string) => {
@@ -899,7 +930,7 @@ export function Training() {
                 ACHIEVED CERTIFICATIONS
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {initialCertifications.map((cert, idx) => (
+                {filteredCertifications.map((cert, idx) => (
                   <div
                     key={idx}
                     className="bg-card p-5 rounded-3xl border border-border shadow-sm flex items-center justify-between gap-4"
@@ -969,16 +1000,7 @@ export function Training() {
 
       {activeTab === "Catalog" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {courses
-            .filter((c) => {
-              const matchesSearch = c.title
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase());
-              const matchesType = typeFilter === "All" || c.type === typeFilter;
-              const matchesDept =
-                deptFilter === "All" || c.department === deptFilter;
-              return matchesSearch && matchesType && matchesDept;
-            })
+          {filteredCourses
             .map((course) => (
               <div
                 key={course.id}
@@ -1050,76 +1072,82 @@ export function Training() {
 
       {activeTab === "Mandatory" && (
         <div className="max-w-3xl mx-auto space-y-4">
-          {[
-            {
-              title: "Security Awareness Training",
-              due: "2026-05-10",
-              status: "Pending",
-              instructor: "IT Sec Team",
-            },
-            {
-              title: "Global Compliance & Anti-Bribery",
-              due: "2026-04-15",
-              status: "Overdue",
-              instructor: "Legal Counsel",
-            },
-            {
-              title: "Health & Safety Orientation",
-              due: "2026-04-20",
-              status: "Completed",
-              instructor: "HR Ops",
-            },
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              className={`bg-card p-5 rounded-3xl border border-border shadow-sm border-l-4 ${
-                item.status === "Completed"
-                  ? "border-l-[#00B87C]"
-                  : item.status === "Overdue"
-                    ? "border-l-rose-500"
-                    : "border-l-amber-500"
-              } flex items-center justify-between gap-4 hover:border-l-8 transition-all duration-200`}
-            >
-              <div className="flex items-center gap-3">
-                <AlertCircle
-                  className={`w-6 h-6 flex-shrink-0 ${
-                    item.status === "Completed"
-                      ? "text-[#00B87C]"
-                      : item.status === "Overdue"
-                        ? "text-rose-500"
-                        : "text-amber-500"
-                  }`}
-                />
-                <div>
-                  <h4 className="text-xs font-black text-slate-900 dark:text-slate-100">
-                    {item.title}
-                  </h4>
-                  <p className="text-[11px] font-bold text-muted-foreground mt-0.5">
-                    Instructor: {item.instructor} • Deadline: {item.due}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <span
-                  className={`px-2.5 py-1 rounded-full text-[9px] font-black tracking-wider uppercase border ${
-                    item.status === "Completed"
-                      ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                      : item.status === "Overdue"
-                        ? "bg-rose-500/10 text-rose-600 border-rose-500/20"
-                        : "bg-amber-500/10 text-amber-600 border-amber-500/20"
-                  }`}
+          {filteredCourses
+            .filter((c) => c.mandatory)
+            .map((item) => {
+              const status =
+                item.progress === 100
+                  ? "Completed"
+                  : item.dueDate === "2026-04-15" || item.id === "C003"
+                    ? "Overdue"
+                    : "Pending";
+              return (
+                <div
+                  key={item.id}
+                  className={`bg-card p-5 rounded-3xl border border-border shadow-sm border-l-4 ${
+                    status === "Completed"
+                      ? "border-l-[#00B87C]"
+                      : status === "Overdue"
+                        ? "border-l-rose-500"
+                        : "border-l-amber-500"
+                  } flex items-center justify-between gap-4 hover:border-l-8 transition-all duration-200`}
                 >
-                  {item.status}
-                </span>
-                {item.status !== "Completed" && (
-                  <button className="px-4 py-1.5 text-[11px] font-black text-white bg-[#00B87C] hover:bg-[#059669] rounded-xl shadow-lg shadow-[#00B87C]/20 transition-all active:scale-95 cursor-pointer uppercase tracking-wider">
-                    Launch
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+                  <div className="flex items-center gap-3">
+                    <AlertCircle
+                      className={`w-6 h-6 flex-shrink-0 ${
+                        status === "Completed"
+                          ? "text-[#00B87C]"
+                          : status === "Overdue"
+                            ? "text-rose-500"
+                            : "text-amber-500"
+                      }`}
+                    />
+                    <div>
+                      <h4 className="text-xs font-black text-slate-900 dark:text-slate-100">
+                        {item.title}
+                      </h4>
+                      <p className="text-[11px] font-bold text-muted-foreground mt-0.5">
+                        Instructor: {item.trainer} • Deadline: {item.dueDate}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-[9px] font-black tracking-wider uppercase border ${
+                        status === "Completed"
+                          ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                          : status === "Overdue"
+                            ? "bg-rose-500/10 text-rose-600 border-rose-500/20"
+                            : "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                      }`}
+                    >
+                      {status}
+                    </span>
+                    {status !== "Completed" && (
+                      <button
+                        onClick={() => {
+                          if (!item.isEnrolled) {
+                            setCourses((prev) =>
+                              prev.map((c) =>
+                                c.id === item.id ? { ...c, isEnrolled: true } : c
+                              )
+                            );
+                          }
+                          setLearningCourse({
+                            ...item,
+                            isEnrolled: true,
+                          });
+                        }}
+                        className="px-4 py-1.5 text-[11px] font-black text-white bg-[#00B87C] hover:bg-[#059669] rounded-xl shadow-lg shadow-[#00B87C]/20 transition-all active:scale-95 cursor-pointer uppercase tracking-wider"
+                      >
+                        Launch
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
         </div>
       )}
 

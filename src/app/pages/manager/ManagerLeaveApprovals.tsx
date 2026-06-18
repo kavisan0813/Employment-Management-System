@@ -14,6 +14,7 @@ import {
   Check,
   X,
 } from "lucide-react";
+import { showToast } from "../../components/workflow/ToastNotification";
 
 type TabType = "Pending" | "Calendar" | "History";
 
@@ -148,6 +149,53 @@ export function ManagerLeaveApprovals() {
     return matchesSearch && matchesStatus;
   });
 
+  const handleExport = () => {
+    if (activeTab === "History") {
+      const headers = ["History ID", "Employee", "Type", "From", "To", "Days", "Reason", "Approved On", "Status"];
+      const rows = filteredHistory.map((h) => [
+        h.id,
+        `"${h.emp}"`,
+        h.type,
+        `"${h.from}"`,
+        `"${h.to}"`,
+        h.days,
+        `"${h.reason}"`,
+        `"${h.approvedOn}"`,
+        h.status,
+      ].join(","));
+      const csv = [headers.join(","), ...rows].join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "leave_history_export.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Exported!", "success", "Leave history downloaded as CSV.");
+    } else {
+      const headers = ["Request ID", "Name", "Type", "Type Label", "Date Range", "Days", "Reason", "Submitted"];
+      const rows = pendingRequests.map((r) => [
+        r.id,
+        `"${r.name}"`,
+        r.type,
+        `"${r.typeLabel}"`,
+        `"${r.dateRange}"`,
+        `"${r.days}"`,
+        `"${r.reason}"`,
+        `"${r.submitted}"`,
+      ].join(","));
+      const csv = [headers.join(","), ...rows].join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "pending_leave_requests.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Exported!", "success", "Pending leave requests downloaded as CSV.");
+    }
+  };
+
   // Reject Modal State
   const [rejectingRequest, setRejectingRequest] = useState<
     (typeof MOCK_PENDING_REQUESTS)[0] | null
@@ -225,7 +273,10 @@ export function ManagerLeaveApprovals() {
           >
             <Calendar size={16} /> View Calendar
           </button>
-          <button className="px-4 py-2.5 text-sm font-bold rounded-xl border border-dashed border-border hover:bg-secondary transition-colors active:scale-95 flex items-center gap-2">
+          <button
+            onClick={handleExport}
+            className="px-4 py-2.5 text-sm font-bold rounded-xl border border-dashed border-border hover:bg-secondary transition-colors active:scale-95 flex items-center gap-2"
+          >
             <Download size={16} /> Export
           </button>
         </div>

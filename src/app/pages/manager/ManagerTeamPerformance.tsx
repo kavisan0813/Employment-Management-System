@@ -12,6 +12,7 @@ import {
   Award,
   Clock,
 } from "lucide-react";
+import { showToast } from "../../components/workflow/ToastNotification";
 
 const MOCK_TEAM_PERFORMANCE = [
   {
@@ -231,6 +232,62 @@ export function ManagerTeamPerformance() {
     return true;
   });
 
+  const handleExport = () => {
+    const headers = ["Employee ID", "Name", "Designation", "Department", "Self Rating", "Manager Rating", "Goals Met", "Goals Total", "Final Score", "Status"];
+    const rows = filteredPerformance.map((row) => [
+      row.id,
+      `"${row.name}"`,
+      `"${row.designation}"`,
+      `"${row.dept}"`,
+      row.selfRating,
+      `"${row.managerRating}"`,
+      row.goalsMet,
+      row.goalsTotal,
+      row.finalScore,
+      row.status,
+    ].join(","));
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "team_performance_export.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Exported!", "success", "Team performance report downloaded as CSV.");
+  };
+
+  const handleExportScorecard = (emp: (typeof MOCK_TEAM_PERFORMANCE)[0]) => {
+    const reviewDetails = MOCK_COMPLETED_REVIEWS[emp.id];
+    if (!reviewDetails) {
+      showToast("No Review Data", "error", "No completed review data found for this employee.");
+      return;
+    }
+    const lines = [
+      `NexusHR Scorecard Report`,
+      `Employee Name: ${emp.name}`,
+      `Designation: ${emp.designation}`,
+      `Department: ${emp.dept}`,
+      `Self Rating: ${emp.selfRating}`,
+      `Manager Rating: ${emp.managerRating}`,
+      `Final Score: ${emp.finalScore}`,
+      `Goals Met: ${emp.goalsMet} / ${emp.goalsTotal}`,
+      `----------------------------------------`,
+      `Key Strengths: ${reviewDetails.strengths}`,
+      `Development Areas: ${reviewDetails.developmentAreas}`,
+      `Promotion Recommended: ${reviewDetails.promoRecommended ? "Yes" : "No"}`,
+      `Promotion Justification: ${reviewDetails.promoJustification || "N/A"}`,
+    ];
+    const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${emp.name.replace(/\s+/g, "_")}_scorecard.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Exported!", "success", "Scorecard exported successfully.");
+  };
+
   // Review Form State
   const [compRatings, setCompRatings] = useState<Record<string, number>>({});
   const [compComments, setCompComments] = useState<Record<string, string>>({});
@@ -356,7 +413,10 @@ export function ManagerTeamPerformance() {
           <span className="px-3 py-1.5 bg-amber-50 text-amber-700 text-[12px] font-bold rounded-lg border border-amber-200 flex items-center gap-1.5">
             <Clock size={14} /> Review deadline: Apr 25
           </span>
-          <button className="px-4 py-2.5 text-sm font-bold rounded-xl border border-border hover:bg-secondary transition-colors active:scale-95 flex items-center gap-2">
+          <button
+            onClick={handleExport}
+            className="px-4 py-2.5 text-sm font-bold rounded-xl border border-border hover:bg-secondary transition-colors active:scale-95 flex items-center gap-2"
+          >
             <Download size={16} /> Export
           </button>
         </div>
@@ -1138,7 +1198,9 @@ export function ManagerTeamPerformance() {
               <div className="p-6 border-t border-border bg-secondary/30 rounded-b-2xl flex items-center justify-between shrink-0">
                 <button
                   onClick={() => {
-                    alert("Downloading scorecard PDF...");
+                    if (viewingEmp) {
+                      handleExportScorecard(viewingEmp);
+                    }
                   }}
                   className="px-4 py-2.5 text-sm font-bold rounded-xl border border-border bg-background hover:bg-secondary transition-colors flex items-center gap-2"
                 >

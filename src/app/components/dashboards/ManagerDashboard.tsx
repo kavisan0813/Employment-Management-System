@@ -249,7 +249,7 @@ export function ManagerDashboard() {
             <Users size={28} className="text-[#F59E0B]" />
           </div>
           <div>
-            <h2 className="text-[26px] font-bold text-[#111827]">
+            <h2 className="text-[26px] font-bold text-[#111827] dark:text-slate-100">
               Team Dashboard
             </h2>
             <p className="text-[13px] text-[#6B7280]">
@@ -425,7 +425,7 @@ export function ManagerDashboard() {
             <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
               {kpi.label}
             </p>
-            <p className="text-[28px] font-bold text-[#111827] mb-1">
+            <p className="text-[28px] font-bold text-[#111827] dark:text-slate-100 mb-1">
               {kpi.value}
             </p>
             <p className="text-[12px] text-[#6B7280]">{kpi.sub}</p>

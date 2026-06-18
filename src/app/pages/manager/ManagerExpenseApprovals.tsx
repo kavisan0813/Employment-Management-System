@@ -133,6 +133,30 @@ export function ManagerExpenseApprovals() {
   };
 
   const filteredExpenses = expenses.filter((e) => e.status === activeTab);
+
+  const handleExport = () => {
+    const headers = ["Expense ID", "Employee Name", "Designation", "Description", "Category", "Amount", "Receipt", "Date", "Status"];
+    const rows = filteredExpenses.map((e) => [
+      e.id,
+      `"${e.empName}"`,
+      `"${e.designation}"`,
+      `"${e.description}"`,
+      e.category,
+      `"${e.amount}"`,
+      e.receiptStatus,
+      `"${e.date}"`,
+      e.status,
+    ].join(","));
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${activeTab.toLowerCase()}_expenses_export.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Exported!", "success", `${activeTab} expense claims downloaded as CSV.`);
+  };
   const pendingCount = expenses.filter((e) => e.status === "Pending").length;
   const approvedCount = expenses.filter((e) => e.status === "Approved").length;
   const rejectedCount = expenses.filter((e) => e.status === "Rejected").length;
@@ -161,7 +185,10 @@ export function ManagerExpenseApprovals() {
             </p>
           </div>
         </div>
-        <button className="px-4 py-2.5 text-sm font-bold rounded-xl border border-border hover:bg-secondary transition-colors active:scale-95 flex items-center gap-2">
+        <button
+          onClick={handleExport}
+          className="px-4 py-2.5 text-sm font-bold rounded-xl border border-border hover:bg-secondary transition-colors active:scale-95 flex items-center gap-2"
+        >
           <Download size={16} /> Export
         </button>
       </div>

@@ -272,6 +272,53 @@ const StatusBadge = ({ status }: { status: ShiftRequest["status"] }) => {
   );
 };
 
+function getShiftForDate(d: Date): Shift {
+  const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
+  const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "2-digit" });
+  const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+
+  if (isWeekend) {
+    return {
+      id: `S-OFF-${d.getTime()}`,
+      date: dateStr,
+      day: dayName,
+      type: "Off Day",
+      time: "N/A",
+      hours: "0h",
+      location: "N/A",
+      department: "Engineering",
+      manager: "Suresh Kumar",
+    };
+  }
+
+  const shiftVal = (d.getDate() + d.getMonth() * 7) % 3;
+  let type: "Morning" | "Evening" | "Night" = "Morning";
+  let time = "08:00 AM - 04:00 PM";
+  let location = "Head Office, BLR";
+
+  if (shiftVal === 1) {
+    type = "Evening";
+    time = "04:00 PM - 12:00 AM";
+    location = "Remote";
+  } else if (shiftVal === 2) {
+    type = "Night";
+    time = "12:00 AM - 08:00 AM";
+    location = "Head Office, BLR";
+  }
+
+  return {
+    id: `S-${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`,
+    date: dateStr,
+    day: dayName,
+    type,
+    time,
+    hours: "8h",
+    location,
+    department: "Engineering",
+    manager: "Suresh Kumar",
+  };
+}
+
 /* ─────────────────────────────────────────────────────────────── */
 /* Main Page Component                                             */
 /* ─────────────────────────────────────────────────────────────── */
@@ -284,6 +331,55 @@ export function EmployeeSchedule() {
   // Date navigation state
   const today = useMemo(() => new Date(2026, 3, 6), []); // Apr 6, 2026 (demo)
   const [navDate, setNavDate] = useState(today);
+
+  // Dynamic state generation
+  const weekDates = useMemo(() => {
+    const dates: Date[] = [];
+    const mon = new Date(navDate);
+    const day = navDate.getDay();
+    mon.setDate(navDate.getDate() - (day === 0 ? 6 : day - 1));
+    for (let i = 0; i < 7; i++) {
+      const next = new Date(mon);
+      next.setDate(mon.getDate() + i);
+      dates.push(next);
+    }
+    return dates;
+  }, [navDate]);
+
+  const thisWeekShiftsCount = useMemo(() => {
+    return weekDates.filter(d => getShiftForDate(d).type !== "Off Day").length;
+  }, [weekDates]);
+
+  const nextDayOff = useMemo(() => {
+    let d = new Date(navDate);
+    for (let i = 0; i < 7; i++) {
+      const shift = getShiftForDate(d);
+      if (shift.type === "Off Day") {
+        return {
+          dayName: d.toLocaleDateString("en-US", { weekday: "long" }),
+          dateStr: d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+        };
+      }
+      d = new Date(d);
+      d.setDate(d.getDate() + 1);
+    }
+    return { dayName: "None", dateStr: "N/A" };
+  }, [navDate]);
+
+  const upcomingShiftsList = useMemo(() => {
+    const list: Shift[] = [];
+    let d = new Date(navDate);
+    for (let i = 0; i < 7; i++) {
+      const shift = getShiftForDate(d);
+      if (shift.type !== "Off Day") {
+        list.push(shift);
+      }
+      d = new Date(d);
+      d.setDate(d.getDate() + 1);
+      if (list.length >= 5) break;
+    }
+    return list;
+  }, [navDate]);
 
   // Navigate forward/back based on current view
   const navigateBack = () => {
@@ -547,8 +643,8 @@ export function EmployeeSchedule() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <PersonalShiftOverviewCard
             label="THIS WEEK SHIFTS"
-            value="5"
-            subValue="40h scheduled"
+            value={thisWeekShiftsCount}
+            subValue={`${thisWeekShiftsCount * 8}h scheduled`}
           />
           <PersonalShiftOverviewCard
             label="OVERTIME"
@@ -559,8 +655,8 @@ export function EmployeeSchedule() {
           />
           <PersonalShiftOverviewCard
             label="NEXT DAY OFF"
-            value="Saturday"
-            subValue="Apr 11, 2026"
+            value={nextDayOff.dayName}
+            subValue={nextDayOff.dateStr}
           />
           <PersonalShiftOverviewCard
             label="SHIFT SWAPS"
@@ -584,22 +680,17 @@ export function EmployeeSchedule() {
                   <th className="px-6 py-5 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border min-w-[200px]">
                     EMPLOYEE
                   </th>
-                  {[
-                    "MON 06",
-                    "TUE 07",
-                    "WED 08",
-                    "THU 09",
-                    "FRI 10",
-                    "SAT 11",
-                    "SUN 12",
-                  ].map((day) => (
-                    <th
-                      key={day}
-                      className="px-4 py-5 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border text-center"
-                    >
-                      {day}
-                    </th>
-                  ))}
+                  {weekDates.map((d) => {
+                    const dayLabel = d.toLocaleDateString("en-US", { weekday: "short", day: "2-digit" }).toUpperCase();
+                    return (
+                      <th
+                        key={d.getTime()}
+                        className="px-4 py-5 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border text-center"
+                      >
+                        {dayLabel}
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
@@ -619,7 +710,8 @@ export function EmployeeSchedule() {
                       </div>
                     </div>
                   </td>
-                  {UPCOMING_SHIFTS.map((shift, idx) => {
+                  {weekDates.map((d, idx) => {
+                    const shift = getShiftForDate(d);
                     const conf =
                       SHIFT_COLORS[shift.type] || SHIFT_COLORS["Morning"];
                     return (
@@ -640,36 +732,6 @@ export function EmployeeSchedule() {
                       </td>
                     );
                   })}
-                  <td className="p-2 border-b border-border">
-                    <div
-                      onClick={() => {
-                        setSelectedShift({
-                          id: "OFF",
-                          date: "Apr 11",
-                          day: "SAT",
-                          type: "Off Day",
-                          time: "N/A",
-                          hours: "0h",
-                          location: "N/A",
-                          department: "Engineering",
-                          manager: "Suresh Kumar",
-                        });
-                        setShowDetailsModal(true);
-                      }}
-                      className="h-full min-h-[60px] rounded-xl bg-secondary flex items-center justify-center border border-dashed border-border cursor-pointer hover:bg-secondary/80 transition-all"
-                    >
-                      <span className="text-[11px] font-semibold text-muted-foreground uppercase">
-                        Off Day
-                      </span>
-                    </div>
-                  </td>
-                  <td className="p-2 border-b border-border">
-                    <div className="h-full min-h-[60px] rounded-xl bg-secondary flex items-center justify-center border border-dashed border-border cursor-not-allowed">
-                      <span className="text-[11px] font-semibold text-muted-foreground uppercase">
-                        Off Day
-                      </span>
-                    </div>
-                  </td>
                 </tr>
               </tbody>
             </table>
@@ -696,27 +758,28 @@ export function EmployeeSchedule() {
                 const cells = [];
                 for (let i = 0; i < firstDay; i++) cells.push(null);
                 for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-                // Shift types for demo pattern
-                const shiftPattern: Record<number, string> = { 6:"Morning", 7:"Morning", 8:"Evening", 9:"Evening", 10:"Night", 13:"Morning", 14:"Morning" };
                 return cells.map((day, i) => {
                   if (day === null) return <div key={`e-${i}`} className="min-h-[80px]" />;
-                  const isToday = day === 6 && month === 3;
-                  const shiftType = shiftPattern[day];
-                  const conf = shiftType ? SHIFT_COLORS[shiftType] : null;
-                  const isWeekend = ((firstDay + day - 1) % 7 === 0 || (firstDay + day - 1) % 7 === 6);
+                  const targetDate = new Date(year, month, day);
+                  const isToday =
+                    targetDate.getDate() === today.getDate() &&
+                    targetDate.getMonth() === today.getMonth() &&
+                    targetDate.getFullYear() === today.getFullYear();
+                  const shift = getShiftForDate(targetDate);
+                  const conf = SHIFT_COLORS[shift.type];
                   return (
-                    <div key={day} className={`min-h-[80px] rounded-xl border p-2 flex flex-col gap-1 transition-colors cursor-pointer hover:border-[#00B87C]/50 ${
-                      isToday ? 'border-[#00B87C] bg-[#00B87C]/5' : isWeekend ? 'border-border/50 bg-muted/20' : 'border-border bg-card'
+                    <div key={day} onClick={() => handleViewDetails(shift)} className={`min-h-[80px] rounded-xl border p-2 flex flex-col gap-1 transition-colors cursor-pointer hover:border-[#00B87C]/50 ${
+                      isToday ? 'border-[#00B87C] bg-[#00B87C]/5' : shift.type === "Off Day" ? 'border-border/50 bg-muted/20' : 'border-border bg-card'
                     }`}>
                       <span className={`text-[12px] font-bold ${ isToday ? 'w-6 h-6 rounded-full bg-[#00B87C] text-white flex items-center justify-center text-[11px] font-black' : 'text-foreground' }`}>
                         {day}
                       </span>
-                      {shiftType && conf && !isWeekend && (
+                      {shift.type !== "Off Day" && conf && (
                         <div className={`mt-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase text-center ${conf.bg} ${conf.text}`}>
-                          {shiftType}
+                          {shift.type}
                         </div>
                       )}
-                      {isWeekend && day > 0 && (
+                      {shift.type === "Off Day" && (
                         <div className="mt-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase text-center bg-secondary text-muted-foreground">
                           Off
                         </div>
@@ -741,54 +804,100 @@ export function EmployeeSchedule() {
         {/* ─── Day View ──────────────────────────────────────────────── */}
         {view === "Day" && (
         <div className="space-y-4">
-          <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">TODAY'S SCHEDULE</h3>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Day Timeline */}
-            <div className="bg-card rounded-2xl border border-border shadow-sm p-6 space-y-5">
-              <div className="flex items-center justify-between">
-                <h4 className="text-[15px] font-black text-foreground">{navDate.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</h4>
-                <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-primary text-[11px] font-black border border-primary/20">Work Day</span>
-              </div>
-              <div className="space-y-3">
-                {[
-                  { time:"08:00 AM", label:"Clock-in / Morning Briefing", type:"start" },
-                  { time:"09:00 AM", label:"Development Sprint", type:"work" },
-                  { time:"01:00 PM", label:"Lunch Break (1 hr)", type:"break" },
-                  { time:"02:00 PM", label:"Team Sync / PR Reviews", type:"work" },
-                  { time:"04:00 PM", label:"Clock-out", type:"end" },
-                ].map((item,i) => (
-                  <div key={i} className="flex items-start gap-4">
-                    <span className="w-[80px] text-[11px] font-black text-muted-foreground pt-1 shrink-0">{item.time}</span>
-                    <div className="flex flex-col items-center gap-1">
-                      <div className={`w-3 h-3 rounded-full mt-1 ${ item.type==="start"||item.type==="end" ? "bg-primary" : item.type==="break" ? "bg-amber-500" : "bg-sky-500" }`} />
-                      {i < 4 && <div className="w-0.5 h-8 bg-border" />}
-                    </div>
-                    <div className={`flex-1 px-4 py-3 rounded-xl text-[13px] font-bold ${ item.type==="break" ? "bg-amber-500/5 border border-amber-500/10 text-amber-600" : item.type==="start"||item.type==="end" ? "bg-emerald-500/5 border border-emerald-500/10 text-primary" : "bg-sky-500/5 border border-sky-500/10 text-foreground" }`}>
-                      {item.label}
-                    </div>
+          <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">DAILY SCHEDULE</h3>
+          {(() => {
+            const shift = getShiftForDate(navDate);
+            const timelineItems = (() => {
+              if (shift.type === "Off Day") {
+                return [
+                  { time: "All Day", label: "No scheduled shifts. Time to relax!", type: "break" }
+                ];
+              }
+              if (shift.type === "Evening") {
+                return [
+                  { time: "04:00 PM", label: "Clock-in / Evening Briefing", type: "start" },
+                  { time: "05:00 PM", label: "Development Sprint", type: "work" },
+                  { time: "09:00 PM", label: "Dinner Break (1 hr)", type: "break" },
+                  { time: "10:00 PM", label: "Team Sync & Code Review", type: "work" },
+                  { time: "12:00 AM", label: "Clock-out", type: "end" },
+                ];
+              }
+              if (shift.type === "Night") {
+                return [
+                  { time: "12:00 AM", label: "Clock-in / Night Briefing", type: "start" },
+                  { time: "01:00 AM", label: "Support & Infrastructure", type: "work" },
+                  { time: "04:00 AM", label: "Meal Break (1 hr)", type: "break" },
+                  { time: "05:00 AM", label: "Automated Testing & Deployment", type: "work" },
+                  { time: "08:00 AM", label: "Clock-out", type: "end" },
+                ];
+              }
+              return [
+                { time: "08:00 AM", label: "Clock-in / Morning Briefing", type: "start" },
+                { time: "09:00 AM", label: "Development Sprint", type: "work" },
+                { time: "01:00 PM", label: "Lunch Break (1 hr)", type: "break" },
+                { time: "02:00 PM", label: "Team Sync / PR Reviews", type: "work" },
+                { time: "04:00 PM", label: "Clock-out", type: "end" },
+              ];
+            })();
+
+            return (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Day Timeline */}
+                <div className="bg-card rounded-2xl border border-border shadow-sm p-6 space-y-5">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-[15px] font-black text-foreground">{navDate.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</h4>
+                    <span className={`px-3 py-1 rounded-full text-[11px] font-black border ${
+                      shift.type === "Off Day"
+                        ? "bg-secondary text-muted-foreground border-border"
+                        : "bg-emerald-500/10 text-primary border-primary/20"
+                    }`}>
+                      {shift.type === "Off Day" ? "Off Day" : "Work Day"}
+                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
-            {/* Day Shift Card */}
-            <div className="space-y-4">
-              <div className="bg-card rounded-2xl border border-border shadow-sm p-6 space-y-4">
-                <h4 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">Shift Details</h4>
-                {[{label:"Shift Type",val:"Morning Shift"},{label:"Timing",val:"08:00 AM – 04:00 PM"},{label:"Duration",val:"8 hours"},{label:"Location",val:"Head Office, BLR"},{label:"Manager",val:"Suresh Kumar"}].map(f => (
-                  <div key={f.label} className="flex justify-between items-center py-1 border-b border-border last:border-0">
-                    <span className="text-[13px] font-bold text-muted-foreground">{f.label}</span>
-                    <span className="text-[13px] font-black text-foreground">{f.val}</span>
+                  <div className="space-y-3">
+                    {timelineItems.map((item,i) => (
+                      <div key={i} className="flex items-start gap-4">
+                        <span className="w-[80px] text-[11px] font-black text-muted-foreground pt-1 shrink-0">{item.time}</span>
+                        <div className="flex flex-col items-center gap-1">
+                          <div className={`w-3 h-3 rounded-full mt-1 ${ item.type==="start"||item.type==="end" ? "bg-primary" : item.type==="break" ? "bg-amber-500" : "bg-sky-500" }`} />
+                          {i < timelineItems.length - 1 && <div className="w-0.5 h-8 bg-border" />}
+                        </div>
+                        <div className={`flex-1 px-4 py-3 rounded-xl text-[13px] font-bold ${ item.type==="break" ? "bg-amber-500/5 border border-amber-500/10 text-amber-600" : item.type==="start"||item.type==="end" ? "bg-emerald-500/5 border border-emerald-500/10 text-primary" : "bg-sky-500/5 border border-sky-500/10 text-foreground" }`}>
+                          {item.label}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+                {/* Day Shift Card */}
+                <div className="space-y-4">
+                  <div className="bg-card rounded-2xl border border-border shadow-sm p-6 space-y-4">
+                    <h4 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">Shift Details</h4>
+                    {[
+                      {label:"Shift Type",val: shift.type === "Off Day" ? "Off Day" : `${shift.type} Shift`},
+                      {label:"Timing",val: shift.time},
+                      {label:"Duration",val: shift.hours},
+                      {label:"Location",val: shift.location},
+                      {label:"Manager",val: shift.manager}
+                    ].map(f => (
+                      <div key={f.label} className="flex justify-between items-center py-1 border-b border-border last:border-0">
+                        <span className="text-[13px] font-bold text-muted-foreground">{f.label}</span>
+                        <span className="text-[13px] font-black text-foreground">{f.val}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {shift.type !== "Off Day" && (
+                    <button
+                      onClick={() => handleRequestSwap(shift)}
+                      className="w-full py-3.5 rounded-xl border border-primary text-primary text-[13px] font-black hover:bg-emerald-500/10 transition-all"
+                    >
+                      ↔ Request Swap for This Day
+                    </button>
+                  )}
+                </div>
               </div>
-              <button
-                onClick={() => handleRequestSwap(UPCOMING_SHIFTS[0])}
-                className="w-full py-3.5 rounded-xl border border-primary text-primary text-[13px] font-black hover:bg-emerald-500/10 transition-all"
-              >
-                ↔ Request Swap for This Day
-              </button>
-            </div>
-          </div>
+            );
+          })()}
         </div>
         )}
 
@@ -799,9 +908,9 @@ export function EmployeeSchedule() {
               UPCOMING SHIFTS
             </h3>
             <div className="space-y-3">
-              {UPCOMING_SHIFTS.map((shift, index) => {
-                const conf = SHIFT_COLORS[shift.type];
-                const isLastTwo = index >= UPCOMING_SHIFTS.length - 2;
+              {upcomingShiftsList.map((shift, index) => {
+                const conf = SHIFT_COLORS[shift.type] || SHIFT_COLORS["Morning"];
+                const isLastTwo = index >= upcomingShiftsList.length - 2;
                 return (
                   <div
                     key={shift.id}

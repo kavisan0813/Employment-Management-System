@@ -449,6 +449,29 @@ export function ManagerPersonalPayslips() {
     });
   }, [selectedYear, selectedMonth]);
 
+  const handleExportAnnualStatement = () => {
+    const headers = ["Payslip ID", "Month", "Year", "Gross Pay", "Deductions", "Net Pay", "Paid Date", "Status"];
+    const rows = filteredPayslips.map((p) => [
+      p.id,
+      p.month,
+      p.year,
+      p.grossPay,
+      p.deductions,
+      p.netPay,
+      p.paidDate,
+      p.status,
+    ].join(","));
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "annual_pay_statement.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Exported!", "success", "Annual pay statement downloaded as CSV.");
+  };
+
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent">
       {/* ─── Page Header ─────────────────────────────────────────── */}
@@ -467,9 +490,7 @@ export function ManagerPersonalPayslips() {
           </div>
         </div>
         <button
-          onClick={() =>
-            showToast("Exporting", "info", "Generating annual pay statement...")
-          }
+          onClick={handleExportAnnualStatement}
           className="flex items-center gap-2 px-5 py-2.5 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground hover:bg-secondary/80 transition-all"
         >
           <Download size={16} /> Export Annual Statement

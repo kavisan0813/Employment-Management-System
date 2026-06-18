@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -19,6 +19,7 @@ import {
   UserCheck,
   MoreVertical as MoreIcon,
 } from "lucide-react";
+import { showToast } from "../../components/workflow/ToastNotification";
 
 interface ShiftDetails {
   type: string;
@@ -386,6 +387,27 @@ export function ManagerTeamSchedule() {
     return row.dept === selectedDept;
   });
 
+  const handleExport = () => {
+    const headers = ["Employee Name", "Department", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const rows = filteredScheduleData.map((row) => {
+      const shiftStrings = row.shifts.map((s) => s ? `${s.type} (${s.time})` : "Off");
+      return [
+        `"${row.name}"`,
+        `"${row.dept}"`,
+        ...shiftStrings.map((s) => `"${s}"`)
+      ].join(",");
+    });
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "team_schedule_export.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Exported!", "success", "Team schedule exported successfully as CSV.");
+  };
+
   const getWeekRangeLabel = () => {
     if (view === "Week") {
       const startStr = weekStartDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -426,6 +448,7 @@ export function ManagerTeamSchedule() {
         </div>
         <div className="flex items-center gap-3">
           <button
+            onClick={handleExport}
             className="px-4 py-2.5 text-sm font-bold rounded-xl border border-dashed transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800 active:scale-95 flex items-center gap-2"
             style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
           >

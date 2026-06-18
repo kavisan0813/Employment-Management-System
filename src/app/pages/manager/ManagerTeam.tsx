@@ -16,6 +16,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { useNavigate } from "react-router";
+import { showToast } from "../../components/workflow/ToastNotification";
 
 const TEAM_DATA = [
   {
@@ -123,6 +124,37 @@ export function ManagerTeam() {
     return matchesSearch && matchesStatus;
   });
 
+  const handleExport = () => {
+    const headers = [
+      "ID", "Name", "Designation", "Attendance", "Leave Balance", "Performance",
+      "CTC", "Status", "Email", "Phone", "Location", "Join Date", "Work Mode"
+    ];
+    const rows = filteredTeam.map((emp) => [
+      emp.id,
+      `"${emp.name}"`,
+      `"${emp.designation}"`,
+      `"${emp.attendance}"`,
+      `"${emp.leaveBal}"`,
+      emp.performance,
+      `"${emp.ctc}"`,
+      emp.status,
+      emp.email,
+      `"${emp.phone}"`,
+      `"${emp.location}"`,
+      `"${emp.joinDate}"`,
+      `"${emp.workMode}"`,
+    ].join(","));
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "team_list_export.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Exported!", "success", "Team member details exported successfully.");
+  };
+
   return (
     <div className="p-8 max-w-[1600px] mx-auto min-h-screen">
       {/* ─── PAGE HEADER ─── */}
@@ -142,7 +174,10 @@ export function ManagerTeam() {
             </p>
           </div>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-bold text-foreground hover:bg-secondary transition-all shadow-sm">
+        <button
+          onClick={handleExport}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-bold text-foreground hover:bg-secondary transition-all shadow-sm"
+        >
           <Download size={18} />
           EXPORT
         </button>
