@@ -7,6 +7,11 @@ import {
   ArrowRight,
   ChevronDown,
   ShieldCheck,
+  ShieldAlert,
+  Users,
+  Coins,
+  Briefcase,
+  User,
 } from "lucide-react";
 import {
   useAuth,
@@ -45,6 +50,14 @@ const DEMO_ACCOUNTS: Record<
     name: "John Doe",
     initials: "JD",
   },
+};
+
+const ROLE_ICONS: Record<UserRole, React.ComponentType<any>> = {
+  "Super Admin": ShieldAlert,
+  "HR Manager": Users,
+  Finance: Coins,
+  Manager: Briefcase,
+  Employee: User,
 };
 
 export function Login() {
@@ -135,6 +148,21 @@ export function Login() {
     e.preventDefault();
     alert("Password reset link sent to " + resetEmail);
     setIsForgotPassword(false);
+  };
+
+  const handleDemoLogin = (role: UserRole) => {
+    setIsLoading(true);
+    setTimeout(() => {
+      const demo = DEMO_ACCOUNTS[role];
+      login({
+        name: demo.name,
+        email: demo.email,
+        role,
+        initials: demo.initials,
+      });
+      navigate(ROLE_HOME_ROUTE[role], { replace: true });
+      setIsLoading(false);
+    }, 500);
   };
 
   return (
@@ -411,9 +439,54 @@ export function Login() {
               </span>
             </button>
           </form>
-        )
-}
+        )}
 
+        {/* Quick Demo Access */}
+        <div className="mt-6 pt-5 border-t border-dashed" style={{ borderColor: "var(--border)" }}>
+          <div className="flex items-center justify-center gap-1.5 mb-3 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--muted-foreground)" }}>
+            <ShieldCheck size={14} className="text-emerald-500" />
+            <span>Quick Demo Access</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {Object.keys(DEMO_ACCOUNTS).map((roleKey, idx) => {
+              const role = roleKey as UserRole;
+              const demo = DEMO_ACCOUNTS[role];
+              const config = ROLE_CONFIG[role];
+              const isLast = idx === Object.keys(DEMO_ACCOUNTS).length - 1;
+              const Icon = ROLE_ICONS[role];
+              return (
+                <button
+                  key={role}
+                  type="button"
+                  onClick={() => handleDemoLogin(role)}
+                  disabled={isLoading}
+                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group ${
+                    isLast ? "col-span-2 justify-center" : ""
+                  }`}
+                  style={{
+                    borderColor: config.color + "30",
+                    backgroundColor: config.bg,
+                  }}
+                >
+                  <div className="p-1 rounded-lg" style={{ backgroundColor: config.color + "15", color: config.color }}>
+                    <Icon size={14} />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span 
+                      className="text-[11px] font-extrabold uppercase tracking-wide group-hover:underline leading-tight"
+                      style={{ color: config.color }}
+                    >
+                      {config.label}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground truncate leading-normal">
+                      {demo.name}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         <div className="mt-6 text-center space-y-3">
           <p
