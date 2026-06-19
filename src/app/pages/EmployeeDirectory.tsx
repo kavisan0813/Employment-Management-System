@@ -500,6 +500,8 @@ export function EmployeeDirectory() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailBody, setEmailBody] = useState("");
   const [showOrgChartModal, setShowOrgChartModal] = useState(false);
   const [targetColleague, setTargetColleague] = useState<Colleague | null>(
     null,
@@ -1137,6 +1139,8 @@ export function EmployeeDirectory() {
               </label>
               <input
                 type="text"
+                value={emailSubject}
+                onChange={(e) => setEmailSubject(e.target.value)}
                 className="w-full p-3 bg-background border border-border rounded-xl text-[14px] font-bold text-foreground outline-none focus:border-primary transition-all"
                 placeholder="Enter subject"
               />
@@ -1148,6 +1152,8 @@ export function EmployeeDirectory() {
               </label>
               <textarea
                 rows={5}
+                value={emailBody}
+                onChange={(e) => setEmailBody(e.target.value)}
                 className="w-full p-4 bg-background border border-border rounded-xl text-[14px] font-bold text-foreground outline-none focus:border-primary transition-all resize-none"
                 placeholder="Write your email content..."
               ></textarea>
@@ -1155,19 +1161,32 @@ export function EmployeeDirectory() {
 
             <div className="flex gap-3 pt-2">
               <button
-                onClick={() => setShowEmailModal(false)}
+                onClick={() => {
+                  setEmailSubject("");
+                  setEmailBody("");
+                  setShowEmailModal(false);
+                }}
                 className="flex-1 py-3.5 bg-secondary text-foreground rounded-xl font-black text-[13px] hover:bg-border transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={() => {
-                  showToast(
-                    "Email Sent",
-                    "success",
-                    `Email successfully delivered to ${targetColleague.name}`,
-                  );
-                  setShowEmailModal(false);
+                  if (targetColleague) {
+                    const mailtoUrl = `mailto:${targetColleague.email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+                    window.location.href = mailtoUrl;
+
+                    showToast(
+                      "Email Client Opened",
+                      "success",
+                      `Drafting email to ${targetColleague.name}`,
+                    );
+                    
+                    // Reset fields & close modal
+                    setEmailSubject("");
+                    setEmailBody("");
+                    setShowEmailModal(false);
+                  }
                 }}
                 className="flex-1 py-3.5 bg-primary text-white rounded-xl font-black text-[13px] shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
               >

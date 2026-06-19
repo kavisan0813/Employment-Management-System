@@ -21,6 +21,7 @@ import {
   TrendingUp,
   MessageSquare,
   MoreHorizontal,
+  CheckCircle2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../components/workflow/ToastNotification";
@@ -56,6 +57,24 @@ export function ManagerProfile() {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // --- Form States (Personal Details) ---
+  const [fullName, setFullName] = useState(() => user?.name || "Suresh Iyer");
+  const [dob, setDob] = useState("1985-07-22");
+  const [gender, setGender] = useState("Male");
+  const [bloodGroup, setBloodGroup] = useState("B+");
+  const [maritalStatus, setMaritalStatus] = useState("Married");
+  const [nationality, setNationality] = useState("Indian");
+
+  // --- Form States (Contact) ---
+  const [personalEmail, setPersonalEmail] = useState(() => user?.email || "suresh.iyer@gmail.com");
+  const [mobileNumber, setMobileNumber] = useState("+91 99887 76655");
+  const [alternatePhone, setAlternatePhone] = useState("+91 98001 12233");
+  const [linkedinUrl, setLinkedinUrl] = useState("linkedin.com/in/suresh-iyer");
+  const [githubUrl, setGithubUrl] = useState("github.com/sureshiyer");
+  const [currentAddress, setCurrentAddress] = useState(
+    "42, Nungambakkam High Road, Chennai 600034, Tamil Nadu",
+  );
+
   useEffect(() => {
     if (user?.email) {
       const saved = localStorage.getItem(`nexus_avatar_${user.email}`);
@@ -78,24 +97,6 @@ export function ManagerProfile() {
     .join("")
     .toUpperCase()
     .slice(0, 2) || "SI";
-
-  // --- Form States (Personal Details) ---
-  const [fullName, setFullName] = useState("Suresh Iyer");
-  const [dob, setDob] = useState("1985-07-22");
-  const [gender, setGender] = useState("Male");
-  const [bloodGroup, setBloodGroup] = useState("B+");
-  const [maritalStatus, setMaritalStatus] = useState("Married");
-  const [nationality, setNationality] = useState("Indian");
-
-  // --- Form States (Contact) ---
-  const [personalEmail, setPersonalEmail] = useState("suresh.iyer@gmail.com");
-  const [mobileNumber, setMobileNumber] = useState("+91 99887 76655");
-  const [alternatePhone, setAlternatePhone] = useState("+91 98001 12233");
-  const [linkedinUrl, setLinkedinUrl] = useState("linkedin.com/in/suresh-iyer");
-  const [githubUrl, setGithubUrl] = useState("github.com/sureshiyer");
-  const [currentAddress, setCurrentAddress] = useState(
-    "42, Nungambakkam High Road, Chennai 600034, Tamil Nadu",
-  );
 
   // --- Skills State ---
   const [skills, setSkills] = useState<SkillItem[]>([
@@ -336,7 +337,7 @@ export function ManagerProfile() {
       {/* ─── Profile Hero Card ────────────────────────────────────── */}
       <div className="bg-card border border-border rounded-[32px] shadow-sm overflow-hidden relative">
         {/* Gradient Banner */}
-        <div className="h-[100px] w-full bg-gradient-to-r from-[#00B87C] to-[#009966] relative">
+        <div className="h-[130px] w-full bg-gradient-to-r from-[#00B87C] to-[#009966] relative">
           <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px] opacity-20" />
         </div>
 
@@ -462,9 +463,12 @@ export function ManagerProfile() {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 pt-8 border-t border-border">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-10 pt-8 border-t border-border">
             <div className="flex items-center gap-4 px-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-[#00B87C] shadow-inner">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
+                style={{ backgroundColor: "rgba(5,150,105,0.1)", color: "#059669" }}
+              >
                 <Briefcase size={22} />
               </div>
               <div>
@@ -476,8 +480,11 @@ export function ManagerProfile() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4 px-4 border-x border-border">
-              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-600 shadow-inner">
+            <div className="flex items-center gap-4 px-4">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
+                style={{ backgroundColor: "rgba(20,184,166,0.1)", color: "#14B8A6" }}
+              >
                 <TrendingUp size={22} />
               </div>
               <div>
@@ -490,7 +497,10 @@ export function ManagerProfile() {
               </div>
             </div>
             <div className="flex items-center gap-4 px-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 shadow-inner">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
+                style={{ backgroundColor: "rgba(245,158,11,0.1)", color: "#F59E0B" }}
+              >
                 <Star size={22} fill="currentColor" />
               </div>
               <div>
@@ -499,6 +509,22 @@ export function ManagerProfile() {
                 </p>
                 <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
                   Rating
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 px-4">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
+                style={{ backgroundColor: "rgba(34,197,94,0.1)", color: "#22C55E" }}
+              >
+                <CheckCircle2 size={22} />
+              </div>
+              <div>
+                <p className="text-xl font-black text-foreground tracking-tight">
+                  1,048
+                </p>
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                  Tasks Completed
                 </p>
               </div>
             </div>
@@ -1457,23 +1483,25 @@ function InputField({
 }: InputFieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+      <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider ml-1">
         {label}
       </label>
       <div
-        className={`flex items-center gap-2.5 px-4 h-11 rounded-2xl border transition-all ${
-          disabled
-            ? "bg-muted/10 border-border opacity-75"
-            : "bg-muted/30 border-border focus-within:border-[#00B87C] focus-within:ring-2 focus-within:ring-[#00B87C]/10"
-        }`}
+        className="flex items-center gap-2.5 rounded-xl px-4 bg-background border border-border h-12 transition-all focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/5"
+        style={{
+          opacity: disabled ? 0.7 : 1,
+        }}
       >
-        {icon && <span className="text-muted-foreground">{icon}</span>}
+        {icon && <span className="text-muted-foreground flex items-center justify-center">{icon}</span>}
         <input
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
-          className="w-full bg-transparent border-none outline-none text-[14px] font-bold text-foreground placeholder:text-muted-foreground"
+          className="w-full bg-transparent border-none outline-none text-[13px] text-foreground font-bold disabled:cursor-not-allowed"
+          style={{
+            WebkitTextFillColor: "var(--foreground)",
+          }}
         />
       </div>
     </div>
@@ -1497,19 +1525,23 @@ function DropdownField({
 }: DropdownFieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider ml-1">
+      <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider ml-1">
         {label}
       </label>
-      <div className="relative">
+      <div
+        className="flex items-center gap-2.5 rounded-xl px-4 bg-background border border-border h-12 transition-all focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/5"
+        style={{
+          opacity: disabled ? 0.7 : 1,
+        }}
+      >
         <select
+          disabled={disabled}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          disabled={disabled}
-          className={`w-full appearance-none px-4 h-11 rounded-2xl border bg-muted/30 border-border text-[14px] font-bold text-foreground outline-none transition-all ${
-            disabled
-              ? "opacity-75 cursor-not-allowed"
-              : "focus:border-[#00B87C] focus:ring-2 focus:ring-[#00B87C]/10 cursor-pointer"
-          }`}
+          className="w-full bg-transparent border-none outline-none text-[13px] text-foreground font-bold appearance-none disabled:cursor-not-allowed cursor-pointer"
+          style={{
+            WebkitTextFillColor: "var(--foreground)",
+          }}
         >
           {options.map((opt) => (
             <option key={opt} value={opt}>
@@ -1517,10 +1549,9 @@ function DropdownField({
             </option>
           ))}
         </select>
-        <ChevronDown
-          size={15}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-        />
+        <div className="pointer-events-none text-muted-foreground shrink-0 flex items-center">
+          <ChevronDown size={14} />
+        </div>
       </div>
     </div>
   );

@@ -360,7 +360,7 @@ export function UserProfile() {
       {/* ─── Profile Hero Card ────────────────────────────────────── */}
       <div className="bg-card border border-border rounded-[32px] shadow-sm overflow-hidden relative">
         {/* Gradient Banner */}
-        <div className="h-[100px] w-full bg-gradient-to-r from-[#00B87C] to-[#009966] relative">
+        <div className="h-[130px] w-full bg-gradient-to-r from-[#00B87C] to-[#009966] relative">
           <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px] opacity-20" />
         </div>
 

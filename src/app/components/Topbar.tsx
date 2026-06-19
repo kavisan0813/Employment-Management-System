@@ -90,26 +90,19 @@ export function Topbar({
     >
       {/* Page title */}
       <div className="flex-1 min-w-0">
-        <h1
-          style={{
-            color: "var(--foreground)",
-            fontSize: "22px",
-            fontWeight: 800,
-            lineHeight: 1,
-            letterSpacing: "-0.3px",
-          }}
-        >
-          {title}
-        </h1>
-        <p
-          style={{
-            color: "var(--muted-foreground)",
-            fontSize: "12px",
-            marginTop: "2px",
-          }}
-        >
-          {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-        </p>
+        {title && title !== "NexusHR" && (
+          <h1
+            style={{
+              color: "var(--foreground)",
+              fontSize: "22px",
+              fontWeight: 800,
+              lineHeight: 1,
+              letterSpacing: "-0.3px",
+            }}
+          >
+            {title}
+          </h1>
+        )}
       </div>
 
       {/* Search */}

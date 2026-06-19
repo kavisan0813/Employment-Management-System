@@ -26,6 +26,7 @@ import {
   Video,
   ChevronLeft,
   Edit3,
+  Upload,
 } from "lucide-react";
 import { recruitmentPipeline } from "../data/mockData";
 import type {
@@ -1221,6 +1222,14 @@ function ScheduleModal({
 }
 
 /* ─── Add Candidate Modal ────────────────────────────────── */
+const MOCK_CANDIDATES = [
+  { name: "Vikram Malhotra", role: "Backend Engineer (Go/Python)", email: "vikram.malhotra@gmail.com", location: "Remote", type: "Full-time" },
+  { name: "Sophia Watson", role: "Lead UI/UX Designer", email: "sophia.watson@yahoo.com", location: "Hybrid", type: "Full-time" },
+  { name: "Rohan Das", role: "DevOps Specialist (AWS/Kubernetes)", email: "rohan.das@outlook.com", location: "Remote", type: "Contract" },
+  { name: "Aishwarya Sen", role: "Data Scientist (ML/AI)", email: "aishwarya.sen@gmail.com", location: "On-site", type: "Full-time" },
+  { name: "Emily Clark", role: "Senior Frontend Developer (React/TS)", email: "emily.clark@techcorp.com", location: "Remote", type: "Full-time" },
+];
+
 function AddCandidateModal({
   stage,
   onClose,
@@ -1239,7 +1248,38 @@ function AddCandidateModal({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState(false);
+  const [isParsing, setIsParsing] = useState(false);
+  const [parseProgress, setParseProgress] = useState(0);
+  const [parseSuccess, setParseSuccess] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   useEscapeKey(onClose);
+
+  const handleResumeUpload = (file: File) => {
+    if (!file) return;
+    setIsParsing(true);
+    setParseProgress(0);
+    setParseSuccess(false);
+
+    let currentProgress = 0;
+    const interval = setInterval(() => {
+      currentProgress += 10;
+      setParseProgress(currentProgress);
+      if (currentProgress >= 100) {
+        clearInterval(interval);
+        setIsParsing(false);
+        setParseSuccess(true);
+        const randomCand = MOCK_CANDIDATES[Math.floor(Math.random() * MOCK_CANDIDATES.length)];
+        setForm({
+          name: randomCand.name,
+          role: randomCand.role,
+          location: randomCand.location,
+          type: randomCand.type,
+          email: randomCand.email,
+        });
+        setErrors({});
+      }
+    }, 150);
+  };
 
   const handleAdd = () => {
     setTouched(true);
@@ -1336,6 +1376,63 @@ function AddCandidateModal({
           </button>
         </div>
         <div className="px-6 py-5 space-y-4 overflow-y-auto flex-1">
+          {/* Resume Parser Dropzone */}
+          <div className="p-5 border-2 border-dashed border-emerald-500/20 hover:border-emerald-500/50 rounded-2xl bg-emerald-500/[0.02] dark:bg-emerald-500/[0.01] transition-all text-center relative overflow-hidden group">
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept=".pdf,.docx,.doc,.txt"
+              onChange={(e) => {
+                if (e.target.files?.[0]) {
+                  handleResumeUpload(e.target.files[0]);
+                }
+              }}
+            />
+            {isParsing ? (
+              <div className="flex flex-col items-center justify-center py-2">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-3 animate-spin">
+                  <Upload size={20} />
+                </div>
+                <p className="text-xs font-black text-foreground">Parsing CV/Resume...</p>
+                <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden max-w-[200px]">
+                  <div
+                    className="bg-emerald-500 h-full rounded-full transition-all duration-150"
+                    style={{ width: `${parseProgress}%` }}
+                  />
+                </div>
+                <span className="text-[10px] font-bold text-muted-foreground mt-2">{parseProgress}%</span>
+              </div>
+            ) : parseSuccess ? (
+              <div className="flex flex-col items-center justify-center py-1">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-2">
+                  <CheckCircle2 size={20} />
+                </div>
+                <p className="text-xs font-black text-emerald-600">CV Parsed Successfully!</p>
+                <p className="text-[10px] font-bold text-muted-foreground mt-1">Form fields have been pre-filled.</p>
+                <button
+                  type="button"
+                  onClick={() => setParseSuccess(false)}
+                  className="text-[10px] font-black uppercase text-emerald-600 tracking-widest mt-3 hover:underline bg-transparent border-0"
+                >
+                  Upload another file
+                </button>
+              </div>
+            ) : (
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="cursor-pointer flex flex-col items-center justify-center py-2"
+              >
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                  <Upload size={20} />
+                </div>
+                <p className="text-xs font-black text-foreground">Zoho Quick CV/Resume Parser</p>
+                <p className="text-[10px] font-bold text-muted-foreground mt-1">
+                  Drag & drop Resume (PDF, DOCX) here to auto-fill
+                </p>
+              </div>
+            )}
+          </div>
           {touched && Object.keys(errors).length > 0 && (
             <div
               className="px-4 py-2.5 rounded-xl text-xs font-semibold"
@@ -2052,6 +2149,7 @@ function CandidateDetailSidePanel({
   onEdit,
   onSchedule,
   scheduledInterviews,
+  toast,
 }: {
   candidate: Candidate;
   stage: Stage;
@@ -2061,8 +2159,9 @@ function CandidateDetailSidePanel({
   onEdit: (c: Candidate) => void;
   onSchedule: () => void;
   scheduledInterviews: ScheduledInterview[];
+  toast: (msg: string, kind?: any) => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"Overview" | "Interviews" | "Activity">("Overview");
+  const [activeTab, setActiveTab] = useState<"Overview" | "Interviews" | "Activity" | "Offer Letter">("Overview");
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: candidate.name,
@@ -2073,7 +2172,105 @@ function CandidateDetailSidePanel({
     email: `${candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com`,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [offerSalary, setOfferSalary] = useState("12,50,000");
+  const [offerJoiningDate, setOfferJoiningDate] = useState(() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 1);
+    d.setDate(1);
+    return d.toISOString().split("T")[0];
+  });
+  const [offerBonus, setOfferBonus] = useState("50,000");
+  const [offerPerks, setOfferPerks] = useState("Health Insurance, Remote Internet Allowance, Gym Membership");
   useEscapeKey(onClose);
+
+  const handleDownloadOffer = () => {
+    const formattedDate = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    const displayDate = offerJoiningDate
+      ? new Date(offerJoiningDate).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : "To Be Decided";
+
+    const textContent = `================================================================
+                       EMS CORP
+                 OFFICIAL OFFER OF EMPLOYMENT
+================================================================
+
+Reference : EMS/OFFER/\${new Date().getFullYear()}/\${candidate.id.slice(0, 4).toUpperCase()}
+Date      : \${formattedDate}
+
+To:
+Candidate Name : \${candidate.name}
+Role           : \${candidate.role}
+Email          : \${candidate.name.toLowerCase().replace(/\\s+/g, ".")}@example.com
+
+Dear \${candidate.name},
+
+On behalf of EMS Corp, we are absolutely delighted to offer you
+employment for the position of \${candidate.role}.
+
+We were highly impressed by your experience and background, and we
+strongly believe your skills will make a valuable addition to our team.
+
+Please find below the terms and details of our employment offer:
+
+  Position Title    : \${candidate.role}
+  Employment Type   : Full-time
+  Office Location   : \${candidate.location}
+  Proposed Start    : \${displayDate}
+  Annual Base Salary: INR \${offerSalary} (LPA)
+  Signing Bonus     : INR \${offerBonus}
+  Perks & Benefits  : \${offerPerks}
+
+RETIREMENT AND INSURANCE BENEFITS:
+As a full-time employee, you will be eligible to participate in the
+comprehensive health, medical, dental, and life insurance benefits
+as well as the standard EMS Corp retirement program.
+
+PROBATION & OTHER AGREEMENTS:
+You will be subject to a standard 3-month probation period.
+Upon joining, you will also be required to sign our standard 
+Non-Disclosure Agreement (NDA) and Intellectual Property Agreement.
+
+ACCEPTANCE OF OFFER:
+To accept this offer, please print, sign, date, and return this letter,
+or confirm your acceptance by signing electronically before your joining date.
+
+Sincerely,
+
+______________________________
+HR Director
+EMS Corp.
+
+
+ACCEPTED AND AGREED TO:
+
+______________________________          __________________
+Signature of \${candidate.name}          Date
+
+================================================================
+© \${new Date().getFullYear()} EMS Corp. All rights reserved.
+================================================================`;
+
+    const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `EMS_Offer_Letter_\${candidate.name.replace(/\\s+/g, "_")}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast("Offer Letter generated and downloaded successfully!", "success");
+  };
+
 
   const steps: Stage[] = [
     "Applied",
@@ -2281,7 +2478,10 @@ function CandidateDetailSidePanel({
               className="flex items-center gap-6 border-b mt-4"
               style={{ borderColor: "var(--border)" }}
             >
-              {(["Overview", "Interviews", "Activity"] as const).map((t) => (
+              {(stage === "Offer"
+                ? (["Overview", "Interviews", "Activity", "Offer Letter"] as const)
+                : (["Overview", "Interviews", "Activity"] as const)
+              ).map((t) => (
                 <button
                   key={t}
                   disabled={isEditing}
@@ -2634,10 +2834,24 @@ function CandidateDetailSidePanel({
                   },
                   {
                     title: `Entered Pipeline: ${stage}`,
-                    desc: `Moved to stage ${stage} for screening.`,
+                    desc: `Moved to stage ${stage}.`,
                     date: "Today",
                     color: "bg-emerald-500",
                   },
+                  ...(stage !== "Applied" ? [{
+                    title: `📧 Automated Notification Sent`,
+                    desc: `Email sent to ${candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com: ${
+                      stage === "Screening"
+                        ? "Screening quiz & background questionnaire link."
+                        : stage === "Round 1" || stage === "Round 2"
+                        ? `${stage} slot booking details and coordinator details.`
+                        : stage === "Offer"
+                        ? "Offer letter contract with digital signature link."
+                        : "Onboarding portal link & welcome credentials."
+                    }`,
+                    date: "Today",
+                    color: "bg-purple-500",
+                  }] : []),
                   ...scheduledInterviews.map((iv) => ({
                     title: `${iv.type} Scheduled`,
                     desc: `Interview with ${iv.interviewer || "Team"} scheduled.`,
@@ -2660,6 +2874,194 @@ function CandidateDetailSidePanel({
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {!isEditing && activeTab === "Offer Letter" && (
+              <div className="space-y-6">
+                <div className="space-y-4 p-5 rounded-2xl border" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+                  <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-3">
+                    Customize Offer Details
+                  </h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        Annual Salary (INR LPA)
+                      </label>
+                      <div className="relative mt-1">
+                        <span className="absolute left-3 top-2.5 text-xs text-muted-foreground font-bold">₹</span>
+                        <input
+                          type="text"
+                          value={offerSalary}
+                          onChange={(e) => setOfferSalary(e.target.value)}
+                          className="w-full pl-7 pr-3 py-2 rounded-xl text-xs outline-none border font-semibold"
+                          style={{
+                            backgroundColor: "var(--background)",
+                            borderColor: "var(--border)",
+                            color: "var(--foreground)",
+                          }}
+                          placeholder="e.g. 12,50,000"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        Signing Bonus (INR)
+                      </label>
+                      <div className="relative mt-1">
+                        <span className="absolute left-3 top-2.5 text-xs text-muted-foreground font-bold">₹</span>
+                        <input
+                          type="text"
+                          value={offerBonus}
+                          onChange={(e) => setOfferBonus(e.target.value)}
+                          className="w-full pl-7 pr-3 py-2 rounded-xl text-xs outline-none border font-semibold"
+                          style={{
+                            backgroundColor: "var(--background)",
+                            borderColor: "var(--border)",
+                            color: "var(--foreground)",
+                          }}
+                          placeholder="e.g. 50,000"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        Joining Date
+                      </label>
+                      <input
+                        type="date"
+                        value={offerJoiningDate}
+                        onChange={(e) => setOfferJoiningDate(e.target.value)}
+                        className="w-full mt-1 px-3 py-2 rounded-xl text-xs outline-none border font-semibold"
+                        style={{
+                          backgroundColor: "var(--background)",
+                          borderColor: "var(--border)",
+                          color: "var(--foreground)",
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        Perks & Benefits
+                      </label>
+                      <input
+                        type="text"
+                        value={offerPerks}
+                        onChange={(e) => setOfferPerks(e.target.value)}
+                        className="w-full mt-1 px-3 py-2 rounded-xl text-xs outline-none border font-semibold"
+                        style={{
+                          backgroundColor: "var(--background)",
+                          borderColor: "var(--border)",
+                          color: "var(--foreground)",
+                        }}
+                        placeholder="Health Ins., Internet, Gym"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Visual Contract Paper Preview */}
+                <div className="space-y-3">
+                  <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                    Contract Preview
+                  </h4>
+                  <div
+                    className="p-8 rounded-2xl border shadow-sm font-mono text-[10px] leading-relaxed relative overflow-hidden"
+                    style={{
+                      backgroundColor: "var(--card)",
+                      borderColor: "var(--border)",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    {/* Watermark/Branding badge at top */}
+                    <div className="flex justify-between items-center border-b pb-4 mb-6" style={{ borderColor: "var(--border)" }}>
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-lg bg-emerald-500 flex items-center justify-center text-white text-xs font-black">E</div>
+                        <span className="font-sans font-black tracking-wider text-xs text-foreground">EMS CORP</span>
+                      </div>
+                      <span className="font-sans text-[9px] font-black uppercase bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded border border-emerald-500/20">
+                        Official Contract
+                      </span>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="text-center font-sans font-black text-xs tracking-wider uppercase mb-6 text-foreground">
+                        Letter of Offer
+                      </div>
+
+                      <div className="flex justify-between font-sans text-muted-foreground mb-4">
+                        <span>Ref: EMS/OFFER/{new Date().getFullYear()}/{candidate.id.slice(0, 4).toUpperCase()}</span>
+                        <span>Date: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
+                      </div>
+
+                      <div className="space-y-1">
+                        <p className="font-sans font-bold text-foreground">To,</p>
+                        <p className="font-bold">{candidate.name}</p>
+                        <p className="text-muted-foreground">{candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com</p>
+                      </div>
+
+                      <p className="font-sans text-muted-foreground mt-4">
+                        Dear {candidate.name},
+                      </p>
+
+                      <p className="font-sans text-muted-foreground">
+                        We are pleased to offer you the position of <strong className="text-foreground">{candidate.role}</strong> at EMS Corp. We are confident that your skill set and background will make you a vital asset to our engineering division.
+                      </p>
+
+                      <div className="my-4 p-4 rounded-xl border space-y-2 bg-slate-50 dark:bg-slate-900/40" style={{ borderColor: "var(--border)" }}>
+                        <div className="grid grid-cols-2 gap-y-1.5 text-muted-foreground">
+                          <span className="font-sans font-bold">Role:</span>
+                          <span className="text-foreground font-bold">{candidate.role}</span>
+                          
+                          <span className="font-sans font-bold">Annual Salary:</span>
+                          <span className="text-foreground font-bold">INR {offerSalary} (LPA)</span>
+                          
+                          <span className="font-sans font-bold">Joining Date:</span>
+                          <span className="text-foreground font-bold">
+                            {offerJoiningDate ? new Date(offerJoiningDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "To Be Decided"}
+                          </span>
+
+                          <span className="font-sans font-bold">Signing Bonus:</span>
+                          <span className="text-foreground font-bold">INR {offerBonus}</span>
+
+                          <span className="font-sans font-bold">Benefits & Perks:</span>
+                          <span className="text-foreground font-bold">{offerPerks}</span>
+                        </div>
+                      </div>
+
+                      <p className="font-sans text-muted-foreground">
+                        Your employment will be subject to a standard 3-month probation period. Please confirm your acceptance by signing electronically, or downloading this copy for physical signature.
+                      </p>
+
+                      <div className="pt-8 flex justify-between items-end border-t" style={{ borderColor: "var(--border)" }}>
+                        <div className="space-y-1 font-sans text-center">
+                          <div className="h-6 flex items-center justify-center font-serif italic text-muted-foreground text-xs">EMS HR Operations</div>
+                          <div className="w-32 border-b" style={{ borderColor: "var(--border)" }} />
+                          <p className="text-[8px] uppercase tracking-wider text-muted-foreground mt-1">Authorized Signatory</p>
+                        </div>
+                        <div className="space-y-1 font-sans text-center">
+                          <div className="h-6" />
+                          <div className="w-32 border-b" style={{ borderColor: "var(--border)" }} />
+                          <p className="text-[8px] uppercase tracking-wider text-muted-foreground mt-1">Candidate Signature</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Generate Action Button */}
+                <button
+                  type="button"
+                  onClick={handleDownloadOffer}
+                  className="w-full py-3.5 rounded-2xl text-white text-xs font-black uppercase tracking-widest bg-emerald-600 hover:bg-emerald-500 shadow-lg hover:shadow-emerald-500/25 transition-all flex items-center justify-center gap-2"
+                >
+                  <Upload size={14} className="rotate-180" />
+                  Generate & Download Offer
+                </button>
               </div>
             )}
           </div>
@@ -4476,7 +4878,9 @@ export function Recruitment() {
       [toStage]: [...(pipeline[toStage] || []), candidate],
     };
     updatePipeline(newPipeline);
-    toast(`${candidate.name} moved to ${toStage}`, "success");
+    
+    const candidateEmail = `${candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com`;
+    toast(`${candidate.name} moved to ${toStage}. Automated notification sent to ${candidateEmail}`, "success");
   };
 
   const handleUpdateRating = (stage: Stage, candidateId: string, rating: number) => {
@@ -4679,6 +5083,7 @@ export function Recruitment() {
           onEdit={(updatedCandidate) => handleEditCandidate(detailCandidate.stage, updatedCandidate)}
           onSchedule={() => setScheduleCandidate(detailCandidate.candidate)}
           scheduledInterviews={interviews.filter(iv => iv.candidateId === detailCandidate.candidate.id)}
+          toast={toast}
         />
       )}
       {messageCandidate && (

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   IndianRupee,
   Download,
@@ -185,10 +185,20 @@ const MONTHS = [
 function PayslipModal({
   payslip,
   onClose,
+  autoPrint = false,
 }: {
   payslip: Payslip;
   onClose: () => void;
+  autoPrint?: boolean;
 }) {
+  useEffect(() => {
+    if (autoPrint) {
+      const timer = setTimeout(() => {
+        window.print();
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [autoPrint]);
   const earnings = [
     { label: "Basic Salary", value: payslip.breakdown.basicSalary },
     { label: "HRA", value: payslip.breakdown.hra },
@@ -447,6 +457,7 @@ export function EmployeePayslips() {
   const [showYearDrop, setShowYearDrop] = useState(false);
   const [showMonthDrop, setShowMonthDrop] = useState(false);
   const [previewPayslip, setPreviewPayslip] = useState<Payslip | null>(null);
+  const [shouldAutoPrint, setShouldAutoPrint] = useState(false);
 
   const filteredPayslips = useMemo(() => {
     return MOCK_PAYSLIPS.filter((p) => {
@@ -700,19 +711,19 @@ export function EmployeePayslips() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 justify-end">
                         <button
-                          onClick={() => setPreviewPayslip(p)}
+                          onClick={() => {
+                            setPreviewPayslip(p);
+                            setShouldAutoPrint(false);
+                          }}
                           className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-border text-[11px] font-black text-foreground hover:bg-secondary hover:border-primary/30 transition-all"
                         >
                           <Eye size={14} /> View
                         </button>
                         <button
-                          onClick={() =>
-                            showToast(
-                              "Downloading",
-                              "success",
-                              `${p.month} ${p.year} payslip downloaded.`,
-                            )
-                          }
+                          onClick={() => {
+                            setPreviewPayslip(p);
+                            setShouldAutoPrint(true);
+                          }}
                           className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 border border-primary/20 text-[11px] font-black text-primary hover:bg-primary/20 transition-all"
                         >
                           <Download size={14} /> PDF
@@ -740,7 +751,11 @@ export function EmployeePayslips() {
       {previewPayslip && (
         <PayslipModal
           payslip={previewPayslip}
-          onClose={() => setPreviewPayslip(null)}
+          onClose={() => {
+            setPreviewPayslip(null);
+            setShouldAutoPrint(false);
+          }}
+          autoPrint={shouldAutoPrint}
         />
       )}
     </div>

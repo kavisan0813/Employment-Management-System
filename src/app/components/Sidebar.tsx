@@ -365,6 +365,72 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     navigate("/login", { replace: true });
   };
 
+  const getRoleStyle = (role: UserRole) => {
+    switch (role) {
+      case "Super Admin":
+        return {
+          avatarBg: "linear-gradient(135deg, #8B5CF6, #6D28D9)",
+          avatarColor: "#FFFFFF",
+          avatarBorder: "none",
+          badgeBg: "rgba(139,92,246,0.1)",
+          badgeColor: "#8B5CF6",
+          badgeBorder: "none",
+          title: user?.name || "Super Admin",
+          subtitle: "System Administrator",
+          initials: user?.initials || "SA",
+        };
+      case "HR Manager":
+        return {
+          avatarBg: "linear-gradient(135deg, #00B87C, #059669)",
+          avatarColor: "#FFFFFF",
+          avatarBorder: "none",
+          badgeBg: "rgba(0,184,124,0.1)",
+          badgeColor: "#00B87C",
+          badgeBorder: "none",
+          title: user?.name || "Ryan Park",
+          subtitle: "HR Manager",
+          initials: user?.initials || "RP",
+        };
+      case "Finance":
+        return {
+          avatarBg: "linear-gradient(135deg, #0EA5E9, #0284C7)",
+          avatarColor: "#FFFFFF",
+          avatarBorder: "none",
+          badgeBg: "#E0F2FE",
+          badgeColor: "#0369A1",
+          badgeBorder: "1px solid #BAE6FD",
+          title: user?.name || "Priya Sharma",
+          subtitle: "Finance Officer",
+          initials: user?.initials || "PS",
+        };
+      case "Manager":
+        return {
+          avatarBg: "linear-gradient(135deg, #F59E0B, #D97706)",
+          avatarColor: "#FFFFFF",
+          avatarBorder: "none",
+          badgeBg: "#FEF3C7",
+          badgeColor: "#92400E",
+          badgeBorder: "1px solid #FDE68A",
+          title: user?.name || "Suresh Iyer",
+          subtitle: "Engineering Manager",
+          initials: user?.initials || "SI",
+        };
+      case "Employee":
+      default:
+        return {
+          avatarBg: "linear-gradient(135deg, #00B87C, #059669)",
+          avatarColor: "#FFFFFF",
+          avatarBorder: "none",
+          badgeBg: "rgba(0,184,124,0.1)",
+          badgeColor: "#00B87C",
+          badgeBorder: "none",
+          title: user?.name || "John Doe",
+          subtitle: "Employee",
+          initials: user?.initials || "JD",
+        };
+    }
+  };
+
   const roleConf = currentRole ? ROLE_CONFIG[currentRole] : null;
 
   return (
@@ -419,128 +485,58 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         )}
       </div>
 
-      {/* HR Manager / Super Admin User Card */}
-      {!collapsed &&
-        (currentRole === "HR Manager" || currentRole === "Super Admin") && (
-          <div className="mx-4 mt-5 mb-2">
-            <div className="flex items-center gap-3 p-1">
+      {/* Unified User Profile Card */}
+      {!collapsed && user && currentRole && !isNewJoinee && (
+        (() => {
+          const styleConf = getRoleStyle(currentRole);
+          return (
+            <div className="mx-4 mt-5 mb-2">
+              <div className="flex items-center gap-3 p-1">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-sm"
+                  style={{
+                    background: styleConf.avatarBg,
+                    color: styleConf.avatarColor,
+                    border: styleConf.avatarBorder || "none",
+                  }}
+                >
+                  {styleConf.initials}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14px] font-black text-foreground truncate leading-tight">
+                    {styleConf.title}
+                  </p>
+                  <p className="text-[11px] font-bold text-muted-foreground truncate">
+                    {styleConf.subtitle}
+                  </p>
+                </div>
+              </div>
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-sm"
+                className="mt-2 px-2.5 py-1 rounded-full inline-flex items-center gap-1.5"
                 style={{
-                  background:
-                    currentRole === "Super Admin"
-                      ? "linear-gradient(135deg, #8B5CF6, #6D28D9)"
-                      : "linear-gradient(135deg, #00B87C, #059669)",
-                  color: "white",
+                  backgroundColor: styleConf.badgeBg,
+                  border: styleConf.badgeBorder || "none",
                 }}
               >
-                {user?.initials || (currentRole === "Super Admin" ? "SA" : "RP")}
+                <div
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{
+                    backgroundColor: styleConf.badgeColor,
+                  }}
+                />
+                <span
+                  className="text-[10px] font-black uppercase tracking-widest"
+                  style={{
+                    color: styleConf.badgeColor,
+                  }}
+                >
+                  {currentRole}
+                </span>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-black text-foreground truncate leading-tight">
-                  {user?.name || (currentRole === "Super Admin" ? "Super Admin" : "Ryan Park")}
-                </p>
-                <p className="text-[11px] font-bold text-muted-foreground truncate">
-                  {currentRole === "Super Admin"
-                    ? "System Administrator"
-                    : "HR Manager"}
-                </p>
-              </div>
             </div>
-            <div
-              className="mt-2 px-2.5 py-1 rounded-full inline-flex items-center gap-1.5"
-              style={{
-                backgroundColor:
-                  currentRole === "Super Admin"
-                    ? "rgba(139,92,246,0.1)"
-                    : "rgba(0,184,124,0.1)",
-              }}
-            >
-              <div
-                className="w-1.5 h-1.5 rounded-full"
-                style={{
-                  backgroundColor:
-                    currentRole === "Super Admin" ? "#8B5CF6" : "#00B87C",
-                }}
-              />
-              <span
-                className="text-[10px] font-black uppercase tracking-widest"
-                style={{
-                  color: currentRole === "Super Admin" ? "#8B5CF6" : "#00B87C",
-                }}
-              >
-                {currentRole}
-              </span>
-            </div>
-          </div>
-        )}
-
-      {/* Manager User Card */}
-      {!collapsed && currentRole === "Manager" && (
-        <div className="mx-4 mt-6 mb-2">
-          <div className="flex items-center gap-3 p-1">
-            <div
-              className="w-10 h-10 rounded-xl bg-[#FEF3C7] flex items-center justify-center text-[#92400E] font-black text-sm shrink-0 shadow-sm"
-              style={{ border: "1px solid #FDE68A" }}
-            >
-              {user?.initials || "SI"}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[14px] font-black text-foreground truncate leading-tight">
-                {user?.name || "Suresh Iyer"}
-              </p>
-              <p className="text-[11px] font-bold text-muted-foreground truncate">
-                Engineering Manager
-              </p>
-            </div>
-          </div>
-          <div
-            className="mt-3 px-2.5 py-1 rounded-full inline-flex items-center gap-1.5"
-            style={{ backgroundColor: "#FEF3C7" }}
-          >
-            <div className="w-1.5 h-1.5 rounded-full bg-[#92400E]" />
-            <span
-              className="text-[10px] font-black uppercase tracking-widest"
-              style={{ color: "#92400E" }}
-            >
-              Manager
-            </span>
-          </div>
-        </div>
+          );
+        })()
       )}
-
-      {/* Role Badge (Non-Manager, Non-HR, Non-SuperAdmin, Non-NewJoinee) */}
-      {!collapsed &&
-        roleConf &&
-        currentRole !== "Manager" &&
-        currentRole !== "HR Manager" &&
-        currentRole !== "Super Admin" &&
-        !isNewJoinee && (
-          <div
-            className="mx-3 mt-3 px-3 py-2 rounded-xl flex items-center gap-2"
-            style={{
-              backgroundColor:
-                currentRole === "Finance" ? "#E0F2FE" : roleConf.bg,
-              border: currentRole === "Finance" ? "1px solid #BAE6FD" : "none",
-            }}
-          >
-            <ShieldCheck
-              size={14}
-              style={{
-                color: currentRole === "Finance" ? "#0369A1" : roleConf.color,
-                flexShrink: 0,
-              }}
-            />
-            <span
-              className="text-[11px] font-black uppercase tracking-widest whitespace-nowrap"
-              style={{
-                color: currentRole === "Finance" ? "#0369A1" : roleConf.color,
-              }}
-            >
-              {currentRole}
-            </span>
-          </div>
-        )}
 
       {/* Navigation */}
       <nav className="flex-1 py-3 overflow-y-auto no-scrollbar">
@@ -854,54 +850,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           </>
         )}
 
-        {/* User info card (Finance/Employee only — HR Manager & Super Admin have top profile cards) */}
-        {!collapsed &&
-          user &&
-          currentRole !== "Manager" &&
-          currentRole !== "HR Manager" &&
-          currentRole !== "Super Admin" &&
-          !isNewJoinee && (
-            <div
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-2"
-              style={{ backgroundColor: "var(--sidebar-accent)" }}
-            >
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                style={{
-                  background: "linear-gradient(135deg, #00B87C, #059669)",
-                }}
-              >
-                <span
-                  style={{ color: "white", fontSize: "12px", fontWeight: 700 }}
-                >
-                  {user.initials}
-                </span>
-              </div>
-              <div className="overflow-hidden flex-1">
-                <p
-                  style={{
-                    color: "var(--foreground)",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {user.name}
-                </p>
-                <p
-                  style={{
-                    color: "var(--muted-foreground)",
-                    fontSize: "10px",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {currentRole === "Finance" ? "Finance Officer" : user.role}
-                </p>
-              </div>
-            </div>
-          )}
 
         {/* Logout button */}
         <button

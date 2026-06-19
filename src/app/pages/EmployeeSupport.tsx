@@ -20,6 +20,9 @@ import {
   Paperclip,
   Download,
   AlertCircle,
+  Star,
+  Send,
+  Bot,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "motion/react";
@@ -63,9 +66,10 @@ interface Ticket {
   description: string;
   timeline: TimelineEntry[];
   attachments: Attachment[];
+  rating?: { stars: number; feedback: string };
 }
 
-const TABS = ["My Tickets", "Knowledge Base"];
+const TABS = ["My Tickets", "AI Support Assistant", "Knowledge Base"];
 
 const INITIAL_TICKETS: Ticket[] = [
   {
@@ -358,6 +362,7 @@ export function EmployeeSupport() {
                 onViewTicket={(t: Ticket) => setViewingTicket(t)}
               />
             )}
+            {activeTab === "AI Support Assistant" && <AISupportAssistantTab />}
             {activeTab === "Knowledge Base" && <KnowledgeBaseTab />}
           </motion.div>
         </AnimatePresence>
@@ -899,6 +904,9 @@ function TicketDetailModal({
   const [commentFile, setCommentFile] = useState<File | null>(null);
   const commentFileInputRef = useRef<HTMLInputElement>(null);
 
+  const [selectedStars, setSelectedStars] = useState(0);
+  const [ratingFeedback, setRatingFeedback] = useState("");
+
   const isClosed =
     ticket.status === "Resolved" ||
     ticket.status === "Closed" ||
@@ -1180,6 +1188,95 @@ function TicketDetailModal({
               ))}
             </div>
           </div>
+
+          {/* Support Experience Rating */}
+          {ticket.status === "Resolved" && !ticket.rating ? (
+            <div className="bg-emerald-50/50 dark:bg-emerald-950/20 p-5 rounded-2xl border border-emerald-500/20 space-y-4 mt-6">
+              <div className="flex items-center gap-2">
+                <Star className="text-emerald-500 fill-emerald-500" size={16} />
+                <span className="text-[13px] font-black text-emerald-800 dark:text-emerald-300">
+                  Rate Support Experience
+                </span>
+              </div>
+              <p className="text-[12px] text-muted-foreground">
+                This ticket has been marked as resolved. Please help us improve by rating your experience:
+              </p>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setSelectedStars(star)}
+                    className="p-1 hover:scale-110 active:scale-95 transition-all text-amber-400 border-none bg-transparent cursor-pointer"
+                  >
+                    <Star
+                      size={24}
+                      fill={selectedStars >= star ? "#F59E0B" : "none"}
+                      className={selectedStars >= star ? "text-amber-500" : "text-slate-300"}
+                    />
+                  </button>
+                ))}
+              </div>
+              {selectedStars > 0 && (
+                <div className="space-y-3">
+                  <textarea
+                    placeholder="Share your feedback (optional)..."
+                    value={ratingFeedback}
+                    onChange={(e) => setRatingFeedback(e.target.value)}
+                    className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-[12px] font-medium text-slate-800 dark:text-slate-100 placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all resize-none min-h-[60px]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (selectedStars === 0) return;
+                      const updated: Ticket = {
+                        ...ticket,
+                        rating: { stars: selectedStars, feedback: ratingFeedback },
+                        timeline: [
+                          ...ticket.timeline,
+                          {
+                            id: Math.random().toString(),
+                            type: "comment",
+                            user: "Current Employee",
+                            timestamp: new Date().toLocaleString(),
+                            comment: `Rated support experience: ${selectedStars} / 5 stars.${ratingFeedback ? ` Feedback: "${ratingFeedback}"` : ""}`,
+                          },
+                        ],
+                      };
+                      onUpdate(updated);
+                      showToast(
+                        "Feedback Submitted",
+                        "success",
+                        "Thank you for your feedback!",
+                      );
+                    }}
+                    className="w-full py-2 bg-[#00B87C] text-white rounded-xl text-[12px] font-black hover:opacity-95 transition-all border-none shadow-sm cursor-pointer"
+                  >
+                    Submit Feedback
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : ticket.rating ? (
+            <div className="bg-secondary/20 p-4 rounded-2xl border border-border mt-6">
+              <span className="text-[11px] font-bold text-muted-foreground block mb-2 uppercase tracking-wider">Your Rating</span>
+              <div className="flex items-center gap-1 mb-1.5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    size={14}
+                    fill={ticket.rating!.stars >= star ? "#F59E0B" : "none"}
+                    className={ticket.rating!.stars >= star ? "text-amber-500" : "text-slate-300"}
+                  />
+                ))}
+              </div>
+              {ticket.rating.feedback && (
+                <p className="text-[12px] text-foreground italic leading-relaxed">
+                  "{ticket.rating.feedback}"
+                </p>
+              )}
+            </div>
+          ) : null}
         </div>
 
         <div className="p-8 bg-secondary/30 border-t border-border flex flex-col gap-4">
@@ -1355,6 +1452,186 @@ function TicketDetailModal({
           </div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+interface ChatMessage {
+  id: string;
+  sender: "user" | "ai";
+  text: string;
+  timestamp: string;
+}
+
+function AISupportAssistantTab() {
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: "1",
+      sender: "ai",
+      text: "Hi there! I am your NexusHR AI Assistant. How can I help you today? You can ask me about hardware upgrades, password resets, leave applications, or expense claims.",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    },
+  ]);
+  const [inputText, setInputText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useState(() => {
+    scrollToBottom();
+  });
+
+  const handleSend = (textToSend: string) => {
+    if (!textToSend.trim()) return;
+
+    const userMsg: ChatMessage = {
+      id: Math.random().toString(),
+      sender: "user",
+      text: textToSend,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    setMessages((prev) => [...prev, userMsg]);
+    setInputText("");
+    setIsTyping(true);
+
+    setTimeout(() => {
+      scrollToBottom();
+    }, 50);
+
+    setTimeout(() => {
+      let reply = "";
+      const lower = textToSend.toLowerCase();
+
+      if (lower.includes("ram") || lower.includes("hardware") || lower.includes("laptop") || lower.includes("pc") || lower.includes("upgrade")) {
+        reply = "For computer slowness or hardware upgrades (like RAM), please raise an **IT Hardware** ticket. Click the green '+ Raise New Ticket' button at the top of the Support page and select the 'IT Support' category.";
+      } else if (lower.includes("password") || lower.includes("reset") || lower.includes("portal") || lower.includes("login")) {
+        reply = "To reset your password, visit **Settings > Security** or click 'Forgot Password' on the login screen. You can also follow the guide in the **Knowledge Base** under the 'Access Issues' category.";
+      } else if (lower.includes("leave") || lower.includes("sick") || lower.includes("vacation")) {
+        reply = "To apply for leave, navigate to the **My Leaves** page in the sidebar and click '+ Apply Leave'. Your manager will receive an instant notification to review your request.";
+      } else if (lower.includes("expense") || lower.includes("reimbursement") || lower.includes("claim") || lower.includes("money")) {
+        reply = "You can submit expense reimbursements under the **My Expenses** page in the sidebar. Click '+ New Claim', fill in the details, and make sure to attach your receipt/invoice for approval.";
+      } else {
+        reply = "I'm here to help! If you have a specific request, you can submit a support ticket directly to our HR or IT desk by clicking the green '+ Raise New Ticket' button. You can also search through our FAQ categories in the **Knowledge Base** tab.";
+      }
+
+      const aiMsg: ChatMessage = {
+        id: Math.random().toString(),
+        sender: "ai",
+        text: reply,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+
+      setMessages((prev) => [...prev, aiMsg]);
+      setIsTyping(false);
+
+      setTimeout(() => {
+        scrollToBottom();
+      }, 50);
+    }, 1000);
+  };
+
+  const suggestions = [
+    "Upgrade RAM or Laptop",
+    "Reset portal password",
+    "How to apply for leave",
+    "Submit expense reimbursement",
+  ];
+
+  return (
+    <div className="max-w-2xl mx-auto bg-card rounded-[32px] border border-border shadow-sm overflow-hidden flex flex-col h-[550px]">
+      {/* Bot Header */}
+      <div className="px-6 py-4 border-b border-border flex items-center gap-3 bg-secondary/10">
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+          <Bot size={20} />
+        </div>
+        <div>
+          <h3 className="text-sm font-black text-foreground">NexusHR AI Helpdesk</h3>
+          <p className="text-[11px] text-[#00B87C] font-bold flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00B87C] animate-pulse" /> Online Assistant
+          </p>
+        </div>
+      </div>
+
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar bg-slate-50/50 dark:bg-card">
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+          >
+            <div
+              className={`max-w-[80%] p-4 rounded-2xl text-[13px] leading-relaxed font-medium ${
+                msg.sender === "user"
+                  ? "bg-primary text-white rounded-tr-none shadow-md shadow-primary/10"
+                  : "bg-white dark:bg-secondary/40 border border-border rounded-tl-none text-foreground"
+              }`}
+            >
+              <p className="whitespace-pre-wrap">{msg.text}</p>
+              <span
+                className={`text-[9px] block mt-1.5 text-right font-bold ${
+                  msg.sender === "user" ? "text-emerald-100" : "text-muted-foreground"
+                }`}
+              >
+                {msg.timestamp}
+              </span>
+            </div>
+          </div>
+        ))}
+
+        {isTyping && (
+          <div className="flex justify-start">
+            <div className="bg-white dark:bg-secondary/40 border border-border p-4 rounded-2xl rounded-tl-none flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Suggestions and Input */}
+      <div className="p-4 border-t border-border bg-white dark:bg-card space-y-3">
+        {messages.length === 1 && (
+          <div className="flex flex-wrap gap-2 justify-center">
+            {suggestions.map((s) => (
+              <button
+                key={s}
+                onClick={() => handleSend(s)}
+                className="px-3 py-1.5 bg-secondary hover:bg-primary hover:text-white rounded-full text-xs font-bold text-muted-foreground transition-all cursor-pointer border border-border"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSend(inputText);
+          }}
+          className="flex gap-2"
+        >
+          <input
+            type="text"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            placeholder="Type your question here..."
+            className="flex-1 bg-secondary/50 border border-border rounded-xl px-4 py-3 text-[13px] font-bold text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all"
+          />
+          <button
+            type="submit"
+            className="p-3 bg-primary hover:opacity-90 text-white rounded-xl transition-all shadow-md active:scale-95 cursor-pointer flex items-center justify-center border-none"
+          >
+            <Send size={16} />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
