@@ -37,7 +37,7 @@ export interface PlatformUser {
   email: string;
   avatarUrl?: string;
   status: "Active" | "Inactive" | "Pending" | "Suspended";
-  role: "Super Admin" | "Org Admin" | "HR Manager" | "Manager" | "Employee";
+  role: string;
   organization: string;
   organizationId: string;
   lastLoginAt: string;

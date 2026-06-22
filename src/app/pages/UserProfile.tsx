@@ -3,7 +3,6 @@ import { EmployeeSelfProfile } from "./EmployeeSelfProfile";
 import { useAuth } from "../context/AuthContext";
 import {
   User,
-  Settings,
   Building2,
   Globe,
   Camera,
@@ -12,7 +11,6 @@ import {
   MapPin,
   Briefcase,
   Calendar,
-  Edit3,
   Save,
   X,
   Bell,
@@ -186,7 +184,11 @@ function InputField({
           opacity: disabled ? 0.7 : 1,
         }}
       >
-        {icon && <span className="text-muted-foreground flex items-center justify-center">{icon}</span>}
+        {icon && (
+          <span className="text-muted-foreground flex items-center justify-center">
+            {icon}
+          </span>
+        )}
         <input
           type={type}
           value={value}
@@ -238,7 +240,7 @@ export function UserProfile() {
   const [department, setDepartment] = useState("Human Resources");
   const [reportsTo, setReportsTo] = useState("Sarah Mitchell, VP HR");
   const [bio, setBio] = useState(
-    "Experienced HR professional with 8+ years managing full-cycle human resources for fast-growing tech organizations. Passionate about building strong employee cultures, optimizing HR processes, and leveraging data-driven decisions."
+    "Experienced HR professional with 8+ years managing full-cycle human resources for fast-growing tech organizations. Passionate about building strong employee cultures, optimizing HR processes, and leveraging data-driven decisions.",
   );
   const [website, setWebsite] = useState("ryanpark.hr.dev");
   const [linkedin, setLinkedin] = useState("linkedin.com/in/ryanpark");
@@ -254,8 +256,12 @@ export function UserProfile() {
       setFirstName(parts[0] || "");
       setLastName(parts.slice(1).join(" ") || "");
       setEmail(user.email || "");
-      setJobTitle(user.role === "Super Admin" ? "Super Administrator" : "HR Manager");
-      setDepartment(user.role === "Super Admin" ? "Executive Office" : "Human Resources");
+      setJobTitle(
+        user.role === "Super Admin" ? "Super Administrator" : "HR Manager",
+      );
+      setDepartment(
+        user.role === "Super Admin" ? "Executive Office" : "Human Resources",
+      );
     }
   }, [user]);
 
@@ -272,7 +278,7 @@ export function UserProfile() {
           showToast(
             "Avatar Updated",
             "success",
-            "Your profile photo has been updated successfully."
+            "Your profile photo has been updated successfully.",
           );
         }
       };
@@ -287,7 +293,7 @@ export function UserProfile() {
       showToast(
         "Skill Added",
         "success",
-        `"${newSkill.trim()}" has been added to your skills.`
+        `"${newSkill.trim()}" has been added to your skills.`,
       );
     }
   };
@@ -302,14 +308,16 @@ export function UserProfile() {
         ...user,
         name: `${firstName} ${lastName}`.trim(),
         email: email,
-        initials: `${firstName} ${lastName}`.trim()
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase()
-          .slice(0, 2) || "RP"
+        initials:
+          `${firstName} ${lastName}`
+            .trim()
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2) || "RP",
       };
-      
+
       login(updatedUser);
 
       try {
@@ -322,15 +330,18 @@ export function UserProfile() {
                 ...u,
                 name: updatedUser.name,
                 email: updatedUser.email,
-                initials: updatedUser.initials
+                initials: updatedUser.initials,
               };
             }
             return u;
           });
-          localStorage.setItem("nexus_registered_users", JSON.stringify(updatedUsers));
+          localStorage.setItem(
+            "nexus_registered_users",
+            JSON.stringify(updatedUsers),
+          );
         }
       } catch (err) {
-        // ignore
+        console.log(err);
       }
     }
 
@@ -339,7 +350,7 @@ export function UserProfile() {
     showToast(
       "Profile Updated",
       "success",
-      "Your changes have been saved successfully."
+      "Your changes have been saved successfully.",
     );
     setTimeout(() => setSaved(false), 3000);
   };
@@ -440,8 +451,9 @@ export function UserProfile() {
                   </span>
                 </div>
               )}
-              {activeTab !== "Settings" && activeTab !== "Recent Activity" && (
-                !isEditing ? (
+              {activeTab !== "Settings" &&
+                activeTab !== "Recent Activity" &&
+                (!isEditing ? (
                   <button
                     onClick={() => setIsEditing(true)}
                     className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted/50 transition-all shadow-sm bg-transparent"
@@ -464,14 +476,13 @@ export function UserProfile() {
                       Save
                     </button>
                   </div>
-                )
-              )}
+                ))}
               <button
                 onClick={() =>
                   showToast(
                     "Info",
                     "info",
-                    `Role permissions: ${user?.role || "Admin"} workspace.`
+                    `Role permissions: ${user?.role || "Admin"} workspace.`,
                   )
                 }
                 className="p-2.5 rounded-xl border border-border text-foreground hover:bg-muted/50 transition-all shadow-sm bg-transparent"
@@ -734,7 +745,8 @@ export function UserProfile() {
                       <div
                         className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
                         style={{
-                          background: "linear-gradient(135deg, #059669, #14B8A6)",
+                          background:
+                            "linear-gradient(135deg, #059669, #14B8A6)",
                         }}
                       >
                         <Award size={18} />
@@ -872,12 +884,17 @@ export function UserProfile() {
                         <button
                           onClick={() => {
                             setSaved(true);
-                            showToast("Company Info", "success", "Company settings saved successfully.");
+                            showToast(
+                              "Company Info",
+                              "success",
+                              "Company settings saved successfully.",
+                            );
                             setTimeout(() => setSaved(false), 3000);
                           }}
                           className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-[13px] transition-all hover:scale-[1.02] border-none cursor-pointer"
                           style={{
-                            background: "linear-gradient(135deg, #059669, #047857)",
+                            background:
+                              "linear-gradient(135deg, #059669, #047857)",
                             boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
                           }}
                         >
@@ -894,14 +911,16 @@ export function UserProfile() {
                         Account Settings
                       </h3>
                       <p className="text-muted-foreground text-[13px] mb-6">
-                        Manage your personal profile information and preferences.
+                        Manage your personal profile information and
+                        preferences.
                       </p>
 
                       <div className="flex items-center gap-4 mb-6 p-4 rounded-xl bg-background border border-border">
                         <div
                           className="w-16 h-16 rounded-full flex items-center justify-center relative shadow-md"
                           style={{
-                            background: "linear-gradient(135deg, #059669, #14B8A6)",
+                            background:
+                              "linear-gradient(135deg, #059669, #14B8A6)",
                           }}
                         >
                           {avatarPreview ? (
@@ -985,7 +1004,8 @@ export function UserProfile() {
                           onClick={handleSave}
                           className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-[13px] transition-all hover:scale-[1.02] border-none cursor-pointer"
                           style={{
-                            background: "linear-gradient(135deg, #059669, #047857)",
+                            background:
+                              "linear-gradient(135deg, #059669, #047857)",
                             boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
                           }}
                         >
@@ -1041,10 +1061,17 @@ export function UserProfile() {
                       />
                       <div className="flex justify-end mt-6">
                         <button
-                          onClick={() => showToast("Preferences", "success", "Notification preferences updated.")}
+                          onClick={() =>
+                            showToast(
+                              "Preferences",
+                              "success",
+                              "Notification preferences updated.",
+                            )
+                          }
                           className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-[13px] border-none cursor-pointer"
                           style={{
-                            background: "linear-gradient(135deg, #059669, #047857)",
+                            background:
+                              "linear-gradient(135deg, #059669, #047857)",
                             boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
                           }}
                         >
@@ -1077,7 +1104,10 @@ export function UserProfile() {
                               Current Password
                             </label>
                             <div className="flex items-center gap-2.5 rounded-xl px-4 border border-border bg-card h-11 focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/5 transition-all">
-                              <Lock size={14} className="text-muted-foreground" />
+                              <Lock
+                                size={14}
+                                className="text-muted-foreground"
+                              />
                               <input
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Enter current password"
@@ -1087,7 +1117,11 @@ export function UserProfile() {
                                 onClick={() => setShowPassword(!showPassword)}
                                 className="border-none bg-transparent cursor-pointer flex items-center text-muted-foreground"
                               >
-                                {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                                {showPassword ? (
+                                  <EyeOff size={14} />
+                                ) : (
+                                  <Eye size={14} />
+                                )}
                               </button>
                             </div>
                           </div>
@@ -1096,17 +1130,26 @@ export function UserProfile() {
                               New Password
                             </label>
                             <div className="flex items-center gap-2.5 rounded-xl px-4 border border-border bg-card h-11 focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/5 transition-all">
-                              <Lock size={14} className="text-muted-foreground" />
+                              <Lock
+                                size={14}
+                                className="text-muted-foreground"
+                              />
                               <input
                                 type={showNewPassword ? "text" : "password"}
                                 placeholder="Enter new password"
                                 className="w-full bg-transparent border-none outline-none text-[13px] text-foreground font-bold"
                               />
                               <button
-                                onClick={() => setShowNewPassword(!showNewPassword)}
+                                onClick={() =>
+                                  setShowNewPassword(!showNewPassword)
+                                }
                                 className="border-none bg-transparent cursor-pointer flex items-center text-muted-foreground"
                               >
-                                {showNewPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                                {showNewPassword ? (
+                                  <EyeOff size={14} />
+                                ) : (
+                                  <Eye size={14} />
+                                )}
                               </button>
                             </div>
                             <div className="flex gap-1 mt-2">
@@ -1128,10 +1171,17 @@ export function UserProfile() {
                           </div>
                         </div>
                         <button
-                          onClick={() => showToast("Security", "success", "Your password has been successfully updated.")}
+                          onClick={() =>
+                            showToast(
+                              "Security",
+                              "success",
+                              "Your password has been successfully updated.",
+                            )
+                          }
                           className="mt-6 px-4 py-2 rounded-xl text-white font-bold text-[13px] flex items-center gap-2 border-none cursor-pointer"
                           style={{
-                            background: "linear-gradient(135deg, #059669, #047857)",
+                            background:
+                              "linear-gradient(135deg, #059669, #047857)",
                             boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)",
                           }}
                         >
@@ -1172,7 +1222,13 @@ export function UserProfile() {
                           Please be certain.
                         </p>
                         <button
-                          onClick={() => showToast("Danger", "error", "Account deletion is restricted for demo environments.")}
+                          onClick={() =>
+                            showToast(
+                              "Danger",
+                              "error",
+                              "Account deletion is restricted for demo environments.",
+                            )
+                          }
                           className="px-4 py-2 rounded-xl text-[13px] font-bold text-red-500 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 cursor-pointer"
                         >
                           Delete Account

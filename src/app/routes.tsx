@@ -6,11 +6,6 @@ import { Signup } from "./pages/Signup";
 import { AuthSuccess } from "./pages/AuthSuccess";
 import { useAuth } from "./context/AuthContext";
 import {
-  Puzzle,
-  Shield,
-  Zap,
-  Key,
-  Settings as SettingsIcon,
   Mail,
   Bell,
   DatabaseBackup,
@@ -31,17 +26,17 @@ const AdminDashboardPage = lazy(() =>
   })),
 );
 const AdminOrganizationsPage = lazy(() =>
-  import("./admin/features/organizations/OrganizationsView").then((m) => ({
+  import("./admin/features/organizations/pages/OrganizationsPage").then((m) => ({
     default: m.default,
   })),
 );
 const AdminGlobalUsersPage = lazy(() =>
-  import("./admin/features/users/GlobalUsersView").then((m) => ({
+  import("./admin/features/userManagement/UserManagementView").then((m) => ({
     default: m.default,
   })),
 );
 const AdminSubscriptionsPage = lazy(() =>
-  import("./admin/features/subscriptions/SubscriptionsView").then((m) => ({
+  import("./admin/features/subscription-billing/SubscriptionBillingView").then((m) => ({
     default: m.default,
   })),
 );

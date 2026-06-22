@@ -1199,7 +1199,8 @@ function TicketDetailModal({
                 </span>
               </div>
               <p className="text-[12px] text-muted-foreground">
-                This ticket has been marked as resolved. Please help us improve by rating your experience:
+                This ticket has been marked as resolved. Please help us improve
+                by rating your experience:
               </p>
               <div className="flex items-center gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -1212,7 +1213,11 @@ function TicketDetailModal({
                     <Star
                       size={24}
                       fill={selectedStars >= star ? "#F59E0B" : "none"}
-                      className={selectedStars >= star ? "text-amber-500" : "text-slate-300"}
+                      className={
+                        selectedStars >= star
+                          ? "text-amber-500"
+                          : "text-slate-300"
+                      }
                     />
                   </button>
                 ))}
@@ -1231,7 +1236,10 @@ function TicketDetailModal({
                       if (selectedStars === 0) return;
                       const updated: Ticket = {
                         ...ticket,
-                        rating: { stars: selectedStars, feedback: ratingFeedback },
+                        rating: {
+                          stars: selectedStars,
+                          feedback: ratingFeedback,
+                        },
                         timeline: [
                           ...ticket.timeline,
                           {
@@ -1259,14 +1267,20 @@ function TicketDetailModal({
             </div>
           ) : ticket.rating ? (
             <div className="bg-secondary/20 p-4 rounded-2xl border border-border mt-6">
-              <span className="text-[11px] font-bold text-muted-foreground block mb-2 uppercase tracking-wider">Your Rating</span>
+              <span className="text-[11px] font-bold text-muted-foreground block mb-2 uppercase tracking-wider">
+                Your Rating
+              </span>
               <div className="flex items-center gap-1 mb-1.5">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
                     size={14}
                     fill={ticket.rating!.stars >= star ? "#F59E0B" : "none"}
-                    className={ticket.rating!.stars >= star ? "text-amber-500" : "text-slate-300"}
+                    className={
+                      ticket.rating!.stars >= star
+                        ? "text-amber-500"
+                        : "text-slate-300"
+                    }
                   />
                 ))}
               </div>
@@ -1469,7 +1483,10 @@ function AISupportAssistantTab() {
       id: "1",
       sender: "ai",
       text: "Hi there! I am your NexusHR AI Assistant. How can I help you today? You can ask me about hardware upgrades, password resets, leave applications, or expense claims.",
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     },
   ]);
   const [inputText, setInputText] = useState("");
@@ -1491,7 +1508,10 @@ function AISupportAssistantTab() {
       id: Math.random().toString(),
       sender: "user",
       text: textToSend,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -1506,23 +1526,51 @@ function AISupportAssistantTab() {
       let reply = "";
       const lower = textToSend.toLowerCase();
 
-      if (lower.includes("ram") || lower.includes("hardware") || lower.includes("laptop") || lower.includes("pc") || lower.includes("upgrade")) {
-        reply = "For computer slowness or hardware upgrades (like RAM), please raise an **IT Hardware** ticket. Click the green '+ Raise New Ticket' button at the top of the Support page and select the 'IT Support' category.";
-      } else if (lower.includes("password") || lower.includes("reset") || lower.includes("portal") || lower.includes("login")) {
-        reply = "To reset your password, visit **Settings > Security** or click 'Forgot Password' on the login screen. You can also follow the guide in the **Knowledge Base** under the 'Access Issues' category.";
-      } else if (lower.includes("leave") || lower.includes("sick") || lower.includes("vacation")) {
-        reply = "To apply for leave, navigate to the **My Leaves** page in the sidebar and click '+ Apply Leave'. Your manager will receive an instant notification to review your request.";
-      } else if (lower.includes("expense") || lower.includes("reimbursement") || lower.includes("claim") || lower.includes("money")) {
-        reply = "You can submit expense reimbursements under the **My Expenses** page in the sidebar. Click '+ New Claim', fill in the details, and make sure to attach your receipt/invoice for approval.";
+      if (
+        lower.includes("ram") ||
+        lower.includes("hardware") ||
+        lower.includes("laptop") ||
+        lower.includes("pc") ||
+        lower.includes("upgrade")
+      ) {
+        reply =
+          "For computer slowness or hardware upgrades (like RAM), please raise an **IT Hardware** ticket. Click the green '+ Raise New Ticket' button at the top of the Support page and select the 'IT Support' category.";
+      } else if (
+        lower.includes("password") ||
+        lower.includes("reset") ||
+        lower.includes("portal") ||
+        lower.includes("login")
+      ) {
+        reply =
+          "To reset your password, visit **Settings > Security** or click 'Forgot Password' on the login screen. You can also follow the guide in the **Knowledge Base** under the 'Access Issues' category.";
+      } else if (
+        lower.includes("leave") ||
+        lower.includes("sick") ||
+        lower.includes("vacation")
+      ) {
+        reply =
+          "To apply for leave, navigate to the **My Leaves** page in the sidebar and click '+ Apply Leave'. Your manager will receive an instant notification to review your request.";
+      } else if (
+        lower.includes("expense") ||
+        lower.includes("reimbursement") ||
+        lower.includes("claim") ||
+        lower.includes("money")
+      ) {
+        reply =
+          "You can submit expense reimbursements under the **My Expenses** page in the sidebar. Click '+ New Claim', fill in the details, and make sure to attach your receipt/invoice for approval.";
       } else {
-        reply = "I'm here to help! If you have a specific request, you can submit a support ticket directly to our HR or IT desk by clicking the green '+ Raise New Ticket' button. You can also search through our FAQ categories in the **Knowledge Base** tab.";
+        reply =
+          "I'm here to help! If you have a specific request, you can submit a support ticket directly to our HR or IT desk by clicking the green '+ Raise New Ticket' button. You can also search through our FAQ categories in the **Knowledge Base** tab.";
       }
 
       const aiMsg: ChatMessage = {
         id: Math.random().toString(),
         sender: "ai",
         text: reply,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
 
       setMessages((prev) => [...prev, aiMsg]);
@@ -1549,9 +1597,12 @@ function AISupportAssistantTab() {
           <Bot size={20} />
         </div>
         <div>
-          <h3 className="text-sm font-black text-foreground">NexusHR AI Helpdesk</h3>
+          <h3 className="text-sm font-black text-foreground">
+            NexusHR AI Helpdesk
+          </h3>
           <p className="text-[11px] text-[#00B87C] font-bold flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00B87C] animate-pulse" /> Online Assistant
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00B87C] animate-pulse" />{" "}
+            Online Assistant
           </p>
         </div>
       </div>
@@ -1573,7 +1624,9 @@ function AISupportAssistantTab() {
               <p className="whitespace-pre-wrap">{msg.text}</p>
               <span
                 className={`text-[9px] block mt-1.5 text-right font-bold ${
-                  msg.sender === "user" ? "text-emerald-100" : "text-muted-foreground"
+                  msg.sender === "user"
+                    ? "text-emerald-100"
+                    : "text-muted-foreground"
                 }`}
               >
                 {msg.timestamp}
@@ -1585,9 +1638,18 @@ function AISupportAssistantTab() {
         {isTyping && (
           <div className="flex justify-start">
             <div className="bg-white dark:bg-secondary/40 border border-border p-4 rounded-2xl rounded-tl-none flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+              <span
+                className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
+                style={{ animationDelay: "0ms" }}
+              />
+              <span
+                className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
+                style={{ animationDelay: "150ms" }}
+              />
+              <span
+                className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
+                style={{ animationDelay: "300ms" }}
+              />
             </div>
           </div>
         )}

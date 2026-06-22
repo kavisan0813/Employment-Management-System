@@ -9,15 +9,10 @@ import { SupportTicket, TicketMessage } from "../../types";
 import {
   MessageSquare,
   Search,
-  Filter,
-  AlertTriangle,
   CheckCircle2,
-  Clock,
-  Send,
   X,
-  UserCheck,
+  Clock,
   Star,
-  ChevronDown,
 } from "lucide-react";
 
 const CURRENT_ADMIN_EMAIL = "admin@ems.io";

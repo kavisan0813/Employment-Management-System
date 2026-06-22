@@ -29,6 +29,22 @@ import {
   AdminTeamMember,
 } from "./types";
 
+import {
+  LoginLog,
+  ActivityLog,
+  AuditTrail,
+  SecurityEventLog,
+  ErrorLog,
+  ExportLog,
+  LogRetentionPolicy,
+} from "./features/auditLogs/types/logs.types";
+
+import {
+  UserSession,
+  CustomRole,
+  Permission,
+} from "./features/userManagement/types/userManagement.types";
+
 // Helper to load or initialize from localStorage
 function getStore<T>(key: string, defaultVal: T): T {
   try {
@@ -219,39 +235,42 @@ const initialOrganizations: Organization[] = [
 const initialUsers: PlatformUser[] = [
   {
     id: "user-1",
-    name: "Alice Vance",
-    email: "admin@acme.com",
+    name: "John Admin",
+    email: "john.admin@acme.com",
+    avatarUrl: "",
     status: "Active",
-    role: "Org Admin",
+    role: "Super Admin",
     organization: "Acme Enterprise",
     organizationId: "org-1",
-    lastLoginAt: "2026-06-20T01:00:00Z",
+    lastLoginAt: "2026-06-20T08:30:00Z",
     mfaEnabled: true,
-    joinedAt: "2024-01-15T08:00:00Z",
+    joinedAt: "2024-01-15T09:00:00Z",
   },
   {
     id: "user-2",
-    name: "Bob Carter",
-    email: "bob@acme.com",
+    name: "Sarah HR",
+    email: "sarah.hr@acme.com",
+    avatarUrl: "",
     status: "Active",
     role: "HR Manager",
     organization: "Acme Enterprise",
     organizationId: "org-1",
-    lastLoginAt: "2026-06-19T17:30:00Z",
+    lastLoginAt: "2026-06-19T14:20:00Z",
     mfaEnabled: false,
-    joinedAt: "2024-03-10T11:00:00Z",
+    joinedAt: "2024-02-10T10:00:00Z",
   },
   {
     id: "user-3",
-    name: "Charlie Dunn",
-    email: "charlie@acme.com",
+    name: "Mike Manager",
+    email: "mike.mgr@acme.com",
+    avatarUrl: "",
     status: "Active",
-    role: "Employee",
+    role: "Manager",
     organization: "Acme Enterprise",
     organizationId: "org-1",
-    lastLoginAt: "2026-06-18T09:00:00Z",
-    mfaEnabled: false,
-    joinedAt: "2024-05-12T14:22:00Z",
+    lastLoginAt: "2026-06-18T11:45:00Z",
+    mfaEnabled: true,
+    joinedAt: "2024-06-05T09:30:00Z",
   },
   {
     id: "user-4",
@@ -1477,6 +1496,411 @@ const initialAdminTeamMembers: AdminTeamMember[] = [
   },
 ];
 
+const initialLoginLogs: LoginLog[] = [
+  {
+    id: "login-1",
+    user: "Ravi Kumar",
+    email: "ravi.kumar@abctech.com",
+    organization: "Acme Enterprise",
+    role: "HR Manager",
+    loginTime: "2026-06-22T09:15:00Z",
+    logoutTime: "2026-06-22T18:15:00Z",
+    ipAddress: "103.25.12.44",
+    device: "Windows 11",
+    browser: "Chrome 124.0",
+    status: "Success",
+  },
+  {
+    id: "login-2",
+    user: "admin@abc.com",
+    email: "admin@abc.com",
+    organization: "Apex Global",
+    role: "Org Admin",
+    loginTime: "2026-06-22T10:30:00Z",
+    logoutTime: null,
+    ipAddress: "192.168.1.15",
+    device: "macOS Sonoma",
+    browser: "Safari 17.4",
+    status: "Failed",
+    failureReason: "Invalid Password",
+  },
+  {
+    id: "login-3",
+    user: "Pradeep Kumar",
+    email: "admin@ems.io",
+    organization: "EMS Platform",
+    role: "Super Admin",
+    loginTime: "2026-06-22T08:00:00Z",
+    logoutTime: null,
+    ipAddress: "185.12.44.90",
+    device: "Windows 11",
+    browser: "Edge 123.0",
+    status: "Success",
+  },
+  {
+    id: "login-4",
+    user: "David Miller",
+    email: "dave.miller@emsplatform.com",
+    organization: "EMS Platform",
+    role: "Support Lead",
+    loginTime: "2026-06-21T14:22:00Z",
+    logoutTime: "2026-06-21T18:50:00Z",
+    ipAddress: "84.22.90.11",
+    device: "Linux Ubuntu",
+    browser: "Firefox 122.0",
+    status: "Success",
+  },
+  {
+    id: "login-5",
+    user: "Unknown User",
+    email: "malicious@attacker.io",
+    organization: "Umbrella Biotech",
+    role: "Employee",
+    loginTime: "2026-06-22T11:05:00Z",
+    logoutTime: null,
+    ipAddress: "45.120.90.1",
+    device: "Linux x86_64",
+    browser: "Unknown Browser",
+    status: "Failed",
+    failureReason: "MFA Verification Failed",
+  },
+  {
+    id: "login-6",
+    user: "Jane Doe",
+    email: "jane@acme.com",
+    organization: "Acme Enterprise",
+    role: "Employee",
+    loginTime: "2026-06-22T09:00:00Z",
+    logoutTime: "2026-06-22T17:00:00Z",
+    ipAddress: "103.25.12.45",
+    device: "iPhone 15 Pro",
+    browser: "Safari Mobile",
+    status: "Success",
+  },
+];
+
+const initialActivityLogs: ActivityLog[] = [
+  {
+    id: "act-1",
+    timestamp: "2026-06-22T10:00:00Z",
+    user: "Ravi Kumar",
+    email: "ravi.kumar@abctech.com",
+    organization: "Acme Enterprise",
+    role: "HR Manager",
+    action: "Create",
+    module: "Employee",
+    details: "Created Employee profile for John Smith (EMP045)",
+    description: undefined,
+  },
+  {
+    id: "act-2",
+    timestamp: "2026-06-22T10:15:00Z",
+    user: "Pradeep Kumar",
+    email: "admin@ems.io",
+    organization: "EMS Platform",
+    role: "Super Admin",
+    action: "Approve",
+    module: "Leave",
+    details: "Approved Leave request #L-9024 for Employee Ravi Kumar",
+    description: undefined,
+  },
+  {
+    id: "act-3",
+    timestamp: "2026-06-22T11:00:00Z",
+    user: "Emma Watson",
+    email: "emma.watson@emsplatform.com",
+    organization: "EMS Platform",
+    role: "Billing Admin",
+    action: "Update",
+    module: "Billing",
+    details: "Generated invoice segment #INV-2026-06 for Acme Enterprise",
+    description: undefined,
+  },
+  {
+    id: "act-4",
+    timestamp: "2026-06-22T11:30:00Z",
+    user: "Ravi Kumar",
+    email: "ravi.kumar@abctech.com",
+    organization: "Acme Enterprise",
+    role: "HR Manager",
+    action: "Export",
+    module: "Payroll",
+    details: "Exported Payroll Summary for June 2026 (Format: Excel)",
+    description: undefined,
+  },
+  {
+    id: "act-5",
+    timestamp: "2026-06-21T16:45:00Z",
+    user: "David Miller",
+    email: "dave.miller@emsplatform.com",
+    organization: "EMS Platform",
+    role: "Support Lead",
+    action: "Update",
+    module: "Tickets",
+    details:
+      "Assigned Support Ticket #tkt-4 (Suspended warning showing) to agent Emma Watson",
+    description: undefined,
+  },
+];
+
+const initialAuditTrails: AuditTrail[] = [
+  {
+    id: "trail-1",
+    timestamp: "2026-06-22T10:02:00Z",
+    user: "Ravi Kumar",
+    email: "ravi.kumar@abctech.com",
+    organization: "Acme Enterprise",
+    action: "Employee Salary Updated",
+    target: "Salary",
+    oldValue: "50000",
+    newValue: "60000",
+    ipAddress: "103.25.12.44",
+  },
+  {
+    id: "trail-2",
+    timestamp: "2026-06-22T11:10:00Z",
+    user: "Emma Watson",
+    email: "emma.watson@emsplatform.com",
+    organization: "EMS Platform",
+    action: "Subscription Plan Configured",
+    target: "Enterprise Seat Limit",
+    oldValue: "500",
+    newValue: "1000",
+    ipAddress: "84.22.90.11",
+  },
+  {
+    id: "trail-3",
+    timestamp: "2026-06-22T09:40:00Z",
+    user: "admin@abc.com",
+    email: "admin@abc.com",
+    organization: "Apex Global",
+    action: "Security Configuration Updated",
+    target: "MFA Enforcement",
+    oldValue: "Optional",
+    newValue: "Required for Admins",
+    ipAddress: "192.168.1.15",
+  },
+  {
+    id: "trail-4",
+    timestamp: "2026-06-21T15:30:00Z",
+    user: "Pradeep Kumar",
+    email: "admin@ems.io",
+    organization: "EMS Platform",
+    action: "Feature Flag Configured",
+    target: "rolloutPct (churn_risk_radar)",
+    oldValue: "50",
+    newValue: "100",
+    ipAddress: "185.12.44.90",
+  },
+];
+
+const initialSecurityEventLogs: SecurityEventLog[] = [
+  {
+    id: "sec-1",
+    detectedAt: "2026-06-22T11:05:00Z",
+    type: "Account Locked",
+    organization: "Umbrella Biotech",
+    actor: "albert.wesker@umbrellacorp.com",
+    severity: "Critical",
+    status: "Active",
+    details:
+      "Account locked after 10 failed login attempts from IP 45.120.90.1 (Brute Force Detection).",
+    ipAddress: "45.120.90.1",
+  },
+  {
+    id: "sec-2",
+    detectedAt: "2026-06-21T22:30:00Z",
+    type: "Impossible Travel",
+    organization: "Acme Enterprise",
+    actor: "bob@acme.com",
+    severity: "High",
+    status: "Pending",
+    details:
+      "Login detected from London, UK and Chennai, India within 30 minutes.",
+    ipAddress: "82.140.231.5",
+  },
+  {
+    id: "sec-3",
+    detectedAt: "2026-06-20T15:20:00Z",
+    type: "MFA Disabled",
+    organization: "Stellar Tech SRL",
+    actor: "contact@stellar.io",
+    severity: "Medium",
+    status: "Resolved",
+    details: "MFA was disabled for administrator contact@stellar.io.",
+    ipAddress: "198.51.100.45",
+  },
+];
+
+const initialErrorLogs: ErrorLog[] = [
+  {
+    id: "err-1",
+    timestamp: "2026-06-22T10:12:00Z",
+    user: "System",
+    organization: null,
+    errorCode: "ERR_500_DB",
+    message:
+      "Database connection pool timeout during payroll generation batch process.",
+    severity: "Fatal",
+    path: "/api/payroll/export",
+    stackTrace:
+      "Error: Connection timeout\n  at Pool.query (d:\\EMS\\src\\db\\pool.ts:42:11)\n  at runPayrollBatch (d:\\EMS\\src\\services\\payroll.ts:182:9)\n  at processTicksAndRejections (node:internal/process/task_queues:95:5)",
+  },
+  {
+    id: "err-2",
+    timestamp: "2026-06-22T11:22:00Z",
+    user: "emma.watson@emsplatform.com",
+    organization: "EMS Platform",
+    errorCode: "API_GATEWAY_TIMEOUT",
+    message: "Gateway timeout received from Stripe payment API.",
+    severity: "Error",
+    path: "/admin/subscriptions",
+    stackTrace:
+      "AxiosError: timeout of 10000ms exceeded\n  at Redirect.settle (node_modules\\axios\\lib\\core\\settle.js:19:12)\n  at IncomingMessage.handleStreamEnd (node_modules\\axios\\lib\\adapters\\http.js:560:11)",
+  },
+  {
+    id: "err-3",
+    timestamp: "2026-06-22T09:15:00Z",
+    user: "ravi.kumar@abctech.com",
+    organization: "Acme Enterprise",
+    errorCode: "AUTH_TOKEN_EXPIRED",
+    message: "Session JWT token expired for active user.",
+    severity: "Warning",
+    path: "/employee/dashboard",
+    stackTrace:
+      "TokenExpiredError: jwt expired\n  at Object.module.exports.verify (node_modules\\jsonwebtoken\\verify.js:83:21)",
+  },
+];
+
+const initialExportLogs: ExportLog[] = [
+  {
+    id: "exp-1",
+    timestamp: "2026-06-22T11:30:00Z",
+    user: "Ravi Kumar",
+    organization: "Acme Enterprise",
+    module: "Payroll Summary",
+    recordsCount: 450,
+    format: "Excel",
+    status: "Success",
+    ipAddress: "103.25.12.44",
+  },
+  {
+    id: "exp-2",
+    timestamp: "2026-06-22T09:45:00Z",
+    user: "admin@abc.com",
+    organization: "Apex Global",
+    module: "Employee Directory",
+    recordsCount: 120,
+    format: "CSV",
+    status: "Success",
+    ipAddress: "192.168.1.15",
+  },
+  {
+    id: "exp-3",
+    timestamp: "2026-06-22T10:10:00Z",
+    user: "emma.watson@emsplatform.com",
+    organization: "EMS Platform",
+    module: "Invoice Ledger (Q2)",
+    recordsCount: 28,
+    format: "PDF",
+    status: "Failed",
+    ipAddress: "84.22.90.11",
+  },
+];
+
+const initialLogRetentionPolicy: LogRetentionPolicy = {
+  retentionDays: 365,
+  archiveEnabled: true,
+  immutableLock: false,
+  complianceStandard: "SOC2",
+};
+
+const initialUserSessions: UserSession[] = [
+  {
+    id: "session-1",
+    userId: "user-4",
+    userName: "Platform Owner",
+    userEmail: "owner@ems.io",
+    ipAddress: "192.168.1.10",
+    device: "MacBook Pro",
+    browser: "Chrome",
+    loginTime: "2026-06-22T08:00:00Z",
+    lastActivityTime: "2026-06-22T08:45:00Z",
+    status: "Active",
+  },
+  {
+    id: "session-2",
+    userId: "user-1",
+    userName: "John Admin",
+    userEmail: "john.admin@acme.com",
+    ipAddress: "203.0.113.45",
+    device: "Windows PC",
+    browser: "Edge",
+    loginTime: "2026-06-21T09:30:00Z",
+    lastActivityTime: "2026-06-21T17:00:00Z",
+    status: "Expired",
+  },
+];
+
+const initialCustomRoles: CustomRole[] = [
+  {
+    id: "role-root",
+    name: "Root Admin",
+    description: "Full access to entire platform.",
+    status: "Active",
+    type: "System",
+    hierarchyLevel: 0,
+  },
+  {
+    id: "role-super",
+    name: "Super Admin",
+    description: "Platform management access.",
+    status: "Active",
+    type: "System",
+    hierarchyLevel: 1,
+  },
+  {
+    id: "role-orgadmin",
+    name: "Org Admin",
+    description: "Organization level administrator.",
+    status: "Active",
+    type: "System",
+    hierarchyLevel: 2,
+  },
+  {
+    id: "role-hrmanager",
+    name: "HR Manager",
+    description: "HR management for organization.",
+    status: "Active",
+    type: "System",
+    hierarchyLevel: 3,
+  },
+  {
+    id: "role-manager",
+    name: "Manager",
+    description: "Team level manager.",
+    status: "Active",
+    type: "System",
+    hierarchyLevel: 4,
+  },
+  {
+    id: "role-employee",
+    name: "Employee",
+    description: "Standard employee access.",
+    status: "Active",
+    type: "System",
+    hierarchyLevel: 5,
+  },
+  {
+    id: "role-custom-recruiter",
+    name: "Recruitment Manager",
+    description: "Custom role for recruiting team.",
+    status: "Active",
+    type: "Custom",
+    hierarchyLevel: 3,
+  },
+];
+
 // ==========================================
 // STATE MANAGEMENT CONTEXT
 // ==========================================
@@ -1489,6 +1913,14 @@ export const db = {
   users: {
     get: () => getStore<PlatformUser[]>("users", initialUsers),
     save: (data: PlatformUser[]) => saveStore("users", data),
+  },
+  userSessions: {
+    get: () => getStore<UserSession[]>("userSessions", initialUserSessions),
+    save: (data: UserSession[]) => saveStore("userSessions", data),
+  },
+  customRoles: {
+    get: () => getStore<CustomRole[]>("customRoles", initialCustomRoles),
+    save: (data: CustomRole[]) => saveStore("customRoles", data),
   },
   subscriptions: {
     get: () => getStore<Subscription[]>("subscriptions", initialSubscriptions),
@@ -1578,6 +2010,42 @@ export const db = {
     getTeam: () =>
       getStore<AdminTeamMember[]>("admin_team", initialAdminTeamMembers),
     saveTeam: (data: AdminTeamMember[]) => saveStore("admin_team", data),
+  },
+  loginLogs: {
+    get: () => getStore<LoginLog[]>("loginLogs", initialLoginLogs),
+    save: (data: LoginLog[]) => saveStore("loginLogs", data),
+  },
+  activityLogs: {
+    get: () => getStore<ActivityLog[]>("activityLogs", initialActivityLogs),
+    save: (data: ActivityLog[]) => saveStore("activityLogs", data),
+  },
+  auditTrails: {
+    get: () => getStore<AuditTrail[]>("auditTrails", initialAuditTrails),
+    save: (data: AuditTrail[]) => saveStore("auditTrails", data),
+  },
+  securityEventLogs: {
+    get: () =>
+      getStore<SecurityEventLog[]>(
+        "securityEventLogs",
+        initialSecurityEventLogs,
+      ),
+    save: (data: SecurityEventLog[]) => saveStore("securityEventLogs", data),
+  },
+  errorLogs: {
+    get: () => getStore<ErrorLog[]>("errorLogs", initialErrorLogs),
+    save: (data: ErrorLog[]) => saveStore("errorLogs", data),
+  },
+  exportLogs: {
+    get: () => getStore<ExportLog[]>("exportLogs", initialExportLogs),
+    save: (data: ExportLog[]) => saveStore("exportLogs", data),
+  },
+  logRetentionPolicy: {
+    get: () =>
+      getStore<LogRetentionPolicy>(
+        "logRetentionPolicy",
+        initialLogRetentionPolicy,
+      ),
+    save: (data: LogRetentionPolicy) => saveStore("logRetentionPolicy", data),
   },
 };
 

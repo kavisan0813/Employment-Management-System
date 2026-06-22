@@ -39,7 +39,9 @@ export function FinanceProfile() {
   const [saved, setSaved] = useState(false);
 
   const [fullName, setFullName] = useState(() => user?.name || "Ananya Sharma");
-  const [email, setEmail] = useState(() => user?.email || "ananya.sharma@nexushr.com");
+  const [email, setEmail] = useState(
+    () => user?.email || "ananya.sharma@nexushr.com",
+  );
 
   useEffect(() => {
     if (user) {
@@ -48,15 +50,16 @@ export function FinanceProfile() {
     }
   }, [user]);
 
-  const avatarInitials = fullName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) || "AS";
+  const avatarInitials =
+    fullName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) || "AS";
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   useEffect(() => {
     if (user?.email) {
       const saved = localStorage.getItem(`nexus_avatar_${user.email}`);
@@ -106,12 +109,13 @@ export function FinanceProfile() {
         ...user,
         name: fullName,
         email: email,
-        initials: fullName
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase()
-          .slice(0, 2) || "AS"
+        initials:
+          fullName
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2) || "AS",
       };
       login(updatedUser);
 
@@ -125,15 +129,18 @@ export function FinanceProfile() {
                 ...u,
                 name: updatedUser.name,
                 email: updatedUser.email,
-                initials: updatedUser.initials
+                initials: updatedUser.initials,
               };
             }
             return u;
           });
-          localStorage.setItem("nexus_registered_users", JSON.stringify(updatedUsers));
+          localStorage.setItem(
+            "nexus_registered_users",
+            JSON.stringify(updatedUsers),
+          );
         }
       } catch (err) {
-        // ignore
+        console.log(err);
       }
     }
 
@@ -301,7 +308,10 @@ export function FinanceProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(5,150,105,0.1)", color: "#059669" }}
+                style={{
+                  backgroundColor: "rgba(5,150,105,0.1)",
+                  color: "#059669",
+                }}
               >
                 <Briefcase size={22} />
               </div>
@@ -317,7 +327,10 @@ export function FinanceProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(20,184,166,0.1)", color: "#14B8A6" }}
+                style={{
+                  backgroundColor: "rgba(20,184,166,0.1)",
+                  color: "#14B8A6",
+                }}
               >
                 <TrendingUp size={22} />
               </div>
@@ -333,7 +346,10 @@ export function FinanceProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(245,158,11,0.1)", color: "#F59E0B" }}
+                style={{
+                  backgroundColor: "rgba(245,158,11,0.1)",
+                  color: "#F59E0B",
+                }}
               >
                 <Star size={22} fill="currentColor" />
               </div>
@@ -349,7 +365,10 @@ export function FinanceProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(34,197,94,0.1)", color: "#22C55E" }}
+                style={{
+                  backgroundColor: "rgba(34,197,94,0.1)",
+                  color: "#22C55E",
+                }}
               >
                 <CheckCircle2 size={22} />
               </div>
@@ -424,9 +443,7 @@ export function FinanceProfile() {
             {activeTab === "Emergency Contact" && (
               <EmergencyContactTab isEditing={isEditing} />
             )}
-            {activeTab === "Settings" && (
-              <SettingsTab />
-            )}
+            {activeTab === "Settings" && <SettingsTab />}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -930,7 +947,7 @@ function EditField({
   onChange?: (val: string) => void;
 }) {
   const [localValue, setLocalValue] = useState(value);
-  
+
   useEffect(() => {
     setLocalValue(value);
   }, [value]);
@@ -951,7 +968,11 @@ function EditField({
           opacity: disabled ? 0.7 : 1,
         }}
       >
-        {icon && <span className="text-muted-foreground flex items-center justify-center">{icon}</span>}
+        {icon && (
+          <span className="text-muted-foreground flex items-center justify-center">
+            {icon}
+          </span>
+        )}
         <input
           type={type}
           value={localValue}
@@ -985,7 +1006,7 @@ function SelectField({
   useEffect(() => {
     setLocalValue(value);
   }, [value]);
-  
+
   return (
     <div className="space-y-2">
       <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider ml-1">

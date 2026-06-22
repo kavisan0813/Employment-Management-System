@@ -37,9 +37,11 @@ export function EmployeeSelfProfile() {
   const [activeTab, setActiveTab] = useState("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  
+
   const [fullName, setFullName] = useState(() => user?.name || "Priya Sharma");
-  const [email, setEmail] = useState(() => user?.email || "priya.sharma@gmail.com");
+  const [email, setEmail] = useState(
+    () => user?.email || "priya.sharma@gmail.com",
+  );
 
   useEffect(() => {
     if (user) {
@@ -48,12 +50,13 @@ export function EmployeeSelfProfile() {
     }
   }, [user]);
 
-  const avatarInitials = fullName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) || "PS";
+  const avatarInitials =
+    fullName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) || "PS";
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -93,12 +96,13 @@ export function EmployeeSelfProfile() {
         ...user,
         name: fullName,
         email: email,
-        initials: fullName
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase()
-          .slice(0, 2) || "PS"
+        initials:
+          fullName
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2) || "PS",
       };
       login(updatedUser);
 
@@ -112,15 +116,18 @@ export function EmployeeSelfProfile() {
                 ...u,
                 name: updatedUser.name,
                 email: updatedUser.email,
-                initials: updatedUser.initials
+                initials: updatedUser.initials,
               };
             }
             return u;
           });
-          localStorage.setItem("nexus_registered_users", JSON.stringify(updatedUsers));
+          localStorage.setItem(
+            "nexus_registered_users",
+            JSON.stringify(updatedUsers),
+          );
         }
       } catch (err) {
-        // ignore
+        console.log(err);
       }
     }
 
@@ -268,7 +275,10 @@ export function EmployeeSelfProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(5,150,105,0.1)", color: "#059669" }}
+                style={{
+                  backgroundColor: "rgba(5,150,105,0.1)",
+                  color: "#059669",
+                }}
               >
                 <Briefcase size={22} />
               </div>
@@ -284,7 +294,10 @@ export function EmployeeSelfProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(20,184,166,0.1)", color: "#14B8A6" }}
+                style={{
+                  backgroundColor: "rgba(20,184,166,0.1)",
+                  color: "#14B8A6",
+                }}
               >
                 <TrendingUp size={22} />
               </div>
@@ -300,7 +313,10 @@ export function EmployeeSelfProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(245,158,11,0.1)", color: "#F59E0B" }}
+                style={{
+                  backgroundColor: "rgba(245,158,11,0.1)",
+                  color: "#F59E0B",
+                }}
               >
                 <Star size={22} fill="currentColor" />
               </div>
@@ -316,7 +332,10 @@ export function EmployeeSelfProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(34,197,94,0.1)", color: "#22C55E" }}
+                style={{
+                  backgroundColor: "rgba(34,197,94,0.1)",
+                  color: "#22C55E",
+                }}
               >
                 <CheckCircle2 size={22} />
               </div>
@@ -447,7 +466,9 @@ function InputField({
     setLocalValue(value);
   }, [value]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setLocalValue(e.target.value);
     onChange?.(e.target.value);
   };

@@ -100,7 +100,8 @@ const radarData = [
 
 export function ManagerPersonalPerformance() {
   const [activeTab, setActiveTab] = useState<PerformanceTab>("My Goals");
-  const [personalGoals, setPersonalGoals] = useState<PersonalGoal[]>(initialPersonalGoals);
+  const [personalGoals, setPersonalGoals] =
+    useState<PersonalGoal[]>(initialPersonalGoals);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
 
   const handleSubmitSelfReview = () => {
@@ -112,7 +113,7 @@ export function ManagerPersonalPerformance() {
     setActiveTab("My Goals");
   };
 
-  const handleRequestGoalSubmit = (title: string, category: string, description: string) => {
+  const handleRequestGoalSubmit = (title: string, category: string) => {
     const newGoal: PersonalGoal = {
       id: (personalGoals.length + 1).toString(),
       title,
@@ -124,7 +125,7 @@ export function ManagerPersonalPerformance() {
     showToast(
       "Request Sent!",
       "success",
-      `Your request to add "${title}" has been sent for approval.`
+      `Your request to add "${title}" has been sent for approval.`,
     );
     setIsRequestModalOpen(false);
   };
@@ -526,8 +527,7 @@ function GoalRow({
             className={`px-2.5 py-1 rounded-lg text-[9px] font-bold border uppercase tracking-wider ${statusColor}`}
           >
             {status} {status === "Completed" && "✅"}{" "}
-            {status === "At risk" && "⚠"}{" "}
-            {status === "Pending" && "⏳"}
+            {status === "At risk" && "⚠"} {status === "Pending" && "⏳"}
           </span>
           <ChevronRight
             size={16}
@@ -665,7 +665,11 @@ interface RequestGoalModalProps {
   onSubmit: (title: string, category: string, description: string) => void;
 }
 
-function RequestGoalModal({ isOpen, onClose, onSubmit }: RequestGoalModalProps) {
+function RequestGoalModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: RequestGoalModalProps) {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Technical");
   const [description, setDescription] = useState("");
@@ -685,7 +689,10 @@ function RequestGoalModal({ isOpen, onClose, onSubmit }: RequestGoalModalProps) 
 
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <div onClick={onClose} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+      <div
+        onClick={onClose}
+        className="absolute inset-0 bg-black/45 backdrop-blur-sm"
+      />
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -693,8 +700,13 @@ function RequestGoalModal({ isOpen, onClose, onSubmit }: RequestGoalModalProps) 
         className="relative w-full max-w-[460px] bg-card border border-border rounded-[32px] shadow-2xl p-6 flex flex-col"
       >
         <div className="flex items-center justify-between pb-4 border-b border-border">
-          <h3 className="text-base font-bold text-foreground">Request Add Goal</h3>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+          <h3 className="text-base font-bold text-foreground">
+            Request Add Goal
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground"
+          >
             <X size={20} />
           </button>
         </div>

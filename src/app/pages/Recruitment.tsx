@@ -29,10 +29,7 @@ import {
   Upload,
 } from "lucide-react";
 import { recruitmentPipeline } from "../data/mockData";
-import type {
-  JobPosting,
-  ScheduledInterview,
-} from "../context/AppContext";
+import type { JobPosting, ScheduledInterview } from "../context/AppContext";
 
 /* ─── Types ──────────────────────────────────────────────── */
 type Stage =
@@ -713,7 +710,13 @@ function MessageModal({
   candidate: Candidate;
   onClose: () => void;
 }) {
-  const [messages, setMessages] = useState<Array<{ sender: "recruiter" | "candidate"; text: string; timestamp: string }>>(() => {
+  const [messages, setMessages] = useState<
+    Array<{
+      sender: "recruiter" | "candidate";
+      text: string;
+      timestamp: string;
+    }>
+  >(() => {
     const saved = localStorage.getItem("nexus_recruitment_messages");
     if (saved) {
       try {
@@ -740,18 +743,35 @@ function MessageModal({
     const newMsg = {
       sender: "recruiter" as const,
       text,
-      timestamp: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+      timestamp: new Date().toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+      }),
     };
-    
+
     // Save message
     const saved = localStorage.getItem("nexus_recruitment_messages");
-    let messagesMap: Record<string, Array<{ sender: "recruiter" | "candidate"; text: string; timestamp: string }>> = {};
+    let messagesMap: Record<
+      string,
+      Array<{
+        sender: "recruiter" | "candidate";
+        text: string;
+        timestamp: string;
+      }>
+    > = {};
     if (saved) {
-      try { messagesMap = JSON.parse(saved); } catch { /* ignore */ }
+      try {
+        messagesMap = JSON.parse(saved);
+      } catch {
+        /* ignore */
+      }
     }
     const currentList = [...messages, newMsg];
     messagesMap[candidate.id] = currentList;
-    localStorage.setItem("nexus_recruitment_messages", JSON.stringify(messagesMap));
+    localStorage.setItem(
+      "nexus_recruitment_messages",
+      JSON.stringify(messagesMap),
+    );
     setMessages(currentList);
     setMsg("");
 
@@ -759,24 +779,45 @@ function MessageModal({
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
-      let replyText = "Hi, thank you for reaching out! I'm interested in the role and would love to connect for next steps.";
+      let replyText =
+        "Hi, thank you for reaching out! I'm interested in the role and would love to connect for next steps.";
       const t = text.toLowerCase();
-      if (t.includes("interview") || t.includes("schedule") || t.includes("time") || t.includes("meet")) {
+      if (
+        t.includes("interview") ||
+        t.includes("schedule") ||
+        t.includes("time") ||
+        t.includes("meet")
+      ) {
         replyText = `Thank you! That sounds great. The interview details look good and I look forward to speaking with the team.`;
-      } else if (t.includes("offer") || t.includes("salary") || t.includes("package") || t.includes("hire")) {
+      } else if (
+        t.includes("offer") ||
+        t.includes("salary") ||
+        t.includes("package") ||
+        t.includes("hire")
+      ) {
         replyText = `Thank you so much! I am absolutely thrilled to receive this offer. I will review the documents and get back to you shortly.`;
-      } else if (t.includes("reject") || t.includes("no") || t.includes("sorry")) {
+      } else if (
+        t.includes("reject") ||
+        t.includes("no") ||
+        t.includes("sorry")
+      ) {
         replyText = `Thank you for letting me know. I appreciate the feedback and hope we can cross paths in the future.`;
       }
       const reply = {
         sender: "candidate" as const,
         text: replyText,
-        timestamp: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+        }),
       };
-      
+
       const updatedList = [...currentList, reply];
       messagesMap[candidate.id] = updatedList;
-      localStorage.setItem("nexus_recruitment_messages", JSON.stringify(messagesMap));
+      localStorage.setItem(
+        "nexus_recruitment_messages",
+        JSON.stringify(messagesMap),
+      );
       setMessages(updatedList);
     }, 1800);
   };
@@ -784,7 +825,10 @@ function MessageModal({
   return (
     <div
       className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,.45)", backdropFilter: "blur(4px)" }}
+      style={{
+        backgroundColor: "rgba(0,0,0,.45)",
+        backdropFilter: "blur(4px)",
+      }}
       onClick={onClose}
     >
       <style>{`
@@ -845,7 +889,7 @@ function MessageModal({
             <X size={16} />
           </button>
         </div>
-        
+
         {/* Messages Feed */}
         <div
           className="px-6 py-4 space-y-4 overflow-y-auto flex-1 custom-scrollbar"
@@ -877,10 +921,20 @@ function MessageModal({
                   <div
                     className="px-4 py-2.5 rounded-2xl text-sm max-w-[85%] font-semibold shadow-sm"
                     style={{
-                      backgroundColor: m.sender === "recruiter" ? "var(--primary)" : "var(--card)",
-                      color: m.sender === "recruiter" ? "white" : "var(--foreground)",
-                      border: m.sender === "recruiter" ? "none" : "1px solid var(--border)",
-                      borderBottomRightRadius: m.sender === "recruiter" ? 4 : 16,
+                      backgroundColor:
+                        m.sender === "recruiter"
+                          ? "var(--primary)"
+                          : "var(--card)",
+                      color:
+                        m.sender === "recruiter"
+                          ? "white"
+                          : "var(--foreground)",
+                      border:
+                        m.sender === "recruiter"
+                          ? "none"
+                          : "1px solid var(--border)",
+                      borderBottomRightRadius:
+                        m.sender === "recruiter" ? 4 : 16,
                       borderBottomLeftRadius: m.sender !== "recruiter" ? 4 : 16,
                     }}
                   >
@@ -902,9 +956,18 @@ function MessageModal({
                       borderBottomLeftRadius: 4,
                     }}
                   >
-                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full dot-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full dot-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="w-1.5 h-1.5 bg-slate-400 rounded-full dot-bounce" style={{ animationDelay: "300ms" }} />
+                    <span
+                      className="w-1.5 h-1.5 bg-slate-400 rounded-full dot-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    />
+                    <span
+                      className="w-1.5 h-1.5 bg-slate-400 rounded-full dot-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    />
+                    <span
+                      className="w-1.5 h-1.5 bg-slate-400 rounded-full dot-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    />
                   </div>
                   <span className="text-[9px] text-slate-400 mt-1 px-1 font-bold">
                     {candidate.name} is typing...
@@ -989,7 +1052,8 @@ function ScheduleModal({
     const errs: Record<string, string> = {};
     if (!form.date) errs.date = "Date is required";
     if (!form.time) errs.time = "Time is required";
-    if (!form.interviewer.trim()) errs.interviewer = "Interviewer name is required";
+    if (!form.interviewer.trim())
+      errs.interviewer = "Interviewer name is required";
 
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
@@ -1012,7 +1076,10 @@ function ScheduleModal({
   return (
     <div
       className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,.45)", backdropFilter: "blur(4px)" }}
+      style={{
+        backgroundColor: "rgba(0,0,0,.45)",
+        backdropFilter: "blur(4px)",
+      }}
       onClick={onClose}
     >
       <div
@@ -1121,7 +1188,8 @@ function ScheduleModal({
                   value={form.time}
                   onChange={(e) => {
                     setForm({ ...form, time: e.target.value });
-                    if (errors.time) setErrors((prev) => ({ ...prev, time: "" }));
+                    if (errors.time)
+                      setErrors((prev) => ({ ...prev, time: "" }));
                   }}
                 />
               </div>
@@ -1185,7 +1253,8 @@ function ScheduleModal({
               value={form.interviewer}
               onChange={(e) => {
                 setForm({ ...form, interviewer: e.target.value });
-                if (errors.interviewer) setErrors((prev) => ({ ...prev, interviewer: "" }));
+                if (errors.interviewer)
+                  setErrors((prev) => ({ ...prev, interviewer: "" }));
               }}
             />
           </div>
@@ -1223,11 +1292,41 @@ function ScheduleModal({
 
 /* ─── Add Candidate Modal ────────────────────────────────── */
 const MOCK_CANDIDATES = [
-  { name: "Vikram Malhotra", role: "Backend Engineer (Go/Python)", email: "vikram.malhotra@gmail.com", location: "Remote", type: "Full-time" },
-  { name: "Sophia Watson", role: "Lead UI/UX Designer", email: "sophia.watson@yahoo.com", location: "Hybrid", type: "Full-time" },
-  { name: "Rohan Das", role: "DevOps Specialist (AWS/Kubernetes)", email: "rohan.das@outlook.com", location: "Remote", type: "Contract" },
-  { name: "Aishwarya Sen", role: "Data Scientist (ML/AI)", email: "aishwarya.sen@gmail.com", location: "On-site", type: "Full-time" },
-  { name: "Emily Clark", role: "Senior Frontend Developer (React/TS)", email: "emily.clark@techcorp.com", location: "Remote", type: "Full-time" },
+  {
+    name: "Vikram Malhotra",
+    role: "Backend Engineer (Go/Python)",
+    email: "vikram.malhotra@gmail.com",
+    location: "Remote",
+    type: "Full-time",
+  },
+  {
+    name: "Sophia Watson",
+    role: "Lead UI/UX Designer",
+    email: "sophia.watson@yahoo.com",
+    location: "Hybrid",
+    type: "Full-time",
+  },
+  {
+    name: "Rohan Das",
+    role: "DevOps Specialist (AWS/Kubernetes)",
+    email: "rohan.das@outlook.com",
+    location: "Remote",
+    type: "Contract",
+  },
+  {
+    name: "Aishwarya Sen",
+    role: "Data Scientist (ML/AI)",
+    email: "aishwarya.sen@gmail.com",
+    location: "On-site",
+    type: "Full-time",
+  },
+  {
+    name: "Emily Clark",
+    role: "Senior Frontend Developer (React/TS)",
+    email: "emily.clark@techcorp.com",
+    location: "Remote",
+    type: "Full-time",
+  },
 ];
 
 function AddCandidateModal({
@@ -1268,7 +1367,8 @@ function AddCandidateModal({
         clearInterval(interval);
         setIsParsing(false);
         setParseSuccess(true);
-        const randomCand = MOCK_CANDIDATES[Math.floor(Math.random() * MOCK_CANDIDATES.length)];
+        const randomCand =
+          MOCK_CANDIDATES[Math.floor(Math.random() * MOCK_CANDIDATES.length)];
         setForm({
           name: randomCand.name,
           role: randomCand.role,
@@ -1286,7 +1386,7 @@ function AddCandidateModal({
     const errs: Record<string, string> = {};
     if (!form.name.trim()) errs.name = "Full name is required";
     if (!form.role.trim()) errs.role = "Job role is required";
-    
+
     if (form.email.trim()) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(form.email.trim())) {
@@ -1330,7 +1430,10 @@ function AddCandidateModal({
   return (
     <div
       className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,.45)", backdropFilter: "blur(4px)" }}
+      style={{
+        backgroundColor: "rgba(0,0,0,.45)",
+        backdropFilter: "blur(4px)",
+      }}
       onClick={onClose}
     >
       <div
@@ -1394,22 +1497,30 @@ function AddCandidateModal({
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-3 animate-spin">
                   <Upload size={20} />
                 </div>
-                <p className="text-xs font-black text-foreground">Parsing CV/Resume...</p>
+                <p className="text-xs font-black text-foreground">
+                  Parsing CV/Resume...
+                </p>
                 <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden max-w-[200px]">
                   <div
                     className="bg-emerald-500 h-full rounded-full transition-all duration-150"
                     style={{ width: `${parseProgress}%` }}
                   />
                 </div>
-                <span className="text-[10px] font-bold text-muted-foreground mt-2">{parseProgress}%</span>
+                <span className="text-[10px] font-bold text-muted-foreground mt-2">
+                  {parseProgress}%
+                </span>
               </div>
             ) : parseSuccess ? (
               <div className="flex flex-col items-center justify-center py-1">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-2">
                   <CheckCircle2 size={20} />
                 </div>
-                <p className="text-xs font-black text-emerald-600">CV Parsed Successfully!</p>
-                <p className="text-[10px] font-bold text-muted-foreground mt-1">Form fields have been pre-filled.</p>
+                <p className="text-xs font-black text-emerald-600">
+                  CV Parsed Successfully!
+                </p>
+                <p className="text-[10px] font-bold text-muted-foreground mt-1">
+                  Form fields have been pre-filled.
+                </p>
                 <button
                   type="button"
                   onClick={() => setParseSuccess(false)}
@@ -1426,7 +1537,9 @@ function AddCandidateModal({
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                   <Upload size={20} />
                 </div>
-                <p className="text-xs font-black text-foreground">Zoho Quick CV/Resume Parser</p>
+                <p className="text-xs font-black text-foreground">
+                  Zoho Quick CV/Resume Parser
+                </p>
                 <p className="text-[10px] font-bold text-muted-foreground mt-1">
                   Drag & drop Resume (PDF, DOCX) here to auto-fill
                 </p>
@@ -1648,7 +1761,9 @@ function PostJobModal({
 }: {
   job?: JobPosting;
   onClose: () => void;
-  onPost: (j: Omit<JobPosting, "id" | "postedAt" | "applicants"> & { id?: string }) => void;
+  onPost: (
+    j: Omit<JobPosting, "id" | "postedAt" | "applicants"> & { id?: string },
+  ) => void;
 }) {
   const [form, setForm] = useState({
     title: job?.title || "",
@@ -1667,7 +1782,8 @@ function PostJobModal({
     setTouched(true);
     const errs: Record<string, string> = {};
     if (!form.title.trim()) errs.title = "Job title is required";
-    if (!form.description.trim()) errs.description = "Job description is required";
+    if (!form.description.trim())
+      errs.description = "Job description is required";
 
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
@@ -1723,7 +1839,10 @@ function PostJobModal({
   return (
     <div
       className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,.45)", backdropFilter: "blur(4px)" }}
+      style={{
+        backgroundColor: "rgba(0,0,0,.45)",
+        backdropFilter: "blur(4px)",
+      }}
       onClick={onClose}
     >
       <div
@@ -1756,7 +1875,9 @@ function PostJobModal({
                 marginTop: 2,
               }}
             >
-              {job ? "Update job listing details" : "Create a new job opening for recruitment"}
+              {job
+                ? "Update job listing details"
+                : "Create a new job opening for recruitment"}
             </p>
           </div>
           <button
@@ -1901,7 +2022,8 @@ function PostJobModal({
               value={form.description}
               onChange={(e) => {
                 setForm({ ...form, description: e.target.value });
-                if (errors.description) setErrors((prev) => ({ ...prev, description: "" }));
+                if (errors.description)
+                  setErrors((prev) => ({ ...prev, description: "" }));
               }}
             />
           </div>
@@ -2044,7 +2166,11 @@ function CandidateCard({
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-1">
-          <StarRating value={candidate.rating} size={12} onChange={onUpdateRating} />
+          <StarRating
+            value={candidate.rating}
+            size={12}
+            onChange={onUpdateRating}
+          />
           <span className="text-[12px] font-bold text-amber-500 ml-1">
             {candidate.rating.toFixed(1)}
           </span>
@@ -2161,7 +2287,9 @@ function CandidateDetailSidePanel({
   scheduledInterviews: ScheduledInterview[];
   toast: (msg: string, kind?: any) => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"Overview" | "Interviews" | "Activity" | "Offer Letter">("Overview");
+  const [activeTab, setActiveTab] = useState<
+    "Overview" | "Interviews" | "Activity" | "Offer Letter"
+  >("Overview");
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: candidate.name,
@@ -2180,7 +2308,9 @@ function CandidateDetailSidePanel({
     return d.toISOString().split("T")[0];
   });
   const [offerBonus, setOfferBonus] = useState("50,000");
-  const [offerPerks, setOfferPerks] = useState("Health Insurance, Remote Internet Allowance, Gym Membership");
+  const [offerPerks, setOfferPerks] = useState(
+    "Health Insurance, Remote Internet Allowance, Gym Membership",
+  );
   useEscapeKey(onClose);
 
   const handleDownloadOffer = () => {
@@ -2189,14 +2319,6 @@ function CandidateDetailSidePanel({
       month: "long",
       day: "numeric",
     });
-
-    const displayDate = offerJoiningDate
-      ? new Date(offerJoiningDate).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      : "To Be Decided";
 
     const textContent = `================================================================
                        EMS CORP
@@ -2270,7 +2392,6 @@ Signature of \${candidate.name}          Date
     URL.revokeObjectURL(url);
     toast("Offer Letter generated and downloaded successfully!", "success");
   };
-
 
   const steps: Stage[] = [
     "Applied",
@@ -2392,7 +2513,9 @@ Signature of \${candidate.name}          Date
                       className="w-full h-full flex items-center justify-center text-xl font-bold"
                       style={{ color: "var(--primary)" }}
                     >
-                      {isEditing ? editForm.name.slice(0, 2).toUpperCase() : candidate.initials}
+                      {isEditing
+                        ? editForm.name.slice(0, 2).toUpperCase()
+                        : candidate.initials}
                     </div>
                   )}
                 </div>
@@ -2403,7 +2526,7 @@ Signature of \${candidate.name}          Date
                   <CheckCircle size={14} />
                 </div>
               </div>
-              
+
               {!isEditing ? (
                 <div className="pt-2 flex-1">
                   <h3
@@ -2451,7 +2574,8 @@ Signature of \${candidate.name}          Date
                     value={editForm.name}
                     onChange={(e) => {
                       setEditForm({ ...editForm, name: e.target.value });
-                      if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
+                      if (errors.name)
+                        setErrors((prev) => ({ ...prev, name: "" }));
                     }}
                     placeholder="Candidate Name"
                   />
@@ -2465,7 +2589,8 @@ Signature of \${candidate.name}          Date
                     value={editForm.role}
                     onChange={(e) => {
                       setEditForm({ ...editForm, role: e.target.value });
-                      if (errors.role) setErrors((prev) => ({ ...prev, role: "" }));
+                      if (errors.role)
+                        setErrors((prev) => ({ ...prev, role: "" }));
                     }}
                     placeholder="Job Role"
                   />
@@ -2479,7 +2604,12 @@ Signature of \${candidate.name}          Date
               style={{ borderColor: "var(--border)" }}
             >
               {(stage === "Offer"
-                ? (["Overview", "Interviews", "Activity", "Offer Letter"] as const)
+                ? ([
+                    "Overview",
+                    "Interviews",
+                    "Activity",
+                    "Offer Letter",
+                  ] as const)
                 : (["Overview", "Interviews", "Activity"] as const)
               ).map((t) => (
                 <button
@@ -2509,7 +2639,9 @@ Signature of \${candidate.name}          Date
             {isEditing && (
               <div className="space-y-4">
                 <div>
-                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Location</label>
+                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                    Location
+                  </label>
                   <select
                     className="w-full mt-1.5 rounded-xl px-3 py-2 text-sm outline-none border font-semibold"
                     style={{
@@ -2518,7 +2650,9 @@ Signature of \${candidate.name}          Date
                       borderColor: "var(--border)",
                     }}
                     value={editForm.location}
-                    onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, location: e.target.value })
+                    }
                   >
                     {["Remote", "On-site", "Hybrid"].map((l) => (
                       <option key={l}>{l}</option>
@@ -2526,7 +2660,9 @@ Signature of \${candidate.name}          Date
                   </select>
                 </div>
                 <div>
-                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Job Type</label>
+                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                    Job Type
+                  </label>
                   <select
                     className="w-full mt-1.5 rounded-xl px-3 py-2 text-sm outline-none border font-semibold"
                     style={{
@@ -2535,15 +2671,21 @@ Signature of \${candidate.name}          Date
                       borderColor: "var(--border)",
                     }}
                     value={editForm.type}
-                    onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, type: e.target.value })
+                    }
                   >
-                    {["Full-time", "Part-time", "Contract", "Internship"].map((t) => (
-                      <option key={t}>{t}</option>
-                    ))}
+                    {["Full-time", "Part-time", "Contract", "Internship"].map(
+                      (t) => (
+                        <option key={t}>{t}</option>
+                      ),
+                    )}
                   </select>
                 </div>
                 <div>
-                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Source</label>
+                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                    Source
+                  </label>
                   <select
                     className="w-full mt-1.5 rounded-xl px-3 py-2 text-sm outline-none border font-semibold"
                     style={{
@@ -2552,7 +2694,12 @@ Signature of \${candidate.name}          Date
                       borderColor: "var(--border)",
                     }}
                     value={editForm.source}
-                    onChange={(e) => setEditForm({ ...editForm, source: e.target.value as Source })}
+                    onChange={(e) =>
+                      setEditForm({
+                        ...editForm,
+                        source: e.target.value as Source,
+                      })
+                    }
                   >
                     {["LinkedIn", "Indeed", "Referral"].map((s) => (
                       <option key={s}>{s}</option>
@@ -2560,7 +2707,9 @@ Signature of \${candidate.name}          Date
                   </select>
                 </div>
                 <div>
-                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Email Address</label>
+                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                    Email Address
+                  </label>
                   <input
                     className="w-full mt-1.5 rounded-xl px-3 py-2 text-sm outline-none border font-semibold"
                     style={{
@@ -2571,16 +2720,23 @@ Signature of \${candidate.name}          Date
                     value={editForm.email}
                     onChange={(e) => {
                       setEditForm({ ...editForm, email: e.target.value });
-                      if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
+                      if (errors.email)
+                        setErrors((prev) => ({ ...prev, email: "" }));
                     }}
                     placeholder="candidate@example.com"
                   />
                 </div>
-                <div className="flex gap-3 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
+                <div
+                  className="flex gap-3 pt-4 border-t"
+                  style={{ borderColor: "var(--border)" }}
+                >
                   <button
                     onClick={() => setIsEditing(false)}
                     className="flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest border transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
-                    style={{ color: "var(--foreground)", borderColor: "var(--border)" }}
+                    style={{
+                      color: "var(--foreground)",
+                      borderColor: "var(--border)",
+                    }}
                   >
                     Cancel
                   </button>
@@ -2803,7 +2959,10 @@ Signature of \${candidate.name}          Date
                     </div>
                     {iv.interviewer && (
                       <p className="text-[11px] font-bold text-slate-400 mt-2">
-                        Interviewer: <span className="text-slate-700 dark:text-slate-300 font-semibold">{iv.interviewer}</span>
+                        Interviewer:{" "}
+                        <span className="text-slate-700 dark:text-slate-300 font-semibold">
+                          {iv.interviewer}
+                        </span>
                       </p>
                     )}
                   </div>
@@ -2838,20 +2997,24 @@ Signature of \${candidate.name}          Date
                     date: "Today",
                     color: "bg-emerald-500",
                   },
-                  ...(stage !== "Applied" ? [{
-                    title: `📧 Automated Notification Sent`,
-                    desc: `Email sent to ${candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com: ${
-                      stage === "Screening"
-                        ? "Screening quiz & background questionnaire link."
-                        : stage === "Round 1" || stage === "Round 2"
-                        ? `${stage} slot booking details and coordinator details.`
-                        : stage === "Offer"
-                        ? "Offer letter contract with digital signature link."
-                        : "Onboarding portal link & welcome credentials."
-                    }`,
-                    date: "Today",
-                    color: "bg-purple-500",
-                  }] : []),
+                  ...(stage !== "Applied"
+                    ? [
+                        {
+                          title: `📧 Automated Notification Sent`,
+                          desc: `Email sent to ${candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com: ${
+                            stage === "Screening"
+                              ? "Screening quiz & background questionnaire link."
+                              : stage === "Round 1" || stage === "Round 2"
+                                ? `${stage} slot booking details and coordinator details.`
+                                : stage === "Offer"
+                                  ? "Offer letter contract with digital signature link."
+                                  : "Onboarding portal link & welcome credentials."
+                          }`,
+                          date: "Today",
+                          color: "bg-purple-500",
+                        },
+                      ]
+                    : []),
                   ...scheduledInterviews.map((iv) => ({
                     title: `${iv.type} Scheduled`,
                     desc: `Interview with ${iv.interviewer || "Team"} scheduled.`,
@@ -2860,7 +3023,9 @@ Signature of \${candidate.name}          Date
                   })),
                 ].map((act, idx) => (
                   <div key={idx} className="relative flex gap-4">
-                    <div className={`absolute -left-[21px] w-3.5 h-3.5 rounded-full ${act.color} border-2 border-white dark:border-slate-900 z-10`} />
+                    <div
+                      className={`absolute -left-[21px] w-3.5 h-3.5 rounded-full ${act.color} border-2 border-white dark:border-slate-900 z-10`}
+                    />
                     <div className="flex flex-col">
                       <span className="text-xs font-black text-slate-700 dark:text-slate-200">
                         {act.title}
@@ -2879,18 +3044,26 @@ Signature of \${candidate.name}          Date
 
             {!isEditing && activeTab === "Offer Letter" && (
               <div className="space-y-6">
-                <div className="space-y-4 p-5 rounded-2xl border" style={{ backgroundColor: "var(--card)", borderColor: "var(--border)" }}>
+                <div
+                  className="space-y-4 p-5 rounded-2xl border"
+                  style={{
+                    backgroundColor: "var(--card)",
+                    borderColor: "var(--border)",
+                  }}
+                >
                   <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-3">
                     Customize Offer Details
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                         Annual Salary (INR LPA)
                       </label>
                       <div className="relative mt-1">
-                        <span className="absolute left-3 top-2.5 text-xs text-muted-foreground font-bold">₹</span>
+                        <span className="absolute left-3 top-2.5 text-xs text-muted-foreground font-bold">
+                          ₹
+                        </span>
                         <input
                           type="text"
                           value={offerSalary}
@@ -2911,7 +3084,9 @@ Signature of \${candidate.name}          Date
                         Signing Bonus (INR)
                       </label>
                       <div className="relative mt-1">
-                        <span className="absolute left-3 top-2.5 text-xs text-muted-foreground font-bold">₹</span>
+                        <span className="absolute left-3 top-2.5 text-xs text-muted-foreground font-bold">
+                          ₹
+                        </span>
                         <input
                           type="text"
                           value={offerBonus}
@@ -2978,10 +3153,17 @@ Signature of \${candidate.name}          Date
                     }}
                   >
                     {/* Watermark/Branding badge at top */}
-                    <div className="flex justify-between items-center border-b pb-4 mb-6" style={{ borderColor: "var(--border)" }}>
+                    <div
+                      className="flex justify-between items-center border-b pb-4 mb-6"
+                      style={{ borderColor: "var(--border)" }}
+                    >
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-lg bg-emerald-500 flex items-center justify-center text-white text-xs font-black">E</div>
-                        <span className="font-sans font-black tracking-wider text-xs text-foreground">EMS CORP</span>
+                        <div className="w-6 h-6 rounded-lg bg-emerald-500 flex items-center justify-center text-white text-xs font-black">
+                          E
+                        </div>
+                        <span className="font-sans font-black tracking-wider text-xs text-foreground">
+                          EMS CORP
+                        </span>
                       </div>
                       <span className="font-sans text-[9px] font-black uppercase bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded border border-emerald-500/20">
                         Official Contract
@@ -2994,14 +3176,29 @@ Signature of \${candidate.name}          Date
                       </div>
 
                       <div className="flex justify-between font-sans text-muted-foreground mb-4">
-                        <span>Ref: EMS/OFFER/{new Date().getFullYear()}/{candidate.id.slice(0, 4).toUpperCase()}</span>
-                        <span>Date: {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
+                        <span>
+                          Ref: EMS/OFFER/{new Date().getFullYear()}/
+                          {candidate.id.slice(0, 4).toUpperCase()}
+                        </span>
+                        <span>
+                          Date:{" "}
+                          {new Date().toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </span>
                       </div>
 
                       <div className="space-y-1">
-                        <p className="font-sans font-bold text-foreground">To,</p>
+                        <p className="font-sans font-bold text-foreground">
+                          To,
+                        </p>
                         <p className="font-bold">{candidate.name}</p>
-                        <p className="text-muted-foreground">{candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com</p>
+                        <p className="text-muted-foreground">
+                          {candidate.name.toLowerCase().replace(/\s+/g, ".")}
+                          @example.com
+                        </p>
                       </div>
 
                       <p className="font-sans text-muted-foreground mt-4">
@@ -3009,44 +3206,96 @@ Signature of \${candidate.name}          Date
                       </p>
 
                       <p className="font-sans text-muted-foreground">
-                        We are pleased to offer you the position of <strong className="text-foreground">{candidate.role}</strong> at EMS Corp. We are confident that your skill set and background will make you a vital asset to our engineering division.
+                        We are pleased to offer you the position of{" "}
+                        <strong className="text-foreground">
+                          {candidate.role}
+                        </strong>{" "}
+                        at EMS Corp. We are confident that your skill set and
+                        background will make you a vital asset to our
+                        engineering division.
                       </p>
 
-                      <div className="my-4 p-4 rounded-xl border space-y-2 bg-slate-50 dark:bg-slate-900/40" style={{ borderColor: "var(--border)" }}>
+                      <div
+                        className="my-4 p-4 rounded-xl border space-y-2 bg-slate-50 dark:bg-slate-900/40"
+                        style={{ borderColor: "var(--border)" }}
+                      >
                         <div className="grid grid-cols-2 gap-y-1.5 text-muted-foreground">
                           <span className="font-sans font-bold">Role:</span>
-                          <span className="text-foreground font-bold">{candidate.role}</span>
-                          
-                          <span className="font-sans font-bold">Annual Salary:</span>
-                          <span className="text-foreground font-bold">INR {offerSalary} (LPA)</span>
-                          
-                          <span className="font-sans font-bold">Joining Date:</span>
                           <span className="text-foreground font-bold">
-                            {offerJoiningDate ? new Date(offerJoiningDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "To Be Decided"}
+                            {candidate.role}
                           </span>
 
-                          <span className="font-sans font-bold">Signing Bonus:</span>
-                          <span className="text-foreground font-bold">INR {offerBonus}</span>
+                          <span className="font-sans font-bold">
+                            Annual Salary:
+                          </span>
+                          <span className="text-foreground font-bold">
+                            INR {offerSalary} (LPA)
+                          </span>
 
-                          <span className="font-sans font-bold">Benefits & Perks:</span>
-                          <span className="text-foreground font-bold">{offerPerks}</span>
+                          <span className="font-sans font-bold">
+                            Joining Date:
+                          </span>
+                          <span className="text-foreground font-bold">
+                            {offerJoiningDate
+                              ? new Date(offerJoiningDate).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                  },
+                                )
+                              : "To Be Decided"}
+                          </span>
+
+                          <span className="font-sans font-bold">
+                            Signing Bonus:
+                          </span>
+                          <span className="text-foreground font-bold">
+                            INR {offerBonus}
+                          </span>
+
+                          <span className="font-sans font-bold">
+                            Benefits & Perks:
+                          </span>
+                          <span className="text-foreground font-bold">
+                            {offerPerks}
+                          </span>
                         </div>
                       </div>
 
                       <p className="font-sans text-muted-foreground">
-                        Your employment will be subject to a standard 3-month probation period. Please confirm your acceptance by signing electronically, or downloading this copy for physical signature.
+                        Your employment will be subject to a standard 3-month
+                        probation period. Please confirm your acceptance by
+                        signing electronically, or downloading this copy for
+                        physical signature.
                       </p>
 
-                      <div className="pt-8 flex justify-between items-end border-t" style={{ borderColor: "var(--border)" }}>
+                      <div
+                        className="pt-8 flex justify-between items-end border-t"
+                        style={{ borderColor: "var(--border)" }}
+                      >
                         <div className="space-y-1 font-sans text-center">
-                          <div className="h-6 flex items-center justify-center font-serif italic text-muted-foreground text-xs">EMS HR Operations</div>
-                          <div className="w-32 border-b" style={{ borderColor: "var(--border)" }} />
-                          <p className="text-[8px] uppercase tracking-wider text-muted-foreground mt-1">Authorized Signatory</p>
+                          <div className="h-6 flex items-center justify-center font-serif italic text-muted-foreground text-xs">
+                            EMS HR Operations
+                          </div>
+                          <div
+                            className="w-32 border-b"
+                            style={{ borderColor: "var(--border)" }}
+                          />
+                          <p className="text-[8px] uppercase tracking-wider text-muted-foreground mt-1">
+                            Authorized Signatory
+                          </p>
                         </div>
                         <div className="space-y-1 font-sans text-center">
                           <div className="h-6" />
-                          <div className="w-32 border-b" style={{ borderColor: "var(--border)" }} />
-                          <p className="text-[8px] uppercase tracking-wider text-muted-foreground mt-1">Candidate Signature</p>
+                          <div
+                            className="w-32 border-b"
+                            style={{ borderColor: "var(--border)" }}
+                          />
+                          <p className="text-[8px] uppercase tracking-wider text-muted-foreground mt-1">
+                            Candidate Signature
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -3633,7 +3882,8 @@ function AnalyticsView({ pipeline }: { pipeline: Record<Stage, Candidate[]> }) {
 
   const appliedCount = pipeline.Applied.length;
   const screeningCount = pipeline.Screening.length;
-  const interviewCount = pipeline["Round 1"].length + pipeline["Round 2"].length;
+  const interviewCount =
+    pipeline["Round 1"].length + pipeline["Round 2"].length;
   const offerCount = pipeline.Offer.length;
   const hiredCount = pipeline.Hired.length;
 
@@ -3641,15 +3891,35 @@ function AnalyticsView({ pipeline }: { pipeline: Record<Stage, Candidate[]> }) {
 
   const funnel = [
     { stage: "Applied", count: appliedCount, rate: 100 },
-    { stage: "Screening", count: screeningCount, rate: Math.round((screeningCount / totalApplied) * 100) },
-    { stage: "Interview", count: interviewCount, rate: Math.round((interviewCount / totalApplied) * 100) },
-    { stage: "Offer", count: offerCount, rate: Math.round((offerCount / totalApplied) * 100) },
-    { stage: "Hired", count: hiredCount, rate: Math.round((hiredCount / totalApplied) * 100) },
+    {
+      stage: "Screening",
+      count: screeningCount,
+      rate: Math.round((screeningCount / totalApplied) * 100),
+    },
+    {
+      stage: "Interview",
+      count: interviewCount,
+      rate: Math.round((interviewCount / totalApplied) * 100),
+    },
+    {
+      stage: "Offer",
+      count: offerCount,
+      rate: Math.round((offerCount / totalApplied) * 100),
+    },
+    {
+      stage: "Hired",
+      count: hiredCount,
+      rate: Math.round((hiredCount / totalApplied) * 100),
+    },
   ];
 
-  const linkedinCount = allCandidates.filter((c) => c.source === "LinkedIn").length;
+  const linkedinCount = allCandidates.filter(
+    (c) => c.source === "LinkedIn",
+  ).length;
   const indeedCount = allCandidates.filter((c) => c.source === "Indeed").length;
-  const referralCount = allCandidates.filter((c) => c.source === "Referral").length;
+  const referralCount = allCandidates.filter(
+    (c) => c.source === "Referral",
+  ).length;
 
   const totalSources = linkedinCount + indeedCount + referralCount || 1;
   const linkedinPct = Math.round((linkedinCount / totalSources) * 100);
@@ -3658,16 +3928,48 @@ function AnalyticsView({ pipeline }: { pipeline: Record<Stage, Candidate[]> }) {
 
   // Build dynamic activities list
   const activities = [
-    ...pipeline.Hired.slice(-2).map((c) => ({ type: "Hired" as const, name: c.name, role: c.role, time: "Just now" })),
-    ...pipeline.Offer.slice(-1).map((c) => ({ type: "Offer" as const, name: c.name, role: c.role, time: "4h ago" })),
-    ...pipeline["Round 2"].slice(-1).map((c) => ({ type: "Interview" as const, name: c.name, role: c.role, time: "1d ago" })),
-    ...pipeline.Applied.slice(-1).map((c) => ({ type: "Application" as const, name: c.name, role: c.role, time: "1d ago" })),
+    ...pipeline.Hired.slice(-2).map((c) => ({
+      type: "Hired" as const,
+      name: c.name,
+      role: c.role,
+      time: "Just now",
+    })),
+    ...pipeline.Offer.slice(-1).map((c) => ({
+      type: "Offer" as const,
+      name: c.name,
+      role: c.role,
+      time: "4h ago",
+    })),
+    ...pipeline["Round 2"]
+      .slice(-1)
+      .map((c) => ({
+        type: "Interview" as const,
+        name: c.name,
+        role: c.role,
+        time: "1d ago",
+      })),
+    ...pipeline.Applied.slice(-1).map((c) => ({
+      type: "Application" as const,
+      name: c.name,
+      role: c.role,
+      time: "1d ago",
+    })),
   ].slice(0, 4);
 
   if (activities.length === 0) {
     activities.push(
-      { type: "Application", name: "Elena Rodriguez", role: "QA Lead", time: "1d ago" },
-      { type: "Interview", name: "Michael Chen", role: "DevOps Engineer", time: "2d ago" }
+      {
+        type: "Application",
+        name: "Elena Rodriguez",
+        role: "QA Lead",
+        time: "1d ago",
+      },
+      {
+        type: "Interview",
+        name: "Michael Chen",
+        role: "DevOps Engineer",
+        time: "2d ago",
+      },
     );
   }
 
@@ -3753,7 +4055,10 @@ function AnalyticsView({ pipeline }: { pipeline: Record<Stage, Candidate[]> }) {
                 </div>
                 {i > 0 && (
                   <div className="absolute -top-6 right-0 text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
-                    {arr[i - 1].count > 0 ? Math.round((f.count / arr[i - 1].count) * 100) : 0}% Pass Rate
+                    {arr[i - 1].count > 0
+                      ? Math.round((f.count / arr[i - 1].count) * 100)
+                      : 0}
+                    % Pass Rate
                   </div>
                 )}
               </div>
@@ -3841,7 +4146,12 @@ function AnalyticsView({ pipeline }: { pipeline: Record<Stage, Candidate[]> }) {
                   color: "#10B981",
                   trend: "+12%",
                 },
-                { label: "Indeed", val: `${indeedPct}%`, color: "#0EA5E9", trend: "+5%" },
+                {
+                  label: "Indeed",
+                  val: `${indeedPct}%`,
+                  color: "#0EA5E9",
+                  trend: "+5%",
+                },
                 {
                   label: "Referral",
                   val: `${referralPct}%`,
@@ -3998,8 +4308,6 @@ function JobsView({
   onSelectJob: (j: JobPosting) => void;
   onDeleteJob: (id: string) => void;
 }) {
-
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between px-1">
@@ -4365,7 +4673,10 @@ function InfoBar({
 }) {
   const stats = [
     { label: `${newApps} new applications this week`, color: "#10B981" },
-    { label: `${interviewsToday} interviews scheduled today`, color: "#F59E0B" },
+    {
+      label: `${interviewsToday} interviews scheduled today`,
+      color: "#F59E0B",
+    },
     { label: `${offersPending} offers pending response`, color: "#8B5CF6" },
   ];
 
@@ -4536,7 +4847,8 @@ const INITIAL_JOBS: JobPosting[] = [
     type: "Full-time",
     experience: "5+ years",
     salary: "₹1,20,000 – ₹1,80,000",
-    description: "We are looking for a Senior React Developer to join our frontend team. You will be responsible for building high-quality, reusable components and optimizing application performance.",
+    description:
+      "We are looking for a Senior React Developer to join our frontend team. You will be responsible for building high-quality, reusable components and optimizing application performance.",
     postedAt: "Jun 1, 2026",
     applicants: 3,
   },
@@ -4548,7 +4860,8 @@ const INITIAL_JOBS: JobPosting[] = [
     type: "Full-time",
     experience: "3+ years",
     salary: "₹90,000 – ₹1,40,000",
-    description: "Looking for a backend engineer experienced in Node.js and TypeScript. You will build and scale APIs and work with databases.",
+    description:
+      "Looking for a backend engineer experienced in Node.js and TypeScript. You will build and scale APIs and work with databases.",
     postedAt: "May 28, 2026",
     applicants: 2,
   },
@@ -4560,7 +4873,8 @@ const INITIAL_JOBS: JobPosting[] = [
     type: "Full-time",
     experience: "2+ years",
     salary: "₹70,000 – ₹1,00,000",
-    description: "Join our design team to create user-centered product designs. Figma proficiency is required.",
+    description:
+      "Join our design team to create user-centered product designs. Figma proficiency is required.",
     postedAt: "May 25, 2026",
     applicants: 1,
   },
@@ -4572,10 +4886,11 @@ const INITIAL_JOBS: JobPosting[] = [
     type: "Full-time",
     experience: "2+ years",
     salary: "₹50,000 – ₹70,000",
-    description: "We are hiring an HR Specialist to help manage employee onboarding, relations, and recruitment coordination.",
+    description:
+      "We are hiring an HR Specialist to help manage employee onboarding, relations, and recruitment coordination.",
     postedAt: "May 20, 2026",
     applicants: 1,
-  }
+  },
 ];
 
 const INITIAL_INTERVIEWS: ScheduledInterview[] = [
@@ -4600,7 +4915,7 @@ const INITIAL_INTERVIEWS: ScheduledInterview[] = [
     time: "10:30",
     type: "Video Call",
     interviewer: "Mark Davis",
-  }
+  },
 ];
 
 function VideoCallSimulator({
@@ -4610,7 +4925,9 @@ function VideoCallSimulator({
   interview: ScheduledInterview;
   onClose: () => void;
 }) {
-  const [status, setStatus] = useState<"connecting" | "connected">("connecting");
+  const [status, setStatus] = useState<"connecting" | "connected">(
+    "connecting",
+  );
   const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
@@ -4651,8 +4968,12 @@ function VideoCallSimulator({
               <div className="absolute inset-0 rounded-full border border-emerald-500 animate-ping opacity-20" />
             </div>
             <div className="text-center">
-              <h3 className="text-xl font-bold tracking-tight mb-2">Connecting with {interview.candidateName}...</h3>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest animate-pulse">Establishing secure link</p>
+              <h3 className="text-xl font-bold tracking-tight mb-2">
+                Connecting with {interview.candidateName}...
+              </h3>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest animate-pulse">
+                Establishing secure link
+              </p>
             </div>
           </div>
         ) : (
@@ -4668,12 +4989,17 @@ function VideoCallSimulator({
                   {/* Waveform visualizer simulation overlay */}
                   <div className="absolute bottom-6 left-6 z-20 flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/5">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-black uppercase tracking-widest">{interview.candidateName} ({interview.role})</span>
+                    <span className="text-xs font-black uppercase tracking-widest">
+                      {interview.candidateName} ({interview.role})
+                    </span>
                   </div>
                   {/* Dynamic audio pulse ring */}
                   <div className="w-32 h-32 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500 text-5xl font-black relative shadow-xl">
                     {interview.candidateInitials}
-                    <div className="absolute inset-0 border-2 border-emerald-400 rounded-full animate-ping opacity-30" style={{ animationDuration: "1.5s" }} />
+                    <div
+                      className="absolute inset-0 border-2 border-emerald-400 rounded-full animate-ping opacity-30"
+                      style={{ animationDuration: "1.5s" }}
+                    />
                   </div>
                   <p className="text-sm font-semibold text-slate-400 mt-6 max-w-xs text-center">
                     Candidate is connected. Audio/video stream active.
@@ -4685,7 +5011,9 @@ function VideoCallSimulator({
             {/* Recruiter Picture in Picture (PiP) */}
             <div className="absolute top-6 right-6 w-32 h-44 rounded-2xl bg-slate-800 border-2 border-slate-700 shadow-xl overflow-hidden z-20 flex flex-col items-center justify-center text-slate-400">
               <Users size={24} className="mb-2 text-slate-500" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Recruiter</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">
+                Recruiter
+              </span>
             </div>
 
             {/* Timer Overlay */}
@@ -4700,7 +5028,17 @@ function VideoCallSimulator({
                 className={`p-3 rounded-full border transition-all ${isMuted ? "bg-red-500/10 border-red-500/20 text-red-400" : "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"}`}
               >
                 {/* Mute icon */}
-                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/></svg>
+                <svg
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                  <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8" />
+                </svg>
               </button>
               <button
                 onClick={() => setIsVideoOff((v) => !v)}
@@ -4713,7 +5051,16 @@ function VideoCallSimulator({
                 className="p-3.5 rounded-full bg-red-600 text-white hover:bg-red-500 transition-all shadow-lg shadow-red-500/30 hover:scale-105 active:scale-95"
               >
                 {/* Hang up icon */}
-                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M10.68 22.28a6 6 0 0 0 2.64 0l7.46-3.73a2 2 0 0 0 1.11-1.79v-2.58a2 2 0 0 0-1.25-1.86l-4.71-1.71a2 2 0 0 0-2 .41L12.3 12.7a8.62 8.62 0 0 1-3.6-3.6l1.38-1.63a2 2 0 0 0 .41-2L8.78 1.76A2 2 0 0 0 6.92.5H4.34a2 2 0 0 0-1.79 1.11L1.73 9.48a16 16 0 0 0 14.79 14.79l.52-.06Z"/></svg>
+                <svg
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M10.68 22.28a6 6 0 0 0 2.64 0l7.46-3.73a2 2 0 0 0 1.11-1.79v-2.58a2 2 0 0 0-1.25-1.86l-4.71-1.71a2 2 0 0 0-2 .41L12.3 12.7a8.62 8.62 0 0 1-3.6-3.6l1.38-1.63a2 2 0 0 0 .41-2L8.78 1.76A2 2 0 0 0 6.92.5H4.34a2 2 0 0 0-1.79 1.11L1.73 9.48a16 16 0 0 0 14.79 14.79l.52-.06Z" />
+                </svg>
               </button>
             </div>
           </div>
@@ -4739,7 +5086,10 @@ export function Recruitment() {
       }
     }
     // Deep clone the mock data recruitmentPipeline so we don't mutate global mock object
-    return JSON.parse(JSON.stringify(recruitmentPipeline)) as Record<Stage, Candidate[]>;
+    return JSON.parse(JSON.stringify(recruitmentPipeline)) as Record<
+      Stage,
+      Candidate[]
+    >;
   });
 
   const [jobs, setJobs] = useState<JobPosting[]>(() => {
@@ -4769,7 +5119,10 @@ export function Recruitment() {
   // State saving helpers
   const updatePipeline = (newPipeline: Record<Stage, Candidate[]>) => {
     setPipeline(newPipeline);
-    localStorage.setItem("nexus_recruitment_pipeline", JSON.stringify(newPipeline));
+    localStorage.setItem(
+      "nexus_recruitment_pipeline",
+      JSON.stringify(newPipeline),
+    );
   };
 
   const updateJobs = (newJobs: JobPosting[]) => {
@@ -4779,7 +5132,10 @@ export function Recruitment() {
 
   const updateInterviews = (newInterviews: ScheduledInterview[]) => {
     setInterviews(newInterviews);
-    localStorage.setItem("nexus_recruitment_interviews", JSON.stringify(newInterviews));
+    localStorage.setItem(
+      "nexus_recruitment_interviews",
+      JSON.stringify(newInterviews),
+    );
   };
 
   // Search & filter
@@ -4831,7 +5187,8 @@ export function Recruitment() {
     stage: Stage;
     candidate: Candidate;
   } | null>(null);
-  const [activeVideoCall, setActiveVideoCall] = useState<ScheduledInterview | null>(null);
+  const [activeVideoCall, setActiveVideoCall] =
+    useState<ScheduledInterview | null>(null);
 
   const dragRef = useRef<{ candidateId: string; fromStage: Stage } | null>(
     null,
@@ -4855,9 +5212,11 @@ export function Recruitment() {
       [stage]: (pipeline[stage] || []).filter((c) => c.id !== candidateId),
     };
     updatePipeline(newPipeline);
-    
+
     // Cleanup interviews
-    const newInterviews = interviews.filter((iv) => iv.candidateId !== candidateId);
+    const newInterviews = interviews.filter(
+      (iv) => iv.candidateId !== candidateId,
+    );
     updateInterviews(newInterviews);
 
     toast(`${candidate.name} removed`, "error");
@@ -4869,25 +5228,36 @@ export function Recruitment() {
     fromStage: Stage,
     toStage: Stage,
   ) => {
-    const candidate = (pipeline[fromStage] || []).find((c) => c.id === candidateId);
+    const candidate = (pipeline[fromStage] || []).find(
+      (c) => c.id === candidateId,
+    );
     if (!candidate) return;
 
     const newPipeline = {
       ...pipeline,
-      [fromStage]: (pipeline[fromStage] || []).filter((c) => c.id !== candidateId),
+      [fromStage]: (pipeline[fromStage] || []).filter(
+        (c) => c.id !== candidateId,
+      ),
       [toStage]: [...(pipeline[toStage] || []), candidate],
     };
     updatePipeline(newPipeline);
-    
+
     const candidateEmail = `${candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com`;
-    toast(`${candidate.name} moved to ${toStage}. Automated notification sent to ${candidateEmail}`, "success");
+    toast(
+      `${candidate.name} moved to ${toStage}. Automated notification sent to ${candidateEmail}`,
+      "success",
+    );
   };
 
-  const handleUpdateRating = (stage: Stage, candidateId: string, rating: number) => {
+  const handleUpdateRating = (
+    stage: Stage,
+    candidateId: string,
+    rating: number,
+  ) => {
     const newPipeline = {
       ...pipeline,
       [stage]: (pipeline[stage] || []).map((c) =>
-        c.id === candidateId ? { ...c, rating } : c
+        c.id === candidateId ? { ...c, rating } : c,
       ),
     };
     updatePipeline(newPipeline);
@@ -4897,7 +5267,7 @@ export function Recruitment() {
     const newPipeline = {
       ...pipeline,
       [stage]: (pipeline[stage] || []).map((c) =>
-        c.id === updated.id ? updated : c
+        c.id === updated.id ? updated : c,
       ),
     };
     updatePipeline(newPipeline);
@@ -4907,7 +5277,9 @@ export function Recruitment() {
 
   // CRUD - Job Posting
   const handlePostJob = (
-    jobForm: Omit<JobPosting, "id" | "postedAt" | "applicants"> & { id?: string },
+    jobForm: Omit<JobPosting, "id" | "postedAt" | "applicants"> & {
+      id?: string;
+    },
   ) => {
     if (jobForm.id) {
       // Edit
@@ -4923,7 +5295,7 @@ export function Recruitment() {
               salary: jobForm.salary,
               description: jobForm.description,
             }
-          : j
+          : j,
       );
       updateJobs(updatedJobs);
       toast(`"${jobForm.title}" updated successfully`, "success");
@@ -4962,7 +5334,8 @@ export function Recruitment() {
     const newInterview: ScheduledInterview = {
       ...iv,
       id: `IV${Date.now()}`,
-      candidateInitials: iv.candidateInitials || iv.candidateName.slice(0, 2).toUpperCase(),
+      candidateInitials:
+        iv.candidateInitials || iv.candidateName.slice(0, 2).toUpperCase(),
     };
     updateInterviews([...interviews, newInterview]);
 
@@ -4979,7 +5352,9 @@ export function Recruitment() {
       const newPipeline = {
         ...pipeline,
         [foundStage]: (pipeline[foundStage] || []).map((x) =>
-          x.id === iv.candidateId ? { ...x, interviewDate: `${iv.date} ${iv.time}` } : x
+          x.id === iv.candidateId
+            ? { ...x, interviewDate: `${iv.date} ${iv.time}` }
+            : x,
         ),
       };
       updatePipeline(newPipeline);
@@ -5027,7 +5402,9 @@ export function Recruitment() {
   const applications = allCandidates.length;
   const newApps = (pipeline.Applied || []).length;
   const todayStr = new Date().toISOString().split("T")[0];
-  const interviewsToday = interviews.filter((iv) => iv.date === todayStr).length;
+  const interviewsToday = interviews.filter(
+    (iv) => iv.date === todayStr,
+  ).length;
   const offersPending = (pipeline.Offer || []).length;
   const offersSent = offersPending;
 
@@ -5076,13 +5453,21 @@ export function Recruitment() {
             const si = STAGES.indexOf(detailCandidate.stage);
             const nextStage = si < STAGES.length - 1 ? STAGES[si + 1] : null;
             if (nextStage) {
-              handleMoveCandidate(detailCandidate.candidate.id, detailCandidate.stage, nextStage);
+              handleMoveCandidate(
+                detailCandidate.candidate.id,
+                detailCandidate.stage,
+                nextStage,
+              );
               setDetailCandidate(null);
             }
           }}
-          onEdit={(updatedCandidate) => handleEditCandidate(detailCandidate.stage, updatedCandidate)}
+          onEdit={(updatedCandidate) =>
+            handleEditCandidate(detailCandidate.stage, updatedCandidate)
+          }
           onSchedule={() => setScheduleCandidate(detailCandidate.candidate)}
-          scheduledInterviews={interviews.filter(iv => iv.candidateId === detailCandidate.candidate.id)}
+          scheduledInterviews={interviews.filter(
+            (iv) => iv.candidateId === detailCandidate.candidate.id,
+          )}
           toast={toast}
         />
       )}
@@ -5216,7 +5601,9 @@ export function Recruitment() {
                             nextStage &&
                             handleMoveCandidate(candidate.id, stage, nextStage)
                           }
-                          onUpdateRating={(rating) => handleUpdateRating(stage, candidate.id, rating)}
+                          onUpdateRating={(rating) =>
+                            handleUpdateRating(stage, candidate.id, rating)
+                          }
                           onDragStart={(e: React.DragEvent) => {
                             dragRef.current = {
                               candidateId: candidate.id,
@@ -5268,7 +5655,7 @@ export function Recruitment() {
             // Find candidate's current stage
             let foundStage: Stage = "Applied";
             for (const st of STAGES) {
-              if ((pipeline[st] || []).some(x => x.id === c.id)) {
+              if ((pipeline[st] || []).some((x) => x.id === c.id)) {
                 foundStage = st;
                 break;
               }

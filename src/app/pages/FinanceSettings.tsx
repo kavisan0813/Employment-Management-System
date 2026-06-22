@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { useAuth } from "../context/AuthContext";
+import { log } from "node:console";
 
 type SettingsTab =
   | "Profile Settings"
@@ -103,12 +104,13 @@ export function FinanceSettings() {
           ...user,
           name: fullName,
           email: email,
-          initials: fullName
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2) || "AS"
+          initials:
+            fullName
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()
+              .slice(0, 2) || "AS",
         };
         login(updatedUser);
 
@@ -122,15 +124,18 @@ export function FinanceSettings() {
                   ...u,
                   name: updatedUser.name,
                   email: updatedUser.email,
-                  initials: updatedUser.initials
+                  initials: updatedUser.initials,
                 };
               }
               return u;
             });
-            localStorage.setItem("nexus_registered_users", JSON.stringify(updatedUsers));
+            localStorage.setItem(
+              "nexus_registered_users",
+              JSON.stringify(updatedUsers),
+            );
           }
         } catch (err) {
-          // ignore
+          console.log(err);
         }
       }
     }

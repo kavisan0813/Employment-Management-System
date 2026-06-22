@@ -62,15 +62,6 @@ const trendData = [
   { name: "Apr", value: 72000 },
 ];
 
-const categoryData = [
-  { name: "Travel", value: 42000, color: "#10B981" },
-  { name: "Food", value: 28000, color: "#3B82F6" },
-  { name: "Fuel", value: 21000, color: "#F59E0B" },
-  { name: "Accommodation", value: 19000, color: "#8B5CF6" },
-  { name: "Office Supplies", value: 14500, color: "#EC4899" },
-  { name: "Other", value: 8500, color: "#64748B" },
-];
-
 const initialClaims = [
   {
     id: "EXP-2026-001",
@@ -311,8 +302,18 @@ export function Expenses() {
     const currentYearVal = today.getFullYear(); // e.g. 2026
 
     const monthsList = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
     ];
 
     let targetMonthName = selectedMonth;
@@ -384,9 +385,15 @@ export function Expenses() {
 
   const kpis = useMemo(() => {
     const totalCount = filteredClaims.length;
-    const pendingCount = filteredClaims.filter((c) => c.approvalStatus === "Pending").length;
-    const approvedSum = filteredClaims.filter((c) => c.approvalStatus === "Approved").reduce((sum, c) => sum + c.amount, 0);
-    const reimbursedSum = filteredClaims.filter((c) => c.reimbursementStatus === "Paid").reduce((sum, c) => sum + c.amount, 0);
+    const pendingCount = filteredClaims.filter(
+      (c) => c.approvalStatus === "Pending",
+    ).length;
+    const approvedSum = filteredClaims
+      .filter((c) => c.approvalStatus === "Approved")
+      .reduce((sum, c) => sum + c.amount, 0);
+    const reimbursedSum = filteredClaims
+      .filter((c) => c.reimbursementStatus === "Paid")
+      .reduce((sum, c) => sum + c.amount, 0);
 
     return [
       {
@@ -440,7 +447,9 @@ export function Expenses() {
   ];
 
   const pendingApprovalsSum = useMemo(() => {
-    return filteredClaims.filter((c) => c.approvalStatus === "Pending").reduce((sum, c) => sum + c.amount, 0);
+    return filteredClaims
+      .filter((c) => c.approvalStatus === "Pending")
+      .reduce((sum, c) => sum + c.amount, 0);
   }, [filteredClaims]);
 
   const managerActionCount = useMemo(() => {
@@ -448,7 +457,8 @@ export function Expenses() {
   }, [filteredClaims]);
 
   const dueTodayCount = useMemo(() => {
-    return filteredClaims.filter((c) => c.reimbursementStatus === "Processing").length;
+    return filteredClaims.filter((c) => c.reimbursementStatus === "Processing")
+      .length;
   }, [filteredClaims]);
 
   const rejectedCount = useMemo(() => {

@@ -38,67 +38,6 @@ interface ShiftRequest {
   createdAt: string;
 }
 
-/* ─────────────────────────────────────────────────────────────── */
-/* Static Data                                                     */
-/* ─────────────────────────────────────────────────────────────── */
-const UPCOMING_SHIFTS: Shift[] = [
-  {
-    id: "S1",
-    date: "Apr 06",
-    day: "Mon",
-    type: "Morning",
-    time: "08:00 AM - 04:00 PM",
-    hours: "8h",
-    location: "Head Office, BLR",
-    department: "Engineering",
-    manager: "Suresh Kumar",
-  },
-  {
-    id: "S2",
-    date: "Apr 07",
-    day: "Tue",
-    type: "Morning",
-    time: "08:00 AM - 04:00 PM",
-    hours: "8h",
-    location: "Head Office, BLR",
-    department: "Engineering",
-    manager: "Suresh Kumar",
-  },
-  {
-    id: "S3",
-    date: "Apr 08",
-    day: "Wed",
-    type: "Evening",
-    time: "04:00 PM - 12:00 AM",
-    hours: "8h",
-    location: "Remote",
-    department: "Engineering",
-    manager: "Suresh Kumar",
-  },
-  {
-    id: "S4",
-    date: "Apr 09",
-    day: "Thu",
-    type: "Evening",
-    time: "04:00 PM - 12:00 AM",
-    hours: "8h",
-    location: "Remote",
-    department: "Engineering",
-    manager: "Suresh Kumar",
-  },
-  {
-    id: "S5",
-    date: "Apr 10",
-    day: "Fri",
-    type: "Night",
-    time: "12:00 AM - 08:00 AM",
-    hours: "8h",
-    location: "Head Office, BLR",
-    department: "Engineering",
-    manager: "Suresh Kumar",
-  },
-];
-
 const INITIAL_REQUESTS: ShiftRequest[] = [
   {
     id: "REQ-001",
@@ -274,7 +213,10 @@ const StatusBadge = ({ status }: { status: ShiftRequest["status"] }) => {
 
 function getShiftForDate(d: Date): Shift {
   const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
-  const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "2-digit" });
+  const dateStr = d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+  });
   const isWeekend = d.getDay() === 0 || d.getDay() === 6;
 
   if (isWeekend) {
@@ -347,7 +289,8 @@ export function EmployeeSchedule() {
   }, [navDate]);
 
   const thisWeekShiftsCount = useMemo(() => {
-    return weekDates.filter(d => getShiftForDate(d).type !== "Off Day").length;
+    return weekDates.filter((d) => getShiftForDate(d).type !== "Off Day")
+      .length;
   }, [weekDates]);
 
   const nextDayOff = useMemo(() => {
@@ -357,7 +300,11 @@ export function EmployeeSchedule() {
       if (shift.type === "Off Day") {
         return {
           dayName: d.toLocaleDateString("en-US", { weekday: "long" }),
-          dateStr: d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+          dateStr: d.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }),
         };
       }
       d = new Date(d);
@@ -383,7 +330,7 @@ export function EmployeeSchedule() {
 
   // Navigate forward/back based on current view
   const navigateBack = () => {
-    setNavDate(prev => {
+    setNavDate((prev) => {
       const d = new Date(prev);
       if (view === "Day") d.setDate(d.getDate() - 1);
       else if (view === "Week") d.setDate(d.getDate() - 7);
@@ -392,7 +339,7 @@ export function EmployeeSchedule() {
     });
   };
   const navigateForward = () => {
-    setNavDate(prev => {
+    setNavDate((prev) => {
       const d = new Date(prev);
       if (view === "Day") d.setDate(d.getDate() + 1);
       else if (view === "Week") d.setDate(d.getDate() + 7);
@@ -405,10 +352,18 @@ export function EmployeeSchedule() {
   // Compute display label for navigator
   const navLabel = useMemo(() => {
     if (view === "Day") {
-      return navDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+      return navDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      });
     }
     if (view === "Month") {
-      return navDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+      return navDate.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      });
     }
     // Week: show Mon–Sun
     const mon = new Date(navDate);
@@ -416,7 +371,8 @@ export function EmployeeSchedule() {
     mon.setDate(navDate.getDate() - (day === 0 ? 6 : day - 1));
     const sun = new Date(mon);
     sun.setDate(mon.getDate() + 6);
-    const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const fmt = (d: Date) =>
+      d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
     return `${fmt(mon)} – ${fmt(sun)}, ${sun.getFullYear()}`;
   }, [view, navDate]);
 
@@ -607,13 +563,19 @@ export function EmployeeSchedule() {
         {/* ─── Date Navigator + View Toggles ─────────────────────────── */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 p-1 bg-card border border-border rounded-xl shadow-sm">
-            <button onClick={navigateBack} className="p-2 hover:bg-secondary rounded-lg text-muted-foreground transition-all">
+            <button
+              onClick={navigateBack}
+              className="p-2 hover:bg-secondary rounded-lg text-muted-foreground transition-all"
+            >
               <ChevronLeft size={18} />
             </button>
             <div className="px-4 py-1.5 text-[14px] font-black text-foreground min-w-[200px] text-center">
               {navLabel}
             </div>
-            <button onClick={navigateForward} className="p-2 hover:bg-secondary rounded-lg text-muted-foreground transition-all">
+            <button
+              onClick={navigateForward}
+              className="p-2 hover:bg-secondary rounded-lg text-muted-foreground transition-all"
+            >
               <ChevronRight size={18} />
             </button>
           </div>
@@ -669,236 +631,356 @@ export function EmployeeSchedule() {
 
         {/* ─── My Weekly Schedule Grid ──────────────────────────────── */}
         {view === "Week" && (
-        <div className="space-y-4">
-          <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
-            MY WEEKLY SCHEDULE
-          </h3>
-          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-x-auto custom-scrollbar">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-secondary">
-                  <th className="px-6 py-5 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border min-w-[200px]">
-                    EMPLOYEE
-                  </th>
-                  {weekDates.map((d) => {
-                    const dayLabel = d.toLocaleDateString("en-US", { weekday: "short", day: "2-digit" }).toUpperCase();
-                    return (
-                      <th
-                        key={d.getTime()}
-                        className="px-4 py-5 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border text-center"
-                      >
-                        {dayLabel}
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="hover:bg-[#00B87C]/[0.08] transition-colors">
-                  <td className="px-6 py-5 border-b border-border">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white text-[12px] font-black border-2 border-card shadow-sm">
-                        PS
-                      </div>
-                      <div>
-                        <p className="text-[14px] font-black text-foreground">
-                          Priya Sharma
-                        </p>
-                        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                          Engineering
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  {weekDates.map((d, idx) => {
-                    const shift = getShiftForDate(d);
-                    const conf =
-                      SHIFT_COLORS[shift.type] || SHIFT_COLORS["Morning"];
-                    return (
-                      <td key={idx} className="p-2 border-b border-border">
-                        <div
-                          onClick={() => handleViewDetails(shift)}
-                          className={`h-full min-h-[60px] rounded-xl p-2 flex flex-col items-center justify-center gap-1 border-t-4 shadow-sm group cursor-pointer transition-all hover:scale-[1.02] ${conf.bg} ${conf.border}`}
+          <div className="space-y-4">
+            <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
+              MY WEEKLY SCHEDULE
+            </h3>
+            <div className="bg-card rounded-2xl border border-border shadow-sm overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-secondary">
+                    <th className="px-6 py-5 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border min-w-[200px]">
+                      EMPLOYEE
+                    </th>
+                    {weekDates.map((d) => {
+                      const dayLabel = d
+                        .toLocaleDateString("en-US", {
+                          weekday: "short",
+                          day: "2-digit",
+                        })
+                        .toUpperCase();
+                      return (
+                        <th
+                          key={d.getTime()}
+                          className="px-4 py-5 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest border-b border-border text-center"
                         >
-                          <p
-                            className={`text-[11px] font-black uppercase tracking-wider ${conf.text}`}
-                          >
-                            {shift.type}
+                          {dayLabel}
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="hover:bg-[#00B87C]/[0.08] transition-colors">
+                    <td className="px-6 py-5 border-b border-border">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white text-[12px] font-black border-2 border-card shadow-sm">
+                          PS
+                        </div>
+                        <div>
+                          <p className="text-[14px] font-black text-foreground">
+                            Priya Sharma
                           </p>
-                          <p className="text-[11px] font-bold text-muted-foreground">
-                            {shift.hours}
+                          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                            Engineering
                           </p>
                         </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-              </tbody>
-            </table>
+                      </div>
+                    </td>
+                    {weekDates.map((d, idx) => {
+                      const shift = getShiftForDate(d);
+                      const conf =
+                        SHIFT_COLORS[shift.type] || SHIFT_COLORS["Morning"];
+                      return (
+                        <td key={idx} className="p-2 border-b border-border">
+                          <div
+                            onClick={() => handleViewDetails(shift)}
+                            className={`h-full min-h-[60px] rounded-xl p-2 flex flex-col items-center justify-center gap-1 border-t-4 shadow-sm group cursor-pointer transition-all hover:scale-[1.02] ${conf.bg} ${conf.border}`}
+                          >
+                            <p
+                              className={`text-[11px] font-black uppercase tracking-wider ${conf.text}`}
+                            >
+                              {shift.type}
+                            </p>
+                            <p className="text-[11px] font-bold text-muted-foreground">
+                              {shift.hours}
+                            </p>
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
         )}
 
         {/* ─── Month View ────────────────────────────────────────────── */}
         {view === "Month" && (
-        <div className="space-y-4">
-          <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">MONTHLY SCHEDULE</h3>
-          <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
-            <div className="grid grid-cols-7 mb-4">
-              {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => (
-                <div key={d} className="text-center text-[11px] font-black text-muted-foreground uppercase tracking-widest py-2">{d}</div>
-              ))}
-            </div>
-            <div className="grid grid-cols-7 gap-2">
-              {(() => {
-                const year = navDate.getFullYear();
-                const month = navDate.getMonth();
-                const firstDay = new Date(year, month, 1).getDay();
-                const daysInMonth = new Date(year, month + 1, 0).getDate();
-                const cells = [];
-                for (let i = 0; i < firstDay; i++) cells.push(null);
-                for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-                return cells.map((day, i) => {
-                  if (day === null) return <div key={`e-${i}`} className="min-h-[80px]" />;
-                  const targetDate = new Date(year, month, day);
-                  const isToday =
-                    targetDate.getDate() === today.getDate() &&
-                    targetDate.getMonth() === today.getMonth() &&
-                    targetDate.getFullYear() === today.getFullYear();
-                  const shift = getShiftForDate(targetDate);
-                  const conf = SHIFT_COLORS[shift.type];
-                  return (
-                    <div key={day} onClick={() => handleViewDetails(shift)} className={`min-h-[80px] rounded-xl border p-2 flex flex-col gap-1 transition-colors cursor-pointer hover:border-[#00B87C]/50 ${
-                      isToday ? 'border-[#00B87C] bg-[#00B87C]/5' : shift.type === "Off Day" ? 'border-border/50 bg-muted/20' : 'border-border bg-card'
-                    }`}>
-                      <span className={`text-[12px] font-bold ${ isToday ? 'w-6 h-6 rounded-full bg-[#00B87C] text-white flex items-center justify-center text-[11px] font-black' : 'text-foreground' }`}>
-                        {day}
-                      </span>
-                      {shift.type !== "Off Day" && conf && (
-                        <div className={`mt-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase text-center ${conf.bg} ${conf.text}`}>
-                          {shift.type}
-                        </div>
-                      )}
-                      {shift.type === "Off Day" && (
-                        <div className="mt-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase text-center bg-secondary text-muted-foreground">
-                          Off
-                        </div>
-                      )}
-                    </div>
-                  );
-                });
-              })()}
-            </div>
-            <div className="flex flex-wrap gap-4 mt-6 pt-5 border-t border-border">
-              {[{label:"Morning",color:"bg-primary"},{label:"Evening",color:"bg-amber-500"},{label:"Night",color:"bg-purple-500"},{label:"Off Day",color:"bg-secondary border border-border"}].map(item => (
-                <div key={item.label} className="flex items-center gap-2">
-                  <div className={`w-2.5 h-2.5 rounded-full ${item.color}`} />
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">{item.label}</span>
-                </div>
-              ))}
+          <div className="space-y-4">
+            <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
+              MONTHLY SCHEDULE
+            </h3>
+            <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
+              <div className="grid grid-cols-7 mb-4">
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+                  <div
+                    key={d}
+                    className="text-center text-[11px] font-black text-muted-foreground uppercase tracking-widest py-2"
+                  >
+                    {d}
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-7 gap-2">
+                {(() => {
+                  const year = navDate.getFullYear();
+                  const month = navDate.getMonth();
+                  const firstDay = new Date(year, month, 1).getDay();
+                  const daysInMonth = new Date(year, month + 1, 0).getDate();
+                  const cells = [];
+                  for (let i = 0; i < firstDay; i++) cells.push(null);
+                  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+                  return cells.map((day, i) => {
+                    if (day === null)
+                      return <div key={`e-${i}`} className="min-h-[80px]" />;
+                    const targetDate = new Date(year, month, day);
+                    const isToday =
+                      targetDate.getDate() === today.getDate() &&
+                      targetDate.getMonth() === today.getMonth() &&
+                      targetDate.getFullYear() === today.getFullYear();
+                    const shift = getShiftForDate(targetDate);
+                    const conf = SHIFT_COLORS[shift.type];
+                    return (
+                      <div
+                        key={day}
+                        onClick={() => handleViewDetails(shift)}
+                        className={`min-h-[80px] rounded-xl border p-2 flex flex-col gap-1 transition-colors cursor-pointer hover:border-[#00B87C]/50 ${
+                          isToday
+                            ? "border-[#00B87C] bg-[#00B87C]/5"
+                            : shift.type === "Off Day"
+                              ? "border-border/50 bg-muted/20"
+                              : "border-border bg-card"
+                        }`}
+                      >
+                        <span
+                          className={`text-[12px] font-bold ${isToday ? "w-6 h-6 rounded-full bg-[#00B87C] text-white flex items-center justify-center text-[11px] font-black" : "text-foreground"}`}
+                        >
+                          {day}
+                        </span>
+                        {shift.type !== "Off Day" && conf && (
+                          <div
+                            className={`mt-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase text-center ${conf.bg} ${conf.text}`}
+                          >
+                            {shift.type}
+                          </div>
+                        )}
+                        {shift.type === "Off Day" && (
+                          <div className="mt-auto px-1.5 py-0.5 rounded text-[9px] font-black uppercase text-center bg-secondary text-muted-foreground">
+                            Off
+                          </div>
+                        )}
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+              <div className="flex flex-wrap gap-4 mt-6 pt-5 border-t border-border">
+                {[
+                  { label: "Morning", color: "bg-primary" },
+                  { label: "Evening", color: "bg-amber-500" },
+                  { label: "Night", color: "bg-purple-500" },
+                  {
+                    label: "Off Day",
+                    color: "bg-secondary border border-border",
+                  },
+                ].map((item) => (
+                  <div key={item.label} className="flex items-center gap-2">
+                    <div className={`w-2.5 h-2.5 rounded-full ${item.color}`} />
+                    <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
         )}
 
         {/* ─── Day View ──────────────────────────────────────────────── */}
         {view === "Day" && (
-        <div className="space-y-4">
-          <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">DAILY SCHEDULE</h3>
-          {(() => {
-            const shift = getShiftForDate(navDate);
-            const timelineItems = (() => {
-              if (shift.type === "Off Day") {
+          <div className="space-y-4">
+            <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
+              DAILY SCHEDULE
+            </h3>
+            {(() => {
+              const shift = getShiftForDate(navDate);
+              const timelineItems = (() => {
+                if (shift.type === "Off Day") {
+                  return [
+                    {
+                      time: "All Day",
+                      label: "No scheduled shifts. Time to relax!",
+                      type: "break",
+                    },
+                  ];
+                }
+                if (shift.type === "Evening") {
+                  return [
+                    {
+                      time: "04:00 PM",
+                      label: "Clock-in / Evening Briefing",
+                      type: "start",
+                    },
+                    {
+                      time: "05:00 PM",
+                      label: "Development Sprint",
+                      type: "work",
+                    },
+                    {
+                      time: "09:00 PM",
+                      label: "Dinner Break (1 hr)",
+                      type: "break",
+                    },
+                    {
+                      time: "10:00 PM",
+                      label: "Team Sync & Code Review",
+                      type: "work",
+                    },
+                    { time: "12:00 AM", label: "Clock-out", type: "end" },
+                  ];
+                }
+                if (shift.type === "Night") {
+                  return [
+                    {
+                      time: "12:00 AM",
+                      label: "Clock-in / Night Briefing",
+                      type: "start",
+                    },
+                    {
+                      time: "01:00 AM",
+                      label: "Support & Infrastructure",
+                      type: "work",
+                    },
+                    {
+                      time: "04:00 AM",
+                      label: "Meal Break (1 hr)",
+                      type: "break",
+                    },
+                    {
+                      time: "05:00 AM",
+                      label: "Automated Testing & Deployment",
+                      type: "work",
+                    },
+                    { time: "08:00 AM", label: "Clock-out", type: "end" },
+                  ];
+                }
                 return [
-                  { time: "All Day", label: "No scheduled shifts. Time to relax!", type: "break" }
+                  {
+                    time: "08:00 AM",
+                    label: "Clock-in / Morning Briefing",
+                    type: "start",
+                  },
+                  {
+                    time: "09:00 AM",
+                    label: "Development Sprint",
+                    type: "work",
+                  },
+                  {
+                    time: "01:00 PM",
+                    label: "Lunch Break (1 hr)",
+                    type: "break",
+                  },
+                  {
+                    time: "02:00 PM",
+                    label: "Team Sync / PR Reviews",
+                    type: "work",
+                  },
+                  { time: "04:00 PM", label: "Clock-out", type: "end" },
                 ];
-              }
-              if (shift.type === "Evening") {
-                return [
-                  { time: "04:00 PM", label: "Clock-in / Evening Briefing", type: "start" },
-                  { time: "05:00 PM", label: "Development Sprint", type: "work" },
-                  { time: "09:00 PM", label: "Dinner Break (1 hr)", type: "break" },
-                  { time: "10:00 PM", label: "Team Sync & Code Review", type: "work" },
-                  { time: "12:00 AM", label: "Clock-out", type: "end" },
-                ];
-              }
-              if (shift.type === "Night") {
-                return [
-                  { time: "12:00 AM", label: "Clock-in / Night Briefing", type: "start" },
-                  { time: "01:00 AM", label: "Support & Infrastructure", type: "work" },
-                  { time: "04:00 AM", label: "Meal Break (1 hr)", type: "break" },
-                  { time: "05:00 AM", label: "Automated Testing & Deployment", type: "work" },
-                  { time: "08:00 AM", label: "Clock-out", type: "end" },
-                ];
-              }
-              return [
-                { time: "08:00 AM", label: "Clock-in / Morning Briefing", type: "start" },
-                { time: "09:00 AM", label: "Development Sprint", type: "work" },
-                { time: "01:00 PM", label: "Lunch Break (1 hr)", type: "break" },
-                { time: "02:00 PM", label: "Team Sync / PR Reviews", type: "work" },
-                { time: "04:00 PM", label: "Clock-out", type: "end" },
-              ];
-            })();
+              })();
 
-            return (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Day Timeline */}
-                <div className="bg-card rounded-2xl border border-border shadow-sm p-6 space-y-5">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-[15px] font-black text-foreground">{navDate.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</h4>
-                    <span className={`px-3 py-1 rounded-full text-[11px] font-black border ${
-                      shift.type === "Off Day"
-                        ? "bg-secondary text-muted-foreground border-border"
-                        : "bg-emerald-500/10 text-primary border-primary/20"
-                    }`}>
-                      {shift.type === "Off Day" ? "Off Day" : "Work Day"}
-                    </span>
+              return (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Day Timeline */}
+                  <div className="bg-card rounded-2xl border border-border shadow-sm p-6 space-y-5">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-[15px] font-black text-foreground">
+                        {navDate.toLocaleDateString("en-US", {
+                          weekday: "long",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </h4>
+                      <span
+                        className={`px-3 py-1 rounded-full text-[11px] font-black border ${
+                          shift.type === "Off Day"
+                            ? "bg-secondary text-muted-foreground border-border"
+                            : "bg-emerald-500/10 text-primary border-primary/20"
+                        }`}
+                      >
+                        {shift.type === "Off Day" ? "Off Day" : "Work Day"}
+                      </span>
+                    </div>
+                    <div className="space-y-3">
+                      {timelineItems.map((item, i) => (
+                        <div key={i} className="flex items-start gap-4">
+                          <span className="w-[80px] text-[11px] font-black text-muted-foreground pt-1 shrink-0">
+                            {item.time}
+                          </span>
+                          <div className="flex flex-col items-center gap-1">
+                            <div
+                              className={`w-3 h-3 rounded-full mt-1 ${item.type === "start" || item.type === "end" ? "bg-primary" : item.type === "break" ? "bg-amber-500" : "bg-sky-500"}`}
+                            />
+                            {i < timelineItems.length - 1 && (
+                              <div className="w-0.5 h-8 bg-border" />
+                            )}
+                          </div>
+                          <div
+                            className={`flex-1 px-4 py-3 rounded-xl text-[13px] font-bold ${item.type === "break" ? "bg-amber-500/5 border border-amber-500/10 text-amber-600" : item.type === "start" || item.type === "end" ? "bg-emerald-500/5 border border-emerald-500/10 text-primary" : "bg-sky-500/5 border border-sky-500/10 text-foreground"}`}
+                          >
+                            {item.label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="space-y-3">
-                    {timelineItems.map((item,i) => (
-                      <div key={i} className="flex items-start gap-4">
-                        <span className="w-[80px] text-[11px] font-black text-muted-foreground pt-1 shrink-0">{item.time}</span>
-                        <div className="flex flex-col items-center gap-1">
-                          <div className={`w-3 h-3 rounded-full mt-1 ${ item.type==="start"||item.type==="end" ? "bg-primary" : item.type==="break" ? "bg-amber-500" : "bg-sky-500" }`} />
-                          {i < timelineItems.length - 1 && <div className="w-0.5 h-8 bg-border" />}
+                  {/* Day Shift Card */}
+                  <div className="space-y-4">
+                    <div className="bg-card rounded-2xl border border-border shadow-sm p-6 space-y-4">
+                      <h4 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
+                        Shift Details
+                      </h4>
+                      {[
+                        {
+                          label: "Shift Type",
+                          val:
+                            shift.type === "Off Day"
+                              ? "Off Day"
+                              : `${shift.type} Shift`,
+                        },
+                        { label: "Timing", val: shift.time },
+                        { label: "Duration", val: shift.hours },
+                        { label: "Location", val: shift.location },
+                        { label: "Manager", val: shift.manager },
+                      ].map((f) => (
+                        <div
+                          key={f.label}
+                          className="flex justify-between items-center py-1 border-b border-border last:border-0"
+                        >
+                          <span className="text-[13px] font-bold text-muted-foreground">
+                            {f.label}
+                          </span>
+                          <span className="text-[13px] font-black text-foreground">
+                            {f.val}
+                          </span>
                         </div>
-                        <div className={`flex-1 px-4 py-3 rounded-xl text-[13px] font-bold ${ item.type==="break" ? "bg-amber-500/5 border border-amber-500/10 text-amber-600" : item.type==="start"||item.type==="end" ? "bg-emerald-500/5 border border-emerald-500/10 text-primary" : "bg-sky-500/5 border border-sky-500/10 text-foreground" }`}>
-                          {item.label}
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                    {shift.type !== "Off Day" && (
+                      <button
+                        onClick={() => handleRequestSwap(shift)}
+                        className="w-full py-3.5 rounded-xl border border-primary text-primary text-[13px] font-black hover:bg-emerald-500/10 transition-all"
+                      >
+                        ↔ Request Swap for This Day
+                      </button>
+                    )}
                   </div>
                 </div>
-                {/* Day Shift Card */}
-                <div className="space-y-4">
-                  <div className="bg-card rounded-2xl border border-border shadow-sm p-6 space-y-4">
-                    <h4 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">Shift Details</h4>
-                    {[
-                      {label:"Shift Type",val: shift.type === "Off Day" ? "Off Day" : `${shift.type} Shift`},
-                      {label:"Timing",val: shift.time},
-                      {label:"Duration",val: shift.hours},
-                      {label:"Location",val: shift.location},
-                      {label:"Manager",val: shift.manager}
-                    ].map(f => (
-                      <div key={f.label} className="flex justify-between items-center py-1 border-b border-border last:border-0">
-                        <span className="text-[13px] font-bold text-muted-foreground">{f.label}</span>
-                        <span className="text-[13px] font-black text-foreground">{f.val}</span>
-                      </div>
-                    ))}
-                  </div>
-                  {shift.type !== "Off Day" && (
-                    <button
-                      onClick={() => handleRequestSwap(shift)}
-                      className="w-full py-3.5 rounded-xl border border-primary text-primary text-[13px] font-black hover:bg-emerald-500/10 transition-all"
-                    >
-                      ↔ Request Swap for This Day
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
-        </div>
+              );
+            })()}
+          </div>
         )}
 
         {/* ─── Upcoming Shifts List ─────────────────────────────────── */}
@@ -909,7 +991,8 @@ export function EmployeeSchedule() {
             </h3>
             <div className="space-y-3">
               {upcomingShiftsList.map((shift, index) => {
-                const conf = SHIFT_COLORS[shift.type] || SHIFT_COLORS["Morning"];
+                const conf =
+                  SHIFT_COLORS[shift.type] || SHIFT_COLORS["Morning"];
                 const isLastTwo = index >= upcomingShiftsList.length - 2;
                 return (
                   <div
