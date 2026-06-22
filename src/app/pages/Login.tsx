@@ -47,8 +47,8 @@ const DEMO_ACCOUNTS: Record<
   },
   Employee: {
     email: "emp@nexushr.com",
-    name: "John Doe",
-    initials: "JD",
+    name: "Priya Sharma",
+    initials: "PS",
   },
 };
 

@@ -51,7 +51,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   const currentRole = user?.role as UserRole | undefined;
   const isNewJoinee =
-    currentRole === "Employee" && location.pathname === "/my-onboarding";
+    currentRole === "Employee" &&
+    (user?.name === "Priya Sharma" || location.pathname === "/my-onboarding");
 
   // Accordion groups configuration based on active user role
   let groups: {
@@ -73,16 +74,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         ],
       },
       {
-        label: "Locked Items",
-        icon: Lock,
+        label: "My Workspace",
+        icon: Briefcase,
         items: [
-          { label: "My Attendance", path: "/attendance", disabled: true },
-          { label: "My Leaves", path: "/leave", disabled: true },
-          { label: "My Payslips", path: "/payslips", disabled: true },
-          { label: "My Schedule", path: "/schedule", disabled: true },
-          { label: "My Performance", path: "/performance", disabled: true },
-          { label: "My Expenses", path: "/expenses", disabled: true },
-          { label: "My Assets", path: "/my-assets", disabled: true },
+          { label: "My Attendance", path: "/attendance" },
+          { label: "My Leaves", path: "/leave" },
+          { label: "My Payslips", path: "/payslips" },
+          { label: "My Schedule", path: "/schedule" },
+          { label: "My Performance", path: "/performance" },
+          { label: "My Expenses", path: "/expenses" },
+          { label: "My Assets", path: "/my-assets" },
         ],
       },
     ];

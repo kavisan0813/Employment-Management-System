@@ -660,7 +660,7 @@ function RootRedirect() {
     "HR Manager": "/hr/dashboard",
     "Finance": "/finance/dashboard",
     "Manager": "/manager/dashboard",
-    "Employee": "/employee/dashboard",
+    "Employee": user?.name === "Priya Sharma" ? "/my-onboarding" : "/employee/dashboard",
   };
   
   return <Navigate to={roleRoutes[user.role] || "/employee/dashboard"} replace />;
