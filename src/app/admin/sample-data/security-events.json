@@ -1,0 +1,488 @@
+[
+  {
+    "id": "sec_1",
+    "type": "Failed Login Spike",
+    "organization": "Sapphire Cloud",
+    "actor": "grace.petrova@sapphirecloud.com",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "Jun 03, 10:23"
+  },
+  {
+    "id": "sec_2",
+    "type": "Impossible Travel",
+    "organization": "Riverstone Pharma",
+    "actor": "lucas.nair@riverstonepharma.com",
+    "severity": "Low",
+    "status": "Active",
+    "detectedAt": "May 25, 03:49"
+  },
+  {
+    "id": "sec_3",
+    "type": "MFA Disabled",
+    "organization": "Riverstone Pharma",
+    "actor": "ana.schmidt@riverstonepharma.com",
+    "severity": "Critical",
+    "status": "Pending",
+    "detectedAt": "Jun 16, 08:32"
+  },
+  {
+    "id": "sec_4",
+    "type": "MFA Disabled",
+    "organization": "Solace Health",
+    "actor": "omar.tran@solacehealth.com",
+    "severity": "High",
+    "status": "Active",
+    "detectedAt": "Jun 02, 01:43"
+  },
+  {
+    "id": "sec_5",
+    "type": "Impossible Travel",
+    "organization": "Quantum Forge",
+    "actor": "noah.haddad@quantumforge.com",
+    "severity": "Medium",
+    "status": "Pending",
+    "detectedAt": "Jun 11, 09:34"
+  },
+  {
+    "id": "sec_6",
+    "type": "Impossible Travel",
+    "organization": "Northstar Biotech",
+    "actor": "yusuf.rivera@northstarbiotech.com",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "May 31, 13:19"
+  },
+  {
+    "id": "sec_7",
+    "type": "Failed Login Spike",
+    "organization": "Sapphire Cloud",
+    "actor": "tariq.schmidt@sapphirecloud.com",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "May 29, 14:36"
+  },
+  {
+    "id": "sec_8",
+    "type": "Failed Login Spike",
+    "organization": "Redwood Analytics",
+    "actor": "noah.schmidt@redwoodanalytics.com",
+    "severity": "High",
+    "status": "Inactive",
+    "detectedAt": "May 21, 01:06"
+  },
+  {
+    "id": "sec_9",
+    "type": "Impossible Travel",
+    "organization": "Amberfield Group",
+    "actor": "priya.schmidt@amberfieldgroup.com",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "Jun 13, 23:32"
+  },
+  {
+    "id": "sec_10",
+    "type": "MFA Disabled",
+    "organization": "Driftway Hospitality",
+    "actor": "ana.okafor@driftwayhospitality.com",
+    "severity": "Low",
+    "status": "Active",
+    "detectedAt": "May 25, 21:44"
+  },
+  {
+    "id": "sec_11",
+    "type": "Impossible Travel",
+    "organization": "Sterling Bridge",
+    "actor": "tariq.haddad@sterlingbridge.com",
+    "severity": "High",
+    "status": "Inactive",
+    "detectedAt": "May 24, 09:02"
+  },
+  {
+    "id": "sec_12",
+    "type": "Failed Login Spike",
+    "organization": "Cinderwood Energy",
+    "actor": "felix.haddad@cinderwoodenergy.com",
+    "severity": "Medium",
+    "status": "Inactive",
+    "detectedAt": "May 27, 03:21"
+  },
+  {
+    "id": "sec_13",
+    "type": "Failed Login Spike",
+    "organization": "Bright Labs",
+    "actor": "sofia.lindqvist@brightlabs.com",
+    "severity": "Medium",
+    "status": "Inactive",
+    "detectedAt": "Jun 15, 14:24"
+  },
+  {
+    "id": "sec_14",
+    "type": "Impossible Travel",
+    "organization": "Lighthouse Consulting",
+    "actor": "naomi.farrell@lighthouseconsulting.com",
+    "severity": "Low",
+    "status": "Pending",
+    "detectedAt": "Jun 02, 16:21"
+  },
+  {
+    "id": "sec_15",
+    "type": "MFA Disabled",
+    "organization": "Goldfinch Marketing",
+    "actor": "ana.adeyemi@goldfinchmarketing.com",
+    "severity": "Medium",
+    "status": "Inactive",
+    "detectedAt": "Jun 15, 05:37"
+  },
+  {
+    "id": "sec_16",
+    "type": "Impossible Travel",
+    "organization": null,
+    "actor": "ana.rivera@ems.io",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "Jun 14, 01:05"
+  },
+  {
+    "id": "sec_17",
+    "type": "New Device Login",
+    "organization": "Maplewood Construction",
+    "actor": "sarah.chen@maplewoodconstruction.com",
+    "severity": "Critical",
+    "status": "Inactive",
+    "detectedAt": "May 30, 06:42"
+  },
+  {
+    "id": "sec_18",
+    "type": "New Device Login",
+    "organization": "Aspen Ridge Capital",
+    "actor": "lina.lindqvist@aspenridgecapital.com",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "May 31, 05:38"
+  },
+  {
+    "id": "sec_19",
+    "type": "Impossible Travel",
+    "organization": null,
+    "actor": "marcus.farrell@ems.io",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "Jun 05, 23:01"
+  },
+  {
+    "id": "sec_20",
+    "type": "Failed Login Spike",
+    "organization": "Hearthstone Realty",
+    "actor": "david.khan@hearthstonerealty.com",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "May 25, 05:25"
+  },
+  {
+    "id": "sec_21",
+    "type": "MFA Disabled",
+    "organization": "Hearthstone Realty",
+    "actor": "elena.haddad@hearthstonerealty.com",
+    "severity": "High",
+    "status": "Inactive",
+    "detectedAt": "May 24, 04:51"
+  },
+  {
+    "id": "sec_22",
+    "type": "MFA Disabled",
+    "organization": "Granite Peak Partners",
+    "actor": "marcus.haddad@granitepeakpartners.com",
+    "severity": "High",
+    "status": "Active",
+    "detectedAt": "Jun 11, 06:28"
+  },
+  {
+    "id": "sec_23",
+    "type": "Impossible Travel",
+    "organization": "Frostbyte Software",
+    "actor": "zara.moreau@frostbytesoftware.com",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "May 23, 03:28"
+  },
+  {
+    "id": "sec_24",
+    "type": "New Device Login",
+    "organization": "Cobalt Manufacturing",
+    "actor": "tariq.kowalski@cobaltmanufacturing.com",
+    "severity": "High",
+    "status": "Inactive",
+    "detectedAt": "Jun 11, 12:01"
+  },
+  {
+    "id": "sec_25",
+    "type": "Failed Login Spike",
+    "organization": null,
+    "actor": "james.adeyemi@ems.io",
+    "severity": "Critical",
+    "status": "Inactive",
+    "detectedAt": "Jun 07, 17:49"
+  },
+  {
+    "id": "sec_26",
+    "type": "Failed Login Spike",
+    "organization": "Goldfinch Marketing",
+    "actor": "sarah.tran@goldfinchmarketing.com",
+    "severity": "Medium",
+    "status": "Inactive",
+    "detectedAt": "Jun 06, 15:36"
+  },
+  {
+    "id": "sec_27",
+    "type": "Failed Login Spike",
+    "organization": "Stonebridge Legal",
+    "actor": "zara.lindqvist@stonebridgelegal.com",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "May 21, 02:56"
+  },
+  {
+    "id": "sec_28",
+    "type": "Failed Login Spike",
+    "organization": "Cedar & Co",
+    "actor": "naomi.lindgren@cedarco.com",
+    "severity": "Medium",
+    "status": "Pending",
+    "detectedAt": "Jun 09, 13:00"
+  },
+  {
+    "id": "sec_29",
+    "type": "Impossible Travel",
+    "organization": "Hearthstone Realty",
+    "actor": "hana.bauer@hearthstonerealty.com",
+    "severity": "Critical",
+    "status": "Pending",
+    "detectedAt": "May 22, 05:31"
+  },
+  {
+    "id": "sec_30",
+    "type": "Impossible Travel",
+    "organization": "Silverline Telecom",
+    "actor": "mei.adeyemi@silverlinetelecom.com",
+    "severity": "Medium",
+    "status": "Pending",
+    "detectedAt": "May 26, 21:44"
+  },
+  {
+    "id": "sec_31",
+    "type": "MFA Disabled",
+    "organization": "Meridian Group",
+    "actor": "james.khan@meridiangroup.com",
+    "severity": "Low",
+    "status": "Pending",
+    "detectedAt": "Jun 17, 22:27"
+  },
+  {
+    "id": "sec_32",
+    "type": "MFA Disabled",
+    "organization": "Northstar Biotech",
+    "actor": "omar.walsh@northstarbiotech.com",
+    "severity": "Critical",
+    "status": "Inactive",
+    "detectedAt": "Jun 17, 23:26"
+  },
+  {
+    "id": "sec_33",
+    "type": "MFA Disabled",
+    "organization": "Northstar Biotech",
+    "actor": "ines.sato@northstarbiotech.com",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "Jun 15, 10:17"
+  },
+  {
+    "id": "sec_34",
+    "type": "Impossible Travel",
+    "organization": "Lumen Works",
+    "actor": "marcus.lindqvist@lumenworks.com",
+    "severity": "High",
+    "status": "Inactive",
+    "detectedAt": "May 31, 15:52"
+  },
+  {
+    "id": "sec_35",
+    "type": "Failed Login Spike",
+    "organization": "Riverstone Pharma",
+    "actor": "mei.farrell@riverstonepharma.com",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "Jun 11, 21:30"
+  },
+  {
+    "id": "sec_36",
+    "type": "Failed Login Spike",
+    "organization": "Crestmark Holdings",
+    "actor": "carlos.walsh@crestmarkholdings.com",
+    "severity": "Medium",
+    "status": "Inactive",
+    "detectedAt": "May 20, 10:53"
+  },
+  {
+    "id": "sec_37",
+    "type": "Failed Login Spike",
+    "organization": "Meridian Group",
+    "actor": "priya.moreau@meridiangroup.com",
+    "severity": "High",
+    "status": "Inactive",
+    "detectedAt": "Jun 04, 17:04"
+  },
+  {
+    "id": "sec_38",
+    "type": "Failed Login Spike",
+    "organization": "Goldfinch Marketing",
+    "actor": "naomi.okafor@goldfinchmarketing.com",
+    "severity": "Medium",
+    "status": "Inactive",
+    "detectedAt": "Jun 08, 19:05"
+  },
+  {
+    "id": "sec_39",
+    "type": "Failed Login Spike",
+    "organization": null,
+    "actor": "ana.rivera@ems.io",
+    "severity": "Low",
+    "status": "Active",
+    "detectedAt": "Jun 16, 19:50"
+  },
+  {
+    "id": "sec_40",
+    "type": "Failed Login Spike",
+    "organization": "Foxglove Retail",
+    "actor": "grace.tran@foxgloveretail.com",
+    "severity": "Low",
+    "status": "Inactive",
+    "detectedAt": "May 23, 00:54"
+  },
+  {
+    "id": "sec_41",
+    "type": "New Device Login",
+    "organization": null,
+    "actor": "marcus.kowalski@ems.io",
+    "severity": "High",
+    "status": "Pending",
+    "detectedAt": "May 25, 16:11"
+  },
+  {
+    "id": "sec_42",
+    "type": "Impossible Travel",
+    "organization": null,
+    "actor": "lucas.haddad@ems.io",
+    "severity": "High",
+    "status": "Inactive",
+    "detectedAt": "May 21, 15:08"
+  },
+  {
+    "id": "sec_43",
+    "type": "Failed Login Spike",
+    "organization": "Driftwood Studios",
+    "actor": "yusuf.bauer@driftwoodstudios.com",
+    "severity": "Medium",
+    "status": "Inactive",
+    "detectedAt": "May 22, 01:16"
+  },
+  {
+    "id": "sec_44",
+    "type": "MFA Disabled",
+    "organization": "Maplewood Construction",
+    "actor": "priya.haddad@maplewoodconstruction.com",
+    "severity": "High",
+    "status": "Inactive",
+    "detectedAt": "Jun 05, 16:59"
+  },
+  {
+    "id": "sec_45",
+    "type": "Impossible Travel",
+    "organization": "Nexus Solutions",
+    "actor": "ines.schmidt@nexussolutions.com",
+    "severity": "Medium",
+    "status": "Inactive",
+    "detectedAt": "May 20, 21:36"
+  },
+  {
+    "id": "sec_46",
+    "type": "Failed Login Spike",
+    "organization": "Timberline Outdoor",
+    "actor": "carlos.moreau@timberlineoutdoor.com",
+    "severity": "Medium",
+    "status": "Inactive",
+    "detectedAt": "Jun 04, 04:15"
+  },
+  {
+    "id": "sec_47",
+    "type": "New Device Login",
+    "organization": null,
+    "actor": "liam.rivera@ems.io",
+    "severity": "High",
+    "status": "Inactive",
+    "detectedAt": "Jun 09, 19:06"
+  },
+  {
+    "id": "sec_48",
+    "type": "Failed Login Spike",
+    "organization": null,
+    "actor": "maya.okafor@ems.io",
+    "severity": "Medium",
+    "status": "Inactive",
+    "detectedAt": "Jun 06, 11:17"
+  },
+  {
+    "id": "sec_49",
+    "type": "Impossible Travel",
+    "organization": "Cascade Freight",
+    "actor": "felix.tran@cascadefreight.com",
+    "severity": "Medium",
+    "status": "Inactive",
+    "detectedAt": "Jun 19, 10:37"
+  },
+  {
+    "id": "sec_50",
+    "type": "New Device Login",
+    "organization": "Aspen Ridge Capital",
+    "actor": "ana.lindqvist@aspenridgecapital.com",
+    "severity": "High",
+    "status": "Active",
+    "detectedAt": "Jun 06, 04:21"
+  },
+  {
+    "id": "sec_51",
+    "type": "MFA Disabled",
+    "organization": "Cascade Freight",
+    "actor": "victor.moreau@cascadefreight.com",
+    "severity": "Medium",
+    "status": "Pending",
+    "detectedAt": "May 20, 08:07"
+  },
+  {
+    "id": "sec_52",
+    "type": "Impossible Travel",
+    "organization": "Skyline Ventures",
+    "actor": "clara.walsh@skylineventures.com",
+    "severity": "Medium",
+    "status": "Active",
+    "detectedAt": "Jun 07, 10:32"
+  },
+  {
+    "id": "sec_53",
+    "type": "MFA Disabled",
+    "organization": null,
+    "actor": "ines.kowalski@ems.io",
+    "severity": "High",
+    "status": "Inactive",
+    "detectedAt": "May 30, 21:54"
+  },
+  {
+    "id": "sec_54",
+    "type": "Impossible Travel",
+    "organization": "Anchor Point Logistics",
+    "actor": "tariq.kowalski@anchorpointlogistics.com",
+    "severity": "High",
+    "status": "Active",
+    "detectedAt": "Jun 15, 14:02"
+  }
+]

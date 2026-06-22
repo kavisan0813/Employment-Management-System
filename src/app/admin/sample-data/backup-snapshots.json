@@ -1,0 +1,497 @@
+[
+  {
+    "id": "bkp_1",
+    "type": "Automatic",
+    "status": "Pending",
+    "sizeGb": 69.1,
+    "createdAt": "May 24, 08:23",
+    "retentionExpiresAt": "Jul 12, 2024",
+    "triggeredBy": "Victor Tran"
+  },
+  {
+    "id": "bkp_2",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 60.2,
+    "createdAt": "Jun 14, 18:04",
+    "retentionExpiresAt": "Jul 01, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_3",
+    "type": "Manual",
+    "status": "Active",
+    "sizeGb": 79.9,
+    "createdAt": "May 06, 22:16",
+    "retentionExpiresAt": "Jul 08, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_4",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 16.9,
+    "createdAt": "Apr 26, 05:39",
+    "retentionExpiresAt": "Jul 09, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_5",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 42.0,
+    "createdAt": "May 28, 08:56",
+    "retentionExpiresAt": "Jun 29, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_6",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 89.7,
+    "createdAt": "Jun 01, 04:33",
+    "retentionExpiresAt": "Jul 03, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_7",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 25.9,
+    "createdAt": "May 02, 11:17",
+    "retentionExpiresAt": "Jul 09, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_8",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 69.9,
+    "createdAt": "May 07, 04:14",
+    "retentionExpiresAt": "Jul 08, 2024",
+    "triggeredBy": "Zara Bauer"
+  },
+  {
+    "id": "bkp_9",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 43.0,
+    "createdAt": "Jun 19, 09:50",
+    "retentionExpiresAt": "Jul 04, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_10",
+    "type": "Automatic",
+    "status": "Inactive",
+    "sizeGb": 53.8,
+    "createdAt": "Jun 09, 11:01",
+    "retentionExpiresAt": "Jun 23, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_11",
+    "type": "Automatic",
+    "status": "Pending",
+    "sizeGb": 55.6,
+    "createdAt": "May 10, 14:58",
+    "retentionExpiresAt": "Jul 02, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_12",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 88.0,
+    "createdAt": "Apr 29, 10:37",
+    "retentionExpiresAt": "Jul 16, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_13",
+    "type": "Automatic",
+    "status": "Inactive",
+    "sizeGb": 42.1,
+    "createdAt": "May 20, 02:37",
+    "retentionExpiresAt": "Jun 23, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_14",
+    "type": "Automatic",
+    "status": "Inactive",
+    "sizeGb": 37.3,
+    "createdAt": "May 17, 02:50",
+    "retentionExpiresAt": "Jun 26, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_15",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 30.8,
+    "createdAt": "Apr 25, 14:49",
+    "retentionExpiresAt": "Jul 15, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_16",
+    "type": "Automatic",
+    "status": "Inactive",
+    "sizeGb": 21.3,
+    "createdAt": "May 22, 14:56",
+    "retentionExpiresAt": "Jul 19, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_17",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 77.8,
+    "createdAt": "Jun 17, 07:48",
+    "retentionExpiresAt": "Jul 03, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_18",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 37.0,
+    "createdAt": "Apr 22, 05:52",
+    "retentionExpiresAt": "Jul 19, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_19",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 86.8,
+    "createdAt": "Apr 21, 17:58",
+    "retentionExpiresAt": "Jul 14, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_20",
+    "type": "Manual",
+    "status": "Active",
+    "sizeGb": 40.9,
+    "createdAt": "Jun 10, 05:02",
+    "retentionExpiresAt": "Jul 14, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_21",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 17.7,
+    "createdAt": "May 11, 06:15",
+    "retentionExpiresAt": "Jun 23, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_22",
+    "type": "Manual",
+    "status": "Active",
+    "sizeGb": 26.3,
+    "createdAt": "Jun 06, 07:58",
+    "retentionExpiresAt": "Jun 25, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_23",
+    "type": "Manual",
+    "status": "Inactive",
+    "sizeGb": 82.7,
+    "createdAt": "Jun 13, 07:12",
+    "retentionExpiresAt": "Jul 04, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_24",
+    "type": "Manual",
+    "status": "Active",
+    "sizeGb": 27.0,
+    "createdAt": "May 21, 15:31",
+    "retentionExpiresAt": "Jul 08, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_25",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 75.2,
+    "createdAt": "May 18, 06:44",
+    "retentionExpiresAt": "Jul 09, 2024",
+    "triggeredBy": "Tom Lindgren"
+  },
+  {
+    "id": "bkp_26",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 58.2,
+    "createdAt": "May 02, 02:11",
+    "retentionExpiresAt": "Jul 18, 2024",
+    "triggeredBy": "Lucas Walsh"
+  },
+  {
+    "id": "bkp_27",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 69.0,
+    "createdAt": "May 20, 18:01",
+    "retentionExpiresAt": "Jun 23, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_28",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 17.8,
+    "createdAt": "May 31, 23:54",
+    "retentionExpiresAt": "Jun 23, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_29",
+    "type": "Automatic",
+    "status": "Inactive",
+    "sizeGb": 68.0,
+    "createdAt": "May 27, 08:23",
+    "retentionExpiresAt": "Jun 28, 2024",
+    "triggeredBy": "Ines Lindgren"
+  },
+  {
+    "id": "bkp_30",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 45.3,
+    "createdAt": "Jun 14, 10:26",
+    "retentionExpiresAt": "Jul 01, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_31",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 92.9,
+    "createdAt": "Apr 23, 08:45",
+    "retentionExpiresAt": "Jul 09, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_32",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 47.3,
+    "createdAt": "May 25, 10:19",
+    "retentionExpiresAt": "Jul 04, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_33",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 77.5,
+    "createdAt": "May 12, 18:15",
+    "retentionExpiresAt": "Jun 29, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_34",
+    "type": "Manual",
+    "status": "Active",
+    "sizeGb": 94.0,
+    "createdAt": "May 07, 17:55",
+    "retentionExpiresAt": "Jul 03, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_35",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 53.3,
+    "createdAt": "Jun 13, 10:20",
+    "retentionExpiresAt": "Jun 29, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_36",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 53.3,
+    "createdAt": "May 03, 12:42",
+    "retentionExpiresAt": "Jul 19, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_37",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 63.6,
+    "createdAt": "May 07, 03:21",
+    "retentionExpiresAt": "Jul 16, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_38",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 28.8,
+    "createdAt": "May 16, 21:42",
+    "retentionExpiresAt": "Jun 28, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_39",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 56.9,
+    "createdAt": "May 16, 02:47",
+    "retentionExpiresAt": "Jul 19, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_40",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 38.1,
+    "createdAt": "May 23, 10:27",
+    "retentionExpiresAt": "Jul 07, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_41",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 76.7,
+    "createdAt": "Jun 07, 19:30",
+    "retentionExpiresAt": "Jun 21, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_42",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 52.5,
+    "createdAt": "Jun 11, 03:51",
+    "retentionExpiresAt": "Jul 16, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_43",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 51.0,
+    "createdAt": "May 14, 15:07",
+    "retentionExpiresAt": "Jul 02, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_44",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 92.6,
+    "createdAt": "May 25, 05:31",
+    "retentionExpiresAt": "Jun 30, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_45",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 61.0,
+    "createdAt": "Jun 01, 03:34",
+    "retentionExpiresAt": "Jul 15, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_46",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 86.0,
+    "createdAt": "May 02, 18:35",
+    "retentionExpiresAt": "Jul 09, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_47",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 66.9,
+    "createdAt": "May 28, 00:27",
+    "retentionExpiresAt": "Jul 12, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_48",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 37.3,
+    "createdAt": "Jun 13, 15:01",
+    "retentionExpiresAt": "Jul 09, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_49",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 47.1,
+    "createdAt": "Jun 16, 22:47",
+    "retentionExpiresAt": "Jul 03, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_50",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 93.8,
+    "createdAt": "May 05, 22:29",
+    "retentionExpiresAt": "Jul 07, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_51",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 68.0,
+    "createdAt": "Jun 12, 21:50",
+    "retentionExpiresAt": "Jul 09, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_52",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 36.9,
+    "createdAt": "May 08, 02:55",
+    "retentionExpiresAt": "Jul 06, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_53",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 56.5,
+    "createdAt": "Apr 30, 11:56",
+    "retentionExpiresAt": "Jul 10, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_54",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 63.8,
+    "createdAt": "May 14, 00:47",
+    "retentionExpiresAt": "Jul 17, 2024",
+    "triggeredBy": "System (scheduled)"
+  },
+  {
+    "id": "bkp_55",
+    "type": "Automatic",
+    "status": "Active",
+    "sizeGb": 59.0,
+    "createdAt": "May 13, 03:01",
+    "retentionExpiresAt": "Jul 03, 2024",
+    "triggeredBy": "System (scheduled)"
+  }
+]

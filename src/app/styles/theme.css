@@ -227,3 +227,135 @@
     line-height: 1.5;
   }
 }
+
+/* Platform Admin Theme Scoping */
+.admin-theme {
+  --font-size: 14px;
+  --radius: 0.625rem;
+
+  --background: #f7f6f3;
+  --foreground: #1a1a2e;
+  --card: #ffffff;
+  --card-foreground: #1a1a2e;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a2e;
+
+  --primary: #534ab7;
+  --primary-foreground: #ffffff;
+  --secondary: #eeedfe;
+  --secondary-foreground: #3c3489;
+
+  --muted: #f1efe8;
+  --muted-foreground: #888780;
+  --accent: #eeedfe;
+  --accent-foreground: #534ab7;
+
+  --destructive: #d85a30;
+  --destructive-foreground: #ffffff;
+
+  --border: #e0ded6;
+  --input: transparent;
+  --input-background: #f7f6f3;
+  --switch-background: #c8c6bf;
+
+  --ring: #534ab7;
+
+  --success: #1d9e75;
+  --success-light: #e1f5ee;
+  --info: #378add;
+  --info-light: #e6f1fb;
+  --warning: #ba7517;
+  --warning-light: #faeeda;
+  --danger: #d85a30;
+  --danger-light: #faece7;
+  --neutral: #888780;
+  --neutral-light: #f1efe8;
+
+  --chart-1: #534ab7;
+  --chart-2: #1d9e75;
+  --chart-3: #378add;
+  --chart-4: #ba7517;
+  --chart-5: #d85a30;
+
+  --sidebar: #ffffff;
+  --sidebar-background: #ffffff;
+  --sidebar-foreground: #1a1a2e;
+  --sidebar-primary: #534ab7;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eeedfe;
+  --sidebar-accent-foreground: #534ab7;
+  --sidebar-border: #e0ded6;
+  --sidebar-ring: #534ab7;
+}
+
+.dark .admin-theme {
+  --background: #15151f;
+  --foreground: #f1f0fb;
+  --card: #1c1c29;
+  --card-foreground: #f1f0fb;
+  --popover: #1c1c29;
+  --popover-foreground: #f1f0fb;
+
+  --primary: #8b80e8;
+  --primary-foreground: #15151f;
+  --secondary: #2a2a3d;
+  --secondary-foreground: #c9c4f7;
+
+  --muted: #232332;
+  --muted-foreground: #9a98ab;
+  --accent: #2a2a3d;
+  --accent-foreground: #c9c4f7;
+
+  --destructive: #e57a55;
+  --destructive-foreground: #15151f;
+
+  --border: #2c2c3d;
+  --input: #2c2c3d;
+  --switch-background: #3a3a4d;
+
+  --ring: #8b80e8;
+
+  --success: #3ec694;
+  --success-light: #173329;
+  --info: #5fa6e8;
+  --info-light: #16263a;
+  --warning: #d99a3f;
+  --warning-light: #362a13;
+  --danger: #e57a55;
+  --danger-light: #3a2018;
+  --neutral: #9a98ab;
+  --neutral-light: #232332;
+
+  --chart-1: #8b80e8;
+  --chart-2: #3ec694;
+  --chart-3: #5fa6e8;
+  --chart-4: #d99a3f;
+  --chart-5: #e57a55;
+
+  --sidebar: #1c1c29;
+  --sidebar-background: #1c1c29;
+  --sidebar-foreground: #f1f0fb;
+  --sidebar-primary: #8b80e8;
+  --sidebar-primary-foreground: #15151f;
+  --sidebar-accent: #2a2a3d;
+  --sidebar-accent-foreground: #c9c4f7;
+  --sidebar-border: #2c2c3d;
+  --sidebar-ring: #8b80e8;
+}
+
+/* Thin scrollbars for admin panels */
+.admin-theme .scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.admin-theme .scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.admin-theme .scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 9999px;
+}
+

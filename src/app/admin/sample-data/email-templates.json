@@ -1,0 +1,362 @@
+[
+  {
+    "id": "tmpl_1",
+    "key": "user_invite",
+    "name": "User Invitation",
+    "category": "Onboarding",
+    "subject": "User Invitation \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the user invitation email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{reset_link}}",
+      "{{invoice_amount}}"
+    ],
+    "lastEditedBy": "Ana Nair",
+    "updatedAt": "Jan 13, 2024",
+    "sentLast30Days": 5500
+  },
+  {
+    "id": "tmpl_2",
+    "key": "password_reset",
+    "name": "Password Reset",
+    "category": "Security",
+    "subject": "Password Reset \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the password reset email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{invite_link}}",
+      "{{reset_link}}"
+    ],
+    "lastEditedBy": "Diego Okafor",
+    "updatedAt": "May 22, 2024",
+    "sentLast30Days": 6274
+  },
+  {
+    "id": "tmpl_3",
+    "key": "trial_ending_3days",
+    "name": "Trial Ending Soon",
+    "category": "Billing",
+    "subject": "Trial Ending Soon \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the trial ending soon email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{plan_name}}",
+      "{{invite_link}}"
+    ],
+    "lastEditedBy": "Felix Bauer",
+    "updatedAt": "May 06, 2024",
+    "sentLast30Days": 10619
+  },
+  {
+    "id": "tmpl_4",
+    "key": "invoice_receipt",
+    "name": "Invoice Receipt",
+    "category": "Billing",
+    "subject": "Invoice Receipt \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the invoice receipt email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{invite_link}}",
+      "{{invoice_amount}}"
+    ],
+    "lastEditedBy": "Elena Adeyemi",
+    "updatedAt": "Apr 19, 2024",
+    "sentLast30Days": 8841
+  },
+  {
+    "id": "tmpl_5",
+    "key": "payment_failed",
+    "name": "Payment Failed Notice",
+    "category": "Billing",
+    "subject": "Payment Failed Notice \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the payment failed notice email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{ticket_id}}",
+      "{{invoice_amount}}"
+    ],
+    "lastEditedBy": "Victor Schmidt",
+    "updatedAt": "Mar 29, 2024",
+    "sentLast30Days": 5778
+  },
+  {
+    "id": "tmpl_6",
+    "key": "welcome_org",
+    "name": "Welcome New Organization",
+    "category": "Onboarding",
+    "subject": "Welcome New Organization \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the welcome new organization email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{plan_name}}",
+      "{{ticket_id}}"
+    ],
+    "lastEditedBy": "Lina Okafor",
+    "updatedAt": "Jun 03, 2024",
+    "sentLast30Days": 6108
+  },
+  {
+    "id": "tmpl_7",
+    "key": "ticket_created",
+    "name": "Support Ticket Created",
+    "category": "Engagement",
+    "subject": "Support Ticket Created \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the support ticket created email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{ticket_id}}",
+      "{{invite_link}}"
+    ],
+    "lastEditedBy": "Lucas Bishop",
+    "updatedAt": "Dec 29, 2023",
+    "sentLast30Days": 8730
+  },
+  {
+    "id": "tmpl_8",
+    "key": "ticket_resolved",
+    "name": "Support Ticket Resolved",
+    "category": "Engagement",
+    "subject": "Support Ticket Resolved \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the support ticket resolved email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{ticket_id}}",
+      "{{reset_link}}"
+    ],
+    "lastEditedBy": "Ana Nair",
+    "updatedAt": "May 02, 2024",
+    "sentLast30Days": 7501
+  },
+  {
+    "id": "tmpl_9",
+    "key": "mfa_enrollment",
+    "name": "MFA Enrollment Reminder",
+    "category": "Security",
+    "subject": "MFA Enrollment Reminder \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the mfa enrollment reminder email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{ticket_id}}",
+      "{{invoice_amount}}"
+    ],
+    "lastEditedBy": "Carlos Nair",
+    "updatedAt": "May 23, 2024",
+    "sentLast30Days": 2699
+  },
+  {
+    "id": "tmpl_10",
+    "key": "weekly_digest",
+    "name": "Weekly Activity Digest",
+    "category": "Engagement",
+    "subject": "Weekly Activity Digest \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the weekly activity digest email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{invoice_amount}}",
+      "{{ticket_id}}"
+    ],
+    "lastEditedBy": "Elena Khan",
+    "updatedAt": "Feb 07, 2024",
+    "sentLast30Days": 10277
+  },
+  {
+    "id": "tmpl_11",
+    "key": "account_suspended",
+    "name": "Account Suspended Notice",
+    "category": "System",
+    "subject": "Account Suspended Notice \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the account suspended notice email.</p>",
+    "status": "Inactive",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{ticket_id}}",
+      "{{invoice_amount}}"
+    ],
+    "lastEditedBy": "Lucas Bauer",
+    "updatedAt": "Mar 04, 2024",
+    "sentLast30Days": 7272
+  },
+  {
+    "id": "tmpl_12",
+    "key": "account_reactivated",
+    "name": "Account Reactivated",
+    "category": "System",
+    "subject": "Account Reactivated \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the account reactivated email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{invite_link}}",
+      "{{reset_link}}"
+    ],
+    "lastEditedBy": "Aisha Nair",
+    "updatedAt": "Jun 14, 2024",
+    "sentLast30Days": 3806
+  },
+  {
+    "id": "tmpl_13",
+    "key": "plan_upgraded",
+    "name": "Plan Upgrade Confirmation",
+    "category": "Billing",
+    "subject": "Plan Upgrade Confirmation \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the plan upgrade confirmation email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{plan_name}}",
+      "{{reset_link}}"
+    ],
+    "lastEditedBy": "Omar Farrell",
+    "updatedAt": "Mar 24, 2024",
+    "sentLast30Days": 10743
+  },
+  {
+    "id": "tmpl_14",
+    "key": "plan_downgraded",
+    "name": "Plan Downgrade Confirmation",
+    "category": "Billing",
+    "subject": "Plan Downgrade Confirmation \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the plan downgrade confirmation email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{reset_link}}",
+      "{{ticket_id}}"
+    ],
+    "lastEditedBy": "Zara Lindgren",
+    "updatedAt": "Jan 31, 2024",
+    "sentLast30Days": 7295
+  },
+  {
+    "id": "tmpl_15",
+    "key": "data_export_ready",
+    "name": "Data Export Ready",
+    "category": "System",
+    "subject": "Data Export Ready \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the data export ready email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{plan_name}}",
+      "{{invoice_amount}}"
+    ],
+    "lastEditedBy": "Diego Rivera",
+    "updatedAt": "May 07, 2024",
+    "sentLast30Days": 4259
+  },
+  {
+    "id": "tmpl_16",
+    "key": "backup_completed",
+    "name": "Backup Completed",
+    "category": "System",
+    "subject": "Backup Completed \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the backup completed email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{reset_link}}",
+      "{{plan_name}}"
+    ],
+    "lastEditedBy": "Victor Okafor",
+    "updatedAt": "May 13, 2024",
+    "sentLast30Days": 5785
+  },
+  {
+    "id": "tmpl_17",
+    "key": "new_device_login",
+    "name": "New Device Login Alert",
+    "category": "Security",
+    "subject": "New Device Login Alert \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the new device login alert email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{invoice_amount}}",
+      "{{plan_name}}"
+    ],
+    "lastEditedBy": "Tariq Bishop",
+    "updatedAt": "Apr 07, 2024",
+    "sentLast30Days": 2986
+  },
+  {
+    "id": "tmpl_18",
+    "key": "api_key_created",
+    "name": "API Key Created",
+    "category": "Security",
+    "subject": "API Key Created \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the api key created email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{invoice_amount}}",
+      "{{plan_name}}"
+    ],
+    "lastEditedBy": "David Walsh",
+    "updatedAt": "Jun 09, 2024",
+    "sentLast30Days": 5187
+  },
+  {
+    "id": "tmpl_19",
+    "key": "announcement_email",
+    "name": "Announcement Notification",
+    "category": "Engagement",
+    "subject": "Announcement Notification \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the announcement notification email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{ticket_id}}",
+      "{{reset_link}}"
+    ],
+    "lastEditedBy": "Felix Lindqvist",
+    "updatedAt": "Apr 28, 2024",
+    "sentLast30Days": 9215
+  },
+  {
+    "id": "tmpl_20",
+    "key": "survey_invite",
+    "name": "Engagement Survey Invite",
+    "category": "Engagement",
+    "subject": "Engagement Survey Invite \u2014 {{org_name}}",
+    "bodyHtml": "<p>Hi {{user_name}}, this is the engagement survey invite email.</p>",
+    "status": "Active",
+    "variables": [
+      "{{user_name}}",
+      "{{org_name}}",
+      "{{reset_link}}",
+      "{{plan_name}}"
+    ],
+    "lastEditedBy": "Elena Bauer",
+    "updatedAt": "Feb 26, 2024",
+    "sentLast30Days": 8845
+  }
+]

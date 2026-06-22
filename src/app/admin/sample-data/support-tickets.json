@@ -1,0 +1,1100 @@
+[
+  {
+    "id": "#T-2000",
+    "subject": "API rate limit hit unexpectedly",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Frostbyte Software",
+    "organizationId": "org_16",
+    "submittedBy": "zara.khan@frostbytesoftware.com",
+    "status": "Inactive",
+    "priority": "Low",
+    "assignedTo": "Hana Nair",
+    "createdAt": "Jun 13, 19:02",
+    "updatedAt": "Jun 13, 22:02",
+    "firstResponseAt": "Jun 07, 21:51",
+    "resolvedAt": "Jun 13, 14:31",
+    "tags": [
+      "billing",
+      "urgent",
+      "integration"
+    ]
+  },
+  {
+    "id": "#T-2001",
+    "subject": "Slack notifications duplicated",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Nexus Solutions",
+    "organizationId": "org_3",
+    "submittedBy": "felix.haddad@nexussolutions.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Omar Walsh",
+    "createdAt": "Jun 14, 12:36",
+    "updatedAt": "Jun 15, 16:14",
+    "firstResponseAt": "May 12, 14:07",
+    "resolvedAt": "Jun 13, 16:56",
+    "tags": [
+      "billing",
+      "integration"
+    ]
+  },
+  {
+    "id": "#T-2002",
+    "subject": "Two-factor auth locked me out",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Brightline Insurance",
+    "organizationId": "org_34",
+    "submittedBy": "tariq.schmidt@brightlineinsurance.com",
+    "status": "Inactive",
+    "priority": "Low",
+    "assignedTo": "Elena Okafor",
+    "createdAt": "Jun 10, 03:21",
+    "updatedAt": "Jun 09, 01:06",
+    "firstResponseAt": "May 21, 18:12",
+    "resolvedAt": "Jun 14, 21:17",
+    "tags": [
+      "bug"
+    ]
+  },
+  {
+    "id": "#T-2003",
+    "subject": "Bulk import fails on large files",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Pinecrest Education",
+    "organizationId": "org_28",
+    "submittedBy": "lucas.farrell@pinecresteducation.com",
+    "status": "Pending",
+    "priority": "Low",
+    "assignedTo": "Noah Kowalski",
+    "createdAt": "Jun 11, 03:02",
+    "updatedAt": "Jun 15, 11:36",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "urgent",
+      "feature-request"
+    ]
+  },
+  {
+    "id": "#T-2004",
+    "subject": "Invoice PDF missing line items",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Driftway Hospitality",
+    "organizationId": "org_50",
+    "submittedBy": "lucas.kowalski@driftwayhospitality.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Sofia Farrell",
+    "createdAt": "May 19, 19:25",
+    "updatedAt": "Jun 15, 19:21",
+    "firstResponseAt": "May 10, 20:37",
+    "resolvedAt": "Jun 18, 06:14",
+    "tags": [
+      "integration"
+    ]
+  },
+  {
+    "id": "#T-2005",
+    "subject": "Shift schedule not saving",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Driftway Hospitality",
+    "organizationId": "org_50",
+    "submittedBy": "liam.haddad@driftwayhospitality.com",
+    "status": "Inactive",
+    "priority": "Medium",
+    "assignedTo": "Omar Bauer",
+    "createdAt": "May 14, 11:27",
+    "updatedAt": "Jun 14, 08:00",
+    "firstResponseAt": "May 30, 02:45",
+    "resolvedAt": "Jun 14, 16:08",
+    "tags": [
+      "integration"
+    ]
+  },
+  {
+    "id": "#T-2006",
+    "subject": "Leave balance showing incorrect value",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Pulse Robotics",
+    "organizationId": "org_11",
+    "submittedBy": "ines.okafor@pulserobotics.com",
+    "status": "Inactive",
+    "priority": "Critical",
+    "assignedTo": "Maya Schmidt",
+    "createdAt": "May 21, 17:14",
+    "updatedAt": "Jun 15, 15:07",
+    "firstResponseAt": "May 27, 09:11",
+    "resolvedAt": "Jun 14, 11:35",
+    "tags": [
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2007",
+    "subject": "Cannot export payroll report",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Orbit Systems",
+    "organizationId": "org_4",
+    "submittedBy": "naomi.walsh@orbitsystems.com",
+    "status": "Inactive",
+    "priority": "Low",
+    "assignedTo": "Carlos Moreau",
+    "createdAt": "Jun 10, 04:41",
+    "updatedAt": "Jun 12, 13:44",
+    "firstResponseAt": "May 29, 07:22",
+    "resolvedAt": "Jun 13, 20:09",
+    "tags": [
+      "bug"
+    ]
+  },
+  {
+    "id": "#T-2008",
+    "subject": "Leave balance showing incorrect value",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Coral Reef Hospitality",
+    "organizationId": "org_35",
+    "submittedBy": "tariq.chen@coralreefhospitality.com",
+    "status": "Active",
+    "priority": "Medium",
+    "assignedTo": "Grace Farrell",
+    "createdAt": "May 19, 17:15",
+    "updatedAt": "Jun 08, 20:32",
+    "firstResponseAt": "Jun 17, 05:47",
+    "resolvedAt": null,
+    "tags": [
+      "billing"
+    ]
+  },
+  {
+    "id": "#T-2009",
+    "subject": "Trial extension request",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "BlueGrove Analytics",
+    "organizationId": "org_19",
+    "submittedBy": "sofia.chen@bluegroveanalytics.com",
+    "status": "Inactive",
+    "priority": "Low",
+    "assignedTo": "Priya Kowalski",
+    "createdAt": "Jun 02, 12:42",
+    "updatedAt": "Jun 09, 05:15",
+    "firstResponseAt": "May 27, 10:50",
+    "resolvedAt": "Jun 19, 04:31",
+    "tags": [
+      "feature-request",
+      "bug",
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2010",
+    "subject": "Survey responses not exporting",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Cinderwood Energy",
+    "organizationId": "org_33",
+    "submittedBy": "noah.nair@cinderwoodenergy.com",
+    "status": "Active",
+    "priority": "Critical",
+    "assignedTo": "Marcus Khan",
+    "createdAt": "May 29, 21:58",
+    "updatedAt": "Jun 10, 22:53",
+    "firstResponseAt": "May 15, 13:46",
+    "resolvedAt": null,
+    "tags": [
+      "bug"
+    ]
+  },
+  {
+    "id": "#T-2011",
+    "subject": "Org chart not rendering for new dept",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Brightline Insurance",
+    "organizationId": "org_34",
+    "submittedBy": "liam.bauer@brightlineinsurance.com",
+    "status": "Pending",
+    "priority": "Medium",
+    "assignedTo": null,
+    "createdAt": "Jun 09, 13:53",
+    "updatedAt": "Jun 15, 06:27",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "integration",
+      "billing",
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2012",
+    "subject": "Webhook not firing for new hires",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Foxglove Retail",
+    "organizationId": "org_25",
+    "submittedBy": "david.petrova@foxgloveretail.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Naomi Kowalski",
+    "createdAt": "Jun 17, 19:34",
+    "updatedAt": "Jun 09, 09:49",
+    "firstResponseAt": "Jun 14, 01:28",
+    "resolvedAt": "Jun 14, 15:22",
+    "tags": [
+      "data",
+      "bug",
+      "feature-request"
+    ]
+  },
+  {
+    "id": "#T-2013",
+    "subject": "Slack notifications duplicated",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Frostbyte Software",
+    "organizationId": "org_16",
+    "submittedBy": "ines.bishop@frostbytesoftware.com",
+    "status": "Pending",
+    "priority": "Medium",
+    "assignedTo": null,
+    "createdAt": "May 30, 17:51",
+    "updatedAt": "Jun 09, 09:47",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "urgent",
+      "bug",
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2014",
+    "subject": "Leave balance showing incorrect value",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "IronGate Security",
+    "organizationId": "org_20",
+    "submittedBy": "sofia.farrell@irongatesecurity.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Maya Lindqvist",
+    "createdAt": "Jun 10, 23:50",
+    "updatedAt": "Jun 14, 12:12",
+    "firstResponseAt": "May 14, 20:19",
+    "resolvedAt": "Jun 14, 10:28",
+    "tags": [
+      "integration"
+    ]
+  },
+  {
+    "id": "#T-2015",
+    "subject": "Custom field not appearing in report",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Meridian Group",
+    "organizationId": "org_10",
+    "submittedBy": "ines.tran@meridiangroup.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Elena Khan",
+    "createdAt": "May 24, 00:28",
+    "updatedAt": "Jun 18, 10:01",
+    "firstResponseAt": "Jun 08, 13:37",
+    "resolvedAt": "Jun 14, 17:27",
+    "tags": [
+      "urgent",
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2016",
+    "subject": "Org chart not rendering for new dept",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Anchor Point Logistics",
+    "organizationId": "org_40",
+    "submittedBy": "priya.sato@anchorpointlogistics.com",
+    "status": "Active",
+    "priority": "Low",
+    "assignedTo": "Elena Lindgren",
+    "createdAt": "May 07, 13:37",
+    "updatedAt": "Jun 09, 22:30",
+    "firstResponseAt": "May 27, 08:14",
+    "resolvedAt": null,
+    "tags": [
+      "feature-request",
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2017",
+    "subject": "Webhook not firing for new hires",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Cedar & Co",
+    "organizationId": "org_9",
+    "submittedBy": "omar.schmidt@cedarco.com",
+    "status": "Active",
+    "priority": "Low",
+    "assignedTo": "Hana Khan",
+    "createdAt": "May 24, 14:00",
+    "updatedAt": "Jun 16, 12:15",
+    "firstResponseAt": "Jun 07, 23:31",
+    "resolvedAt": null,
+    "tags": [
+      "feature-request",
+      "integration",
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2018",
+    "subject": "Slack notifications duplicated",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Frostbyte Software",
+    "organizationId": "org_16",
+    "submittedBy": "grace.castillo@frostbytesoftware.com",
+    "status": "Inactive",
+    "priority": "Medium",
+    "assignedTo": "Hana Farrell",
+    "createdAt": "May 12, 01:31",
+    "updatedAt": "Jun 09, 20:12",
+    "firstResponseAt": "May 16, 16:37",
+    "resolvedAt": "Jun 14, 13:12",
+    "tags": [
+      "billing",
+      "feature-request",
+      "urgent"
+    ]
+  },
+  {
+    "id": "#T-2019",
+    "subject": "SSO integration not working",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Nexus Solutions",
+    "organizationId": "org_3",
+    "submittedBy": "noah.kowalski@nexussolutions.com",
+    "status": "Active",
+    "priority": "High",
+    "assignedTo": "Mei Okafor",
+    "createdAt": "May 16, 01:00",
+    "updatedAt": "Jun 16, 04:34",
+    "firstResponseAt": "May 22, 00:55",
+    "resolvedAt": null,
+    "tags": [
+      "integration",
+      "feature-request"
+    ]
+  },
+  {
+    "id": "#T-2020",
+    "subject": "Two-factor auth locked me out",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Pulse Robotics",
+    "organizationId": "org_11",
+    "submittedBy": "diego.petrova@pulserobotics.com",
+    "status": "Inactive",
+    "priority": "Medium",
+    "assignedTo": "Ines Moreau",
+    "createdAt": "Jun 15, 14:57",
+    "updatedAt": "Jun 17, 21:25",
+    "firstResponseAt": "Jun 12, 08:22",
+    "resolvedAt": "Jun 14, 14:45",
+    "tags": [
+      "bug",
+      "feature-request",
+      "urgent"
+    ]
+  },
+  {
+    "id": "#T-2021",
+    "subject": "Trial extension request",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Wavelength Media",
+    "organizationId": "org_21",
+    "submittedBy": "priya.tran@wavelengthmedia.com",
+    "status": "Active",
+    "priority": "Medium",
+    "assignedTo": "Naomi Lindqvist",
+    "createdAt": "May 13, 07:37",
+    "updatedAt": "Jun 18, 11:24",
+    "firstResponseAt": "Jun 11, 23:10",
+    "resolvedAt": null,
+    "tags": [
+      "integration",
+      "billing",
+      "feature-request"
+    ]
+  },
+  {
+    "id": "#T-2022",
+    "subject": "Performance review template broken",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Cascade Freight",
+    "organizationId": "org_47",
+    "submittedBy": "grace.okafor@cascadefreight.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Victor Lindqvist",
+    "createdAt": "Jun 09, 01:35",
+    "updatedAt": "Jun 13, 19:12",
+    "firstResponseAt": "Jun 10, 08:58",
+    "resolvedAt": "Jun 18, 08:24",
+    "tags": [
+      "billing",
+      "feature-request",
+      "integration"
+    ]
+  },
+  {
+    "id": "#T-2023",
+    "subject": "Mobile app crashes on clock-in",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "IronGate Security",
+    "organizationId": "org_20",
+    "submittedBy": "tom.petrova@irongatesecurity.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Aisha Chen",
+    "createdAt": "May 31, 17:08",
+    "updatedAt": "Jun 10, 05:52",
+    "firstResponseAt": "Jun 18, 22:51",
+    "resolvedAt": "Jun 15, 21:29",
+    "tags": [
+      "billing",
+      "urgent",
+      "feature-request"
+    ]
+  },
+  {
+    "id": "#T-2024",
+    "subject": "Trial extension request",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Frostbyte Software",
+    "organizationId": "org_16",
+    "submittedBy": "priya.castillo@frostbytesoftware.com",
+    "status": "Inactive",
+    "priority": "Low",
+    "assignedTo": "Ethan Chen",
+    "createdAt": "May 21, 00:31",
+    "updatedAt": "Jun 15, 19:50",
+    "firstResponseAt": "Jun 01, 17:21",
+    "resolvedAt": "Jun 13, 19:29",
+    "tags": [
+      "billing"
+    ]
+  },
+  {
+    "id": "#T-2025",
+    "subject": "SSO integration not working",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Harborlight Inc",
+    "organizationId": "org_12",
+    "submittedBy": "liam.farrell@harborlightinc.com",
+    "status": "Inactive",
+    "priority": "Low",
+    "assignedTo": "Yusuf Castillo",
+    "createdAt": "Jun 17, 09:33",
+    "updatedAt": "Jun 15, 03:12",
+    "firstResponseAt": "Jun 14, 12:50",
+    "resolvedAt": "Jun 19, 00:17",
+    "tags": [
+      "bug"
+    ]
+  },
+  {
+    "id": "#T-2026",
+    "subject": "Cannot add custom holiday",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Redwood Analytics",
+    "organizationId": "org_44",
+    "submittedBy": "ana.bishop@redwoodanalytics.com",
+    "status": "Inactive",
+    "priority": "Low",
+    "assignedTo": "Marcus Moreau",
+    "createdAt": "May 05, 18:12",
+    "updatedAt": "Jun 10, 02:13",
+    "firstResponseAt": "Jun 17, 11:20",
+    "resolvedAt": "Jun 17, 03:29",
+    "tags": [
+      "feature-request",
+      "billing"
+    ]
+  },
+  {
+    "id": "#T-2027",
+    "subject": "Leave balance showing incorrect value",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Silverline Telecom",
+    "organizationId": "org_49",
+    "submittedBy": "tom.tran@silverlinetelecom.com",
+    "status": "Inactive",
+    "priority": "Medium",
+    "assignedTo": "Naomi Lindgren",
+    "createdAt": "May 31, 22:26",
+    "updatedAt": "Jun 12, 20:36",
+    "firstResponseAt": "Jun 05, 14:45",
+    "resolvedAt": "Jun 17, 17:37",
+    "tags": [
+      "billing"
+    ]
+  },
+  {
+    "id": "#T-2028",
+    "subject": "Survey responses not exporting",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Maplewood Construction",
+    "organizationId": "org_37",
+    "submittedBy": "maya.rivera@maplewoodconstruction.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Omar Castillo",
+    "createdAt": "Jun 13, 22:00",
+    "updatedAt": "Jun 14, 05:39",
+    "firstResponseAt": "May 16, 18:53",
+    "resolvedAt": "Jun 15, 02:26",
+    "tags": [
+      "urgent"
+    ]
+  },
+  {
+    "id": "#T-2029",
+    "subject": "Mobile app crashes on clock-in",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Maplewood Construction",
+    "organizationId": "org_37",
+    "submittedBy": "diego.castillo@maplewoodconstruction.com",
+    "status": "Inactive",
+    "priority": "Medium",
+    "assignedTo": "David Rivera",
+    "createdAt": "May 18, 21:42",
+    "updatedAt": "Jun 16, 14:27",
+    "firstResponseAt": "Jun 12, 13:41",
+    "resolvedAt": "Jun 15, 17:10",
+    "tags": [
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2030",
+    "subject": "Slack notifications duplicated",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Lumen Works",
+    "organizationId": "org_14",
+    "submittedBy": "felix.bishop@lumenworks.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Ana Khan",
+    "createdAt": "May 24, 12:57",
+    "updatedAt": "Jun 18, 16:39",
+    "firstResponseAt": "Jun 06, 14:57",
+    "resolvedAt": "Jun 17, 05:49",
+    "tags": [
+      "integration"
+    ]
+  },
+  {
+    "id": "#T-2031",
+    "subject": "Slack notifications duplicated",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "IronGate Security",
+    "organizationId": "org_20",
+    "submittedBy": "naomi.kowalski@irongatesecurity.com",
+    "status": "Pending",
+    "priority": "Medium",
+    "assignedTo": "Ethan Chen",
+    "createdAt": "Jun 19, 10:37",
+    "updatedAt": "Jun 17, 07:53",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "integration",
+      "feature-request"
+    ]
+  },
+  {
+    "id": "#T-2032",
+    "subject": "Trial extension request",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Velvet Sky Travel",
+    "organizationId": "org_31",
+    "submittedBy": "diego.bishop@velvetskytravel.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Diego Adeyemi",
+    "createdAt": "May 20, 09:12",
+    "updatedAt": "Jun 12, 00:23",
+    "firstResponseAt": "Jun 15, 20:43",
+    "resolvedAt": "Jun 16, 19:13",
+    "tags": [
+      "data",
+      "integration",
+      "billing"
+    ]
+  },
+  {
+    "id": "#T-2033",
+    "subject": "Leave balance showing incorrect value",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Lumen Works",
+    "organizationId": "org_14",
+    "submittedBy": "lina.chen@lumenworks.com",
+    "status": "Pending",
+    "priority": "Medium",
+    "assignedTo": null,
+    "createdAt": "May 28, 12:15",
+    "updatedAt": "Jun 12, 17:07",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "bug",
+      "urgent",
+      "feature-request"
+    ]
+  },
+  {
+    "id": "#T-2034",
+    "subject": "SSO integration not working",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Harborlight Inc",
+    "organizationId": "org_12",
+    "submittedBy": "lina.haddad@harborlightinc.com",
+    "status": "Inactive",
+    "priority": "Medium",
+    "assignedTo": "Priya Sato",
+    "createdAt": "May 31, 03:46",
+    "updatedAt": "Jun 16, 01:49",
+    "firstResponseAt": "May 22, 04:11",
+    "resolvedAt": "Jun 17, 20:35",
+    "tags": [
+      "bug",
+      "billing"
+    ]
+  },
+  {
+    "id": "#T-2035",
+    "subject": "Two-factor auth locked me out",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Echo Valley Tech",
+    "organizationId": "org_24",
+    "submittedBy": "sarah.sato@echovalleytech.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Diego Lindgren",
+    "createdAt": "Jun 13, 23:22",
+    "updatedAt": "Jun 17, 08:01",
+    "firstResponseAt": "May 28, 22:00",
+    "resolvedAt": "Jun 13, 20:38",
+    "tags": [
+      "integration",
+      "bug"
+    ]
+  },
+  {
+    "id": "#T-2036",
+    "subject": "Leave balance showing incorrect value",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Driftway Hospitality",
+    "organizationId": "org_50",
+    "submittedBy": "aisha.okafor@driftwayhospitality.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Ines Kowalski",
+    "createdAt": "May 16, 15:25",
+    "updatedAt": "Jun 11, 10:33",
+    "firstResponseAt": "Jun 19, 03:54",
+    "resolvedAt": "Jun 18, 15:03",
+    "tags": [
+      "billing",
+      "integration",
+      "feature-request"
+    ]
+  },
+  {
+    "id": "#T-2037",
+    "subject": "Cannot add custom holiday",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Nexus Solutions",
+    "organizationId": "org_3",
+    "submittedBy": "victor.rivera@nexussolutions.com",
+    "status": "Inactive",
+    "priority": "Low",
+    "assignedTo": "Sofia Khan",
+    "createdAt": "May 31, 13:44",
+    "updatedAt": "Jun 14, 07:40",
+    "firstResponseAt": "Jun 07, 04:44",
+    "resolvedAt": "Jun 16, 20:20",
+    "tags": [
+      "feature-request",
+      "billing"
+    ]
+  },
+  {
+    "id": "#T-2038",
+    "subject": "Performance review template broken",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Solace Health",
+    "organizationId": "org_18",
+    "submittedBy": "mei.walsh@solacehealth.com",
+    "status": "Active",
+    "priority": "Low",
+    "assignedTo": "Aisha Bishop",
+    "createdAt": "Jun 18, 17:15",
+    "updatedAt": "Jun 13, 19:45",
+    "firstResponseAt": "May 30, 05:15",
+    "resolvedAt": null,
+    "tags": [
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2039",
+    "subject": "Slack notifications duplicated",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "BlueGrove Analytics",
+    "organizationId": "org_19",
+    "submittedBy": "noah.moreau@bluegroveanalytics.com",
+    "status": "Active",
+    "priority": "Medium",
+    "assignedTo": "James Petrova",
+    "createdAt": "May 30, 17:35",
+    "updatedAt": "Jun 18, 22:26",
+    "firstResponseAt": "Jun 16, 10:54",
+    "resolvedAt": null,
+    "tags": [
+      "billing",
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2040",
+    "subject": "Trial extension request",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Pinecrest Education",
+    "organizationId": "org_28",
+    "submittedBy": "ethan.bauer@pinecresteducation.com",
+    "status": "Inactive",
+    "priority": "Medium",
+    "assignedTo": "Carlos Adeyemi",
+    "createdAt": "May 12, 17:01",
+    "updatedAt": "Jun 15, 15:37",
+    "firstResponseAt": "May 16, 11:50",
+    "resolvedAt": "Jun 15, 19:08",
+    "tags": [
+      "billing"
+    ]
+  },
+  {
+    "id": "#T-2041",
+    "subject": "Trial extension request",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Ember Creative",
+    "organizationId": "org_45",
+    "submittedBy": "lucas.schmidt@embercreative.com",
+    "status": "Pending",
+    "priority": "Medium",
+    "assignedTo": "Elena Castillo",
+    "createdAt": "May 06, 16:31",
+    "updatedAt": "Jun 15, 02:06",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "bug",
+      "integration"
+    ]
+  },
+  {
+    "id": "#T-2042",
+    "subject": "Org chart not rendering for new dept",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Wavelength Media",
+    "organizationId": "org_21",
+    "submittedBy": "lucas.moreau@wavelengthmedia.com",
+    "status": "Active",
+    "priority": "Medium",
+    "assignedTo": "Clara Lindqvist",
+    "createdAt": "May 20, 10:39",
+    "updatedAt": "Jun 15, 02:37",
+    "firstResponseAt": "May 11, 18:54",
+    "resolvedAt": null,
+    "tags": [
+      "urgent"
+    ]
+  },
+  {
+    "id": "#T-2043",
+    "subject": "Performance review template broken",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Northwind Traders",
+    "organizationId": "org_7",
+    "submittedBy": "sofia.nair@northwindtraders.com",
+    "status": "Inactive",
+    "priority": "Medium",
+    "assignedTo": "Ana Rivera",
+    "createdAt": "Jun 13, 03:23",
+    "updatedAt": "Jun 10, 22:46",
+    "firstResponseAt": "May 24, 18:21",
+    "resolvedAt": "Jun 16, 06:22",
+    "tags": [
+      "bug",
+      "urgent",
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2044",
+    "subject": "Announcement banner not dismissible",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Velvet Sky Travel",
+    "organizationId": "org_31",
+    "submittedBy": "ana.haddad@velvetskytravel.com",
+    "status": "Pending",
+    "priority": "Medium",
+    "assignedTo": "Naomi Bishop",
+    "createdAt": "May 05, 18:20",
+    "updatedAt": "Jun 16, 08:36",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "data",
+      "billing",
+      "feature-request"
+    ]
+  },
+  {
+    "id": "#T-2045",
+    "subject": "Trial extension request",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Quantum Forge",
+    "organizationId": "org_8",
+    "submittedBy": "marcus.rivera@quantumforge.com",
+    "status": "Pending",
+    "priority": "Medium",
+    "assignedTo": "Priya Castillo",
+    "createdAt": "May 15, 11:11",
+    "updatedAt": "Jun 17, 15:07",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "feature-request",
+      "integration",
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2046",
+    "subject": "Cannot export payroll report",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Timberline Outdoor",
+    "organizationId": "org_42",
+    "submittedBy": "victor.petrova@timberlineoutdoor.com",
+    "status": "Active",
+    "priority": "High",
+    "assignedTo": "Liam Petrova",
+    "createdAt": "Jun 10, 18:41",
+    "updatedAt": "Jun 11, 20:22",
+    "firstResponseAt": "Jun 01, 01:12",
+    "resolvedAt": null,
+    "tags": [
+      "urgent",
+      "feature-request",
+      "bug"
+    ]
+  },
+  {
+    "id": "#T-2047",
+    "subject": "Custom field not appearing in report",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Lumen Works",
+    "organizationId": "org_14",
+    "submittedBy": "maya.haddad@lumenworks.com",
+    "status": "Pending",
+    "priority": "High",
+    "assignedTo": "Maya Bauer",
+    "createdAt": "May 13, 15:19",
+    "updatedAt": "Jun 17, 18:37",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "urgent"
+    ]
+  },
+  {
+    "id": "#T-2048",
+    "subject": "Org chart not rendering for new dept",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Cinderwood Energy",
+    "organizationId": "org_33",
+    "submittedBy": "diego.bishop@cinderwoodenergy.com",
+    "status": "Active",
+    "priority": "Medium",
+    "assignedTo": "James Chen",
+    "createdAt": "Jun 01, 12:23",
+    "updatedAt": "Jun 11, 02:15",
+    "firstResponseAt": "Jun 12, 04:53",
+    "resolvedAt": null,
+    "tags": [
+      "bug"
+    ]
+  },
+  {
+    "id": "#T-2049",
+    "subject": "API rate limit hit unexpectedly",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Pinecrest Education",
+    "organizationId": "org_28",
+    "submittedBy": "grace.haddad@pinecresteducation.com",
+    "status": "Pending",
+    "priority": "High",
+    "assignedTo": "Liam Lindqvist",
+    "createdAt": "May 30, 01:27",
+    "updatedAt": "Jun 12, 09:46",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "urgent"
+    ]
+  },
+  {
+    "id": "#T-2050",
+    "subject": "Custom field not appearing in report",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Foxglove Retail",
+    "organizationId": "org_25",
+    "submittedBy": "clara.petrova@foxgloveretail.com",
+    "status": "Pending",
+    "priority": "High",
+    "assignedTo": null,
+    "createdAt": "May 24, 09:15",
+    "updatedAt": "Jun 17, 16:23",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "bug"
+    ]
+  },
+  {
+    "id": "#T-2051",
+    "subject": "Leave balance showing incorrect value",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Cascade Freight",
+    "organizationId": "org_47",
+    "submittedBy": "sofia.haddad@cascadefreight.com",
+    "status": "Inactive",
+    "priority": "High",
+    "assignedTo": "Clara Moreau",
+    "createdAt": "Jun 11, 11:37",
+    "updatedAt": "Jun 09, 23:59",
+    "firstResponseAt": "May 11, 08:22",
+    "resolvedAt": "Jun 15, 21:07",
+    "tags": [
+      "urgent",
+      "feature-request"
+    ]
+  },
+  {
+    "id": "#T-2052",
+    "subject": "Cannot add custom holiday",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Foxglove Retail",
+    "organizationId": "org_25",
+    "submittedBy": "lucas.schmidt@foxgloveretail.com",
+    "status": "Active",
+    "priority": "Medium",
+    "assignedTo": "Tariq Lindgren",
+    "createdAt": "May 12, 14:15",
+    "updatedAt": "Jun 15, 00:29",
+    "firstResponseAt": "May 15, 18:50",
+    "resolvedAt": null,
+    "tags": [
+      "billing",
+      "data"
+    ]
+  },
+  {
+    "id": "#T-2053",
+    "subject": "Bulk import fails on large files",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Maplewood Construction",
+    "organizationId": "org_37",
+    "submittedBy": "elena.lindgren@maplewoodconstruction.com",
+    "status": "Pending",
+    "priority": "Medium",
+    "assignedTo": "Victor Tran",
+    "createdAt": "May 12, 22:04",
+    "updatedAt": "Jun 11, 20:52",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "urgent"
+    ]
+  },
+  {
+    "id": "#T-2054",
+    "subject": "Bulk import fails on large files",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Anchor Point Logistics",
+    "organizationId": "org_40",
+    "submittedBy": "liam.bishop@anchorpointlogistics.com",
+    "status": "Pending",
+    "priority": "Low",
+    "assignedTo": "Carlos Castillo",
+    "createdAt": "May 07, 15:41",
+    "updatedAt": "Jun 19, 02:47",
+    "firstResponseAt": null,
+    "resolvedAt": null,
+    "tags": [
+      "billing",
+      "feature-request",
+      "urgent"
+    ]
+  },
+  {
+    "id": "#T-2055",
+    "subject": "Org chart not rendering for new dept",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Cinderwood Energy",
+    "organizationId": "org_33",
+    "submittedBy": "ana.rivera@cinderwoodenergy.com",
+    "status": "Inactive",
+    "priority": "Critical",
+    "assignedTo": "Carlos Lindqvist",
+    "createdAt": "May 29, 00:08",
+    "updatedAt": "Jun 18, 14:47",
+    "firstResponseAt": "May 12, 04:08",
+    "resolvedAt": "Jun 13, 19:16",
+    "tags": [
+      "billing",
+      "feature-request"
+    ]
+  },
+  {
+    "id": "#T-2056",
+    "subject": "Cannot export payroll report",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Riverstone Pharma",
+    "organizationId": "org_38",
+    "submittedBy": "carlos.sato@riverstonepharma.com",
+    "status": "Active",
+    "priority": "Low",
+    "assignedTo": "Priya Petrova",
+    "createdAt": "May 31, 17:12",
+    "updatedAt": "Jun 11, 11:53",
+    "firstResponseAt": "Jun 02, 05:54",
+    "resolvedAt": null,
+    "tags": [
+      "urgent"
+    ]
+  },
+  {
+    "id": "#T-2057",
+    "subject": "Mobile app crashes on clock-in",
+    "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
+    "organization": "Solace Health",
+    "organizationId": "org_18",
+    "submittedBy": "maya.farrell@solacehealth.com",
+    "status": "Active",
+    "priority": "Low",
+    "assignedTo": "Hana Petrova",
+    "createdAt": "Jun 11, 17:54",
+    "updatedAt": "Jun 08, 23:16",
+    "firstResponseAt": "May 27, 08:31",
+    "resolvedAt": null,
+    "tags": [
+      "data",
+      "bug"
+    ]
+  }
+]

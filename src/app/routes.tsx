@@ -5,6 +5,86 @@ import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
 import { AuthSuccess } from "./pages/AuthSuccess";
 import { useAuth } from "./context/AuthContext";
+import {
+  Puzzle,
+  Shield,
+  Zap,
+  Key,
+  Settings as SettingsIcon,
+  Mail,
+  Bell,
+  DatabaseBackup,
+  Palette,
+  Lock,
+  BrainCircuit,
+} from "lucide-react";
+
+// Lazy-loaded Admin Panel Components
+const AdminLayout = lazy(() =>
+  import("./admin/layout/AdminLayout").then((m) => ({
+    default: m.AdminLayout,
+  })),
+);
+const AdminDashboardPage = lazy(() =>
+  import("./admin/features/dashboard/DashboardView").then((m) => ({
+    default: m.default,
+  })),
+);
+const AdminOrganizationsPage = lazy(() =>
+  import("./admin/features/organizations/OrganizationsView").then((m) => ({
+    default: m.default,
+  })),
+);
+const AdminGlobalUsersPage = lazy(() =>
+  import("./admin/features/users/GlobalUsersView").then((m) => ({
+    default: m.default,
+  })),
+);
+const AdminSubscriptionsPage = lazy(() =>
+  import("./admin/features/subscriptions/SubscriptionsView").then((m) => ({
+    default: m.default,
+  })),
+);
+const AdminReportsPage = lazy(() =>
+  import("./admin/features/reports/ReportsView").then((m) => ({
+    default: m.default,
+  })),
+);
+const AdminAuditLogsPage = lazy(() =>
+  import("./admin/features/auditLogs/AuditLogsView").then((m) => ({
+    default: m.default,
+  })),
+);
+const AdminSupportTicketsPage = lazy(() =>
+  import("./admin/features/supportTickets/SupportTicketsView").then((m) => ({
+    default: m.default,
+  })),
+);
+const AdminAnnouncementsPage = lazy(() =>
+  import("./admin/features/announcements/announcements.page").then((m) => ({
+    default: m.default,
+  })),
+);
+const AdminFeatureManagementPage = lazy(() =>
+  import("./admin/features/featureManagement/FeatureManagementView").then(
+    (m) => ({ default: m.default }),
+  ),
+);
+const AdminRoleTemplatesPage = lazy(() =>
+  import("./admin/features/roleTemplates/RoleTemplatesView").then((m) => ({
+    default: m.default,
+  })),
+);
+const AdminPlatformSettingsPage = lazy(() =>
+  import("./admin/features/platformSettings/PlatformSettingsView").then(
+    (m) => ({ default: m.default }),
+  ),
+);
+const AdminComingSoonPage = lazy(() =>
+  import("./admin/components/common/coming-soon-page").then((m) => ({
+    default: m.ComingSoonPage,
+  })),
+);
 
 // Lazy-loaded page components for code splitting
 const Dashboard = lazy(() =>
@@ -146,13 +226,13 @@ const EmployeePayslips = lazy(() =>
     default: m.EmployeePayslips,
   })),
 );
-const EmployeeSettings = lazy(() =>
-  import("./pages/EmployeeSettings")
-);
+const EmployeeSettings = lazy(() => import("./pages/EmployeeSettings"));
 
 // Finance Components
 const FinanceExpenses = lazy(() =>
-  import("./pages/FinanceExpenses").then((m) => ({ default: m.FinanceExpenses })),
+  import("./pages/FinanceExpenses").then((m) => ({
+    default: m.FinanceExpenses,
+  })),
 );
 const FinancePayroll = lazy(() =>
   import("./pages/FinancePayroll").then((m) => ({ default: m.FinancePayroll })),
@@ -161,34 +241,52 @@ const FinanceReports = lazy(() =>
   import("./pages/FinanceReports").then((m) => ({ default: m.FinanceReports })),
 );
 const FinanceAssetCostReport = lazy(() =>
-  import("./pages/FinanceAssetCostReport").then((m) => ({ default: m.FinanceAssetCostReport })),
+  import("./pages/FinanceAssetCostReport").then((m) => ({
+    default: m.FinanceAssetCostReport,
+  })),
 );
 const FinanceOnboarding = lazy(() =>
-  import("./pages/FinanceOnboarding").then((m) => ({ default: m.FinanceOnboarding })),
+  import("./pages/FinanceOnboarding").then((m) => ({
+    default: m.FinanceOnboarding,
+  })),
 );
 const FinancePayrollSettings = lazy(() =>
-  import("./pages/FinancePayrollSettings").then((m) => ({ default: m.FinancePayrollSettings })),
+  import("./pages/FinancePayrollSettings").then((m) => ({
+    default: m.FinancePayrollSettings,
+  })),
 );
 const FinanceSettlements = lazy(() =>
-  import("./pages/FinanceSettlements").then((m) => ({ default: m.FinanceSettlements })),
+  import("./pages/FinanceSettlements").then((m) => ({
+    default: m.FinanceSettlements,
+  })),
 );
 const FinanceAttendance = lazy(() =>
-  import("./pages/FinanceAttendance").then((m) => ({ default: m.FinanceAttendance })),
+  import("./pages/FinanceAttendance").then((m) => ({
+    default: m.FinanceAttendance,
+  })),
 );
 const FinanceDocuments = lazy(() =>
-  import("./pages/FinanceDocuments").then((m) => ({ default: m.FinanceDocuments })),
+  import("./pages/FinanceDocuments").then((m) => ({
+    default: m.FinanceDocuments,
+  })),
 );
 const FinanceMyExpenses = lazy(() =>
-  import("./pages/FinanceMyExpenses").then((m) => ({ default: m.FinanceMyExpenses })),
+  import("./pages/FinanceMyExpenses").then((m) => ({
+    default: m.FinanceMyExpenses,
+  })),
 );
 const FinancePayslips = lazy(() =>
-  import("./pages/FinancePayslips").then((m) => ({ default: m.FinancePayslips })),
+  import("./pages/FinancePayslips").then((m) => ({
+    default: m.FinancePayslips,
+  })),
 );
 const FinanceProfile = lazy(() =>
   import("./pages/FinanceProfile").then((m) => ({ default: m.FinanceProfile })),
 );
 const FinancePerformance = lazy(() =>
-  import("./pages/FinancePerformance").then((m) => ({ default: m.FinancePerformance })),
+  import("./pages/FinancePerformance").then((m) => ({
+    default: m.FinancePerformance,
+  })),
 );
 const FinanceGoals = lazy(() =>
   import("./pages/FinanceGoals").then((m) => ({ default: m.FinanceGoals })),
@@ -197,106 +295,170 @@ const FinanceSupport = lazy(() =>
   import("./pages/FinanceSupport").then((m) => ({ default: m.FinanceSupport })),
 );
 const FinanceEmployees = lazy(() =>
-  import("./pages/FinanceEmployees").then((m) => ({ default: m.FinanceEmployees })),
+  import("./pages/FinanceEmployees").then((m) => ({
+    default: m.FinanceEmployees,
+  })),
 );
 const FinanceIncrement = lazy(() =>
-  import("./pages/FinanceIncrement").then((m) => ({ default: m.FinanceIncrement })),
+  import("./pages/FinanceIncrement").then((m) => ({
+    default: m.FinanceIncrement,
+  })),
 );
 const FinanceDepartments = lazy(() =>
-  import("./pages/FinanceDepartments").then((m) => ({ default: m.FinanceDepartments })),
+  import("./pages/FinanceDepartments").then((m) => ({
+    default: m.FinanceDepartments,
+  })),
 );
 const FinancePersonalDashboard = lazy(() =>
-  import("./pages/FinancePersonalDashboard").then((m) => ({ default: m.FinancePersonalDashboard })),
+  import("./pages/FinancePersonalDashboard").then((m) => ({
+    default: m.FinancePersonalDashboard,
+  })),
 );
-
 
 // Manager Team & Personal Components
 const ManagerAttendance = lazy(() =>
-  import("./pages/manager/ManagerAttendance").then((m) => ({ default: m.ManagerAttendance })),
+  import("./pages/manager/ManagerAttendance").then((m) => ({
+    default: m.ManagerAttendance,
+  })),
 );
 const ManagerTeamSchedule = lazy(() =>
-  import("./pages/manager/ManagerTeamSchedule").then((m) => ({ default: m.ManagerTeamSchedule })),
+  import("./pages/manager/ManagerTeamSchedule").then((m) => ({
+    default: m.ManagerTeamSchedule,
+  })),
 );
 const ManagerLeaveApprovals = lazy(() =>
-  import("./pages/manager/ManagerLeaveApprovals").then((m) => ({ default: m.ManagerLeaveApprovals })),
+  import("./pages/manager/ManagerLeaveApprovals").then((m) => ({
+    default: m.ManagerLeaveApprovals,
+  })),
 );
 const ManagerTeamPerformance = lazy(() =>
-  import("./pages/manager/ManagerTeamPerformance").then((m) => ({ default: m.ManagerTeamPerformance })),
+  import("./pages/manager/ManagerTeamPerformance").then((m) => ({
+    default: m.ManagerTeamPerformance,
+  })),
 );
 const ManagerTeamTraining = lazy(() =>
-  import("./pages/manager/ManagerTeamTraining").then((m) => ({ default: m.ManagerTeamTraining })),
+  import("./pages/manager/ManagerTeamTraining").then((m) => ({
+    default: m.ManagerTeamTraining,
+  })),
 );
 const ManagerExpenseApprovals = lazy(() =>
-  import("./pages/manager/ManagerExpenseApprovals").then((m) => ({ default: m.ManagerExpenseApprovals })),
+  import("./pages/manager/ManagerExpenseApprovals").then((m) => ({
+    default: m.ManagerExpenseApprovals,
+  })),
 );
 const ManagerTeam = lazy(() =>
-  import("./pages/manager/ManagerTeam").then((m) => ({ default: m.ManagerTeam })),
+  import("./pages/manager/ManagerTeam").then((m) => ({
+    default: m.ManagerTeam,
+  })),
 );
 const ManagerTeamAppraisal = lazy(() =>
-  import("./pages/manager/ManagerTeamAppraisal").then((m) => ({ default: m.ManagerTeamAppraisal })),
+  import("./pages/manager/ManagerTeamAppraisal").then((m) => ({
+    default: m.ManagerTeamAppraisal,
+  })),
 );
 const ManagerPersonalDashboard = lazy(() =>
-  import("./pages/manager/ManagerPersonalDashboard").then((m) => ({ default: m.ManagerPersonalDashboard })),
+  import("./pages/manager/ManagerPersonalDashboard").then((m) => ({
+    default: m.ManagerPersonalDashboard,
+  })),
 );
 const ManagerPersonalAttendance = lazy(() =>
-  import("./pages/manager/ManagerPersonalAttendance").then((m) => ({ default: m.ManagerPersonalAttendance })),
+  import("./pages/manager/ManagerPersonalAttendance").then((m) => ({
+    default: m.ManagerPersonalAttendance,
+  })),
 );
 const ManagerPersonalLeaves = lazy(() =>
-  import("./pages/manager/ManagerPersonalLeaves").then((m) => ({ default: m.ManagerPersonalLeaves })),
+  import("./pages/manager/ManagerPersonalLeaves").then((m) => ({
+    default: m.ManagerPersonalLeaves,
+  })),
 );
 const FinanceLeaves = lazy(() =>
   import("./pages/FinanceLeaves").then((m) => ({ default: m.FinanceLeaves })),
 );
 const FinanceSchedule = lazy(() =>
-  import("./pages/FinanceSchedule").then((m) => ({ default: m.FinanceSchedule })),
+  import("./pages/FinanceSchedule").then((m) => ({
+    default: m.FinanceSchedule,
+  })),
 );
 const ManagerPersonalExpenses = lazy(() =>
-  import("./pages/manager/ManagerPersonalExpenses").then((m) => ({ default: m.ManagerPersonalExpenses })),
+  import("./pages/manager/ManagerPersonalExpenses").then((m) => ({
+    default: m.ManagerPersonalExpenses,
+  })),
 );
 const ManagerPersonalGoals = lazy(() =>
-  import("./pages/manager/ManagerPersonalGoals").then((m) => ({ default: m.ManagerPersonalGoals })),
+  import("./pages/manager/ManagerPersonalGoals").then((m) => ({
+    default: m.ManagerPersonalGoals,
+  })),
 );
 const ManagerPersonalPerformance = lazy(() =>
-  import("./pages/manager/ManagerPersonalPerformance").then((m) => ({ default: m.ManagerPersonalPerformance })),
+  import("./pages/manager/ManagerPersonalPerformance").then((m) => ({
+    default: m.ManagerPersonalPerformance,
+  })),
 );
 const ManagerPersonalSchedule = lazy(() =>
-  import("./pages/manager/ManagerPersonalSchedule").then((m) => ({ default: m.ManagerPersonalSchedule })),
+  import("./pages/manager/ManagerPersonalSchedule").then((m) => ({
+    default: m.ManagerPersonalSchedule,
+  })),
 );
 const ManagerPersonalPayslips = lazy(() =>
-  import("./pages/manager/ManagerPersonalPayslips").then((m) => ({ default: m.ManagerPersonalPayslips })),
+  import("./pages/manager/ManagerPersonalPayslips").then((m) => ({
+    default: m.ManagerPersonalPayslips,
+  })),
 );
 const ManagerPersonalDocuments = lazy(() =>
-  import("./pages/manager/ManagerPersonalDocuments").then((m) => ({ default: m.ManagerPersonalDocuments })),
+  import("./pages/manager/ManagerPersonalDocuments").then((m) => ({
+    default: m.ManagerPersonalDocuments,
+  })),
 );
-const ManagerProfile = lazy(() =>
-  import("./pages/manager/ManagerProfile").then((m) => ({ default: m.ManagerProfile })), // Force reload
+const ManagerProfile = lazy(
+  () =>
+    import("./pages/manager/ManagerProfile").then((m) => ({
+      default: m.ManagerProfile,
+    })), // Force reload
 );
 const ManagerNotifications = lazy(() =>
-  import("./pages/manager/ManagerNotifications").then((m) => ({ default: m.ManagerNotifications })),
+  import("./pages/manager/ManagerNotifications").then((m) => ({
+    default: m.ManagerNotifications,
+  })),
 );
 const ManagerAnnouncements = lazy(() =>
-  import("./pages/manager/ManagerAnnouncements").then((m) => ({ default: m.ManagerAnnouncements })),
+  import("./pages/manager/ManagerAnnouncements").then((m) => ({
+    default: m.ManagerAnnouncements,
+  })),
 );
 const ManagerTeamDirectory = lazy(() =>
-  import("./pages/manager/ManagerTeamDirectory").then((m) => ({ default: m.ManagerTeamDirectory })),
+  import("./pages/manager/ManagerTeamDirectory").then((m) => ({
+    default: m.ManagerTeamDirectory,
+  })),
 );
 const ManagerSupportTicket = lazy(() =>
-  import("./pages/manager/ManagerSupportTicket").then((m) => ({ default: m.ManagerSupportTicket })),
+  import("./pages/manager/ManagerSupportTicket").then((m) => ({
+    default: m.ManagerSupportTicket,
+  })),
 );
 const ManagerTeamAssets = lazy(() =>
-  import("./pages/manager/ManagerTeamAssets").then((m) => ({ default: m.ManagerTeamAssets })),
+  import("./pages/manager/ManagerTeamAssets").then((m) => ({
+    default: m.ManagerTeamAssets,
+  })),
 );
 const ManagerExitTasks = lazy(() =>
-  import("./pages/manager/ManagerExitTasks").then((m) => ({ default: m.ManagerExitTasks })),
+  import("./pages/manager/ManagerExitTasks").then((m) => ({
+    default: m.ManagerExitTasks,
+  })),
 );
 const ManagerSettings = lazy(() =>
-  import("./pages/manager/ManagerSettings").then((m) => ({ default: m.ManagerSettings })),
+  import("./pages/manager/ManagerSettings").then((m) => ({
+    default: m.ManagerSettings,
+  })),
 );
 const ManagerTeamOnboarding = lazy(() =>
-  import("./pages/manager/ManagerTeamOnboarding").then((m) => ({ default: m.ManagerTeamOnboarding })),
+  import("./pages/manager/ManagerTeamOnboarding").then((m) => ({
+    default: m.ManagerTeamOnboarding,
+  })),
 );
 const FinanceSettings = lazy(() =>
-  import("./pages/FinanceSettings").then((m) => ({ default: m.FinanceSettings })),
+  import("./pages/FinanceSettings").then((m) => ({
+    default: m.FinanceSettings,
+  })),
 );
 const AuditLogs = lazy(() =>
   import("./pages/AuditLogs").then((m) => ({ default: m.AuditLogs })),
@@ -305,10 +467,14 @@ const HRAuditLogs = lazy(() =>
   import("./pages/HRAuditLogs").then((m) => ({ default: m.HRAuditLogs })),
 );
 const FinanceAuditLogs = lazy(() =>
-  import("./pages/FinanceAuditLogs").then((m) => ({ default: m.FinanceAuditLogs })),
+  import("./pages/FinanceAuditLogs").then((m) => ({
+    default: m.FinanceAuditLogs,
+  })),
 );
 const AssetManagement = lazy(() =>
-  import("./pages/AssetManagement").then((m) => ({ default: m.AssetManagement })),
+  import("./pages/AssetManagement").then((m) => ({
+    default: m.AssetManagement,
+  })),
 );
 
 // Loading spinner
@@ -614,7 +780,6 @@ function AppraisalWrapper() {
   return lazyRoute(IncrementAppraisal);
 }
 
-
 // ── Employee Dashboard Wrapper: role-based view ───────────────
 function EmployeeDashboardWrapper() {
   const { user } = useAuth();
@@ -651,22 +816,99 @@ function AuditLogsWrapper() {
 function RootRedirect() {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
-  
+
   const roleRoutes: Record<string, string> = {
     "Super Admin": "/admin/dashboard",
     "HR Manager": "/hr/dashboard",
-    "Finance": "/finance/dashboard",
-    "Manager": "/manager/dashboard",
-    "Employee": "/employee/dashboard",
+    Finance: "/finance/dashboard",
+    Manager: "/manager/dashboard",
+    Employee: "/employee/dashboard",
   };
-  
-  return <Navigate to={roleRoutes[user.role] || "/employee/dashboard"} replace />;
+
+  return (
+    <Navigate to={roleRoutes[user.role] || "/employee/dashboard"} replace />
+  );
 }
 
 export const router = createBrowserRouter([
   { path: "/login", Component: Login },
   { path: "/signup", Component: Signup },
   { path: "/signup-success", Component: AuthSuccess },
+  {
+    path: "/admin",
+    element: (
+      <Protected>
+        <Suspense fallback={<PageLoader />}>
+          <AdminLayout />
+        </Suspense>
+      </Protected>
+    ),
+    children: [
+      { index: true, element: <Navigate to="dashboard" replace /> },
+      { path: "dashboard", element: lazyRoute(AdminDashboardPage) },
+      { path: "organizations", element: lazyRoute(AdminOrganizationsPage) },
+      { path: "users", element: lazyRoute(AdminGlobalUsersPage) },
+      { path: "subscriptions", element: lazyRoute(AdminSubscriptionsPage) },
+      { path: "reports", element: lazyRoute(AdminReportsPage) },
+      { path: "audit-logs", element: lazyRoute(AdminAuditLogsPage) },
+      { path: "support-tickets", element: lazyRoute(AdminSupportTicketsPage) },
+      { path: "announcements", element: lazyRoute(AdminAnnouncementsPage) },
+      { path: "features", element: lazyRoute(AdminFeatureManagementPage) },
+      { path: "roles", element: lazyRoute(AdminRoleTemplatesPage) },
+      { path: "settings", element: lazyRoute(AdminPlatformSettingsPage) },
+      {
+        path: "settings/email-templates",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <AdminComingSoonPage title="Email Templates" icon={Mail} />
+          </Suspense>
+        ),
+      },
+      {
+        path: "settings/notifications",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <AdminComingSoonPage title="Notifications" icon={Bell} />
+          </Suspense>
+        ),
+      },
+      {
+        path: "settings/backup",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <AdminComingSoonPage
+              title="Backup & Restore"
+              icon={DatabaseBackup}
+            />
+          </Suspense>
+        ),
+      },
+      {
+        path: "settings/branding",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <AdminComingSoonPage title="Branding" icon={Palette} />
+          </Suspense>
+        ),
+      },
+      {
+        path: "settings/security",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <AdminComingSoonPage title="Security" icon={Lock} />
+          </Suspense>
+        ),
+      },
+      {
+        path: "settings/ai",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <AdminComingSoonPage title="AI Settings" icon={BrainCircuit} />
+          </Suspense>
+        ),
+      },
+    ],
+  },
   {
     path: "/",
     element: (
@@ -677,28 +919,79 @@ export const router = createBrowserRouter([
     children: [
       { path: "403", element: <AccessDenied /> },
       { index: true, element: <RootRedirect /> },
-      { path: "admin/dashboard", element: protectedRoute(Dashboard) },
       { path: "hr/dashboard", element: protectedRoute(Dashboard) },
       { path: "finance/dashboard", element: protectedRoute(Dashboard) },
       { path: "manager/dashboard", element: protectedRoute(Dashboard) },
-      { path: "manager/my-dashboard", element: protectedRoute(ManagerPersonalDashboard) },
-      { path: "manager/my-attendance", element: protectedRoute(ManagerPersonalAttendance) },
-      { path: "manager/my-leaves", element: protectedRoute(ManagerPersonalLeaves) },
-      { path: "manager/my-payslips", element: protectedRoute(ManagerPersonalPayslips) },
-      { path: "manager/my-documents", element: protectedRoute(ManagerPersonalDocuments) },
-      { path: "manager/my-expenses", element: protectedRoute(ManagerPersonalExpenses) },
-      { path: "manager/my-goals", element: protectedRoute(ManagerPersonalGoals) },
-      { path: "manager/my-schedule", element: protectedRoute(ManagerPersonalSchedule) },
-      { path: "manager/my-performance", element: protectedRoute(ManagerPersonalPerformance) },
-      { path: "manager/notifications", element: protectedRoute(ManagerNotifications) },
-      { path: "manager/announcements", element: protectedRoute(ManagerAnnouncements) },
-      { path: "manager/directory", element: protectedRoute(ManagerTeamDirectory) },
-      { path: "manager/support", element: protectedRoute(ManagerSupportTicket) },
-      { path: "manager/team-assets", element: protectedRoute(ManagerTeamAssets) },
+      {
+        path: "manager/my-dashboard",
+        element: protectedRoute(ManagerPersonalDashboard),
+      },
+      {
+        path: "manager/my-attendance",
+        element: protectedRoute(ManagerPersonalAttendance),
+      },
+      {
+        path: "manager/my-leaves",
+        element: protectedRoute(ManagerPersonalLeaves),
+      },
+      {
+        path: "manager/my-payslips",
+        element: protectedRoute(ManagerPersonalPayslips),
+      },
+      {
+        path: "manager/my-documents",
+        element: protectedRoute(ManagerPersonalDocuments),
+      },
+      {
+        path: "manager/my-expenses",
+        element: protectedRoute(ManagerPersonalExpenses),
+      },
+      {
+        path: "manager/my-goals",
+        element: protectedRoute(ManagerPersonalGoals),
+      },
+      {
+        path: "manager/my-schedule",
+        element: protectedRoute(ManagerPersonalSchedule),
+      },
+      {
+        path: "manager/my-performance",
+        element: protectedRoute(ManagerPersonalPerformance),
+      },
+      {
+        path: "manager/notifications",
+        element: protectedRoute(ManagerNotifications),
+      },
+      {
+        path: "manager/announcements",
+        element: protectedRoute(ManagerAnnouncements),
+      },
+      {
+        path: "manager/directory",
+        element: protectedRoute(ManagerTeamDirectory),
+      },
+      {
+        path: "manager/support",
+        element: protectedRoute(ManagerSupportTicket),
+      },
+      {
+        path: "manager/team-assets",
+        element: protectedRoute(ManagerTeamAssets),
+      },
       { path: "manager/exit-tasks", element: protectedRoute(ManagerExitTasks) },
       { path: "manager/settings", element: protectedRoute(ManagerSettings) },
-      { path: "manager/team-onboarding", element: protectedRoute(ManagerTeamOnboarding) },
-      { path: "employee/dashboard", element: <Protected><EmployeeDashboardWrapper /></Protected> },
+      {
+        path: "manager/team-onboarding",
+        element: protectedRoute(ManagerTeamOnboarding),
+      },
+      {
+        path: "employee/dashboard",
+        element: (
+          <Protected>
+            <EmployeeDashboardWrapper />
+          </Protected>
+        ),
+      },
       {
         path: "employees",
         element: (
@@ -708,8 +1001,22 @@ export const router = createBrowserRouter([
         ),
       },
       { path: "employees/:id", element: protectedRoute(EmployeeProfile) },
-      { path: "profile", element: <Protected><ProfileWrapper /></Protected> },
-      { path: "attendance", element: <Protected><AttendanceWrapper /></Protected> },
+      {
+        path: "profile",
+        element: (
+          <Protected>
+            <ProfileWrapper />
+          </Protected>
+        ),
+      },
+      {
+        path: "attendance",
+        element: (
+          <Protected>
+            <AttendanceWrapper />
+          </Protected>
+        ),
+      },
       {
         path: "payroll",
         element: (
@@ -718,7 +1025,14 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
-      { path: "payslips", element: <Protected><PayslipsWrapper /></Protected> },
+      {
+        path: "payslips",
+        element: (
+          <Protected>
+            <PayslipsWrapper />
+          </Protected>
+        ),
+      },
       {
         path: "expenses",
         element: (
@@ -729,11 +1043,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "finance/my-expenses",
-        element: (
-          <Protected>
-            {lazyRoute(FinanceMyExpenses)}
-          </Protected>
-        ),
+        element: <Protected>{lazyRoute(FinanceMyExpenses)}</Protected>,
       },
       { path: "recruitment", element: protectedRoute(Recruitment) },
       { path: "offboarding", element: protectedRoute(Offboarding) },
@@ -755,24 +1065,36 @@ export const router = createBrowserRouter([
       },
       {
         path: "finance/asset-cost-report",
+        element: <Protected>{lazyRoute(FinanceAssetCostReport)}</Protected>,
+      },
+      {
+        path: "finance/settlements",
+        element: <Protected>{lazyRoute(FinanceSettlements)}</Protected>,
+      },
+      {
+        path: "finance/onboarding",
+        element: protectedRoute(FinanceOnboarding),
+      },
+      {
+        path: "settings",
         element: (
           <Protected>
-            {lazyRoute(FinanceAssetCostReport)}
+            <SettingsWrapper />
           </Protected>
         ),
       },
       {
-        path: "finance/settlements",
+        path: "settings/audit-logs",
         element: (
           <Protected>
-            {lazyRoute(FinanceSettlements)}
+            <AuditLogsWrapper />
           </Protected>
         ),
       },
-      { path: "finance/onboarding", element: protectedRoute(FinanceOnboarding) },
-      { path: "settings", element: <Protected><SettingsWrapper /></Protected> },
-      { path: "settings/audit-logs", element: <Protected><AuditLogsWrapper /></Protected> },
-      { path: "settings/payroll", element: protectedRoute(FinancePayrollSettings) },
+      {
+        path: "settings/payroll",
+        element: protectedRoute(FinancePayrollSettings),
+      },
       {
         path: "leave",
         element: (
@@ -831,8 +1153,22 @@ export const router = createBrowserRouter([
       },
       { path: "expense-policy", element: protectedRoute(ExpensePolicy) },
       { path: "expense-support", element: protectedRoute(ExpenseSupport) },
-      { path: "support", element: <Protected><SupportWrapper /></Protected> },
-      { path: "my-documents", element: <Protected><DocumentsWrapper /></Protected> },
+      {
+        path: "support",
+        element: (
+          <Protected>
+            <SupportWrapper />
+          </Protected>
+        ),
+      },
+      {
+        path: "my-documents",
+        element: (
+          <Protected>
+            <DocumentsWrapper />
+          </Protected>
+        ),
+      },
       { path: "my-assets", element: protectedRoute(MyAssets) },
       { path: "my-exit", element: protectedRoute(EmployeeExit) },
       { path: "my-onboarding", element: protectedRoute(MyOnboarding) },
