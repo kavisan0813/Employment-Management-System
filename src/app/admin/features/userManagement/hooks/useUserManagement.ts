@@ -35,8 +35,7 @@ export function useUserManagement() {
         u.email.toLowerCase().includes(userSearch.toLowerCase());
       const matchRole = roleFilter === "ALL" || u.role === roleFilter;
       const matchStatus = statusFilter === "ALL" || u.status === statusFilter;
-      const matchOrg =
-        orgFilter === "ALL" || u.organizationId === orgFilter;
+      const matchOrg = orgFilter === "ALL" || u.organizationId === orgFilter;
 
       return matchSearch && matchRole && matchStatus && matchOrg;
     });

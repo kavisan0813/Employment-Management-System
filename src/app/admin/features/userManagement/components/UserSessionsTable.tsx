@@ -13,7 +13,8 @@ export function UserSessionsTable() {
             <Monitor className="w-5 h-5 text-indigo-600" /> Active User Sessions
           </h2>
           <p className="text-xs text-gray-500">
-            Monitor and manage active logins, IP addresses, and connected devices.
+            Monitor and manage active logins, IP addresses, and connected
+            devices.
           </p>
         </div>
         <button className="px-3.5 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer">

@@ -13,7 +13,8 @@ export function OrgAdminsTable() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-indigo-600" /> Organization Admins
+            <Building2 className="w-5 h-5 text-indigo-600" /> Organization
+            Admins
           </h2>
           <p className="text-xs text-gray-500">
             Primary administrators and point of contacts for each tenant.
@@ -34,7 +35,10 @@ export function OrgAdminsTable() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {orgAdmins.map((admin) => (
-              <tr key={admin.id} className="hover:bg-gray-50/70 transition-colors">
+              <tr
+                key={admin.id}
+                className="hover:bg-gray-50/70 transition-colors"
+              >
                 <td className="px-4 py-3 font-semibold text-gray-900">
                   {admin.organization || "Unassigned"}
                 </td>
@@ -64,7 +68,10 @@ export function OrgAdminsTable() {
             ))}
             {orgAdmins.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-12 text-center text-gray-400">
+                <td
+                  colSpan={5}
+                  className="px-4 py-12 text-center text-gray-400"
+                >
                   No Organization Admins found.
                 </td>
               </tr>

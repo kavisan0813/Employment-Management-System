@@ -13,7 +13,9 @@ export function usePlans() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"ALL" | "Active" | "Inactive">("ALL");
+  const [statusFilter, setStatusFilter] = useState<
+    "ALL" | "Active" | "Inactive"
+  >("ALL");
 
   const refresh = useCallback(() => {
     setPlans(PlanService.getAll());

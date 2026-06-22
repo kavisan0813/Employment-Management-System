@@ -4,8 +4,15 @@
  */
 
 import React, { useState } from "react";
-import { 
-  Search, ShieldAlert, Monitor, Info, Calendar, Clock, Laptop, X
+import {
+  Search,
+  ShieldAlert,
+  Monitor,
+  Info,
+  Calendar,
+  Clock,
+  Laptop,
+  X,
 } from "lucide-react";
 import { LoginLog } from "../types/logs.types";
 
@@ -34,19 +41,21 @@ export function LoginLogsTable({
   setSelectedStatus,
   dateRange,
   setDateRange,
-  filterByDate
+  filterByDate,
 }: LoginLogsTableProps) {
   const [selectedLog, setSelectedLog] = useState<LoginLog | null>(null);
 
   // Filter login logs based on search + selected filters
-  const filtered = logs.filter(log => {
-    const matchesSearch = 
+  const filtered = logs.filter((log) => {
+    const matchesSearch =
       log.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.ipAddress.includes(searchQuery);
 
-    const matchesOrg = selectedOrg === "ALL" || log.organization === selectedOrg;
-    const matchesStatus = selectedStatus === "ALL" || log.status === selectedStatus;
+    const matchesOrg =
+      selectedOrg === "ALL" || log.organization === selectedOrg;
+    const matchesStatus =
+      selectedStatus === "ALL" || log.status === selectedStatus;
     const matchesDate = filterByDate(log.loginTime);
 
     return matchesSearch && matchesOrg && matchesStatus && matchesDate;
@@ -75,8 +84,10 @@ export function LoginLogsTable({
             className="bg-gray-50 border border-gray-200 text-gray-800 text-xs px-3 py-2 rounded-lg focus:outline-indigo-500"
           >
             <option value="ALL">All Organizations</option>
-            {organizations.map(org => (
-              <option key={org} value={org}>{org}</option>
+            {organizations.map((org) => (
+              <option key={org} value={org}>
+                {org}
+              </option>
             ))}
           </select>
 
@@ -122,25 +133,40 @@ export function LoginLogsTable({
             <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-gray-400">No login log records found.</td>
+                  <td colSpan={7} className="p-8 text-center text-gray-400">
+                    No login log records found.
+                  </td>
                 </tr>
               ) : (
-                filtered.map(log => (
-                  <tr key={log.id} className="hover:bg-gray-50/50 transition-colors">
+                filtered.map((log) => (
+                  <tr
+                    key={log.id}
+                    className="hover:bg-gray-50/50 transition-colors"
+                  >
                     <td className="px-4 py-3.5">
-                      <div className="font-semibold text-gray-900">{log.user}</div>
-                      <div className="text-[10px] text-gray-400 mt-0.5">{log.email}</div>
+                      <div className="font-semibold text-gray-900">
+                        {log.user}
+                      </div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">
+                        {log.email}
+                      </div>
                     </td>
                     <td className="px-4 py-3.5">
                       <div className="text-gray-800">{log.organization}</div>
-                      <div className="text-[10px] text-gray-400 mt-0.5">{log.role}</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">
+                        {log.role}
+                      </div>
                     </td>
                     <td className="px-4 py-3.5 font-mono text-[11px] text-gray-500">
-                      {new Date(log.loginTime).toLocaleString().replace(",", "")}
+                      {new Date(log.loginTime)
+                        .toLocaleString()
+                        .replace(",", "")}
                     </td>
                     <td className="px-4 py-3.5 font-mono text-[11px] text-gray-500">
                       {log.logoutTime ? (
-                        new Date(log.logoutTime).toLocaleString().replace(",", "")
+                        new Date(log.logoutTime)
+                          .toLocaleString()
+                          .replace(",", "")
                       ) : (
                         <span className="inline-flex items-center gap-1 text-teal-600 font-semibold bg-teal-50 px-1.5 py-0.5 rounded text-[9px]">
                           Active Session
@@ -148,15 +174,21 @@ export function LoginLogsTable({
                       )}
                     </td>
                     <td className="px-4 py-3.5">
-                      <div className="font-mono text-[11px] text-gray-800">{log.ipAddress}</div>
-                      <div className="text-[10px] text-gray-400 mt-0.5">{log.device} &bull; {log.browser}</div>
+                      <div className="font-mono text-[11px] text-gray-800">
+                        {log.ipAddress}
+                      </div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">
+                        {log.device} &bull; {log.browser}
+                      </div>
                     </td>
                     <td className="px-4 py-3.5">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${
-                        log.status === "Success" 
-                          ? "bg-teal-50 text-teal-700" 
-                          : "bg-rose-50 text-rose-700"
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${
+                          log.status === "Success"
+                            ? "bg-teal-50 text-teal-700"
+                            : "bg-rose-50 text-rose-700"
+                        }`}
+                      >
                         {log.status === "Success" ? "SUCCESS" : "FAILED"}
                       </span>
                     </td>
@@ -202,31 +234,53 @@ export function LoginLogsTable({
                     {selectedLog.user.charAt(0)}
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-gray-900">{selectedLog.user}</h4>
-                    <p className="text-xs text-gray-500 mt-0.5">{selectedLog.email}</p>
+                    <h4 className="text-sm font-bold text-gray-900">
+                      {selectedLog.user}
+                    </h4>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {selectedLog.email}
+                    </p>
                   </div>
                 </div>
 
                 {/* Grid details */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">Organization</span>
-                    <p className="text-xs font-semibold text-gray-900">{selectedLog.organization}</p>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase">
+                      Organization
+                    </span>
+                    <p className="text-xs font-semibold text-gray-900">
+                      {selectedLog.organization}
+                    </p>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">Role / Access Level</span>
-                    <p className="text-xs font-semibold text-gray-900">{selectedLog.role}</p>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase">
+                      Role / Access Level
+                    </span>
+                    <p className="text-xs font-semibold text-gray-900">
+                      {selectedLog.role}
+                    </p>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">IP Address</span>
-                    <p className="text-xs font-semibold font-mono text-gray-900">{selectedLog.ipAddress}</p>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase">
+                      IP Address
+                    </span>
+                    <p className="text-xs font-semibold font-mono text-gray-900">
+                      {selectedLog.ipAddress}
+                    </p>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">Authentication Result</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase">
+                      Authentication Result
+                    </span>
                     <div>
-                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${
-                        selectedLog.status === "Success" ? "bg-teal-50 text-teal-700" : "bg-rose-50 text-rose-700"
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${
+                          selectedLog.status === "Success"
+                            ? "bg-teal-50 text-teal-700"
+                            : "bg-rose-50 text-rose-700"
+                        }`}
+                      >
                         {selectedLog.status}
                       </span>
                     </div>
@@ -237,34 +291,49 @@ export function LoginLogsTable({
                   <div className="flex items-center gap-3">
                     <Calendar className="w-4 h-4 text-gray-400" />
                     <div>
-                      <span className="text-[10px] font-bold text-gray-400 uppercase">Login Timestamp</span>
-                      <p className="text-xs font-semibold text-gray-800">{new Date(selectedLog.loginTime).toString()}</p>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase">
+                        Login Timestamp
+                      </span>
+                      <p className="text-xs font-semibold text-gray-800">
+                        {new Date(selectedLog.loginTime).toString()}
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
                     <Clock className="w-4 h-4 text-gray-400" />
                     <div>
-                      <span className="text-[10px] font-bold text-gray-400 uppercase">Logout Timestamp</span>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase">
+                        Logout Timestamp
+                      </span>
                       <p className="text-xs font-semibold text-gray-800">
-                        {selectedLog.logoutTime ? new Date(selectedLog.logoutTime).toString() : "Session Active (No logout registered)"}
+                        {selectedLog.logoutTime
+                          ? new Date(selectedLog.logoutTime).toString()
+                          : "Session Active (No logout registered)"}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                {selectedLog.status === "Failed" && selectedLog.failureReason && (
-                  <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl flex gap-3 mt-4">
-                    <ShieldAlert className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="text-xs font-bold text-rose-800">Security Exception</h5>
-                      <p className="text-xs text-rose-700 mt-1">{selectedLog.failureReason}</p>
+                {selectedLog.status === "Failed" &&
+                  selectedLog.failureReason && (
+                    <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl flex gap-3 mt-4">
+                      <ShieldAlert className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                      <div>
+                        <h5 className="text-xs font-bold text-rose-800">
+                          Security Exception
+                        </h5>
+                        <p className="text-xs text-rose-700 mt-1">
+                          {selectedLog.failureReason}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                 <div className="space-y-2 pt-4 border-t border-gray-100 font-mono text-[10px] text-gray-400">
-                  <p className="text-indigo-400">// Client System Browser Fingerprint</p>
+                  <p className="text-indigo-400">
+                    // Client System Browser Fingerprint
+                  </p>
                   <p>device_os: "{selectedLog.device}"</p>
                   <p>user_agent: "{selectedLog.browser} WebKit"</p>
                 </div>

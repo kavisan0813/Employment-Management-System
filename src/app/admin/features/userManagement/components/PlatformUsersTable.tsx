@@ -47,7 +47,9 @@ export function PlatformUsersTable() {
     <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Platform Users</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Platform Users
+          </h2>
           <p className="text-xs text-gray-500">
             Master list of all users across the platform.
           </p>
@@ -181,7 +183,10 @@ export function PlatformUsersTable() {
               ))}
               {filteredUsers.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                  <td
+                    colSpan={7}
+                    className="px-4 py-12 text-center text-gray-400"
+                  >
                     No users found matching current filters.
                   </td>
                 </tr>

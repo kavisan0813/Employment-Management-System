@@ -26,8 +26,25 @@ export interface ActivityLog {
   email: string;
   organization: string;
   role: string;
-  action: "Create" | "Update" | "Delete" | "Approve" | "Reject" | "Upload" | "Download" | "Export";
-  module: "Employee" | "Leave" | "Payroll" | "Billing" | "Announcements" | "Features" | "Roles" | "Settings" | "Tickets";
+  action:
+    | "Create"
+    | "Update"
+    | "Delete"
+    | "Approve"
+    | "Reject"
+    | "Upload"
+    | "Download"
+    | "Export";
+  module:
+    | "Employee"
+    | "Leave"
+    | "Payroll"
+    | "Billing"
+    | "Announcements"
+    | "Features"
+    | "Roles"
+    | "Settings"
+    | "Tickets";
   details: string;
 }
 
@@ -47,7 +64,13 @@ export interface AuditTrail {
 export interface SecurityEventLog {
   id: string;
   detectedAt: string;
-  type: "Failed Login Spike" | "New Device Login" | "Impossible Travel" | "MFA Disabled" | "Account Locked" | "Suspicious IP";
+  type:
+    | "Failed Login Spike"
+    | "New Device Login"
+    | "Impossible Travel"
+    | "MFA Disabled"
+    | "Account Locked"
+    | "Suspicious IP";
   organization: string | null;
   actor: string;
   severity: "Low" | "Medium" | "High" | "Critical";

@@ -10,7 +10,8 @@ export function UserActivityTimeline() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-indigo-600" /> Recent User Activity
+            <Activity className="w-5 h-5 text-indigo-600" /> Recent User
+            Activity
           </h2>
           <p className="text-xs text-gray-500">
             Global timeline of actions across all managed users.
@@ -26,7 +27,9 @@ export function UserActivityTimeline() {
               <div className="w-4 h-4 rounded-full bg-indigo-100 border-2 border-indigo-500 mt-1 z-10"></div>
               <div className="flex-1 bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <div className="flex justify-between items-start mb-1">
-                  <p className="text-sm font-semibold text-gray-900">{log.action}</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {log.action}
+                  </p>
                   <span className="text-[10px] font-mono text-gray-400">
                     {new Date(log.timestamp).toLocaleString()}
                   </span>

@@ -13,7 +13,7 @@ import {
   ErrorLog,
   ExportLog,
   LogRetentionPolicy,
-  LogsStats
+  LogsStats,
 } from "../types/logs.types";
 
 export function useAuditLogs() {
@@ -27,7 +27,7 @@ export function useAuditLogs() {
     retentionDays: 365,
     archiveEnabled: true,
     immutableLock: false,
-    complianceStandard: "SOC2"
+    complianceStandard: "SOC2",
   });
   const [stats, setStats] = useState<LogsStats>({
     totalLogins: 0,
@@ -35,7 +35,7 @@ export function useAuditLogs() {
     activeSessions: 0,
     criticalSecurityEvents: 0,
     errorRateToday: 0,
-    totalExportsCount: 0
+    totalExportsCount: 0,
   });
 
   const [loading, setLoading] = useState(true);
@@ -81,43 +81,58 @@ export function useAuditLogs() {
   }, [reloadData]);
 
   // Actions
-  const resolveSecurityEvent = useCallback((id: string, status: "Resolved" | "Pending" | "Active") => {
-    LogsService.resolveSecurityEvent(id, status);
-    reloadData();
-  }, [reloadData]);
+  const resolveSecurityEvent = useCallback(
+    (id: string, status: "Resolved" | "Pending" | "Active") => {
+      LogsService.resolveSecurityEvent(id, status);
+      reloadData();
+    },
+    [reloadData],
+  );
 
-  const updateRetentionPolicy = useCallback((policy: LogRetentionPolicy) => {
-    LogsService.saveRetentionPolicy(policy);
-    reloadData();
-  }, [reloadData]);
+  const updateRetentionPolicy = useCallback(
+    (policy: LogRetentionPolicy) => {
+      LogsService.saveRetentionPolicy(policy);
+      reloadData();
+    },
+    [reloadData],
+  );
 
   const purgeAuditTrail = useCallback(() => {
-    alert("Compliance Lock Active:\nFederally compliant SOC2 controls prevent administrative deletion or truncation of the active logging ledger.");
+    alert(
+      "Compliance Lock Active:\nFederally compliant SOC2 controls prevent administrative deletion or truncation of the active logging ledger.",
+    );
   }, []);
 
   // Filter helper functions
-  const filterByDate = useCallback((timestamp: string) => {
-    if (dateRange === "ALL") return true;
-    const logTime = new Date(timestamp).getTime();
-    const now = Date.now();
-    if (dateRange === "TODAY") {
-      return now - logTime <= 24 * 60 * 60 * 1000;
-    }
-    if (dateRange === "WEEK") {
-      return now - logTime <= 7 * 24 * 60 * 60 * 1000;
-    }
-    return true;
-  }, [dateRange]);
+  const filterByDate = useCallback(
+    (timestamp: string) => {
+      if (dateRange === "ALL") return true;
+      const logTime = new Date(timestamp).getTime();
+      const now = Date.now();
+      if (dateRange === "TODAY") {
+        return now - logTime <= 24 * 60 * 60 * 1000;
+      }
+      if (dateRange === "WEEK") {
+        return now - logTime <= 7 * 24 * 60 * 60 * 1000;
+      }
+      return true;
+    },
+    [dateRange],
+  );
 
   // Get unique organizations for drop down filter
   const organizations = Array.from(
-    new Set([
-      ...loginLogs.map(l => l.organization),
-      ...activityLogs.map(a => a.organization),
-      ...auditTrails.map(t => t.organization),
-      ...securityEvents.filter(s => s.organization !== null).map(s => s.organization as string),
-      ...exportLogs.map(e => e.organization)
-    ].filter(Boolean))
+    new Set(
+      [
+        ...loginLogs.map((l) => l.organization),
+        ...activityLogs.map((a) => a.organization),
+        ...auditTrails.map((t) => t.organization),
+        ...securityEvents
+          .filter((s) => s.organization !== null)
+          .map((s) => s.organization as string),
+        ...exportLogs.map((e) => e.organization),
+      ].filter(Boolean),
+    ),
   );
 
   return {
@@ -153,6 +168,6 @@ export function useAuditLogs() {
     updateRetentionPolicy,
     purgeAuditTrail,
     refresh: reloadData,
-    filterByDate
+    filterByDate,
   };
 }

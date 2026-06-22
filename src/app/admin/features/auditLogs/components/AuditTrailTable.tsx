@@ -28,17 +28,17 @@ export function AuditTrailTable({
   setSelectedOrg,
   dateRange,
   setDateRange,
-  filterByDate
+  filterByDate,
 }: AuditTrailTableProps) {
-
-  const filtered = trails.filter(trail => {
-    const matchesSearch = 
+  const filtered = trails.filter((trail) => {
+    const matchesSearch =
       trail.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
       trail.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       trail.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
       trail.target.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesOrg = selectedOrg === "ALL" || trail.organization === selectedOrg;
+    const matchesOrg =
+      selectedOrg === "ALL" || trail.organization === selectedOrg;
     const matchesDate = filterByDate(trail.timestamp);
 
     return matchesSearch && matchesOrg && matchesDate;
@@ -67,8 +67,10 @@ export function AuditTrailTable({
             className="bg-gray-50 border border-gray-200 text-gray-800 text-xs px-3 py-2 rounded-lg focus:outline-indigo-500"
           >
             <option value="ALL">All Organizations</option>
-            {organizations.map(org => (
-              <option key={org} value={org}>{org}</option>
+            {organizations.map((org) => (
+              <option key={org} value={org}>
+                {org}
+              </option>
             ))}
           </select>
 
@@ -101,20 +103,31 @@ export function AuditTrailTable({
             <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-gray-400">No data mutation audit entries found.</td>
+                  <td colSpan={5} className="p-8 text-center text-gray-400">
+                    No data mutation audit entries found.
+                  </td>
                 </tr>
               ) : (
-                filtered.map(trail => (
-                  <tr key={trail.id} className="hover:bg-gray-50/50 transition-colors">
+                filtered.map((trail) => (
+                  <tr
+                    key={trail.id}
+                    className="hover:bg-gray-50/50 transition-colors"
+                  >
                     {/* Timestamp */}
                     <td className="px-4 py-3.5 font-mono text-[11px] text-gray-400 whitespace-nowrap">
-                      {new Date(trail.timestamp).toLocaleString().replace(",", "")}
+                      {new Date(trail.timestamp)
+                        .toLocaleString()
+                        .replace(",", "")}
                     </td>
 
                     {/* Actor */}
                     <td className="px-4 py-3.5 whitespace-nowrap">
-                      <div className="font-semibold text-gray-900">{trail.user}</div>
-                      <div className="text-[10px] text-gray-400 mt-0.5">{trail.organization}</div>
+                      <div className="font-semibold text-gray-900">
+                        {trail.user}
+                      </div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">
+                        {trail.organization}
+                      </div>
                     </td>
 
                     {/* Target & Action */}
@@ -123,17 +136,28 @@ export function AuditTrailTable({
                         <History className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
                         {trail.action}
                       </div>
-                      <div className="text-[10px] text-gray-400 mt-0.5">Target: <span className="font-mono text-gray-600">{trail.target}</span></div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">
+                        Target:{" "}
+                        <span className="font-mono text-gray-600">
+                          {trail.target}
+                        </span>
+                      </div>
                     </td>
 
                     {/* Delta comparison */}
                     <td className="px-4 py-3.5 min-w-[240px]">
                       <div className="flex items-center gap-2 bg-gray-50 border border-gray-150 p-2 rounded-lg text-[11px] font-mono w-full">
-                        <span className="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded border border-rose-100 line-through truncate max-w-[120px]" title={trail.oldValue}>
+                        <span
+                          className="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded border border-rose-100 line-through truncate max-w-[120px]"
+                          title={trail.oldValue}
+                        >
                           {trail.oldValue}
                         </span>
                         <ArrowRight className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                        <span className="bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded border border-teal-100 font-bold truncate max-w-[120px]" title={trail.newValue}>
+                        <span
+                          className="bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded border border-teal-100 font-bold truncate max-w-[120px]"
+                          title={trail.newValue}
+                        >
                           {trail.newValue}
                         </span>
                       </div>

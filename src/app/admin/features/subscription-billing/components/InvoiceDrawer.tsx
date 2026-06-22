@@ -4,7 +4,16 @@
  */
 
 import React from "react";
-import { X, FileText, Download, Building2, CheckCircle2, Clock, AlertTriangle, Ban } from "lucide-react";
+import {
+  X,
+  FileText,
+  Download,
+  Building2,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  Ban,
+} from "lucide-react";
 import { Invoice } from "../types/invoice.types";
 
 interface InvoiceDrawerProps {
@@ -14,25 +23,57 @@ interface InvoiceDrawerProps {
   onRefund: (id: string) => void;
 }
 
-const statusConfig: Record<string, { class: string; icon: React.ElementType; label: string }> = {
-  Paid: { class: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: CheckCircle2, label: "Paid" },
-  Pending: { class: "bg-amber-50 text-amber-700 border-amber-200", icon: Clock, label: "Pending" },
-  Overdue: { class: "bg-rose-50 text-rose-700 border-rose-200", icon: AlertTriangle, label: "Overdue" },
-  Cancelled: { class: "bg-gray-100 text-gray-600 border-gray-200", icon: Ban, label: "Cancelled" },
-  Refunded: { class: "bg-blue-50 text-blue-700 border-blue-200", icon: Ban, label: "Refunded" },
+const statusConfig: Record<
+  string,
+  { class: string; icon: React.ElementType; label: string }
+> = {
+  Paid: {
+    class: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    icon: CheckCircle2,
+    label: "Paid",
+  },
+  Pending: {
+    class: "bg-amber-50 text-amber-700 border-amber-200",
+    icon: Clock,
+    label: "Pending",
+  },
+  Overdue: {
+    class: "bg-rose-50 text-rose-700 border-rose-200",
+    icon: AlertTriangle,
+    label: "Overdue",
+  },
+  Cancelled: {
+    class: "bg-gray-100 text-gray-600 border-gray-200",
+    icon: Ban,
+    label: "Cancelled",
+  },
+  Refunded: {
+    class: "bg-blue-50 text-blue-700 border-blue-200",
+    icon: Ban,
+    label: "Refunded",
+  },
 };
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between py-2.5 border-b border-gray-100 last:border-0">
-      <span className="text-[10px] uppercase font-semibold tracking-wide text-gray-400">{label}</span>
+      <span className="text-[10px] uppercase font-semibold tracking-wide text-gray-400">
+        {label}
+      </span>
       <span className="text-xs font-medium text-gray-900">{value}</span>
     </div>
   );
 }
 
-export function InvoiceDrawer({ invoice, onClose, onMarkPaid, onRefund }: InvoiceDrawerProps) {
-  const [paymentMethod, setPaymentMethod] = React.useState("Credit Card •••• 4242");
+export function InvoiceDrawer({
+  invoice,
+  onClose,
+  onMarkPaid,
+  onRefund,
+}: InvoiceDrawerProps) {
+  const [paymentMethod, setPaymentMethod] = React.useState(
+    "Credit Card •••• 4242",
+  );
   const [showPayForm, setShowPayForm] = React.useState(false);
   const cfg = statusConfig[invoice.status] || statusConfig.Pending;
   const StatusIcon = cfg.icon;
@@ -57,11 +98,15 @@ export function InvoiceDrawer({ invoice, onClose, onMarkPaid, onRefund }: Invoic
 
       <div className="flex-1 overflow-y-auto">
         {/* Status banner */}
-        <div className={`mx-5 mt-5 flex items-center gap-2.5 px-4 py-3 rounded-lg border ${cfg.class}`}>
+        <div
+          className={`mx-5 mt-5 flex items-center gap-2.5 px-4 py-3 rounded-lg border ${cfg.class}`}
+        >
           <StatusIcon className="w-4 h-4" />
           <span className="text-xs font-semibold">{cfg.label}</span>
           {invoice.paidDate && (
-            <span className="text-[10px] ml-auto opacity-75">Paid {invoice.paidDate}</span>
+            <span className="text-[10px] ml-auto opacity-75">
+              Paid {invoice.paidDate}
+            </span>
           )}
         </div>
 
@@ -72,8 +117,12 @@ export function InvoiceDrawer({ invoice, onClose, onMarkPaid, onRefund }: Invoic
               <Building2 className="w-4 h-4 text-indigo-600" />
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900">{invoice.organizationName}</p>
-              <p className="text-[11px] text-gray-400 font-mono">{invoice.organizationId}</p>
+              <p className="text-sm font-bold text-gray-900">
+                {invoice.organizationName}
+              </p>
+              <p className="text-[11px] text-gray-400 font-mono">
+                {invoice.organizationId}
+              </p>
             </div>
           </div>
         </div>
@@ -106,11 +155,22 @@ export function InvoiceDrawer({ invoice, onClose, onMarkPaid, onRefund }: Invoic
               </thead>
               <tbody>
                 {invoice.lineItems.map((item, idx) => (
-                  <tr key={idx} className="border-b border-gray-100 last:border-0">
-                    <td className="px-3 py-2 text-gray-700">{item.description}</td>
-                    <td className="px-3 py-2 text-right text-gray-500">{item.quantity}</td>
-                    <td className="px-3 py-2 text-right text-gray-500">${item.unitPrice.toLocaleString()}</td>
-                    <td className="px-3 py-2 text-right font-semibold text-gray-900">${item.total.toLocaleString()}</td>
+                  <tr
+                    key={idx}
+                    className="border-b border-gray-100 last:border-0"
+                  >
+                    <td className="px-3 py-2 text-gray-700">
+                      {item.description}
+                    </td>
+                    <td className="px-3 py-2 text-right text-gray-500">
+                      {item.quantity}
+                    </td>
+                    <td className="px-3 py-2 text-right text-gray-500">
+                      ${item.unitPrice.toLocaleString()}
+                    </td>
+                    <td className="px-3 py-2 text-right font-semibold text-gray-900">
+                      ${item.total.toLocaleString()}
+                    </td>
                   </tr>
                 ))}
               </tbody>

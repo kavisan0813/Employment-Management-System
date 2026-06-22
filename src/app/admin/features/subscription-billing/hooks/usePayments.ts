@@ -14,7 +14,9 @@ export function usePayments() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"ALL" | PaymentStatus>("ALL");
+  const [statusFilter, setStatusFilter] = useState<"ALL" | PaymentStatus>(
+    "ALL",
+  );
   const [methodFilter, setMethodFilter] = useState("ALL");
 
   const refresh = useCallback(() => {

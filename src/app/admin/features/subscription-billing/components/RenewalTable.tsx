@@ -48,19 +48,33 @@ function UrgencyBadge({ days }: { days: number }) {
 }
 
 export function RenewalTable({ renewals, onRowClick }: RenewalTableProps) {
-  const sorted = [...renewals].sort((a, b) => getDaysUntil(a.renewalDate) - getDaysUntil(b.renewalDate));
+  const sorted = [...renewals].sort(
+    (a, b) => getDaysUntil(a.renewalDate) - getDaysUntil(b.renewalDate),
+  );
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-xs text-left border-collapse">
         <thead>
           <tr className="bg-gray-50/75 border-b border-gray-100 font-medium">
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Organization</th>
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Plan</th>
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Cycle</th>
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Amount</th>
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Renewal Date</th>
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Time Left</th>
+            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+              Organization
+            </th>
+            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+              Plan
+            </th>
+            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+              Cycle
+            </th>
+            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+              Amount
+            </th>
+            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+              Renewal Date
+            </th>
+            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+              Time Left
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
@@ -69,8 +83,12 @@ export function RenewalTable({ renewals, onRowClick }: RenewalTableProps) {
               <td colSpan={6} className="p-8 text-center text-gray-400">
                 <div className="flex flex-col items-center justify-center gap-2 py-4">
                   <Calendar className="w-8 h-8 text-gray-300" />
-                  <span className="font-medium text-gray-500">No upcoming renewals</span>
-                  <span className="text-[11px] text-gray-400">All subscriptions are up to date.</span>
+                  <span className="font-medium text-gray-500">
+                    No upcoming renewals
+                  </span>
+                  <span className="text-[11px] text-gray-400">
+                    All subscriptions are up to date.
+                  </span>
                 </div>
               </td>
             </tr>
@@ -86,19 +104,27 @@ export function RenewalTable({ renewals, onRowClick }: RenewalTableProps) {
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-2">
                       <Building2 className="w-3.5 h-3.5 text-gray-400" />
-                      <span className="font-semibold text-gray-900">{sub.organizationName}</span>
+                      <span className="font-semibold text-gray-900">
+                        {sub.organizationName}
+                      </span>
                     </div>
                   </td>
                   <td className="px-4 py-3.5">
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold border ${planBadgeClass(sub.planTier)}`}>
+                    <span
+                      className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold border ${planBadgeClass(sub.planTier)}`}
+                    >
                       {sub.planTier}
                     </span>
                   </td>
-                  <td className="px-4 py-3.5 text-gray-600">{sub.billingCycle}</td>
+                  <td className="px-4 py-3.5 text-gray-600">
+                    {sub.billingCycle}
+                  </td>
                   <td className="px-4 py-3.5 font-semibold text-gray-900">
                     ${sub.amount.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3.5 text-gray-500">{sub.renewalDate || "—"}</td>
+                  <td className="px-4 py-3.5 text-gray-500">
+                    {sub.renewalDate || "—"}
+                  </td>
                   <td className="px-4 py-3.5">
                     <UrgencyBadge days={days} />
                   </td>

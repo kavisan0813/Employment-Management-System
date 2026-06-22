@@ -14,7 +14,9 @@ export function useInvoices() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"ALL" | InvoiceStatus>("ALL");
+  const [statusFilter, setStatusFilter] = useState<"ALL" | InvoiceStatus>(
+    "ALL",
+  );
   const [orgFilter, setOrgFilter] = useState("ALL");
 
   const refresh = useCallback(() => {

@@ -6,9 +6,13 @@ export function SuperAdminsTable() {
   const { users } = useUserManagement();
 
   const superAdmins = users.filter((u) =>
-    ["Super Admin", "Root Admin", "Billing Admin", "Support Admin", "Technical Admin"].includes(
-      u.role
-    )
+    [
+      "Super Admin",
+      "Root Admin",
+      "Billing Admin",
+      "Support Admin",
+      "Technical Admin",
+    ].includes(u.role),
   );
 
   return (
@@ -73,7 +77,10 @@ export function SuperAdminsTable() {
               ))}
               {superAdmins.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-gray-400">
+                  <td
+                    colSpan={5}
+                    className="px-4 py-12 text-center text-gray-400"
+                  >
                     No Super Admins found.
                   </td>
                 </tr>

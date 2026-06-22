@@ -4,7 +4,15 @@
  */
 
 import React from "react";
-import { X, DollarSign, Building2, CheckCircle2, XCircle, Clock, RotateCw } from "lucide-react";
+import {
+  X,
+  DollarSign,
+  Building2,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  RotateCw,
+} from "lucide-react";
 import { Payment } from "../types/payment.types";
 
 interface PaymentDrawerProps {
@@ -14,23 +22,49 @@ interface PaymentDrawerProps {
   onRefund: (id: string) => void;
 }
 
-const statusConfig: Record<string, { class: string; icon: React.ElementType; label: string }> = {
-  Success: { class: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: CheckCircle2, label: "Success" },
-  Failed: { class: "bg-rose-50 text-rose-700 border-rose-200", icon: XCircle, label: "Failed" },
-  Pending: { class: "bg-amber-50 text-amber-700 border-amber-200", icon: Clock, label: "Pending" },
-  Refunded: { class: "bg-blue-50 text-blue-700 border-blue-200", icon: RotateCw, label: "Refunded" },
+const statusConfig: Record<
+  string,
+  { class: string; icon: React.ElementType; label: string }
+> = {
+  Success: {
+    class: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    icon: CheckCircle2,
+    label: "Success",
+  },
+  Failed: {
+    class: "bg-rose-50 text-rose-700 border-rose-200",
+    icon: XCircle,
+    label: "Failed",
+  },
+  Pending: {
+    class: "bg-amber-50 text-amber-700 border-amber-200",
+    icon: Clock,
+    label: "Pending",
+  },
+  Refunded: {
+    class: "bg-blue-50 text-blue-700 border-blue-200",
+    icon: RotateCw,
+    label: "Refunded",
+  },
 };
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between py-2.5 border-b border-gray-100 last:border-0">
-      <span className="text-[10px] uppercase font-semibold tracking-wide text-gray-400">{label}</span>
+      <span className="text-[10px] uppercase font-semibold tracking-wide text-gray-400">
+        {label}
+      </span>
       <span className="text-xs font-medium text-gray-900">{value}</span>
     </div>
   );
 }
 
-export function PaymentDrawer({ payment, onClose, onRetry, onRefund }: PaymentDrawerProps) {
+export function PaymentDrawer({
+  payment,
+  onClose,
+  onRetry,
+  onRefund,
+}: PaymentDrawerProps) {
   const cfg = statusConfig[payment.status] || statusConfig.Pending;
   const StatusIcon = cfg.icon;
 
@@ -40,7 +74,9 @@ export function PaymentDrawer({ payment, onClose, onRetry, onRefund }: PaymentDr
       <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <DollarSign className="w-4 h-4 text-indigo-600" />
-          <h3 className="text-sm font-semibold text-gray-900">Payment Details</h3>
+          <h3 className="text-sm font-semibold text-gray-900">
+            Payment Details
+          </h3>
         </div>
         <button
           onClick={onClose}
@@ -52,11 +88,15 @@ export function PaymentDrawer({ payment, onClose, onRetry, onRefund }: PaymentDr
 
       <div className="flex-1 overflow-y-auto">
         {/* Status banner */}
-        <div className={`mx-5 mt-5 flex items-center gap-2.5 px-4 py-3 rounded-lg border ${cfg.class}`}>
+        <div
+          className={`mx-5 mt-5 flex items-center gap-2.5 px-4 py-3 rounded-lg border ${cfg.class}`}
+        >
           <StatusIcon className="w-4 h-4" />
           <span className="text-xs font-semibold">{cfg.label}</span>
           {payment.failureReason && (
-            <span className="text-[10px] ml-auto opacity-75">{payment.failureReason}</span>
+            <span className="text-[10px] ml-auto opacity-75">
+              {payment.failureReason}
+            </span>
           )}
         </div>
 
@@ -75,17 +115,26 @@ export function PaymentDrawer({ payment, onClose, onRetry, onRefund }: PaymentDr
               <Building2 className="w-4 h-4 text-indigo-600" />
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900">{payment.organizationName}</p>
-              <p className="text-[11px] text-gray-400">Invoice {payment.invoiceNumber}</p>
+              <p className="text-sm font-bold text-gray-900">
+                {payment.organizationName}
+              </p>
+              <p className="text-[11px] text-gray-400">
+                Invoice {payment.invoiceNumber}
+              </p>
             </div>
           </div>
         </div>
 
         {/* Details */}
         <div className="px-5 py-4 space-y-0.5">
-          <InfoRow label="Transaction ID" value={
-            <span className="font-mono text-[10px]">{payment.transactionId}</span>
-          } />
+          <InfoRow
+            label="Transaction ID"
+            value={
+              <span className="font-mono text-[10px]">
+                {payment.transactionId}
+              </span>
+            }
+          />
           <InfoRow label="Payment Date" value={payment.paymentDate} />
           <InfoRow label="Method" value={payment.method} />
           {payment.cardLast4 && (
@@ -95,7 +144,11 @@ export function PaymentDrawer({ payment, onClose, onRetry, onRefund }: PaymentDr
           {payment.failureReason && (
             <InfoRow
               label="Failure Reason"
-              value={<span className="text-rose-600 font-semibold">{payment.failureReason}</span>}
+              value={
+                <span className="text-rose-600 font-semibold">
+                  {payment.failureReason}
+                </span>
+              }
             />
           )}
         </div>

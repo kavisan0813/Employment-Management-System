@@ -7,7 +7,8 @@ export function ImportExportUsers() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Download className="w-5 h-5 text-indigo-600" /> Import / Export Users
+            <Download className="w-5 h-5 text-indigo-600" /> Import / Export
+            Users
           </h2>
           <p className="text-xs text-gray-500">
             Bulk manage users via CSV file transfers.

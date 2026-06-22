@@ -15,7 +15,7 @@ export const userManagementService = {
   killSession: (sessionId: string) => {
     const sessions = db.userSessions.get();
     const updated = sessions.map((s) =>
-      s.id === sessionId ? { ...s, status: "Terminated" as const } : s
+      s.id === sessionId ? { ...s, status: "Terminated" as const } : s,
     );
     db.userSessions.save(updated);
   },

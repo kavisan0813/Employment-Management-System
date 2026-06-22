@@ -36,26 +36,34 @@ export function ActivityLogsTable({
   setSelectedAction,
   dateRange,
   setDateRange,
-  filterByDate
+  filterByDate,
 }: ActivityLogsTableProps) {
-  
   // Extract all unique modules
-  const modules = Array.from(new Set(logs.map(l => l.module)));
+  const modules = Array.from(new Set(logs.map((l) => l.module)));
   // Extract all unique actions
-  const actions = Array.from(new Set(logs.map(l => l.action)));
+  const actions = Array.from(new Set(logs.map((l) => l.action)));
 
-  const filtered = logs.filter(log => {
-    const matchesSearch = 
+  const filtered = logs.filter((log) => {
+    const matchesSearch =
       log.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.details.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesOrg = selectedOrg === "ALL" || log.organization === selectedOrg;
-    const matchesModule = selectedModule === "ALL" || log.module === selectedModule;
-    const matchesAction = selectedAction === "ALL" || log.action === selectedAction;
+    const matchesOrg =
+      selectedOrg === "ALL" || log.organization === selectedOrg;
+    const matchesModule =
+      selectedModule === "ALL" || log.module === selectedModule;
+    const matchesAction =
+      selectedAction === "ALL" || log.action === selectedAction;
     const matchesDate = filterByDate(log.timestamp);
 
-    return matchesSearch && matchesOrg && matchesModule && matchesAction && matchesDate;
+    return (
+      matchesSearch &&
+      matchesOrg &&
+      matchesModule &&
+      matchesAction &&
+      matchesDate
+    );
   });
 
   return (
@@ -81,8 +89,10 @@ export function ActivityLogsTable({
             className="bg-gray-50 border border-gray-200 text-gray-800 text-xs px-3 py-2 rounded-lg focus:outline-indigo-500"
           >
             <option value="ALL">All Organizations</option>
-            {organizations.map(org => (
-              <option key={org} value={org}>{org}</option>
+            {organizations.map((org) => (
+              <option key={org} value={org}>
+                {org}
+              </option>
             ))}
           </select>
 
@@ -93,8 +103,10 @@ export function ActivityLogsTable({
             className="bg-gray-50 border border-gray-200 text-gray-800 text-xs px-3 py-2 rounded-lg focus:outline-indigo-500"
           >
             <option value="ALL">All Modules</option>
-            {modules.map(mod => (
-              <option key={mod} value={mod}>{mod}</option>
+            {modules.map((mod) => (
+              <option key={mod} value={mod}>
+                {mod}
+              </option>
             ))}
           </select>
 
@@ -105,8 +117,10 @@ export function ActivityLogsTable({
             className="bg-gray-50 border border-gray-200 text-gray-800 text-xs px-3 py-2 rounded-lg focus:outline-indigo-500"
           >
             <option value="ALL">All Actions</option>
-            {actions.map(act => (
-              <option key={act} value={act}>{act}</option>
+            {actions.map((act) => (
+              <option key={act} value={act}>
+                {act}
+              </option>
             ))}
           </select>
 
@@ -126,20 +140,29 @@ export function ActivityLogsTable({
       {/* Timeline Layout */}
       <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-2xs">
         {filtered.length === 0 ? (
-          <div className="p-8 text-center text-gray-400 text-xs">No activity log entries found.</div>
+          <div className="p-8 text-center text-gray-400 text-xs">
+            No activity log entries found.
+          </div>
         ) : (
           <div className="relative border-l border-gray-200 ml-4 space-y-6 py-2">
-            {filtered.map(log => {
+            {filtered.map((log) => {
               // Action color mappings
               const getActionColor = (action: string) => {
-                switch(action) {
-                  case "Create": return "bg-teal-50 text-teal-700 border-teal-200";
-                  case "Update": return "bg-indigo-50 text-indigo-700 border-indigo-200";
-                  case "Delete": return "bg-rose-50 text-rose-700 border-rose-200";
-                  case "Approve": return "bg-emerald-50 text-emerald-700 border-emerald-200";
-                  case "Reject": return "bg-amber-50 text-amber-700 border-amber-200";
-                  case "Export": return "bg-purple-50 text-purple-700 border-purple-200";
-                  default: return "bg-gray-50 text-gray-700 border-gray-200";
+                switch (action) {
+                  case "Create":
+                    return "bg-teal-50 text-teal-700 border-teal-200";
+                  case "Update":
+                    return "bg-indigo-50 text-indigo-700 border-indigo-200";
+                  case "Delete":
+                    return "bg-rose-50 text-rose-700 border-rose-200";
+                  case "Approve":
+                    return "bg-emerald-50 text-emerald-700 border-emerald-200";
+                  case "Reject":
+                    return "bg-amber-50 text-amber-700 border-amber-200";
+                  case "Export":
+                    return "bg-purple-50 text-purple-700 border-purple-200";
+                  default:
+                    return "bg-gray-50 text-gray-700 border-gray-200";
                 }
               };
 
@@ -153,11 +176,15 @@ export function ActivityLogsTable({
                       {/* Timestamp */}
                       <span className="text-[11px] font-mono text-gray-400 flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
-                        {new Date(log.timestamp).toLocaleString().replace(",", "")}
+                        {new Date(log.timestamp)
+                          .toLocaleString()
+                          .replace(",", "")}
                       </span>
 
                       {/* Action Badges */}
-                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded border text-[9px] font-mono font-bold uppercase shrink-0 ${getActionColor(log.action)}`}>
+                      <span
+                        className={`inline-flex items-center px-1.5 py-0.5 rounded border text-[9px] font-mono font-bold uppercase shrink-0 ${getActionColor(log.action)}`}
+                      >
                         {log.action}
                       </span>
 
@@ -171,7 +198,11 @@ export function ActivityLogsTable({
                     {/* Actor label */}
                     <div className="text-[11px] text-gray-500 flex items-center gap-1">
                       <User className="w-3 h-3 text-gray-400" />
-                      by <strong className="text-gray-800 font-semibold">{log.user}</strong> ({log.role})
+                      by{" "}
+                      <strong className="text-gray-800 font-semibold">
+                        {log.user}
+                      </strong>{" "}
+                      ({log.role})
                     </div>
                   </div>
 

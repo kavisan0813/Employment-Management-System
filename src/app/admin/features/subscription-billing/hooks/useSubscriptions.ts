@@ -4,20 +4,29 @@
  */
 
 import { useState, useEffect, useCallback } from "react";
-import { SubscriptionRecord, SubscriptionStats } from "../types/subscription.types";
+import {
+  SubscriptionRecord,
+  SubscriptionStats,
+} from "../types/subscription.types";
 import { SubscriptionService } from "../services/subscription.service";
 import { EntityStatus } from "../../../../admin/types";
 
 export function useSubscriptions() {
   const [subscriptions, setSubscriptions] = useState<SubscriptionRecord[]>([]);
   const [stats, setStats] = useState<SubscriptionStats | null>(null);
-  const [selectedSub, setSelectedSub] = useState<SubscriptionRecord | null>(null);
+  const [selectedSub, setSelectedSub] = useState<SubscriptionRecord | null>(
+    null,
+  );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"ALL" | EntityStatus>("ALL");
-  const [planFilter, setPlanFilter] = useState<"ALL" | "Starter" | "Growth" | "Enterprise">("ALL");
-  const [cycleFilter, setCycleFilter] = useState<"ALL" | "Monthly" | "Annual">("ALL");
+  const [planFilter, setPlanFilter] = useState<
+    "ALL" | "Starter" | "Growth" | "Enterprise"
+  >("ALL");
+  const [cycleFilter, setCycleFilter] = useState<"ALL" | "Monthly" | "Annual">(
+    "ALL",
+  );
 
   const refresh = useCallback(() => {
     setSubscriptions(SubscriptionService.getAll());
@@ -34,7 +43,8 @@ export function useSubscriptions() {
       sub.id.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "ALL" || sub.status === statusFilter;
     const matchesPlan = planFilter === "ALL" || sub.planTier === planFilter;
-    const matchesCycle = cycleFilter === "ALL" || sub.billingCycle === cycleFilter;
+    const matchesCycle =
+      cycleFilter === "ALL" || sub.billingCycle === cycleFilter;
     return matchesSearch && matchesStatus && matchesPlan && matchesCycle;
   });
 
@@ -48,7 +58,11 @@ export function useSubscriptions() {
     setSelectedSub(null);
   };
 
-  const handleChangePlan = (subId: string, newPlan: "Starter" | "Growth" | "Enterprise", newAmount: number) => {
+  const handleChangePlan = (
+    subId: string,
+    newPlan: "Starter" | "Growth" | "Enterprise",
+    newAmount: number,
+  ) => {
     SubscriptionService.changePlan(subId, newPlan, newAmount);
     refresh();
     closeDrawer();

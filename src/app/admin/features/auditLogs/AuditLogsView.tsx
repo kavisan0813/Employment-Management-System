@@ -4,9 +4,18 @@
  */
 
 import React, { useState } from "react";
-import { 
-  LayoutDashboard, ShieldAlert, AlertTriangle, ShieldCheck, 
-  Download, History, UserCheck, Terminal, Settings2, Trash2, Shield
+import {
+  LayoutDashboard,
+  ShieldAlert,
+  AlertTriangle,
+  ShieldCheck,
+  Download,
+  History,
+  UserCheck,
+  Terminal,
+  Settings2,
+  Trash2,
+  Shield,
 } from "lucide-react";
 import { useAuditLogs } from "./hooks/useAuditLogs";
 import { LogsDashboard } from "./components/LogsDashboard";
@@ -18,7 +27,7 @@ import { ErrorLogsTable } from "./components/ErrorLogsTable";
 import { ExportLogsTable } from "./components/ExportLogsTable";
 import { LogRetentionSettings } from "./components/LogRetentionSettings";
 
-type ActiveTab = 
+type ActiveTab =
   | "dashboard"
   | "login"
   | "activity"
@@ -30,7 +39,7 @@ type ActiveTab =
 
 export default function AuditLogsView() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("dashboard");
-  
+
   const {
     loginLogs,
     activityLogs,
@@ -63,7 +72,7 @@ export default function AuditLogsView() {
     resolveSecurityEvent,
     updateRetentionPolicy,
     purgeAuditTrail,
-    filterByDate
+    filterByDate,
   } = useAuditLogs();
 
   // Reset tab-specific filters when switching tabs
@@ -91,7 +100,6 @@ export default function AuditLogsView() {
 
   return (
     <div className="space-y-6">
-      
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-gray-150 gap-4">
         <div>
@@ -100,7 +108,8 @@ export default function AuditLogsView() {
             Compliance Audit Ledger (SOC2)
           </h1>
           <p className="text-xs text-gray-400 mt-1">
-            Real-time event logging registry, credential accesses, and configuration mutations globally.
+            Real-time event logging registry, credential accesses, and
+            configuration mutations globally.
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -116,11 +125,10 @@ export default function AuditLogsView() {
 
       {/* Main Tabbed Grid Layout */}
       <div className="flex flex-col lg:flex-row gap-6">
-        
         {/* Navigation Sidebar */}
         <aside className="w-full lg:w-60 shrink-0">
           <nav className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 gap-1 border-b lg:border-b-0 border-gray-150">
-            {tabsConfig.map(tab => {
+            {tabsConfig.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
 
@@ -129,18 +137,21 @@ export default function AuditLogsView() {
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
                   className={`inline-flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    isActive 
-                      ? "bg-indigo-600 text-white shadow-2xs" 
+                    isActive
+                      ? "bg-indigo-600 text-white shadow-2xs"
                       : "text-gray-600 hover:text-gray-950 hover:bg-gray-55"
                   }`}
                 >
-                  <Icon className={`w-4.5 h-4.5 ${isActive ? "text-white" : "text-gray-400"}`} />
+                  <Icon
+                    className={`w-4.5 h-4.5 ${isActive ? "text-white" : "text-gray-400"}`}
+                  />
                   {tab.label}
-                  
+
                   {/* Alert notification badge inside tab for security alerts */}
-                  {tab.id === "security" && stats.criticalSecurityEvents > 0 && (
-                    <span className="ml-auto w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                  )}
+                  {tab.id === "security" &&
+                    stats.criticalSecurityEvents > 0 && (
+                      <span className="ml-auto w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                    )}
                 </button>
               );
             })}
@@ -270,9 +281,7 @@ export default function AuditLogsView() {
             </div>
           )}
         </main>
-
       </div>
-
     </div>
   );
 }

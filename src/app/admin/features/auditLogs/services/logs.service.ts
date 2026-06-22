@@ -12,7 +12,7 @@ import {
   ErrorLog,
   ExportLog,
   LogRetentionPolicy,
-  LogsStats
+  LogsStats,
 } from "../types/logs.types";
 
 export const LogsService = {
@@ -28,7 +28,7 @@ export const LogsService = {
     const newLog: LoginLog = {
       ...log,
       id: `login-${Date.now()}`,
-      loginTime: new Date().toISOString()
+      loginTime: new Date().toISOString(),
     };
     this.saveLoginLogs([newLog, ...logs]);
   },
@@ -45,7 +45,7 @@ export const LogsService = {
     const newLog: ActivityLog = {
       ...log,
       id: `act-${Date.now()}`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     this.saveActivityLogs([newLog, ...logs]);
   },
@@ -62,7 +62,7 @@ export const LogsService = {
     const newTrail: AuditTrail = {
       ...trail,
       id: `trail-${Date.now()}`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     this.saveAuditTrails([newTrail, ...trails]);
   },
@@ -79,13 +79,16 @@ export const LogsService = {
     const newLog: SecurityEventLog = {
       ...log,
       id: `sec-${Date.now()}`,
-      detectedAt: new Date().toISOString()
+      detectedAt: new Date().toISOString(),
     };
     this.saveSecurityEventLogs([newLog, ...logs]);
   },
-  resolveSecurityEvent(id: string, status: "Resolved" | "Pending" | "Active"): void {
+  resolveSecurityEvent(
+    id: string,
+    status: "Resolved" | "Pending" | "Active",
+  ): void {
     const logs = this.getSecurityEventLogs();
-    const updated = logs.map(l => l.id === id ? { ...l, status } : l);
+    const updated = logs.map((l) => (l.id === id ? { ...l, status } : l));
     this.saveSecurityEventLogs(updated);
   },
 
@@ -101,7 +104,7 @@ export const LogsService = {
     const newLog: ErrorLog = {
       ...log,
       id: `err-${Date.now()}`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     this.saveErrorLogs([newLog, ...logs]);
   },
@@ -118,7 +121,7 @@ export const LogsService = {
     const newLog: ExportLog = {
       ...log,
       id: `exp-${Date.now()}`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     this.saveExportLogs([newLog, ...logs]);
   },
@@ -139,20 +142,32 @@ export const LogsService = {
     const exportsList = this.getExportLogs();
 
     const totalLogins = logins.length;
-    const successfulLogins = logins.filter(l => l.status === "Success").length;
-    const loginSuccessRate = totalLogins > 0 ? Math.round((successfulLogins / totalLogins) * 100) : 100;
-    
+    const successfulLogins = logins.filter(
+      (l) => l.status === "Success",
+    ).length;
+    const loginSuccessRate =
+      totalLogins > 0
+        ? Math.round((successfulLogins / totalLogins) * 100)
+        : 100;
+
     // Active sessions are successful logins with logoutTime = null and within last 24 hours
     const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
     const activeSessions = logins.filter(
-      l => l.status === "Success" && l.logoutTime === null && new Date(l.loginTime).getTime() > oneDayAgo
+      (l) =>
+        l.status === "Success" &&
+        l.logoutTime === null &&
+        new Date(l.loginTime).getTime() > oneDayAgo,
     ).length;
 
-    const criticalSecurityEvents = security.filter(s => s.severity === "Critical" && s.status === "Active").length;
-    
+    const criticalSecurityEvents = security.filter(
+      (s) => s.severity === "Critical" && s.status === "Active",
+    ).length;
+
     // Error rate today is number of Error/Fatal logs in last 24 hours
     const errorRateToday = errors.filter(
-      e => (e.severity === "Error" || e.severity === "Fatal") && new Date(e.timestamp).getTime() > oneDayAgo
+      (e) =>
+        (e.severity === "Error" || e.severity === "Fatal") &&
+        new Date(e.timestamp).getTime() > oneDayAgo,
     ).length;
 
     const totalExportsCount = exportsList.length;
@@ -163,7 +178,7 @@ export const LogsService = {
       activeSessions,
       criticalSecurityEvents,
       errorRateToday,
-      totalExportsCount
+      totalExportsCount,
     };
-  }
+  },
 };

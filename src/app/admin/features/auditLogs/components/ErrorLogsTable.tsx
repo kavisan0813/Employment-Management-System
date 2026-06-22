@@ -4,7 +4,14 @@
  */
 
 import React, { useState } from "react";
-import { Search, AlertTriangle, ChevronDown, ChevronUp, Copy, Terminal } from "lucide-react";
+import {
+  Search,
+  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  Terminal,
+} from "lucide-react";
 import { ErrorLog } from "../types/logs.types";
 
 interface ErrorLogsTableProps {
@@ -26,7 +33,7 @@ export function ErrorLogsTable({
   setSelectedSeverity,
   dateRange,
   setDateRange,
-  filterByDate
+  filterByDate,
 }: ErrorLogsTableProps) {
   const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
 
@@ -41,13 +48,14 @@ export function ErrorLogsTable({
     alert("Error debug trace payload copied to clipboard.");
   };
 
-  const filtered = logs.filter(log => {
-    const matchesSearch = 
+  const filtered = logs.filter((log) => {
+    const matchesSearch =
       log.errorCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.path.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesSeverity = selectedSeverity === "ALL" || log.severity === selectedSeverity;
+    const matchesSeverity =
+      selectedSeverity === "ALL" || log.severity === selectedSeverity;
     const matchesDate = filterByDate(log.timestamp);
 
     return matchesSearch && matchesSeverity && matchesDate;
@@ -98,22 +106,30 @@ export function ErrorLogsTable({
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-2xs">
         <div className="divide-y divide-gray-100">
           {filtered.length === 0 ? (
-            <div className="p-8 text-center text-gray-400 text-xs">No exception logs registered.</div>
+            <div className="p-8 text-center text-gray-400 text-xs">
+              No exception logs registered.
+            </div>
           ) : (
-            filtered.map(log => {
+            filtered.map((log) => {
               const isExpanded = expandedLogId === log.id;
-              
+
               // Get severity color
               const getSeverityBadge = (sev: string) => {
-                switch(sev) {
-                  case "Fatal": return "bg-rose-100 text-rose-700 border-rose-200";
-                  case "Error": return "bg-red-50 text-red-700 border-red-150";
-                  default: return "bg-amber-50 text-amber-700 border-amber-150";
+                switch (sev) {
+                  case "Fatal":
+                    return "bg-rose-100 text-rose-700 border-rose-200";
+                  case "Error":
+                    return "bg-red-50 text-red-700 border-red-150";
+                  default:
+                    return "bg-amber-50 text-amber-700 border-amber-150";
                 }
               };
 
               return (
-                <div key={log.id} className="transition-colors hover:bg-gray-50/20 text-xs">
+                <div
+                  key={log.id}
+                  className="transition-colors hover:bg-gray-50/20 text-xs"
+                >
                   {/* Summary Bar */}
                   <div
                     onClick={() => toggleExpand(log.id)}
@@ -122,18 +138,26 @@ export function ErrorLogsTable({
                     <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                       {/* Timestamp */}
                       <span className="font-mono text-gray-400 w-36 shrink-0">
-                        {new Date(log.timestamp).toLocaleString().replace(",", "")}
+                        {new Date(log.timestamp)
+                          .toLocaleString()
+                          .replace(",", "")}
                       </span>
 
                       {/* Severity badge */}
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded border text-[9px] font-bold uppercase shrink-0 ${getSeverityBadge(log.severity)}`}>
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded border text-[9px] font-bold uppercase shrink-0 ${getSeverityBadge(log.severity)}`}
+                      >
                         {log.severity}
                       </span>
 
                       {/* Error code & message */}
                       <div>
-                        <span className="font-mono text-[11px] font-bold text-rose-600 mr-2">{log.errorCode}</span>
-                        <span className="text-gray-900 font-bold leading-normal">{log.message}</span>
+                        <span className="font-mono text-[11px] font-bold text-rose-600 mr-2">
+                          {log.errorCode}
+                        </span>
+                        <span className="text-gray-900 font-bold leading-normal">
+                          {log.message}
+                        </span>
                       </div>
                     </div>
 
@@ -148,7 +172,11 @@ export function ErrorLogsTable({
                       >
                         <Copy className="w-3.5 h-3.5" />
                       </button>
-                      {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      {isExpanded ? (
+                        <ChevronUp className="w-4 h-4" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
                     </div>
                   </div>
 
@@ -159,20 +187,36 @@ export function ErrorLogsTable({
                         {/* Scope details */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-[11px] text-gray-500 font-medium">
                           <div>
-                            <span className="text-[10px] font-bold text-gray-400 uppercase block">Organization</span>
-                            <span className="text-gray-800 font-bold">{log.organization || "Global System"}</span>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase block">
+                              Organization
+                            </span>
+                            <span className="text-gray-800 font-bold">
+                              {log.organization || "Global System"}
+                            </span>
                           </div>
                           <div>
-                            <span className="text-[10px] font-bold text-gray-400 uppercase block">Actor Context</span>
-                            <span className="text-gray-800 font-bold">{log.user}</span>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase block">
+                              Actor Context
+                            </span>
+                            <span className="text-gray-800 font-bold">
+                              {log.user}
+                            </span>
                           </div>
                           <div>
-                            <span className="text-[10px] font-bold text-gray-400 uppercase block">API endpoint</span>
-                            <span className="text-gray-850 font-mono">{log.path}</span>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase block">
+                              API endpoint
+                            </span>
+                            <span className="text-gray-850 font-mono">
+                              {log.path}
+                            </span>
                           </div>
                           <div>
-                            <span className="text-[10px] font-bold text-gray-400 uppercase block">Log Reference ID</span>
-                            <span className="text-gray-850 font-mono">{log.id}</span>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase block">
+                              Log Reference ID
+                            </span>
+                            <span className="text-gray-850 font-mono">
+                              {log.id}
+                            </span>
                           </div>
                         </div>
 
@@ -190,7 +234,9 @@ export function ErrorLogsTable({
                             <Terminal className="w-3.5 h-3.5" />
                             // Interactive Runtime Trace Dump
                           </p>
-                          <pre className="whitespace-pre-wrap leading-relaxed select-all selection:bg-indigo-650">{log.stackTrace}</pre>
+                          <pre className="whitespace-pre-wrap leading-relaxed select-all selection:bg-indigo-650">
+                            {log.stackTrace}
+                          </pre>
                         </div>
                       </div>
                     </div>

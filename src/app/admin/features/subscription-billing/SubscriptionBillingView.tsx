@@ -19,7 +19,13 @@ import { InvoicesPage } from "./pages/InvoicesPage";
 import { PaymentsPage } from "./pages/PaymentsPage";
 import { RenewalTrackingPage } from "./pages/RenewalTrackingPage";
 
-type BillingTab = "overview" | "plans" | "subscriptions" | "invoices" | "payments" | "renewals";
+type BillingTab =
+  | "overview"
+  | "plans"
+  | "subscriptions"
+  | "invoices"
+  | "payments"
+  | "renewals";
 
 const TABS: { id: BillingTab; label: string; icon: React.ElementType }[] = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
