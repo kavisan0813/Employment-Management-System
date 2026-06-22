@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, Navigate, useLocation } from "react-router";
+import { createBrowserRouter, Navigate, useLocation, useNavigate } from "react-router";
 import { Layout } from "./components/Layout";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
@@ -419,6 +419,78 @@ function AccessDenied() {
       >
         Return to Dashboard
       </a>
+    </div>
+  );
+}
+
+// ── 404 Not Found page ────────────────────────────────────────
+function NotFound() {
+  const navigate = useNavigate();
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[70vh] text-center p-8 animate-in fade-in duration-500">
+      <div
+        className="w-24 h-24 rounded-[32px] flex items-center justify-center mb-8 shadow-2xl animate-bounce"
+        style={{
+          background: "linear-gradient(135deg, #10B981, #059669)",
+          boxShadow: "0 10px 30px rgba(16, 185, 129, 0.3)",
+        }}
+      >
+        <span style={{ fontSize: "42px" }}>🔍</span>
+      </div>
+      <h1
+        style={{
+          fontSize: "80px",
+          fontWeight: 950,
+          background: "linear-gradient(135deg, #10B981, #059669)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          letterSpacing: "-2px",
+          lineHeight: 1,
+          marginBottom: "16px",
+        }}
+      >
+        404
+      </h1>
+      <h2
+        style={{
+          fontSize: "24px",
+          fontWeight: 800,
+          color: "var(--foreground)",
+          letterSpacing: "-0.5px",
+          marginBottom: "12px",
+        }}
+      >
+        Page Not Found
+      </h2>
+      <p
+        style={{
+          fontSize: "15px",
+          color: "var(--muted-foreground)",
+          maxWidth: "450px",
+          lineHeight: 1.6,
+          marginBottom: "32px",
+        }}
+      >
+        The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
+      </p>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => navigate(-1)}
+          className="px-6 py-3.5 rounded-2xl border border-border text-sm font-bold text-muted-foreground transition-all hover:bg-secondary hover:text-foreground active:scale-95 cursor-pointer"
+        >
+          Go Back
+        </button>
+        <button
+          onClick={() => navigate("/")}
+          className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl text-white text-sm font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer"
+          style={{
+            background: "linear-gradient(135deg, #10B981, #059669)",
+            boxShadow: "0 8px 24px rgba(16,185,129,0.3)",
+          }}
+        >
+          Return to Dashboard
+        </button>
+      </div>
     </div>
   );
 }
@@ -848,15 +920,14 @@ export const router = createBrowserRouter([
         path: "my-notifications",
         element: protectedRoute(EmployeeNotifications),
       },
-      {
-        path: "goals",
-        element: (
-          <Protected>
-            <GoalsWrapper />
-          </Protected>
-        ),
-      },
+      { path: "goals", element: (
+        <Protected>
+          <GoalsWrapper />
+        </Protected>
+      ) },
       { path: "asset-management", element: protectedRoute(AssetManagement) },
+      { path: "*", element: <NotFound /> },
     ],
   },
+  { path: "*", element: <NotFound /> },
 ]);
