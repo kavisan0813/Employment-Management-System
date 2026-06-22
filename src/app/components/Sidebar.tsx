@@ -246,7 +246,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           { label: "Team Directory", path: "/manager/directory" },
           { label: "Support Ticket", path: "/manager/support" },
           { label: "Announcements", path: "/manager/announcements" },
-          { label: "Notifications", path: "/manager/notifications" },
         ],
       },
     ];

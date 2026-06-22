@@ -543,6 +543,9 @@ function NotificationsWrapper() {
   if (user?.role === "Employee") {
     return lazyRoute(EmployeeAnnouncements);
   }
+  if (user?.role === "Manager") {
+    return lazyRoute(ManagerNotifications);
+  }
   return lazyRoute(Notifications);
 }
 

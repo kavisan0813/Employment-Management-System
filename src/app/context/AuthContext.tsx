@@ -172,6 +172,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/goals",
         "/profile",
         "/support",
+        "/reports",
+        "/notifications",
       ];
       return allowed.some(
         (p) => normalizedPath === p || normalizedPath.startsWith(p + "/"),
