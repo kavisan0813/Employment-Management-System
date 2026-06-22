@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
 import {
   Download,
   FileText,
@@ -4961,6 +4962,8 @@ const landingFunnelData = [
 ];
 
 export function Reports() {
+  const { user } = useAuth();
+  const isManager = user?.role === "Manager";
   const location = useLocation();
   const navigate = useNavigate();
   const [activeReport, setActiveReport] = useState<string | null>(null);
@@ -4969,7 +4972,9 @@ export function Reports() {
 
   // Filters state
   const [filterDate, setFilterDate] = useState("This Month");
-  const [filterDept, setFilterDept] = useState("All Departments");
+  const [filterDept, setFilterDept] = useState(
+    user?.role === "Manager" ? "Engineering" : "All Departments"
+  );
   const [filterLoc, setFilterLoc] = useState("All Locations");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -5034,6 +5039,24 @@ export function Reports() {
     dir: "asc" | "desc";
   } | null>(null);
   const [queryPage, setQueryPage] = useState(1);
+
+  const pipelineSummary = isManager
+    ? { total: 42, conversion: "19.0%", thisMonth: "+3", pending: 2 }
+    : { total: 145, conversion: "18.5%", thisMonth: "+8", pending: 4 };
+
+  const pipelineStages = isManager
+    ? [
+        { stage: "Applied", count: 42, pct: 100, color: "#9CA3AF" },
+        { stage: "Interviewed", count: 18, pct: 42.8, color: "#34D399" },
+        { stage: "Offered", count: 4, pct: 9.5, color: "#00B87C" },
+        { stage: "Joined", count: 3, pct: 7.1, color: "#059669" },
+      ]
+    : [
+        { stage: "Applied", count: 145, pct: 100, color: "#9CA3AF" },
+        { stage: "Interviewed", count: 58, pct: 40, color: "#34D399" },
+        { stage: "Offered", count: 12, pct: 8.2, color: "#00B87C" },
+        { stage: "Joined", count: 8, pct: 5.5, color: "#059669" },
+      ];
 
   useEffect(() => {
     if (location.state?.activeReport) {
@@ -5344,7 +5367,7 @@ export function Reports() {
   const handleResetFilters = () => {
     setIsLoading(true);
     setFilterDate("This Month");
-    setFilterDept("All Departments");
+    setFilterDept(user?.role === "Manager" ? "Engineering" : "All Departments");
     setFilterLoc("All Locations");
     setTimeout(() => {
       setIsLoading(false);
@@ -5393,6 +5416,59 @@ export function Reports() {
       employees -= 5;
       hires = Math.max(0, hires - 2);
       payroll = payroll * 0.95;
+    }
+
+    if (isManager) {
+      return [
+        {
+          label: "Total Employees",
+          value: `${employees}`,
+          color: "#059669",
+          bg: "rgba(5, 150, 105, 0.15)",
+          trend: "+12",
+          icon: Users,
+        },
+        {
+          label: "New Hires",
+          value: `${hires}`,
+          color: "#0D9488",
+          bg: "rgba(13, 148, 136, 0.15)",
+          trend: "+5",
+          icon: UserPlus,
+        },
+        {
+          label: "Budget Utilization",
+          value: `${((payroll / 28.0) * 100).toFixed(1)}%`,
+          color: "#7C3AED",
+          bg: "rgba(124, 58, 237, 0.15)",
+          trend: "Under Budget",
+          icon: TrendingUp,
+        },
+        {
+          label: "Avg Attendance",
+          value: `${attendance}%`,
+          color: "#059669",
+          bg: "rgba(5, 150, 105, 0.15)",
+          trend: "+2.4%",
+          icon: CalendarCheck,
+        },
+        {
+          label: "Payroll Cost",
+          value: `₹${payroll.toFixed(1)}L`,
+          color: "#0EA5E9",
+          bg: "rgba(14, 165, 233, 0.15)",
+          trend: "+4.2%",
+          icon: DollarSign,
+        },
+        {
+          label: "Active Overtime",
+          value: "42 hrs",
+          color: "#EF4444",
+          bg: "rgba(239, 68, 68, 0.15)",
+          trend: "3 Alerts",
+          icon: Clock,
+        },
+      ];
     }
 
     return [
@@ -5648,7 +5724,7 @@ export function Reports() {
           {/* Dept filter dropdown */}
           <div style={{ position: "relative" }}>
             <button
-              onClick={() => setShowDeptDropdown(!showDeptDropdown)}
+              onClick={() => !isManager && setShowDeptDropdown(!showDeptDropdown)}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -5660,12 +5736,13 @@ export function Reports() {
                 color: "var(--foreground)",
                 fontSize: "13px",
                 fontWeight: 600,
-                cursor: "pointer",
+                cursor: isManager ? "default" : "pointer",
+                opacity: isManager ? 0.85 : 1,
               }}
             >
-              {filterDept} <ChevronDown size={14} />
+              {filterDept} {!isManager && <ChevronDown size={14} />}
             </button>
-            {showDeptDropdown && (
+            {showDeptDropdown && !isManager && (
               <div
                 style={{
                   position: "absolute",
@@ -5835,6 +5912,10 @@ export function Reports() {
                   else if (card.label === "Payroll Cost") navigate("/payroll");
                   else if (card.label === "Open Positions")
                     navigate("/recruitment");
+                  else if (card.label === "Budget Utilization")
+                    setActiveReport("Payroll Summary");
+                  else if (card.label === "Active Overtime")
+                    setActiveReport("Overtime Monitoring");
                 }}
                 style={{
                   backgroundColor: "var(--card)",
@@ -6165,7 +6246,7 @@ export function Reports() {
                   color: "var(--foreground)",
                 }}
               >
-                145
+                {pipelineSummary.total}
               </div>
             </div>
             <div>
@@ -6183,7 +6264,7 @@ export function Reports() {
               <div
                 style={{ fontSize: "16px", fontWeight: 900, color: "#00B87C" }}
               >
-                18.5%
+                {pipelineSummary.conversion}
               </div>
             </div>
             <div>
@@ -6201,7 +6282,7 @@ export function Reports() {
               <div
                 style={{ fontSize: "16px", fontWeight: 900, color: "#00B87C" }}
               >
-                +8
+                {pipelineSummary.thisMonth}
               </div>
             </div>
             <div>
@@ -6219,7 +6300,7 @@ export function Reports() {
               <div
                 style={{ fontSize: "16px", fontWeight: 900, color: "#EF4444" }}
               >
-                4
+                {pipelineSummary.pending}
               </div>
             </div>
           </div>
@@ -6227,12 +6308,7 @@ export function Reports() {
           <div
             style={{ display: "flex", flexDirection: "column", gap: "12px" }}
           >
-            {[
-              { stage: "Applied", count: 145, pct: 100, color: "#9CA3AF" },
-              { stage: "Interviewed", count: 58, pct: 40, color: "#34D399" },
-              { stage: "Offered", count: 12, pct: 8.2, color: "#00B87C" },
-              { stage: "Joined", count: 8, pct: 5.5, color: "#059669" },
-            ].map((st) => (
+            {pipelineStages.map((st) => (
               <div
                 key={st.stage}
                 onClick={(e) => {

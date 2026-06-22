@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -43,19 +43,30 @@ function RegularizationModal({
   isOpen,
   onClose,
   onSubmit,
+  defaultDate = "",
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (req: RegularizationRequest) => void;
+  defaultDate?: string;
 }) {
   const [formData, setFormData] = useState({
-    date: "",
+    date: defaultDate,
     type: "",
     checkIn: "",
     checkOut: "",
     reason: "",
     manager: "Arjun Reddy",
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormData((prev) => ({
+        ...prev,
+        date: defaultDate || prev.date,
+      }));
+    }
+  }, [isOpen, defaultDate]);
 
   if (!isOpen) return null;
 
@@ -505,6 +516,10 @@ export function EmployeeAttendance() {
     },
   ]);
 
+  const [logs, setLogs] = useState(ATTENDANCE_LOGS);
+  const [selectedDay, setSelectedDay] = useState<number | null>(6); // Default to April 6 (Today)
+  const [regDefaultDate, setRegDefaultDate] = useState("");
+
   // Calendar Math
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
@@ -512,12 +527,98 @@ export function EmployeeAttendance() {
   for (let i = 0; i < firstDayOfMonth; i++) calendarDays.push(null);
   for (let i = 1; i <= daysInMonth; i++) calendarDays.push(i);
 
+  const convertInputToDisplayDate = (inputDate: string): string => {
+    if (!inputDate) return "";
+    const parts = inputDate.split("-");
+    if (parts.length < 3) return inputDate;
+    const year = parts[0];
+    const monthIdx = parseInt(parts[1]) - 1;
+    const day = parts[2];
+    const monthShort = MONTH_NAMES[monthIdx]?.substring(0, 3) || "";
+    return `${day} ${monthShort} ${year}`;
+  };
+
+  const getLogForDay = useMemo(() => {
+    return (day: number) => {
+      const dayStr = day < 10 ? `0${day}` : `${day}`;
+      const monthStr = MONTH_NAMES[selectedMonth].substring(0, 3);
+      const dateStr = `${dayStr} ${monthStr} ${selectedYear}`;
+
+      const found = logs.find((l) => l.date === dateStr);
+      if (found) return found;
+
+      // Determine if weekend
+      const dayOfWeek = (firstDayOfMonth + day - 1) % 7;
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      if (isWeekend) {
+        return { date: dateStr, in: "-", out: "-", status: "Weekend" };
+      }
+
+      // Hardcoded leave for day 7
+      if (day === 7) {
+        return { date: dateStr, in: "-", out: "-", status: "Leave" };
+      }
+
+      // Past weekdays (day < today (6)) with no logs default to Present
+      if (day < 6) {
+        return { date: dateStr, in: "09:00 AM", out: "06:00 PM", status: "Present" };
+      }
+
+      // Future/today with no log
+      return { date: dateStr, in: "-", out: "-", status: "-" };
+    };
+  }, [logs, selectedMonth, selectedYear, firstDayOfMonth]);
+
+  const selectedDayLog = useMemo(() => {
+    if (selectedDay === null) return null;
+    return getLogForDay(selectedDay);
+  }, [selectedDay, getLogForDay]);
+
   const handleApplyRegularization = () => {
+    if (selectedDay) {
+      const dayPadded = String(selectedDay).padStart(2, "0");
+      const monthPadded = String(selectedMonth + 1).padStart(2, "0");
+      const dateStr = `${selectedYear}-${monthPadded}-${dayPadded}`;
+      setRegDefaultDate(dateStr);
+    } else {
+      setRegDefaultDate("");
+    }
     setIsRegModalOpen(true);
   };
 
   const handleSubmitRegularization = (newReq: RegularizationRequest) => {
     setRequests([newReq, ...requests]);
+
+    const displayDate = convertInputToDisplayDate(newReq.date);
+    let statusText = "Present";
+    if (newReq.type === "Work From Home") statusText = "WFH";
+    else if (newReq.type === "On-site / Client Visit") statusText = "On-site";
+    else if (newReq.type === "Missed Check-in" || newReq.type === "Missed Check-out" || newReq.type === "Full Day Correction") {
+      statusText = "Present"; // Regularized/approved correction represents presence
+    }
+
+    setLogs((prevLogs) => {
+      const existingIdx = prevLogs.findIndex((l) => l.date === displayDate);
+      const newLog = {
+        date: displayDate,
+        in: newReq.checkIn,
+        out: newReq.checkOut,
+        status: statusText,
+      };
+
+      if (existingIdx > -1) {
+        const updated = [...prevLogs];
+        updated[existingIdx] = newLog;
+        return updated;
+      } else {
+        const updated = [...prevLogs, newLog];
+        return updated.sort((a, b) => {
+          const dayA = parseInt(a.date.split(" ")[0]);
+          const dayB = parseInt(b.date.split(" ")[0]);
+          return dayA - dayB;
+        });
+      }
+    });
   };
 
   return (
@@ -644,45 +745,60 @@ export function EmployeeAttendance() {
                 if (day === null)
                   return <div key={`empty-${i}`} className="aspect-square" />;
 
-                const isWeekend = i % 7 === 0 || i % 7 === 6;
-                const isToday = day === 6; // April 6
-                const isLeave = day === 7;
+                const log = getLogForDay(day);
+                const status = log.status;
+                const isToday = day === 6;
+                const isSelected = selectedDay === day;
 
-                let cellStyle = "bg-background";
+                let cellStyle = "bg-background border-border hover:border-primary/40";
                 let textStyle = "text-foreground";
                 let dotStyle = "bg-transparent";
 
                 if (isToday) {
-                  cellStyle = "bg-primary shadow-xl shadow-primary/30";
-                  textStyle = "text-white";
+                  cellStyle = "bg-primary text-white shadow-xl shadow-primary/30 border-primary hover:bg-primary/95";
+                  textStyle = "text-white font-extrabold";
                   dotStyle = "bg-white";
-                } else if (isLeave) {
-                  cellStyle = "bg-amber-500/10 border-amber-500/20";
-                  textStyle = "text-amber-500";
+                } else if (status === "Present" || status === "WFH" || status === "On-site") {
+                  cellStyle = "bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20";
+                  textStyle = "text-emerald-700 dark:text-emerald-400 font-bold";
+                  dotStyle = "bg-emerald-500";
+                } else if (status === "Late") {
+                  cellStyle = "bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20";
+                  textStyle = "text-amber-600 dark:text-amber-400 font-bold";
                   dotStyle = "bg-amber-500";
-                } else if (isWeekend) {
-                  cellStyle = "bg-secondary/30 border-transparent opacity-40";
+                } else if (status === "Leave") {
+                  cellStyle = "bg-indigo-500/10 border-indigo-500/20 hover:bg-indigo-500/20";
+                  textStyle = "text-indigo-600 dark:text-indigo-400 font-bold";
+                  dotStyle = "bg-indigo-500";
+                } else if (status === "Weekend") {
+                  cellStyle = "bg-secondary/30 border-transparent opacity-40 hover:opacity-60";
                   textStyle = "text-muted-foreground";
-                } else if (day < 6) {
-                  cellStyle = "bg-primary/10 border-primary/20";
-                  textStyle = "text-primary";
-                  dotStyle = "bg-primary";
+                  dotStyle = "bg-transparent";
+                } else if (status === "Absent") {
+                  cellStyle = "bg-rose-500/10 border-rose-500/20 hover:bg-rose-500/20";
+                  textStyle = "text-rose-600 dark:text-rose-400 font-bold";
+                  dotStyle = "bg-rose-500";
                 }
 
+                const selectedRing = isSelected
+                  ? "ring-2 ring-primary ring-offset-2 dark:ring-offset-zinc-950 scale-105 z-10 shadow-md"
+                  : "";
+
                 return (
-                  <div
+                  <button
                     key={day}
-                    className={`aspect-square rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer hover:scale-105 border ${cellStyle}`}
+                    onClick={() => setSelectedDay(day)}
+                    className={`aspect-square rounded-xl flex flex-col items-center justify-center transition-all hover:scale-105 border ${cellStyle} ${selectedRing}`}
                   >
                     <span className={`text-base font-black ${textStyle}`}>
                       {day}
                     </span>
-                    {!isWeekend && (
+                    {status !== "Weekend" && status !== "-" && (
                       <div
                         className={`mt-1.5 w-1.5 h-1.5 rounded-full ${dotStyle}`}
                       />
                     )}
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -720,7 +836,7 @@ export function EmployeeAttendance() {
 
         {/* RIGHT PANEL: Daily Log & Regularization (5/12) */}
         <div className="xl:col-span-5 flex flex-col gap-6">
-          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col animate-in fade-in duration-300">
             <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
               <div className="flex items-center gap-2">
                 <h3 className="text-[16px] font-black text-foreground">
@@ -737,6 +853,83 @@ export function EmployeeAttendance() {
                 View History <ChevronRight size={14} />
               </button>
             </div>
+
+            {/* Selected Day Details Panel */}
+            {selectedDayLog && (
+              <div className="p-6 bg-gradient-to-br from-[#F0FDF4] via-[#F0FDF4]/30 to-transparent dark:from-emerald-500/5 dark:to-transparent border-b border-border animate-in slide-in-from-top-4 duration-300">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                      <Calendar size={18} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-widest leading-none mb-1">
+                        Selected Attendance Details
+                      </p>
+                      <h4 className="text-[14px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">
+                        {selectedDayLog.date}
+                      </h4>
+                    </div>
+                  </div>
+                  <span
+                    className={`text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${
+                      selectedDayLog.status === "Present" || selectedDayLog.status === "WFH" || selectedDayLog.status === "On-site"
+                        ? "bg-emerald-500/10 text-primary border border-emerald-500/20"
+                        : selectedDayLog.status === "Late"
+                          ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                          : selectedDayLog.status === "Leave"
+                            ? "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20"
+                            : selectedDayLog.status === "Weekend"
+                              ? "bg-secondary text-muted-foreground border border-border"
+                              : selectedDayLog.status === "Absent"
+                                ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                                : "bg-secondary text-muted-foreground/40 border border-border"
+                    }`}
+                  >
+                    {selectedDayLog.status === "-" ? "No Record" : selectedDayLog.status}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="p-3 bg-background rounded-xl border border-border/80 text-center">
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Punch In</p>
+                    <p className="text-[13px] font-bold text-foreground">{selectedDayLog.in}</p>
+                  </div>
+                  <div className="p-3 bg-background rounded-xl border border-border/80 text-center">
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Punch Out</p>
+                    <p className="text-[13px] font-bold text-foreground">{selectedDayLog.out}</p>
+                  </div>
+                  <div className="p-3 bg-background rounded-xl border border-border/80 text-center">
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Hours</p>
+                    <p className="text-[13px] font-black text-primary">
+                      {selectedDayLog.status === "Present" || selectedDayLog.status === "Late" || selectedDayLog.status === "WFH" || selectedDayLog.status === "On-site" ? "9h 00m" : "-"}
+                    </p>
+                  </div>
+                </div>
+
+                {(selectedDayLog.status === "Absent" || selectedDayLog.status === "Late" || selectedDayLog.status === "-") && (
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/10">
+                    <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400">
+                      {selectedDayLog.status === "Absent" || selectedDayLog.status === "-"
+                        ? "Missed logging this day? Submit a regularization request."
+                        : "Late punch-in? Correct details with manager approval."}
+                    </span>
+                    <button
+                      onClick={() => {
+                        const dayPadded = String(selectedDay).padStart(2, "0");
+                        const monthPadded = String(selectedMonth + 1).padStart(2, "0");
+                        const dateStr = `${selectedYear}-${monthPadded}-${dayPadded}`;
+                        setRegDefaultDate(dateStr);
+                        setIsRegModalOpen(true);
+                      }}
+                      className="whitespace-nowrap px-4 py-1.5 bg-amber-500 text-white rounded-lg text-[11px] font-black uppercase tracking-wider hover:bg-amber-600 active:scale-95 transition-all shadow-md shadow-amber-500/20"
+                    >
+                      Regularize
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="overflow-x-auto">
               <table className="w-full text-left">
@@ -757,37 +950,50 @@ export function EmployeeAttendance() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {ATTENDANCE_LOGS.map((log, i) => (
-                    <tr
-                      key={i}
-                      className="h-14 hover:bg-secondary transition-colors group"
-                    >
-                      <td className="px-6 text-[13px] font-black text-foreground">
-                        {log.date}
-                      </td>
-                      <td className="px-6 text-[12px] font-bold text-muted-foreground">
-                        {log.in}
-                      </td>
-                      <td className="px-6 text-[12px] font-bold text-muted-foreground">
-                        {log.out}
-                      </td>
-                      <td className="px-6">
-                        <span
-                          className={`text-[12px] font-black ${
-                            log.status === "Present"
-                              ? "text-primary"
-                              : log.status === "Late"
-                                ? "text-amber-500"
-                                : log.status === "Leave"
-                                  ? "text-indigo-400"
-                                  : "text-muted-foreground/30"
-                          }`}
-                        >
-                          {log.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                  {logs.map((log, i) => {
+                    const logDay = parseInt(log.date.split(" ")[0]);
+                    const isSelectedRow = selectedDay === logDay;
+                    return (
+                      <tr
+                        key={i}
+                        onClick={() => setSelectedDay(logDay)}
+                        className={`h-14 hover:bg-secondary transition-colors group cursor-pointer ${
+                          isSelectedRow
+                            ? "bg-primary/5 hover:bg-primary/10 border-l-[3px] border-l-primary"
+                            : ""
+                        }`}
+                      >
+                        <td className="px-6 text-[13px] font-black text-slate-800 dark:text-slate-100">
+                          {log.date}
+                        </td>
+                        <td className="px-6 text-[12px] font-bold text-muted-foreground">
+                          {log.in}
+                        </td>
+                        <td className="px-6 text-[12px] font-bold text-muted-foreground">
+                          {log.out}
+                        </td>
+                        <td className="px-6">
+                          <span
+                            className={`text-[12px] font-black ${
+                              log.status === "Present" || log.status === "WFH" || log.status === "On-site"
+                                ? "text-primary"
+                                : log.status === "Late"
+                                  ? "text-amber-500"
+                                  : log.status === "Leave"
+                                    ? "text-indigo-400"
+                                    : log.status === "Weekend"
+                                      ? "text-muted-foreground/50"
+                                      : log.status === "Absent"
+                                        ? "text-rose-500"
+                                        : "text-muted-foreground/30"
+                            }`}
+                          >
+                            {log.status}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -844,6 +1050,7 @@ export function EmployeeAttendance() {
             isOpen={isRegModalOpen}
             onClose={() => setIsRegModalOpen(false)}
             onSubmit={handleSubmitRegularization}
+            defaultDate={regDefaultDate}
           />
         )}
         {selectedRequest && (
