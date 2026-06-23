@@ -47,10 +47,13 @@ export function Topbar() {
             {theme === "light" ? "dark_mode" : "light_mode"}
           </span>
         </button>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest transition-transform active:scale-98 relative border-0 bg-transparent cursor-pointer">
+        <Link
+          to="/platform-admin/notifications"
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest transition-transform active:scale-98 relative cursor-pointer"
+        >
           <span className="material-symbols-outlined text-on-surface-variant">notifications</span>
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-error rounded-full border-2 border-surface-bright"></span>
-        </button>
+        </Link>
         <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest transition-transform active:scale-98 border-0 bg-transparent cursor-pointer">
           <span className="material-symbols-outlined text-on-surface-variant">help_outline</span>
         </button>

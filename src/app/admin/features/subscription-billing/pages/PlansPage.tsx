@@ -27,11 +27,11 @@ export function PlansPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-gray-100 gap-4">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-gray-900 flex items-center gap-2">
-            <Package className="w-5 h-5 text-indigo-600" />
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Package className="w-6 h-6 text-indigo-600" />
             Subscription Plans
           </h1>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-sm text-gray-500 mt-1">
             Manage pricing tiers, features, and plan configurations.
           </p>
         </div>

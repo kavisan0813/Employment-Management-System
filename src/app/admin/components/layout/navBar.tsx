@@ -5,6 +5,7 @@ import {
   ChevronDown,
   Moon,
 } from "lucide-react";
+import { Link } from "react-router";
 
 export default function Navbar() {
   return (
@@ -28,13 +29,13 @@ export default function Navbar() {
       {/* Right Actions */}
       <div className="flex items-center gap-4 ml-6">
         {/* Notification */}
-        <button className="relative p-2 rounded-lg hover:bg-gray-100 transition">
+        <Link to="/platform-admin/notifications" className="relative p-2 rounded-lg hover:bg-gray-100 transition text-gray-900 block">
           <Bell size={20} />
 
           <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
             3
           </span>
-        </button>
+        </Link>
 
         {/* Theme Toggle */}
         <button className="p-2 rounded-lg border border-gray-200 hover:bg-gray-100">

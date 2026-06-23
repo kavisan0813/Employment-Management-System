@@ -22,25 +22,25 @@ export function UserSessionsTable() {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-xs">
-        <table className="w-full text-left border-collapse text-xs">
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
+        <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 font-medium uppercase tracking-wider text-[10px]">
-              <th className="px-4 py-3">User</th>
-              <th className="px-4 py-3">Device / Browser</th>
-              <th className="px-4 py-3">IP Address</th>
-              <th className="px-4 py-3">Login Time</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Kill</th>
+            <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-5 py-4">User</th>
+              <th className="px-5 py-4">Device / Browser</th>
+              <th className="px-5 py-4">IP Address</th>
+              <th className="px-5 py-4">Login Time</th>
+              <th className="px-5 py-4">Status</th>
+              <th className="px-5 py-4 text-right">Kill</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 text-sm">
             {sessions.map((session) => (
               <tr
                 key={session.id}
-                className="hover:bg-gray-50/70 transition-colors"
+                className="hover:bg-gray-50/50 transition-colors group"
               >
-                <td className="px-4 py-3">
+                <td className="px-5 py-4">
                   <div className="font-medium text-gray-900">
                     {session.userName}
                   </div>
@@ -48,18 +48,18 @@ export function UserSessionsTable() {
                     {session.userEmail}
                   </div>
                 </td>
-                <td className="px-4 py-3 text-gray-700">
+                <td className="px-5 py-4 text-gray-700">
                   {session.device} &bull; {session.browser}
                 </td>
-                <td className="px-4 py-3 font-mono text-gray-500">
+                <td className="px-5 py-4 font-mono text-gray-500">
                   {session.ipAddress}
                 </td>
-                <td className="px-4 py-3 text-gray-500">
+                <td className="px-5 py-4 text-gray-500">
                   {new Date(session.loginTime).toLocaleString()}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-5 py-4">
                   <span
-                    className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                    className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold border ${
                       session.status === "Active"
                         ? "bg-teal-50 text-teal-700 border-teal-200"
                         : session.status === "Expired"
@@ -70,7 +70,7 @@ export function UserSessionsTable() {
                     {session.status}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="px-5 py-4 text-right">
                   {session.status === "Active" ? (
                     <button
                       onClick={() => actions.killSession(session.id)}

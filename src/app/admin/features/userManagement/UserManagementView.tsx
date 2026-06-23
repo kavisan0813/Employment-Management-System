@@ -73,42 +73,68 @@ export default function UserManagementView() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 min-h-[calc(100vh-6rem)]">
-      {/* Sidebar Navigation */}
-      <div className="w-full md:w-64 flex-shrink-0 space-y-1 bg-white border border-gray-200 rounded-xl p-3 shadow-xs h-fit self-start sticky top-6">
-        <div className="mb-4 px-2 pt-2">
-          <h2 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+    <div className="space-y-6 max-w-7xl mx-auto px-1.5 py-4">
+      {/* Header Profile Section */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between pb-5 border-b border-gray-200 gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Users className="w-6 h-6 text-indigo-600" />
             User Management
-          </h2>
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Manage system-wide platform users, super administrators, organization admins, roles, active sessions, and access control settings.
+          </p>
         </div>
-        {TABS.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                isActive
-                  ? "bg-indigo-50 text-indigo-700 shadow-sm border border-indigo-100"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent"
-              }`}
-            >
-              <Icon
-                className={`w-4 h-4 ${
-                  isActive ? "text-indigo-600" : "text-gray-400"
-                }`}
-              />
-              {tab.label}
-            </button>
-          );
-        })}
+        <div className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-750 border border-indigo-100 self-start md:self-auto shadow-xs">
+          <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+          Access Registry Connected
+        </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 min-w-0">
-        <div className="bg-white rounded-xl shadow-xs border border-gray-200 p-6">
-          {renderContent()}
+      {/* Top Tab Navigation Bar */}
+      <div className="bg-white border border-gray-200 rounded-xl shadow-xs">
+        <div className="flex items-center gap-0.5 p-1 overflow-x-auto">
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                  isActive
+                    ? "bg-indigo-600 text-white shadow-sm"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-55"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Form Workspace View */}
+      <div className="space-y-6">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+          
+          {/* Header of Active Tab */}
+          <div className="px-6 py-4 bg-gray-50/50 border-b border-gray-200 flex justify-between items-center">
+            <div>
+              <h2 className="text-sm font-extrabold text-gray-900 uppercase tracking-wide">
+                {TABS.find(i => i.id === activeTab)?.label}
+              </h2>
+              <p className="text-[11px] text-gray-500 font-medium">
+                Detailed registry control panel for platform {activeTab} operations.
+              </p>
+            </div>
+          </div>
+
+          {/* Render block */}
+          <div className="p-6">
+            {renderContent()}
+          </div>
         </div>
       </div>
     </div>

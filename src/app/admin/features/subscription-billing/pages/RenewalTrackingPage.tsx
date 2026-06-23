@@ -27,11 +27,11 @@ export function RenewalTrackingPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-gray-100 gap-4">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-gray-900 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-indigo-600" />
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Calendar className="w-6 h-6 text-indigo-600" />
             Renewal Tracking
           </h1>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-sm text-gray-500 mt-1">
             Monitor upcoming subscription renewals and proactively manage retention.
           </p>
         </div>
@@ -79,7 +79,7 @@ export function RenewalTrackingPage() {
       </div>
 
       {/* Renewal table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-xs">
+      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs">
         <RenewalTable renewals={renewals} onRowClick={handleRowClick} />
       </div>
 

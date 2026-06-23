@@ -64,25 +64,35 @@ const AdminSupportTicketsPage = lazy(() =>
     default: m.default,
   })),
 );
-const AdminAnnouncementsPage = lazy(() =>
-  import("./admin/features/announcements/announcements.page").then((m) => ({
-    default: m.default,
-  })),
-);
-const AdminFeatureManagementPage = lazy(() =>
-  import("./admin/features/featureManagement/FeatureManagementView").then(
-    (m) => ({ default: m.default }),
-  ),
-);
-const AdminRoleTemplatesPage = lazy(() =>
-  import("./admin/features/roleTemplates/RoleTemplatesView").then((m) => ({
-    default: m.default,
-  })),
-);
+// const AdminAnnouncementsPage = lazy(() =>
+//   import("./admin/features/announcements/announcements.page").then((m) => ({
+//     default: m.default,
+//   })),
+// );
+// const AdminFeatureManagementPage = lazy(() =>
+//   import("./admin/features/featureManagement/FeatureManagementView").then(
+//     (m) => ({ default: m.default }),
+//   ),
+// );
+// const AdminRoleTemplatesPage = lazy(() =>
+//   import("./admin/features/roleTemplates/RoleTemplatesView").then((m) => ({
+//     default: m.default,
+//   })),
+// );
 const AdminPlatformSettingsPage = lazy(() =>
   import("./admin/features/platformSettings/PlatformSettingsView").then(
-    (m) => ({ default: m.default }),
+    (m) => ({ default: m.PlatformSettingsView }),
   ),
+);
+const AdminNotificationsPage = lazy(() =>
+  import("./admin/features/notifications/NotificationsView").then((m) => ({
+    default: m.NotificationsView,
+  })),
+);
+const AdminCommunicationPage = lazy(() =>
+  import("./admin/features/communication/CommunicationView").then((m) => ({
+    default: m.CommunicationView,
+  })),
 );
 const AdminComingSoonPage = lazy(() =>
   import("./admin/components/common/coming-soon-page").then((m) => ({
@@ -942,10 +952,12 @@ export const router = createBrowserRouter([
       { path: "reports", element: lazyRoute(AdminReportsPage) },
       { path: "audit-logs", element: lazyRoute(AdminAuditLogsPage) },
       { path: "support-tickets", element: lazyRoute(AdminSupportTicketsPage) },
-      { path: "announcements", element: lazyRoute(AdminAnnouncementsPage) },
-      { path: "features", element: lazyRoute(AdminFeatureManagementPage) },
-      { path: "roles", element: lazyRoute(AdminRoleTemplatesPage) },
+//       { path: "announcements", element: lazyRoute(AdminAnnouncementsPage) },
+      // { path: "features", element: lazyRoute(AdminFeatureManagementPage) },
+      // { path: "roles", element: lazyRoute(AdminRoleTemplatesPage) },
       { path: "settings", element: lazyRoute(AdminPlatformSettingsPage) },
+      { path: "notifications", element: lazyRoute(AdminNotificationsPage) },
+      { path: "communication", element: lazyRoute(AdminCommunicationPage) },
       {
         path: "settings/email-templates",
         element: (

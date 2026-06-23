@@ -10,6 +10,7 @@ import {
   Zap,
   BarChart3,
   Headphones,
+  ChevronDown,
 } from "lucide-react";
 import { useSupportTickets } from "./hooks/useSupportTickets";
 
@@ -34,17 +35,19 @@ type Tab =
   | "escalation"
   | "reports";
 
-const tabs: { id: Tab; label: string; icon: any }[] = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "tickets", label: "Support Tickets", icon: MessageSquare },
-  { id: "issues", label: "Issue Tracking", icon: Bug },
-  { id: "features", label: "Feature Requests", icon: Lightbulb },
-  { id: "feedback", label: "Feedback", icon: Star },
-  { id: "sla", label: "SLA Management", icon: Shield },
-  { id: "kb", label: "Knowledge Base", icon: BookOpen },
-  { id: "escalation", label: "Escalation Rules", icon: Zap },
-  { id: "reports", label: "Reports & Analytics", icon: BarChart3 },
+const tabs: { id: Tab; label: string; icon: any; group: string }[] = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, group: "Overview" },
+  { id: "reports", label: "Reports & Analytics", icon: BarChart3, group: "Overview" },
+  { id: "tickets", label: "Support Tickets", icon: MessageSquare, group: "Ticket Desk" },
+  { id: "issues", label: "Issue Tracking", icon: Bug, group: "Ticket Desk" },
+  { id: "features", label: "Feature Requests", icon: Lightbulb, group: "Ticket Desk" },
+  { id: "feedback", label: "Feedback", icon: Star, group: "Ticket Desk" },
+  { id: "sla", label: "SLA Management", icon: Shield, group: "Governance" },
+  { id: "kb", label: "Knowledge Base", icon: BookOpen, group: "Governance" },
+  { id: "escalation", label: "Escalation Rules", icon: Zap, group: "Governance" },
 ];
+
+const groups = ["Overview", "Ticket Desk", "Governance"] as const;
 
 export default function SupportTicketsView() {
   const hook = useSupportTickets();
@@ -93,68 +96,113 @@ export default function SupportTicketsView() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[#F8F9FA]">
-      {/* Sidebar */}
-      <div className="w-64 flex-shrink-0 border-r border-gray-200 bg-white flex flex-col relative z-10 shadow-xs">
-        <div className="p-5 border-b border-gray-100 flex items-center gap-2 text-indigo-700">
-          <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center">
-            <Headphones className="w-4 h-4" />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold leading-tight">
-              Support & Tickets
-            </h2>
-            <p className="text-[10px] font-medium text-indigo-400">
-              Help Desk CRM
-            </p>
-          </div>
+    <div className="space-y-6 max-w-7xl mx-auto px-1.5 py-4">
+      {/* Header Profile Section */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between pb-5 border-b border-gray-200 gap-4">
+        <div>
+          <h1 className="text-2xl font-black tracking-tight text-gray-950 flex items-center gap-2">
+            <Headphones className="w-6 h-6 text-indigo-650" />
+            Support & Tickets
+          </h1>
+          <p className="text-xs text-gray-500 font-medium mt-1">
+            Super Admin Help Desk CRM. Manage support tickets, track issues, handle feature requests, and monitor SLA policies.
+          </p>
         </div>
-
-        <div className="flex-1 overflow-y-auto p-3 space-y-1">
-          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-2 mt-2">
-            Navigation
-          </div>
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
-                activeTab === tab.id
-                  ? "bg-indigo-50 text-indigo-700 shadow-xs"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <tab.icon className="w-4 h-4" /> {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Summary footer */}
-        <div className="p-4 border-t border-gray-100 bg-gray-50/50">
-          <div className="grid grid-cols-2 gap-2 text-center">
-            <div className="bg-white rounded-lg p-2 border border-gray-100 shadow-xs">
-              <p className="text-lg font-bold text-blue-600">
-                {hook.stats.open}
-              </p>
-              <p className="text-[9px] font-bold text-gray-400 uppercase">
-                Open
-              </p>
-            </div>
-            <div className="bg-white rounded-lg p-2 border border-gray-100 shadow-xs">
-              <p className="text-lg font-bold text-red-600">
-                {hook.stats.slaBreached}
-              </p>
-              <p className="text-[9px] font-bold text-gray-400 uppercase">
-                Breached
-              </p>
-            </div>
-          </div>
+        <div className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-750 border border-indigo-100 self-start md:self-auto shadow-xs">
+          <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+          Support Pipeline Active
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-y-auto relative">
-        <div className="p-8 max-w-6xl mx-auto pb-32">{renderContent()}</div>
+      {/* Top Tab Navigation Bar (Grouped on Hover) */}
+      <div className="bg-white border border-gray-200 rounded-xl shadow-xs relative">
+        <div className="flex items-center gap-2 p-1.5">
+          {groups.map((groupName) => {
+            const isGroupActive = tabs.some(item => item.group === groupName && item.id === activeTab);
+            const activeItemInGroup = tabs.find(item => item.group === groupName && item.id === activeTab);
+            
+            return (
+              <div key={groupName} className="relative group/menu">
+                {/* Main Group Button */}
+                <button
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap border ${
+                    isGroupActive
+                      ? "bg-indigo-50 text-indigo-750 border-indigo-100"
+                      : "bg-transparent text-gray-600 hover:bg-gray-55 hover:text-gray-900 border-transparent"
+                  }`}
+                >
+                  <span>{groupName}</span>
+                  {activeItemInGroup && (
+                    <span className="text-[10px] text-indigo-650 font-extrabold bg-indigo-100/50 px-1.5 py-0.5 rounded-md ml-1">
+                      {activeItemInGroup.label}
+                    </span>
+                  )}
+                  <ChevronDown className="w-3 h-3 text-gray-400 group-hover/menu:rotate-180 transition-transform duration-200" />
+                </button>
+
+                {/* Hover Dropdown Menu */}
+                <div className="absolute left-0 top-full pt-1.5 z-40 hidden group-hover/menu:block min-w-[220px]">
+                  <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 space-y-0.5 animate-in fade-in duration-100">
+                    {tabs
+                      .filter((item) => item.group === groupName)
+                      .map((item) => {
+                        const Icon = item.icon;
+                        const isActive = activeTab === item.id;
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => setActiveTab(item.id)}
+                            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-left transition-all cursor-pointer ${
+                              isActive
+                                ? "bg-indigo-600 text-white shadow-xs"
+                                : "text-gray-600 hover:text-gray-955 hover:bg-gray-50"
+                            }`}
+                          >
+                            <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-white" : "text-gray-400"}`} />
+                            <span>{item.label}</span>
+                          </button>
+                        );
+                      })}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Form Workspace View */}
+      <div className="space-y-6">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+          
+          {/* Header of Active Tab */}
+          <div className="px-6 py-4 bg-gray-50/50 border-b border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+            <div>
+              <h2 className="text-sm font-extrabold text-gray-900 uppercase tracking-wide">
+                {tabs.find(i => i.id === activeTab)?.label}
+              </h2>
+              <p className="text-[11px] text-gray-500 font-medium">
+                Detailed diagnostics workspace for {activeTab} operations.
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 border border-blue-100 rounded-lg text-[11px] text-blue-750 font-bold shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                <span>Open: {hook.stats.open}</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-50 border border-red-100 rounded-lg text-[11px] text-red-750 font-bold shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                <span>Breached: {hook.stats.slaBreached}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Render block */}
+          <div className="p-6">
+            {renderContent()}
+          </div>
+        </div>
       </div>
     </div>
   );
