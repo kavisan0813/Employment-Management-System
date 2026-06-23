@@ -18,8 +18,8 @@ const G = {
   primary:    "#00B87C",
   dark:       "#059669",
   light:      "#34D39A",
-  bg:         "#F0FDF4",
-  bgCard:     "#ECFDF5",
+  bg:         "rgba(0, 184, 124, 0.05)",
+  bgCard:     "rgba(0, 184, 124, 0.1)",
   blue:       "#0EA5E9",
   amber:      "#F59E0B",
   rose:       "#EF4444",
@@ -209,7 +209,7 @@ function StatCard({ icon: Icon, iconColor, iconBg, delta, deltaType, value, labe
   value: string; label: string; sub?: string;
 }) {
   const deltaColors = { up: G.primary, down: G.rose, alert: G.amber };
-  const deltaBg     = { up: G.bgCard,  down: "#FEF2F2", alert: "#FEF3C7" };
+  const deltaBg     = { up: G.bgCard,  down: "rgba(239, 68, 68, 0.1)", alert: "rgba(245, 158, 11, 0.1)" };
   return (
     <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 16,
       padding: "20px 22px", position: "relative", overflow: "hidden",
@@ -395,16 +395,16 @@ export function ManagerReports() {
           <StatCard icon={TrendingUp} iconColor={G.primary} iconBg={G.bgCard}
             delta={`+${meta.kpi.newJoins}`} deltaType="up"
             value={`${teamHealth}`} label="Health Score" sub="Composite avg" />
-          <StatCard icon={Shield} iconColor={G.blue} iconBg="#EFF6FF"
+          <StatCard icon={Shield} iconColor={G.blue} iconBg="rgba(14, 165, 233, 0.1)"
             delta={meta.kpi.goalDelta} deltaType="up"
             value={`${meta.kpi.goalPct}%`} label="Goal Completion" sub={meta.label} />
           <StatCard icon={Clock} iconColor={G.primary} iconBg={G.bgCard}
             delta={meta.kpi.attendanceDelta} deltaType="up"
             value={meta.kpi.attendance} label="Avg Attendance" sub={meta.label} />
-          <StatCard icon={Zap} iconColor={G.amber} iconBg="#FEF3C7"
+          <StatCard icon={Zap} iconColor={G.amber} iconBg="rgba(245, 158, 11, 0.1)"
             delta={meta.kpi.costDelta} deltaType="up"
             value={meta.kpi.teamCost} label="Team Cost" sub={meta.label} />
-          <StatCard icon={AlertCircle} iconColor={G.rose} iconBg="#FEF2F2"
+          <StatCard icon={AlertCircle} iconColor={G.rose} iconBg="rgba(239, 68, 68, 0.1)"
             delta={`${meta.kpi.overtimeAlerts} Alerts`} deltaType="alert"
             value={meta.kpi.overtime} label="Active Overtime" sub="This period" />
         </div>
