@@ -68,60 +68,60 @@ export function PermissionsMatrix() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-xs">
-        <table className="w-full text-center border-collapse text-xs">
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
+        <table className="w-full text-center border-collapse">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 font-medium uppercase tracking-wider text-[10px]">
-              <th className="px-4 py-3 text-left">Module / Feature</th>
-              <th className="px-4 py-3">View</th>
-              <th className="px-4 py-3">Create</th>
-              <th className="px-4 py-3">Edit</th>
-              <th className="px-4 py-3">Delete</th>
-              <th className="px-4 py-3">Approve</th>
+            <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="px-5 py-4 text-left">Module / Feature</th>
+              <th className="px-5 py-4">View</th>
+              <th className="px-5 py-4">Create</th>
+              <th className="px-5 py-4">Edit</th>
+              <th className="px-5 py-4">Delete</th>
+              <th className="px-5 py-4">Approve</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 text-sm">
             {modules.map((m) => (
               <tr
                 key={m.name}
-                className="hover:bg-gray-50/70 transition-colors"
+                className="hover:bg-gray-50/50 transition-colors group"
               >
-                <td className="px-4 py-3 font-semibold text-gray-900 text-left">
+                <td className="px-5 py-4 font-semibold text-gray-900 text-left">
                   {m.name}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-5 py-4">
                   <input
                     type="checkbox"
                     defaultChecked={m.view}
-                    className="accent-indigo-600 cursor-pointer"
+                    className="accent-indigo-600 cursor-pointer w-4 h-4"
                   />
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-5 py-4">
                   <input
                     type="checkbox"
                     defaultChecked={m.create}
-                    className="accent-indigo-600 cursor-pointer"
+                    className="accent-indigo-600 cursor-pointer w-4 h-4"
                   />
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-5 py-4">
                   <input
                     type="checkbox"
                     defaultChecked={m.edit}
-                    className="accent-indigo-600 cursor-pointer"
+                    className="accent-indigo-600 cursor-pointer w-4 h-4"
                   />
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-5 py-4">
                   <input
                     type="checkbox"
                     defaultChecked={m.delete}
-                    className="accent-indigo-600 cursor-pointer"
+                    className="accent-indigo-600 cursor-pointer w-4 h-4"
                   />
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-5 py-4">
                   <input
                     type="checkbox"
                     defaultChecked={m.approve}
-                    className="accent-indigo-600 cursor-pointer"
+                    className="accent-indigo-600 cursor-pointer w-4 h-4"
                   />
                 </td>
               </tr>

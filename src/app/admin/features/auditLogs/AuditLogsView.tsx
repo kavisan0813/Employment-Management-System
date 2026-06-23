@@ -16,6 +16,7 @@ import {
   Settings2,
   Trash2,
   Shield,
+  ChevronDown,
 } from "lucide-react";
 import { useAuditLogs } from "./hooks/useAuditLogs";
 import { LogsDashboard } from "./components/LogsDashboard";
@@ -87,16 +88,18 @@ export default function AuditLogsView() {
     setDateRange("ALL");
   };
 
-  const tabsConfig = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { id: "login", label: "Login Logs", icon: UserCheck },
-    { id: "activity", label: "Activity Logs", icon: Terminal },
-    { id: "trail", label: "Audit Trail", icon: History },
-    { id: "security", label: "Security Events", icon: ShieldAlert },
-    { id: "error", label: "Error Logs", icon: AlertTriangle },
-    { id: "export", label: "Export Logs", icon: Download },
-    { id: "settings", label: "Log Retention", icon: Settings2 },
-  ] as const;
+  const tabsConfig: { id: ActiveTab; label: string; icon: any; group: string }[] = [
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, group: "Overview" },
+    { id: "trail", label: "Audit Trail", icon: History, group: "Overview" },
+    { id: "login", label: "Login Logs", icon: UserCheck, group: "Access & Activity" },
+    { id: "activity", label: "Activity Logs", icon: Terminal, group: "Access & Activity" },
+    { id: "export", label: "Export Logs", icon: Download, group: "Access & Activity" },
+    { id: "security", label: "Security Events", icon: ShieldAlert, group: "System Security" },
+    { id: "error", label: "Error Logs", icon: AlertTriangle, group: "System Security" },
+    { id: "settings", label: "Log Retention", icon: Settings2, group: "System Security" },
+  ];
+
+  const groups = ["Overview", "Access & Activity", "System Security"] as const;
 
   return (
     <div className="space-y-6">
@@ -123,164 +126,206 @@ export default function AuditLogsView() {
         </div>
       </div>
 
-      {/* Main Tabbed Grid Layout */}
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Navigation Sidebar */}
-        <aside className="w-full lg:w-60 shrink-0">
-          <nav className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 gap-1 border-b lg:border-b-0 border-gray-150">
-            {tabsConfig.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-
-              return (
+      {/* Top Tab Navigation Bar (Grouped on Hover) */}
+      <div className="bg-white border border-gray-200 rounded-xl shadow-xs relative">
+        <div className="flex items-center gap-2 p-1.5">
+          {groups.map((groupName) => {
+            const isGroupActive = tabsConfig.some(item => item.group === groupName && item.id === activeTab);
+            const activeItemInGroup = tabsConfig.find(item => item.group === groupName && item.id === activeTab);
+            
+            return (
+              <div key={groupName} className="relative group/menu">
+                {/* Main Group Button */}
                 <button
-                  key={tab.id}
-                  onClick={() => handleTabChange(tab.id)}
-                  className={`inline-flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    isActive
-                      ? "bg-indigo-600 text-white shadow-2xs"
-                      : "text-gray-600 hover:text-gray-950 hover:bg-gray-55"
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap border ${
+                    isGroupActive
+                      ? "bg-indigo-50 text-indigo-750 border-indigo-100"
+                      : "bg-transparent text-gray-600 hover:bg-gray-55 hover:text-gray-900 border-transparent"
                   }`}
                 >
-                  <Icon
-                    className={`w-4.5 h-4.5 ${isActive ? "text-white" : "text-gray-400"}`}
-                  />
-                  {tab.label}
-
-                  {/* Alert notification badge inside tab for security alerts */}
-                  {tab.id === "security" &&
-                    stats.criticalSecurityEvents > 0 && (
-                      <span className="ml-auto w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                    )}
+                  <span>{groupName}</span>
+                  {activeItemInGroup && (
+                    <span className="text-[10px] text-indigo-650 font-extrabold bg-indigo-100/50 px-1.5 py-0.5 rounded-md ml-1">
+                      {activeItemInGroup.label}
+                    </span>
+                  )}
+                  <ChevronDown className="w-3 h-3 text-gray-400 group-hover/menu:rotate-180 transition-transform duration-200" />
                 </button>
-              );
-            })}
-          </nav>
-        </aside>
 
-        {/* Tab Content Display Area */}
-        <main className="flex-1 min-w-0">
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-400 text-xs font-medium space-y-2">
-              <span className="w-5 h-5 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
-              <span>Verifying Soc2 ledger checksums...</span>
+                {/* Hover Dropdown Menu */}
+                <div className="absolute left-0 top-full pt-1.5 z-40 hidden group-hover/menu:block min-w-[220px]">
+                  <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 space-y-0.5 animate-in fade-in duration-100">
+                    {tabsConfig
+                      .filter((item) => item.group === groupName)
+                      .map((item) => {
+                        const Icon = item.icon;
+                        const isActive = activeTab === item.id;
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => handleTabChange(item.id)}
+                            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-left transition-all cursor-pointer ${
+                              isActive
+                                ? "bg-indigo-600 text-white shadow-xs"
+                                : "text-gray-600 hover:text-gray-955 hover:bg-gray-50"
+                            }`}
+                          >
+                            <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-white" : "text-gray-400"}`} />
+                            <span className="flex-1">{item.label}</span>
+                            {item.id === "security" && stats.criticalSecurityEvents > 0 && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shrink-0 ml-1.5" />
+                            )}
+                          </button>
+                        );
+                      })}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Form Workspace View */}
+      <div className="space-y-6">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+          
+          {/* Header of Active Tab */}
+          <div className="px-6 py-4 bg-gray-50/50 border-b border-gray-200 flex justify-between items-center">
+            <div>
+              <h2 className="text-sm font-extrabold text-gray-900 uppercase tracking-wide">
+                {tabsConfig.find(i => i.id === activeTab)?.label}
+              </h2>
+              <p className="text-[11px] text-gray-500 font-medium">
+                Detailed compliance log registry for platform {activeTab} operations.
+              </p>
             </div>
-          ) : (
-            <div className="animate-in fade-in duration-200">
-              {activeTab === "dashboard" && (
-                <LogsDashboard
-                  stats={stats}
-                  loginLogs={loginLogs}
-                  securityEvents={securityEvents}
-                  errorLogs={errorLogs}
-                />
-              )}
+          </div>
 
-              {activeTab === "login" && (
-                <LoginLogsTable
-                  logs={loginLogs}
-                  organizations={organizations}
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  selectedOrg={selectedOrg}
-                  setSelectedOrg={setSelectedOrg}
-                  selectedStatus={selectedStatus}
-                  setSelectedStatus={setSelectedStatus}
-                  dateRange={dateRange}
-                  setDateRange={setDateRange}
-                  filterByDate={filterByDate}
-                />
-              )}
+          {/* Tab Content Display Area */}
+          <div className="p-6">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-20 text-gray-400 text-xs font-medium space-y-2">
+                <span className="w-5 h-5 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin" />
+                <span>Verifying Soc2 ledger checksums...</span>
+              </div>
+            ) : (
+              <div className="animate-in fade-in duration-200">
+                {activeTab === "dashboard" && (
+                  <LogsDashboard
+                    stats={stats}
+                    loginLogs={loginLogs}
+                    securityEvents={securityEvents}
+                    errorLogs={errorLogs}
+                  />
+                )}
 
-              {activeTab === "activity" && (
-                <ActivityLogsTable
-                  logs={activityLogs}
-                  organizations={organizations}
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  selectedOrg={selectedOrg}
-                  setSelectedOrg={setSelectedOrg}
-                  selectedModule={selectedModule}
-                  setSelectedModule={setSelectedModule}
-                  selectedAction={selectedAction}
-                  setSelectedAction={setSelectedAction}
-                  dateRange={dateRange}
-                  setDateRange={setDateRange}
-                  filterByDate={filterByDate}
-                />
-              )}
+                {activeTab === "login" && (
+                  <LoginLogsTable
+                    logs={loginLogs}
+                    organizations={organizations}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedOrg={selectedOrg}
+                    setSelectedOrg={setSelectedOrg}
+                    selectedStatus={selectedStatus}
+                    setSelectedStatus={setSelectedStatus}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                  />
+                )}
 
-              {activeTab === "trail" && (
-                <AuditTrailTable
-                  trails={auditTrails}
-                  organizations={organizations}
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  selectedOrg={selectedOrg}
-                  setSelectedOrg={setSelectedOrg}
-                  dateRange={dateRange}
-                  setDateRange={setDateRange}
-                  filterByDate={filterByDate}
-                />
-              )}
+                {activeTab === "activity" && (
+                  <ActivityLogsTable
+                    logs={activityLogs}
+                    organizations={organizations}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedOrg={selectedOrg}
+                    setSelectedOrg={setSelectedOrg}
+                    selectedModule={selectedModule}
+                    setSelectedModule={setSelectedModule}
+                    selectedAction={selectedAction}
+                    setSelectedAction={setSelectedAction}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                  />
+                )}
 
-              {activeTab === "security" && (
-                <SecurityEventsTable
-                  events={securityEvents}
-                  organizations={organizations}
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  selectedOrg={selectedOrg}
-                  setSelectedOrg={setSelectedOrg}
-                  selectedSeverity={selectedSeverity}
-                  setSelectedSeverity={setSelectedSeverity}
-                  selectedStatus={selectedStatus}
-                  setSelectedStatus={setSelectedStatus}
-                  dateRange={dateRange}
-                  setDateRange={setDateRange}
-                  filterByDate={filterByDate}
-                  resolveSecurityEvent={resolveSecurityEvent}
-                />
-              )}
+                {activeTab === "trail" && (
+                  <AuditTrailTable
+                    trails={auditTrails}
+                    organizations={organizations}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedOrg={selectedOrg}
+                    setSelectedOrg={setSelectedOrg}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                  />
+                )}
 
-              {activeTab === "error" && (
-                <ErrorLogsTable
-                  logs={errorLogs}
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  selectedSeverity={selectedSeverity}
-                  setSelectedSeverity={setSelectedSeverity}
-                  dateRange={dateRange}
-                  setDateRange={setDateRange}
-                  filterByDate={filterByDate}
-                />
-              )}
+                {activeTab === "security" && (
+                  <SecurityEventsTable
+                    events={securityEvents}
+                    organizations={organizations}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedOrg={selectedOrg}
+                    setSelectedOrg={setSelectedOrg}
+                    selectedSeverity={selectedSeverity}
+                    setSelectedSeverity={setSelectedSeverity}
+                    selectedStatus={selectedStatus}
+                    setSelectedStatus={setSelectedStatus}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                    resolveSecurityEvent={resolveSecurityEvent}
+                  />
+                )}
 
-              {activeTab === "export" && (
-                <ExportLogsTable
-                  logs={exportLogs}
-                  organizations={organizations}
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  selectedOrg={selectedOrg}
-                  setSelectedOrg={setSelectedOrg}
-                  selectedStatus={selectedStatus}
-                  setSelectedStatus={setSelectedStatus}
-                  dateRange={dateRange}
-                  setDateRange={setDateRange}
-                  filterByDate={filterByDate}
-                />
-              )}
+                {activeTab === "error" && (
+                  <ErrorLogsTable
+                    logs={errorLogs}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedSeverity={selectedSeverity}
+                    setSelectedSeverity={setSelectedSeverity}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                  />
+                )}
 
-              {activeTab === "settings" && (
-                <LogRetentionSettings
-                  policy={retentionPolicy}
-                  onSavePolicy={updateRetentionPolicy}
-                />
-              )}
-            </div>
-          )}
-        </main>
+                {activeTab === "export" && (
+                  <ExportLogsTable
+                    logs={exportLogs}
+                    organizations={organizations}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedOrg={selectedOrg}
+                    setSelectedOrg={setSelectedOrg}
+                    selectedStatus={selectedStatus}
+                    setSelectedStatus={setSelectedStatus}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                  />
+                )}
+
+                {activeTab === "settings" && (
+                  <LogRetentionSettings
+                    policy={retentionPolicy}
+                    onSavePolicy={updateRetentionPolicy}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -3,29 +3,20 @@
  * SPDX-License-Identifier: Apache-2.5
  */
 
-import React, { useState } from "react";
+import React from "react";
 import { NavLink, useLocation } from "react-router";
 import {
   Building2,
   Users,
   CreditCard,
   LayoutDashboard,
-  ToggleLeft,
-  Users2,
-  GitMerge,
-  Terminal,
   AreaChart,
   History,
   MessageSquare,
   Settings,
   ShieldCheck,
   Megaphone,
-  Fingerprint,
-  Cpu,
-  Layers,
-  HelpCircle,
-  ChevronDown,
-  Zap,
+  Bell,
 } from "lucide-react";
 import { IoIosPerson } from "react-icons/io";
 
@@ -48,7 +39,7 @@ export function Sidebar() {
         },
         {
           id: "reports",
-          label: "Analytics",
+          label: "Reports & Analytics",
           icon: AreaChart,
           path: "/platform-admin/reports",
         },
@@ -87,7 +78,7 @@ export function Sidebar() {
         { id: "complianceRules", label: "Compliance", icon: Layers, path: "/platform-admin/compliance" }
       ]
     }, */
-    {
+   /*  {
       title: "Security & API",
       id: "security_api",
       items: [
@@ -104,7 +95,7 @@ export function Sidebar() {
           path: "/platform-admin/roles",
         },
       ],
-    },
+    }, */
     {
       title: "SLA & Helpdesk",
       id: "helpdesk",
@@ -116,10 +107,10 @@ export function Sidebar() {
           path: "/platform-admin/support-tickets",
         },
         {
-          id: "announcements",
-          label: "Announcements",
+          id: "communication",
+          label: "Communication",
           icon: Megaphone,
-          path: "/platform-admin/announcements",
+          path: "/platform-admin/communication",
         },
         {
           id: "auditLogs",
@@ -127,6 +118,12 @@ export function Sidebar() {
           icon: History,
           path: "/platform-admin/audit-logs",
         },
+        // {
+        //   id: "notifications",
+        //   label: "Notifications",
+        //   icon: Bell,
+        //   path: "/platform-admin/notifications",
+        // },
       ],
     },
     {
@@ -142,28 +139,6 @@ export function Sidebar() {
       ],
     },
   ];
-
-  // Auto-expand a group if the user is currently on a path belonging to it
-  const initialOpenState = superAdminGroups.reduce(
-    (acc, group) => {
-      const isCurrentPathInGroup = group.items.some(
-        (item) => location.pathname === item.path,
-      );
-      acc[group.id] = isCurrentPathInGroup;
-      return acc;
-    },
-    {} as Record<string, boolean>,
-  );
-
-  const [openGroups, setOpenOpenGroups] =
-    useState<Record<string, boolean>>(initialOpenState);
-
-  const toggleGroup = (groupId: string) => {
-    setOpenOpenGroups((prev) => ({
-      ...prev,
-      [groupId]: !prev[groupId],
-    }));
-  };
 
   return (
     <aside className="w-64 border-r border-gray-200 bg-white flex flex-col justify-between shrink-0 h-screen sticky top-0">
@@ -183,83 +158,36 @@ export function Sidebar() {
           </div>
         </div>
 
-        {/* Switch to HRMS Workspace Button */}
-        <div className="px-3.5 pt-3.5 shrink-0">
-          <NavLink
-            to="/hr/dashboard"
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 hover:border-indigo-200 transition-all cursor-pointer shadow-sm"
-          >
-            <Zap className="w-3.5 h-3.5 fill-indigo-600 text-indigo-600" />
-            <span>Go to HRMS Workspace</span>
-          </NavLink>
-        </div>
-
-        {/* Menugroups Accordion Iteration */}
-        <nav className="p-3.5 space-y-2">
-          {superAdminGroups.map((group) => {
-            const isOpen = !!openGroups[group.id];
-            const isGroupActive = group.items.some(
-              (item) => location.pathname === item.path,
-            );
-
-            return (
-              <div key={group.id} className="space-y-1">
-                {/* Header Trigger Accordion Button */}
-                <button
-                  onClick={() => toggleGroup(group.id)}
-                  className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer select-none border border-transparent ${
-                    isGroupActive
-                      ? "text-indigo-900 bg-indigo-50/40"
-                      : "text-gray-400 hover:bg-gray-50 hover:text-gray-700"
-                  }`}
-                >
-                  <span className="uppercase tracking-wider text-[9px]">
-                    {group.title}
-                  </span>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${
-                      isOpen ? "transform rotate-180 text-indigo-600" : ""
-                    }`}
-                  />
-                </button>
-
-                {/* Sub-Items Navigation List with Animation Block */}
-                <div
-                  className={`space-y-0.5 transition-all duration-200 overflow-hidden ${
-                    isOpen
-                      ? "max-h-60 opacity-100 pl-1.5 pt-0.5"
-                      : "max-h-0 opacity-0 pointer-events-none"
-                  }`}
-                >
-                  {group.items.map((item) => {
-                    const IconComp = item.icon;
-                    return (
-                      <NavLink
-                        key={item.id}
-                        to={item.path}
-                        className={({ isActive }) =>
-                          `w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
-                            isActive
-                              ? "bg-indigo-50/70 text-indigo-800"
-                              : "text-gray-600 hover:bg-gray-100 hover:text-gray-950"
-                          }`
-                        }
-                      >
-                        {({ isActive }) => (
-                          <>
-                            <IconComp
-                              className={`w-4 h-4 ${isActive ? "text-indigo-600" : "text-gray-400"}`}
-                            />
-                            <span>{item.label}</span>
-                          </>
-                        )}
-                      </NavLink>
-                    );
-                  })}
-                </div>
+        {/* Menu Navigation (Always Expanded) */}
+        <nav className="p-3.5 space-y-6">
+          {superAdminGroups.map((group) => (
+            <div key={group.title} className="space-y-1">
+              <div className="px-2.5 mb-1">
+                <span className="uppercase tracking-wider text-[9px] font-bold text-gray-400">
+                  {group.title}
+                </span>
               </div>
-            );
-          })}
+              
+              {group.items.map((item) => {
+                const IconComp = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <NavLink
+                    key={item.id}
+                    to={item.path}
+                    className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      isActive
+                        ? "bg-indigo-50/70 text-indigo-800"
+                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-950"
+                    }`}
+                  >
+                    <IconComp className={`w-4 h-4 ${isActive ? "text-indigo-600" : "text-gray-400"}`} />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </div>
+          ))}
         </nav>
       </div>
 

@@ -83,11 +83,11 @@ export function SubscriptionsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-gray-100 gap-4">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-gray-900 flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-indigo-600" />
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <CreditCard className="w-6 h-6 text-indigo-600" />
             Subscriptions
           </h1>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-sm text-gray-500 mt-1">
             Manage billing plans and lifecycle for every organization subscription.
           </p>
         </div>
@@ -181,22 +181,22 @@ export function SubscriptionsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-xs">
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 font-medium uppercase tracking-wider text-[10px]">
-                <th className="px-4 py-3">ID</th>
-                <th className="px-4 py-3">Organization</th>
-                <th className="px-4 py-3">Plan</th>
-                <th className="px-4 py-3">Cycle</th>
-                <th className="px-4 py-3">Amount</th>
-                <th className="px-4 py-3">Renewal</th>
-                <th className="px-4 py-3">Failures</th>
-                <th className="px-4 py-3">Status</th>
+              <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <th className="px-5 py-4">ID</th>
+                <th className="px-5 py-4">Organization</th>
+                <th className="px-5 py-4">Plan</th>
+                <th className="px-5 py-4">Cycle</th>
+                <th className="px-5 py-4">Amount</th>
+                <th className="px-5 py-4">Renewal</th>
+                <th className="px-5 py-4">Failures</th>
+                <th className="px-5 py-4">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 text-sm">
               {filteredSubs.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="p-8 text-center text-gray-400">
@@ -212,19 +212,19 @@ export function SubscriptionsPage() {
                   <tr
                     key={sub.id}
                     onClick={() => openDrawer(sub)}
-                    className="hover:bg-gray-50/70 transition-colors cursor-pointer"
+                    className="hover:bg-gray-50/50 transition-colors cursor-pointer group"
                   >
-                    <td className="px-4 py-3 font-mono font-semibold text-gray-500">{sub.id}</td>
-                    <td className="px-4 py-3 font-medium text-gray-900">{sub.organizationName}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded border text-[11px] font-semibold ${planBadgeClass(sub.planTier)}`}>
+                    <td className="px-5 py-4 font-mono font-semibold text-gray-500">{sub.id}</td>
+                    <td className="px-5 py-4 font-medium text-gray-900">{sub.organizationName}</td>
+                    <td className="px-5 py-4">
+                      <span className={`inline-flex px-2.5 py-1 rounded-full border text-xs font-semibold ${planBadgeClass(sub.planTier)}`}>
                         {sub.planTier}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{sub.billingCycle}</td>
-                    <td className="px-4 py-3 font-semibold text-gray-900">${sub.amount.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-gray-500">{sub.renewalDate || "—"}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-4 text-gray-600">{sub.billingCycle}</td>
+                    <td className="px-5 py-4 font-semibold text-gray-900">${sub.amount.toLocaleString()}</td>
+                    <td className="px-5 py-4 text-gray-500">{sub.renewalDate || "—"}</td>
+                    <td className="px-5 py-4">
                       {sub.failedPaymentCount > 0 ? (
                         <span className="text-rose-600 font-semibold flex items-center gap-1">
                           <ShieldAlert className="w-3.5 h-3.5" />
@@ -234,8 +234,8 @@ export function SubscriptionsPage() {
                         <span className="text-gray-400">0</span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded-md border text-[11px] font-medium ${statusBadgeClass(sub.status)}`}>
+                    <td className="px-5 py-4">
+                      <span className={`inline-flex px-2.5 py-1 rounded-full border text-xs font-semibold ${statusBadgeClass(sub.status)}`}>
                         {sub.status}
                       </span>
                     </td>

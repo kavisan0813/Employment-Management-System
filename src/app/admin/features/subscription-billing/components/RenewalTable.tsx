@@ -54,30 +54,30 @@ export function RenewalTable({ renewals, onRowClick }: RenewalTableProps) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-xs text-left border-collapse">
+      <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="bg-gray-50/75 border-b border-gray-100 font-medium">
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+          <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <th className="px-5 py-4">
               Organization
             </th>
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+            <th className="px-5 py-4">
               Plan
             </th>
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+            <th className="px-5 py-4">
               Cycle
             </th>
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+            <th className="px-5 py-4">
               Amount
             </th>
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+            <th className="px-5 py-4">
               Renewal Date
             </th>
-            <th className="px-4 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+            <th className="px-5 py-4">
               Time Left
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100">
+        <tbody className="divide-y divide-gray-100 text-sm">
           {sorted.length === 0 ? (
             <tr>
               <td colSpan={6} className="p-8 text-center text-gray-400">
@@ -99,9 +99,9 @@ export function RenewalTable({ renewals, onRowClick }: RenewalTableProps) {
                 <tr
                   key={sub.id}
                   onClick={() => onRowClick(sub)}
-                  className="hover:bg-gray-50/50 cursor-pointer transition-colors duration-150"
+                  className="hover:bg-gray-50/50 cursor-pointer transition-colors group"
                 >
-                  <td className="px-4 py-3.5">
+                  <td className="px-5 py-4">
                     <div className="flex items-center gap-2">
                       <Building2 className="w-3.5 h-3.5 text-gray-400" />
                       <span className="font-semibold text-gray-900">
@@ -109,23 +109,23 @@ export function RenewalTable({ renewals, onRowClick }: RenewalTableProps) {
                       </span>
                     </div>
                   </td>
-                  <td className="px-4 py-3.5">
+                  <td className="px-5 py-4">
                     <span
-                      className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold border ${planBadgeClass(sub.planTier)}`}
+                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold border ${planBadgeClass(sub.planTier)}`}
                     >
                       {sub.planTier}
                     </span>
                   </td>
-                  <td className="px-4 py-3.5 text-gray-600">
+                  <td className="px-5 py-4 text-gray-600">
                     {sub.billingCycle}
                   </td>
-                  <td className="px-4 py-3.5 font-semibold text-gray-900">
+                  <td className="px-5 py-4 font-semibold text-gray-900">
                     ${sub.amount.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3.5 text-gray-500">
+                  <td className="px-5 py-4 text-gray-500">
                     {sub.renewalDate || "—"}
                   </td>
-                  <td className="px-4 py-3.5">
+                  <td className="px-5 py-4">
                     <UrgencyBadge days={days} />
                   </td>
                 </tr>
