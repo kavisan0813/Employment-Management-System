@@ -156,6 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/manager/team-assets",
         "/manager/team-onboarding",
         "/manager/settings",
+        "/settings",
         "/manager/exit-tasks",
         "/employees", // My Team handled in UI
         "/attendance", // Team attendance

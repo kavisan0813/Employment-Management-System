@@ -140,8 +140,14 @@ export function ManagerAttendance() {
     });
   };
 
-  // Month navigation state
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(2); // Apr 2026
+  // Month navigation state - dynamically default to current month
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(() => {
+    const today = new Date();
+    const mNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const currentMonthStr = `${mNames[today.getMonth()]} ${today.getFullYear()}`;
+    const idx = MONTH_LIST.indexOf(currentMonthStr);
+    return idx !== -1 ? idx : 4; // default to Jun 2026 (index 4)
+  });
   const activeMonthStr = MONTH_LIST[currentMonthIndex];
   const activeMonthConfig = MONTH_CONFIGS[activeMonthStr];
 
@@ -569,9 +575,17 @@ export function ManagerAttendance() {
         const memberColor = (s: number) =>
           s === 0 ? "#00B87C" : s === 1 ? "#F59E0B" : s === 2 ? "#EF4444" : "#8B5CF6";
 
+        const today = new Date();
+        const formatMonthStr = (d: Date): string => {
+          const mNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          return `${mNames[d.getMonth()]} ${d.getFullYear()}`;
+        };
+        const currentRealMonthStr = formatMonthStr(today);
+        const endDay = Math.min(today.getDate(), activeMonthConfig.days);
+
         // Monthly summary
         let totalPresent = 0, totalLate = 0, totalAbsent = 0, totalLeave = 0;
-        for (let d = 1; d <= activeMonthConfig.days; d++) {
+        for (let d = 1; d <= endDay; d++) {
           const isWeekend = (d + activeMonthConfig.offset - 1 + 7) % 7 === 0
                          || (d + activeMonthConfig.offset - 1 + 7) % 7 === 6;
           if (isWeekend) continue;
@@ -582,6 +596,12 @@ export function ManagerAttendance() {
             else totalLeave++;
           });
         }
+
+        const memberCount = TEAM_NAMES.length || 1;
+        const avgPresent = (totalPresent / memberCount).toFixed(1);
+        const avgLate = (totalLate / memberCount).toFixed(1);
+        const avgAbsent = (totalAbsent / memberCount).toFixed(1);
+        const avgLeave = (totalLeave / memberCount).toFixed(1);
 
         const [selectedDay, setSelectedDay] = React.useState<number | null>(null);
         const selectedData = selectedDay ? dayData(selectedDay) : [];
@@ -599,10 +619,10 @@ export function ManagerAttendance() {
             {/* Summary bar */}
             <div className="grid grid-cols-4 gap-3 mb-5">
               {[
-                { label: "Present Days",  value: totalPresent, color: "#00B87C", bg: "#ECFDF5" },
-                { label: "Late Arrivals", value: totalLate,    color: "#F59E0B", bg: "#FEF3C7" },
-                { label: "Absent Days",   value: totalAbsent,  color: "#EF4444", bg: "#FEF2F2" },
-                { label: "Leave Days",    value: totalLeave,   color: "#8B5CF6", bg: "#F5F3FF" },
+                { label: "Avg. Present Days",  value: avgPresent, color: "#00B87C", bg: "#ECFDF5" },
+                { label: "Avg. Late Arrivals", value: avgLate,    color: "#F59E0B", bg: "#FEF3C7" },
+                { label: "Avg. Absent Days",   value: avgAbsent,  color: "#EF4444", bg: "#FEF2F2" },
+                { label: "Avg. Leave Days",    value: avgLeave,   color: "#8B5CF6", bg: "#F5F3FF" },
               ].map(s => (
                 <div key={s.label} className="rounded-xl p-3 text-center" style={{ background: s.bg }}>
                   <div className="text-[20px] font-black" style={{ color: s.color }}>{s.value}</div>
@@ -629,7 +649,8 @@ export function ManagerAttendance() {
                 const dow = (date + activeMonthConfig.offset - 1 + 7) % 7;
                 const isWeekend = dow === 0 || dow === 6;
                 const isHoliday = !!HOLIDAYS[date];
-                const isToday   = activeMonthStr === "Jun 2026" && date === 15;
+                const isToday   = activeMonthStr === currentRealMonthStr && date === today.getDate();
+                const isFuture  = date > endDay;
 
                 let bg = "", textCol = "", border = "";
                 let presentCount = 0, lateCount = 0, absentCount = 0;
@@ -646,7 +667,7 @@ export function ManagerAttendance() {
                   presentCount = d.filter(s=>s===0).length;
                   lateCount    = d.filter(s=>s===1).length;
                   absentCount  = d.filter(s=>s===2 || s===3).length;
-                } else if (date > 15) {
+                } else if (isFuture) {
                   // future days (greyed)
                   bg = "var(--secondary)"; textCol = "var(--muted-foreground)"; border = "transparent";
                 } else {
@@ -660,7 +681,7 @@ export function ManagerAttendance() {
                   else                { bg="#FEE2E2"; textCol="#DC2626"; border="#FECACA"; }
                 }
 
-                const canClick = !isWeekend && !isHoliday && date <= 15;
+                const canClick = !isWeekend && !isHoliday && !isFuture;
 
                 return (
                   <div
@@ -1042,18 +1063,29 @@ export function ManagerAttendance() {
               <div className="border-t pt-4" style={{ borderColor: "var(--border)" }}>
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider mb-2">Today's Logs</h4>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center text-xs py-1">
-                    <span className="text-muted-foreground">08:45 AM</span>
-                    <span className="font-semibold text-foreground">Swipe In (Office Gate)</span>
-                  </div>
-                  <div className="flex justify-between items-center text-xs py-1">
-                    <span className="text-muted-foreground">01:00 PM</span>
-                    <span className="font-semibold text-foreground">Swipe Out (Lunch Break)</span>
-                  </div>
-                  <div className="flex justify-between items-center text-xs py-1">
-                    <span className="text-muted-foreground">02:00 PM</span>
-                    <span className="font-semibold text-foreground">Swipe In (Back to Desk)</span>
-                  </div>
+                  {selectedEmployee.name === "Priya Sharma" && globalPunchState.logs && globalPunchState.logs.length > 0 ? (
+                    globalPunchState.logs.map((log, idx) => (
+                      <div key={idx} className="flex justify-between items-center text-xs py-1">
+                        <span className="text-muted-foreground">{log.time}</span>
+                        <span className="font-semibold text-foreground">{log.action}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <>
+                      <div className="flex justify-between items-center text-xs py-1">
+                        <span className="text-muted-foreground">08:45 AM</span>
+                        <span className="font-semibold text-foreground">Swipe In (Office Gate)</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs py-1">
+                        <span className="text-muted-foreground">01:00 PM</span>
+                        <span className="font-semibold text-foreground">Swipe Out (Lunch Break)</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs py-1">
+                        <span className="text-muted-foreground">02:00 PM</span>
+                        <span className="font-semibold text-foreground">Swipe In (Back to Desk)</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

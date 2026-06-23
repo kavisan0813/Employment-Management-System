@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -59,6 +59,41 @@ export function FinanceAttendance() {
   const [regRequests, setRegRequests] = useState<RegularizationReq[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState(EMPLOYEES[0]);
   const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<number | null>(6); // Default to April 6 (Today)
+
+  const getLogForDay = useMemo(() => {
+    return (day: number) => {
+      const dayStr = String(day).padStart(2, "0");
+      const monthStr = MONTH_NAMES[selectedMonth].substring(0, 3);
+      const dateStr = `${dayStr} ${monthStr} ${selectedYear}`;
+
+      const found = ATTENDANCE_LOGS.find((l) => l.date === dateStr);
+      if (found) return found;
+
+      // Calculate weekend
+      const firstDayOfWeek = new Date(selectedYear, selectedMonth, 1).getDay();
+      const dayOfWeek = (firstDayOfWeek + day - 1) % 7;
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      if (isWeekend) {
+        return { date: dateStr, in: "-", out: "-", status: "Weekend" };
+      }
+
+      if (day === 15 || day === 16) {
+        return { date: dateStr, in: "-", out: "-", status: "Leave" };
+      }
+
+      if (day < 6) {
+        return { date: dateStr, in: "09:00 AM", out: "06:00 PM", status: "Present" };
+      }
+
+      return { date: dateStr, in: "-", out: "-", status: "-" };
+    };
+  }, [selectedMonth, selectedYear]);
+
+  const selectedDayLog = useMemo(() => {
+    if (selectedDay === null) return null;
+    return getLogForDay(selectedDay);
+  }, [selectedDay, getLogForDay]);
 
   // Modal Fields
   const [regDate, setRegDate] = useState("2026-04-07");
@@ -243,9 +278,9 @@ export function FinanceAttendance() {
                 if (day === null)
                   return <div key={`empty-${i}`} className="aspect-square" />;
 
+                const log = getLogForDay(day);
                 const isToday = day === 6;
-                const isLeave = day === 15 || day === 16;
-                const isWeekend = i % 7 === 0 || i % 7 === 6;
+                const isSelected = selectedDay === day;
 
                 let cellStyle = "bg-card border-border hover:border-[#00B87C]";
                 let textStyle = "text-foreground";
@@ -253,35 +288,43 @@ export function FinanceAttendance() {
 
                 if (isToday) {
                   cellStyle =
-                    "bg-[#00B87C] border-[#00B87C] shadow-lg shadow-[#00B87C]/20";
-                  textStyle = "text-white";
+                    "bg-[#00B87C] border-[#00B87C] shadow-lg shadow-[#00B87C]/20 text-white hover:bg-[#00B87C]/95";
+                  textStyle = "text-white font-extrabold";
                   dotColor = "bg-white";
-                } else if (isLeave) {
-                  cellStyle = "bg-[#FEF3C7] border-transparent";
+                } else if (log.status === "Leave") {
+                  cellStyle = "bg-[#FEF3C7] border-transparent text-[#F59E0B] hover:bg-[#FEF3C7]/90";
                   textStyle = "text-[#F59E0B]";
                   dotColor = "bg-[#F59E0B]";
-                } else if (isWeekend) {
-                  cellStyle = "bg-card border-transparent opacity-60";
+                } else if (log.status === "Weekend") {
+                  cellStyle = "bg-card border-transparent opacity-60 text-[#D1D5DB] hover:opacity-80";
                   textStyle = "text-[#D1D5DB]";
                   dotColor = "bg-transparent";
-                } else if (day < 6) {
-                  cellStyle = "bg-[#DCFCE7] border-transparent";
+                } else if (log.status === "Present") {
+                  cellStyle = "bg-[#DCFCE7] border-transparent text-[#00B87C] hover:bg-[#DCFCE7]/90";
                   textStyle = "text-[#00B87C]";
                   dotColor = "bg-[#00B87C]";
                 }
 
+                const selectedRing = isSelected
+                  ? "ring-2 ring-[#00B87C] ring-offset-2 dark:ring-offset-zinc-950 scale-105 z-10 shadow-md"
+                  : "";
+
                 return (
-                  <div
+                  <button
                     key={day}
-                    className={`aspect-square min-h-[85px] rounded-[20px] flex flex-col items-center justify-center transition-all border ${cellStyle}`}
+                    type="button"
+                    onClick={() => setSelectedDay(day)}
+                    className={`aspect-square min-h-[85px] rounded-[20px] flex flex-col items-center justify-center transition-all border cursor-pointer outline-none ${cellStyle} ${selectedRing}`}
                   >
                     <span className={`text-[18px] font-black ${textStyle}`}>
                       {day}
                     </span>
-                    <div
-                      className={`mt-1.5 w-1.5 h-1.5 rounded-full ${dotColor}`}
-                    />
-                  </div>
+                    {log.status !== "Weekend" && log.status !== "-" && (
+                      <div
+                        className={`mt-1.5 w-1.5 h-1.5 rounded-full ${dotColor}`}
+                      />
+                    )}
+                  </button>
                 );
               })}
             </div>
@@ -308,6 +351,83 @@ export function FinanceAttendance() {
               </div>
             </div>
 
+            {/* Selected Day Details Panel */}
+            {selectedDayLog && (
+              <div className="p-6 bg-gradient-to-br from-[#F0FDF4] via-[#F0FDF4]/30 to-transparent dark:from-emerald-500/5 dark:to-transparent border-b border-border animate-in slide-in-from-top-4 duration-300">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#00B87C]/10 flex items-center justify-center text-[#00B87C] border border-[#00B87C]/20">
+                      <Calendar size={18} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-widest leading-none mb-1">
+                        Selected Attendance Details
+                      </p>
+                      <h4 className="text-[14px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">
+                        {selectedDayLog.date}
+                      </h4>
+                    </div>
+                  </div>
+                  <span
+                    className={`text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${
+                      selectedDayLog.status === "Present" || selectedDayLog.status === "WFH" || selectedDayLog.status === "On-site"
+                        ? "bg-[#DCFCE7] text-[#00B87C] border border-[#00B87C]/20"
+                        : selectedDayLog.status === "Late"
+                          ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                          : selectedDayLog.status === "Leave"
+                            ? "bg-[#FEF3C7] text-[#F59E0B] border border-[#F59E0B]/20"
+                            : selectedDayLog.status === "Weekend"
+                              ? "bg-secondary text-muted-foreground border border-border"
+                              : selectedDayLog.status === "Absent"
+                                ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                                : "bg-secondary text-muted-foreground/40 border border-border"
+                    }`}
+                  >
+                    {selectedDayLog.status === "-" ? "No Record" : selectedDayLog.status}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="p-3 bg-background rounded-xl border border-border/80 text-center">
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Punch In</p>
+                    <p className="text-[13px] font-bold text-foreground">{selectedDayLog.in}</p>
+                  </div>
+                  <div className="p-3 bg-background rounded-xl border border-border/80 text-center">
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Punch Out</p>
+                    <p className="text-[13px] font-bold text-foreground">{selectedDayLog.out}</p>
+                  </div>
+                  <div className="p-3 bg-background rounded-xl border border-border/80 text-center">
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Hours</p>
+                    <p className="text-[13px] font-black text-[#00B87C]">
+                      {selectedDayLog.status === "Present" || selectedDayLog.status === "Late" || selectedDayLog.status === "WFH" || selectedDayLog.status === "On-site" ? "9h 00m" : "-"}
+                    </p>
+                  </div>
+                </div>
+
+                {(selectedDayLog.status === "Absent" || selectedDayLog.status === "Late" || selectedDayLog.status === "-") && (
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/10">
+                    <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400">
+                      {selectedDayLog.status === "Absent" || selectedDayLog.status === "-"
+                        ? "Missed logging this day? Submit a regularization request."
+                        : "Late punch-in? Correct details with manager approval."}
+                    </span>
+                    <button
+                      onClick={() => {
+                        const dayPadded = String(selectedDay).padStart(2, "0");
+                        const monthPadded = String(selectedMonth + 1).padStart(2, "0");
+                        const dateStr = `${selectedYear}-${monthPadded}-${dayPadded}`;
+                        setRegDate(dateStr);
+                        setIsRegModalOpen(true);
+                      }}
+                      className="whitespace-nowrap px-4 py-1.5 bg-[#00B87C] text-white rounded-lg text-[11px] font-black uppercase tracking-wider hover:bg-[#009966] active:scale-95 transition-all shadow-md shadow-emerald-500/20"
+                    >
+                      Regularize
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-border">
@@ -326,37 +446,46 @@ export function FinanceAttendance() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {ATTENDANCE_LOGS.map((log, i) => (
-                  <tr
-                    key={i}
-                    className="h-14 hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all"
-                  >
-                    <td className="px-6 text-[13px] font-black text-foreground">
-                      {log.date}
-                    </td>
-                    <td className="px-6 text-[12px] font-bold text-muted-foreground">
-                      {log.in}
-                    </td>
-                    <td className="px-6 text-[12px] font-bold text-muted-foreground">
-                      {log.out}
-                    </td>
-                    <td className="px-6">
-                      <span
-                        className={`text-[12px] font-black ${
-                          log.status === "Present"
-                            ? "text-[#00B87C]"
-                            : log.status === "Leave"
-                              ? "text-[#F59E0B]"
-                              : log.status === "Absent"
-                                ? "text-[#EF4444]"
-                                : "text-muted-foreground"
-                        }`}
-                      >
-                        {log.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {ATTENDANCE_LOGS.map((log, i) => {
+                  const logDay = parseInt(log.date.split(" ")[0]);
+                  const isSelectedRow = selectedDay === logDay;
+                  return (
+                    <tr
+                      key={i}
+                      onClick={() => setSelectedDay(logDay)}
+                      className={`h-14 hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all cursor-pointer ${
+                        isSelectedRow
+                          ? "bg-[#00B87C]/5 border-l-[3px] border-l-[#00B87C]"
+                          : ""
+                      }`}
+                    >
+                      <td className="px-6 text-[13px] font-black text-foreground">
+                        {log.date}
+                      </td>
+                      <td className="px-6 text-[12px] font-bold text-muted-foreground">
+                        {log.in}
+                      </td>
+                      <td className="px-6 text-[12px] font-bold text-muted-foreground">
+                        {log.out}
+                      </td>
+                      <td className="px-6">
+                        <span
+                          className={`text-[12px] font-black ${
+                            log.status === "Present"
+                              ? "text-[#00B87C]"
+                              : log.status === "Leave"
+                                ? "text-[#F59E0B]"
+                                : log.status === "Absent"
+                                  ? "text-[#EF4444]"
+                                  : "text-muted-foreground"
+                          }`}
+                        >
+                          {log.status}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

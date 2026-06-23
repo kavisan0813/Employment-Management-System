@@ -20,7 +20,6 @@ import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import { showToast } from "../components/workflow/ToastNotification";
 import { ResponsiveContainer, AreaChart, Area } from "recharts";
-import { useAttendance } from "../context/AttendanceContext";
 
 const BookOpen = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -192,9 +191,6 @@ export function EmployeeSelfService() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [hoveredAction, setHoveredAction] = useState<number | null>(null);
-
-  const { punchState, handlePunchIn, handlePunchOut, handleResetPunch } = useAttendance();
-
   const handleQuickAction = (route: string) => {
     navigate(route);
     showToast("Opening Module", "info", "Navigating to " + route);
@@ -438,100 +434,6 @@ export function EmployeeSelfService() {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* TODAY'S SCHEDULE */}
-          <div className="bg-card rounded-2xl p-7 border border-border shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-[15px] font-black text-foreground">
-                Today's Shift Attendance
-              </h3>
-              <span className="text-[12px] font-bold text-muted-foreground bg-secondary px-3 py-1 rounded-lg border border-border">
-                {new Date().toLocaleDateString(undefined, {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-6 items-center justify-between bg-secondary/50 rounded-2xl p-6 border-l-[4px] border-primary">
-              <div className="flex-1">
-                <p className="text-[11px] font-black text-primary uppercase tracking-widest mb-1">
-                  MORNING SHIFT (09:00 – 18:00)
-                </p>
-                {punchState.isPunchedIn ? (
-                  <div className="flex flex-col gap-1 mt-1">
-                    <p className="text-[16px] font-black text-foreground flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping inline-block" />
-                      Active Shift In Progress
-                    </p>
-                    <p className="text-[13px] font-semibold text-muted-foreground">
-                      Punched in at:{" "}
-                      <span className="text-foreground font-bold">
-                        {punchState.punchInTime}
-                      </span>
-                    </p>
-                  </div>
-                ) : punchState.punchOutTime ? (
-                  <div className="flex flex-col gap-1 mt-1">
-                    <p className="text-[16px] font-black text-emerald-600 dark:text-emerald-500 flex items-center gap-2">
-                      ✓ Shift Completed
-                    </p>
-                    <p className="text-[13px] font-semibold text-muted-foreground">
-                      In:{" "}
-                      <span className="text-foreground font-bold">
-                        {punchState.punchInTime}
-                      </span>{" "}
-                      | Out:{" "}
-                      <span className="text-foreground font-bold">
-                        {punchState.punchOutTime}
-                      </span>
-                    </p>
-                    <p className="text-[13px] font-semibold text-muted-foreground">
-                      Total worked:{" "}
-                      <span className="text-primary font-black">
-                        {punchState.workedHours}
-                      </span>
-                    </p>
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-1 mt-1">
-                    <p className="text-[16px] font-black text-muted-foreground">
-                      Not Punched In Yet
-                    </p>
-                    <p className="text-[13px] font-semibold text-muted-foreground">
-                      Please punch in to record your attendance.
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-3 shrink-0">
-                {punchState.isPunchedIn ? (
-                  <button
-                    onClick={handlePunchOut}
-                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-black text-[13px] uppercase tracking-wider hover:shadow-lg hover:shadow-red-500/20 active:scale-[0.98] transition-all border-none cursor-pointer"
-                  >
-                    Punch Out
-                  </button>
-                ) : punchState.punchOutTime ? (
-                  <button
-                    onClick={handleResetPunch}
-                    className="px-6 py-3 rounded-xl bg-[#00B87C] hover:bg-[#009966] text-white font-black text-[13px] uppercase tracking-wider hover:shadow-lg active:scale-[0.98] transition-all border-none cursor-pointer"
-                  >
-                    Reset Shift
-                  </button>
-                ) : (
-                  <button
-                    onClick={handlePunchIn}
-                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#00B87C] to-[#009966] hover:from-[#00c987] hover:to-[#00a36d] text-white font-black text-[13px] uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all border-none cursor-pointer"
-                  >
-                    Punch In
-                  </button>
-                )}
-              </div>
             </div>
           </div>
         </div>
