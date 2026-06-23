@@ -195,6 +195,9 @@ const GOALS = [
 ];
 
 export function ManagerTeamPerformance() {
+  const [teamPerformance, setTeamPerformance] = useState(MOCK_TEAM_PERFORMANCE);
+  const [completedReviews, setCompletedReviews] = useState(MOCK_COMPLETED_REVIEWS);
+
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [reviewingEmp, setReviewingEmp] = useState<
     (typeof MOCK_TEAM_PERFORMANCE)[0] | null
@@ -209,7 +212,7 @@ export function ManagerTeamPerformance() {
   const [statusFilter, setStatusFilter] = useState("Review Status");
   const [ratingFilter, setRatingFilter] = useState("Rating");
 
-  const filteredPerformance = MOCK_TEAM_PERFORMANCE.filter((row) => {
+  const filteredPerformance = teamPerformance.filter((row) => {
     // Dept filter
     if (deptFilter !== "All Employees" && row.dept !== deptFilter) {
       return false;
@@ -258,7 +261,7 @@ export function ManagerTeamPerformance() {
   };
 
   const handleExportScorecard = (emp: (typeof MOCK_TEAM_PERFORMANCE)[0]) => {
-    const reviewDetails = MOCK_COMPLETED_REVIEWS[emp.id];
+    const reviewDetails = completedReviews[emp.id];
     if (!reviewDetails) {
       showToast("No Review Data", "error", "No completed review data found for this employee.");
       return;
@@ -299,19 +302,122 @@ export function ManagerTeamPerformance() {
   const [overrideRating, setOverrideRating] = useState(false);
   const [finalRating, setFinalRating] = useState("Exceeds");
   const [promoRec, setPromoRec] = useState(false);
+  const [strengths, setStrengths] = useState("");
+  const [developmentAreas, setDevelopmentAreas] = useState("");
+  const [promoJustification, setPromoJustification] = useState("");
 
   const handleReviewClick = (emp: (typeof MOCK_TEAM_PERFORMANCE)[0]) => {
     setReviewingEmp(emp);
     setReviewModalOpen(true);
-    // Reset form state
-    setCompRatings({});
-    setCompComments({});
-    setExpandedComments({});
-    setGoalStatus({});
-    setGoalComments({});
-    setOverrideRating(false);
-    setFinalRating("Exceeds");
-    setPromoRec(false);
+    // Reset form state or load draft if exists
+    const draft = completedReviews[emp.id];
+    if (draft) {
+      const compRatingsMap: Record<string, number> = {};
+      const compCommentsMap: Record<string, string> = {};
+      const expandedCommentsMap: Record<string, boolean> = {};
+      Object.entries(draft.competencies).forEach(([id, c]) => {
+        compRatingsMap[id] = c.rating;
+        compCommentsMap[id] = c.comment;
+        if (c.comment) {
+          expandedCommentsMap[id] = true;
+        }
+      });
+      setCompRatings(compRatingsMap);
+      setCompComments(compCommentsMap);
+      setExpandedComments(expandedCommentsMap);
+
+      const goalStatusMap: Record<string, string> = {};
+      const goalCommentsMap: Record<string, string> = {};
+      Object.entries(draft.goals).forEach(([id, g]) => {
+        goalStatusMap[id] = g.status;
+        goalCommentsMap[id] = g.comment;
+      });
+      setGoalStatus(goalStatusMap);
+      setGoalComments(goalCommentsMap);
+
+      setOverrideRating(emp.status === "Completed" && emp.finalScore !== "Pending");
+      setFinalRating(emp.finalScore !== "Pending" ? emp.finalScore : "Exceeds");
+      setPromoRec(draft.promoRecommended);
+      setStrengths(draft.strengths);
+      setDevelopmentAreas(draft.developmentAreas);
+      setPromoJustification(draft.promoJustification);
+    } else {
+      setCompRatings({});
+      setCompComments({});
+      setExpandedComments({});
+      setGoalStatus({});
+      setGoalComments({});
+      setOverrideRating(false);
+      setFinalRating("Exceeds");
+      setPromoRec(false);
+      setStrengths("");
+      setDevelopmentAreas("");
+      setPromoJustification("");
+    }
+  };
+
+  const handleSaveReview = (isSubmit: boolean) => {
+    if (!reviewingEmp) return;
+
+    const avg = calcAvg();
+    let finalScoreStr = finalRating;
+
+    if (!overrideRating) {
+      const avgNum = parseFloat(avg);
+      if (avgNum >= 4.5) finalScoreStr = "Exceptional";
+      else if (avgNum >= 4.0) finalScoreStr = "Exceeds";
+      else if (avgNum >= 3.0) finalScoreStr = "Meets";
+      else if (avgNum >= 2.0) finalScoreStr = "Below Avg";
+      else finalScoreStr = "Unsatisfactory";
+    }
+
+    setTeamPerformance((prev) =>
+      prev.map((emp) =>
+        emp.id === reviewingEmp.id
+          ? {
+              ...emp,
+              status: isSubmit ? "Completed" : "In Progress",
+              managerRating: avg !== "0.0" ? `${avg} you` : emp.managerRating,
+              finalScore: isSubmit ? finalScoreStr : emp.finalScore,
+            }
+          : emp,
+      ),
+    );
+
+    const finalCompetencies: Record<string, { rating: number; comment: string }> = {};
+    COMPETENCIES.forEach((comp) => {
+      finalCompetencies[comp.id] = {
+        rating: compRatings[comp.id] || 3,
+        comment: compComments[comp.id] || "",
+      };
+    });
+
+    const finalGoals: Record<string, { status: string; comment: string }> = {};
+    GOALS.forEach((goal) => {
+      finalGoals[goal.id] = {
+        status: goalStatus[goal.id] || "Met",
+        comment: goalComments[goal.id] || "",
+      };
+    });
+
+    setCompletedReviews((prev) => ({
+      ...prev,
+      [reviewingEmp.id]: {
+        competencies: finalCompetencies,
+        goals: finalGoals,
+        strengths: strengths || "No strengths specified.",
+        developmentAreas: developmentAreas || "No development areas specified.",
+        promoRecommended: promoRec,
+        promoJustification: promoRec ? promoJustification : "",
+      },
+    }));
+
+    setReviewModalOpen(false);
+    showToast(
+      isSubmit ? "Submitted!" : "Saved!",
+      "success",
+      isSubmit ? "Review submitted successfully." : "Draft saved successfully."
+    );
   };
 
   const getScoreChip = (score: string) => {
@@ -579,11 +685,22 @@ export function ManagerTeamPerformance() {
                   </td>
                   <td className="px-6 py-2">
                     {row.managerRating.includes("Pending") ? (
-                      <span className="text-xs font-semibold text-muted-foreground italic">
+                      <span
+                        onClick={() => handleReviewClick(row)}
+                        className="text-xs font-semibold text-muted-foreground italic cursor-pointer hover:text-emerald-600 hover:underline transition-colors"
+                        title="Click to review this employee"
+                      >
                         {row.managerRating}
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1 font-bold text-foreground">
+                      <span
+                        onClick={() => {
+                          setViewingEmp(row);
+                          setViewModalOpen(true);
+                        }}
+                        className="flex items-center gap-1 font-bold text-foreground cursor-pointer hover:text-emerald-600 hover:underline transition-colors"
+                        title="Click to view scorecard"
+                      >
                         <Star
                           size={14}
                           className="text-emerald-500"
@@ -902,6 +1019,8 @@ export function ManagerTeamPerformance() {
                     </label>
                     <textarea
                       placeholder="Key strengths observed..."
+                      value={strengths}
+                      onChange={(e) => setStrengths(e.target.value)}
                       className="w-full p-3 text-sm bg-background border border-border rounded-xl outline-none focus:border-primary resize-none min-h-[80px]"
                     />
                   </div>
@@ -911,6 +1030,8 @@ export function ManagerTeamPerformance() {
                     </label>
                     <textarea
                       placeholder="Areas for improvement..."
+                      value={developmentAreas}
+                      onChange={(e) => setDevelopmentAreas(e.target.value)}
                       className="w-full p-3 text-sm bg-background border border-border rounded-xl outline-none focus:border-primary resize-none min-h-[80px]"
                     />
                   </div>
@@ -938,6 +1059,8 @@ export function ManagerTeamPerformance() {
                     {promoRec && (
                       <textarea
                         placeholder="Justification for promotion..."
+                        value={promoJustification}
+                        onChange={(e) => setPromoJustification(e.target.value)}
                         className="w-full mt-2 p-2.5 text-xs bg-background border border-border rounded-lg outline-none focus:border-indigo-400 resize-none min-h-[60px]"
                       />
                     )}
@@ -949,13 +1072,13 @@ export function ManagerTeamPerformance() {
             {/* Footer */}
             <div className="p-6 border-t border-border bg-secondary/30 rounded-b-2xl flex items-center justify-end gap-3 shrink-0">
               <button
-                onClick={() => setReviewModalOpen(false)}
+                onClick={() => handleSaveReview(false)}
                 className="px-5 py-2.5 text-sm font-bold text-muted-foreground border border-border bg-background rounded-xl hover:bg-secondary transition-colors"
               >
                 Save Draft
               </button>
               <button
-                onClick={() => setReviewModalOpen(false)}
+                onClick={() => handleSaveReview(true)}
                 className="px-6 py-2.5 text-sm font-bold text-white bg-[#00B87C] rounded-xl hover:bg-[#00a36d] shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
               >
                 Submit Review
@@ -987,7 +1110,7 @@ export function ManagerTeamPerformance() {
           promoJustification: ""
         };
 
-        const reviewDetails = MOCK_COMPLETED_REVIEWS[viewingEmp.id] || defaultReview;
+        const reviewDetails = completedReviews[viewingEmp.id] || defaultReview;
 
         return (
           <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">

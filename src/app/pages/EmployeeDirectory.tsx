@@ -335,15 +335,6 @@ function ColleagueCard({
           >
             <Mail size={16} />
           </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              showToast("Phone Number", "info", `Calling ${colleague.phone}`);
-            }}
-            className="p-2 rounded-xl bg-secondary text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
-          >
-            <Phone size={16} />
-          </button>
         </div>
         <button
           onClick={(e) => {
@@ -1096,10 +1087,14 @@ export function EmployeeDirectory() {
               </button>
               <button
                 onClick={() => {
+                  const el = document.getElementById("msg-area") as HTMLTextAreaElement;
+                  const messageVal = el ? el.value : "";
+                  const mailtoUrl = `mailto:${targetColleague.email}?subject=${encodeURIComponent("Message from Colleague")}&body=${encodeURIComponent(messageVal)}`;
+                  window.location.href = mailtoUrl;
                   showToast(
-                    "Message Sent",
+                    "Email Client Opened",
                     "success",
-                    `Notification sent to ${targetColleague.name}`,
+                    `Drafting email message to ${targetColleague.name}`,
                   );
                   setShowMessageModal(false);
                 }}

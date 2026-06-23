@@ -358,17 +358,19 @@ export function ManagerTeamDirectory() {
     showToast("Exported!", "success", "Directory list exported successfully.");
   };
 
-  const handleCopyEmail = (email: string) => {
-    navigator.clipboard.writeText(email);
-    showToast("Copied", "success", "Email address copied to clipboard.");
+  const handleOpenMail = (email: string) => {
+    window.location.href = `mailto:${email}`;
+    showToast("Email Client Opened", "success", `Drafting email to ${email}`);
   };
 
   const handleSendMessage = () => {
-    if (!messageText.trim()) return;
+    if (!messageText.trim() || !targetColleague) return;
+    const mailtoUrl = `mailto:${targetColleague.email}?subject=${encodeURIComponent("Message from Manager")}&body=${encodeURIComponent(messageText)}`;
+    window.location.href = mailtoUrl;
     showToast(
-      "Message Sent",
+      "Email Client Opened",
       "success",
-      `Message sent to ${targetColleague?.name}`,
+      `Drafting email message to ${targetColleague.name}`,
     );
     setMessageText("");
     setShowMessageModal(false);
@@ -558,7 +560,7 @@ export function ManagerTeamDirectory() {
                         setTargetColleague(colleague);
                         setShowMessageModal(true);
                       }}
-                      onEmail={handleCopyEmail}
+                      onEmail={handleOpenMail}
                     />
                   ))}
                 </div>
@@ -570,7 +572,7 @@ export function ManagerTeamDirectory() {
                     setTargetColleague(colleague);
                     setShowMessageModal(true);
                   }}
-                  onEmail={handleCopyEmail}
+                  onEmail={handleOpenMail}
                 />
               )}
             </div>
@@ -602,7 +604,7 @@ export function ManagerTeamDirectory() {
                         setTargetColleague(colleague);
                         setShowMessageModal(true);
                       }}
-                      onEmail={handleCopyEmail}
+                      onEmail={handleOpenMail}
                     />
                   ))}
                 </div>
@@ -614,7 +616,7 @@ export function ManagerTeamDirectory() {
                     setTargetColleague(colleague);
                     setShowMessageModal(true);
                   }}
-                  onEmail={handleCopyEmail}
+                  onEmail={handleOpenMail}
                 />
               )}
             </div>
@@ -632,7 +634,7 @@ export function ManagerTeamDirectory() {
               setTargetColleague(selectedColleague);
               setShowMessageModal(true);
             }}
-            onCopyEmail={handleCopyEmail}
+            onCopyEmail={handleOpenMail}
           />
         )}
       </AnimatePresence>
@@ -788,19 +790,9 @@ function ColleagueCard({
               onEmail(colleague.email);
             }}
             className="p-2.5 rounded-xl bg-secondary text-muted-foreground hover:text-[#00B87C] hover:bg-emerald-500/10 transition-all border border-border/50"
-            title="Copy Email"
+            title="Open Mail"
           >
             <Mail size={15} />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              showToast("Calling", "info", `Dialing ${colleague.phone}`);
-            }}
-            className="p-2.5 rounded-xl bg-secondary text-muted-foreground hover:text-[#00B87C] hover:bg-emerald-500/10 transition-all border border-border/50"
-            title="Call"
-          >
-            <Phone size={15} />
           </button>
         </div>
         <button
@@ -1146,15 +1138,6 @@ function ColleagueSlidePanel({
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() =>
-                    showToast("Calling", "info", `Calling ${colleague.phone}`)
-                  }
-                  className="p-2 hover:bg-[#00B87C] hover:text-white rounded-lg text-muted-foreground transition-all border border-border/30 shadow-sm"
-                  title="Call"
-                >
-                  <Phone size={13} />
-                </button>
               </div>
 
               {/* LinkedIn */}
