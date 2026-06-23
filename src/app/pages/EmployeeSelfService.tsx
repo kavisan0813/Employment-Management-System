@@ -21,6 +21,7 @@ import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import { showToast } from "../components/workflow/ToastNotification";
 import { ResponsiveContainer, AreaChart, Area } from "recharts";
+import { useAttendance } from "../context/AttendanceContext";
 
 const BookOpen = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -193,99 +194,7 @@ export function EmployeeSelfService() {
   const navigate = useNavigate();
   const [hoveredAction, setHoveredAction] = useState<number | null>(null);
 
-  // Attendance Punch State
-  const [punchState, setPunchState] = useState<{
-    isPunchedIn: boolean;
-    punchInTime: string | null;
-    punchInTimestamp: number | null;
-    punchOutTime: string | null;
-    workedHours: string | null;
-  }>({
-    isPunchedIn: false,
-    punchInTime: null,
-    punchInTimestamp: null,
-    punchOutTime: null,
-    workedHours: null,
-  });
-
-  useEffect(() => {
-    if (user?.email) {
-      const saved = localStorage.getItem(`nexus_punch_${user.email}`);
-      if (saved) {
-        setPunchState(JSON.parse(saved));
-      }
-    }
-  }, [user]);
-
-  const handlePunchIn = () => {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const timestamp = Date.now();
-    const newState = {
-      isPunchedIn: true,
-      punchInTime: timeStr,
-      punchInTimestamp: timestamp,
-      punchOutTime: null,
-      workedHours: null,
-    };
-    setPunchState(newState);
-    if (user?.email) {
-      localStorage.setItem(`nexus_punch_${user.email}`, JSON.stringify(newState));
-    }
-    showToast(
-      "Punched In",
-      "success",
-      `Shift started successfully at ${timeStr}.`
-    );
-  };
-
-  const handlePunchOut = () => {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const elapsedMs = Date.now() - (punchState.punchInTimestamp || Date.now());
-    const elapsedSecs = Math.floor(elapsedMs / 1000);
-    const elapsedMins = Math.floor(elapsedSecs / 60);
-    
-    let workedStr = "";
-    if (elapsedMins < 1) {
-      workedStr = `${elapsedSecs} seconds`;
-    } else if (elapsedMins < 60) {
-      workedStr = `${elapsedMins} mins`;
-    } else {
-      workedStr = `${(elapsedMs / (1000 * 60 * 60)).toFixed(2)} hours`;
-    }
-
-    const newState = {
-      ...punchState,
-      isPunchedIn: false,
-      punchOutTime: timeStr,
-      workedHours: workedStr,
-    };
-    setPunchState(newState);
-    if (user?.email) {
-      localStorage.setItem(`nexus_punch_${user.email}`, JSON.stringify(newState));
-    }
-    showToast(
-      "Punched Out",
-      "success",
-      `Shift completed at ${timeStr}. Duration: ${workedStr}`
-    );
-  };
-
-  const handleResetPunch = () => {
-    const newState = {
-      isPunchedIn: false,
-      punchInTime: null,
-      punchInTimestamp: null,
-      punchOutTime: null,
-      workedHours: null,
-    };
-    setPunchState(newState);
-    if (user?.email) {
-      localStorage.removeItem(`nexus_punch_${user.email}`);
-    }
-    showToast("Shift Reset", "info", "You can now punch in for a new shift.");
-  };
+  const { punchState, handlePunchIn, handlePunchOut, handleResetPunch } = useAttendance();
 
   const handleQuickAction = (route: string) => {
     navigate(route);

@@ -292,6 +292,9 @@ const ManagerExitTasks = lazy(() =>
 const ManagerSettings = lazy(() =>
   import("./pages/manager/ManagerSettings").then((m) => ({ default: m.ManagerSettings })),
 );
+const ManagerReports = lazy(() =>
+  import("./pages/manager/ManagerReports").then((m) => ({ default: m.ManagerReports })),
+);
 const ManagerTeamOnboarding = lazy(() =>
   import("./pages/manager/ManagerTeamOnboarding").then((m) => ({ default: m.ManagerTeamOnboarding })),
 );
@@ -671,6 +674,9 @@ function DirectoryWrapper() {
 // ── Reports Wrapper: role-based view ─────────────────────────
 function ReportsWrapper() {
   const { user } = useAuth();
+  if (user?.role === "Manager") {
+    return lazyRoute(ManagerReports);
+  }
   if (user?.role === "Finance") {
     return lazyRoute(FinanceReports);
   }

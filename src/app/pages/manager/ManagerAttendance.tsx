@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CalendarCheck,
   ChevronLeft,
@@ -7,6 +7,8 @@ import {
   Clock,
   X,
 } from "lucide-react";
+import { useAttendance } from "../../context/AttendanceContext";
+import { StatusBadge } from "../../components/workflow/StatusBadge";
 
 // Mock Data for the table
 interface AttendanceRow {
@@ -108,6 +110,36 @@ export function ManagerAttendance() {
   const [reason, setReason] = useState("Technical issue");
   const [notes, setNotes] = useState("");
 
+  const { getPunchStateForEmail, punchState: globalPunchState } = useAttendance();
+
+  // For testing our context, we'll assume "today" is the 23rd of June 2026
+  const todayMockDay = new Date().getDate();
+  const todayMockMonth = new Date().getMonth();
+
+  const dayData = (date: number, selectedMonth: number, TEAM_NAMES: string[]) => {
+    return TEAM_NAMES.map((name, mi) => {
+      // Dynamic Hook for Priya Sharma's real-time punch state
+      if (name === "Priya Sharma" && date === todayMockDay && selectedMonth === todayMockMonth) {
+        const priyaPunch = getPunchStateForEmail("emp@nexushr.com");
+        if (priyaPunch?.isPunchedIn || priyaPunch?.punchOutTime) {
+           return 0; // Present
+        } else {
+           return 2; // Absent (Not punched in yet)
+        }
+      }
+
+      // Holiday
+      if (date === 19) return 4;
+      
+      const seed = date * 100 + mi;
+      let val = seed % 100;
+      if (val < 85) return 0; // Present
+      if (val < 92) return 1; // Late
+      if (val < 96) return 3; // Leave
+      return 2; // Absent
+    });
+  };
+
   // Month navigation state
   const [currentMonthIndex, setCurrentMonthIndex] = useState(2); // Apr 2026
   const activeMonthStr = MONTH_LIST[currentMonthIndex];
@@ -117,6 +149,35 @@ export function ManagerAttendance() {
   const [showRegularizeDropdown, setShowRegularizeDropdown] = useState(false);
   const [regularizeFilter, setRegularizeFilter] = useState("All");
   const [attendanceData, setAttendanceData] = useState(TEAM_ATTENDANCE_DATA);
+
+  // Sync Priya's real-time punch state to the table view
+  useEffect(() => {
+    const priyaPunch = getPunchStateForEmail("emp@nexushr.com");
+    setAttendanceData(prev => prev.map(row => {
+      if (row.name === "Priya Sharma") {
+        if (priyaPunch?.isPunchedIn || priyaPunch?.punchOutTime) {
+          return {
+            ...row,
+            status: "Present",
+            checkIn: priyaPunch.punchInTime || row.checkIn,
+            checkOut: priyaPunch.punchOutTime || "--:-- --",
+            hours: priyaPunch.workedHours || "--",
+            isLate: false
+          };
+        } else {
+          return {
+            ...row,
+            status: "Absent",
+            checkIn: "--:-- --",
+            checkOut: "--:-- --",
+            hours: "--",
+            isLate: false
+          };
+        }
+      }
+      return row;
+    }));
+  }, [globalPunchState]); // re-run if global punch state changes
 
   const handlePrevMonth = () => {
     if (currentMonthIndex > 0) {
@@ -455,66 +516,254 @@ export function ManagerAttendance() {
       </div>
 
       {/* ── Monthly Calendar View ── */}
-      <div
-        className="rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm p-6"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <h3
-          className="text-[14px] font-bold mb-4"
-          style={{ color: "var(--foreground)" }}
-        >
-          Monthly Calendar View
-        </h3>
-        <div className="grid grid-cols-7 gap-2 text-center mb-2">
-          {CALENDAR_DAYS.map((day) => (
-            <div
-              key={day}
-              className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider"
-            >
-              {day}
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-2">
-          {/* Mock empty cells for offset */}
-          {Array.from({ length: activeMonthConfig.offset }).map((_, i) => (
-            <div key={`empty-${i}`} className="h-10"></div>
-          ))}
-          {Array.from({ length: activeMonthConfig.days }).map((_, i) => {
-            const date = i + 1;
-            const isToday = activeMonthStr === "Apr 2026" && date === 15;
-            const isWeekend = (date + activeMonthConfig.offset) % 7 === 0 || (date + activeMonthConfig.offset) % 7 === 6;
-            const isLeave = date === 8;
+      {(() => {
+        // ─── Dynamic per-day attendance data for Jun 2026 ───────────────
+        // 0 = present, 1 = late, 2 = absent, 3 = on leave
+        // Key: date (1-30), Value: array of member statuses [m1,m2,...,m12]
+        const TEAM_NAMES = [
+          "Priya M.", "Arjun S.", "Kavitha R.", "Rohan D.",
+          "Sneha P.", "Kiran N.", "Deepa K.", "Vikram J.",
+          "Ananya S.", "Rajan I.", "Meera N.", "Suresh B.",
+        ];
+        const TEAM_AVATARS = ["PM","AS","KR","RD","SP","KN","DK","VJ","AN","RI","MN","SB"];
+        // company holidays in Jun 2026
+        const HOLIDAYS: Record<number, string> = { 19: "Eid al-Adha" };
 
-            let bg;
-            let textColor;
-
-            if (isToday) {
-              bg = "bg-[#00B87C] border-transparent";
-              textColor = "text-white";
-            } else if (isLeave) {
-              bg = "bg-[#FEF3C7] border-[#FEF3C7] dark:border-transparent";
-              textColor = "text-[#D97706]";
-            } else if (isWeekend) {
-              bg = "bg-neutral-50 dark:bg-zinc-800/50 border-transparent";
-              textColor = "text-muted-foreground";
-            } else {
-              bg = "bg-[#DCFCE7] border-[#DCFCE7] dark:border-transparent";
-              textColor = "text-[#10B981]";
+        // seeded per-day per-member attendance (deterministic, not random)
+        function dayData(date: number): number[] {
+          const seed = [0,1,0,0,3,0,0,0,0,0,0,1,  // member base patterns
+                        0,0,1,0,0,0,0,0,0,0,0,0];
+          return TEAM_NAMES.map((name, mi) => {
+            // Check real-time punch state for Priya M.
+            if (name === "Priya M." && date === todayMockDay && currentMonthIndex === todayMockMonth) {
+              const priyaPunch = getPunchStateForEmail("emp@nexushr.com");
+              if (priyaPunch?.isPunchedIn || priyaPunch?.punchOutTime) {
+                return 0; // Present
+              } else {
+                return 2; // Absent (Not punched in yet)
+              }
             }
 
-            return (
-              <div
-                key={date}
-                className={`h-10 rounded-xl flex items-center justify-center text-[13px] font-bold transition-all hover:scale-105 cursor-pointer ${bg} ${textColor}`}
-                style={{ borderColor: "var(--border)" }}
-              >
-                {date}
+            // Sneha (index 4) is frequently on leave
+            if (mi === 4 && date >= 5 && date <= 7)  return 3;
+            if (mi === 4 && (date === 14 || date === 21)) return 3;
+            // Ananya (index 8) WFH / late on Mondays
+            if (mi === 8 && date % 7 === 1) return 1;
+            // Arjun (index 1) was absent on 3rd
+            if (mi === 1 && date === 3)  return 2;
+            // Vikram late on 10
+            if (mi === 7 && date === 10) return 1;
+            // Meera absent on 17
+            if (mi === 10 && date === 17) return 2;
+            // Holiday: everyone off
+            if (HOLIDAYS[date]) return 3;
+            // Seed-based light variation
+            const v = (date * 13 + mi * 7) % 20;
+            if (v === 0 && mi < 6) return 1; // occasional late
+            if (v === 1 && mi > 8) return 1;
+            return 0; // present
+          });
+        }
+
+        const statusLabel = ["Present", "Late", "Absent", "On Leave"];
+        const memberColor = (s: number) =>
+          s === 0 ? "#00B87C" : s === 1 ? "#F59E0B" : s === 2 ? "#EF4444" : "#8B5CF6";
+
+        // Monthly summary
+        let totalPresent = 0, totalLate = 0, totalAbsent = 0, totalLeave = 0;
+        for (let d = 1; d <= activeMonthConfig.days; d++) {
+          const isWeekend = (d + activeMonthConfig.offset - 1 + 7) % 7 === 0
+                         || (d + activeMonthConfig.offset - 1 + 7) % 7 === 6;
+          if (isWeekend) continue;
+          dayData(d).forEach(s => {
+            if (s === 0) totalPresent++;
+            else if (s === 1) totalLate++;
+            else if (s === 2) totalAbsent++;
+            else totalLeave++;
+          });
+        }
+
+        const [selectedDay, setSelectedDay] = React.useState<number | null>(null);
+        const selectedData = selectedDay ? dayData(selectedDay) : [];
+
+        return (
+          <div className="rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm p-6" style={{ borderColor: "var(--border)" }}>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-[14px] font-bold" style={{ color: "var(--foreground)" }}>Monthly Calendar View</h3>
+                <p className="text-[11px] text-muted-foreground mt-0.5">Click any working day to see who attended · {activeMonthConfig.label}</p>
               </div>
-            );
-          })}
-        </div>
-      </div>
+            </div>
+
+            {/* Summary bar */}
+            <div className="grid grid-cols-4 gap-3 mb-5">
+              {[
+                { label: "Present Days",  value: totalPresent, color: "#00B87C", bg: "#ECFDF5" },
+                { label: "Late Arrivals", value: totalLate,    color: "#F59E0B", bg: "#FEF3C7" },
+                { label: "Absent Days",   value: totalAbsent,  color: "#EF4444", bg: "#FEF2F2" },
+                { label: "Leave Days",    value: totalLeave,   color: "#8B5CF6", bg: "#F5F3FF" },
+              ].map(s => (
+                <div key={s.label} className="rounded-xl p-3 text-center" style={{ background: s.bg }}>
+                  <div className="text-[20px] font-black" style={{ color: s.color }}>{s.value}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wide" style={{ color: s.color }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Day headers */}
+            <div className="grid grid-cols-7 gap-2 text-center mb-2">
+              {CALENDAR_DAYS.map(day => (
+                <div key={day} className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">{day}</div>
+              ))}
+            </div>
+
+            {/* Calendar grid */}
+            <div className="grid grid-cols-7 gap-2">
+              {Array.from({ length: activeMonthConfig.offset }).map((_, i) => (
+                <div key={`e-${i}`} className="h-14" />
+              ))}
+              {Array.from({ length: activeMonthConfig.days }).map((_, i) => {
+                const date = i + 1;
+                // dow: 0=Sun...6=Sat
+                const dow = (date + activeMonthConfig.offset - 1 + 7) % 7;
+                const isWeekend = dow === 0 || dow === 6;
+                const isHoliday = !!HOLIDAYS[date];
+                const isToday   = activeMonthStr === "Jun 2026" && date === 15;
+
+                let bg = "", textCol = "", border = "";
+                let presentCount = 0, lateCount = 0, absentCount = 0;
+                let tooltip = "";
+
+                if (isWeekend) {
+                  bg = "var(--secondary)"; textCol = "var(--muted-foreground)"; border = "transparent";
+                } else if (isHoliday) {
+                  bg = "#F5F3FF"; textCol = "#8B5CF6"; border = "#DDD6FE";
+                  tooltip = HOLIDAYS[date];
+                } else if (isToday) {
+                  bg = "#00B87C"; textCol = "white"; border = "transparent";
+                  const d = dayData(date);
+                  presentCount = d.filter(s=>s===0).length;
+                  lateCount    = d.filter(s=>s===1).length;
+                  absentCount  = d.filter(s=>s===2 || s===3).length;
+                } else if (date > 15) {
+                  // future days (greyed)
+                  bg = "var(--secondary)"; textCol = "var(--muted-foreground)"; border = "transparent";
+                } else {
+                  const d = dayData(date);
+                  presentCount = d.filter(s=>s===0).length;
+                  lateCount    = d.filter(s=>s===1).length;
+                  absentCount  = d.filter(s=>s===2).length;
+                  const pct    = ((presentCount + lateCount * 0.5) / 12) * 100;
+                  if (pct >= 90)      { bg="#DCFCE7"; textCol="#059669"; border="#A7F3D0"; }
+                  else if (pct >= 70) { bg="#FEF3C7"; textCol="#D97706"; border="#FDE68A"; }
+                  else                { bg="#FEE2E2"; textCol="#DC2626"; border="#FECACA"; }
+                }
+
+                const canClick = !isWeekend && !isHoliday && date <= 15;
+
+                return (
+                  <div
+                    key={date}
+                    onClick={() => canClick && setSelectedDay(date === selectedDay ? null : date)}
+                    title={tooltip || (isWeekend ? "Weekend" : date > 15 ? "Upcoming" : "")}
+                    className={`h-14 rounded-xl flex flex-col items-center justify-center transition-all select-none ${
+                      canClick ? "cursor-pointer hover:scale-105 hover:shadow-md" : "cursor-default"
+                    } ${selectedDay === date ? "ring-2 ring-[#00B87C] ring-offset-1" : ""}`}
+                    style={{ background: bg, color: textCol, border: `1px solid ${border}` }}
+                  >
+                    <span className="text-[13px] font-black leading-none">{date}</span>
+                    {isHoliday && <span className="text-[8px] font-bold mt-0.5 opacity-80">HOLIDAY</span>}
+                    {!isWeekend && !isHoliday && date <= 15 && (
+                      <span className="text-[9px] font-bold mt-0.5 opacity-80">
+                        {presentCount}/{12}
+                        {lateCount > 0 ? ` · ${lateCount}L` : ""}
+                        {absentCount > 0 ? ` · ${absentCount}A` : ""}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Legend */}
+            <div className="flex items-center gap-5 mt-5 pt-4 border-t flex-wrap" style={{ borderColor: "var(--border)" }}>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Legend:</span>
+              {[
+                { color: "#DCFCE7", text: "#059669", label: "Full / High Attendance (≥90%)" },
+                { color: "#FEF3C7", text: "#D97706", label: "Moderate (70–89%)" },
+                { color: "#FEE2E2", text: "#DC2626", label: "Low (<70%)" },
+                { color: "#00B87C", text: "white",   label: "Today" },
+                { color: "#F5F3FF", text: "#8B5CF6", label: "Holiday" },
+                { color: "var(--secondary)", text: "var(--muted-foreground)", label: "Weekend" },
+              ].map(l => (
+                <div key={l.label} className="flex items-center gap-1.5">
+                  <div className="w-4 h-4 rounded-md flex-shrink-0" style={{ background: l.color, border: `1px solid ${l.text}40` }} />
+                  <span className="text-[11px] font-semibold text-muted-foreground">{l.label}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Day detail popup */}
+            {selectedDay !== null && (
+              <div className="mt-5 rounded-xl border overflow-hidden" style={{ borderColor: "var(--border)" }}>
+                <div className="px-5 py-3 flex items-center justify-between" style={{ background: "#00B87C" }}>
+                  <div>
+                    <span className="text-[14px] font-black text-white">{activeMonthConfig.label.split(" ")[0]} {selectedDay}, 2026</span>
+                    <span className="text-[11px] text-white/80 ml-3">Team Attendance Detail</span>
+                  </div>
+                  <button onClick={() => setSelectedDay(null)}
+                    className="text-white/80 hover:text-white text-lg font-black leading-none w-6 h-6 flex items-center justify-center rounded-lg hover:bg-white/20 transition-colors">×</button>
+                </div>
+                {/* summary chips */}
+                <div className="px-5 py-3 border-b flex gap-4" style={{ borderColor: "var(--border)", background: "#F0FDF4" }}>
+                  {[
+                    { label: "Present", count: selectedData.filter(s=>s===0).length, color: "#00B87C" },
+                    { label: "Late",    count: selectedData.filter(s=>s===1).length, color: "#F59E0B" },
+                    { label: "Absent",  count: selectedData.filter(s=>s===2).length, color: "#EF4444" },
+                    { label: "On Leave",count: selectedData.filter(s=>s===3).length, color: "#8B5CF6" },
+                  ].map(c => (
+                    <div key={c.label} className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ background: c.color }} />
+                      <span className="text-[12px] font-bold" style={{ color: c.color }}>{c.count}</span>
+                      <span className="text-[11px] text-muted-foreground font-semibold">{c.label}</span>
+                    </div>
+                  ))}
+                  <div className="ml-auto">
+                    <span className="text-[11px] font-bold" style={{ color: "#00B87C" }}>
+                      {Math.round((selectedData.filter(s=>s===0||s===1).length/12)*100)}% Attendance Rate
+                    </span>
+                  </div>
+                </div>
+                {/* member rows */}
+                <div className="grid grid-cols-2 gap-0 divide-x divide-y" style={{ borderColor: "var(--border)" }}>
+                  {TEAM_NAMES.map((name, mi) => {
+                    const s = selectedData[mi];
+                    const dotColor = memberColor(s);
+                    const badge: Record<number, { bg: string; text: string; label: string }> = {
+                      0: { bg: "#ECFDF5", text: "#059669", label: "✓ Present" },
+                      1: { bg: "#FEF3C7", text: "#D97706", label: "⏰ Late" },
+                      2: { bg: "#FEF2F2", text: "#DC2626", label: "✕ Absent" },
+                      3: { bg: "#F5F3FF", text: "#7C3AED", label: "🏖 On Leave" },
+                    };
+                    const b = badge[s];
+                    return (
+                      <div key={mi} className="flex items-center gap-3 px-4 py-2.5" style={{ borderColor: "var(--border)" }}>
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0"
+                          style={{ background: `${dotColor}25`, color: dotColor, border: `1.5px solid ${dotColor}50` }}>
+                          {TEAM_AVATARS[mi]}
+                        </div>
+                        <span className="text-[12px] font-semibold flex-1" style={{ color: "var(--foreground)" }}>{name}</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: b.bg, color: b.text }}>{b.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* ── Attendance Heatmap ── */}
       <div

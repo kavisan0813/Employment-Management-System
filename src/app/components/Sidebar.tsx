@@ -64,6 +64,15 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   if (isNewJoinee) {
     groups = [
       {
+        label: "Home",
+        icon: Home,
+        items: [
+          { label: "Smart Search", path: "/smart-search" },
+          { label: "My Dashboard", path: "/employee/dashboard" },
+          { label: "Notifications", path: "/notifications" },
+        ],
+      },
+      {
         label: "My Journey",
         icon: Sprout,
         items: [
