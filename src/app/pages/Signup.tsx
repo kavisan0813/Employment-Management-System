@@ -97,21 +97,26 @@ export function Signup() {
         name: formData.fullName,
         email: formData.email,
         role: formData.role || "Employee",
-        initials: formData.fullName
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase()
-          .slice(0, 2) || "JD",
+        initials:
+          formData.fullName
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2) || "JD",
       };
 
       const existingUsersRaw = localStorage.getItem("nexus_registered_users");
-      const existingUsers = existingUsersRaw ? JSON.parse(existingUsersRaw) : [];
-      
+      const existingUsers = existingUsersRaw
+        ? JSON.parse(existingUsersRaw)
+        : [];
+
       // Prevent duplicates in registered users list
-      const filtered = existingUsers.filter((u: any) => u.email.toLowerCase() !== formData.email.toLowerCase());
+      const filtered = existingUsers.filter(
+        (u: any) => u.email.toLowerCase() !== formData.email.toLowerCase(),
+      );
       filtered.push(newUser);
-      
+
       localStorage.setItem("nexus_registered_users", JSON.stringify(filtered));
 
       navigate("/signup-success", {

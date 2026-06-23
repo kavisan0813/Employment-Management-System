@@ -258,9 +258,10 @@ export function AdminDashboard() {
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [isPostAnnouncementOpen, setIsPostAnnouncementOpen] = useState(false);
   const [isManageRoleOpen, setIsManageRoleOpen] = useState(false);
-  const [selectedRoleToManage, setSelectedRoleToManage] = useState<RoleDistItem | null>(null);
-  const [activePendingAction, setActivePendingAction] = useState<PendingActionItem | null>(null);
-
+  const [selectedRoleToManage, setSelectedRoleToManage] =
+    useState<RoleDistItem | null>(null);
+  const [activePendingAction, setActivePendingAction] =
+    useState<PendingActionItem | null>(null);
 
   // System actions (loading state)
   const [systemTaskType, setSystemTaskType] = useState<
@@ -452,7 +453,12 @@ export function AdminDashboard() {
               {t("adminDashboard")}
             </h2>
             <p className="text-[13px] font-semibold text-muted-foreground">
-              {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </p>
           </div>
         </div>

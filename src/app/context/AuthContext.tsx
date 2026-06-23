@@ -54,7 +54,7 @@ export const ROLE_CONFIG: Record<
 };
 
 export const ROLE_HOME_ROUTE: Record<UserRole, string> = {
-  "Super Admin": "/admin/dashboard",
+  "Super Admin": "/hr/dashboard",
   "HR Manager": "/hr/dashboard",
   Finance: "/finance/dashboard",
   Manager: "/manager/dashboard",

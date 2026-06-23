@@ -5,7 +5,6 @@ import {
   Lock,
   Zap,
   ArrowRight,
-  ChevronDown,
   ShieldCheck,
   ShieldAlert,
   Users,
@@ -78,14 +77,14 @@ export function Login() {
       if (registered) {
         const users = JSON.parse(registered);
         const match = users.find(
-          (u: any) => u.email.toLowerCase() === emailVal.toLowerCase()
+          (u: any) => u.email.toLowerCase() === emailVal.toLowerCase(),
         );
         if (match && match.role) {
           return match.role as UserRole;
         }
       }
     } catch (e) {
-      // ignore
+      console.log(e);
     }
 
     // Fallback to keyword detection
@@ -105,7 +104,7 @@ export function Login() {
 
     setTimeout(() => {
       const role: UserRole = detectRole(email);
-      
+
       // Check registered users list for name/initials
       let accountName = "";
       let accountInitials = "";
@@ -114,7 +113,7 @@ export function Login() {
         if (registered) {
           const users = JSON.parse(registered);
           const match = users.find(
-            (u: any) => u.email.toLowerCase() === email.toLowerCase()
+            (u: any) => u.email.toLowerCase() === email.toLowerCase(),
           );
           if (match) {
             accountName = match.name;
@@ -122,7 +121,7 @@ export function Login() {
           }
         }
       } catch (err) {
-        // ignore
+        console.log(err);
       }
 
       // Fallback to demo account details if not found in registered list
@@ -161,6 +160,20 @@ export function Login() {
         initials: demo.initials,
       });
       navigate(ROLE_HOME_ROUTE[role], { replace: true });
+      setIsLoading(false);
+    }, 500);
+  };
+
+  const handlePlatformDemoLogin = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      login({
+        name: "Ryan Park",
+        email: "admin@nexushr.com",
+        role: "Super Admin",
+        initials: "RP",
+      });
+      navigate("/platform-admin/dashboard", { replace: true });
       setIsLoading(false);
     }, 500);
   };
@@ -442,8 +455,14 @@ export function Login() {
         )}
 
         {/* Quick Demo Access */}
-        <div className="mt-6 pt-5 border-t border-dashed" style={{ borderColor: "var(--border)" }}>
-          <div className="flex items-center justify-center gap-1.5 mb-3 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--muted-foreground)" }}>
+        <div
+          className="mt-6 pt-5 border-t border-dashed"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <div
+            className="flex items-center justify-center gap-1.5 mb-3 text-xs font-bold uppercase tracking-wider"
+            style={{ color: "var(--muted-foreground)" }}
+          >
             <ShieldCheck size={14} className="text-emerald-500" />
             <span>Quick Demo Access</span>
           </div>
@@ -468,11 +487,17 @@ export function Login() {
                     backgroundColor: config.bg,
                   }}
                 >
-                  <div className="p-1 rounded-lg" style={{ backgroundColor: config.color + "15", color: config.color }}>
+                  <div
+                    className="p-1 rounded-lg"
+                    style={{
+                      backgroundColor: config.color + "15",
+                      color: config.color,
+                    }}
+                  >
                     <Icon size={14} />
                   </div>
                   <div className="flex flex-col min-w-0">
-                    <span 
+                    <span
                       className="text-[11px] font-extrabold uppercase tracking-wide group-hover:underline leading-tight"
                       style={{ color: config.color }}
                     >
@@ -485,6 +510,38 @@ export function Login() {
                 </button>
               );
             })}
+          </div>
+
+          {/* Separate Platform Admin Login Button */}
+          <div className="mt-3">
+            <button
+              type="button"
+              onClick={handlePlatformDemoLogin}
+              disabled={isLoading}
+              className="w-full flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group justify-center"
+              style={{
+                borderColor: "#8B5CF630",
+                backgroundColor: "rgba(139,92,246,0.06)",
+              }}
+            >
+              <div
+                className="p-1 rounded-lg"
+                style={{
+                  backgroundColor: "rgba(139, 92, 246, 0.12)",
+                  color: "#8B5CF6",
+                }}
+              >
+                <ShieldAlert size={14} />
+              </div>
+              <div className="flex flex-col">
+                <span
+                  className="text-[11px] font-extrabold uppercase tracking-wide group-hover:underline leading-tight"
+                  style={{ color: "#8B5CF6" }}
+                >
+                  Platform Super Admin Console
+                </span>
+              </div>
+            </button>
           </div>
         </div>
 

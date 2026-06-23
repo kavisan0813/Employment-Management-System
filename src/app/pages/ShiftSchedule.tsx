@@ -165,7 +165,9 @@ export const ShiftSchedule: React.FC = () => {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   const [activeBrush, setActiveBrush] = useState<string | null>(null);
-  const [currentDate, setCurrentDate] = useState<Date>(() => new Date(2026, 3, 6)); // Apr 6, 2026 (Monday)
+  const [currentDate, setCurrentDate] = useState<Date>(
+    () => new Date(2026, 3, 6),
+  ); // Apr 6, 2026 (Monday)
   const [swaps, setSwaps] = useState<SwapItem[]>([
     {
       id: 1,
@@ -513,7 +515,6 @@ export const ShiftSchedule: React.FC = () => {
           </button>
         </div>
       </div>
-
       {/* System Health / Alerts Bar */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div className="flex items-center gap-4 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/30 p-4 rounded-2xl">
@@ -556,7 +557,6 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* Navigation & Controls */}
       <div className="bg-card p-4 rounded-2xl border border-border shadow-sm flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
@@ -618,7 +618,6 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div
@@ -736,7 +735,6 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* Shift Legend & Quick Assign Toolbar */}
       <div className="bg-card border border-border rounded-2xl p-4 mb-6 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-6">
@@ -795,7 +793,8 @@ export const ShiftSchedule: React.FC = () => {
           </div>
           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
         </div>
-      </div>      {view === "Week" && (
+      </div>{" "}
+      {view === "Week" && (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8 animate-in fade-in duration-300">
           <div className="grid grid-cols-[240px_repeat(7,1fr)] bg-secondary/50 border-b border-border">
             <div className="px-4 py-3 text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center">
@@ -921,101 +920,128 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
       )}
-
       {/* Monthly Coverage Calendar */}
-      {view === "Month" && (() => {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        const firstDay = new Date(year, month, 1);
-        const rawDay = firstDay.getDay();
-        const startOffset = rawDay === 0 ? 6 : rawDay - 1;
-        const totalDays = new Date(year, month + 1, 0).getDate();
-        const monthLabel = currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+      {view === "Month" &&
+        (() => {
+          const year = currentDate.getFullYear();
+          const month = currentDate.getMonth();
+          const firstDay = new Date(year, month, 1);
+          const rawDay = firstDay.getDay();
+          const startOffset = rawDay === 0 ? 6 : rawDay - 1;
+          const totalDays = new Date(year, month + 1, 0).getDate();
+          const monthLabel = currentDate.toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+          });
 
-        return (
-          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm mb-8 animate-in fade-in duration-300">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-sm font-black text-foreground uppercase tracking-wider">{monthLabel} — Team Shift Coverage</h3>
-              <span className="text-xs font-bold text-muted-foreground">🟢 Morning | 🟡 Evening | 🟣 Night</span>
-            </div>
-            
-            <div className="grid grid-cols-7 gap-2">
-              {/* Weekday headers */}
-              {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((w) => (
-                <div key={w} className="py-2.5 text-center text-xs font-black text-slate-400 uppercase tracking-wider bg-secondary/30 rounded-lg">
-                  {w}
-                </div>
-              ))}
-              
-              {/* Empty days offset */}
-              {Array.from({ length: startOffset }).map((_, idx) => (
-                <div key={`empty-${idx}`} className="min-h-[90px] p-2 bg-secondary/10 rounded-xl border border-dashed border-border/40 opacity-30" />
-              ))}
-              
-              {/* Month Days */}
-              {Array.from({ length: totalDays }, (_, i) => {
-                const day = i + 1;
-                const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-                
-                // Aggregate shifts
-                let morningCount = 0;
-                let eveningCount = 0;
-                let nightCount = 0;
-                
-                filteredSchedule.forEach((emp) => {
-                  const shift = getShiftForDate(emp.name, dStr);
-                  if (shift) {
-                    if (shift.type === "Morning" || shift.type === "Full Day") {
-                      morningCount++;
-                    } else if (shift.type === "Evening") {
-                      eveningCount++;
-                    } else if (shift.type === "Night") {
-                      nightCount++;
-                    }
-                  }
-                });
+          return (
+            <div className="bg-card border border-border rounded-2xl p-6 shadow-sm mb-8 animate-in fade-in duration-300">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-sm font-black text-foreground uppercase tracking-wider">
+                  {monthLabel} — Team Shift Coverage
+                </h3>
+                <span className="text-xs font-bold text-muted-foreground">
+                  🟢 Morning | 🟡 Evening | 🟣 Night
+                </span>
+              </div>
 
-                const isToday = new Date().toDateString() === new Date(year, month, day).toDateString();
-                const isSelected = currentDate.getDate() === day && currentDate.getMonth() === month && currentDate.getFullYear() === year;
-                
-                return (
+              <div className="grid grid-cols-7 gap-2">
+                {/* Weekday headers */}
+                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((w) => (
                   <div
-                    key={day}
-                    onClick={() => {
-                      const newDate = new Date(year, month, day);
-                      setCurrentDate(newDate);
-                      setView("Day");
-                    }}
-                    className={`min-h-[90px] p-3 bg-secondary/20 hover:bg-[#00B87C]/[0.04] rounded-xl border hover:border-primary/50 transition-all flex flex-col justify-between group cursor-pointer ${isSelected ? "border-primary/70 ring-1 ring-primary/20" : "border-border"}`}
+                    key={w}
+                    className="py-2.5 text-center text-xs font-black text-slate-400 uppercase tracking-wider bg-secondary/30 rounded-lg"
                   >
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs font-black group-hover:text-primary transition-colors ${isSelected ? "text-primary" : "text-foreground"}`}>{day}</span>
-                      {isToday && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary" title="Today" />
-                      )}
-                    </div>
-                    <div className="space-y-1 mt-2">
-                      <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
-                        <span>{morningCount} MOR</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
-                        <span>{eveningCount} EVE</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#7C3AED]" />
-                        <span>{nightCount} NGT</span>
-                      </div>
-                    </div>
+                    {w}
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })()}
+                ))}
 
+                {/* Empty days offset */}
+                {Array.from({ length: startOffset }).map((_, idx) => (
+                  <div
+                    key={`empty-${idx}`}
+                    className="min-h-[90px] p-2 bg-secondary/10 rounded-xl border border-dashed border-border/40 opacity-30"
+                  />
+                ))}
+
+                {/* Month Days */}
+                {Array.from({ length: totalDays }, (_, i) => {
+                  const day = i + 1;
+                  const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+                  // Aggregate shifts
+                  let morningCount = 0;
+                  let eveningCount = 0;
+                  let nightCount = 0;
+
+                  filteredSchedule.forEach((emp) => {
+                    const shift = getShiftForDate(emp.name, dStr);
+                    if (shift) {
+                      if (
+                        shift.type === "Morning" ||
+                        shift.type === "Full Day"
+                      ) {
+                        morningCount++;
+                      } else if (shift.type === "Evening") {
+                        eveningCount++;
+                      } else if (shift.type === "Night") {
+                        nightCount++;
+                      }
+                    }
+                  });
+
+                  const isToday =
+                    new Date().toDateString() ===
+                    new Date(year, month, day).toDateString();
+                  const isSelected =
+                    currentDate.getDate() === day &&
+                    currentDate.getMonth() === month &&
+                    currentDate.getFullYear() === year;
+
+                  return (
+                    <div
+                      key={day}
+                      onClick={() => {
+                        const newDate = new Date(year, month, day);
+                        setCurrentDate(newDate);
+                        setView("Day");
+                      }}
+                      className={`min-h-[90px] p-3 bg-secondary/20 hover:bg-[#00B87C]/[0.04] rounded-xl border hover:border-primary/50 transition-all flex flex-col justify-between group cursor-pointer ${isSelected ? "border-primary/70 ring-1 ring-primary/20" : "border-border"}`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <span
+                          className={`text-xs font-black group-hover:text-primary transition-colors ${isSelected ? "text-primary" : "text-foreground"}`}
+                        >
+                          {day}
+                        </span>
+                        {isToday && (
+                          <span
+                            className="w-1.5 h-1.5 rounded-full bg-primary"
+                            title="Today"
+                          />
+                        )}
+                      </div>
+                      <div className="space-y-1 mt-2">
+                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
+                          <span>{morningCount} MOR</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+                          <span>{eveningCount} EVE</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#7C3AED]" />
+                          <span>{nightCount} NGT</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
       {/* Daily Breakdown Columns */}
       {view === "Day" && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 animate-in fade-in duration-300">
@@ -1024,7 +1050,9 @@ export const ShiftSchedule: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#00B87C]" />
-                <span className="text-sm font-extrabold text-foreground">Morning Shift</span>
+                <span className="text-sm font-extrabold text-foreground">
+                  Morning Shift
+                </span>
               </div>
               <span className="text-xs font-black bg-secondary text-primary px-2 py-0.5 rounded-md">
                 {dayBreakdown.morning.length}
@@ -1032,16 +1060,29 @@ export const ShiftSchedule: React.FC = () => {
             </div>
             <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
               {dayBreakdown.morning.map((emp) => (
-                <div key={emp.id} className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all">
-                  <img src={emp.avatar} alt="" className="w-8 h-8 rounded-full shadow-sm" />
+                <div
+                  key={emp.id}
+                  className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all"
+                >
+                  <img
+                    src={emp.avatar}
+                    alt=""
+                    className="w-8 h-8 rounded-full shadow-sm"
+                  />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-black text-foreground truncate">{emp.name}</p>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase">{emp.dept}</p>
+                    <p className="text-xs font-black text-foreground truncate">
+                      {emp.name}
+                    </p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                      {emp.dept}
+                    </p>
                   </div>
                 </div>
               ))}
               {dayBreakdown.morning.length === 0 && (
-                <p className="text-center text-xs text-muted-foreground py-8">No employees scheduled</p>
+                <p className="text-center text-xs text-muted-foreground py-8">
+                  No employees scheduled
+                </p>
               )}
             </div>
           </div>
@@ -1051,7 +1092,9 @@ export const ShiftSchedule: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" />
-                <span className="text-sm font-extrabold text-foreground">Evening Shift</span>
+                <span className="text-sm font-extrabold text-foreground">
+                  Evening Shift
+                </span>
               </div>
               <span className="text-xs font-black bg-[rgba(245,158,11,0.1)] text-[#F59E0B] px-2 py-0.5 rounded-md">
                 {dayBreakdown.evening.length}
@@ -1059,16 +1102,29 @@ export const ShiftSchedule: React.FC = () => {
             </div>
             <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
               {dayBreakdown.evening.map((emp) => (
-                <div key={emp.id} className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all">
-                  <img src={emp.avatar} alt="" className="w-8 h-8 rounded-full shadow-sm" />
+                <div
+                  key={emp.id}
+                  className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all"
+                >
+                  <img
+                    src={emp.avatar}
+                    alt=""
+                    className="w-8 h-8 rounded-full shadow-sm"
+                  />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-black text-foreground truncate">{emp.name}</p>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase">{emp.dept}</p>
+                    <p className="text-xs font-black text-foreground truncate">
+                      {emp.name}
+                    </p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                      {emp.dept}
+                    </p>
                   </div>
                 </div>
               ))}
               {dayBreakdown.evening.length === 0 && (
-                <p className="text-center text-xs text-muted-foreground py-8">No employees scheduled</p>
+                <p className="text-center text-xs text-muted-foreground py-8">
+                  No employees scheduled
+                </p>
               )}
             </div>
           </div>
@@ -1078,7 +1134,9 @@ export const ShiftSchedule: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#7C3AED]" />
-                <span className="text-sm font-extrabold text-foreground">Night Shift</span>
+                <span className="text-sm font-extrabold text-foreground">
+                  Night Shift
+                </span>
               </div>
               <span className="text-xs font-black bg-violet-50 text-violet-700 px-2 py-0.5 rounded-md">
                 {dayBreakdown.night.length}
@@ -1086,16 +1144,29 @@ export const ShiftSchedule: React.FC = () => {
             </div>
             <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
               {dayBreakdown.night.map((emp) => (
-                <div key={emp.id} className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all">
-                  <img src={emp.avatar} alt="" className="w-8 h-8 rounded-full shadow-sm" />
+                <div
+                  key={emp.id}
+                  className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all"
+                >
+                  <img
+                    src={emp.avatar}
+                    alt=""
+                    className="w-8 h-8 rounded-full shadow-sm"
+                  />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-black text-foreground truncate">{emp.name}</p>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase">{emp.dept}</p>
+                    <p className="text-xs font-black text-foreground truncate">
+                      {emp.name}
+                    </p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                      {emp.dept}
+                    </p>
                   </div>
                 </div>
               ))}
               {dayBreakdown.night.length === 0 && (
-                <p className="text-center text-xs text-muted-foreground py-8">No employees scheduled</p>
+                <p className="text-center text-xs text-muted-foreground py-8">
+                  No employees scheduled
+                </p>
               )}
             </div>
           </div>
@@ -1105,7 +1176,9 @@ export const ShiftSchedule: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-border mb-4">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#90A4AE]" />
-                <span className="text-sm font-extrabold text-foreground">Rest / Off Day</span>
+                <span className="text-sm font-extrabold text-foreground">
+                  Rest / Off Day
+                </span>
               </div>
               <span className="text-xs font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md">
                 {dayBreakdown.off.length}
@@ -1113,22 +1186,34 @@ export const ShiftSchedule: React.FC = () => {
             </div>
             <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
               {dayBreakdown.off.map((emp) => (
-                <div key={emp.id} className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all">
-                  <img src={emp.avatar} alt="" className="w-8 h-8 rounded-full shadow-sm" />
+                <div
+                  key={emp.id}
+                  className="flex items-center gap-3 p-2 bg-secondary/35 rounded-xl border border-transparent hover:border-border/60 transition-all"
+                >
+                  <img
+                    src={emp.avatar}
+                    alt=""
+                    className="w-8 h-8 rounded-full shadow-sm"
+                  />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-black text-foreground truncate">{emp.name}</p>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase">{emp.dept}</p>
+                    <p className="text-xs font-black text-foreground truncate">
+                      {emp.name}
+                    </p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                      {emp.dept}
+                    </p>
                   </div>
                 </div>
               ))}
               {dayBreakdown.off.length === 0 && (
-                <p className="text-center text-xs text-muted-foreground py-8">No employees scheduled</p>
+                <p className="text-center text-xs text-muted-foreground py-8">
+                  No employees scheduled
+                </p>
               )}
             </div>
           </div>
         </div>
       )}
-
       {/* Bottom Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
         {/* Swap Requests */}
@@ -1373,7 +1458,6 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* Shift Templates Section */}
       <div className="mb-12">
         <div className="flex items-center justify-between mb-6">
@@ -1583,7 +1667,6 @@ export const ShiftSchedule: React.FC = () => {
           ))}
         </div>
       </div>
-
       {/* Advanced Apply Template Workflow */}
       {advancedApplyTemplate && (
         <div
@@ -1935,7 +2018,7 @@ export const ShiftSchedule: React.FC = () => {
                       Thu: 3,
                       Fri: 4,
                       Sat: 5,
-                      Sun: 6
+                      Sun: 6,
                     };
 
                     setScheduleData((prev) =>
@@ -2011,7 +2094,6 @@ export const ShiftSchedule: React.FC = () => {
           )}
         </div>
       )}
-
       {/* Success Toast */}
       {showSuccessToast && (
         <div className="fixed bottom-5 right-5 z-[2000] bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3 animate-in slide-in-from-right-5 duration-300">
@@ -2023,7 +2105,6 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
       )}
-
       {/* View Template Modal (Weekly Schedule Preview) */}
       {selectedTemplate && (
         <div
@@ -2089,7 +2170,6 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
       )}
-
       {/* Create Template Popup */}
       {showCreateTemplate && (
         <div
@@ -2248,7 +2328,6 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
       )}
-
       {/* Edit Template Popup */}
       {editTemplate && (
         <div
@@ -2408,7 +2487,6 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
       )}
-
       {/* Rename Template Popup */}
       {renameTemplate && (
         <div
@@ -2458,7 +2536,6 @@ export const ShiftSchedule: React.FC = () => {
           </div>
         </div>
       )}
-
       {/* New Request Modal */}
       {showAddModal && (
         <div

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   Calendar,
-  Clock,
   FileText,
   IndianRupee,
   MessageSquare,
@@ -449,7 +448,11 @@ export function EmployeeSelfService() {
                 Today's Shift Attendance
               </h3>
               <span className="text-[12px] font-bold text-muted-foreground bg-secondary px-3 py-1 rounded-lg border border-border">
-                {new Date().toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
+                {new Date().toLocaleDateString(undefined, {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
               </span>
             </div>
 
@@ -465,7 +468,10 @@ export function EmployeeSelfService() {
                       Active Shift In Progress
                     </p>
                     <p className="text-[13px] font-semibold text-muted-foreground">
-                      Punched in at: <span className="text-foreground font-bold">{punchState.punchInTime}</span>
+                      Punched in at:{" "}
+                      <span className="text-foreground font-bold">
+                        {punchState.punchInTime}
+                      </span>
                     </p>
                   </div>
                 ) : punchState.punchOutTime ? (
@@ -474,10 +480,20 @@ export function EmployeeSelfService() {
                       ✓ Shift Completed
                     </p>
                     <p className="text-[13px] font-semibold text-muted-foreground">
-                      In: <span className="text-foreground font-bold">{punchState.punchInTime}</span> | Out: <span className="text-foreground font-bold">{punchState.punchOutTime}</span>
+                      In:{" "}
+                      <span className="text-foreground font-bold">
+                        {punchState.punchInTime}
+                      </span>{" "}
+                      | Out:{" "}
+                      <span className="text-foreground font-bold">
+                        {punchState.punchOutTime}
+                      </span>
                     </p>
                     <p className="text-[13px] font-semibold text-muted-foreground">
-                      Total worked: <span className="text-primary font-black">{punchState.workedHours}</span>
+                      Total worked:{" "}
+                      <span className="text-primary font-black">
+                        {punchState.workedHours}
+                      </span>
                     </p>
                   </div>
                 ) : (

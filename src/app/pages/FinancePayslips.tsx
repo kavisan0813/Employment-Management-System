@@ -225,7 +225,14 @@ Thank you for your valuable contribution.
               className="px-4 py-2 rounded-xl border border-border bg-card text-[11px] font-semibold uppercase tracking-wider hover:bg-secondary outline-none transition-all cursor-pointer text-foreground"
             >
               <option value="All">All Months</option>
-              {["January", "February", "March", "October", "November", "December"].map((m) => (
+              {[
+                "January",
+                "February",
+                "March",
+                "October",
+                "November",
+                "December",
+              ].map((m) => (
                 <option key={m} value={m}>
                   {m}
                 </option>
@@ -512,14 +519,6 @@ function KPICard({
         </div>
       </div>
     </div>
-  );
-}
-
-function FilterDropdown({ label }: { label: string }) {
-  return (
-    <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-card text-[11px] font-semibold uppercase tracking-wider hover:bg-secondary transition-all">
-      {label} <ChevronDown size={14} className="text-muted-foreground" />
-    </button>
   );
 }
 

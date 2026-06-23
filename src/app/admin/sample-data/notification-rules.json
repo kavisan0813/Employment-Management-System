@@ -1,0 +1,253 @@
+[
+  {
+    "id": "notif_1",
+    "name": "Payment Failed Alert",
+    "triggerEvent": "subscription.payment_failed",
+    "category": "Billing",
+    "channels": [
+      "SMS"
+    ],
+    "recipientType": "Platform Admins",
+    "status": "Active",
+    "throttle": "Digest - Hourly",
+    "updatedAt": "Feb 13, 2024"
+  },
+  {
+    "id": "notif_2",
+    "name": "Ticket Escalated",
+    "triggerEvent": "ticket.escalated",
+    "category": "Support",
+    "channels": [
+      "Slack"
+    ],
+    "recipientType": "Org Admins",
+    "status": "Active",
+    "throttle": "Digest - Daily",
+    "updatedAt": "Feb 01, 2024"
+  },
+  {
+    "id": "notif_3",
+    "name": "New Org Signed Up",
+    "triggerEvent": "org.created",
+    "category": "System",
+    "channels": [
+      "SMS",
+      "Slack",
+      "Email"
+    ],
+    "recipientType": "Org Admins",
+    "status": "Active",
+    "throttle": "Digest - Daily",
+    "updatedAt": "Jan 01, 2024"
+  },
+  {
+    "id": "notif_4",
+    "name": "Suspicious Login Detected",
+    "triggerEvent": "security.failed_login_spike",
+    "category": "Security",
+    "channels": [
+      "Slack"
+    ],
+    "recipientType": "Org Admins",
+    "status": "Active",
+    "throttle": "Digest - Daily",
+    "updatedAt": "Feb 18, 2024"
+  },
+  {
+    "id": "notif_5",
+    "name": "API Rate Limit Exceeded",
+    "triggerEvent": "api.rate_limit_exceeded",
+    "category": "System",
+    "channels": [
+      "Email"
+    ],
+    "recipientType": "Affected User",
+    "status": "Active",
+    "throttle": "Digest - Hourly",
+    "updatedAt": "Jun 13, 2024"
+  },
+  {
+    "id": "notif_6",
+    "name": "Trial Ending Soon",
+    "triggerEvent": "subscription.trial_ending",
+    "category": "Billing",
+    "channels": [
+      "Email",
+      "Slack"
+    ],
+    "recipientType": "Org Admins",
+    "status": "Inactive",
+    "throttle": "Immediate",
+    "updatedAt": "Jan 16, 2024"
+  },
+  {
+    "id": "notif_7",
+    "name": "MFA Disabled",
+    "triggerEvent": "user.mfa_disabled",
+    "category": "Security",
+    "channels": [
+      "Email",
+      "SMS",
+      "In-App"
+    ],
+    "recipientType": "Org Admins",
+    "status": "Active",
+    "throttle": "Immediate",
+    "updatedAt": "Feb 03, 2024"
+  },
+  {
+    "id": "notif_8",
+    "name": "Backup Failed",
+    "triggerEvent": "backup.failed",
+    "category": "System",
+    "channels": [
+      "In-App",
+      "SMS"
+    ],
+    "recipientType": "Org Admins",
+    "status": "Active",
+    "throttle": "Digest - Hourly",
+    "updatedAt": "Jan 17, 2024"
+  },
+  {
+    "id": "notif_9",
+    "name": "New Admin Invited",
+    "triggerEvent": "admin.invited",
+    "category": "System",
+    "channels": [
+      "In-App",
+      "SMS",
+      "Email"
+    ],
+    "recipientType": "Org Admins",
+    "status": "Active",
+    "throttle": "Digest - Hourly",
+    "updatedAt": "Mar 17, 2024"
+  },
+  {
+    "id": "notif_10",
+    "name": "Webhook Delivery Failed",
+    "triggerEvent": "webhook.delivery_failed",
+    "category": "System",
+    "channels": [
+      "SMS",
+      "In-App"
+    ],
+    "recipientType": "Org Admins",
+    "status": "Active",
+    "throttle": "Digest - Hourly",
+    "updatedAt": "Feb 26, 2024"
+  },
+  {
+    "id": "notif_11",
+    "name": "Org Plan Downgraded",
+    "triggerEvent": "org.plan_downgraded",
+    "category": "Billing",
+    "channels": [
+      "In-App",
+      "Slack",
+      "Email"
+    ],
+    "recipientType": "Affected User",
+    "status": "Active",
+    "throttle": "Digest - Hourly",
+    "updatedAt": "Apr 07, 2024"
+  },
+  {
+    "id": "notif_12",
+    "name": "Data Deletion Request Submitted",
+    "triggerEvent": "data.deletion_requested",
+    "category": "Security",
+    "channels": [
+      "Slack"
+    ],
+    "recipientType": "Affected User",
+    "status": "Active",
+    "throttle": "Immediate",
+    "updatedAt": "Jan 21, 2024"
+  },
+  {
+    "id": "notif_13",
+    "name": "Critical Ticket Created",
+    "triggerEvent": "ticket.created_critical",
+    "category": "Support",
+    "channels": [
+      "In-App",
+      "Slack",
+      "SMS"
+    ],
+    "recipientType": "Org Admins",
+    "status": "Active",
+    "throttle": "Digest - Daily",
+    "updatedAt": "Mar 26, 2024"
+  },
+  {
+    "id": "notif_14",
+    "name": "New Feature Flag Enabled",
+    "triggerEvent": "feature_flag.toggled",
+    "category": "System",
+    "channels": [
+      "Slack"
+    ],
+    "recipientType": "Platform Admins",
+    "status": "Inactive",
+    "throttle": "Digest - Daily",
+    "updatedAt": "Apr 11, 2024"
+  },
+  {
+    "id": "notif_15",
+    "name": "Impersonation Session Started",
+    "triggerEvent": "impersonation.started",
+    "category": "Security",
+    "channels": [
+      "Email",
+      "SMS"
+    ],
+    "recipientType": "Org Admins",
+    "status": "Active",
+    "throttle": "Immediate",
+    "updatedAt": "Apr 29, 2024"
+  },
+  {
+    "id": "notif_16",
+    "name": "Storage Quota 90% Reached",
+    "triggerEvent": "org.quota_warning",
+    "category": "System",
+    "channels": [
+      "Slack"
+    ],
+    "recipientType": "Org Admins",
+    "status": "Active",
+    "throttle": "Immediate",
+    "updatedAt": "Apr 03, 2024"
+  },
+  {
+    "id": "notif_17",
+    "name": "Org Reactivated",
+    "triggerEvent": "org.reactivated",
+    "category": "System",
+    "channels": [
+      "SMS",
+      "Email",
+      "Slack"
+    ],
+    "recipientType": "Platform Admins",
+    "status": "Inactive",
+    "throttle": "Immediate",
+    "updatedAt": "May 11, 2024"
+  },
+  {
+    "id": "notif_18",
+    "name": "Announcement Published",
+    "triggerEvent": "announcement.published",
+    "category": "System",
+    "channels": [
+      "SMS",
+      "Slack"
+    ],
+    "recipientType": "Affected User",
+    "status": "Active",
+    "throttle": "Digest - Daily",
+    "updatedAt": "Jan 01, 2024"
+  }
+]

@@ -66,7 +66,9 @@ export function ManagerProfile() {
   const [nationality, setNationality] = useState("Indian");
 
   // --- Form States (Contact) ---
-  const [personalEmail, setPersonalEmail] = useState(() => user?.email || "suresh.iyer@gmail.com");
+  const [personalEmail, setPersonalEmail] = useState(
+    () => user?.email || "suresh.iyer@gmail.com",
+  );
   const [mobileNumber, setMobileNumber] = useState("+91 99887 76655");
   const [alternatePhone, setAlternatePhone] = useState("+91 98001 12233");
   const [linkedinUrl, setLinkedinUrl] = useState("linkedin.com/in/suresh-iyer");
@@ -91,12 +93,13 @@ export function ManagerProfile() {
     }
   }, [user]);
 
-  const avatarInitials = fullName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) || "SI";
+  const avatarInitials =
+    fullName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) || "SI";
 
   // --- Skills State ---
   const [skills, setSkills] = useState<SkillItem[]>([
@@ -225,12 +228,13 @@ export function ManagerProfile() {
         ...user,
         name: fullName,
         email: personalEmail,
-        initials: fullName
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase()
-          .slice(0, 2) || "SI"
+        initials:
+          fullName
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2) || "SI",
       };
       login(updatedUser);
 
@@ -244,15 +248,18 @@ export function ManagerProfile() {
                 ...u,
                 name: updatedUser.name,
                 email: updatedUser.email,
-                initials: updatedUser.initials
+                initials: updatedUser.initials,
               };
             }
             return u;
           });
-          localStorage.setItem("nexus_registered_users", JSON.stringify(updatedUsers));
+          localStorage.setItem(
+            "nexus_registered_users",
+            JSON.stringify(updatedUsers),
+          );
         }
       } catch (err) {
-        // ignore
+        console.log(err);
       }
     }
 
@@ -467,7 +474,10 @@ export function ManagerProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(5,150,105,0.1)", color: "#059669" }}
+                style={{
+                  backgroundColor: "rgba(5,150,105,0.1)",
+                  color: "#059669",
+                }}
               >
                 <Briefcase size={22} />
               </div>
@@ -483,7 +493,10 @@ export function ManagerProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(20,184,166,0.1)", color: "#14B8A6" }}
+                style={{
+                  backgroundColor: "rgba(20,184,166,0.1)",
+                  color: "#14B8A6",
+                }}
               >
                 <TrendingUp size={22} />
               </div>
@@ -499,7 +512,10 @@ export function ManagerProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(245,158,11,0.1)", color: "#F59E0B" }}
+                style={{
+                  backgroundColor: "rgba(245,158,11,0.1)",
+                  color: "#F59E0B",
+                }}
               >
                 <Star size={22} fill="currentColor" />
               </div>
@@ -515,7 +531,10 @@ export function ManagerProfile() {
             <div className="flex items-center gap-4 px-4">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{ backgroundColor: "rgba(34,197,94,0.1)", color: "#22C55E" }}
+                style={{
+                  backgroundColor: "rgba(34,197,94,0.1)",
+                  color: "#22C55E",
+                }}
               >
                 <CheckCircle2 size={22} />
               </div>
@@ -1492,7 +1511,11 @@ function InputField({
           opacity: disabled ? 0.7 : 1,
         }}
       >
-        {icon && <span className="text-muted-foreground flex items-center justify-center">{icon}</span>}
+        {icon && (
+          <span className="text-muted-foreground flex items-center justify-center">
+            {icon}
+          </span>
+        )}
         <input
           type={type}
           value={value}

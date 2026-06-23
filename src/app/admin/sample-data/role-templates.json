@@ -1,0 +1,1540 @@
+[
+  {
+    "id": "role_1",
+    "name": "Super Admin",
+    "description": "Permission template for super admin responsibilities.",
+    "scope": "Platform",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "view",
+          "edit",
+          "approve",
+          "create"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "view",
+          "approve",
+          "create",
+          "delete"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "create",
+          "edit"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "create",
+          "delete",
+          "view"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "approve"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "approve"
+        ]
+      }
+    ],
+    "assignedOrgCount": 32,
+    "isSystemDefault": true,
+    "updatedAt": "Sep 10, 2023"
+  },
+  {
+    "id": "role_2",
+    "name": "Org Admin",
+    "description": "Permission template for org admin responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Attendance",
+        "actions": [
+          "delete"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "view",
+          "edit",
+          "approve"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "approve"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "create",
+          "view",
+          "approve"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "delete",
+          "approve"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "view",
+          "delete"
+        ]
+      }
+    ],
+    "assignedOrgCount": 12,
+    "isSystemDefault": true,
+    "updatedAt": "May 29, 2024"
+  },
+  {
+    "id": "role_3",
+    "name": "HR Manager",
+    "description": "Permission template for hr manager responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "approve",
+          "delete",
+          "edit"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "create"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "edit"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "delete",
+          "approve",
+          "create",
+          "edit"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "delete",
+          "edit",
+          "approve",
+          "create"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "view",
+          "delete",
+          "edit",
+          "approve"
+        ]
+      }
+    ],
+    "assignedOrgCount": 20,
+    "isSystemDefault": true,
+    "updatedAt": "Apr 28, 2024"
+  },
+  {
+    "id": "role_4",
+    "name": "Payroll Admin",
+    "description": "Permission template for payroll admin responsibilities.",
+    "scope": "Organization",
+    "status": "Inactive",
+    "permissions": [
+      {
+        "module": "Attendance",
+        "actions": [
+          "delete",
+          "approve",
+          "view"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "delete",
+          "view",
+          "edit"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "approve",
+          "delete",
+          "create"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "view"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "edit",
+          "create",
+          "view",
+          "approve"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "view",
+          "create",
+          "approve",
+          "edit"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "edit",
+          "delete",
+          "approve"
+        ]
+      }
+    ],
+    "assignedOrgCount": 9,
+    "isSystemDefault": true,
+    "updatedAt": "Nov 02, 2023"
+  },
+  {
+    "id": "role_5",
+    "name": "Recruiter",
+    "description": "Permission template for recruiter responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "delete",
+          "view",
+          "edit"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "edit",
+          "create",
+          "view"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "edit"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "create",
+          "edit",
+          "delete",
+          "approve"
+        ]
+      }
+    ],
+    "assignedOrgCount": 4,
+    "isSystemDefault": true,
+    "updatedAt": "Nov 01, 2023"
+  },
+  {
+    "id": "role_6",
+    "name": "Hiring Manager",
+    "description": "Permission template for hiring manager responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Attendance",
+        "actions": [
+          "edit"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "approve"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "create",
+          "approve",
+          "delete"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "create"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "delete",
+          "view"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "delete",
+          "create",
+          "edit"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "edit"
+        ]
+      }
+    ],
+    "assignedOrgCount": 30,
+    "isSystemDefault": true,
+    "updatedAt": "Sep 24, 2023"
+  },
+  {
+    "id": "role_7",
+    "name": "Team Lead",
+    "description": "Permission template for team lead responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "approve",
+          "view",
+          "delete",
+          "create"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "delete",
+          "edit",
+          "view",
+          "approve"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "delete",
+          "view"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "edit",
+          "create"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "edit",
+          "approve"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "create",
+          "edit",
+          "view"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "approve"
+        ]
+      }
+    ],
+    "assignedOrgCount": 37,
+    "isSystemDefault": true,
+    "updatedAt": "Aug 27, 2023"
+  },
+  {
+    "id": "role_8",
+    "name": "Finance Reviewer",
+    "description": "Permission template for finance reviewer responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Attendance",
+        "actions": [
+          "approve",
+          "view",
+          "delete"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "create",
+          "delete",
+          "edit"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "approve",
+          "edit",
+          "delete",
+          "create"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "edit",
+          "delete",
+          "view",
+          "approve"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "create",
+          "edit",
+          "delete",
+          "view"
+        ]
+      }
+    ],
+    "assignedOrgCount": 20,
+    "isSystemDefault": true,
+    "updatedAt": "Dec 26, 2023"
+  },
+  {
+    "id": "role_9",
+    "name": "Read Only Auditor",
+    "description": "Permission template for read only auditor responsibilities.",
+    "scope": "Organization",
+    "status": "Inactive",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "edit",
+          "view"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "view",
+          "edit",
+          "create",
+          "approve"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "create",
+          "approve",
+          "delete",
+          "edit"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "delete",
+          "edit",
+          "create",
+          "view"
+        ]
+      }
+    ],
+    "assignedOrgCount": 25,
+    "isSystemDefault": true,
+    "updatedAt": "Oct 05, 2023"
+  },
+  {
+    "id": "role_10",
+    "name": "IT Admin",
+    "description": "Permission template for it admin responsibilities.",
+    "scope": "Organization",
+    "status": "Inactive",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "create",
+          "edit"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "edit",
+          "view",
+          "delete",
+          "create"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "edit",
+          "view",
+          "create",
+          "delete"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "edit",
+          "approve"
+        ]
+      }
+    ],
+    "assignedOrgCount": 32,
+    "isSystemDefault": true,
+    "updatedAt": "Nov 02, 2023"
+  },
+  {
+    "id": "role_11",
+    "name": "Department Head",
+    "description": "Permission template for department head responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "approve",
+          "view",
+          "delete"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "edit",
+          "approve",
+          "delete",
+          "create"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "approve",
+          "delete"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "view"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "approve",
+          "delete",
+          "view",
+          "edit"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "create",
+          "delete",
+          "edit"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "approve",
+          "edit",
+          "delete"
+        ]
+      }
+    ],
+    "assignedOrgCount": 34,
+    "isSystemDefault": true,
+    "updatedAt": "Oct 13, 2023"
+  },
+  {
+    "id": "role_12",
+    "name": "Onboarding Specialist",
+    "description": "Permission template for onboarding specialist responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "delete",
+          "view",
+          "create"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "delete"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "approve"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "view",
+          "delete"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "create",
+          "approve",
+          "view",
+          "edit"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "create",
+          "delete",
+          "edit",
+          "view"
+        ]
+      }
+    ],
+    "assignedOrgCount": 39,
+    "isSystemDefault": true,
+    "updatedAt": "Oct 22, 2023"
+  },
+  {
+    "id": "role_13",
+    "name": "Compliance Officer",
+    "description": "Permission template for compliance officer responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "create"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "delete",
+          "approve",
+          "create"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "approve",
+          "edit",
+          "delete",
+          "create"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "approve",
+          "delete",
+          "view"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "approve",
+          "edit",
+          "view"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "edit",
+          "create",
+          "approve"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "delete",
+          "edit",
+          "approve"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "edit",
+          "view",
+          "approve"
+        ]
+      }
+    ],
+    "assignedOrgCount": 24,
+    "isSystemDefault": true,
+    "updatedAt": "Nov 30, 2023"
+  },
+  {
+    "id": "role_14",
+    "name": "Benefits Admin",
+    "description": "Permission template for benefits admin responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "edit",
+          "view"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "delete",
+          "edit",
+          "approve"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "approve",
+          "edit"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "create",
+          "view",
+          "edit"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "create",
+          "view"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "create",
+          "view"
+        ]
+      }
+    ],
+    "assignedOrgCount": 30,
+    "isSystemDefault": true,
+    "updatedAt": "Apr 29, 2024"
+  },
+  {
+    "id": "role_15",
+    "name": "Support Agent (Platform)",
+    "description": "Permission template for support agent (platform) responsibilities.",
+    "scope": "Platform",
+    "status": "Inactive",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "view",
+          "create"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "delete",
+          "create",
+          "approve",
+          "edit"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "approve",
+          "view"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "delete",
+          "create"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "delete"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "edit",
+          "view"
+        ]
+      }
+    ],
+    "assignedOrgCount": 6,
+    "isSystemDefault": false,
+    "updatedAt": "Dec 31, 2023"
+  },
+  {
+    "id": "role_16",
+    "name": "Billing Admin (Platform)",
+    "description": "Permission template for billing admin (platform) responsibilities.",
+    "scope": "Platform",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Attendance",
+        "actions": [
+          "create",
+          "delete",
+          "approve",
+          "view"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "create",
+          "delete",
+          "edit"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "approve",
+          "create",
+          "view"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "delete",
+          "edit",
+          "view",
+          "create"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "create",
+          "delete"
+        ]
+      }
+    ],
+    "assignedOrgCount": 16,
+    "isSystemDefault": false,
+    "updatedAt": "Dec 06, 2023"
+  },
+  {
+    "id": "role_17",
+    "name": "Regional HR Director",
+    "description": "Permission template for regional hr director responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Attendance",
+        "actions": [
+          "edit",
+          "view",
+          "create"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "view",
+          "approve"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "delete",
+          "edit"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "edit",
+          "create",
+          "view"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "create",
+          "delete",
+          "edit",
+          "approve"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "approve",
+          "create",
+          "view",
+          "edit"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "view",
+          "approve",
+          "delete"
+        ]
+      }
+    ],
+    "assignedOrgCount": 0,
+    "isSystemDefault": false,
+    "updatedAt": "Mar 08, 2024"
+  },
+  {
+    "id": "role_18",
+    "name": "Site Manager",
+    "description": "Permission template for site manager responsibilities.",
+    "scope": "Organization",
+    "status": "Inactive",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "create",
+          "edit"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "delete"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "approve"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "view",
+          "delete",
+          "create"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "approve",
+          "view"
+        ]
+      }
+    ],
+    "assignedOrgCount": 4,
+    "isSystemDefault": false,
+    "updatedAt": "Sep 16, 2023"
+  },
+  {
+    "id": "role_19",
+    "name": "Contractor Manager",
+    "description": "Permission template for contractor manager responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "delete"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "delete",
+          "edit"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "delete",
+          "approve",
+          "create",
+          "view"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "edit",
+          "view"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "create",
+          "view"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "delete",
+          "approve",
+          "edit"
+        ]
+      }
+    ],
+    "assignedOrgCount": 29,
+    "isSystemDefault": false,
+    "updatedAt": "Dec 25, 2023"
+  },
+  {
+    "id": "role_20",
+    "name": "Training Coordinator",
+    "description": "Permission template for training coordinator responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Leave",
+        "actions": [
+          "view"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "approve",
+          "view",
+          "delete",
+          "edit"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "approve",
+          "view",
+          "delete",
+          "edit"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "approve",
+          "create"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "create"
+        ]
+      }
+    ],
+    "assignedOrgCount": 36,
+    "isSystemDefault": false,
+    "updatedAt": "Jan 08, 2024"
+  },
+  {
+    "id": "role_21",
+    "name": "Performance Reviewer",
+    "description": "Permission template for performance reviewer responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "create",
+          "edit",
+          "view"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "delete",
+          "edit"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "delete",
+          "approve"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "approve",
+          "edit",
+          "delete",
+          "create"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "delete",
+          "create",
+          "edit"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "edit",
+          "create"
+        ]
+      }
+    ],
+    "assignedOrgCount": 0,
+    "isSystemDefault": false,
+    "updatedAt": "Sep 06, 2023"
+  },
+  {
+    "id": "role_22",
+    "name": "Exit Process Owner",
+    "description": "Permission template for exit process owner responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "approve",
+          "create",
+          "delete",
+          "view"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "delete"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "approve"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "view",
+          "edit"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "view"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "delete",
+          "create"
+        ]
+      }
+    ],
+    "assignedOrgCount": 0,
+    "isSystemDefault": false,
+    "updatedAt": "Mar 03, 2024"
+  },
+  {
+    "id": "role_23",
+    "name": "Survey Admin",
+    "description": "Permission template for survey admin responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "delete"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "delete",
+          "create"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "delete",
+          "approve",
+          "edit"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "edit",
+          "approve",
+          "delete"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "view",
+          "delete",
+          "create",
+          "approve"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "view",
+          "create",
+          "edit",
+          "approve"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "edit",
+          "create",
+          "view",
+          "delete"
+        ]
+      }
+    ],
+    "assignedOrgCount": 15,
+    "isSystemDefault": false,
+    "updatedAt": "Oct 08, 2023"
+  },
+  {
+    "id": "role_24",
+    "name": "Workforce Planner",
+    "description": "Permission template for workforce planner responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "edit",
+          "delete",
+          "approve"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "delete",
+          "create",
+          "edit",
+          "approve"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "create",
+          "view",
+          "edit",
+          "delete"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "view"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "create",
+          "approve",
+          "view",
+          "edit"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "view",
+          "delete",
+          "edit"
+        ]
+      }
+    ],
+    "assignedOrgCount": 35,
+    "isSystemDefault": false,
+    "updatedAt": "Nov 22, 2023"
+  },
+  {
+    "id": "role_25",
+    "name": "Custom: Acme HR Lite",
+    "description": "Permission template for custom: acme hr lite responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Attendance",
+        "actions": [
+          "approve",
+          "edit",
+          "view"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "create",
+          "view",
+          "delete",
+          "edit"
+        ]
+      },
+      {
+        "module": "Recruitment",
+        "actions": [
+          "edit",
+          "approve",
+          "create"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "approve",
+          "create",
+          "edit",
+          "view"
+        ]
+      }
+    ],
+    "assignedOrgCount": 2,
+    "isSystemDefault": false,
+    "updatedAt": "May 03, 2024"
+  },
+  {
+    "id": "role_26",
+    "name": "Custom: Nexus Finance View",
+    "description": "Permission template for custom: nexus finance view responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Employees",
+        "actions": [
+          "approve",
+          "delete",
+          "view",
+          "edit"
+        ]
+      },
+      {
+        "module": "Attendance",
+        "actions": [
+          "delete"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "approve",
+          "view",
+          "edit"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "create",
+          "delete"
+        ]
+      },
+      {
+        "module": "Performance",
+        "actions": [
+          "approve",
+          "view",
+          "delete"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "view",
+          "create",
+          "edit"
+        ]
+      }
+    ],
+    "assignedOrgCount": 0,
+    "isSystemDefault": false,
+    "updatedAt": "May 11, 2024"
+  },
+  {
+    "id": "role_27",
+    "name": "Custom: Orbit Read Only",
+    "description": "Permission template for custom: orbit read only responsibilities.",
+    "scope": "Organization",
+    "status": "Active",
+    "permissions": [
+      {
+        "module": "Attendance",
+        "actions": [
+          "approve",
+          "edit",
+          "create",
+          "view"
+        ]
+      },
+      {
+        "module": "Leave",
+        "actions": [
+          "approve"
+        ]
+      },
+      {
+        "module": "Payroll",
+        "actions": [
+          "view",
+          "approve",
+          "create"
+        ]
+      },
+      {
+        "module": "Reports",
+        "actions": [
+          "edit",
+          "view",
+          "approve",
+          "create"
+        ]
+      },
+      {
+        "module": "Settings",
+        "actions": [
+          "delete",
+          "create",
+          "approve",
+          "edit"
+        ]
+      }
+    ],
+    "assignedOrgCount": 24,
+    "isSystemDefault": false,
+    "updatedAt": "May 07, 2024"
+  }
+]

@@ -1,0 +1,1802 @@
+[
+  {
+    "id": "#88419",
+    "event": "org.suspended",
+    "eventCategory": "Admin Action",
+    "actor": "maya.farrell@cinderwoodenergy.com",
+    "actorType": "user",
+    "organization": "Cinderwood Energy",
+    "ipAddress": "49.48.19.118",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_377860"
+    },
+    "timestamp": "Jun 07, 18:38"
+  },
+  {
+    "id": "#88418",
+    "event": "org.reactivated",
+    "eventCategory": "Admin Action",
+    "actor": "diego.rivera@brightlineinsurance.com",
+    "actorType": "platform_admin",
+    "organization": "Brightline Insurance",
+    "ipAddress": "11.153.113.55",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_961866"
+    },
+    "timestamp": "May 19, 14:58"
+  },
+  {
+    "id": "#88417",
+    "event": "impersonation.ended",
+    "eventCategory": "Security",
+    "actor": "victor.bishop@coralreefhospitality.com",
+    "actorType": "org_admin",
+    "organization": "Coral Reef Hospitality",
+    "ipAddress": "200.130.184.247",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_516379"
+    },
+    "timestamp": "Jun 19, 13:20"
+  },
+  {
+    "id": "#88416",
+    "event": "data.exported",
+    "eventCategory": "Data",
+    "actor": "ethan.moreau@pulserobotics.com",
+    "actorType": "user",
+    "organization": "Pulse Robotics",
+    "ipAddress": "100.161.166.217",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_764001"
+    },
+    "timestamp": "Jun 06, 03:28"
+  },
+  {
+    "id": "#88415",
+    "event": "org.created",
+    "eventCategory": "Admin Action",
+    "actor": "tom.farrell@stonebridgelegal.com",
+    "actorType": "org_admin",
+    "organization": "Stonebridge Legal",
+    "ipAddress": "101.234.218.227",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_289159"
+    },
+    "timestamp": "Jun 02, 00:48"
+  },
+  {
+    "id": "#88414",
+    "event": "org.reactivated",
+    "eventCategory": "Admin Action",
+    "actor": "mei.walsh@ems.io",
+    "actorType": "org_admin",
+    "organization": null,
+    "ipAddress": "35.118.197.49",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_360846"
+    },
+    "timestamp": "May 31, 17:10"
+  },
+  {
+    "id": "#88413",
+    "event": "backup.created",
+    "eventCategory": "Data",
+    "actor": "diego.haddad@ems.io",
+    "actorType": "user",
+    "organization": null,
+    "ipAddress": "220.188.29.211",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_142627"
+    },
+    "timestamp": "May 27, 12:06"
+  },
+  {
+    "id": "#88412",
+    "event": "backup.restored",
+    "eventCategory": "Data",
+    "actor": "lina.okafor@anchorpointlogistics.com",
+    "actorType": "user",
+    "organization": "Anchor Point Logistics",
+    "ipAddress": "103.113.36.4",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_972496"
+    },
+    "timestamp": "Jun 16, 22:32"
+  },
+  {
+    "id": "#88411",
+    "event": "user.mfa_enabled",
+    "eventCategory": "Security",
+    "actor": "elena.lindqvist@vertexdynamics.com",
+    "actorType": "platform_admin",
+    "organization": "Vertex Dynamics",
+    "ipAddress": "18.103.54.125",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_698749"
+    },
+    "timestamp": "May 30, 01:15"
+  },
+  {
+    "id": "#88410",
+    "event": "impersonation.ended",
+    "eventCategory": "Security",
+    "actor": "noah.kowalski@cascadefreight.com",
+    "actorType": "platform_admin",
+    "organization": "Cascade Freight",
+    "ipAddress": "58.254.78.157",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_772036"
+    },
+    "timestamp": "Jun 09, 10:44"
+  },
+  {
+    "id": "#88409",
+    "event": "data.exported",
+    "eventCategory": "Data",
+    "actor": "noah.bauer@bluegroveanalytics.com",
+    "actorType": "user",
+    "organization": "BlueGrove Analytics",
+    "ipAddress": "126.0.194.188",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_749838"
+    },
+    "timestamp": "May 23, 02:05"
+  },
+  {
+    "id": "#88408",
+    "event": "data.deletion_requested",
+    "eventCategory": "Data",
+    "actor": "noah.bauer@granitepeakpartners.com",
+    "actorType": "user",
+    "organization": "Granite Peak Partners",
+    "ipAddress": "92.239.140.223",
+    "userAgent": "API Client",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_681456"
+    },
+    "timestamp": "Jun 14, 12:09"
+  },
+  {
+    "id": "#88407",
+    "event": "subscription.cancelled",
+    "eventCategory": "Billing",
+    "actor": "sarah.kowalski@marblerunfoods.com",
+    "actorType": "user",
+    "organization": "Marble Run Foods",
+    "ipAddress": "101.68.128.231",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_558752"
+    },
+    "timestamp": "Jun 02, 04:27"
+  },
+  {
+    "id": "#88406",
+    "event": "impersonation.ended",
+    "eventCategory": "Security",
+    "actor": "james.bauer@silverlinetelecom.com",
+    "actorType": "user",
+    "organization": "Silverline Telecom",
+    "ipAddress": "175.78.54.33",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_685472"
+    },
+    "timestamp": "May 24, 16:30"
+  },
+  {
+    "id": "#88405",
+    "event": "impersonation.started",
+    "eventCategory": "Security",
+    "actor": "sarah.okafor@ems.io",
+    "actorType": "user",
+    "organization": null,
+    "ipAddress": "158.243.79.96",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_624203"
+    },
+    "timestamp": "Jun 16, 15:06"
+  },
+  {
+    "id": "#88404",
+    "event": "org.reactivated",
+    "eventCategory": "Admin Action",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Orbit Systems",
+    "ipAddress": "65.57.120.163",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_275490"
+    },
+    "timestamp": "May 25, 05:05"
+  },
+  {
+    "id": "#88403",
+    "event": "data.exported",
+    "eventCategory": "Data",
+    "actor": "liam.rivera@lumenworks.com",
+    "actorType": "org_admin",
+    "organization": "Lumen Works",
+    "ipAddress": "92.81.21.191",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_365617"
+    },
+    "timestamp": "Jun 03, 16:43"
+  },
+  {
+    "id": "#88402",
+    "event": "user.login",
+    "eventCategory": "Auth",
+    "actor": "david.kowalski@ems.io",
+    "actorType": "user",
+    "organization": null,
+    "ipAddress": "207.226.126.189",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_871041"
+    },
+    "timestamp": "May 26, 11:18"
+  },
+  {
+    "id": "#88401",
+    "event": "subscription.payment_failed",
+    "eventCategory": "Billing",
+    "actor": "elena.okafor@ems.io",
+    "actorType": "user",
+    "organization": null,
+    "ipAddress": "78.200.36.140",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_982417"
+    },
+    "timestamp": "Jun 11, 01:29"
+  },
+  {
+    "id": "#88400",
+    "event": "announcement.published",
+    "eventCategory": "Admin Action",
+    "actor": "sarah.sato@ems.io",
+    "actorType": "platform_admin",
+    "organization": null,
+    "ipAddress": "65.175.215.80",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_586208"
+    },
+    "timestamp": "May 28, 13:26"
+  },
+  {
+    "id": "#88399",
+    "event": "feature_flag.toggled",
+    "eventCategory": "Admin Action",
+    "actor": "naomi.chen@anchorpointlogistics.com",
+    "actorType": "org_admin",
+    "organization": "Anchor Point Logistics",
+    "ipAddress": "48.25.11.48",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_231113"
+    },
+    "timestamp": "May 27, 23:33"
+  },
+  {
+    "id": "#88398",
+    "event": "security_policy.updated",
+    "eventCategory": "Security",
+    "actor": "noah.tran@bluegroveanalytics.com",
+    "actorType": "user",
+    "organization": "BlueGrove Analytics",
+    "ipAddress": "115.96.35.47",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_767830"
+    },
+    "timestamp": "Jun 04, 17:25"
+  },
+  {
+    "id": "#88397",
+    "event": "org.created",
+    "eventCategory": "Admin Action",
+    "actor": "grace.schmidt@timberlineoutdoor.com",
+    "actorType": "org_admin",
+    "organization": "Timberline Outdoor",
+    "ipAddress": "77.40.216.161",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_938817"
+    },
+    "timestamp": "May 20, 17:35"
+  },
+  {
+    "id": "#88396",
+    "event": "org.reactivated",
+    "eventCategory": "Admin Action",
+    "actor": "carlos.castillo@ems.io",
+    "actorType": "org_admin",
+    "organization": null,
+    "ipAddress": "69.3.191.49",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_558339"
+    },
+    "timestamp": "Jun 07, 05:59"
+  },
+  {
+    "id": "#88395",
+    "event": "api_key.revoked",
+    "eventCategory": "Security",
+    "actor": "mei.petrova@irongatesecurity.com",
+    "actorType": "platform_admin",
+    "organization": "IronGate Security",
+    "ipAddress": "98.146.240.137",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_615827"
+    },
+    "timestamp": "May 19, 22:13"
+  },
+  {
+    "id": "#88394",
+    "event": "announcement.published",
+    "eventCategory": "Admin Action",
+    "actor": "sofia.bishop@maplewoodconstruction.com",
+    "actorType": "org_admin",
+    "organization": "Maplewood Construction",
+    "ipAddress": "89.177.246.139",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Pending",
+    "metadata": {
+      "requestId": "req_563324"
+    },
+    "timestamp": "Jun 10, 02:01"
+  },
+  {
+    "id": "#88393",
+    "event": "feature_flag.toggled",
+    "eventCategory": "Admin Action",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Coral Reef Hospitality",
+    "ipAddress": "150.227.69.249",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_726612"
+    },
+    "timestamp": "Jun 04, 16:58"
+  },
+  {
+    "id": "#88392",
+    "event": "org.reactivated",
+    "eventCategory": "Admin Action",
+    "actor": "sofia.petrova@ironwoodmanufacturing.com",
+    "actorType": "org_admin",
+    "organization": "Ironwood Manufacturing",
+    "ipAddress": "43.87.14.9",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Pending",
+    "metadata": {
+      "requestId": "req_440998"
+    },
+    "timestamp": "May 22, 22:15"
+  },
+  {
+    "id": "#88391",
+    "event": "user.password_reset",
+    "eventCategory": "Auth",
+    "actor": "sarah.kowalski@velvetskytravel.com",
+    "actorType": "user",
+    "organization": "Velvet Sky Travel",
+    "ipAddress": "144.42.53.68",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_786641"
+    },
+    "timestamp": "May 21, 01:12"
+  },
+  {
+    "id": "#88390",
+    "event": "data.exported",
+    "eventCategory": "Data",
+    "actor": "clara.chen@sterlingbridge.com",
+    "actorType": "platform_admin",
+    "organization": "Sterling Bridge",
+    "ipAddress": "42.120.128.241",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_516332"
+    },
+    "timestamp": "Jun 16, 11:15"
+  },
+  {
+    "id": "#88389",
+    "event": "user.password_reset",
+    "eventCategory": "Auth",
+    "actor": "sofia.rivera@tidewaterlogistics.com",
+    "actorType": "org_admin",
+    "organization": "Tidewater Logistics",
+    "ipAddress": "191.136.202.70",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_480805"
+    },
+    "timestamp": "May 26, 18:28"
+  },
+  {
+    "id": "#88388",
+    "event": "feature_flag.toggled",
+    "eventCategory": "Admin Action",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Meridian Group",
+    "ipAddress": "173.172.215.162",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_990136"
+    },
+    "timestamp": "May 21, 12:04"
+  },
+  {
+    "id": "#88387",
+    "event": "org.plan_upgraded",
+    "eventCategory": "Billing",
+    "actor": "marcus.rivera@timberlineoutdoor.com",
+    "actorType": "user",
+    "organization": "Timberline Outdoor",
+    "ipAddress": "100.166.249.199",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_499581"
+    },
+    "timestamp": "May 31, 04:44"
+  },
+  {
+    "id": "#88386",
+    "event": "backup.created",
+    "eventCategory": "Data",
+    "actor": "lina.bauer@ems.io",
+    "actorType": "user",
+    "organization": null,
+    "ipAddress": "102.131.176.6",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_812597"
+    },
+    "timestamp": "May 19, 17:50"
+  },
+  {
+    "id": "#88385",
+    "event": "data.deletion_requested",
+    "eventCategory": "Data",
+    "actor": "noah.farrell@hearthstonerealty.com",
+    "actorType": "org_admin",
+    "organization": "Hearthstone Realty",
+    "ipAddress": "22.203.50.177",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_953350"
+    },
+    "timestamp": "Jun 10, 22:15"
+  },
+  {
+    "id": "#88384",
+    "event": "org.plan_upgraded",
+    "eventCategory": "Billing",
+    "actor": "System",
+    "actorType": "system",
+    "organization": null,
+    "ipAddress": "48.242.4.46",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_990649"
+    },
+    "timestamp": "May 29, 20:52"
+  },
+  {
+    "id": "#88383",
+    "event": "subscription.cancelled",
+    "eventCategory": "Billing",
+    "actor": "zara.petrova@solacehealth.com",
+    "actorType": "org_admin",
+    "organization": "Solace Health",
+    "ipAddress": "157.117.51.185",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Pending",
+    "metadata": {
+      "requestId": "req_682316"
+    },
+    "timestamp": "Jun 06, 01:30"
+  },
+  {
+    "id": "#88382",
+    "event": "impersonation.ended",
+    "eventCategory": "Security",
+    "actor": "david.tran@harborlightinc.com",
+    "actorType": "user",
+    "organization": "Harborlight Inc",
+    "ipAddress": "130.175.187.48",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_539450"
+    },
+    "timestamp": "May 28, 01:48"
+  },
+  {
+    "id": "#88381",
+    "event": "org.created",
+    "eventCategory": "Admin Action",
+    "actor": "ines.adeyemi@quantumforge.com",
+    "actorType": "user",
+    "organization": "Quantum Forge",
+    "ipAddress": "186.4.6.173",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_205641"
+    },
+    "timestamp": "Jun 09, 02:10"
+  },
+  {
+    "id": "#88380",
+    "event": "org.suspended",
+    "eventCategory": "Admin Action",
+    "actor": "james.lindgren@silverlinetelecom.com",
+    "actorType": "user",
+    "organization": "Silverline Telecom",
+    "ipAddress": "214.216.244.241",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_464158"
+    },
+    "timestamp": "Jun 06, 15:05"
+  },
+  {
+    "id": "#88379",
+    "event": "user.login",
+    "eventCategory": "Auth",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Coral Reef Hospitality",
+    "ipAddress": "133.190.161.127",
+    "userAgent": "API Client",
+    "result": "Pending",
+    "metadata": {
+      "requestId": "req_614646"
+    },
+    "timestamp": "Jun 13, 21:04"
+  },
+  {
+    "id": "#88378",
+    "event": "org.suspended",
+    "eventCategory": "Admin Action",
+    "actor": "yusuf.castillo@granitepeakpartners.com",
+    "actorType": "user",
+    "organization": "Granite Peak Partners",
+    "ipAddress": "101.79.54.31",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_795650"
+    },
+    "timestamp": "Jun 03, 17:33"
+  },
+  {
+    "id": "#88377",
+    "event": "user.password_reset",
+    "eventCategory": "Auth",
+    "actor": "felix.khan@harborlightinc.com",
+    "actorType": "org_admin",
+    "organization": "Harborlight Inc",
+    "ipAddress": "156.137.93.243",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_309365"
+    },
+    "timestamp": "Jun 12, 06:15"
+  },
+  {
+    "id": "#88376",
+    "event": "org.plan_downgraded",
+    "eventCategory": "Billing",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Sterling Bridge",
+    "ipAddress": "142.4.134.64",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_806423"
+    },
+    "timestamp": "May 27, 02:50"
+  },
+  {
+    "id": "#88375",
+    "event": "feature_flag.toggled",
+    "eventCategory": "Admin Action",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Riverstone Pharma",
+    "ipAddress": "133.59.132.18",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_331087"
+    },
+    "timestamp": "May 28, 14:34"
+  },
+  {
+    "id": "#88374",
+    "event": "org.reactivated",
+    "eventCategory": "Admin Action",
+    "actor": "lina.bishop@quantumforge.com",
+    "actorType": "user",
+    "organization": "Quantum Forge",
+    "ipAddress": "218.128.226.248",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_907369"
+    },
+    "timestamp": "Jun 12, 02:55"
+  },
+  {
+    "id": "#88373",
+    "event": "impersonation.started",
+    "eventCategory": "Security",
+    "actor": "aisha.moreau@solacehealth.com",
+    "actorType": "org_admin",
+    "organization": "Solace Health",
+    "ipAddress": "113.2.133.45",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_685766"
+    },
+    "timestamp": "Jun 16, 21:20"
+  },
+  {
+    "id": "#88372",
+    "event": "user.password_reset",
+    "eventCategory": "Auth",
+    "actor": "liam.kowalski@driftwayhospitality.com",
+    "actorType": "org_admin",
+    "organization": "Driftway Hospitality",
+    "ipAddress": "113.102.7.189",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_676289"
+    },
+    "timestamp": "Jun 09, 19:25"
+  },
+  {
+    "id": "#88371",
+    "event": "backup.restored",
+    "eventCategory": "Data",
+    "actor": "james.castillo@brightlineinsurance.com",
+    "actorType": "org_admin",
+    "organization": "Brightline Insurance",
+    "ipAddress": "140.118.86.173",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_786837"
+    },
+    "timestamp": "Jun 19, 09:08"
+  },
+  {
+    "id": "#88370",
+    "event": "user.password_reset",
+    "eventCategory": "Auth",
+    "actor": "james.kowalski@echovalleytech.com",
+    "actorType": "platform_admin",
+    "organization": "Echo Valley Tech",
+    "ipAddress": "112.146.29.243",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_560295"
+    },
+    "timestamp": "Jun 19, 07:37"
+  },
+  {
+    "id": "#88369",
+    "event": "data.deletion_requested",
+    "eventCategory": "Data",
+    "actor": "marcus.kowalski@redwoodanalytics.com",
+    "actorType": "user",
+    "organization": "Redwood Analytics",
+    "ipAddress": "172.2.46.211",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_729402"
+    },
+    "timestamp": "Jun 06, 11:30"
+  },
+  {
+    "id": "#88368",
+    "event": "announcement.published",
+    "eventCategory": "Admin Action",
+    "actor": "System",
+    "actorType": "system",
+    "organization": null,
+    "ipAddress": "40.117.228.201",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_633036"
+    },
+    "timestamp": "Jun 07, 02:57"
+  },
+  {
+    "id": "#88367",
+    "event": "api_key.revoked",
+    "eventCategory": "Security",
+    "actor": "felix.bishop@stonebridgelegal.com",
+    "actorType": "org_admin",
+    "organization": "Stonebridge Legal",
+    "ipAddress": "152.247.129.254",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_911801"
+    },
+    "timestamp": "May 28, 00:55"
+  },
+  {
+    "id": "#88366",
+    "event": "api_key.revoked",
+    "eventCategory": "Security",
+    "actor": "zara.tran@meridiangroup.com",
+    "actorType": "org_admin",
+    "organization": "Meridian Group",
+    "ipAddress": "76.216.187.157",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_516760"
+    },
+    "timestamp": "May 26, 07:33"
+  },
+  {
+    "id": "#88365",
+    "event": "org.reactivated",
+    "eventCategory": "Admin Action",
+    "actor": "aisha.chen@coralreefhospitality.com",
+    "actorType": "org_admin",
+    "organization": "Coral Reef Hospitality",
+    "ipAddress": "191.3.60.134",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_315397"
+    },
+    "timestamp": "May 28, 03:44"
+  },
+  {
+    "id": "#88364",
+    "event": "api_key.revoked",
+    "eventCategory": "Security",
+    "actor": "grace.bauer@velvetskytravel.com",
+    "actorType": "user",
+    "organization": "Velvet Sky Travel",
+    "ipAddress": "160.50.217.35",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_343807"
+    },
+    "timestamp": "May 21, 11:39"
+  },
+  {
+    "id": "#88363",
+    "event": "data.deletion_requested",
+    "eventCategory": "Data",
+    "actor": "liam.petrova@quantumforge.com",
+    "actorType": "platform_admin",
+    "organization": "Quantum Forge",
+    "ipAddress": "164.0.220.134",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_145548"
+    },
+    "timestamp": "May 27, 20:25"
+  },
+  {
+    "id": "#88362",
+    "event": "org.plan_downgraded",
+    "eventCategory": "Billing",
+    "actor": "aisha.lindgren@cedarco.com",
+    "actorType": "platform_admin",
+    "organization": "Cedar & Co",
+    "ipAddress": "139.214.76.156",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_744610"
+    },
+    "timestamp": "May 31, 13:11"
+  },
+  {
+    "id": "#88361",
+    "event": "role_template.updated",
+    "eventCategory": "Admin Action",
+    "actor": "omar.castillo@pulserobotics.com",
+    "actorType": "org_admin",
+    "organization": "Pulse Robotics",
+    "ipAddress": "46.93.135.43",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_725510"
+    },
+    "timestamp": "Jun 01, 12:10"
+  },
+  {
+    "id": "#88360",
+    "event": "impersonation.started",
+    "eventCategory": "Security",
+    "actor": "maya.lindqvist@ems.io",
+    "actorType": "platform_admin",
+    "organization": null,
+    "ipAddress": "142.207.9.225",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_327114"
+    },
+    "timestamp": "Jun 04, 17:48"
+  },
+  {
+    "id": "#88359",
+    "event": "role_template.updated",
+    "eventCategory": "Admin Action",
+    "actor": "omar.chen@pulserobotics.com",
+    "actorType": "user",
+    "organization": "Pulse Robotics",
+    "ipAddress": "72.22.65.147",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_760120"
+    },
+    "timestamp": "Jun 03, 13:10"
+  },
+  {
+    "id": "#88358",
+    "event": "backup.created",
+    "eventCategory": "Data",
+    "actor": "felix.castillo@meridiangroup.com",
+    "actorType": "platform_admin",
+    "organization": "Meridian Group",
+    "ipAddress": "193.60.117.107",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_604906"
+    },
+    "timestamp": "May 28, 22:10"
+  },
+  {
+    "id": "#88357",
+    "event": "data.exported",
+    "eventCategory": "Data",
+    "actor": "felix.bauer@tidewaterlogistics.com",
+    "actorType": "user",
+    "organization": "Tidewater Logistics",
+    "ipAddress": "134.246.3.129",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_341162"
+    },
+    "timestamp": "Jun 16, 20:57"
+  },
+  {
+    "id": "#88356",
+    "event": "user.mfa_enabled",
+    "eventCategory": "Security",
+    "actor": "lina.tran@brightlineinsurance.com",
+    "actorType": "user",
+    "organization": "Brightline Insurance",
+    "ipAddress": "158.89.192.168",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_785073"
+    },
+    "timestamp": "May 22, 11:51"
+  },
+  {
+    "id": "#88355",
+    "event": "user.password_reset",
+    "eventCategory": "Auth",
+    "actor": "aisha.lindgren@tidewaterlogistics.com",
+    "actorType": "platform_admin",
+    "organization": "Tidewater Logistics",
+    "ipAddress": "212.184.198.121",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_141843"
+    },
+    "timestamp": "May 30, 03:27"
+  },
+  {
+    "id": "#88354",
+    "event": "backup.restored",
+    "eventCategory": "Data",
+    "actor": "marcus.lindqvist@cinderwoodenergy.com",
+    "actorType": "platform_admin",
+    "organization": "Cinderwood Energy",
+    "ipAddress": "154.74.247.241",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_898461"
+    },
+    "timestamp": "Jun 04, 06:36"
+  },
+  {
+    "id": "#88353",
+    "event": "api_key.created",
+    "eventCategory": "Security",
+    "actor": "clara.rivera@driftwayhospitality.com",
+    "actorType": "user",
+    "organization": "Driftway Hospitality",
+    "ipAddress": "44.237.46.102",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_794868"
+    },
+    "timestamp": "Jun 11, 17:33"
+  },
+  {
+    "id": "#88352",
+    "event": "backup.created",
+    "eventCategory": "Data",
+    "actor": "grace.farrell@ems.io",
+    "actorType": "user",
+    "organization": null,
+    "ipAddress": "64.18.133.140",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_912853"
+    },
+    "timestamp": "Jun 15, 02:01"
+  },
+  {
+    "id": "#88351",
+    "event": "impersonation.ended",
+    "eventCategory": "Security",
+    "actor": "yusuf.petrova@ems.io",
+    "actorType": "org_admin",
+    "organization": null,
+    "ipAddress": "147.100.134.188",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_119535"
+    },
+    "timestamp": "May 22, 21:12"
+  },
+  {
+    "id": "#88350",
+    "event": "api_key.revoked",
+    "eventCategory": "Security",
+    "actor": "hana.adeyemi@echovalleytech.com",
+    "actorType": "platform_admin",
+    "organization": "Echo Valley Tech",
+    "ipAddress": "132.236.228.92",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_214119"
+    },
+    "timestamp": "Jun 13, 16:28"
+  },
+  {
+    "id": "#88349",
+    "event": "backup.restored",
+    "eventCategory": "Data",
+    "actor": "zara.bauer@riverstonepharma.com",
+    "actorType": "platform_admin",
+    "organization": "Riverstone Pharma",
+    "ipAddress": "216.161.219.44",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_923824"
+    },
+    "timestamp": "Jun 11, 16:38"
+  },
+  {
+    "id": "#88348",
+    "event": "role_template.updated",
+    "eventCategory": "Admin Action",
+    "actor": "sofia.schmidt@driftwoodstudios.com",
+    "actorType": "platform_admin",
+    "organization": "Driftwood Studios",
+    "ipAddress": "35.145.35.231",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_572536"
+    },
+    "timestamp": "Jun 08, 17:28"
+  },
+  {
+    "id": "#88347",
+    "event": "user.mfa_enabled",
+    "eventCategory": "Security",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Maplewood Construction",
+    "ipAddress": "202.236.37.75",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_307007"
+    },
+    "timestamp": "May 26, 18:41"
+  },
+  {
+    "id": "#88346",
+    "event": "user.password_reset",
+    "eventCategory": "Auth",
+    "actor": "hana.bauer@ironwoodmanufacturing.com",
+    "actorType": "user",
+    "organization": "Ironwood Manufacturing",
+    "ipAddress": "64.211.72.42",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_975297"
+    },
+    "timestamp": "Jun 11, 07:53"
+  },
+  {
+    "id": "#88345",
+    "event": "org.reactivated",
+    "eventCategory": "Admin Action",
+    "actor": "diego.bauer@meridiangroup.com",
+    "actorType": "org_admin",
+    "organization": "Meridian Group",
+    "ipAddress": "12.72.63.11",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_513224"
+    },
+    "timestamp": "Jun 01, 19:49"
+  },
+  {
+    "id": "#88344",
+    "event": "impersonation.ended",
+    "eventCategory": "Security",
+    "actor": "ines.kowalski@ems.io",
+    "actorType": "user",
+    "organization": null,
+    "ipAddress": "111.15.242.41",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_883028"
+    },
+    "timestamp": "Jun 06, 19:53"
+  },
+  {
+    "id": "#88343",
+    "event": "user.mfa_enabled",
+    "eventCategory": "Security",
+    "actor": "priya.farrell@timberlineoutdoor.com",
+    "actorType": "user",
+    "organization": "Timberline Outdoor",
+    "ipAddress": "21.37.183.238",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_925115"
+    },
+    "timestamp": "May 29, 04:13"
+  },
+  {
+    "id": "#88342",
+    "event": "user.password_reset",
+    "eventCategory": "Auth",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Tidewater Logistics",
+    "ipAddress": "114.198.230.162",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_117711"
+    },
+    "timestamp": "Jun 06, 15:32"
+  },
+  {
+    "id": "#88341",
+    "event": "backup.created",
+    "eventCategory": "Data",
+    "actor": "elena.chen@vertexdynamics.com",
+    "actorType": "user",
+    "organization": "Vertex Dynamics",
+    "ipAddress": "127.169.19.23",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_932794"
+    },
+    "timestamp": "Jun 10, 19:28"
+  },
+  {
+    "id": "#88340",
+    "event": "data.deletion_requested",
+    "eventCategory": "Data",
+    "actor": "liam.khan@ems.io",
+    "actorType": "platform_admin",
+    "organization": null,
+    "ipAddress": "185.217.53.53",
+    "userAgent": "API Client",
+    "result": "Pending",
+    "metadata": {
+      "requestId": "req_877388"
+    },
+    "timestamp": "May 25, 23:39"
+  },
+  {
+    "id": "#88339",
+    "event": "subscription.cancelled",
+    "eventCategory": "Billing",
+    "actor": "james.rivera@cinderwoodenergy.com",
+    "actorType": "org_admin",
+    "organization": "Cinderwood Energy",
+    "ipAddress": "176.98.164.132",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_275526"
+    },
+    "timestamp": "May 19, 20:09"
+  },
+  {
+    "id": "#88338",
+    "event": "org.plan_downgraded",
+    "eventCategory": "Billing",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Redwood Analytics",
+    "ipAddress": "107.58.197.66",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_125905"
+    },
+    "timestamp": "May 20, 20:52"
+  },
+  {
+    "id": "#88337",
+    "event": "subscription.payment_failed",
+    "eventCategory": "Billing",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Lumen Works",
+    "ipAddress": "168.243.4.30",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_773462"
+    },
+    "timestamp": "May 30, 17:18"
+  },
+  {
+    "id": "#88336",
+    "event": "data.exported",
+    "eventCategory": "Data",
+    "actor": "ana.lindgren@harborlightinc.com",
+    "actorType": "user",
+    "organization": "Harborlight Inc",
+    "ipAddress": "50.212.206.24",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_323717"
+    },
+    "timestamp": "May 29, 03:11"
+  },
+  {
+    "id": "#88335",
+    "event": "subscription.payment_failed",
+    "eventCategory": "Billing",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Driftway Hospitality",
+    "ipAddress": "167.154.251.203",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_176421"
+    },
+    "timestamp": "May 25, 03:40"
+  },
+  {
+    "id": "#88334",
+    "event": "user.mfa_enabled",
+    "eventCategory": "Security",
+    "actor": "lina.petrova@pinecresteducation.com",
+    "actorType": "org_admin",
+    "organization": "Pinecrest Education",
+    "ipAddress": "51.130.2.85",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_262325"
+    },
+    "timestamp": "Jun 18, 09:16"
+  },
+  {
+    "id": "#88333",
+    "event": "subscription.cancelled",
+    "eventCategory": "Billing",
+    "actor": "aisha.khan@coralreefhospitality.com",
+    "actorType": "user",
+    "organization": "Coral Reef Hospitality",
+    "ipAddress": "85.229.90.252",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_282237"
+    },
+    "timestamp": "May 26, 20:58"
+  },
+  {
+    "id": "#88332",
+    "event": "api_key.created",
+    "eventCategory": "Security",
+    "actor": "noah.okafor@redwoodanalytics.com",
+    "actorType": "org_admin",
+    "organization": "Redwood Analytics",
+    "ipAddress": "13.128.103.159",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Pending",
+    "metadata": {
+      "requestId": "req_764575"
+    },
+    "timestamp": "May 27, 16:24"
+  },
+  {
+    "id": "#88331",
+    "event": "user.logout",
+    "eventCategory": "Auth",
+    "actor": "clara.bishop@marblerunfoods.com",
+    "actorType": "platform_admin",
+    "organization": "Marble Run Foods",
+    "ipAddress": "67.199.121.131",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_149261"
+    },
+    "timestamp": "May 21, 01:29"
+  },
+  {
+    "id": "#88330",
+    "event": "user.logout",
+    "eventCategory": "Auth",
+    "actor": "ana.lindqvist@granitepeakpartners.com",
+    "actorType": "org_admin",
+    "organization": "Granite Peak Partners",
+    "ipAddress": "83.128.74.215",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_409477"
+    },
+    "timestamp": "Jun 12, 20:02"
+  },
+  {
+    "id": "#88329",
+    "event": "security_policy.updated",
+    "eventCategory": "Security",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Ironwood Manufacturing",
+    "ipAddress": "146.146.216.207",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_126499"
+    },
+    "timestamp": "Jun 07, 09:33"
+  },
+  {
+    "id": "#88328",
+    "event": "user.mfa_disabled",
+    "eventCategory": "Security",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Timberline Outdoor",
+    "ipAddress": "55.165.59.195",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_711116"
+    },
+    "timestamp": "May 31, 15:44"
+  },
+  {
+    "id": "#88327",
+    "event": "impersonation.ended",
+    "eventCategory": "Security",
+    "actor": "yusuf.bishop@ironwoodmanufacturing.com",
+    "actorType": "user",
+    "organization": "Ironwood Manufacturing",
+    "ipAddress": "90.111.102.54",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_819964"
+    },
+    "timestamp": "Jun 07, 15:33"
+  },
+  {
+    "id": "#88326",
+    "event": "subscription.payment_failed",
+    "eventCategory": "Billing",
+    "actor": "ethan.schmidt@foxgloveretail.com",
+    "actorType": "org_admin",
+    "organization": "Foxglove Retail",
+    "ipAddress": "80.203.175.249",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_239850"
+    },
+    "timestamp": "Jun 15, 00:25"
+  },
+  {
+    "id": "#88325",
+    "event": "user.login",
+    "eventCategory": "Auth",
+    "actor": "omar.farrell@orbitsystems.com",
+    "actorType": "user",
+    "organization": "Orbit Systems",
+    "ipAddress": "133.90.88.188",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_789461"
+    },
+    "timestamp": "May 30, 17:49"
+  },
+  {
+    "id": "#88324",
+    "event": "org.plan_upgraded",
+    "eventCategory": "Billing",
+    "actor": "tom.haddad@granitepeakpartners.com",
+    "actorType": "user",
+    "organization": "Granite Peak Partners",
+    "ipAddress": "21.63.230.118",
+    "userAgent": "API Client",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_241176"
+    },
+    "timestamp": "May 19, 21:29"
+  },
+  {
+    "id": "#88323",
+    "event": "org.reactivated",
+    "eventCategory": "Admin Action",
+    "actor": "james.lindqvist@echovalleytech.com",
+    "actorType": "user",
+    "organization": "Echo Valley Tech",
+    "ipAddress": "136.71.209.28",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_296653"
+    },
+    "timestamp": "Jun 16, 01:06"
+  },
+  {
+    "id": "#88322",
+    "event": "data.deletion_requested",
+    "eventCategory": "Data",
+    "actor": "liam.bauer@goldfinchmarketing.com",
+    "actorType": "org_admin",
+    "organization": "Goldfinch Marketing",
+    "ipAddress": "193.231.58.25",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_472390"
+    },
+    "timestamp": "May 23, 16:53"
+  },
+  {
+    "id": "#88321",
+    "event": "impersonation.ended",
+    "eventCategory": "Security",
+    "actor": "mei.bishop@lighthouseconsulting.com",
+    "actorType": "org_admin",
+    "organization": "Lighthouse Consulting",
+    "ipAddress": "62.233.174.94",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Pending",
+    "metadata": {
+      "requestId": "req_985331"
+    },
+    "timestamp": "Jun 05, 03:11"
+  },
+  {
+    "id": "#88320",
+    "event": "feature_flag.toggled",
+    "eventCategory": "Admin Action",
+    "actor": "naomi.walsh@ems.io",
+    "actorType": "org_admin",
+    "organization": null,
+    "ipAddress": "137.9.52.104",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_675771"
+    },
+    "timestamp": "Jun 19, 11:24"
+  },
+  {
+    "id": "#88319",
+    "event": "subscription.payment_failed",
+    "eventCategory": "Billing",
+    "actor": "david.bishop@solacehealth.com",
+    "actorType": "platform_admin",
+    "organization": "Solace Health",
+    "ipAddress": "174.193.206.210",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_565765"
+    },
+    "timestamp": "May 24, 18:57"
+  },
+  {
+    "id": "#88318",
+    "event": "api_key.created",
+    "eventCategory": "Security",
+    "actor": "diego.castillo@ems.io",
+    "actorType": "user",
+    "organization": null,
+    "ipAddress": "23.5.80.130",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Pending",
+    "metadata": {
+      "requestId": "req_273438"
+    },
+    "timestamp": "Jun 16, 21:44"
+  },
+  {
+    "id": "#88317",
+    "event": "announcement.published",
+    "eventCategory": "Admin Action",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Sapphire Cloud",
+    "ipAddress": "142.48.221.170",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_795951"
+    },
+    "timestamp": "May 28, 16:37"
+  },
+  {
+    "id": "#88316",
+    "event": "role_template.updated",
+    "eventCategory": "Admin Action",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Quantum Forge",
+    "ipAddress": "122.23.32.67",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_810859"
+    },
+    "timestamp": "Jun 02, 18:50"
+  },
+  {
+    "id": "#88315",
+    "event": "user.mfa_enabled",
+    "eventCategory": "Security",
+    "actor": "zara.moreau@riverstonepharma.com",
+    "actorType": "org_admin",
+    "organization": "Riverstone Pharma",
+    "ipAddress": "56.194.183.157",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Pending",
+    "metadata": {
+      "requestId": "req_979269"
+    },
+    "timestamp": "May 27, 10:03"
+  },
+  {
+    "id": "#88314",
+    "event": "org.suspended",
+    "eventCategory": "Admin Action",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Ember Creative",
+    "ipAddress": "214.215.85.29",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_161495"
+    },
+    "timestamp": "May 20, 09:04"
+  },
+  {
+    "id": "#88313",
+    "event": "user.login",
+    "eventCategory": "Auth",
+    "actor": "naomi.bauer@sapphirecloud.com",
+    "actorType": "user",
+    "organization": "Sapphire Cloud",
+    "ipAddress": "122.137.47.96",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_520245"
+    },
+    "timestamp": "Jun 06, 22:56"
+  },
+  {
+    "id": "#88312",
+    "event": "feature_flag.toggled",
+    "eventCategory": "Admin Action",
+    "actor": "clara.okafor@ems.io",
+    "actorType": "user",
+    "organization": null,
+    "ipAddress": "84.184.160.110",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_895034"
+    },
+    "timestamp": "May 22, 12:57"
+  },
+  {
+    "id": "#88311",
+    "event": "impersonation.started",
+    "eventCategory": "Security",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Meridian Group",
+    "ipAddress": "209.38.51.232",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_578938"
+    },
+    "timestamp": "Jun 10, 05:30"
+  },
+  {
+    "id": "#88310",
+    "event": "org.plan_upgraded",
+    "eventCategory": "Billing",
+    "actor": "james.bishop@sterlingbridge.com",
+    "actorType": "org_admin",
+    "organization": "Sterling Bridge",
+    "ipAddress": "137.106.246.85",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_804258"
+    },
+    "timestamp": "Jun 17, 10:44"
+  },
+  {
+    "id": "#88309",
+    "event": "api_key.revoked",
+    "eventCategory": "Security",
+    "actor": "ethan.walsh@northwindtraders.com",
+    "actorType": "user",
+    "organization": "Northwind Traders",
+    "ipAddress": "82.58.54.128",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_915749"
+    },
+    "timestamp": "Jun 10, 20:39"
+  },
+  {
+    "id": "#88308",
+    "event": "org.suspended",
+    "eventCategory": "Admin Action",
+    "actor": "liam.chen@meridiangroup.com",
+    "actorType": "org_admin",
+    "organization": "Meridian Group",
+    "ipAddress": "87.215.51.170",
+    "userAgent": "API Client",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_735053"
+    },
+    "timestamp": "May 28, 09:50"
+  },
+  {
+    "id": "#88307",
+    "event": "impersonation.ended",
+    "eventCategory": "Security",
+    "actor": "System",
+    "actorType": "system",
+    "organization": null,
+    "ipAddress": "179.55.10.13",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_498724"
+    },
+    "timestamp": "Jun 15, 19:50"
+  },
+  {
+    "id": "#88306",
+    "event": "org.plan_downgraded",
+    "eventCategory": "Billing",
+    "actor": "sarah.farrell@cedarco.com",
+    "actorType": "org_admin",
+    "organization": "Cedar & Co",
+    "ipAddress": "139.86.63.94",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_771425"
+    },
+    "timestamp": "Jun 10, 20:15"
+  },
+  {
+    "id": "#88305",
+    "event": "subscription.payment_failed",
+    "eventCategory": "Billing",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Redwood Analytics",
+    "ipAddress": "97.250.183.193",
+    "userAgent": "Safari 17 / iOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_951452"
+    },
+    "timestamp": "Jun 07, 13:51"
+  },
+  {
+    "id": "#88304",
+    "event": "subscription.cancelled",
+    "eventCategory": "Billing",
+    "actor": "zara.rivera@northwindtraders.com",
+    "actorType": "org_admin",
+    "organization": "Northwind Traders",
+    "ipAddress": "52.33.23.77",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_645561"
+    },
+    "timestamp": "May 30, 20:37"
+  },
+  {
+    "id": "#88303",
+    "event": "data.deletion_requested",
+    "eventCategory": "Data",
+    "actor": "System",
+    "actorType": "system",
+    "organization": "Echo Valley Tech",
+    "ipAddress": "92.97.9.174",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_360909"
+    },
+    "timestamp": "Jun 11, 14:50"
+  },
+  {
+    "id": "#88302",
+    "event": "impersonation.started",
+    "eventCategory": "Security",
+    "actor": "victor.nair@hearthstonerealty.com",
+    "actorType": "user",
+    "organization": "Hearthstone Realty",
+    "ipAddress": "43.222.219.104",
+    "userAgent": "Edge 125 / Windows",
+    "result": "Inactive",
+    "metadata": {
+      "requestId": "req_501936"
+    },
+    "timestamp": "Jun 19, 13:13"
+  },
+  {
+    "id": "#88301",
+    "event": "user.mfa_disabled",
+    "eventCategory": "Security",
+    "actor": "priya.sato@northstarbiotech.com",
+    "actorType": "platform_admin",
+    "organization": "Northstar Biotech",
+    "ipAddress": "95.90.160.163",
+    "userAgent": "Chrome 125 / macOS",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_386814"
+    },
+    "timestamp": "Jun 13, 08:45"
+  },
+  {
+    "id": "#88300",
+    "event": "org.plan_upgraded",
+    "eventCategory": "Billing",
+    "actor": "carlos.haddad@redwoodanalytics.com",
+    "actorType": "org_admin",
+    "organization": "Redwood Analytics",
+    "ipAddress": "23.77.70.52",
+    "userAgent": "Firefox 126 / Windows",
+    "result": "Active",
+    "metadata": {
+      "requestId": "req_697062"
+    },
+    "timestamp": "May 21, 22:53"
+  }
+]

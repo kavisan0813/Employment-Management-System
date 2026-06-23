@@ -1,41 +1,24 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router";
 import {
-  LayoutDashboard,
   Users,
   CalendarCheck,
   IndianRupee,
   Briefcase,
-  TrendingUp,
   BarChart3,
   Settings,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
   Zap,
-  CalendarDays,
-  Store,
-  Sparkles,
-  CalendarClock,
-  Award,
-  BookOpen,
-  Folder,
-  Receipt,
   LogOut,
-  ShieldCheck,
   Home,
-  Megaphone,
-  Clock,
-  HelpCircle,
-  User,
-  Star,
-  Package,
   FileText,
-  UserPlus,
   Lock,
   Sprout,
+  ShieldCheck,
 } from "lucide-react";
-import { useAuth, ROLE_CONFIG, type UserRole } from "../context/AuthContext";
+import { useAuth, type UserRole } from "../context/AuthContext";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -110,9 +93,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {
         label: "Reports",
         icon: BarChart3,
-        items: [
-          { label: "Reports & Analytics", path: "/reports" },
-        ],
+        items: [{ label: "Reports & Analytics", path: "/reports" }],
       },
       {
         label: "Team Management",
@@ -163,9 +144,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {
         label: "Reports",
         icon: BarChart3,
-        items: [
-          { label: "Reports & Analytics", path: "/reports" },
-        ],
+        items: [{ label: "Reports & Analytics", path: "/reports" }],
       },
       {
         label: "Finance Ops",
@@ -215,9 +194,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {
         label: "Reports",
         icon: BarChart3,
-        items: [
-          { label: "Reports & Analytics", path: "/reports" },
-        ],
+        items: [{ label: "Reports & Analytics", path: "/reports" }],
       },
       {
         label: "My Team",
@@ -294,18 +271,20 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     ];
   }
 
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {},
+  );
 
   useEffect(() => {
-    const activeGroup = groups.find(group => 
-      group.items.some(item => isActive(item.path) && !item.disabled)
+    const activeGroup = groups.find((group) =>
+      group.items.some((item) => isActive(item.path) && !item.disabled),
     );
     if (activeGroup) {
-      setExpandedGroups(prev => {
+      setExpandedGroups((prev) => {
         if (prev[activeGroup.label]) return prev;
         return {
           ...prev,
-          [activeGroup.label]: true
+          [activeGroup.label]: true,
         };
       });
     }
@@ -314,14 +293,14 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const toggleGroup = (groupLabel: string) => {
     if (collapsed) {
       onToggle(); // expand sidebar
-      setExpandedGroups(prev => ({
+      setExpandedGroups((prev) => ({
         ...prev,
-        [groupLabel]: true
+        [groupLabel]: true,
       }));
     } else {
-      setExpandedGroups(prev => ({
+      setExpandedGroups((prev) => ({
         ...prev,
-        [groupLabel]: !prev[groupLabel]
+        [groupLabel]: !prev[groupLabel],
       }));
     }
   };
@@ -333,7 +312,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     if (path === "/") {
       return (
         currentPath === "/" ||
-        currentPath === "/admin/dashboard" ||
+        currentPath === "/platform-admin/dashboard" ||
         currentPath === "/hr/dashboard" ||
         currentPath === "/finance/dashboard" ||
         currentPath === "/manager/dashboard"
@@ -440,8 +419,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     }
   };
 
-  const roleConf = currentRole ? ROLE_CONFIG[currentRole] : null;
-
   return (
     <div
       className="fixed top-0 left-0 h-screen flex flex-col transition-all duration-300 ease-in-out z-[2000] shadow-sm"
@@ -495,7 +472,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </div>
 
       {/* Unified User Profile Card */}
-      {!collapsed && user && currentRole && !isNewJoinee && (
+      {!collapsed &&
+        user &&
+        currentRole &&
+        !isNewJoinee &&
         (() => {
           const styleConf = getRoleStyle(currentRole);
           return (
@@ -544,8 +524,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               </div>
             </div>
           );
-        })()
-      )}
+        })()}
+
+     
 
       {/* Navigation */}
       <nav className="flex-1 py-3 overflow-y-auto no-scrollbar">
@@ -597,7 +578,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
             // Check if any child item inside this group is active
             const isGroupActive = group.items.some(
-              (item) => !item.disabled && isActive(item.path)
+              (item) => !item.disabled && isActive(item.path),
             );
 
             return (
@@ -610,11 +591,14 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   style={{
                     padding: collapsed ? "10px 14px" : "9px 12px",
                     backgroundColor: "transparent",
-                    color: isGroupActive ? "#00B87C" : "var(--sidebar-foreground)",
+                    color: isGroupActive
+                      ? "#00B87C"
+                      : "var(--sidebar-foreground)",
                     justifyContent: collapsed ? "center" : "flex-start",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "var(--sidebar-accent)";
+                    e.currentTarget.style.backgroundColor =
+                      "var(--sidebar-accent)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = "transparent";
@@ -654,7 +638,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
                 {/* Sub-items list (if expanded and sidebar is not collapsed) */}
                 {!collapsed && isExpanded && (
-                  <ul className="mt-1 space-y-0.5" style={{ paddingLeft: "28px" }}>
+                  <ul
+                    className="mt-1 space-y-0.5"
+                    style={{ paddingLeft: "28px" }}
+                  >
                     {group.items.map((item) => {
                       if (item.disabled) {
                         return (
@@ -712,7 +699,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                               backgroundColor: active
                                 ? "rgba(0, 184, 124, 0.12)"
                                 : "transparent",
-                              color: active ? "#00B87C" : "var(--sidebar-foreground)",
+                              color: active
+                                ? "#00B87C"
+                                : "var(--sidebar-foreground)",
                             }}
                             className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
                           >
@@ -858,7 +847,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </NavLink>
           </>
         )}
-
 
         {/* Logout button */}
         <button

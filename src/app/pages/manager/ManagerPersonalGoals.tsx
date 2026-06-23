@@ -7,7 +7,6 @@ import {
   AlertCircle,
   BarChart3,
   X,
-  PlusCircle,
   MoreVertical,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -107,8 +106,10 @@ export function ManagerPersonalGoals() {
   const [activeTab, setActiveTab] = useState<GoalStatus>("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [goals, setGoals] = useState<Goal[]>(goalsData);
-  const [selectedGoalForDetails, setSelectedGoalForDetails] = useState<Goal | null>(null);
-  const [selectedGoalForCheckIn, setSelectedGoalForCheckIn] = useState<Goal | null>(null);
+  const [selectedGoalForDetails, setSelectedGoalForDetails] =
+    useState<Goal | null>(null);
+  const [selectedGoalForCheckIn, setSelectedGoalForCheckIn] =
+    useState<Goal | null>(null);
   const [activeMenuGoalId, setActiveMenuGoalId] = useState<string | null>(null);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
 
@@ -119,7 +120,13 @@ export function ManagerPersonalGoals() {
   const handleAddGoal = (newGoalData: any) => {
     if (editingGoal) {
       // update
-      setGoals(prev => prev.map(g => g.id === editingGoal.id ? { ...g, ...newGoalData, lastUpdated: "Today" } : g));
+      setGoals((prev) =>
+        prev.map((g) =>
+          g.id === editingGoal.id
+            ? { ...g, ...newGoalData, lastUpdated: "Today" }
+            : g,
+        ),
+      );
       showToast("Updated!", "success", "Goal updated successfully.");
       setEditingGoal(null);
     } else {
@@ -136,8 +143,12 @@ export function ManagerPersonalGoals() {
         manager: "Rajan Kumar",
         status: "In Progress",
       };
-      setGoals(prev => [...prev, newGoal]);
-      showToast("Added!", "success", "Your personal goal has been added successfully.");
+      setGoals((prev) => [...prev, newGoal]);
+      showToast(
+        "Added!",
+        "success",
+        "Your personal goal has been added successfully.",
+      );
     }
     setIsModalOpen(false);
   };
@@ -174,17 +185,42 @@ export function ManagerPersonalGoals() {
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard label="GOALS SET" value={goals.length.toString()} color="default" />
-        <KPICard label="COMPLETED" value={goals.filter(g => g.status === "Completed").length.toString()} color="green" />
-        <KPICard label="IN PROGRESS" value={goals.filter(g => g.status === "In Progress").length.toString()} color="teal" />
-        <KPICard label="AT RISK" value={goals.filter(g => g.status === "At Risk").length.toString()} color="red" />
+        <KPICard
+          label="GOALS SET"
+          value={goals.length.toString()}
+          color="default"
+        />
+        <KPICard
+          label="COMPLETED"
+          value={goals
+            .filter((g) => g.status === "Completed")
+            .length.toString()}
+          color="green"
+        />
+        <KPICard
+          label="IN PROGRESS"
+          value={goals
+            .filter((g) => g.status === "In Progress")
+            .length.toString()}
+          color="teal"
+        />
+        <KPICard
+          label="AT RISK"
+          value={goals.filter((g) => g.status === "At Risk").length.toString()}
+          color="red"
+        />
       </div>
 
       {/* OVERALL PROGRESS */}
       {(() => {
         const totalGoals = goals.length;
-        const onTrackCount = goals.filter(g => g.status !== "At Risk").length;
-        const avgProgress = totalGoals > 0 ? Math.round(goals.reduce((acc, g) => acc + g.progress, 0) / totalGoals) : 0;
+        const onTrackCount = goals.filter((g) => g.status !== "At Risk").length;
+        const avgProgress =
+          totalGoals > 0
+            ? Math.round(
+                goals.reduce((acc, g) => acc + g.progress, 0) / totalGoals,
+              )
+            : 0;
         return (
           <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
@@ -251,13 +287,23 @@ export function ManagerPersonalGoals() {
                 onViewDetails={() => setSelectedGoalForDetails(goal)}
                 onCheckIn={() => setSelectedGoalForCheckIn(goal)}
                 isMenuOpen={activeMenuGoalId === goal.id}
-                onMenuToggle={() => setActiveMenuGoalId(activeMenuGoalId === goal.id ? null : goal.id)}
+                onMenuToggle={() =>
+                  setActiveMenuGoalId(
+                    activeMenuGoalId === goal.id ? null : goal.id,
+                  )
+                }
                 onDelete={() => {
-                  setGoals(prev => prev.filter(g => g.id !== goal.id));
+                  setGoals((prev) => prev.filter((g) => g.id !== goal.id));
                   showToast("Deleted!", "info", "Goal has been deleted.");
                 }}
                 onMarkCompleted={() => {
-                  setGoals(prev => prev.map(g => g.id === goal.id ? { ...g, progress: 100, status: "Completed" } : g));
+                  setGoals((prev) =>
+                    prev.map((g) =>
+                      g.id === goal.id
+                        ? { ...g, progress: 100, status: "Completed" }
+                        : g,
+                    ),
+                  );
                   showToast("Success", "success", "Goal marked as Completed!");
                 }}
                 onEdit={() => {
@@ -282,150 +328,194 @@ export function ManagerPersonalGoals() {
       />
 
       {/* CHECK-IN GOAL MODAL */}
-      {selectedGoalForCheckIn && (() => {
-        const [progress, setProgress] = useState(selectedGoalForCheckIn.progress);
-        const [status, setStatus] = useState(selectedGoalForCheckIn.status);
-        const [checkInComment, setCheckInComment] = useState("");
-
-        const handleSaveCheckIn = () => {
-          setGoals((prev) =>
-            prev.map((g) =>
-              g.id === selectedGoalForCheckIn.id
-                ? {
-                    ...g,
-                    progress,
-                    status,
-                    lastUpdated: "Today",
-                  }
-                : g
-            )
+      {selectedGoalForCheckIn &&
+        (() => {
+          const [progress, setProgress] = useState(
+            selectedGoalForCheckIn.progress,
           );
-          showToast("Saved!", "success", "Progress checked in successfully.");
-          setSelectedGoalForCheckIn(null);
-        };
+          const [status, setStatus] = useState(selectedGoalForCheckIn.status);
+          const [checkInComment, setCheckInComment] = useState("");
 
-        return (
-          <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <div onClick={() => setSelectedGoalForCheckIn(null)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
-            <div className="relative w-full max-w-[440px] bg-card border border-border rounded-[32px] shadow-2xl p-6 animate-in zoom-in-95 flex flex-col">
-              <div className="flex items-center justify-between pb-4 border-b border-border">
-                <h3 className="text-base font-bold text-foreground">Goal Check-in</h3>
-                <button onClick={() => setSelectedGoalForCheckIn(null)} className="text-muted-foreground hover:text-foreground">
-                  <X size={20} />
-                </button>
-              </div>
-              <div className="py-6 space-y-4 text-sm flex-1">
-                <div>
-                  <span className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Goal</span>
-                  <p className="font-bold text-foreground text-sm">{selectedGoalForCheckIn.title}</p>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                    Progress: {progress}%
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={progress}
-                    onChange={(e) => setProgress(parseInt(e.target.value))}
-                    className="w-full accent-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                    Goal Status
-                  </label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as GoalStatus)}
-                    className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none appearance-none cursor-pointer focus:border-[#00B87C] bg-card text-foreground dark:bg-zinc-900"
+          const handleSaveCheckIn = () => {
+            setGoals((prev) =>
+              prev.map((g) =>
+                g.id === selectedGoalForCheckIn.id
+                  ? {
+                      ...g,
+                      progress,
+                      status,
+                      lastUpdated: "Today",
+                    }
+                  : g,
+              ),
+            );
+            showToast("Saved!", "success", "Progress checked in successfully.");
+            setSelectedGoalForCheckIn(null);
+          };
+
+          return (
+            <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
+              <div
+                onClick={() => setSelectedGoalForCheckIn(null)}
+                className="absolute inset-0 bg-black/45 backdrop-blur-sm"
+              />
+              <div className="relative w-full max-w-[440px] bg-card border border-border rounded-[32px] shadow-2xl p-6 animate-in zoom-in-95 flex flex-col">
+                <div className="flex items-center justify-between pb-4 border-b border-border">
+                  <h3 className="text-base font-bold text-foreground">
+                    Goal Check-in
+                  </h3>
+                  <button
+                    onClick={() => setSelectedGoalForCheckIn(null)}
+                    className="text-muted-foreground hover:text-foreground"
                   >
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                    <option value="At Risk">At Risk</option>
-                    <option value="Not Started">Not Started</option>
-                  </select>
+                    <X size={20} />
+                  </button>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                    Check-in Comments
-                  </label>
-                  <textarea
-                    value={checkInComment}
-                    onChange={(e) => setCheckInComment(e.target.value)}
-                    placeholder="What updates do you have on this goal?"
-                    className="w-full h-20 p-3 rounded-xl border bg-transparent text-xs outline-none resize-none focus:border-[#00B87C] text-foreground"
-                  />
+                <div className="py-6 space-y-4 text-sm flex-1">
+                  <div>
+                    <span className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                      Goal
+                    </span>
+                    <p className="font-bold text-foreground text-sm">
+                      {selectedGoalForCheckIn.title}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                      Progress: {progress}%
+                    </label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={progress}
+                      onChange={(e) => setProgress(parseInt(e.target.value))}
+                      className="w-full accent-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                      Goal Status
+                    </label>
+                    <select
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value as GoalStatus)}
+                      className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none appearance-none cursor-pointer focus:border-[#00B87C] bg-card text-foreground dark:bg-zinc-900"
+                    >
+                      <option value="In Progress">In Progress</option>
+                      <option value="Completed">Completed</option>
+                      <option value="At Risk">At Risk</option>
+                      <option value="Not Started">Not Started</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                      Check-in Comments
+                    </label>
+                    <textarea
+                      value={checkInComment}
+                      onChange={(e) => setCheckInComment(e.target.value)}
+                      placeholder="What updates do you have on this goal?"
+                      className="w-full h-20 p-3 rounded-xl border bg-transparent text-xs outline-none resize-none focus:border-[#00B87C] text-foreground"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="pt-4 border-t border-border flex items-center justify-end gap-3 bg-secondary/10 rounded-b-2xl">
-                <button
-                  onClick={() => setSelectedGoalForCheckIn(null)}
-                  className="px-4 py-2.5 rounded-xl border text-xs font-bold text-muted-foreground hover:bg-secondary"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveCheckIn}
-                  className="px-5 py-2.5 rounded-xl text-white text-xs font-bold bg-[#00B87C] hover:opacity-90 shadow-lg shadow-emerald-500/20"
-                >
-                  Save Check-in
-                </button>
+                <div className="pt-4 border-t border-border flex items-center justify-end gap-3 bg-secondary/10 rounded-b-2xl">
+                  <button
+                    onClick={() => setSelectedGoalForCheckIn(null)}
+                    className="px-4 py-2.5 rounded-xl border text-xs font-bold text-muted-foreground hover:bg-secondary"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveCheckIn}
+                    className="px-5 py-2.5 rounded-xl text-white text-xs font-bold bg-[#00B87C] hover:opacity-90 shadow-lg shadow-emerald-500/20"
+                  >
+                    Save Check-in
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })()}
 
       {/* VIEW DETAILS GOAL MODAL */}
       {selectedGoalForDetails && (
         <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-          <div onClick={() => setSelectedGoalForDetails(null)} className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
+          <div
+            onClick={() => setSelectedGoalForDetails(null)}
+            className="absolute inset-0 bg-black/45 backdrop-blur-sm"
+          />
           <div className="relative w-full max-w-[480px] bg-card border border-border rounded-[32px] shadow-2xl p-8 animate-in zoom-in-95 flex flex-col">
             <div className="flex items-center justify-between pb-4 border-b border-border">
               <div className="flex items-center gap-2">
                 <Target className="text-[#00B87C]" size={20} />
-                <h3 className="text-lg font-bold text-foreground">Goal Details</h3>
+                <h3 className="text-lg font-bold text-foreground">
+                  Goal Details
+                </h3>
               </div>
-              <button onClick={() => setSelectedGoalForDetails(null)} className="text-muted-foreground hover:text-foreground">
+              <button
+                onClick={() => setSelectedGoalForDetails(null)}
+                className="text-muted-foreground hover:text-foreground"
+              >
                 <X size={20} />
               </button>
             </div>
             <div className="py-6 space-y-5 text-sm">
               <div>
-                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Objective</span>
-                <p className="font-bold text-foreground text-[15px]">{selectedGoalForDetails.title}</p>
+                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
+                  Objective
+                </span>
+                <p className="font-bold text-foreground text-[15px]">
+                  {selectedGoalForDetails.title}
+                </p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Category</span>
+                  <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
+                    Category
+                  </span>
                   <span className="px-2 py-0.5 bg-secondary text-foreground text-[10px] font-bold uppercase rounded">
                     {selectedGoalForDetails.category}
                   </span>
                 </div>
                 <div>
-                  <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Priority</span>
-                  <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${
-                    selectedGoalForDetails.priority === "High" ? "bg-rose-500/10 text-rose-500 border-rose-200" : "bg-amber-500/10 text-amber-500 border-amber-200"
-                  }`}>
+                  <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
+                    Priority
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${
+                      selectedGoalForDetails.priority === "High"
+                        ? "bg-rose-500/10 text-rose-500 border-rose-200"
+                        : "bg-amber-500/10 text-amber-500 border-amber-200"
+                    }`}
+                  >
                     {selectedGoalForDetails.priority}
                   </span>
                 </div>
               </div>
               <div>
-                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Key Results (KRs)</span>
+                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                  Key Results (KRs)
+                </span>
                 <p className="text-xs font-semibold text-foreground bg-secondary/40 p-3 rounded-xl border border-border italic leading-relaxed">
                   {selectedGoalForDetails.kr}
                 </p>
               </div>
               <div>
-                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Progress</span>
+                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                  Progress
+                </span>
                 <div className="flex items-center gap-3">
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden flex-1 border">
-                    <div className="h-full bg-primary rounded-full" style={{ width: `${selectedGoalForDetails.progress}%` }} />
+                    <div
+                      className="h-full bg-primary rounded-full"
+                      style={{ width: `${selectedGoalForDetails.progress}%` }}
+                    />
                   </div>
-                  <span className="text-xs font-bold text-primary">{selectedGoalForDetails.progress}%</span>
+                  <span className="text-xs font-bold text-primary">
+                    {selectedGoalForDetails.progress}%
+                  </span>
                 </div>
               </div>
               <div className="flex justify-between items-center pt-2 border-t text-[11px] font-bold text-muted-foreground uppercase">
@@ -491,161 +581,166 @@ interface GoalItemProps {
   onEdit: () => void;
 }
 
-const GoalItem = forwardRef<HTMLDivElement, GoalItemProps>(({
-  goal,
-  onViewDetails,
-  onCheckIn,
-  onMenuToggle,
-  isMenuOpen,
-  onDelete,
-  onMarkCompleted,
-  onEdit
-}, ref) => {
-  const statusIcon =
-    goal.status === "Completed" ? (
-      <CheckCircle2 size={16} className="text-emerald-500" />
-    ) : goal.status === "At Risk" ? (
-      <AlertCircle size={16} className="text-rose-500" />
-    ) : (
-      <div className="w-4 h-4 rounded-full border-2 border-[#00B87C]/50 border-t-[#00B87C] animate-spin" />
-    );
+const GoalItem = forwardRef<HTMLDivElement, GoalItemProps>(
+  (
+    {
+      goal,
+      onViewDetails,
+      onCheckIn,
+      onMenuToggle,
+      isMenuOpen,
+      onDelete,
+      onMarkCompleted,
+      onEdit,
+    },
+    ref,
+  ) => {
+    const statusIcon =
+      goal.status === "Completed" ? (
+        <CheckCircle2 size={16} className="text-emerald-500" />
+      ) : goal.status === "At Risk" ? (
+        <AlertCircle size={16} className="text-rose-500" />
+      ) : (
+        <div className="w-4 h-4 rounded-full border-2 border-[#00B87C]/50 border-t-[#00B87C] animate-spin" />
+      );
 
-  const priorityColor =
-    goal.priority === "High"
-      ? "text-rose-600 bg-rose-500/10 border-rose-500/20"
-      : goal.priority === "Medium"
-        ? "text-amber-600 bg-amber-500/10 border-amber-500/20"
-        : "text-muted-foreground bg-muted/50 border-border";
+    const priorityColor =
+      goal.priority === "High"
+        ? "text-rose-600 bg-rose-500/10 border-rose-500/20"
+        : goal.priority === "Medium"
+          ? "text-amber-600 bg-amber-500/10 border-amber-500/20"
+          : "text-muted-foreground bg-muted/50 border-border";
 
-  return (
-    <motion.div
-      ref={ref}
-      layout
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      className="p-4 rounded-2xl border border-border bg-card hover:border-[#00B87C]/30 transition-all space-y-4 group relative"
-    >
-      {/* TOP ROW */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          {statusIcon}
-          <h4 className="text-[14px] font-bold text-foreground tracking-tight">
-            {goal.title}
-          </h4>
-          <span className="px-2 py-0.5 rounded-md bg-secondary text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
-            {goal.category}
-          </span>
-          <span
-            className={`px-2 py-0.5 rounded-md border text-[9px] font-bold uppercase tracking-wider ${priorityColor}`}
-          >
-            {goal.priority}
-          </span>
-        </div>
-        <div className="relative">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onMenuToggle();
-            }}
-            className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground transition-all"
-          >
-            <MoreVertical size={16} />
-          </button>
-          {isMenuOpen && (
-            <div className="absolute right-0 mt-1 w-36 bg-card border border-border rounded-xl shadow-lg z-50 py-1.5 overflow-hidden animate-in fade-in duration-200">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit();
-                }}
-                className="w-full px-4 py-2 text-left text-xs font-bold text-foreground hover:bg-secondary transition-all"
-              >
-                Edit Goal
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMarkCompleted();
-                }}
-                className="w-full px-4 py-2 text-left text-xs font-bold text-emerald-600 hover:bg-secondary transition-all"
-              >
-                Mark Completed
-              </button>
-              <div className="h-[1px] bg-border my-1" />
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete();
-                }}
-                className="w-full px-4 py-2 text-left text-xs font-bold text-rose-600 hover:bg-rose-500/10 transition-all animate-in"
-              >
-                Delete Goal
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* PROGRESS ROW */}
-      <div className="space-y-2">
-        <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${goal.progress}%` }}
-            className="h-full bg-[#00B87C] rounded-full"
-          />
-        </div>
-        <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider">
-          <span className="text-[#00B87C]">{goal.progress}%</span>
-          <span className="text-muted-foreground">{goal.deadline}</span>
-        </div>
-      </div>
-
-      {/* DETAIL ROW */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 py-2 border-t border-border/50">
-        <div className="space-y-1">
-          <p className="text-[12px] font-bold text-muted-foreground italic tracking-tight">
-            KR: {goal.kr}
-          </p>
-          <div className="flex items-center gap-4">
-            <span className="text-[11px] font-bold text-muted-foreground/60">
-              Last updated: {goal.lastUpdated}
+    return (
+      <motion.div
+        ref={ref}
+        layout
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.98 }}
+        className="p-4 rounded-2xl border border-border bg-card hover:border-[#00B87C]/30 transition-all space-y-4 group relative"
+      >
+        {/* TOP ROW */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {statusIcon}
+            <h4 className="text-[14px] font-bold text-foreground tracking-tight">
+              {goal.title}
+            </h4>
+            <span className="px-2 py-0.5 rounded-md bg-secondary text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+              {goal.category}
             </span>
-            <div className="flex items-center gap-1.5">
-              <div className="w-5 h-5 rounded-full bg-blue-500/10 flex items-center justify-center text-[8px] font-bold text-blue-600">
-                RK
+            <span
+              className={`px-2 py-0.5 rounded-md border text-[9px] font-bold uppercase tracking-wider ${priorityColor}`}
+            >
+              {goal.priority}
+            </span>
+          </div>
+          <div className="relative">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onMenuToggle();
+              }}
+              className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground transition-all"
+            >
+              <MoreVertical size={16} />
+            </button>
+            {isMenuOpen && (
+              <div className="absolute right-0 mt-1 w-36 bg-card border border-border rounded-xl shadow-lg z-50 py-1.5 overflow-hidden animate-in fade-in duration-200">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit();
+                  }}
+                  className="w-full px-4 py-2 text-left text-xs font-bold text-foreground hover:bg-secondary transition-all"
+                >
+                  Edit Goal
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMarkCompleted();
+                  }}
+                  className="w-full px-4 py-2 text-left text-xs font-bold text-emerald-600 hover:bg-secondary transition-all"
+                >
+                  Mark Completed
+                </button>
+                <div className="h-[1px] bg-border my-1" />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete();
+                  }}
+                  className="w-full px-4 py-2 text-left text-xs font-bold text-rose-600 hover:bg-rose-500/10 transition-all animate-in"
+                >
+                  Delete Goal
+                </button>
               </div>
-              <span className="text-[11px] font-bold text-muted-foreground">
-                {goal.manager}
-              </span>
-            </div>
+            )}
           </div>
         </div>
 
-        {/* ACTION ROW */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onViewDetails}
-            className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider hover:underline flex items-center gap-1"
-          >
-            View Details <ChevronRight size={14} />
-          </button>
-          <button
-            onClick={onCheckIn}
-            className="px-4 py-1.5 rounded-lg border border-border text-[11px] font-bold uppercase tracking-wider hover:bg-muted transition-all"
-          >
-            Check-in
-          </button>
-          <ChevronRight
-            size={18}
-            className="text-muted-foreground group-hover:text-[#00B87C] transition-all ml-1"
-          />
+        {/* PROGRESS ROW */}
+        <div className="space-y-2">
+          <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${goal.progress}%` }}
+              className="h-full bg-[#00B87C] rounded-full"
+            />
+          </div>
+          <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider">
+            <span className="text-[#00B87C]">{goal.progress}%</span>
+            <span className="text-muted-foreground">{goal.deadline}</span>
+          </div>
         </div>
-      </div>
-    </motion.div>
-  );
-});
+
+        {/* DETAIL ROW */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 py-2 border-t border-border/50">
+          <div className="space-y-1">
+            <p className="text-[12px] font-bold text-muted-foreground italic tracking-tight">
+              KR: {goal.kr}
+            </p>
+            <div className="flex items-center gap-4">
+              <span className="text-[11px] font-bold text-muted-foreground/60">
+                Last updated: {goal.lastUpdated}
+              </span>
+              <div className="flex items-center gap-1.5">
+                <div className="w-5 h-5 rounded-full bg-blue-500/10 flex items-center justify-center text-[8px] font-bold text-blue-600">
+                  RK
+                </div>
+                <span className="text-[11px] font-bold text-muted-foreground">
+                  {goal.manager}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* ACTION ROW */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onViewDetails}
+              className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider hover:underline flex items-center gap-1"
+            >
+              View Details <ChevronRight size={14} />
+            </button>
+            <button
+              onClick={onCheckIn}
+              className="px-4 py-1.5 rounded-lg border border-border text-[11px] font-bold uppercase tracking-wider hover:bg-muted transition-all"
+            >
+              Check-in
+            </button>
+            <ChevronRight
+              size={18}
+              className="text-muted-foreground group-hover:text-[#00B87C] transition-all ml-1"
+            />
+          </div>
+        </div>
+      </motion.div>
+    );
+  },
+);
 GoalItem.displayName = "GoalItem";
 
 function AddGoalModal({
@@ -782,11 +877,15 @@ function AddGoalModal({
                   const isActive = priority === p;
                   let colorClasses = "";
                   if (isActive) {
-                    if (p === "High") colorClasses = "bg-rose-600 text-white border-rose-600";
-                    else if (p === "Medium") colorClasses = "bg-amber-600 text-white border-amber-600";
-                    else colorClasses = "bg-blue-600 text-white border-blue-600";
+                    if (p === "High")
+                      colorClasses = "bg-rose-600 text-white border-rose-600";
+                    else if (p === "Medium")
+                      colorClasses = "bg-amber-600 text-white border-amber-600";
+                    else
+                      colorClasses = "bg-blue-600 text-white border-blue-600";
                   } else {
-                    colorClasses = "border-border hover:border-[#00B87C] text-foreground bg-transparent";
+                    colorClasses =
+                      "border-border hover:border-[#00B87C] text-foreground bg-transparent";
                   }
                   return (
                     <button

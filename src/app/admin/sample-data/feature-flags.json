@@ -1,0 +1,1033 @@
+[
+  {
+    "id": "flag_1",
+    "key": "ai_scheduling",
+    "name": "AI Scheduling Assistant",
+    "description": "Controls availability of ai scheduling assistant across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 0,
+    "enabledPlans": [
+      "Growth",
+      "Starter"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Mar 02, 2024",
+    "updatedAt": "Jun 04, 2024"
+  },
+  {
+    "id": "flag_2",
+    "key": "bulk_import_v2",
+    "name": "Bulk Import v2",
+    "description": "Controls availability of bulk import v2 across tenant organizations.",
+    "category": "Experimental",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 100,
+    "enabledPlans": [
+      "Enterprise",
+      "Growth",
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_25"
+    ],
+    "createdAt": "Sep 21, 2023",
+    "updatedAt": "May 09, 2024"
+  },
+  {
+    "id": "flag_3",
+    "key": "dark_mode",
+    "name": "Dark Mode",
+    "description": "Controls availability of dark mode across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_40",
+      "org_27",
+      "org_18"
+    ],
+    "createdAt": "Sep 06, 2023",
+    "updatedAt": "Jun 04, 2024"
+  },
+  {
+    "id": "flag_4",
+    "key": "payroll_sync",
+    "name": "Payroll Sync",
+    "description": "Controls availability of payroll sync across tenant organizations.",
+    "category": "Experimental",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Enterprise",
+      "Growth",
+      "Starter"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Sep 30, 2023",
+    "updatedAt": "Jun 02, 2024"
+  },
+  {
+    "id": "flag_5",
+    "key": "mobile_clock_in",
+    "name": "Mobile Clock-In",
+    "description": "Controls availability of mobile clock-in across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Enterprise"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Jan 03, 2024",
+    "updatedAt": "May 09, 2024"
+  },
+  {
+    "id": "flag_6",
+    "key": "custom_reports",
+    "name": "Custom Report Builder",
+    "description": "Controls availability of custom report builder across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Starter"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Mar 15, 2023",
+    "updatedAt": "May 14, 2024"
+  },
+  {
+    "id": "flag_7",
+    "key": "slack_notify",
+    "name": "Slack Notifications",
+    "description": "Controls availability of slack notifications across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 75,
+    "enabledPlans": [
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_14",
+      "org_38",
+      "org_15",
+      "org_22"
+    ],
+    "createdAt": "Feb 06, 2023",
+    "updatedAt": "Jun 10, 2024"
+  },
+  {
+    "id": "flag_8",
+    "key": "biometric_attendance",
+    "name": "Biometric Attendance",
+    "description": "Controls availability of biometric attendance across tenant organizations.",
+    "category": "Deprecated",
+    "status": "Inactive",
+    "defaultState": true,
+    "rolloutPct": 10,
+    "enabledPlans": [
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_17",
+      "org_12",
+      "org_8",
+      "org_43"
+    ],
+    "createdAt": "Mar 13, 2023",
+    "updatedAt": "Apr 30, 2024"
+  },
+  {
+    "id": "flag_9",
+    "key": "multi_currency",
+    "name": "Multi-Currency Payroll",
+    "description": "Controls availability of multi-currency payroll across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 10,
+    "enabledPlans": [
+      "Growth",
+      "Starter",
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_2",
+      "org_12"
+    ],
+    "createdAt": "Aug 21, 2023",
+    "updatedAt": "May 22, 2024"
+  },
+  {
+    "id": "flag_10",
+    "key": "org_chart_v2",
+    "name": "Org Chart v2",
+    "description": "Controls availability of org chart v2 across tenant organizations.",
+    "category": "Experimental",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 75,
+    "enabledPlans": [
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_38",
+      "org_7",
+      "org_29",
+      "org_33"
+    ],
+    "createdAt": "Mar 16, 2023",
+    "updatedAt": "May 08, 2024"
+  },
+  {
+    "id": "flag_11",
+    "key": "self_service_portal",
+    "name": "Self-Service Portal",
+    "description": "Controls availability of self-service portal across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Enterprise",
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_42",
+      "org_2",
+      "org_4"
+    ],
+    "createdAt": "Aug 13, 2023",
+    "updatedAt": "May 05, 2024"
+  },
+  {
+    "id": "flag_12",
+    "key": "shift_swap",
+    "name": "Shift Swap Requests",
+    "description": "Controls availability of shift swap requests across tenant organizations.",
+    "category": "Experimental",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Starter",
+      "Enterprise",
+      "Growth"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Dec 02, 2023",
+    "updatedAt": "May 11, 2024"
+  },
+  {
+    "id": "flag_13",
+    "key": "e_signature",
+    "name": "E-Signature Documents",
+    "description": "Controls availability of e-signature documents across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Enterprise",
+      "Growth",
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_46",
+      "org_21",
+      "org_25",
+      "org_39"
+    ],
+    "createdAt": "Mar 11, 2023",
+    "updatedAt": "May 06, 2024"
+  },
+  {
+    "id": "flag_14",
+    "key": "performance_reviews_v2",
+    "name": "Performance Reviews v2",
+    "description": "Controls availability of performance reviews v2 across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 10,
+    "enabledPlans": [
+      "Growth",
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_42",
+      "org_50",
+      "org_36",
+      "org_47",
+      "org_14"
+    ],
+    "createdAt": "Sep 29, 2023",
+    "updatedAt": "May 24, 2024"
+  },
+  {
+    "id": "flag_15",
+    "key": "api_webhooks_v2",
+    "name": "Webhooks v2",
+    "description": "Controls availability of webhooks v2 across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_28",
+      "org_21"
+    ],
+    "createdAt": "Aug 22, 2023",
+    "updatedAt": "Jun 15, 2024"
+  },
+  {
+    "id": "flag_16",
+    "key": "expense_tracking",
+    "name": "Expense Tracking",
+    "description": "Controls availability of expense tracking across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 0,
+    "enabledPlans": [
+      "Enterprise",
+      "Growth",
+      "Starter"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Jul 11, 2023",
+    "updatedAt": "Jun 16, 2024"
+  },
+  {
+    "id": "flag_17",
+    "key": "geo_fencing",
+    "name": "Geo-Fencing",
+    "description": "Controls availability of geo-fencing across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 100,
+    "enabledPlans": [
+      "Enterprise",
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_36",
+      "org_22",
+      "org_43",
+      "org_8"
+    ],
+    "createdAt": "Nov 25, 2023",
+    "updatedAt": "May 12, 2024"
+  },
+  {
+    "id": "flag_18",
+    "key": "candidate_portal",
+    "name": "Candidate Portal",
+    "description": "Controls availability of candidate portal across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 10,
+    "enabledPlans": [
+      "Enterprise"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Aug 18, 2023",
+    "updatedAt": "Jun 05, 2024"
+  },
+  {
+    "id": "flag_19",
+    "key": "benefits_marketplace",
+    "name": "Benefits Marketplace",
+    "description": "Controls availability of benefits marketplace across tenant organizations.",
+    "category": "Experimental",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Starter",
+      "Growth",
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_36",
+      "org_24"
+    ],
+    "createdAt": "Jun 14, 2023",
+    "updatedAt": "May 08, 2024"
+  },
+  {
+    "id": "flag_20",
+    "key": "ai_resume_parse",
+    "name": "AI Resume Parsing",
+    "description": "Controls availability of ai resume parsing across tenant organizations.",
+    "category": "Experimental",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Growth",
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_2",
+      "org_12"
+    ],
+    "createdAt": "Jan 19, 2024",
+    "updatedAt": "Jun 10, 2024"
+  },
+  {
+    "id": "flag_21",
+    "key": "custom_branding",
+    "name": "Custom Branding",
+    "description": "Controls availability of custom branding across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 0,
+    "enabledPlans": [
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_5",
+      "org_10",
+      "org_48"
+    ],
+    "createdAt": "Jul 24, 2023",
+    "updatedAt": "Jun 06, 2024"
+  },
+  {
+    "id": "flag_22",
+    "key": "sso_saml",
+    "name": "SSO via SAML",
+    "description": "Controls availability of sso via saml across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Enterprise",
+      "Starter",
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_22",
+      "org_11",
+      "org_24"
+    ],
+    "createdAt": "Feb 01, 2024",
+    "updatedAt": "Jun 09, 2024"
+  },
+  {
+    "id": "flag_23",
+    "key": "audit_export",
+    "name": "Audit Log Export",
+    "description": "Controls availability of audit log export across tenant organizations.",
+    "category": "Experimental",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Enterprise",
+      "Growth"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Aug 16, 2023",
+    "updatedAt": "May 12, 2024"
+  },
+  {
+    "id": "flag_24",
+    "key": "two_factor_sms",
+    "name": "2FA via SMS",
+    "description": "Controls availability of 2fa via sms across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Starter",
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_14",
+      "org_49"
+    ],
+    "createdAt": "May 09, 2023",
+    "updatedAt": "May 07, 2024"
+  },
+  {
+    "id": "flag_25",
+    "key": "leave_calendar_sync",
+    "name": "Leave Calendar Sync",
+    "description": "Controls availability of leave calendar sync across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 75,
+    "enabledPlans": [
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_43",
+      "org_20",
+      "org_3",
+      "org_15"
+    ],
+    "createdAt": "Jan 07, 2024",
+    "updatedAt": "May 31, 2024"
+  },
+  {
+    "id": "flag_26",
+    "key": "payslip_portal",
+    "name": "Payslip Portal",
+    "description": "Controls availability of payslip portal across tenant organizations.",
+    "category": "Deprecated",
+    "status": "Inactive",
+    "defaultState": false,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_49"
+    ],
+    "createdAt": "Aug 10, 2023",
+    "updatedAt": "May 03, 2024"
+  },
+  {
+    "id": "flag_27",
+    "key": "survey_builder",
+    "name": "Engagement Survey Builder",
+    "description": "Controls availability of engagement survey builder across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 10,
+    "enabledPlans": [
+      "Enterprise",
+      "Growth",
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_25"
+    ],
+    "createdAt": "Sep 30, 2023",
+    "updatedAt": "May 03, 2024"
+  },
+  {
+    "id": "flag_28",
+    "key": "org_benchmark",
+    "name": "Org Benchmarking",
+    "description": "Controls availability of org benchmarking across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 0,
+    "enabledPlans": [
+      "Enterprise",
+      "Growth"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Jul 02, 2023",
+    "updatedAt": "May 25, 2024"
+  },
+  {
+    "id": "flag_29",
+    "key": "ai_job_description",
+    "name": "AI Job Description Writer",
+    "description": "Controls availability of ai job description writer across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_19",
+      "org_8",
+      "org_26"
+    ],
+    "createdAt": "Aug 29, 2023",
+    "updatedAt": "May 06, 2024"
+  },
+  {
+    "id": "flag_30",
+    "key": "time_tracking_v2",
+    "name": "Time Tracking v2",
+    "description": "Controls availability of time tracking v2 across tenant organizations.",
+    "category": "Experimental",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 0,
+    "enabledPlans": [
+      "Growth"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Jun 24, 2023",
+    "updatedAt": "May 25, 2024"
+  },
+  {
+    "id": "flag_31",
+    "key": "custom_fields",
+    "name": "Custom Employee Fields",
+    "description": "Controls availability of custom employee fields across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 10,
+    "enabledPlans": [
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_20",
+      "org_48",
+      "org_22"
+    ],
+    "createdAt": "Jun 01, 2023",
+    "updatedAt": "Jun 12, 2024"
+  },
+  {
+    "id": "flag_32",
+    "key": "approval_chains",
+    "name": "Multi-Level Approval Chains",
+    "description": "Controls availability of multi-level approval chains across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 100,
+    "enabledPlans": [
+      "Starter",
+      "Enterprise",
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_50"
+    ],
+    "createdAt": "Feb 06, 2024",
+    "updatedAt": "Jun 03, 2024"
+  },
+  {
+    "id": "flag_33",
+    "key": "data_export_api",
+    "name": "Bulk Data Export API",
+    "description": "Controls availability of bulk data export api across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 100,
+    "enabledPlans": [
+      "Growth",
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_10",
+      "org_49",
+      "org_42",
+      "org_5"
+    ],
+    "createdAt": "May 08, 2023",
+    "updatedAt": "May 14, 2024"
+  },
+  {
+    "id": "flag_34",
+    "key": "holiday_calendar",
+    "name": "Regional Holiday Calendar",
+    "description": "Controls availability of regional holiday calendar across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Growth",
+      "Enterprise",
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_21",
+      "org_41",
+      "org_10",
+      "org_29"
+    ],
+    "createdAt": "Oct 23, 2023",
+    "updatedAt": "May 18, 2024"
+  },
+  {
+    "id": "flag_35",
+    "key": "asset_tracking",
+    "name": "Asset Tracking",
+    "description": "Controls availability of asset tracking across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 25,
+    "enabledPlans": [
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_29",
+      "org_3",
+      "org_4"
+    ],
+    "createdAt": "Feb 08, 2023",
+    "updatedAt": "Jun 14, 2024"
+  },
+  {
+    "id": "flag_36",
+    "key": "training_lms",
+    "name": "Training LMS Integration",
+    "description": "Controls availability of training lms integration across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 100,
+    "enabledPlans": [
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_25",
+      "org_30",
+      "org_38",
+      "org_36"
+    ],
+    "createdAt": "Mar 03, 2023",
+    "updatedAt": "May 14, 2024"
+  },
+  {
+    "id": "flag_37",
+    "key": "referral_program",
+    "name": "Employee Referral Program",
+    "description": "Controls availability of employee referral program across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 0,
+    "enabledPlans": [
+      "Starter",
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_39",
+      "org_31"
+    ],
+    "createdAt": "Apr 21, 2023",
+    "updatedAt": "Jun 14, 2024"
+  },
+  {
+    "id": "flag_38",
+    "key": "exit_interview",
+    "name": "Exit Interview Workflow",
+    "description": "Controls availability of exit interview workflow across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Enterprise",
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_3"
+    ],
+    "createdAt": "Oct 17, 2023",
+    "updatedAt": "May 27, 2024"
+  },
+  {
+    "id": "flag_39",
+    "key": "org_announcements_v2",
+    "name": "Announcements v2",
+    "description": "Controls availability of announcements v2 across tenant organizations.",
+    "category": "Experimental",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 0,
+    "enabledPlans": [
+      "Enterprise",
+      "Growth",
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_27",
+      "org_50",
+      "org_22"
+    ],
+    "createdAt": "Nov 04, 2023",
+    "updatedAt": "Jun 13, 2024"
+  },
+  {
+    "id": "flag_40",
+    "key": "compliance_alerts",
+    "name": "Compliance Alerts",
+    "description": "Controls availability of compliance alerts across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 75,
+    "enabledPlans": [
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_19",
+      "org_17",
+      "org_47"
+    ],
+    "createdAt": "Mar 10, 2024",
+    "updatedAt": "May 13, 2024"
+  },
+  {
+    "id": "flag_41",
+    "key": "payroll_simulation",
+    "name": "Payroll Simulation Mode",
+    "description": "Controls availability of payroll simulation mode across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_20",
+      "org_42"
+    ],
+    "createdAt": "Apr 24, 2023",
+    "updatedAt": "Jun 14, 2024"
+  },
+  {
+    "id": "flag_42",
+    "key": "custom_roles_v2",
+    "name": "Custom Roles v2",
+    "description": "Controls availability of custom roles v2 across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 100,
+    "enabledPlans": [
+      "Enterprise",
+      "Starter",
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_42",
+      "org_22",
+      "org_9"
+    ],
+    "createdAt": "Aug 04, 2023",
+    "updatedAt": "May 27, 2024"
+  },
+  {
+    "id": "flag_43",
+    "key": "calendar_sync_google",
+    "name": "Google Calendar Sync",
+    "description": "Controls availability of google calendar sync across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": false,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_12",
+      "org_14"
+    ],
+    "createdAt": "Feb 10, 2024",
+    "updatedAt": "Jun 10, 2024"
+  },
+  {
+    "id": "flag_44",
+    "key": "calendar_sync_outlook",
+    "name": "Outlook Calendar Sync",
+    "description": "Controls availability of outlook calendar sync across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 75,
+    "enabledPlans": [
+      "Enterprise",
+      "Starter",
+      "Growth"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Mar 25, 2023",
+    "updatedAt": "May 11, 2024"
+  },
+  {
+    "id": "flag_45",
+    "key": "ai_attrition_alerts",
+    "name": "AI Attrition Alerts",
+    "description": "Controls availability of ai attrition alerts across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 75,
+    "enabledPlans": [
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_10",
+      "org_11",
+      "org_12"
+    ],
+    "createdAt": "Sep 09, 2023",
+    "updatedAt": "Jun 17, 2024"
+  },
+  {
+    "id": "flag_46",
+    "key": "document_vault",
+    "name": "Secure Document Vault",
+    "description": "Controls availability of secure document vault across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_47",
+      "org_16",
+      "org_29",
+      "org_40",
+      "org_19"
+    ],
+    "createdAt": "Dec 20, 2023",
+    "updatedAt": "May 31, 2024"
+  },
+  {
+    "id": "flag_47",
+    "key": "benefits_enrollment",
+    "name": "Open Enrollment Workflow",
+    "description": "Controls availability of open enrollment workflow across tenant organizations.",
+    "category": "Deprecated",
+    "status": "Inactive",
+    "defaultState": true,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Growth",
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_13",
+      "org_24",
+      "org_44"
+    ],
+    "createdAt": "Aug 07, 2023",
+    "updatedAt": "May 17, 2024"
+  },
+  {
+    "id": "flag_48",
+    "key": "shift_planner_ai",
+    "name": "AI Shift Planner",
+    "description": "Controls availability of ai shift planner across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 10,
+    "enabledPlans": [
+      "Starter",
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_13"
+    ],
+    "createdAt": "Oct 13, 2023",
+    "updatedAt": "May 15, 2024"
+  },
+  {
+    "id": "flag_49",
+    "key": "recognition_wall",
+    "name": "Peer Recognition Wall",
+    "description": "Controls availability of peer recognition wall across tenant organizations.",
+    "category": "Deprecated",
+    "status": "Inactive",
+    "defaultState": false,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Starter",
+      "Growth",
+      "Enterprise"
+    ],
+    "enabledOrgIds": [
+      "org_34",
+      "org_8",
+      "org_19",
+      "org_6",
+      "org_49"
+    ],
+    "createdAt": "Dec 29, 2023",
+    "updatedAt": "May 22, 2024"
+  },
+  {
+    "id": "flag_50",
+    "key": "anonymous_feedback",
+    "name": "Anonymous Feedback Channel",
+    "description": "Controls availability of anonymous feedback channel across tenant organizations.",
+    "category": "Experimental",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Growth",
+      "Starter",
+      "Enterprise"
+    ],
+    "enabledOrgIds": [],
+    "createdAt": "Mar 10, 2024",
+    "updatedAt": "May 27, 2024"
+  },
+  {
+    "id": "flag_51",
+    "key": "contractor_management",
+    "name": "Contractor Management",
+    "description": "Controls availability of contractor management across tenant organizations.",
+    "category": "Core",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 10,
+    "enabledPlans": [
+      "Starter"
+    ],
+    "enabledOrgIds": [
+      "org_7",
+      "org_46"
+    ],
+    "createdAt": "Nov 26, 2023",
+    "updatedAt": "May 20, 2024"
+  },
+  {
+    "id": "flag_52",
+    "key": "offboarding_checklist",
+    "name": "Offboarding Checklist v2",
+    "description": "Controls availability of offboarding checklist v2 across tenant organizations.",
+    "category": "Beta",
+    "status": "Active",
+    "defaultState": true,
+    "rolloutPct": 50,
+    "enabledPlans": [
+      "Starter",
+      "Enterprise",
+      "Growth"
+    ],
+    "enabledOrgIds": [
+      "org_49"
+    ],
+    "createdAt": "Dec 11, 2023",
+    "updatedAt": "Jun 06, 2024"
+  }
+]
