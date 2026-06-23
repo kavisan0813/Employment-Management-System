@@ -19,8 +19,11 @@ export const REGIONS = [
   "Latin America",
 ];
 
-export const PLAN_PRICING: Record<"Starter" | "Growth" | "Enterprise", number> = {
+export const PLAN_PRICING: Record<string, number> = {
+  Trial: 0,
   Starter: 99,
+  Basic: 99,
   Growth: 1200,
+  Professional: 299,
   Enterprise: 3500,
 };

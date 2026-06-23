@@ -164,6 +164,20 @@ export function Login() {
     }, 500);
   };
 
+  const handlePlatformDemoLogin = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      login({
+        name: "Ryan Park",
+        email: "admin@nexushr.com",
+        role: "Super Admin",
+        initials: "RP",
+      });
+      navigate("/platform-admin/dashboard", { replace: true });
+      setIsLoading(false);
+    }, 500);
+  };
+
   return (
     <div
       className="min-h-screen w-full flex items-center justify-center relative overflow-hidden"
@@ -496,6 +510,38 @@ export function Login() {
                 </button>
               );
             })}
+          </div>
+
+          {/* Separate Platform Admin Login Button */}
+          <div className="mt-3">
+            <button
+              type="button"
+              onClick={handlePlatformDemoLogin}
+              disabled={isLoading}
+              className="w-full flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group justify-center"
+              style={{
+                borderColor: "#8B5CF630",
+                backgroundColor: "rgba(139,92,246,0.06)",
+              }}
+            >
+              <div
+                className="p-1 rounded-lg"
+                style={{
+                  backgroundColor: "rgba(139, 92, 246, 0.12)",
+                  color: "#8B5CF6",
+                }}
+              >
+                <ShieldAlert size={14} />
+              </div>
+              <div className="flex flex-col">
+                <span
+                  className="text-[11px] font-extrabold uppercase tracking-wide group-hover:underline leading-tight"
+                  style={{ color: "#8B5CF6" }}
+                >
+                  Platform Super Admin Console
+                </span>
+              </div>
+            </button>
           </div>
         </div>
 

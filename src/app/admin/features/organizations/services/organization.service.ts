@@ -1,10 +1,5 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { db, pushAuditLog } from "../../../mockData";
-import { Organization, Subscription, PlatformUser, EntityStatus } from "../../../types";
+import { Organization, Subscription, PlatformUser } from "../../../types";
 import { PLAN_PRICING } from "../types/organization.types";
 
 const CURRENT_ADMIN_EMAIL = "admin@ems.io";
@@ -26,28 +21,33 @@ export const OrganizationService = {
     return db.auditLogs.get();
   },
 
-  createOrganization(params: {
-    name: string;
-    domain: string;
-    plan: "Starter" | "Growth" | "Enterprise";
-    region: string;
-    ownerEmail: string;
-    seatLimit: number;
-    industry: string;
-    password?: string;
-  }): Organization {
+  createOrganization(params: Partial<Organization> & { ownerName?: string; password?: string }): Organization {
+    const plan = params.plan || "Starter";
     const newOrg: Organization = {
       id: `org-${Date.now()}`,
-      name: params.name,
-      domain: params.domain,
-      status: "Pending",
-      plan: params.plan,
+      name: params.name || "Unknown Org",
+      domain: params.domain || "",
+      code: params.code,
+      status: "Active",
+      plan: plan,
       userCount: 1,
-      seatLimit: Number(params.seatLimit),
-      mrr: PLAN_PRICING[params.plan],
-      industry: params.industry,
-      region: params.region,
-      ownerEmail: params.ownerEmail,
+      seatLimit: Number(params.seatLimit || 50),
+      mrr: PLAN_PRICING[plan] || 0,
+      industry: params.industry || "Technology",
+      region: params.region || "North America",
+      ownerEmail: params.ownerEmail || "",
+      phone: params.phone,
+      website: params.website,
+      registrationNumber: params.registrationNumber,
+      gstNumber: params.gstNumber,
+      address: params.address,
+      country: params.country,
+      state: params.state,
+      city: params.city,
+      pincode: params.pincode,
+      storageUsedGB: 0,
+      storageAllocatedGB: plan === "Enterprise" ? 500 : 50,
+      enabledModules: params.enabledModules || [],
       joinedAt: new Date().toISOString(),
       lastActiveAt: new Date().toISOString(),
     };
@@ -58,8 +58,8 @@ export const OrganizationService = {
       id: `sub-${Date.now()}`,
       organization: newOrg.name,
       organizationId: newOrg.id,
-      plan: newOrg.plan,
-      status: "Pending",
+      plan: newOrg.plan as any,
+      status: "Active",
       billingCycle: "Monthly",
       amount: newOrg.mrr,
       currency: "USD",
@@ -73,11 +73,11 @@ export const OrganizationService = {
     if (params.password) {
       const newUser: PlatformUser = {
         id: `user-${Date.now()}`,
-        name: "Owner Account",
-        email: params.ownerEmail,
-        status: "Pending",
+        name: params.ownerName || "Owner Account",
+        email: params.ownerEmail || "",
+        status: "Active",
         role: "Org Admin",
-        organization: params.name,
+        organization: params.name || "",
         organizationId: newOrg.id,
         lastLoginAt: new Date().toISOString(),
         mfaEnabled: false,
@@ -100,93 +100,39 @@ export const OrganizationService = {
     return newOrg;
   },
 
-  updateOrganization(
-    orgId: string,
-    params: {
-      name: string;
-      domain: string;
-      plan: "Starter" | "Growth" | "Enterprise";
-      region: string;
-      ownerEmail: string;
-      seatLimit: number;
-      industry: string;
-    }
-  ) {
-    const updated = db.organizations.get().map((o) =>
-      o.id === orgId
-        ? {
-            ...o,
-            name: params.name,
-            domain: params.domain,
-            plan: params.plan,
-            region: params.region,
-            ownerEmail: params.ownerEmail,
-            seatLimit: Number(params.seatLimit),
-            industry: params.industry,
-            mrr: PLAN_PRICING[params.plan],
-          }
-        : o
-    );
-
+  updateOrganizationStatus(orgId: string, status: Organization["status"]) {
+    const orgs = db.organizations.get();
+    const updated = orgs.map((o) => (o.id === orgId ? { ...o, status } : o));
     db.organizations.save(updated);
+    
     pushAuditLog(
-      "org.edit",
-      "Admin Action",
-      CURRENT_ADMIN_EMAIL,
-      "platform_admin",
-      params.name,
-      "Active",
-      { id: orgId, plan: params.plan, seats: String(params.seatLimit) }
-    );
-  },
-
-  toggleSuspend(org: Organization) {
-    const nextStatus = (org.status === "Suspended" ? "Active" : "Suspended") as EntityStatus;
-    const updated = db.organizations.get().map((o) =>
-      o.id === org.id ? { ...o, status: nextStatus } : o
-    );
-
-    db.organizations.save(updated);
-    pushAuditLog(
-      `org.${nextStatus.toLowerCase()}`,
+      "org.status_change",
       "Security",
       CURRENT_ADMIN_EMAIL,
       "platform_admin",
-      org.name,
+      updated.find((o) => o.id === orgId)?.name || "Unknown",
       "Active",
-      { previous_status: org.status, result: nextStatus }
-    );
-    return nextStatus;
-  },
-
-  deleteOrganization(orgId: string, orgName: string) {
-    db.organizations.save(
-      db.organizations.get().filter((o) => o.id !== orgId)
-    );
-    pushAuditLog(
-      "org.delete",
-      "Admin Action",
-      CURRENT_ADMIN_EMAIL,
-      "platform_admin",
-      null,
-      "Active",
-      { orgName: orgName, previous_id: orgId }
+      { new_status: status },
     );
   },
 
-  bulkSuspend(orgIds: string[]) {
-    const updated = db.organizations.get().map((o) =>
-      orgIds.includes(o.id) ? { ...o, status: "Suspended" as const } : o
-    );
-    db.organizations.save(updated);
+  updateSubscriptionPlan(orgId: string, plan: Organization["plan"]) {
+    const orgs = db.organizations.get();
+    const updatedOrgs = orgs.map((o) => (o.id === orgId ? { ...o, plan, mrr: PLAN_PRICING[plan] || o.mrr } : o));
+    db.organizations.save(updatedOrgs);
+
+    const subs = db.subscriptions.get();
+    const updatedSubs = subs.map((s) => (s.organizationId === orgId ? { ...s, plan: plan as any, amount: PLAN_PRICING[plan] || s.amount } : s));
+    db.subscriptions.save(updatedSubs);
+
     pushAuditLog(
-      "org.bulk_suspend",
-      "Admin Action",
+      "org.plan_upgrade",
+      "Billing",
       CURRENT_ADMIN_EMAIL,
       "platform_admin",
-      null,
+      updatedOrgs.find((o) => o.id === orgId)?.name || "Unknown",
       "Active",
-      { count: String(orgIds.length), orgIds: orgIds.join(", ") }
+      { new_plan: plan },
     );
-  },
+  }
 };

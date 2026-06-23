@@ -22,17 +22,17 @@ export function Topbar() {
         <nav className="hidden lg:flex items-center gap-6 mr-6">
           <Link 
             className={`font-label-md text-label-md h-header-height flex items-center px-1 border-b-2 ${
-              location.pathname === "/admin/dashboard" ? "text-primary border-primary" : "text-on-surface-variant border-transparent hover:text-primary"
+              location.pathname === "/platform-admin/dashboard" ? "text-primary border-primary" : "text-on-surface-variant border-transparent hover:text-primary"
             }`} 
-            to="/admin/dashboard"
+            to="/platform-admin/dashboard"
           >
             Dashboard
           </Link>
           <Link 
             className={`font-label-md text-label-md h-header-height flex items-center px-1 border-b-2 ${
-              location.pathname === "/admin/reports" ? "text-primary border-primary" : "text-on-surface-variant border-transparent hover:text-primary"
+              location.pathname === "/platform-admin/reports" ? "text-primary border-primary" : "text-on-surface-variant border-transparent hover:text-primary"
             }`} 
-            to="/admin/reports"
+            to="/platform-admin/reports"
           >
             Reports
           </Link>

@@ -16,6 +16,7 @@ import {
   FileText,
   Lock,
   Sprout,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth, type UserRole } from "../context/AuthContext";
 
@@ -302,7 +303,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     if (path === "/") {
       return (
         currentPath === "/" ||
-        currentPath === "/admin/dashboard" ||
+        currentPath === "/platform-admin/dashboard" ||
         currentPath === "/hr/dashboard" ||
         currentPath === "/finance/dashboard" ||
         currentPath === "/manager/dashboard"
@@ -515,6 +516,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </div>
           );
         })()}
+
+     
 
       {/* Navigation */}
       <nav className="flex-1 py-3 overflow-y-auto no-scrollbar">

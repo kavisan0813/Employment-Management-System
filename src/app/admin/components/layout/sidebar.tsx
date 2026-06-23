@@ -25,6 +25,7 @@ import {
   Layers,
   HelpCircle,
   ChevronDown,
+  Zap,
 } from "lucide-react";
 import { IoIosPerson } from "react-icons/io";
 
@@ -43,13 +44,13 @@ export function Sidebar() {
           id: "dashboard",
           label: "Dashboard",
           icon: LayoutDashboard,
-          path: "/admin/dashboard",
+          path: "/platform-admin/dashboard",
         },
         {
           id: "reports",
           label: "Analytics",
           icon: AreaChart,
-          path: "/admin/reports",
+          path: "/platform-admin/reports",
         },
       ],
     },
@@ -61,19 +62,19 @@ export function Sidebar() {
           id: "organizations",
           label: "Organizations",
           icon: Building2,
-          path: "/admin/organizations",
+          path: "/platform-admin/organizations",
         },
         {
           id: "subscriptions",
           label: "Subscriptions",
           icon: CreditCard,
-          path: "/admin/subscriptions",
+          path: "/platform-admin/subscriptions",
         },
         {
           id: "globalUsers",
           label: "Users",
           icon: Users,
-          path: "/admin/users",
+          path: "/platform-admin/users",
         },
       ],
     },
@@ -81,9 +82,9 @@ export function Sidebar() {
       title: "Workforce System",
       id: "workforce",
       items: [
-        { id: "shiftTemplates", label: "Shifts", icon: Cpu, path: "/admin/shifts" },
-        { id: "biometricGateways", label: "Biometrics", icon: Fingerprint, path: "/admin/biometrics" },
-        { id: "complianceRules", label: "Compliance", icon: Layers, path: "/admin/compliance" }
+        { id: "shiftTemplates", label: "Shifts", icon: Cpu, path: "/platform-admin/shifts" },
+        { id: "biometricGateways", label: "Biometrics", icon: Fingerprint, path: "/platform-admin/biometrics" },
+        { id: "complianceRules", label: "Compliance", icon: Layers, path: "/platform-admin/compliance" }
       ]
     }, */
     {
@@ -94,13 +95,13 @@ export function Sidebar() {
           id: "featureFlags",
           label: "Feature Flags",
           icon: ToggleLeft,
-          path: "/admin/features",
+          path: "/platform-admin/features",
         },
         {
           id: "roleTemplates",
           label: "Roles",
           icon: Users2,
-          path: "/admin/roles",
+          path: "/platform-admin/roles",
         },
       ],
     },
@@ -112,25 +113,19 @@ export function Sidebar() {
           id: "supportTickets",
           label: "Support",
           icon: MessageSquare,
-          path: "/admin/support-tickets",
-        },
-        {
-          id: "helpdeskMetrics",
-          label: "Metrics",
-          icon: HelpCircle,
-          path: "/admin/helpdesk-metrics",
+          path: "/platform-admin/support-tickets",
         },
         {
           id: "announcements",
           label: "Announcements",
           icon: Megaphone,
-          path: "/admin/announcements",
+          path: "/platform-admin/announcements",
         },
         {
           id: "auditLogs",
           label: "Audit Logs",
           icon: History,
-          path: "/admin/audit-logs",
+          path: "/platform-admin/audit-logs",
         },
       ],
     },
@@ -142,7 +137,7 @@ export function Sidebar() {
           id: "platformSettings",
           label: "Settings",
           icon: Settings,
-          path: "/admin/settings",
+          path: "/platform-admin/settings",
         },
       ],
     },
@@ -186,6 +181,17 @@ export function Sidebar() {
               Consolidated Portals
             </span>
           </div>
+        </div>
+
+        {/* Switch to HRMS Workspace Button */}
+        <div className="px-3.5 pt-3.5 shrink-0">
+          <NavLink
+            to="/hr/dashboard"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 hover:border-indigo-200 transition-all cursor-pointer shadow-sm"
+          >
+            <Zap className="w-3.5 h-3.5 fill-indigo-600 text-indigo-600" />
+            <span>Go to HRMS Workspace</span>
+          </NavLink>
         </div>
 
         {/* Menugroups Accordion Iteration */}

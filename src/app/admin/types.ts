@@ -9,22 +9,36 @@ export type EntityStatus =
   | "Inactive"
   | "Pending"
   | "Suspended"
-  | "Trial";
+  | "Trial"
+  | "Expired";
 
 // --- Module 2: Organizations ---
 export interface Organization {
   id: string;
   name: string;
+  code?: string;
   domain: string;
   logoUrl?: string;
   status: EntityStatus;
-  plan: "Starter" | "Growth" | "Enterprise";
+  plan: "Trial" | "Basic" | "Professional" | "Enterprise" | "Starter" | "Growth";
   userCount: number;
   seatLimit: number;
   mrr: number;
   industry: string;
   region: string;
   ownerEmail: string;
+  phone?: string;
+  website?: string;
+  registrationNumber?: string;
+  gstNumber?: string;
+  address?: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  pincode?: string;
+  storageUsedGB?: number;
+  storageAllocatedGB?: number;
+  enabledModules?: string[];
   joinedAt: string;
   lastActiveAt: string;
   trialEndsAt?: string;
@@ -157,6 +171,7 @@ export interface TrendSeries {
 
 // --- Module 10: Audit Logs ---
 export interface AuditLogEntry {
+  action?: string;
   id: string;
   event: string; // e.g. "user.login", "org.plan_upgrade"
   eventCategory: "Auth" | "Billing" | "Admin Action" | "Data" | "Security";
