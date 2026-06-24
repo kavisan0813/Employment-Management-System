@@ -7,13 +7,22 @@ export function OrgActivityLogs({ org }: { org: Organization }) {
   const logs = db.auditLogs.get().filter(l => l.organization === org.name).slice(0, 20);
 
   return (
-    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Activity Logs</h1>
-        <p className="text-sm text-gray-500 mt-1">Recent activity and audit events for {org.name}.</p>
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-medium animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-indigo-600" />
+            Activity Logs
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Recent activity and audit events for {org.name}.
+          </p>
+        </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden p-6">
+      <div className="p-6 flex-1 overflow-y-auto">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
           {logs.map((log, index) => (
             <div key={log.id} className={`relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active`}>
@@ -38,6 +47,7 @@ export function OrgActivityLogs({ org }: { org: Organization }) {
               No recent activity logs found for this organization.
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>

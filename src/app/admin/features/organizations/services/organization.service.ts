@@ -100,6 +100,22 @@ export const OrganizationService = {
     return newOrg;
   },
 
+  updateOrganization(orgId: string, updates: Partial<Organization>) {
+    const orgs = db.organizations.get();
+    const updated = orgs.map((o) => (o.id === orgId ? { ...o, ...updates } : o));
+    db.organizations.save(updated);
+    
+    pushAuditLog(
+      "org.update",
+      "Admin Action",
+      CURRENT_ADMIN_EMAIL,
+      "platform_admin",
+      updated.find((o) => o.id === orgId)?.name || "Unknown",
+      "Active",
+      { updates: JSON.stringify(updates) }
+    );
+  },
+
   updateOrganizationStatus(orgId: string, status: Organization["status"]) {
     const orgs = db.organizations.get();
     const updated = orgs.map((o) => (o.id === orgId ? { ...o, status } : o));
@@ -134,5 +150,18 @@ export const OrganizationService = {
       "Active",
       { new_plan: plan },
     );
+  },
+
+  extendSubscription(orgId: string, months: number) {
+    const subs = db.subscriptions.get();
+    const updatedSubs = subs.map((s) => {
+      if (s.organizationId === orgId && s.renewalDate) {
+        const date = new Date(s.renewalDate);
+        date.setMonth(date.getMonth() + months);
+        return { ...s, renewalDate: date.toISOString().slice(0, 10) };
+      }
+      return s;
+    });
+    db.subscriptions.save(updatedSubs);
   }
 };

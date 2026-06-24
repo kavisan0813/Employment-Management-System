@@ -18,11 +18,21 @@ export function FeatureRequests({ featureRequests, actions }: { featureRequests:
   };
 
   return (
-    <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Feature Requests</h1>
-        <p className="text-sm text-gray-500 mt-1">Customer-requested features with voting and roadmap tracking.</p>
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-semibold animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Lightbulb className="w-5 h-5 text-indigo-600" />
+            Feature Requests
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Customer-requested features with voting and roadmap tracking.
+          </p>
+        </div>
       </div>
+
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {featureRequests.sort((a, b) => b.votes - a.votes).map(fr => (
@@ -56,6 +66,7 @@ export function FeatureRequests({ featureRequests, actions }: { featureRequests:
             </div>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

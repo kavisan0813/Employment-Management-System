@@ -3,6 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+export interface ApiLog {
+  id: string;
+  apiName: string; // e.g. "Get Employees"
+  endpoint: string; // e.g. "/api/employees"
+  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  statusCode: number; // e.g. 200, 401, 500
+  responseTimeMs: number; // e.g. 150
+  user: string; // e.g. "Mobile App", "Web Client"
+  date: string;
+  errorMessage?: string; // Optional error detail
+}
+
 export interface LoginLog {
   id: string;
   user: string;

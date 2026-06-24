@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router";
 import {
   LayoutDashboard,
   Package,
@@ -37,7 +38,14 @@ const TABS: { id: BillingTab; label: string; icon: React.ElementType }[] = [
 ];
 
 export default function SubscriptionBillingView() {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<BillingTab>("overview");
+
+  useEffect(() => {
+    if (location.state && location.state.tab) {
+      setActiveTab(location.state.tab as BillingTab);
+    }
+  }, [location.state]);
 
   const renderPage = () => {
     switch (activeTab) {
@@ -59,10 +67,24 @@ export default function SubscriptionBillingView() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 max-w-7xl mx-auto px-1.5 py-4">
+
+        {/* Header Profile Section */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between pb-5 border-b border-gray-200 gap-4 font-semibold">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Package className="w-6 h-6 text-indigo-600 font-semibold" />
+            Subscription Billing
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Manage pricing tiers, features, and plan configurations.
+          </p>
+        </div>
+      </div>
+
       {/* Tab navigation */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-xs">
-        <div className="flex items-center gap-0.5 p-1 overflow-x-auto">
+      <div className="w-full overflow-hidden">
+  <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;

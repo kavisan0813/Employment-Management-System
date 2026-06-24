@@ -1,10 +1,10 @@
 /**
  * @license
- * SPDX-License-Identifier: Apache-2.5
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 import React, { useState } from "react";
-import { Shield, Key } from "lucide-react";
+import { Shield, Key, Trash2 } from "lucide-react";
 import { SystemConfig } from "../types/platformSettings.types";
 
 interface Props {
@@ -17,158 +17,108 @@ export function SecuritySettingsView({ config, setConfig, triggerAlert }: Props)
   const [newIp, setNewIp] = useState("");
   const [newIpLabel, setNewIpLabel] = useState("");
 
+  const updateSecurity = (key: keyof SystemConfig["security"], value: any) => {
+    setConfig(prev => ({ ...prev, security: { ...prev.security, [key]: value } }));
+  };
+
   const handleAddIp = () => {
-    if (!newIp) return;
-    
-    // CIDR pattern validation check
     const cidrRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))?$/;
     if (!cidrRegex.test(newIp)) {
-      triggerAlert("Invalid IP address or CIDR notation format.", "error");
+      triggerAlert("Invalid IP or CIDR format.", "error");
       return;
     }
-
-    const newItem = { ip: newIp, label: newIpLabel || "Manual Admin Override" };
-    setConfig(prev => ({
-      ...prev,
-      security: {
-        ...prev.security,
-        ipWhitelist: [...prev.security.ipWhitelist, newItem]
-      }
-    }));
-    setNewIp("");
-    setNewIpLabel("");
-    triggerAlert("IP range firewall exclusion added to list.", "info");
+    updateSecurity("ipWhitelist", [...config.security.ipWhitelist, { ip: newIp, label: newIpLabel || "Manual Override" }]);
+    setNewIp(""); setNewIpLabel("");
+    triggerAlert("IP range added to firewall.", "success");
   };
 
-  const handleRemoveIp = (ipToRemove: string) => {
-    setConfig(prev => ({
-      ...prev,
-      security: {
-        ...prev.security,
-        ipWhitelist: prev.security.ipWhitelist.filter(i => i.ip !== ipToRemove)
-      }
-    }));
-    triggerAlert("IP range firewall exclusion removed.", "info");
+  const handleRemoveIp = (ip: string) => {
+    updateSecurity("ipWhitelist", config.security.ipWhitelist.filter(i => i.ip !== ip));
+    triggerAlert("IP range removed.", "info");
   };
+
+  const inputClass = "w-full text-sm p-2.5 border border-gray-200 rounded-lg outline-none focus:border-indigo-400 transition-colors";
+  const labelClass = "text-xs font-semibold text-gray-500 uppercase tracking-wider";
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        {/* Left: password guidelines & policies */}
-        <div className="space-y-4 text-xs font-semibold text-gray-700">
-          <h3 className="text-xs font-extrabold text-gray-905 uppercase tracking-wide flex items-center gap-1">
-            <Shield className="w-4 h-4 text-indigo-600" />
-            Credential Strength Guidelines
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Credential Policies */}
+        <div className="space-y-6">
+          <h3 className="text-sm font-semibold text-gray-800 border-b border-gray-100 pb-2 flex items-center gap-2">
+            <Shield className="w-4 h-4 text-indigo-500" /> Credential Policies
           </h3>
           
-          <div className="space-y-3 p-4 bg-gray-50 border border-gray-150 rounded-xl">
+          <div className="space-y-4 bg-gray-50 p-5 rounded-xl border border-gray-100">
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500 block">Minimum Password Character Length</label>
-              <select
-                value={config.security.passwordMinLength}
-                onChange={e => setConfig(p => ({ ...p, security: { ...p.security, passwordMinLength: Number(e.target.value) } }))}
-                className="w-full p-2 bg-white border border-gray-200 rounded-lg outline-none cursor-pointer"
-              >
-                <option value={8}>8 Characters Minimum</option>
-                <option value={10}>10 Characters Minimum</option>
-                <option value={12}>12 Characters (Highly Secure)</option>
+              <label className={labelClass}>Min Password Length</label>
+              <select value={config.security.passwordMinLength} onChange={e => updateSecurity("passwordMinLength", Number(e.target.value))} className={inputClass}>
+                <option value={8}>8 Characters</option>
+                <option value={10}>10 Characters</option>
+                <option value={12}>12 Characters (High Security)</option>
               </select>
             </div>
 
             <div className="space-y-2 pt-2">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={config.security.passwordRequireSpecial}
-                  onChange={e => setConfig(p => ({ ...p, security: { ...p.security, passwordRequireSpecial: e.target.checked } }))}
-                  className="w-4 h-4 rounded accent-indigo-650 cursor-pointer"
-                />
-                Require Special Character (e.g. @, #, $, !)
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+                <input type="checkbox" checked={config.security.passwordRequireSpecial} onChange={e => updateSecurity("passwordRequireSpecial", e.target.checked)} className="rounded text-indigo-600 focus:ring-indigo-500" />
+                Require Special Character
               </label>
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={config.security.passwordRequireUppercase}
-                  onChange={e => setConfig(p => ({ ...p, security: { ...p.security, passwordRequireUppercase: e.target.checked } }))}
-                  className="w-4 h-4 rounded accent-indigo-650 cursor-pointer"
-                />
-                Require Uppercase Character (A-Z)
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+                <input type="checkbox" checked={config.security.passwordRequireUppercase} onChange={e => updateSecurity("passwordRequireUppercase", e.target.checked)} className="rounded text-indigo-600 focus:ring-indigo-500" />
+                Require Uppercase
               </label>
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">MFA Policy Enrollment</label>
-            <select
-              value={config.security.mfaRequirement}
-              onChange={e => setConfig(p => ({ ...p, security: { ...p.security, mfaRequirement: e.target.value as any } }))}
-              className="w-full text-xs font-semibold p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white cursor-pointer"
-            >
-              <option value="none">Optional enrollment for all accounts</option>
-              <option value="admin">Enforce MFA strictly for Admin accounts only</option>
-              <option value="all">Enforce MFA globally for all user accounts</option>
+            <label className={labelClass}>MFA Enrollment Policy</label>
+            <select value={config.security.mfaRequirement} onChange={e => updateSecurity("mfaRequirement", e.target.value)} className={inputClass}>
+              <option value="none">Optional for all</option>
+              <option value="admin">Enforce for Admins</option>
+              <option value="all">Global MFA Enforcement</option>
             </select>
           </div>
         </div>
 
-        {/* Right: IP whitelist logs CIDR whitelist list */}
-        <div className="space-y-4">
-          <h3 className="text-xs font-extrabold text-gray-900 uppercase tracking-wide flex items-center gap-1">
-            <Key className="w-4 h-4 text-indigo-650" />
-            Firewall Security Boundaries (IP Exclusion Whitelist)
+        {/* IP Whitelist */}
+        <div className="space-y-6">
+          <h3 className="text-sm font-semibold text-gray-800 border-b border-gray-100 pb-2 flex items-center gap-2">
+            <Key className="w-4 h-4 text-indigo-500" /> Firewall Boundaries
           </h3>
-          
-          <div className="p-4 border border-gray-205 bg-gray-50/50 rounded-xl space-y-3">
-            <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
-              <input
-                type="text"
-                placeholder="CIDR IP Block (e.g. 192.168.1.1/24)"
-                value={newIp}
-                onChange={e => setNewIp(e.target.value)}
-                className="p-2 bg-white border border-gray-200 rounded-lg font-mono text-[11px]"
-              />
-              <input
-                type="text"
-                placeholder="Description / Location Label"
-                value={newIpLabel}
-                onChange={e => setNewIpLabel(e.target.value)}
-                className="p-2 bg-white border border-gray-200 rounded-lg text-[11px]"
-              />
+
+          <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <input type="text" placeholder="192.168.1.1/24" value={newIp} onChange={e => setNewIp(e.target.value)} className={inputClass} />
+              <input type="text" placeholder="Office Location" value={newIpLabel} onChange={e => setNewIpLabel(e.target.value)} className={inputClass} />
             </div>
-            <button
-              type="button"
-              onClick={handleAddIp}
-              className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold uppercase cursor-pointer"
-            >
-              Add CIDR Excluded segment
+            <button onClick={handleAddIp} className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-colors">
+              Add IP Range
             </button>
           </div>
 
-          <div className="border border-gray-150 rounded-xl overflow-hidden shadow-xs divide-y divide-gray-100 max-h-48 overflow-y-auto">
-            {config.security.ipWhitelist.map((item, idx) => (
-              <div key={idx} className="p-2.5 flex justify-between items-center bg-white hover:bg-gray-50 font-semibold text-[11px]">
-                <div>
-                  <code className="font-mono bg-gray-100 text-indigo-900 px-1 py-0.5 rounded text-[10px] font-bold">
-                    {item.ip}
-                  </code>
-                  <span className="text-gray-400 pl-2 font-medium">{item.label}</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveIp(item.ip)}
-                  className="p-1 hover:bg-rose-50 rounded text-rose-600 font-bold cursor-pointer"
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
-            {config.security.ipWhitelist.length === 0 && (
-              <div className="p-4 text-center text-gray-450 text-xs">No IP exclusion whitelists defined. Portal accessible from any network origin.</div>
+          <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm max-h-60 overflow-y-auto">
+            {config.security.ipWhitelist.length === 0 ? (
+              <p className="p-4 text-center text-xs text-gray-500">No exclusions defined.</p>
+            ) : (
+              <table className="w-full text-xs text-left">
+                <tbody className="divide-y divide-gray-100">
+                  {config.security.ipWhitelist.map((item, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50">
+                      <td className="p-3 font-mono font-medium text-indigo-700">{item.ip}</td>
+                      <td className="p-3 text-gray-600">{item.label}</td>
+                      <td className="p-3 text-right">
+                        <button onClick={() => handleRemoveIp(item.ip)} className="text-rose-500 hover:text-rose-700">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
         </div>
-
       </div>
     </div>
   );

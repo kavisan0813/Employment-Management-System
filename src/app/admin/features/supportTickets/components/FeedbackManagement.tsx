@@ -11,11 +11,21 @@ export function FeedbackManagement({ feedback }: { feedback: Feedback[] }) {
   };
 
   return (
-    <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Feedback Management</h1>
-        <p className="text-sm text-gray-500 mt-1">Customer feedback, ratings, and Net Promoter Score tracking.</p>
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-semibold animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Star className="w-5 h-5 text-indigo-600" />
+            Feedback Management
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Customer feedback, ratings, and Net Promoter Score tracking.
+          </p>
+        </div>
       </div>
+
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
 
       <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
         <table className="w-full text-left text-sm">
@@ -59,6 +69,7 @@ export function FeedbackManagement({ feedback }: { feedback: Feedback[] }) {
             ))}
           </tbody>
         </table>
+      </div>
       </div>
     </div>
   );

@@ -60,14 +60,14 @@ export function PlatformSettingsView() {
     { id: "localization", label: "Localization & Regional", icon: Globe, group: "Foundation" },
     { id: "currency", label: "Currency Settings", icon: Coins, group: "Foundation" },
     { id: "timezone", label: "Time Zones", icon: Clock, group: "Foundation" },
-    { id: "email", label: "Email Settings", icon: Mail, group: "Channels" },
-    { id: "notifications", label: "Notifications Rules", icon: Bell, group: "Channels" },
-    { id: "security", label: "Security & MFA", icon: Lock, group: "Governance" },
+    /* { id: "email", label: "Email Settings", icon: Mail, group: "Channels" }, */
+   /*  { id: "notifications", label: "Notifications Rules", icon: Bell, group: "Channels" }, */
+  /*   { id: "security", label: "Security & MFA", icon: Lock, group: "Governance" }, */
     { id: "storage", label: "File Storage Policies", icon: HardDrive, group: "Governance" },
     { id: "preferences", label: "System Preferences", icon: Sliders, group: "Governance" },
   ] as const;
 
-  const groups = ["Foundation", "Channels", "Governance"] as const;
+
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
@@ -130,85 +130,52 @@ export function PlatformSettingsView() {
       {/* Header Title Grid */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between pb-5 border-b border-gray-200 gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-gray-950 flex items-center gap-2">
+          <h1 className="text-2xl font-black tracking-tight text-gray-950 flex items-center gap-2 font-bold">
             <Settings className="w-6 h-6 text-indigo-650" />
             System Configuration
           </h1>
-          <p className="text-xs text-gray-500 font-medium mt-1">
+          <p className="text-xs text-gray-500 font-medium mt-1 font-semibold">
             Configure system-wide settings that apply globally to all organizations. Individual tenants can override specific parameters in their local portals.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 self-start md:self-auto shadow-xs">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse font-semibold" />
           Central Platform Control Active
         </div>
       </div>
 
-      {/* Top Tab Navigation Bar (Grouped on Hover) */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-xs relative">
-        <div className="flex items-center gap-2 p-1.5">
-          {groups.map((groupName) => {
-            const isGroupActive = settingsNavItems.some(item => item.group === groupName && item.id === activeTab);
-            const activeItemInGroup = settingsNavItems.find(item => item.group === groupName && item.id === activeTab);
-            
-            return (
-              <div key={groupName} className="relative group/menu">
-                {/* Main Group Button */}
-                <button
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap border ${
-                    isGroupActive
-                      ? "bg-indigo-50 text-indigo-750 border-indigo-100"
-                      : "bg-transparent text-gray-600 hover:bg-gray-55 hover:text-gray-900 border-transparent"
-                  }`}
-                >
-                  <span>{groupName}</span>
-                  {activeItemInGroup && (
-                    <span className="text-[10px] text-indigo-650 font-extrabold bg-indigo-100/50 px-1.5 py-0.5 rounded-md ml-1">
-                      {activeItemInGroup.label}
-                    </span>
-                  )}
-                  <ChevronDown className="w-3 h-3 text-gray-400 group-hover/menu:rotate-180 transition-transform duration-200" />
-                </button>
-
-                {/* Hover Dropdown Menu */}
-                <div className="absolute left-0 top-full pt-1.5 z-40 hidden group-hover/menu:block min-w-[220px]">
-                  <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 space-y-0.5 animate-in fade-in duration-100">
-                    {settingsNavItems
-                      .filter((item) => item.group === groupName)
-                      .map((item) => {
-                        const Icon = item.icon;
-                        const isActive = activeTab === item.id;
-                        return (
-                          <button
-                            key={item.id}
-                            onClick={() => setActiveTab(item.id as keyof SystemConfig)}
-                            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-left transition-all cursor-pointer ${
-                              isActive
-                                ? "bg-indigo-600 text-white shadow-xs"
-                                : "text-gray-600 hover:text-gray-955 hover:bg-gray-50"
-                            }`}
-                          >
-                            <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-white" : "text-gray-400"}`} />
-                            <span>{item.label}</span>
-                          </button>
-                        );
-                      })}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+     {/* Flat Tab Navigation */}
+<div className="w-full overflow-hidden">
+  <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
+    {settingsNavItems.map((tab) => {
+      const Icon = tab.icon;
+      const isActive = activeTab === tab.id;
+      return (
+        <button
+          key={tab.id}
+          onClick={() => setActiveTab(tab.id as any)}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            isActive
+              ? "bg-indigo-600 text-white shadow-sm"
+              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+          }`}
+        >
+          <Icon className="w-3.5 h-3.5" />
+          <span>{tab.label}</span>
+        </button>
+      );
+    })}
+  </div>
+</div>
 
       {/* Form Workspace View */}
       <div className="space-y-6">
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
           
           {/* Header of Active Tab */}
-          <div className="px-6 py-4 bg-gray-50/50 border-b border-gray-200 flex justify-between items-center">
+          <div className="px-6 py-4 bg-gray-50/50 font-semibold border-b border-gray-200 flex justify-between items-center">
             <div>
-              <h2 className="text-sm font-extrabold text-gray-900 uppercase tracking-wide">
+              <h2 className="text-lg font-bold text-gray-900 tracking-wide">
                 {settingsNavItems.find(i => i.id === activeTab)?.label}
               </h2>
               <p className="text-[11px] text-gray-500 font-medium">

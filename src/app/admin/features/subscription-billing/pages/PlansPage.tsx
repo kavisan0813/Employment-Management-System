@@ -23,29 +23,31 @@ export function PlansPage() {
   } = usePlans();
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-gray-100 gap-4">
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-medium">
+      
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
-            <Package className="w-6 h-6 text-indigo-600" />
-            Subscription Plans
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Package className="w-5 h-5 text-indigo-600" />
+            Plan Master
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Manage pricing tiers, features, and plan configurations.
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Manage available subscription plans, tier structures, and included features.
           </p>
         </div>
         <button
           onClick={openCreate}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold shadow-sm transition-colors cursor-pointer self-start sm:self-auto"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 font-semibold" />
           New Plan
         </button>
       </div>
 
       {/* Plan cards grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+      <div className="p-6 flex-1 overflow-y-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 font-semibold">
         {filteredPlans.map((plan) => {
           const tierColor = PLAN_COLORS[plan.tier];
           return (
@@ -130,6 +132,7 @@ export function PlansPage() {
             </div>
           );
         })}
+      </div>
       </div>
 
       {/* Form modal */}

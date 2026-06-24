@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { PlatformUser } from "../../../types";
+import { PlatformUser, AdminTeamMember } from "../../../types";
 import { UserSession, CustomRole } from "../types/userManagement.types";
 import { userManagementService } from "../services/userManagement.service";
 import { db } from "../../../mockData";
@@ -8,6 +8,7 @@ export function useUserManagement() {
   const [users, setUsers] = useState<PlatformUser[]>([]);
   const [sessions, setSessions] = useState<UserSession[]>([]);
   const [roles, setRoles] = useState<CustomRole[]>([]);
+  const [superAdmins, setSuperAdmins] = useState<AdminTeamMember[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Filters state
@@ -21,6 +22,7 @@ export function useUserManagement() {
     setUsers(userManagementService.getUsers());
     setSessions(userManagementService.getSessions());
     setRoles(userManagementService.getRoles());
+    setSuperAdmins(userManagementService.getSuperAdmins());
     setLoading(false);
   };
 
@@ -46,8 +48,30 @@ export function useUserManagement() {
     loadData(); // refresh
   };
 
+  const killAllSessions = () => {
+    sessions
+      .filter((s) => s.status === "Active")
+      .forEach((s) => userManagementService.killSession(s.id));
+    loadData();
+  };
+
   const updateUserStatus = (userId: string, status: PlatformUser["status"]) => {
     userManagementService.updateUserStatus(userId, status);
+    loadData();
+  };
+
+  const updateSuperAdminStatus = (adminId: string, status: AdminTeamMember["status"]) => {
+    userManagementService.updateSuperAdminStatus(adminId, status);
+    loadData();
+  };
+
+  const deleteUser = (userId: string) => {
+    userManagementService.deleteUser(userId);
+    loadData();
+  };
+
+  const updateUser = (userId: string, updates: Partial<PlatformUser>) => {
+    userManagementService.updateUser(userId, updates);
     loadData();
   };
 
@@ -58,10 +82,13 @@ export function useUserManagement() {
     filteredUsers,
     sessions,
     roles,
+    superAdmins,
+    setRoles,
     loading,
     organizations,
     filters: {
       userSearch,
+
       setUserSearch,
       roleFilter,
       setRoleFilter,
@@ -73,7 +100,11 @@ export function useUserManagement() {
     actions: {
       loadData,
       killSession,
+      killAllSessions,
       updateUserStatus,
+      updateSuperAdminStatus,
+      updateUser,
+      deleteUser,
     },
   };
 }

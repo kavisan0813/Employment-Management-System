@@ -46,13 +46,15 @@ export function PermissionsMatrix() {
   ];
 
   return (
-    <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
-      <div className="flex items-center justify-between">
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-medium animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Lock className="w-5 h-5 text-indigo-600" /> Permissions Matrix
-          </h2>
-          <p className="text-xs text-gray-500">
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Lock className="w-5 h-5 text-indigo-600" />
+            Permissions Matrix
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
             Define granular access control across the HRMS modules.
           </p>
         </div>
@@ -68,66 +70,68 @@ export function PermissionsMatrix() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
-        <table className="w-full text-center border-collapse">
-          <thead>
-            <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              <th className="px-5 py-4 text-left">Module / Feature</th>
-              <th className="px-5 py-4">View</th>
-              <th className="px-5 py-4">Create</th>
-              <th className="px-5 py-4">Edit</th>
-              <th className="px-5 py-4">Delete</th>
-              <th className="px-5 py-4">Approve</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100 text-sm">
-            {modules.map((m) => (
-              <tr
-                key={m.name}
-                className="hover:bg-gray-50/50 transition-colors group"
-              >
-                <td className="px-5 py-4 font-semibold text-gray-900 text-left">
-                  {m.name}
-                </td>
-                <td className="px-5 py-4">
-                  <input
-                    type="checkbox"
-                    defaultChecked={m.view}
-                    className="accent-indigo-600 cursor-pointer w-4 h-4"
-                  />
-                </td>
-                <td className="px-5 py-4">
-                  <input
-                    type="checkbox"
-                    defaultChecked={m.create}
-                    className="accent-indigo-600 cursor-pointer w-4 h-4"
-                  />
-                </td>
-                <td className="px-5 py-4">
-                  <input
-                    type="checkbox"
-                    defaultChecked={m.edit}
-                    className="accent-indigo-600 cursor-pointer w-4 h-4"
-                  />
-                </td>
-                <td className="px-5 py-4">
-                  <input
-                    type="checkbox"
-                    defaultChecked={m.delete}
-                    className="accent-indigo-600 cursor-pointer w-4 h-4"
-                  />
-                </td>
-                <td className="px-5 py-4">
-                  <input
-                    type="checkbox"
-                    defaultChecked={m.approve}
-                    className="accent-indigo-600 cursor-pointer w-4 h-4"
-                  />
-                </td>
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
+          <table className="w-full text-center border-collapse">
+            <thead>
+              <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <th className="px-5 py-4 text-left">Module / Feature</th>
+                <th className="px-5 py-4">View</th>
+                <th className="px-5 py-4">Create</th>
+                <th className="px-5 py-4">Edit</th>
+                <th className="px-5 py-4">Delete</th>
+                <th className="px-5 py-4">Approve</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-100 text-sm">
+              {modules.map((m) => (
+                <tr
+                  key={m.name}
+                  className="hover:bg-gray-50/50 transition-colors group"
+                >
+                  <td className="px-5 py-4 font-semibold text-gray-900 text-left">
+                    {m.name}
+                  </td>
+                  <td className="px-5 py-4">
+                    <input
+                      type="checkbox"
+                      defaultChecked={m.view}
+                      className="accent-indigo-600 cursor-pointer w-4 h-4"
+                    />
+                  </td>
+                  <td className="px-5 py-4">
+                    <input
+                      type="checkbox"
+                      defaultChecked={m.create}
+                      className="accent-indigo-600 cursor-pointer w-4 h-4"
+                    />
+                  </td>
+                  <td className="px-5 py-4">
+                    <input
+                      type="checkbox"
+                      defaultChecked={m.edit}
+                      className="accent-indigo-600 cursor-pointer w-4 h-4"
+                    />
+                  </td>
+                  <td className="px-5 py-4">
+                    <input
+                      type="checkbox"
+                      defaultChecked={m.delete}
+                      className="accent-indigo-600 cursor-pointer w-4 h-4"
+                    />
+                  </td>
+                  <td className="px-5 py-4">
+                    <input
+                      type="checkbox"
+                      defaultChecked={m.approve}
+                      className="accent-indigo-600 cursor-pointer w-4 h-4"
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

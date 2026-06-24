@@ -67,6 +67,14 @@ export function useOrganizations() {
       updatePlan: (id: string, plan: Organization["plan"]) => {
         OrganizationService.updateSubscriptionPlan(id, plan);
         loadData();
+      },
+      updateOrg: (id: string, updates: Partial<Organization>) => {
+        OrganizationService.updateOrganization(id, updates);
+        loadData();
+      },
+      extendSub: (id: string, months: number) => {
+        OrganizationService.extendSubscription(id, months);
+        loadData();
       }
     },
   };

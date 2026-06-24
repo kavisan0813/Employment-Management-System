@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { HardDrive } from "lucide-react";
+import { HardDrive, Database, ShieldCheck } from "lucide-react";
 import { SystemConfig } from "../types/platformSettings.types";
 
 interface Props {
@@ -13,93 +13,85 @@ interface Props {
 }
 
 export function StorageSettingsView({ config, setConfig }: Props) {
+  const updateStorage = (key: keyof SystemConfig["storage"], value: any) => {
+    setConfig(prev => ({ ...prev, storage: { ...prev.storage, [key]: value } }));
+  };
+
+  const inputClass = "w-full text-sm p-2.5 border border-gray-200 rounded-lg outline-none focus:border-indigo-400 transition-colors";
+  const labelClass = "text-xs font-semibold text-gray-500 uppercase tracking-wider";
+
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-4 font-semibold text-xs text-gray-700">
-          
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left: Configuration Form */}
+        <div className="space-y-6">
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Storage Provider</label>
-            <select
-              value={config.storage.provider}
-              onChange={e => setConfig(p => ({ ...p, storage: { ...p.storage, provider: e.target.value as any } }))}
-              className="w-full text-xs font-semibold p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white cursor-pointer"
-            >
-              <option value="local">Local Server Disk storage</option>
-              <option value="s3">AWS S3 Relational Cloud Buckets</option>
-              <option value="azure">Azure Blob Binary Storage Container</option>
-              <option value="gcs">Google Cloud Object Storage Bucket</option>
+            <label className={labelClass}>Storage Provider</label>
+            <select value={config.storage.provider} onChange={e => updateStorage("provider", e.target.value)} className={inputClass}>
+              <option value="local">Local Server Disk</option>
+              <option value="s3">AWS S3 (Cloud Buckets)</option>
+              <option value="azure">Azure Blob Storage</option>
+              <option value="gcs">Google Cloud Storage</option>
             </select>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Maximum Upload File Size</label>
-            <select
-              value={config.storage.maxUploadSizeMb}
-              onChange={e => setConfig(p => ({ ...p, storage: { ...p.storage, maxUploadSizeMb: Number(e.target.value) } }))}
-              className="w-full text-xs font-semibold p-2.5 border border-gray-200 rounded-xl bg-white cursor-pointer"
-            >
-              <option value={5}>5 MB (Standard resumes/documents)</option>
-              <option value={10}>10 MB (Default size)</option>
-              <option value={20}>20 MB (Allows media clips)</option>
-              <option value={50}>50 MB (High capacity limits)</option>
+            <label className={labelClass}>Max Upload File Size (MB)</label>
+            <select value={config.storage.maxUploadSizeMb} onChange={e => updateStorage("maxUploadSizeMb", Number(e.target.value))} className={inputClass}>
+              <option value={5}>5 MB</option>
+              <option value={10}>10 MB</option>
+              <option value={20}>20 MB</option>
+              <option value={50}>50 MB</option>
             </select>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Default Per-Tenant Storage Limit cap</label>
-            <select
-              value={config.storage.tenantStorageLimitGb}
-              onChange={e => setConfig(p => ({ ...p, storage: { ...p.storage, tenantStorageLimitGb: Number(e.target.value) } }))}
-              className="w-full text-xs font-semibold p-2.5 border border-gray-200 rounded-xl bg-white cursor-pointer"
-            >
-              <option value={10}>10 GB Storage capacity limit</option>
-              <option value={50}>50 GB Storage capacity limit</option>
-              <option value={100}>100 GB (Default tier limit)</option>
-              <option value={500}>500 GB (Enterprise capacity tier)</option>
+            <label className={labelClass}>Tenant Storage Limit (GB)</label>
+            <select value={config.storage.tenantStorageLimitGb} onChange={e => updateStorage("tenantStorageLimitGb", Number(e.target.value))} className={inputClass}>
+              <option value={10}>10 GB</option>
+              <option value={50}>50 GB</option>
+              <option value={100}>100 GB</option>
+              <option value={500}>500 GB</option>
             </select>
           </div>
-
         </div>
 
-        <div className="bg-indigo-50/20 rounded-2xl p-5 border border-indigo-100 flex flex-col justify-between space-y-4">
-          <div>
-            <h4 className="text-xs font-extrabold text-indigo-950 uppercase tracking-wide flex items-center gap-1.5">
-              <HardDrive className="w-4 h-4 text-indigo-650" />
-              Platform File Limits visual Allocation
-            </h4>
-            <p className="text-[10px] text-indigo-500 font-semibold mt-1">
-              Evaluates how local and cloud partition sizes display resource allocation boundaries:
-            </p>
-          </div>
+        {/* Right: Storage Allocation Preview */}
+        <div className="bg-indigo-50/30 border border-indigo-100 rounded-2xl p-6 space-y-6">
+          <h4 className="text-sm font-semibold text-indigo-900 flex items-center gap-2">
+            <HardDrive className="w-4 h-4" /> Allocation Overview
+          </h4>
 
-          <div className="space-y-4 bg-white border border-indigo-100/60 p-4 rounded-xl shadow-xs font-semibold">
-            <div className="space-y-1 text-xs">
-              <div className="flex justify-between font-bold text-[10px] text-gray-400">
-                <span>MOCK STORAGE CAP INDEX</span>
-                <span className="text-indigo-900 font-mono">32.4 GB / {config.storage.tenantStorageLimitGb} GB Allocated</span>
+          <div className="space-y-4 bg-white p-5 rounded-xl border border-indigo-100 shadow-sm">
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs font-semibold text-gray-500 uppercase">
+                <span>Usage Monitor</span>
+                <span className="font-mono text-indigo-700">32.4 GB / {config.storage.tenantStorageLimitGb} GB</span>
               </div>
-              
-              {/* Visual progress bar */}
-              <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+              <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden border border-gray-200">
                 <div 
                   className="bg-indigo-600 h-full rounded-full transition-all duration-500" 
                   style={{ width: `${(32.4 / config.storage.tenantStorageLimitGb) * 100}%` }}
                 />
               </div>
             </div>
+          </div>
 
-            <div className="text-[10px] text-gray-500 leading-normal font-semibold space-y-1">
-              <div>&bull; Maximum Upload: <strong className="text-gray-900">{config.storage.maxUploadSizeMb} MB</strong> per file</div>
-              <div>&bull; Object Bucket: <strong className="text-indigo-900 font-mono">ems-hrms-storage-{config.storage.provider}-bucket</strong></div>
+          <div className="grid grid-cols-1 gap-3 text-xs text-gray-600">
+            <div className="flex items-center gap-2">
+              <Database className="w-4 h-4 text-indigo-500" /> 
+              Bucket: <span className="font-mono font-semibold text-gray-900">ems-{config.storage.provider}-bucket</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-500" /> 
+              Status: <span className="font-semibold text-emerald-700">Storage Partition Active</span>
             </div>
           </div>
-
-          <div className="p-3 bg-white border border-gray-150 rounded-xl text-[10px] text-gray-500 leading-relaxed font-semibold">
-            SaaS organizations exceeding {config.storage.tenantStorageLimitGb} GB allocations are automatically blocked from uploading files until administrators upgrade subscription tiers.
+          
+          <div className="p-4 bg-indigo-100/50 rounded-xl text-xs font-medium text-indigo-900">
+            <strong>Capacity Alert:</strong> Organizations exceeding their {config.storage.tenantStorageLimitGb} GB limit will trigger an automatic upload block.
           </div>
         </div>
-
       </div>
     </div>
   );

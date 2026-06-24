@@ -69,8 +69,12 @@ export function PaymentDrawer({
   const StatusIcon = cfg.icon;
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full sm:max-w-md bg-white shadow-2xl border-l border-gray-200 z-50 flex flex-col overflow-hidden">
-      {/* Header */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div 
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
       <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <DollarSign className="w-4 h-4 text-indigo-600" />
@@ -179,6 +183,7 @@ export function PaymentDrawer({
         >
           Close
         </button>
+      </div>
       </div>
     </div>
   );

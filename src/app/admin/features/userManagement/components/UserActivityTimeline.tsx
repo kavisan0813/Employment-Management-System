@@ -6,18 +6,21 @@ export function UserActivityTimeline() {
   const activities = db.activityLogs.get().slice(0, 10); // get latest 10 activities
 
   return (
-    <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
-      <div className="flex items-center justify-between">
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-medium animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-indigo-600" /> Recent User
-            Activity
-          </h2>
-          <p className="text-xs text-gray-500">
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-indigo-600" />
+            Recent User Activity
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
             Global timeline of actions across all managed users.
           </p>
         </div>
       </div>
+
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
 
       <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-xs relative">
         <div className="absolute top-4 bottom-4 left-6 w-px bg-gray-200"></div>
@@ -51,6 +54,7 @@ export function UserActivityTimeline() {
               No recent activity logs found.
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>

@@ -36,12 +36,21 @@ export function TicketsTable({ hook }: { hook: any }) {
   };
 
   return (
-    <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Customer Support Tickets</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage, assign, and resolve support requests from organizations.</p>
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-semibold animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <MessageSquare className="w-5 h-5 text-indigo-600" />
+            Customer Support Tickets
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Manage, assign, and resolve support requests from organizations.
+          </p>
+        </div>
       </div>
 
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
       {/* Filters */}
       <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-xs flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px]">
@@ -103,6 +112,8 @@ export function TicketsTable({ hook }: { hook: any }) {
             )}
           </tbody>
         </table>
+      </div>
+
       </div>
 
       {/* Conversation Drawer */}

@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { Search, Play, Download, HelpCircle, FileText } from "lucide-react";
+import { Play, Download, FileText } from "lucide-react";
 
 interface CustomReportsViewProps {
   customFilters: {
@@ -25,30 +25,18 @@ interface CustomReportsViewProps {
 }
 
 export function CustomReportsView({
-  customFilters,
-  setCustomFilters,
-  customReportResult,
-  handleCompileCustomReport,
-  handleCreateExport
+  customFilters, setCustomFilters, customReportResult,
+  handleCompileCustomReport, handleCreateExport
 }: CustomReportsViewProps) {
-  // Organizations selector options
+  
   const orgOptions = [
     { id: "all", name: "All Organizations" },
     { id: "org-1", name: "Acme Enterprise" },
-    { id: "org-2", name: "Apex Global" },
-    { id: "org-3", name: "Stellar Tech SRL" },
-    { id: "org-4", name: "Nova Media Ltd" },
-    { id: "org-7", name: "Cyberdyne Systems" },
-    { id: "org-9", name: "Wayne Enterprises" }
+    { id: "org-2", name: "Apex Global" }
   ];
 
-  // Industry options
   const industries = ["all", "Technology", "Healthcare", "Manufacturing", "Finance", "Education"];
-
-  // Plan options
   const plans = ["all", "Basic", "Professional", "Enterprise", "Trial"];
-
-  // Time ranges
   const dateRanges = [
     { id: "7d", label: "Past 7 Days" },
     { id: "30d", label: "Past 30 Days" },
@@ -56,82 +44,50 @@ export function CustomReportsView({
     { id: "1y", label: "Past Year" }
   ];
 
-  const handleExportAction = (format: "PDF" | "CSV" | "Excel") => {
-    if (customReportResult.length === 0) {
-      alert("Please compile the report before exporting.");
-      return;
-    }
-    const name = `custom_report_org_${customFilters.orgId}_plan_${customFilters.plan}`;
-    handleCreateExport(name, format);
-  };
-
   return (
-    <div className="space-y-6">
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-medium animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-indigo-600" />
+            Custom Reports
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Compile customized analytical views across organizations.
+          </p>
+        </div>
+      </div>
+
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
       {/* Parameter selection panel */}
-      <div className="bg-white border border-gray-250 rounded-2xl p-5 shadow-xs space-y-4">
-        <h4 className="text-xs font-extrabold uppercase text-gray-400 tracking-wider">Dynamic Report Compiler Parameters</h4>
+      <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs space-y-4">
+        <h4 className="text-sm font-semibold text-gray-700">Report Compiler Parameters</h4>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Client Organization</label>
-            <select
-              value={customFilters.orgId}
-              onChange={e => setCustomFilters(prev => ({ ...prev, orgId: e.target.value }))}
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-bold text-gray-900 focus:outline-indigo-500 cursor-pointer"
-            >
-              {orgOptions.map(org => (
-                <option key={org.id} value={org.id}>{org.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Subscription Plan</label>
-            <select
-              value={customFilters.plan}
-              onChange={e => setCustomFilters(prev => ({ ...prev, plan: e.target.value }))}
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-bold text-gray-900 focus:outline-indigo-500 cursor-pointer"
-            >
-              {plans.map(p => (
-                <option key={p} value={p}>{p === "all" ? "All Plans" : `${p} Plan`}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Industry vertical</label>
-            <select
-              value={customFilters.industry}
-              onChange={e => setCustomFilters(prev => ({ ...prev, industry: e.target.value }))}
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-bold text-gray-900 focus:outline-indigo-500 cursor-pointer"
-            >
-              {industries.map(ind => (
-                <option key={ind} value={ind}>{ind === "all" ? "All Industries" : ind}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Query window date range</label>
-            <select
-              value={customFilters.dateRange}
-              onChange={e => setCustomFilters(prev => ({ ...prev, dateRange: e.target.value }))}
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-bold text-gray-900 focus:outline-indigo-500 cursor-pointer"
-            >
-              {dateRanges.map(d => (
-                <option key={d.id} value={d.id}>{d.label}</option>
-              ))}
-            </select>
-          </div>
+          {[
+            { label: "Organization", key: "orgId", opts: orgOptions.map(o => ({ v: o.id, l: o.name })) },
+            { label: "Plan", key: "plan", opts: plans.map(p => ({ v: p, l: p === "all" ? "All Plans" : `${p} Plan` })) },
+            { label: "Industry", key: "industry", opts: industries.map(i => ({ v: i, l: i === "all" ? "All Industries" : i })) },
+            { label: "Date Range", key: "dateRange", opts: dateRanges.map(d => ({ v: d.id, l: d.label })) }
+          ].map(field => (
+            <div key={field.key} className="space-y-1">
+              <label className="text-xs font-medium text-gray-500 uppercase">{field.label}</label>
+              <select
+                value={(customFilters as any)[field.key]}
+                onChange={e => setCustomFilters(prev => ({ ...prev, [field.key]: e.target.value }))}
+                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 outline-none focus:border-indigo-400 cursor-pointer"
+              >
+                {field.opts.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
+              </select>
+            </div>
+          ))}
         </div>
 
-        <div className="flex justify-between items-center pt-2">
-          <div className="text-[10px] text-gray-400 font-semibold flex items-center gap-1">
-            <HelpCircle className="w-3.5 h-3.5" /> Compiling queries aggregates tenant database entries securely.
-          </div>
+        <div className="flex justify-end pt-2">
           <button
             onClick={handleCompileCustomReport}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-600/10 cursor-pointer border-none transition-all hover:scale-105 active:scale-95"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-all"
           >
             <Play className="w-3.5 h-3.5" /> Compile Custom Report
           </button>
@@ -140,22 +96,19 @@ export function CustomReportsView({
 
       {/* Grid dataset results preview */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-xs">
-        <div className="px-5 py-4 bg-gray-50 border-b border-gray-150 flex justify-between items-center">
-          <span className="text-xs font-extrabold uppercase text-gray-500 tracking-wider">Tabular Dataset Preview</span>
+        <div className="px-5 py-4 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center">
+          <span className="text-xs font-semibold text-gray-700 uppercase">Tabular Dataset Preview</span>
           {customReportResult.length > 0 && (
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleExportAction("CSV")}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-[10px] font-bold cursor-pointer border border-gray-200"
-              >
-                <Download className="w-3 h-3" /> Export CSV
-              </button>
-              <button
-                onClick={() => handleExportAction("PDF")}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-[10px] font-bold cursor-pointer border border-gray-200"
-              >
-                <Download className="w-3 h-3" /> Export PDF
-              </button>
+              {["CSV", "PDF"].map(fmt => (
+                <button
+                  key={fmt}
+                  onClick={() => handleCreateExport("report", fmt as any)}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-gray-200 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-50"
+                >
+                  <Download className="w-3 h-3" /> Export {fmt}
+                </button>
+              ))}
             </div>
           )}
         </div>
@@ -163,37 +116,30 @@ export function CustomReportsView({
         {customReportResult.length === 0 ? (
           <div className="p-12 text-center space-y-2">
             <FileText className="w-8 h-8 text-gray-300 mx-auto" />
-            <p className="text-xs text-gray-500 font-bold">No report compiled yet.</p>
-            <p className="text-[10px] text-gray-400 font-medium">Select parameters and click "Compile Custom Report" to render raw preview records.</p>
+            <p className="text-sm font-medium text-gray-500">No report compiled yet.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="text-gray-400 border-b border-gray-150 bg-gray-50/50">
-                  <th className="p-3 font-bold uppercase tracking-wider">Record ID</th>
-                  <th className="p-3 font-bold uppercase tracking-wider">Organization Target</th>
-                  <th className="p-3 font-bold uppercase tracking-wider">Plan</th>
-                  <th className="p-3 font-bold uppercase tracking-wider">Industry</th>
-                  <th className="p-3 font-bold uppercase tracking-wider text-center">Users</th>
-                  <th className="p-3 font-bold uppercase tracking-wider text-center">Health</th>
-                  <th className="p-3 font-bold uppercase tracking-wider text-right">Contribution</th>
+            <table className="w-full text-left text-sm">
+              <thead className="bg-gray-50/50 border-b border-gray-100 text-gray-500 uppercase text-xs font-semibold">
+                <tr>
+                  {["Record ID", "Organization", "Plan", "Industry", "Users", "Health", "Contribution"].map(h => (
+                    <th key={h} className="p-3">{h}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {customReportResult.map(rec => (
-                  <tr key={rec.id} className="hover:bg-gray-50/30">
-                    <td className="p-3 font-mono font-bold text-gray-400">{rec.id}</td>
-                    <td className="p-3 font-bold text-gray-900">{rec.org}</td>
-                    <td className="p-3 font-semibold text-gray-600">{rec.plan}</td>
-                    <td className="p-3 font-semibold text-gray-500">{rec.industry}</td>
-                    <td className="p-3 text-center font-extrabold text-gray-700 font-mono">{rec.usersCount}</td>
-                    <td className="p-3 text-center">
-                      <span className="text-[10px] font-extrabold bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded font-mono">
-                        {rec.healthIndex}
-                      </span>
+                  <tr key={rec.id} className="hover:bg-gray-50/50">
+                    <td className="p-3 font-mono text-gray-500 text-xs">{rec.id}</td>
+                    <td className="p-3 font-medium text-gray-900">{rec.org}</td>
+                    <td className="p-3 text-gray-600">{rec.plan}</td>
+                    <td className="p-3 text-gray-600">{rec.industry}</td>
+                    <td className="p-3 text-gray-700">{rec.usersCount}</td>
+                    <td className="p-3">
+                      <span className="px-2 py-0.5 rounded border border-teal-100 bg-teal-50 text-teal-700 text-xs font-medium">{rec.healthIndex}</span>
                     </td>
-                    <td className="p-3 text-right font-black text-indigo-650 font-mono">
+                    <td className="p-3 text-gray-900 font-semibold text-right">
                       {rec.revenueContribution > 0 ? `$${rec.revenueContribution}` : "$0"}
                     </td>
                   </tr>
@@ -203,6 +149,8 @@ export function CustomReportsView({
           </div>
         )}
       </div>
-    </div>
+      </div>
+      </div>
+    
   );
 }

@@ -4,11 +4,21 @@ import type { KBArticle } from "../types/types";
 
 export function KnowledgeBase({ kbArticles }: { kbArticles: KBArticle[] }) {
   return (
-    <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Knowledge Base</h1>
-        <p className="text-sm text-gray-500 mt-1">Self-service articles to help customers resolve common issues.</p>
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-semibold animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-indigo-600" />
+            Knowledge Base
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Self-service articles to help customers resolve common issues.
+          </p>
+        </div>
       </div>
+
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
 
       <div className="space-y-3">
         {kbArticles.map(article => (
@@ -33,6 +43,7 @@ export function KnowledgeBase({ kbArticles }: { kbArticles: KBArticle[] }) {
             </div>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

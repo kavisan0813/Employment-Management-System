@@ -18,11 +18,21 @@ export function IssueTracker({ issues, actions }: { issues: Issue[], actions: an
   };
 
   return (
-    <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Issue Tracking</h1>
-        <p className="text-sm text-gray-500 mt-1">Track system-level problems linked to customer tickets.</p>
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-semibold animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Bug className="w-5 h-5 text-indigo-600" />
+            Issue Tracking
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Track system-level problems linked to customer tickets.
+          </p>
+        </div>
       </div>
+
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
 
       <div className="space-y-4">
         {issues.map(issue => (
@@ -54,6 +64,7 @@ export function IssueTracker({ issues, actions }: { issues: Issue[], actions: an
         {issues.length === 0 && (
           <div className="text-center py-12 text-sm text-gray-400">No tracked issues.</div>
         )}
+      </div>
       </div>
     </div>
   );

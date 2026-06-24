@@ -20,153 +20,86 @@ interface AuditTrailTableProps {
 }
 
 export function AuditTrailTable({
-  trails,
-  organizations,
-  searchQuery,
-  setSearchQuery,
-  selectedOrg,
-  setSelectedOrg,
-  dateRange,
-  setDateRange,
-  filterByDate,
+  trails, organizations, searchQuery, setSearchQuery, selectedOrg, 
+  setSelectedOrg, dateRange, setDateRange, filterByDate,
 }: AuditTrailTableProps) {
+  
   const filtered = trails.filter((trail) => {
-    const matchesSearch =
-      trail.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      trail.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      trail.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      trail.target.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesOrg =
-      selectedOrg === "ALL" || trail.organization === selectedOrg;
-    const matchesDate = filterByDate(trail.timestamp);
-
-    return matchesSearch && matchesOrg && matchesDate;
+    const matchesSearch = trail.user.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          trail.email.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          trail.action.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          trail.target.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch && (selectedOrg === "ALL" || trail.organization === selectedOrg) && filterByDate(trail.timestamp);
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Search & Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col md:flex-row items-center gap-3 shadow-2xs">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col md:flex-row items-center gap-3 shadow-sm">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search data changes by actor, target, modification description..."
+            placeholder="Search audit trail..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:bg-white focus:outline-indigo-500"
+            className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 outline-none focus:border-indigo-400"
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-          {/* Org Filter */}
-          <select
-            value={selectedOrg}
-            onChange={(e) => setSelectedOrg(e.target.value)}
-            className="bg-gray-50 border border-gray-200 text-gray-800 text-xs px-3 py-2 rounded-lg focus:outline-indigo-500"
-          >
-            <option value="ALL">All Organizations</option>
-            {organizations.map((org) => (
-              <option key={org} value={org}>
-                {org}
-              </option>
-            ))}
+        <div className="flex flex-wrap items-center gap-2">
+          <select value={selectedOrg} onChange={(e) => setSelectedOrg(e.target.value)} className="bg-gray-50 border border-gray-200 text-gray-700 text-sm px-3 py-2 rounded-lg font-medium outline-none">
+            <option value="ALL">All Orgs</option>
+            {organizations.map(org => <option key={org} value={org}>{org}</option>)}
           </select>
-
-          {/* Date Filter */}
-          <select
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
-            className="bg-gray-50 border border-gray-200 text-gray-800 text-xs px-3 py-2 rounded-lg focus:outline-indigo-500"
-          >
+          <select value={dateRange} onChange={(e) => setDateRange(e.target.value)} className="bg-gray-50 border border-gray-200 text-gray-700 text-sm px-3 py-2 rounded-lg font-medium outline-none">
             <option value="ALL">All Time</option>
-            <option value="TODAY">Today (24h)</option>
+            <option value="TODAY">Today</option>
             <option value="WEEK">Last 7 Days</option>
           </select>
         </div>
       </div>
 
       {/* Audit Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-2xs">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 text-[10px] uppercase font-bold text-gray-500 border-b border-gray-150">
-                <th className="px-4 py-3">Timestamp</th>
-                <th className="px-4 py-3">Actor / Org</th>
-                <th className="px-4 py-3">Mutation Description</th>
-                <th className="px-4 py-3">Value Delta (Old &rarr; New)</th>
-                <th className="px-4 py-3">IP Address</th>
+          <table className="w-full text-left text-sm">
+            <thead className="bg-gray-50/50 text-gray-500 uppercase text-xs font-semibold border-b border-gray-100">
+              <tr>
+                <th className="p-4">Timestamp</th>
+                <th className="p-4">Actor</th>
+                <th className="p-4">Action</th>
+                <th className="p-4">Change Delta</th>
+                <th className="p-4">IP Address</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 text-xs text-gray-700">
+            <tbody className="divide-y divide-gray-100 font-medium text-gray-700">
               {filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="p-8 text-center text-gray-400">
-                    No data mutation audit entries found.
-                  </td>
-                </tr>
+                <tr><td colSpan={5} className="p-8 text-center text-gray-500">No records found.</td></tr>
               ) : (
                 filtered.map((trail) => (
-                  <tr
-                    key={trail.id}
-                    className="hover:bg-gray-50/50 transition-colors"
-                  >
-                    {/* Timestamp */}
-                    <td className="px-4 py-3.5 font-mono text-[11px] text-gray-400 whitespace-nowrap">
-                      {new Date(trail.timestamp)
-                        .toLocaleString()
-                        .replace(",", "")}
+                  <tr key={trail.id} className="hover:bg-gray-50/50">
+                    <td className="p-4 text-xs font-mono text-gray-500 whitespace-nowrap">
+                      {new Date(trail.timestamp).toLocaleString()}
                     </td>
-
-                    {/* Actor */}
-                    <td className="px-4 py-3.5 whitespace-nowrap">
-                      <div className="font-semibold text-gray-900">
-                        {trail.user}
-                      </div>
-                      <div className="text-[10px] text-gray-400 mt-0.5">
-                        {trail.organization}
-                      </div>
+                    <td className="p-4">
+                      <div className="font-semibold text-gray-900">{trail.user}</div>
+                      <div className="text-xs font-normal text-gray-500">{trail.organization}</div>
                     </td>
-
-                    {/* Target & Action */}
-                    <td className="px-4 py-3.5">
-                      <div className="font-bold text-gray-800 flex items-center gap-1.5">
-                        <History className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                        {trail.action}
+                    <td className="p-4">
+                      <div className="flex items-center gap-1.5 text-indigo-600 font-semibold">
+                        <History className="w-3.5 h-3.5" /> {trail.action}
                       </div>
-                      <div className="text-[10px] text-gray-400 mt-0.5">
-                        Target:{" "}
-                        <span className="font-mono text-gray-600">
-                          {trail.target}
-                        </span>
+                      <div className="text-xs text-gray-500 mt-0.5">{trail.target}</div>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-lg border border-gray-100 text-xs font-mono">
+                        <span className="text-rose-700 line-through truncate max-w-[100px]">{trail.oldValue}</span>
+                        <ArrowRight className="w-3.5 h-3.5 text-gray-400" />
+                        <span className="text-emerald-700 font-semibold truncate max-w-[100px]">{trail.newValue}</span>
                       </div>
                     </td>
-
-                    {/* Delta comparison */}
-                    <td className="px-4 py-3.5 min-w-[240px]">
-                      <div className="flex items-center gap-2 bg-gray-50 border border-gray-150 p-2 rounded-lg text-[11px] font-mono w-full">
-                        <span
-                          className="bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded border border-rose-100 line-through truncate max-w-[120px]"
-                          title={trail.oldValue}
-                        >
-                          {trail.oldValue}
-                        </span>
-                        <ArrowRight className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                        <span
-                          className="bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded border border-teal-100 font-bold truncate max-w-[120px]"
-                          title={trail.newValue}
-                        >
-                          {trail.newValue}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* IP */}
-                    <td className="px-4 py-3.5 font-mono text-[11px] text-gray-500 whitespace-nowrap">
-                      {trail.ipAddress}
-                    </td>
+                    <td className="p-4 font-mono text-xs text-gray-500">{trail.ipAddress}</td>
                   </tr>
                 ))
               )}

@@ -24,198 +24,95 @@ interface ActivityLogsTableProps {
 }
 
 export function ActivityLogsTable({
-  logs,
-  organizations,
-  searchQuery,
-  setSearchQuery,
-  selectedOrg,
-  setSelectedOrg,
-  selectedModule,
-  setSelectedModule,
-  selectedAction,
-  setSelectedAction,
-  dateRange,
-  setDateRange,
-  filterByDate,
+  logs, organizations, searchQuery, setSearchQuery, selectedOrg, setSelectedOrg,
+  selectedModule, setSelectedModule, selectedAction, setSelectedAction,
+  dateRange, setDateRange, filterByDate,
 }: ActivityLogsTableProps) {
-  // Extract all unique modules
   const modules = Array.from(new Set(logs.map((l) => l.module)));
-  // Extract all unique actions
   const actions = Array.from(new Set(logs.map((l) => l.action)));
 
   const filtered = logs.filter((log) => {
-    const matchesSearch =
-      log.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.details.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesOrg =
-      selectedOrg === "ALL" || log.organization === selectedOrg;
-    const matchesModule =
-      selectedModule === "ALL" || log.module === selectedModule;
-    const matchesAction =
-      selectedAction === "ALL" || log.action === selectedAction;
-    const matchesDate = filterByDate(log.timestamp);
-
-    return (
-      matchesSearch &&
-      matchesOrg &&
-      matchesModule &&
-      matchesAction &&
-      matchesDate
-    );
+    const matchesSearch = log.user.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          log.email.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          log.details.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch && 
+           (selectedOrg === "ALL" || log.organization === selectedOrg) && 
+           (selectedModule === "ALL" || log.module === selectedModule) && 
+           (selectedAction === "ALL" || log.action === selectedAction) && 
+           filterByDate(log.timestamp);
   });
 
+  const getActionColor = (action: string) => {
+    switch (action) {
+      case "Create": return "bg-teal-50 text-teal-700 border-teal-200";
+      case "Update": return "bg-indigo-50 text-indigo-700 border-indigo-200";
+      case "Delete": return "bg-rose-50 text-rose-700 border-rose-200";
+      case "Approve": return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      default: return "bg-gray-100 text-gray-700 border-gray-200";
+    }
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Search & Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col md:flex-row items-center gap-3 shadow-2xs">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col md:flex-row items-center gap-3 shadow-sm">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search operations by user name, details, email..."
+            placeholder="Search activity by user, details, email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:bg-white focus:outline-indigo-500"
+            className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 outline-none focus:border-indigo-400"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-          {/* Org Filter */}
-          <select
-            value={selectedOrg}
-            onChange={(e) => setSelectedOrg(e.target.value)}
-            className="bg-gray-50 border border-gray-200 text-gray-800 text-xs px-3 py-2 rounded-lg focus:outline-indigo-500"
-          >
-            <option value="ALL">All Organizations</option>
-            {organizations.map((org) => (
-              <option key={org} value={org}>
-                {org}
-              </option>
-            ))}
-          </select>
-
-          {/* Module Filter */}
-          <select
-            value={selectedModule}
-            onChange={(e) => setSelectedModule(e.target.value)}
-            className="bg-gray-50 border border-gray-200 text-gray-800 text-xs px-3 py-2 rounded-lg focus:outline-indigo-500"
-          >
-            <option value="ALL">All Modules</option>
-            {modules.map((mod) => (
-              <option key={mod} value={mod}>
-                {mod}
-              </option>
-            ))}
-          </select>
-
-          {/* Action Filter */}
-          <select
-            value={selectedAction}
-            onChange={(e) => setSelectedAction(e.target.value)}
-            className="bg-gray-50 border border-gray-200 text-gray-800 text-xs px-3 py-2 rounded-lg focus:outline-indigo-500"
-          >
-            <option value="ALL">All Actions</option>
-            {actions.map((act) => (
-              <option key={act} value={act}>
-                {act}
-              </option>
-            ))}
-          </select>
-
-          {/* Date Filter */}
-          <select
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
-            className="bg-gray-50 border border-gray-200 text-gray-800 text-xs px-3 py-2 rounded-lg focus:outline-indigo-500"
-          >
-            <option value="ALL">All Time</option>
-            <option value="TODAY">Today (24h)</option>
-            <option value="WEEK">Last 7 Days</option>
-          </select>
+          {[
+            { v: selectedOrg, s: setSelectedOrg, opts: [["ALL", "All Orgs"], ...organizations.map(o => [o, o])] },
+            { v: selectedModule, s: setSelectedModule, opts: [["ALL", "All Modules"], ...modules.map(m => [m, m])] },
+            { v: selectedAction, s: setSelectedAction, opts: [["ALL", "All Actions"], ...actions.map(a => [a, a])] },
+            { v: dateRange, s: setDateRange, opts: [["ALL", "All Time"], ["TODAY", "Today"], ["WEEK", "Last 7 Days"]] }
+          ].map((f, i) => (
+            <select key={i} value={f.v} onChange={(e) => f.s(e.target.value)} className="bg-gray-50 border border-gray-200 text-gray-700 text-sm px-3 py-2 rounded-lg font-medium outline-none focus:border-indigo-400">
+              {f.opts.map(([val, label]) => <option key={val} value={val}>{label}</option>)}
+            </select>
+          ))}
         </div>
       </div>
 
       {/* Timeline Layout */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-2xs">
+      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         {filtered.length === 0 ? (
-          <div className="p-8 text-center text-gray-400 text-xs">
-            No activity log entries found.
-          </div>
+          <div className="py-12 text-center text-sm font-medium text-gray-500">No activity log entries found.</div>
         ) : (
-          <div className="relative border-l border-gray-200 ml-4 space-y-6 py-2">
-            {filtered.map((log) => {
-              // Action color mappings
-              const getActionColor = (action: string) => {
-                switch (action) {
-                  case "Create":
-                    return "bg-teal-50 text-teal-700 border-teal-200";
-                  case "Update":
-                    return "bg-indigo-50 text-indigo-700 border-indigo-200";
-                  case "Delete":
-                    return "bg-rose-50 text-rose-700 border-rose-200";
-                  case "Approve":
-                    return "bg-emerald-50 text-emerald-700 border-emerald-200";
-                  case "Reject":
-                    return "bg-amber-50 text-amber-700 border-amber-200";
-                  case "Export":
-                    return "bg-purple-50 text-purple-700 border-purple-200";
-                  default:
-                    return "bg-gray-50 text-gray-700 border-gray-200";
-                }
-              };
+          <div className="relative border-l border-gray-200 ml-2 space-y-8">
+            {filtered.map((log) => (
+              <div key={log.id} className="relative pl-6 group">
+                <div className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-indigo-500 border-2 border-white" />
 
-              return (
-                <div key={log.id} className="relative pl-6 group">
-                  {/* Timeline indicator node */}
-                  <div className="absolute -left-[6px] top-1 w-2.5 h-2.5 rounded-full bg-white border-2 border-indigo-500 group-hover:scale-125 transition-transform" />
+                <div className="flex items-center gap-3 mb-2 text-xs font-medium">
+                  <span className="text-gray-400 font-mono flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5" /> {new Date(log.timestamp).toLocaleString()}
+                  </span>
+                  <span className={`px-2 py-0.5 rounded border text-[10px] font-semibold uppercase ${getActionColor(log.action)}`}>
+                    {log.action}
+                  </span>
+                  <span className="text-gray-500 flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded border border-gray-100">
+                    <FileText className="w-3 h-3" /> {log.module}
+                  </span>
+                </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      {/* Timestamp */}
-                      <span className="text-[11px] font-mono text-gray-400 flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />
-                        {new Date(log.timestamp)
-                          .toLocaleString()
-                          .replace(",", "")}
-                      </span>
-
-                      {/* Action Badges */}
-                      <span
-                        className={`inline-flex items-center px-1.5 py-0.5 rounded border text-[9px] font-mono font-bold uppercase shrink-0 ${getActionColor(log.action)}`}
-                      >
-                        {log.action}
-                      </span>
-
-                      {/* Module Badge */}
-                      <span className="inline-flex items-center gap-1 text-gray-500 bg-gray-100/60 px-1.5 py-0.5 rounded text-[10px] font-medium border border-gray-200">
-                        <FileText className="w-2.5 h-2.5" />
-                        {log.module}
-                      </span>
-                    </div>
-
-                    {/* Actor label */}
-                    <div className="text-[11px] text-gray-500 flex items-center gap-1">
-                      <User className="w-3 h-3 text-gray-400" />
-                      by{" "}
-                      <strong className="text-gray-800 font-semibold">
-                        {log.user}
-                      </strong>{" "}
-                      ({log.role})
-                    </div>
-                  </div>
-
-                  {/* Operation details */}
-                  <div className="mt-2 bg-gray-50/50 hover:bg-gray-50 border border-gray-150 p-3 rounded-lg text-xs text-gray-800 transition-colors">
-                    <p className="font-medium">{log.details}</p>
-                    <p className="text-[10px] text-gray-400 mt-1 font-mono">
-                      Scope: {log.organization} &bull; ID: {log.id}
-                    </p>
+                <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl">
+                  <p className="text-sm font-medium text-gray-800">{log.details}</p>
+                  <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                    <User className="w-3.5 h-3.5" />
+                    <span className="font-semibold text-gray-700">{log.user}</span>
+                    <span>({log.role}) &bull; {log.organization}</span>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )}
       </div>

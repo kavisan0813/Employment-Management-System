@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { Coins } from "lucide-react";
+import { Coins, RefreshCw, Globe } from "lucide-react";
 import { SystemConfig } from "../types/platformSettings.types";
 
 interface Props {
@@ -18,131 +18,94 @@ export function CurrencySettingsView({
   setConfig,
   getFormattedCurrencyPreview
 }: Props) {
+  const updateCurrency = (key: keyof SystemConfig["currency"], value: any) => {
+    setConfig(prev => ({ ...prev, currency: { ...prev.currency, [key]: value } }));
+  };
+
+  const inputClass = "w-full text-sm p-2.5 border border-gray-200 rounded-lg outline-none focus:border-indigo-400 transition-colors";
+  const labelClass = "text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block";
+
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <div className="space-y-4">
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left: Configuration Form */}
+        <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Base Currency Code</label>
-              <select
-                value={config.currency.defaultCode}
+              <label className={labelClass}>Base Currency</label>
+              <select 
+                value={config.currency.defaultCode} 
                 onChange={e => {
                   const symbols: Record<string, string> = { INR: "₹", USD: "$", AED: "د.إ", EUR: "€", SGD: "S$" };
-                  setConfig(p => ({
-                    ...p,
-                    currency: {
-                      ...p.currency,
-                      defaultCode: e.target.value,
-                      symbol: symbols[e.target.value] || "$"
-                    }
+                  setConfig(p => ({ 
+                    ...p, 
+                    currency: { ...p.currency, defaultCode: e.target.value, symbol: symbols[e.target.value] || "$" } 
                   }));
-                }}
-                className="w-full text-xs font-semibold p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white cursor-pointer"
+                }} 
+                className={inputClass}
               >
-                <option value="INR">INR (Indian Rupee)</option>
-                <option value="USD">USD (US Dollar)</option>
-                <option value="AED">AED (UAE Dirham)</option>
-                <option value="EUR">EUR (Euro)</option>
-                <option value="SGD">SGD (Singapore Dollar)</option>
+                <option value="INR">INR (₹)</option>
+                <option value="USD">USD ($)</option>
+                <option value="AED">AED (د.إ)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="SGD">SGD (S$)</option>
               </select>
             </div>
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Currency Symbol</label>
-              <input
-                type="text"
-                value={config.currency.symbol}
-                onChange={e => setConfig(p => ({ ...p, currency: { ...p.currency, symbol: e.target.value } }))}
-                className="w-full text-xs font-semibold p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white"
-              />
+              <label className={labelClass}>Currency Symbol</label>
+              <input type="text" value={config.currency.symbol} onChange={e => updateCurrency("symbol", e.target.value)} className={inputClass} />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Decimal Places</label>
-              <select
-                value={config.currency.decimalPlaces}
-                onChange={e => setConfig(p => ({ ...p, currency: { ...p.currency, decimalPlaces: Number(e.target.value) } }))}
-                className="w-full text-xs font-semibold p-2.5 border border-gray-200 rounded-xl bg-white cursor-pointer"
-              >
+              <label className={labelClass}>Decimal Places</label>
+              <select value={config.currency.decimalPlaces} onChange={e => updateCurrency("decimalPlaces", Number(e.target.value))} className={inputClass}>
                 <option value={0}>0 (No decimals)</option>
-                <option value={2}>2 Decimals (.00)</option>
-                <option value={3}>3 Decimals (.000)</option>
+                <option value={2}>2 (.00)</option>
+                <option value={3}>3 (.000)</option>
               </select>
             </div>
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Symbol Position</label>
-              <select
-                value={config.currency.symbolPosition}
-                onChange={e => setConfig(p => ({ ...p, currency: { ...p.currency, symbolPosition: e.target.value as any } }))}
-                className="w-full text-xs font-semibold p-2.5 border border-gray-200 rounded-xl bg-white cursor-pointer"
-              >
-                <option value="before">Before Amount (e.g. ₹50,000)</option>
-                <option value="after">After Amount (e.g. 50,000 INR)</option>
+              <label className={labelClass}>Symbol Position</label>
+              <select value={config.currency.symbolPosition} onChange={e => updateCurrency("symbolPosition", e.target.value)} className={inputClass}>
+                <option value="before">Before Amount</option>
+                <option value="after">After Amount</option>
               </select>
             </div>
           </div>
 
-          <div className="space-y-1.5 pt-2">
-            <label className="flex items-center gap-2 text-xs font-bold text-gray-700 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={config.currency.autoConversion}
-                onChange={e => setConfig(p => ({ ...p, currency: { ...p.currency, autoConversion: e.target.checked } }))}
-                className="w-4 h-4 rounded accent-indigo-650"
-              />
-              Enable Dynamic Currency Conversion (Automated exchange rates)
-            </label>
-            <p className="text-[10px] text-gray-400 font-semibold pl-6">
-              Converts foreign payroll indices and platform invoices into tenant base currencies automatically using global daily exchange indices.
-            </p>
-          </div>
-
+          <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 cursor-pointer">
+            <input type="checkbox" checked={config.currency.autoConversion} onChange={e => updateCurrency("autoConversion", e.target.checked)} className="rounded text-indigo-600 focus:ring-indigo-500" />
+            Enable Dynamic Conversion
+          </label>
         </div>
 
-        <div className="bg-indigo-50/20 rounded-2xl p-5 border border-indigo-105 flex flex-col justify-between space-y-4">
-          <div>
-            <h4 className="text-xs font-extrabold text-indigo-950 uppercase tracking-wide flex items-center gap-1.5">
-              <Coins className="w-4 h-4 text-indigo-650" />
-              Currency Render Sandbox
-            </h4>
-            <p className="text-[10px] text-indigo-500 font-semibold mt-1">
-              Evaluates how salary entries, invoicing schedules, and financial reports will display amounts on the screen:
-            </p>
-          </div>
+        {/* Right: Currency Sandbox */}
+        <div className="bg-indigo-50/30 border border-indigo-100 rounded-2xl p-6 flex flex-col space-y-6">
+          <h4 className="text-sm font-semibold text-indigo-900 flex items-center gap-2">
+            <Coins className="w-4 h-4" /> Currency Sandbox
+          </h4>
 
-          <div className="space-y-3 font-semibold text-xs bg-white border border-indigo-100/60 p-5 rounded-xl shadow-xs">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400 font-bold text-[10px] uppercase">Configured Code</span>
-              <span className="text-indigo-900 font-extrabold">{config.currency.defaultCode} ({config.currency.symbol})</span>
+          <div className="space-y-4 bg-white p-5 rounded-xl border border-indigo-100 shadow-sm">
+            <div className="flex justify-between items-center text-xs">
+              <span className="font-semibold text-gray-500 uppercase">Live Preview</span>
+              <span className="font-mono text-indigo-700 text-xl font-bold">{getFormattedCurrencyPreview()}</span>
             </div>
-            <hr className="border-gray-100" />
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400 font-bold text-[10px] uppercase">Format Style Sample</span>
-              <span className="font-mono text-xl font-black text-indigo-950">{getFormattedCurrencyPreview()}</span>
-            </div>
-            <hr className="border-gray-100" />
-            <div className="flex justify-between items-center text-[11px]">
-              <span className="text-gray-450 font-bold">Exchange Conversion status</span>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${config.currency.autoConversion ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-gray-100 text-gray-600 border border-gray-150"}`}>
-                {config.currency.autoConversion ? "Live Rates Active" : "Fixed Rates Only"}
+            
+            <div className="pt-4 border-t border-gray-100 flex justify-between items-center text-xs">
+              <span className="font-semibold text-gray-500 uppercase">Auto-Conversion</span>
+              <span className={`px-2 py-0.5 rounded-full font-bold uppercase text-[10px] ${config.currency.autoConversion ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-600"}`}>
+                {config.currency.autoConversion ? "Active" : "Disabled"}
               </span>
             </div>
           </div>
 
-          <div className="p-3 bg-white border border-gray-150 rounded-xl space-y-1.5 text-[10px] text-gray-500 font-semibold">
-            <div className="text-[9px] uppercase tracking-wider font-extrabold text-gray-450">Multi-country conversion preview</div>
-            <div className="flex justify-between items-center">
-              <span>Subscription standard plan:</span>
-              <span className="font-mono font-bold text-gray-900">
-                USD 100 &rarr; {config.currency.symbolPosition === "before" ? `${config.currency.symbol} ` : ""}{(100 * (config.currency.defaultCode === "INR" ? 83.5 : config.currency.defaultCode === "AED" ? 3.67 : 1.35)).toFixed(0)} {config.currency.symbolPosition === "after" ? config.currency.defaultCode : ""}
-              </span>
-            </div>
+          <div className="flex items-start gap-3 p-4 bg-white rounded-xl border border-gray-100 text-xs text-gray-600">
+            <Globe className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+            <p><strong>Conversion Preview:</strong> A USD 100 base amount will render as <strong>{getFormattedCurrencyPreview()}</strong> based on current daily exchange index rates.</p>
           </div>
         </div>
-
       </div>
     </div>
   );

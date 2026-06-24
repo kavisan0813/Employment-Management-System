@@ -37,6 +37,7 @@ import {
   ErrorLog,
   ExportLog,
   LogRetentionPolicy,
+  ApiLog,
 } from "./features/auditLogs/types/logs.types";
 
 import {
@@ -1937,6 +1938,62 @@ const initialCustomRoles: CustomRole[] = [
   },
 ];
 
+const initialApiLogs: ApiLog[] = [
+  {
+    id: "api-1",
+    apiName: "Get Employees",
+    endpoint: "/api/employees",
+    method: "GET",
+    statusCode: 200,
+    responseTimeMs: 150,
+    user: "Mobile App",
+    date: new Date(Date.now() - 3600000 * 2).toISOString(),
+  },
+  {
+    id: "api-2",
+    apiName: "Attendance Punch",
+    endpoint: "/api/attendance/punch",
+    method: "POST",
+    statusCode: 200,
+    responseTimeMs: 80,
+    user: "Web Client",
+    date: new Date(Date.now() - 3600000 * 5).toISOString(),
+  },
+  {
+    id: "api-3",
+    apiName: "Process Payroll",
+    endpoint: "/api/payroll/process",
+    method: "POST",
+    statusCode: 500,
+    responseTimeMs: 5000,
+    user: "System",
+    date: new Date(Date.now() - 3600000 * 24).toISOString(),
+    errorMessage: "Internal Server Error",
+  },
+  {
+    id: "api-4",
+    apiName: "Update Settings",
+    endpoint: "/api/settings",
+    method: "PUT",
+    statusCode: 403,
+    responseTimeMs: 120,
+    user: "Mobile App",
+    date: new Date(Date.now() - 3600000 * 48).toISOString(),
+    errorMessage: "Forbidden",
+  },
+  {
+    id: "api-5",
+    apiName: "Get Subscriptions",
+    endpoint: "/api/subscriptions",
+    method: "GET",
+    statusCode: 401,
+    responseTimeMs: 45,
+    user: "Third Party Integration",
+    date: new Date(Date.now() - 3600000 * 72).toISOString(),
+    errorMessage: "Unauthorized",
+  },
+];
+
 // ==========================================
 // STATE MANAGEMENT CONTEXT
 // ==========================================
@@ -2082,6 +2139,10 @@ export const db = {
         initialLogRetentionPolicy,
       ),
     save: (data: LogRetentionPolicy) => saveStore("logRetentionPolicy", data),
+  },
+  apiLogs: {
+    get: () => getStore<ApiLog[]>("apiLogs", initialApiLogs),
+    save: (data: ApiLog[]) => saveStore("apiLogs", data),
   },
 };
 

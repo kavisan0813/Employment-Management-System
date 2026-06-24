@@ -15,11 +15,22 @@ export function OrganizationStatus({ org, hook }: { org: Organization, hook: any
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200 max-w-4xl">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Organization Status</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage tenant access and view status history.</p>
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-medium animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <ShieldAlert className="w-5 h-5 text-indigo-600" />
+            Organization Status
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Manage tenant access and view status history.
+          </p>
+        </div>
       </div>
+
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
+        <div className="max-w-4xl space-y-6">
 
       <div className={`rounded-2xl border p-6 flex items-start gap-4 ${
         org.status === 'Active' ? 'bg-emerald-50 border-emerald-200' :
@@ -94,6 +105,8 @@ export function OrganizationStatus({ org, hook }: { org: Organization, hook: any
             )}
           </div>
         </div>
+      </div>
+      </div>
       </div>
     </div>
   );

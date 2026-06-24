@@ -13,6 +13,7 @@ import {
   ExportLog,
   LogRetentionPolicy,
   LogsStats,
+  ApiLog,
 } from "../types/logs.types";
 
 export const LogsService = {
@@ -132,6 +133,23 @@ export const LogsService = {
   },
   saveRetentionPolicy(policy: LogRetentionPolicy): void {
     db.logRetentionPolicy.save(policy);
+  },
+
+  // Api Logs
+  getApiLogs(): ApiLog[] {
+    return db.apiLogs.get();
+  },
+  saveApiLogs(logs: ApiLog[]): void {
+    db.apiLogs.save(logs);
+  },
+  addApiLog(log: Omit<ApiLog, "id" | "date">): void {
+    const logs = this.getApiLogs();
+    const newLog: ApiLog = {
+      ...log,
+      id: `api-${Date.now()}`,
+      date: new Date().toISOString(),
+    };
+    this.saveApiLogs([newLog, ...logs]);
   },
 
   // Summarize Statistics

@@ -14,6 +14,7 @@ import {
   ExportLog,
   LogRetentionPolicy,
   LogsStats,
+  ApiLog,
 } from "../types/logs.types";
 
 export function useAuditLogs() {
@@ -23,6 +24,7 @@ export function useAuditLogs() {
   const [securityEvents, setSecurityEvents] = useState<SecurityEventLog[]>([]);
   const [errorLogs, setErrorLogs] = useState<ErrorLog[]>([]);
   const [exportLogs, setExportLogs] = useState<ExportLog[]>([]);
+  const [apiLogs, setApiLogs] = useState<ApiLog[]>([]);
   const [retentionPolicy, setRetentionPolicy] = useState<LogRetentionPolicy>({
     retentionDays: 365,
     archiveEnabled: true,
@@ -58,6 +60,7 @@ export function useAuditLogs() {
       const securityData = LogsService.getSecurityEventLogs();
       const errorData = LogsService.getErrorLogs();
       const exportData = LogsService.getExportLogs();
+      const apiData = LogsService.getApiLogs();
       const policyData = LogsService.getRetentionPolicy();
       const statsData = LogsService.getStats();
 
@@ -67,6 +70,7 @@ export function useAuditLogs() {
       setSecurityEvents(securityData);
       setErrorLogs(errorData);
       setExportLogs(exportData);
+      setApiLogs(apiData);
       setRetentionPolicy(policyData);
       setStats(statsData);
     } catch (e) {
@@ -142,6 +146,7 @@ export function useAuditLogs() {
     securityEvents,
     errorLogs,
     exportLogs,
+    apiLogs,
     retentionPolicy,
     stats,
     loading,

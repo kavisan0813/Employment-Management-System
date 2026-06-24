@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from "react";
-import { Building } from "lucide-react";
+import { Building, ArrowRight } from "lucide-react";
 import { SystemConfig } from "../types/platformSettings.types";
 
 interface Props {
@@ -17,136 +17,73 @@ export function TenantOverrideSimulator({ config }: Props) {
   const getDemoTenantData = () => {
     switch (selectedDemoTenant) {
       case "Acme India":
-        return {
-          timezone: "Asia/Kolkata (Overridden)",
-          currency: "INR (Overridden - ₹)",
-          lang: "English (Default Inherited)",
-          whiteLabel: "Disabled (Inherited)",
-          uploadSize: `${config.storage.maxUploadSizeMb} MB (Default Inherited)`,
-          status: "Acme Corporate Portal Active"
-        };
+        return { tz: "Asia/Kolkata", cur: "INR (₹)", lang: "English", wl: "Disabled", size: `${config.storage.maxUploadSizeMb} MB` };
       case "Nexus Dubai":
-        return {
-          timezone: "Asia/Dubai (Overridden)",
-          currency: "AED (Overridden - د.إ)",
-          lang: "Arabic (Overridden)",
-          whiteLabel: "Enabled (Overridden)",
-          uploadSize: "50 MB (Overridden - Enterprise Tier)",
-          status: "Nexus Dubai Enterprise Console Active"
-        };
+        return { tz: "Asia/Dubai", cur: "AED (د.إ)", lang: "Arabic", wl: "Enabled", size: "50 MB" };
       case "Viyan Singapore":
-        return {
-          timezone: "Europe/London (Overridden - Remote Hub)",
-          currency: "SGD (Overridden - S$)",
-          lang: "English (Default Inherited)",
-          whiteLabel: "Disabled (Inherited)",
-          uploadSize: `${config.storage.maxUploadSizeMb} MB (Default Inherited)`,
-          status: "Viyan HR Space Active"
-        };
+        return { tz: "Europe/London", cur: "SGD (S$)", lang: "English", wl: "Disabled", size: `${config.storage.maxUploadSizeMb} MB` };
     }
   };
 
-  const demoTenant = getDemoTenantData();
+  const data = getDemoTenantData();
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-gray-150 pb-3 gap-2">
+    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-4">
         <div>
-          <h3 className="text-sm font-extrabold text-gray-950 uppercase tracking-wider flex items-center gap-1.5">
-            <Building className="w-4 h-4 text-indigo-650" />
-            Tenant Inheritance & Override Simulator
+          <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+            <Building className="w-4 h-4 text-indigo-500" /> Tenant Override Simulator
           </h3>
-          <p className="text-[11px] text-gray-500 font-semibold mt-0.5">
-            This tool validates how regional configurations and branding parameters inherit or override platform values in client portals.
-          </p>
+          <p className="text-xs text-gray-500 mt-1">Validate how platform settings propagate or override at the tenant level.</p>
         </div>
-
-        {/* Selector for demo tenants */}
-        <div className="flex items-center gap-1.5 self-start md:self-auto">
-          <span className="text-[10px] uppercase font-bold text-gray-400">Select Mock Tenant:</span>
-          <select
-            value={selectedDemoTenant}
-            onChange={e => setSelectedDemoTenant(e.target.value as any)}
-            className="bg-gray-50 border border-gray-200 rounded-lg p-1.5 text-[11px] font-bold text-gray-800 outline-none cursor-pointer"
-          >
-            <option value="Acme India">Acme India Corporate Space</option>
-            <option value="Nexus Dubai">Nexus Dubai Middle East</option>
-            <option value="Viyan Singapore">Viyan Remote Asia Hub</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Simulated Data Grid comparison table */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
-        {/* Inherited Defaults */}
-        <div className="bg-gray-50 border border-gray-150 rounded-xl p-4 space-y-3 text-xs font-semibold text-gray-700">
-          <span className="text-[10px] text-gray-450 block font-extrabold uppercase tracking-wide">SYSTEM DEFAULTS</span>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center text-[11px]">
-              <span>Timezone</span>
-              <span className="font-mono text-gray-900">{config.timezone.defaultTimezone}</span>
-            </div>
-            <hr className="border-gray-200/50" />
-            <div className="flex justify-between items-center text-[11px]">
-              <span>Currency</span>
-              <span className="font-mono text-gray-900">{config.currency.defaultCode} ({config.currency.symbol})</span>
-            </div>
-            <hr className="border-gray-200/50" />
-            <div className="flex justify-between items-center text-[11px]">
-              <span>Default Language</span>
-              <span className="text-gray-900">{config.localization.defaultLanguage}</span>
-            </div>
-            <hr className="border-gray-200/50" />
-            <div className="flex justify-between items-center text-[11px]">
-              <span>Max Upload Size</span>
-              <span className="text-gray-900">{config.storage.maxUploadSizeMb} MB</span>
-            </div>
+        <select 
+          value={selectedDemoTenant} 
+          onChange={e => setSelectedDemoTenant(e.target.value as any)}
+          className="text-xs font-semibold bg-gray-50 border border-gray-200 rounded-lg p-2 outline-none focus:border-indigo-400"
+        >
+          <option value="Acme India">Acme India</option>
+          <option value="Nexus Dubai">Nexus Dubai</option>
+          <option value="Viyan Singapore">Viyan Singapore</option>
+        </select>
+      </div>
+
+      {/* Grid Comparison */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* System Defaults */}
+        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">System Defaults</p>
+          <div className="space-y-2 text-xs font-medium">
+            <div className="flex justify-between"><span className="text-gray-500">Timezone</span><span className="text-gray-800">{config.timezone.defaultTimezone}</span></div>
+            <div className="flex justify-between"><span className="text-gray-500">Currency</span><span className="text-gray-800">{config.currency.defaultCode}</span></div>
+            <div className="flex justify-between"><span className="text-gray-500">Language</span><span className="text-gray-800">{config.localization.defaultLanguage}</span></div>
+            <div className="flex justify-between"><span className="text-gray-500">Upload Cap</span><span className="text-gray-800">{config.storage.maxUploadSizeMb} MB</span></div>
           </div>
         </div>
 
-        {/* Comparison Arrow */}
-        <div className="flex flex-col justify-center items-center p-3 text-center bg-indigo-50/20 border border-indigo-100/60 rounded-xl">
-          <span className="text-[10px] font-extrabold text-indigo-900 uppercase tracking-widest block mb-1">Inheritance Pipeline</span>
-          <span className="w-8 h-8 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-xs shadow-xs my-2">&rarr;</span>
-          <span className="text-[9px] text-indigo-500 font-semibold px-2">System settings apply automatically to organizations unless overridden.</span>
+        {/* Pipeline Visual */}
+        <div className="flex flex-col items-center justify-center gap-2 text-indigo-400">
+          <span className="text-[10px] font-bold uppercase tracking-widest">Inheritance</span>
+          <ArrowRight className="w-6 h-6" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Override</span>
         </div>
 
-        {/* Inherited/Overridden Values for Tenant */}
-        <div className="bg-emerald-50/20 border border-emerald-100 rounded-xl p-4 space-y-3 text-xs font-semibold text-emerald-900">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] text-emerald-700 block font-extrabold uppercase tracking-wide">ORGANIZATION VALUES</span>
-            <span className="text-[8px] uppercase tracking-wider font-extrabold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
-              {selectedDemoTenant}
-            </span>
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center text-[11px]">
-              <span className="text-emerald-700">Timezone</span>
-              <span className="font-mono text-emerald-955 font-bold">{demoTenant.timezone}</span>
-            </div>
-            <hr className="border-emerald-100/50" />
-            <div className="flex justify-between items-center text-[11px]">
-              <span className="text-emerald-700">Currency</span>
-              <span className="font-mono text-emerald-955 font-bold">{demoTenant.currency}</span>
-            </div>
-            <hr className="border-emerald-100/50" />
-            <div className="flex justify-between items-center text-[11px]">
-              <span className="text-emerald-700">Default Language</span>
-              <span className="text-emerald-955 font-bold">{demoTenant.lang}</span>
-            </div>
-            <hr className="border-emerald-100/50" />
-            <div className="flex justify-between items-center text-[11px]">
-              <span className="text-emerald-700">Max Upload Size</span>
-              <span className="text-emerald-955 font-bold">{demoTenant.uploadSize}</span>
-            </div>
+        {/* Tenant Values */}
+        <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 space-y-3">
+          <p className="text-[10px] font-bold text-indigo-700 uppercase tracking-wider">{selectedDemoTenant} Values</p>
+          <div className="space-y-2 text-xs font-semibold">
+            <div className="flex justify-between"><span className="text-indigo-900/60">Timezone</span><span className="text-indigo-900">{data.tz}</span></div>
+            <div className="flex justify-between"><span className="text-indigo-900/60">Currency</span><span className="text-indigo-900">{data.cur}</span></div>
+            <div className="flex justify-between"><span className="text-indigo-900/60">Language</span><span className="text-indigo-900">{data.lang}</span></div>
+            <div className="flex justify-between"><span className="text-indigo-900/60">Upload Cap</span><span className="text-indigo-900">{data.size}</span></div>
           </div>
         </div>
       </div>
 
-      {/* visual statement explaining how standard overrides work in SaaS */}
-      <div className="p-3.5 bg-gray-55 border border-gray-150 rounded-xl text-[10px] text-gray-550 leading-relaxed font-semibold">
-        <strong>Tenant Compliance Policy:</strong> When the organization timezones are overridden (e.g. <code>Asia/Dubai</code> in Nexus Dubai), attendance punches, scheduling clocks, and local payroll calculation deadlines automatically bind to that local timezone instead of the platform default.
+      {/* Compliance Note */}
+      <div className="p-4 bg-amber-50 rounded-lg border border-amber-100 text-xs text-amber-800 leading-relaxed font-medium">
+        <strong>Note:</strong> Tenant overrides for Timezones and Currency automatically bind local attendance and payroll calculations to the tenant's regional constraints, bypassing global platform defaults.
       </div>
     </div>
   );

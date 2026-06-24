@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from "react";
-import { Server, Database, Mail, HardDrive, Cpu, ShieldAlert, CheckCircle2, Search, SlidersHorizontal } from "lucide-react";
+import { Server, Database, Mail, HardDrive, Cpu, Search, SlidersHorizontal, CheckCircle2 } from "lucide-react";
 import { SystemAlert } from "../types/notifications.types";
 
 interface Props {
@@ -24,78 +24,40 @@ export function SystemAlertsView({ alerts, onAcknowledgeAlert }: Props) {
     return matchesSeverity && matchesSearch;
   });
 
+  const getNodeColor = (load: number, isCritical: boolean = false) => {
+    if (isCritical) return "bg-rose-500";
+    if (load > 90) return "bg-orange-500";
+    if (load > 70) return "bg-amber-500";
+    return "bg-emerald-500";
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-semibold">
       
-      {/* Visual Server Node Health Deck */}
+      {/* Visual Server Node Health Deck - Added subtle background tints */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        
-        {/* Node 1: CPU */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-2xs space-y-2">
-          <div className="flex justify-between items-center text-xs font-extrabold text-gray-400">
-            <span className="flex items-center gap-1"><Cpu className="w-3.5 h-3.5 text-indigo-500" /> CPU CORES</span>
-            <span className="text-orange-600">95% Load</span>
+        {[
+          { label: "CPU CORES", val: "95% Load", icon: Cpu, color: "orange", node: "App Server Node-04", bg: "bg-orange-50/30" },
+          { label: "DB REPLICA", val: "Failover", icon: Database, color: "rose", node: "Replica Heartbeat Lost", pulse: true, bg: "bg-rose-50/30" },
+          { label: "STORAGE S3", val: "85% Used", icon: HardDrive, color: "amber", node: "Capacity Warning", bg: "bg-amber-50/30" },
+          { label: "SMTP MAIL", val: "Rejected", icon: Mail, color: "orange", node: "Relay Handshake Fail", bg: "bg-orange-50/30" },
+          { label: "API GATEWAY", val: "Normal", icon: Server, color: "emerald", node: "Latency: 12ms", bg: "bg-emerald-50/30" }
+        ].map((node, i) => (
+          <div key={i} className={`${node.bg} border border-black/5 rounded-xl p-4 shadow-sm space-y-2 transition-all hover:shadow-md`}>
+            <div className="flex justify-between items-center text-[10px] text-gray-500 uppercase">
+              <span className="flex items-center gap-1"><node.icon className="w-3.5 h-3.5" /> {node.label}</span>
+              <span className={`text-${node.color}-600 font-bold`}>{node.val}</span>
+            </div>
+            <div className="w-full bg-black/5 h-1.5 rounded-full overflow-hidden">
+              <div className={`${getNodeColor(parseInt(node.val), node.pulse)} h-full rounded-full ${node.pulse ? 'animate-pulse' : ''}`} style={{ width: "95%" }} />
+            </div>
+            <span className="text-[10px] text-gray-600">{node.node}</span>
           </div>
-          <div className="w-full bg-gray-150 h-2 rounded-full overflow-hidden">
-            <div className="bg-orange-500 h-full rounded-full" style={{ width: "95%" }} />
-          </div>
-          <span className="text-[10px] text-gray-500 font-bold block">App Server Node-04 Warning</span>
-        </div>
-
-        {/* Node 2: DB */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-2xs space-y-2">
-          <div className="flex justify-between items-center text-xs font-extrabold text-gray-400">
-            <span className="flex items-center gap-1"><Database className="w-3.5 h-3.5 text-rose-500" /> DB REPLICA</span>
-            <span className="text-rose-600">Failover</span>
-          </div>
-          <div className="w-full bg-gray-150 h-2 rounded-full overflow-hidden">
-            <div className="bg-rose-500 h-full rounded-full animate-pulse" style={{ width: "100%" }} />
-          </div>
-          <span className="text-[10px] text-rose-700 font-bold block">Replica heartbeat Lost</span>
-        </div>
-
-        {/* Node 3: Storage */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-2xs space-y-2">
-          <div className="flex justify-between items-center text-xs font-extrabold text-gray-400">
-            <span className="flex items-center gap-1"><HardDrive className="w-3.5 h-3.5 text-amber-500" /> STORAGE S3</span>
-            <span className="text-amber-600">85% Used</span>
-          </div>
-          <div className="w-full bg-gray-150 h-2 rounded-full overflow-hidden">
-            <div className="bg-amber-500 h-full rounded-full" style={{ width: "85%" }} />
-          </div>
-          <span className="text-[10px] text-gray-500 font-bold block">Capacity Warning Threshold</span>
-        </div>
-
-        {/* Node 4: SMTP */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-2xs space-y-2">
-          <div className="flex justify-between items-center text-xs font-extrabold text-gray-400">
-            <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5 text-orange-500" /> SMTP MAIL</span>
-            <span className="text-orange-600">Rejected</span>
-          </div>
-          <div className="w-full bg-gray-150 h-2 rounded-full overflow-hidden">
-            <div className="bg-orange-500 h-full rounded-full" style={{ width: "100%" }} />
-          </div>
-          <span className="text-[10px] text-gray-500 font-bold block">Relay Handshake Rejected</span>
-        </div>
-
-        {/* Node 5: API */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-2xs space-y-2">
-          <div className="flex justify-between items-center text-xs font-extrabold text-gray-400">
-            <span className="flex items-center gap-1"><Server className="w-3.5 h-3.5 text-emerald-500" /> API GATEWAY</span>
-            <span className="text-emerald-600">Normal</span>
-          </div>
-          <div className="w-full bg-gray-150 h-2 rounded-full overflow-hidden">
-            <div className="bg-emerald-500 h-full rounded-full" style={{ width: "22%" }} />
-          </div>
-          <span className="text-[10px] text-emerald-700 font-bold block">Latency: 12ms (Good)</span>
-        </div>
-
+        ))}
       </div>
 
-      {/* Filter and search parameters */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-2xs flex flex-col sm:flex-row gap-3 justify-between items-center">
-        
-        {/* Search input */}
+      {/* Filter Controls - Added slight gray tint */}
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col sm:flex-row gap-4 justify-between items-center">
         <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -103,33 +65,29 @@ export function SystemAlertsView({ alerts, onAcknowledgeAlert }: Props) {
             placeholder="Search health events..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-9 pr-4 py-2 text-xs font-semibold outline-none focus:bg-white transition-colors"
+            className="w-full bg-white border border-gray-200 rounded-lg pl-9 pr-4 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
           />
         </div>
-
-        {/* Severity selection toggles */}
-        <div className="flex items-center gap-2 text-xs font-bold text-gray-600 w-full sm:w-auto self-start sm:self-auto">
+        <div className="flex items-center gap-2 text-xs text-gray-600">
           <SlidersHorizontal className="w-3.5 h-3.5 text-gray-400" />
           <span>Severity:</span>
           <select
             value={filterSeverity}
             onChange={e => setFilterSeverity(e.target.value)}
-            className="bg-gray-50 border border-gray-200 rounded-lg p-1.5 text-[11px] font-bold text-gray-800 outline-none cursor-pointer"
+            className="bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-xs outline-none cursor-pointer"
           >
-            <option value="all">All Severities</option>
-            <option value="critical">Critical Only</option>
-            <option value="warning">Warning Only</option>
-            <option value="info">Info Only</option>
+            <option value="all">All</option>
+            <option value="critical">Critical</option>
+            <option value="warning">Warning</option>
           </select>
         </div>
-
       </div>
 
-      {/* System alerts grid table */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-xs overflow-hidden">
-        <table className="w-full text-left border-collapse text-xs font-semibold">
+      {/* Alerts Table - Added header tint */}
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200 text-gray-450 uppercase text-[10px] tracking-wider font-extrabold select-none">
+            <tr className="bg-indigo-50/50 border-b border-indigo-100 text-indigo-800 uppercase text-[10px] tracking-wider">
               <th className="px-5 py-3">Alert Details</th>
               <th className="px-5 py-3">Value</th>
               <th className="px-5 py-3">Timestamp</th>
@@ -138,66 +96,42 @@ export function SystemAlertsView({ alerts, onAcknowledgeAlert }: Props) {
               <th className="px-5 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 font-semibold text-gray-700">
-            {filtered.map(alert => {
-              return (
-                <tr key={alert.id} className="hover:bg-gray-50">
-                  <td className="px-5 py-4 max-w-sm">
-                    <div className="font-extrabold text-gray-900 leading-snug">{alert.alertName}</div>
-                    <div className="text-[10px] text-gray-450 mt-0.5 leading-normal">{alert.description}</div>
-                  </td>
-                  <td className="px-5 py-4 font-mono text-gray-900 text-[11px]">
-                    {alert.value}
-                  </td>
-                  <td className="px-5 py-4 text-gray-400 font-bold text-[10px]">
-                    {new Date(alert.timestamp).toLocaleString()}
-                  </td>
-                  <td className="px-5 py-4">
-                    <span className={`text-[9px] uppercase font-black px-2 py-0.5 rounded border ${
-                      alert.severity === "critical"
-                        ? "bg-rose-50 border-rose-200 text-rose-700"
-                        : alert.severity === "warning"
-                        ? "bg-orange-50 border-orange-200 text-orange-700"
-                        : "bg-indigo-50 border-indigo-200 text-indigo-700"
-                    }`}>
-                      {alert.severity}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4">
-                    <span className={`inline-flex items-center gap-1 text-[10px] font-bold ${
-                      alert.acknowledged ? "text-emerald-600" : "text-amber-600 animate-pulse"
-                    }`}>
-                      {alert.acknowledged ? "Resolved" : "Active Alert"}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4 text-right">
-                    {!alert.acknowledged ? (
-                      <button
-                        onClick={() => onAcknowledgeAlert(alert.id)}
-                        className="px-2.5 py-1 bg-white border border-gray-250 hover:bg-gray-50 text-[10px] font-bold text-gray-700 rounded-lg cursor-pointer transition-all shadow-2xs"
-                      >
-                        Acknowledge & Close
-                      </button>
-                    ) : (
-                      <span className="text-[10px] text-gray-400 font-bold flex items-center justify-end gap-1 select-none">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Closed
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-            {filtered.length === 0 && (
-              <tr>
-                <td colSpan={6} className="p-8 text-center text-gray-450 font-bold">
-                  No system health alerts found matching the parameters.
+          <tbody className="divide-y divide-gray-100 text-gray-700">
+            {filtered.map(alert => (
+              <tr key={alert.id} className="hover:bg-indigo-50/20 transition-colors">
+                <td className="px-5 py-4">
+                  <div className="font-semibold text-gray-900">{alert.alertName}</div>
+                  <div className="text-[10px] text-gray-500 mt-0.5">{alert.description}</div>
+                </td>
+                <td className="px-5 py-4 font-mono text-indigo-700">{alert.value}</td>
+                <td className="px-5 py-4 text-gray-400">{new Date(alert.timestamp).toLocaleString()}</td>
+                <td className="px-5 py-4">
+                  <span className={`text-[9px] uppercase font-semibold px-2 py-0.5 rounded border ${
+                    alert.severity === "critical" ? "bg-rose-50 border-rose-100 text-rose-700" : 
+                    alert.severity === "warning" ? "bg-amber-50 border-amber-100 text-amber-700" : "bg-indigo-50 border-indigo-100 text-indigo-700"
+                  }`}>
+                    {alert.severity}
+                  </span>
+                </td>
+                <td className="px-5 py-4">
+                  <span className={`text-[10px] font-semibold ${alert.acknowledged ? "text-emerald-600" : "text-amber-600"}`}>
+                    {alert.acknowledged ? "Resolved" : "Active"}
+                  </span>
+                </td>
+                <td className="px-5 py-4 text-right">
+                  {!alert.acknowledged ? (
+                    <button onClick={() => onAcknowledgeAlert(alert.id)} className="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-[10px] font-semibold text-gray-700 rounded-lg shadow-sm transition-all">
+                      Acknowledge
+                    </button>
+                  ) : (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 ml-auto" />
+                  )}
                 </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
       </div>
-
     </div>
   );
 }

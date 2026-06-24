@@ -5,14 +5,23 @@ export function AllOrganizationsTable({ hook }: { hook: any }) {
   const { filteredOrgs, filters, actions, setActiveOrgId } = hook;
 
   return (
-    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">All Organizations</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage and monitor all tenant organizations on the platform.</p>
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-medium animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Globe className="w-5 h-5 text-indigo-600" />
+            All Organizations
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Manage and monitor all tenant organizations on the platform.
+          </p>
+        </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-xs flex flex-wrap items-center gap-4">
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
+        {/* Filters Header Container */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="relative flex items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 flex-1 min-w-[200px]">
           <Search className="w-4 h-4 text-gray-400 mr-2" />
           <input
@@ -60,10 +69,10 @@ export function AllOrganizationsTable({ hook }: { hook: any }) {
             <option value="Media & Entertainment">Media & Entertainment</option>
           </select>
         </div>
-      </div>
+        </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
+      {/* Table Container */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -140,6 +149,7 @@ export function AllOrganizationsTable({ hook }: { hook: any }) {
             </tbody>
           </table>
         </div>
+      </div>
       </div>
     </div>
   );

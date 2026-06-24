@@ -3,18 +3,21 @@ import { Download, UploadCloud } from "lucide-react";
 
 export function ImportExportUsers() {
   return (
-    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-medium animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Download className="w-5 h-5 text-indigo-600" /> Import / Export
-            Users
-          </h2>
-          <p className="text-xs text-gray-500">
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Download className="w-5 h-5 text-indigo-600" />
+            Import / Export Users
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
             Bulk manage users via CSV file transfers.
           </p>
         </div>
       </div>
+
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-xs flex flex-col items-center justify-center text-center space-y-4">
@@ -49,6 +52,7 @@ export function ImportExportUsers() {
             </button>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -52,7 +52,7 @@ export function PlanForm({ plan, isEditing, onSave, onClose }: PlanFormProps) {
 
   return (
     <div
-      className="fixed inset-0 bg-gray-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-gray-900/40 backdrop-blur-xs flex items-center  justify-center z-50 p-4"
       onClick={onClose}
     >
       <div
@@ -60,7 +60,7 @@ export function PlanForm({ plan, isEditing, onSave, onClose }: PlanFormProps) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+        <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between font-semibold">
           <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
             <Package className="w-4 h-4 text-indigo-600" />
             {isEditing ? `Edit Plan • ${plan?.name}` : "Create New Plan"}

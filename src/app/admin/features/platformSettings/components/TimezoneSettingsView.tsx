@@ -1,10 +1,10 @@
 /**
  * @license
- * SPDX-License-Identifier: Apache-2.5
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 import React from "react";
-import { Clock } from "lucide-react";
+import { Clock, Globe } from "lucide-react";
 import { SystemConfig } from "../types/platformSettings.types";
 
 interface Props {
@@ -13,102 +13,89 @@ interface Props {
 }
 
 export function TimezoneSettingsView({ config, setConfig }: Props) {
+  const updateTZ = (key: keyof SystemConfig["timezone"], value: any) => {
+    setConfig(prev => ({ ...prev, timezone: { ...prev.timezone, [key]: value } }));
+  };
+
+  const inputClass = "w-full text-sm p-2.5 border border-gray-200 rounded-lg outline-none focus:border-indigo-400 transition-colors";
+  const labelClass = "text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block";
+
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-4 font-semibold text-xs text-gray-700">
-          
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left: Configuration Form */}
+        <div className="space-y-6">
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Global Default Timezone</label>
-            <select
-              value={config.timezone.defaultTimezone}
-              onChange={e => setConfig(p => ({ ...p, timezone: { ...p.timezone, defaultTimezone: e.target.value } }))}
-              className="w-full text-xs font-semibold p-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white cursor-pointer"
+            <label className={labelClass}>Global Default Timezone</label>
+            <select 
+              value={config.timezone.defaultTimezone} 
+              onChange={e => updateTZ("defaultTimezone", e.target.value)} 
+              className={inputClass}
             >
-              <option value="Asia/Kolkata">Asia/Kolkata (IST - UTC+5:30)</option>
-              <option value="Asia/Dubai">Asia/Dubai (GST - UTC+4:00)</option>
-              <option value="America/New_York">America/New_York (EST - UTC-5:00)</option>
-              <option value="Europe/London">Europe/London (GMT/BST - UTC+0:00/1:00)</option>
+              <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+              <option value="Asia/Dubai">Asia/Dubai (GST)</option>
+              <option value="America/New_York">America/New_York (EST)</option>
+              <option value="Europe/London">Europe/London (GMT)</option>
             </select>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500 block">Supported Timezones Pool</label>
-            <div className="space-y-1 border border-gray-200 p-3 rounded-xl max-h-40 overflow-y-auto">
-              {["Asia/Kolkata", "Asia/Dubai", "America/New_York", "Europe/London"].map(tz => {
-                const isChecked = config.timezone.supportedTimezones.includes(tz);
-                return (
-                  <label key={tz} className="flex items-center gap-2 py-1 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={() => {
-                        const next = isChecked
-                          ? config.timezone.supportedTimezones.filter(t => t !== tz)
-                          : [...config.timezone.supportedTimezones, tz];
-                        if (next.length > 0) {
-                          setConfig(p => ({ ...p, timezone: { ...p.timezone, supportedTimezones: next } }));
-                        }
-                      }}
-                      className="w-4 h-4 rounded accent-indigo-650 cursor-pointer"
-                    />
-                    <span className="font-mono text-[11px] font-bold text-gray-800">{tz}</span>
-                  </label>
-                );
-              })}
+          <div className="space-y-2">
+            <label className={labelClass}>Supported Timezone Pool</label>
+            <div className="grid grid-cols-2 gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 max-h-40 overflow-y-auto">
+              {["Asia/Kolkata", "Asia/Dubai", "America/New_York", "Europe/London"].map(tz => (
+                <label key={tz} className="flex items-center gap-2 text-sm font-medium text-gray-700 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={config.timezone.supportedTimezones.includes(tz)}
+                    onChange={(e) => {
+                      const next = e.target.checked 
+                        ? [...config.timezone.supportedTimezones, tz]
+                        : config.timezone.supportedTimezones.filter(t => t !== tz);
+                      updateTZ("supportedTimezones", next);
+                    }}
+                    className="rounded text-indigo-600 focus:ring-indigo-500"
+                  />
+                  {tz}
+                </label>
+              ))}
             </div>
           </div>
 
-          <div className="space-y-1.5 pt-2">
-            <label className="flex items-center gap-2 text-xs font-bold text-gray-700 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={config.timezone.useLocalTimeForPunches}
-                onChange={e => setConfig(p => ({ ...p, timezone: { ...p.timezone, useLocalTimeForPunches: e.target.checked } }))}
-                className="w-4 h-4 rounded accent-indigo-650"
-              />
-              Use Local Device Timezone for Attendance Punch-Ins
-            </label>
-            <p className="text-[10px] text-gray-400 font-semibold pl-6">
-              If unchecked, attendance timestamp recordings are enforced strictly to the selected organization's default timezone center (prevents timezone spoofing).
-            </p>
-          </div>
-
+          <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 cursor-pointer">
+            <input 
+              type="checkbox" 
+              checked={config.timezone.useLocalTimeForPunches} 
+              onChange={e => updateTZ("useLocalTimeForPunches", e.target.checked)} 
+              className="rounded text-indigo-600 focus:ring-indigo-500" 
+            />
+            Use Local Device Timezone for Attendance
+          </label>
         </div>
 
-        <div className="bg-indigo-50/20 rounded-2xl p-5 border border-indigo-100 flex flex-col justify-between space-y-4">
-          <div>
-            <h4 className="text-xs font-extrabold text-indigo-955 uppercase tracking-wide flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-indigo-650" />
-              Time Synchronization Audit
-            </h4>
-            <p className="text-[10px] text-indigo-500 font-semibold mt-1">
-              Evaluates how local punch time records are aligned for audit checks:
-            </p>
+        {/* Right: Time Synchronization Audit */}
+        <div className="bg-indigo-50/30 border border-indigo-100 rounded-2xl p-6 space-y-6">
+          <h4 className="text-sm font-semibold text-indigo-900 flex items-center gap-2">
+            <Clock className="w-4 h-4" /> Time Synchronization Audit
+          </h4>
+
+          <div className="space-y-3 bg-white p-5 rounded-xl border border-indigo-100 shadow-sm">
+            {[
+              { label: "Platform Default", val: config.timezone.defaultTimezone },
+              { label: "UTC Server Reference", val: new Date().toUTCString().slice(17, 25) + " UTC" },
+              { label: "Simulated Local Display", val: new Date().toLocaleTimeString('en-US', { timeZone: config.timezone.defaultTimezone }) }
+            ].map(item => (
+              <div key={item.label} className="flex justify-between items-center text-xs border-b border-gray-50 pb-2 last:border-0 last:pb-0">
+                <span className="font-semibold text-gray-400 uppercase">{item.label}</span>
+                <span className="font-semibold text-indigo-700 font-mono">{item.val}</span>
+              </div>
+            ))}
           </div>
 
-          <div className="space-y-3 font-semibold text-xs bg-white border border-indigo-100/60 p-4 rounded-xl shadow-xs">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400 font-bold text-[10px] uppercase">Platform Timezone Default</span>
-              <span className="text-indigo-900 font-extrabold">{config.timezone.defaultTimezone}</span>
-            </div>
-            <hr className="border-gray-100" />
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400 font-bold text-[10px] uppercase">UTC Server Reference</span>
-              <span className="font-mono text-indigo-900">{new Date().toUTCString().slice(17, 25)} UTC</span>
-            </div>
-            <hr className="border-gray-100" />
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400 font-bold text-[10px] uppercase">Simulated Local Display</span>
-              <span className="font-mono text-indigo-900">{new Date().toLocaleTimeString('en-US', { timeZone: config.timezone.defaultTimezone })}</span>
-            </div>
-          </div>
-
-          <div className="p-3.5 bg-indigo-50 border border-indigo-100 rounded-xl space-y-1.5 text-[10px] text-indigo-850">
-            <strong>Compliance Benefit:</strong> Enforcing strict organization boundary timezones prevents remote workers from cheating attendance stamps by changing their laptop clocks.
+          <div className="p-4 bg-white rounded-xl border border-indigo-100 text-xs font-medium text-indigo-900 leading-relaxed">
+            <Globe className="w-4 h-4 inline-block mr-2 text-indigo-500" />
+            <strong>Compliance Note:</strong> Strictly enforcing server-side timezones prevents attendance spoofing by client-side clock manipulation.
           </div>
         </div>
-
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { OrganizationService } from "../services/organization.service";
-import { Building2, Mail, Phone, MapPin, CheckCircle2, Package, Shield, Settings, ChevronRight } from "lucide-react";
+import { Building2, Mail, Phone, MapPin, CheckCircle2, Package, Shield, Settings, ChevronRight, Plus } from "lucide-react";
 
 export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
   const [step, setStep] = useState(1);
@@ -65,13 +65,23 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-200">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Add New Organization</h1>
-        <p className="text-sm text-gray-500 mt-1">Provision a new tenant environment and administrator account.</p>
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-medium animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Plus className="w-5 h-5 text-indigo-600" />
+            Add New Organization
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Provision a new tenant environment and administrator account.
+          </p>
+        </div>
       </div>
 
-      <div className="flex gap-8">
+      {/* Main Content Area */}
+      <div className="p-6 flex-1 overflow-y-auto">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-8">
         {/* Progress Sidebar */}
         <div className="w-64 flex-shrink-0">
           <div className="relative border-l-2 border-gray-100 ml-3 space-y-8 py-2">
@@ -254,6 +264,7 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
               </button>
             )}
           </div>
+        </div>
         </div>
       </div>
     </div>

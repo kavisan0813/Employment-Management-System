@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PlatformUsersTable } from "./components/PlatformUsersTable";
+import PlatformUsersTable from "./components/PlatformUsersTable";
 import { SuperAdminsTable } from "./components/SuperAdminsTable";
 import { OrgAdminsTable } from "./components/OrgAdminsTable";
 import { RoleManagementView } from "./components/RoleManagementView";
@@ -78,22 +78,22 @@ export default function UserManagementView() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between pb-5 border-b border-gray-200 gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
-            <Users className="w-6 h-6 text-indigo-600" />
+            <Users className="w-6 h-6 text-indigo-600 font-semibold" />
             User Management
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
             Manage system-wide platform users, super administrators, organization admins, roles, active sessions, and access control settings.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-750 border border-indigo-100 self-start md:self-auto shadow-xs">
-          <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse font-semibold" />
           Access Registry Connected
         </div>
       </div>
 
       {/* Top Tab Navigation Bar */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-xs">
-        <div className="flex items-center gap-0.5 p-1 overflow-x-auto">
+     <div className="w-full overflow-hidden">
+  <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -116,26 +116,8 @@ export default function UserManagementView() {
       </div>
 
       {/* Form Workspace View */}
-      <div className="space-y-6">
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-          
-          {/* Header of Active Tab */}
-          <div className="px-6 py-4 bg-gray-50/50 border-b border-gray-200 flex justify-between items-center">
-            <div>
-              <h2 className="text-sm font-extrabold text-gray-900 uppercase tracking-wide">
-                {TABS.find(i => i.id === activeTab)?.label}
-              </h2>
-              <p className="text-[11px] text-gray-500 font-medium">
-                Detailed registry control panel for platform {activeTab} operations.
-              </p>
-            </div>
-          </div>
-
-          {/* Render block */}
-          <div className="p-6">
-            {renderContent()}
-          </div>
-        </div>
+      <div className="pt-2">
+        {renderContent()}
       </div>
     </div>
   );

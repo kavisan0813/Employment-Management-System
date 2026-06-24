@@ -387,25 +387,7 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
         </div>
       </div>
 
-      {/* Subscription Expiry Alerts */}
-      <div>
-        <div style={{ fontSize: "10px", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--muted-foreground, #B4B2A9)", marginBottom: "8px" }}>
-          Expiry alerts
-        </div>
-        {subscriptions.filter(s => s.status === "Active" && s.renewalDate && (new Date(s.renewalDate).getTime() - Date.now()) < 30 * 24 * 60 * 60 * 1000).slice(0, 3).map(sub => {
-          const daysLeft = Math.max(1, Math.ceil((new Date(sub.renewalDate!).getTime() - Date.now()) / (24 * 60 * 60 * 1000)));
-          return (
-            <div className="alert-bar" key={sub.id}>
-              <AlertTriangle className="w-3.5 h-3.5" />
-              <span className="at">{sub.organization} — subscription expires {daysLeft === 1 ? 'tomorrow' : `in ${daysLeft} days`}</span>
-              <span className="ad">{daysLeft} {daysLeft === 1 ? 'day' : 'days'}</span>
-            </div>
-          );
-        })}
-        {subscriptions.filter(s => s.status === "Active" && s.renewalDate && (new Date(s.renewalDate).getTime() - Date.now()) < 30 * 24 * 60 * 60 * 1000).length === 0 && (
-          <div className="text-xs text-gray-400 py-2 italic">No immediate subscription expiries.</div>
-        )}
-      </div>
+   
 
       {/* Two Col Layout: Recent Activity & Top Orgs */}
       <div className="two-col">

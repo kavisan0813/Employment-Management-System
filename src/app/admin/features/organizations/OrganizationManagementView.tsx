@@ -8,7 +8,8 @@ import {
   Database, 
   Receipt,
   ShieldAlert,
-  ChevronRight
+  ChevronRight,
+  ArrowLeft
 } from "lucide-react";
 import { useOrganizations } from "./hooks/useOrganizations";
 
@@ -39,19 +40,19 @@ export function OrganizationManagementView() {
       // Org Context
       switch (activeOrgTab) {
         case "profile":
-          return <OrganizationProfile org={hook.activeOrg!} />;
+          return <OrganizationProfile org={hook.activeOrg!} hook={hook} />;
         case "status":
           return <OrganizationStatus org={hook.activeOrg!} hook={hook} />;
         case "settings":
-          return <OrganizationSettings org={hook.activeOrg!} />;
+          return <OrganizationSettings org={hook.activeOrg!} hook={hook} />;
         case "logs":
           return <OrgActivityLogs org={hook.activeOrg!} />;
         case "storage":
           return <StorageUsage org={hook.activeOrg!} />;
         case "billing":
-          return <BillingHistory org={hook.activeOrg!} />;
+          return <BillingHistory org={hook.activeOrg!} hook={hook} />;
         default:
-          return <OrganizationProfile org={hook.activeOrg!} />;
+          return <OrganizationProfile org={hook.activeOrg!} hook={hook} />;
       }
     } else {
       // Global Context
@@ -69,13 +70,34 @@ export function OrganizationManagementView() {
   };
 
   return (
-    <div className="space-y-4 max-w-7xl mx-auto p-4 pb-32">
-      {/* Context Selector & Tab Navigation Top Bar */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-xs p-2 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        
+    <div className="space-y-6 max-w-7xl mx-auto px-1.5 py-4">
+      {/* Header Profile Section */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between pb-5 border-b border-gray-200 gap-4 font-semibold">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <Building2 className="w-6 h-6 text-indigo-600 font-semibold" />
+            Organization Management
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Manage tenants, context settings, and organizational structures.
+          </p>
+        </div>
+
         {/* Context Selector Dropdown */}
         <div className="flex items-center gap-2 shrink-0">
-          <label className="text-[10px] font-bold text-gray-405 uppercase tracking-wider whitespace-nowrap">
+          {hook.activeOrgId && (
+            <button
+              onClick={() => {
+                hook.setActiveOrgId(null);
+                setActiveGlobalTab("all");
+              }}
+              className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg text-sm font-bold shadow-sm transition-colors cursor-pointer mr-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Organizations
+            </button>
+          )}
+          <label className="text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
             Context Focus:
           </label>
           <select
@@ -101,9 +123,11 @@ export function OrganizationManagementView() {
             </optgroup>
           </select>
         </div>
+      </div>
 
-        {/* Tab Navigation Buttons */}
-        <div className="flex items-center gap-0.5 overflow-x-auto flex-1 md:justify-end">
+      {/* Tab navigation */}
+      <div className="w-full overflow-hidden">
+        <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
           {!hook.activeOrgId ? (
             // Global Tabs
             <>
@@ -161,11 +185,10 @@ export function OrganizationManagementView() {
             </>
           )}
         </div>
-
       </div>
 
       {/* Active Page Content Area */}
-      <div className="bg-[#F8F9FA] rounded-xl p-6 min-h-[calc(100vh-200px)]">
+      <div className="w-full">
         {renderContent()}
       </div>
     </div>

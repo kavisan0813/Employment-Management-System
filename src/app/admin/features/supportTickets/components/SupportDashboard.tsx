@@ -1,5 +1,5 @@
 import React from "react";
-import { BarChart3, Clock, AlertTriangle, Star, ThumbsUp, Ticket } from "lucide-react";
+import { BarChart3, Clock, AlertTriangle, Star, ThumbsUp, Ticket, LayoutDashboard } from "lucide-react";
 
 export function SupportDashboard({ stats }: { stats: any }) {
   const cards = [
@@ -12,11 +12,21 @@ export function SupportDashboard({ stats }: { stats: any }) {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Support Dashboard</h1>
-        <p className="text-sm text-gray-500 mt-1">Real-time overview of support operations and customer satisfaction.</p>
+    <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-semibold animate-in fade-in zoom-in-95 duration-200">
+      {/* Navigation Header */}
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
+            <LayoutDashboard className="w-5 h-5 text-indigo-600" />
+            Support Dashboard
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 font-semibold">
+            Real-time overview of support operations and customer satisfaction.
+          </p>
+        </div>
       </div>
+
+      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {cards.map(c => (
@@ -79,7 +89,9 @@ export function SupportDashboard({ stats }: { stats: any }) {
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+      </div>
+    
   );
 }
