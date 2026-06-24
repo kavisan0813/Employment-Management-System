@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from "react";
-import { Search, Download, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import React, { useState } from "react";
+import { Search, Download, CheckCircle, XCircle, AlertCircle, X, Calendar } from "lucide-react";
 import { ExportLog } from "../types/logs.types";
 
 interface ExportLogsTableProps {
@@ -26,6 +26,8 @@ export function ExportLogsTable({
   selectedStatus, setSelectedStatus, dateRange, setDateRange, filterByDate,
 }: ExportLogsTableProps) {
   
+  const [selectedLog, setSelectedLog] = useState<ExportLog | null>(null);
+
   const filtered = logs.filter((log) => {
     const matchesSearch = log.user.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           log.module.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -33,6 +35,25 @@ export function ExportLogsTable({
     return matchesSearch && (selectedOrg === "ALL" || log.organization === selectedOrg) && 
            (selectedStatus === "ALL" || log.status === selectedStatus) && filterByDate(log.timestamp);
   });
+
+  const handleDownload = (log: ExportLog) => {
+    if (log.status !== "Success") return;
+
+    const fileName = `${log.module}_export_${new Date(log.timestamp).toISOString().slice(0,10)}.${log.format.toLowerCase()}`;
+    
+    // Simulate realistic download
+    alert(`✅ Downloading: ${fileName}`);
+    
+    // Real implementation would be:
+    // const link = document.createElement("a");
+    // link.href = `/api/exports/download/${log.id}`;
+    // link.download = fileName;
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+  };
+
+  const closeModal = () => setSelectedLog(null);
 
   return (
     <div className="space-y-6">
@@ -83,7 +104,11 @@ export function ExportLogsTable({
                 </tr>
               ) : (
                 filtered.map((log) => (
-                  <tr key={log.id} className="hover:bg-gray-50/50 transition-colors">
+                  <tr 
+                    key={log.id} 
+                    onClick={() => setSelectedLog(log)}
+                    className="hover:bg-gray-50/50 transition-colors cursor-pointer"
+                  >
                     <td className="p-4 font-mono text-xs text-gray-500">
                       {new Date(log.timestamp).toLocaleString()}
                     </td>
@@ -110,12 +135,13 @@ export function ExportLogsTable({
                         {log.status}
                       </span>
                     </td>
-                    <td className="p-4 text-right">
+                    <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
                       <button 
                         disabled={log.status !== "Success"}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-100 disabled:opacity-50"
+                        onClick={() => handleDownload(log)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Download className="w-3.5 h-3.5" /> {log.status === "Success" ? "Download" : "N/A"}
+                        <Download className="w-3.5 h-3.5" /> Download
                       </button>
                     </td>
                   </tr>
@@ -125,6 +151,83 @@ export function ExportLogsTable({
           </table>
         </div>
       </div>
+
+      {/* ====================== CENTERED MODAL ====================== */}
+      {selectedLog && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="px-8 py-6 border-b flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Download className="w-5 h-5 text-indigo-600" />
+                <h3 className="text-xl font-semibold text-gray-900">Export Details</h3>
+              </div>
+              <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-8 space-y-8">
+              <div className="bg-gray-50 p-6 rounded-2xl">
+                <div className="flex justify-between">
+                  <div>
+                    <p className="text-2xl font-semibold">{selectedLog.user}</p>
+                    <p className="text-gray-500 mt-1">{selectedLog.organization}</p>
+                  </div>
+                  <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                    selectedLog.status === "Success" ? "bg-teal-100 text-teal-700" : 
+                    selectedLog.status === "Failed" ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700"
+                  }`}>
+                    {selectedLog.status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-gray-500">Module</p>
+                  <p className="font-semibold text-lg mt-1">{selectedLog.module}</p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-gray-500">Format</p>
+                  <p className="font-semibold text-lg mt-1">{selectedLog.format}</p>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t">
+                <p className="text-xs uppercase tracking-wider text-gray-500">Export Time</p>
+                <p className="font-semibold mt-1">{new Date(selectedLog.timestamp).toLocaleString()}</p>
+              </div>
+
+              {selectedLog.ipAddress && (
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-gray-500">IP Address</p>
+                  <p className="font-mono mt-1">{selectedLog.ipAddress}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="px-8 py-6 border-t bg-gray-50 flex justify-end gap-3">
+              <button
+                onClick={closeModal}
+                className="px-6 py-3 text-gray-700 font-semibold hover:bg-gray-100 rounded-2xl transition-colors"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => handleDownload(selectedLog)}
+                disabled={selectedLog.status !== "Success"}
+                className="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-2xl hover:bg-indigo-700 flex items-center gap-2 disabled:opacity-50"
+              >
+                <Download className="w-4 h-4" />
+                Download File
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

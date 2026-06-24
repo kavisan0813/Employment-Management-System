@@ -16,7 +16,6 @@ import { AuditTrailTable } from "./components/AuditTrailTable";
 import { SecurityEventsTable } from "./components/SecurityEventsTable";
 import { ErrorLogsTable } from "./components/ErrorLogsTable";
 import { ExportLogsTable } from "./components/ExportLogsTable";
-import { LogRetentionSettings } from "./components/LogRetentionSettings";
 import { ApiLogsTable } from "./components/ApiLogsTable";
 // ... (Your other component imports remain the same)
 
@@ -53,7 +52,6 @@ export default function AuditLogsView() {
     { id: "security", label: "Security Events", icon: ShieldAlert },
     { id: "error", label: "Error Logs", icon: AlertTriangle },
     { id: "export", label: "Export Logs", icon: Download },
-    { id: "settings", label: "Log Retention", icon: Settings2 },
   ];
 
   return (
@@ -133,8 +131,7 @@ export default function AuditLogsView() {
             {activeTab === "security" && <SecurityEventsTable events={securityEvents} organizations={organizations} searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedOrg={selectedOrg} setSelectedOrg={setSelectedOrg} selectedSeverity={selectedSeverity} setSelectedSeverity={setSelectedSeverity} selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus} dateRange={dateRange} setDateRange={setDateRange} filterByDate={filterByDate} resolveSecurityEvent={resolveSecurityEvent} />}
             {activeTab === "error" && <ErrorLogsTable logs={errorLogs} searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedSeverity={selectedSeverity} setSelectedSeverity={setSelectedSeverity} dateRange={dateRange} setDateRange={setDateRange} filterByDate={filterByDate} />}
             {activeTab === "export" && <ExportLogsTable logs={exportLogs} organizations={organizations} searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedOrg={selectedOrg} setSelectedOrg={setSelectedOrg} selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus} dateRange={dateRange} setDateRange={setDateRange} filterByDate={filterByDate} />}
-            {activeTab === "settings" && <LogRetentionSettings policy={retentionPolicy} onSavePolicy={updateRetentionPolicy} />}
-              </div>
+           </div>
             )}
           </div>
         </div>

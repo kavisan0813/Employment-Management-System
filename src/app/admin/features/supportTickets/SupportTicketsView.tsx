@@ -123,12 +123,12 @@ export default function SupportTicketsView() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between pb-5 border-b border-gray-200 gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-gray-950 flex items-center gap-2">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-950 flex items-center gap-2">
             <Headphones className="w-6 h-6 text-indigo-600" />
             Support & Tickets
           </h1>
 
-          <p className="text-xs text-gray-500 font-medium mt-1">
+          <p className="text-xs text-gray-500 font-medium mt-1 font-semibold">
             Super Admin Help Desk CRM. Manage support tickets, track issues,
             handle feature requests, and monitor SLA policies.
           </p>

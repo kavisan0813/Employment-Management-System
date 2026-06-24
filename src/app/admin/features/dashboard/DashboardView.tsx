@@ -116,16 +116,16 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
   return (
     <div className="space-y-6">
       {/* Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-gray-200/80 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center font-semibold sm:justify-between pb-4 border-b border-gray-200/80 gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-500">Live heartbeat metrics of your multi-tenant environment.</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900 font-semibold">Dashboard</h1>
+          <p className="text-sm text-gray-500 font-semibold">Live heartbeat metrics of your multi-tenant environment.</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="inline-flex rounded-lg border border-gray-200 p-1 bg-gray-50 text-xs font-medium">
             <button
               onClick={() => setSelectedRange("7d")}
-              className={`px-3 py-1.5 rounded-md transition-all ${selectedRange === "7d" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-900"}`}
+              className={`px-3 py-1.5 font-semibold rounded-md transition-all ${selectedRange === "7d" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-900"}`}
             >
               7 Days
             </button>
@@ -152,7 +152,7 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
               a.download = `ems-platform-summary-${selectedRange}.csv`;
               a.click();
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
+            className="inline-flex items-center font-semibold gap-1.5 px-3 py-1.5 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
           >
             Export Snapshot
           </button>
@@ -160,8 +160,8 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
       </div>
 
       {/* KPI Grid 1 */}
-      <div className="kpi-grid">
-        <div className="kpi-card">
+      <div className="kpi-grid font-semibold">
+        <div className="kpi-card ">
           <div className="kpi-icon ki-amber">
             <Building2 className="w-3.5 h-3.5" />
           </div>
@@ -198,7 +198,7 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
       </div>
 
       {/* KPI Grid 2 */}
-      <div className="kpi-grid">
+      <div className="kpi-grid font-semibold">
         <div className="kpi-card">
           <div className="kpi-icon ki-green">
             <Building2 className="w-3.5 h-3.5" />
@@ -241,7 +241,7 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
 
       {/* Two Col Layout: Stats */}
       <div className="two-col">
-        <div className="panel">
+        <div className="panel font-semibold">
           <div className="ptitle">
             Organization statistics 
             <button className="pmore" onClick={() => handleNavigate("organizations")}>View all →</button>
@@ -268,8 +268,8 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
           </div>
         </div>
 
-        <div className="panel">
-          <div className="ptitle">
+        <div className="panel font-semibold">
+          <div className="ptitle font-semibold">
             Employee statistics 
             <button className="pmore" onClick={() => handleNavigate("organizations")}>View all →</button>
           </div>
@@ -299,7 +299,7 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
       </div>
 
       {/* Three Col Layout: Financials & Quick Actions */}
-      <div className="three-col">
+      <div className="three-col font-semibold">
         <div className="panel">
           <div className="ptitle">
             Revenue overview 
@@ -356,7 +356,7 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
           </div>
         </div>
 
-        <div className="panel">
+        <div className="panel font-semibold">
           <div className="ptitle">Quick actions</div>
           <div className="qgrid">
             <button className="qbtn" onClick={() => handleNavigate("org-create")}>
@@ -390,8 +390,8 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
    
 
       {/* Two Col Layout: Recent Activity & Top Orgs */}
-      <div className="two-col">
-        <div className="panel">
+      <div className="two-col font-semibold">
+        <div className="panel font-semibold">
           <div className="ptitle">
             Recent activity 
             <button className="pmore" onClick={() => handleNavigate("audit")}>Full log →</button>
@@ -416,8 +416,8 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
           })}
         </div>
 
-        <div className="panel">
-          <div className="ptitle">
+        <div className="panel font-semibold">
+          <div className="ptitle font-semibold">
             Top organizations 
             <button className="pmore" onClick={() => handleNavigate("organizations")}>View all →</button>
           </div>

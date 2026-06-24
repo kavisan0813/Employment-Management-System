@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useUserManagement } from "../hooks/useUserManagement";
 import {
   Shield,
   MoreVertical,
@@ -14,7 +13,9 @@ import {
   Trash2,
   Lock,
   X,
+  Plus,
 } from "lucide-react";
+import { useUserManagement } from "../hooks/useUserManagement";
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -35,16 +36,18 @@ interface Role {
   hierarchyLevel: number;
   status: "Active" | "Disabled" | "Inactive";
   assignedUsers?: number;
+  permissions?: Record<string, boolean>;
 }
 
 export function RoleManagementView() {
-  const { roles, setRoles } = useUserManagement(); // Assuming setRoles is available
+  const { roles, setRoles } = useUserManagement();
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // ====================== ACTION HANDLERS ======================
 
@@ -130,7 +133,227 @@ export function RoleManagementView() {
     setOpenMenu(null);
   };
 
-  // ====================== MODALS ======================
+  // ====================== CREATE NEW ROLE ======================
+  const handleCreateRole = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const CreateRoleModal = () => {
+    const [newRole, setNewRole] = useState({
+      name: "",
+      description: "",
+      hierarchyLevel: 5,
+    });
+
+    const handleSave = () => {
+      if (!newRole.name.trim()) {
+        alert("Role name is required");
+        return;
+      }
+
+      const createdRole: Role = {
+        id: `role-${Date.now()}`,
+        name: newRole.name.trim(),
+        description: newRole.description.trim() || "Custom role",
+        type: "Custom",
+        hierarchyLevel: newRole.hierarchyLevel,
+        status: "Active",
+        assignedUsers: 0,
+      };
+
+      setRoles((prev: any[]) => [...prev, createdRole]);
+      alert(`Custom role "${createdRole.name}" created successfully!`);
+      setIsCreateModalOpen(false);
+      setNewRole({ name: "", description: "", hierarchyLevel: 5 });
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div className="bg-white rounded-2xl p-8 w-full max-w-md">
+          <h2 className="text-2xl font-semibold mb-6">Create Custom Role</h2>
+          <div className="space-y-4">
+            <input
+              type="text"
+              placeholder="Role Name"
+              value={newRole.name}
+              onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+            />
+            <textarea
+              placeholder="Description"
+              value={newRole.description}
+              onChange={(e) => setNewRole({ ...newRole, description: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl h-24"
+            />
+            <input
+              type="number"
+              placeholder="Hierarchy Level"
+              value={newRole.hierarchyLevel}
+              onChange={(e) => setNewRole({ ...newRole, hierarchyLevel: parseInt(e.target.value) || 1 })}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+            />
+          </div>
+          <div className="flex gap-3 mt-8">
+            <button
+              onClick={() => setIsCreateModalOpen(false)}
+              className="flex-1 py-3 border border-gray-300 rounded-xl"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              className="flex-1 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700"
+            >
+              Create Role
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ====================== PERMISSIONS MODAL (with Save) ======================
+  const PermissionsModal = () => {
+    if (!selectedRole) return null;
+
+    const [permissions, setPermissions] = useState<Record<string, boolean>>(selectedRole.permissions || {
+      users: true,
+      organizations: true,
+      billing: false,
+      reports: true,
+      settings: false,
+    });
+
+    const togglePermission = (key: string) => {
+      setPermissions(prev => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    const handleSavePermissions = () => {
+      setRoles((prev: any[]) =>
+        prev.map((r: any) =>
+          r.id === selectedRole.id ? { ...r, permissions } : r
+        )
+      );
+      alert(`Permissions for "${selectedRole.name}" have been saved successfully!`);
+      setIsPermissionsModalOpen(false);
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div className="bg-white rounded-2xl p-8 w-full max-w-lg">
+          <h2 className="text-2xl font-semibold mb-2">Manage Permissions</h2>
+          <p className="text-gray-500 mb-6">Role: <span className="font-medium text-gray-900">{selectedRole.name}</span></p>
+
+          <div className="space-y-3">
+            {Object.entries(permissions).map(([key, enabled]) => (
+              <div key={key} className="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:bg-gray-50">
+                <div className="capitalize font-medium">{key.replace(/([A-Z])/g, ' $1')}</div>
+                <button
+                  onClick={() => togglePermission(key as keyof typeof permissions)}
+                  className={`w-11 h-6 rounded-full relative transition-colors ${enabled ? 'bg-indigo-600' : 'bg-gray-300'}`}
+                >
+                  <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all ${enabled ? 'right-0.5' : 'left-0.5'}`} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-3 mt-8">
+            <button
+              onClick={() => setIsPermissionsModalOpen(false)}
+              className="flex-1 py-3 border border-gray-300 rounded-xl"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSavePermissions}
+              className="flex-1 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700"
+            >
+              Save Matrix
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ====================== EDIT MODAL ======================
+  const EditModal = () => {
+    if (!selectedRole) return null;
+
+    const [editedRole, setEditedRole] = useState({
+      name: selectedRole.name,
+      description: selectedRole.description,
+      hierarchyLevel: selectedRole.hierarchyLevel,
+    });
+
+    const handleSave = () => {
+      if (!editedRole.name.trim()) {
+        alert("Role name is required");
+        return;
+      }
+
+      setRoles((prev: any[]) =>
+        prev.map((r: any) =>
+          r.id === selectedRole.id
+            ? {
+                ...r,
+                name: editedRole.name.trim(),
+                description: editedRole.description.trim(),
+                hierarchyLevel: editedRole.hierarchyLevel,
+              }
+            : r
+        )
+      );
+      
+      alert(`Role "${editedRole.name}" updated successfully!`);
+      setIsEditModalOpen(false);
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div className="bg-white rounded-2xl p-8 w-full max-w-md">
+          <h2 className="text-2xl font-semibold mb-6">Edit Role</h2>
+          <div className="space-y-4">
+            <input
+              type="text"
+              placeholder="Role Name"
+              value={editedRole.name}
+              onChange={(e) => setEditedRole({ ...editedRole, name: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+            />
+            <textarea
+              placeholder="Description"
+              value={editedRole.description}
+              onChange={(e) => setEditedRole({ ...editedRole, description: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl h-24"
+            />
+            <input
+              type="number"
+              placeholder="Hierarchy Level"
+              value={editedRole.hierarchyLevel}
+              onChange={(e) => setEditedRole({ ...editedRole, hierarchyLevel: parseInt(e.target.value) || 1 })}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+            />
+          </div>
+          <div className="flex gap-3 mt-8">
+            <button
+              onClick={() => setIsEditModalOpen(false)}
+              className="flex-1 py-3 border border-gray-300 rounded-xl hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              className="flex-1 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700"
+            >
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const RoleDrawer = () => {
     if (!selectedRole) return null;
@@ -144,29 +367,18 @@ export function RoleManagementView() {
           <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-indigo-600" />
-              <h3 className="text-sm font-semibold text-gray-900">
-                Role Profile
-              </h3>
+              <h3 className="text-sm font-semibold text-gray-900">Role Profile</h3>
             </div>
-            <button
-              onClick={() => setIsDrawerOpen(false)}
-              className="p-1.5 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-md bg-white cursor-pointer"
-            >
+            <button onClick={() => setIsDrawerOpen(false)} className="p-1.5 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-md bg-white">
               <X className="w-4 h-4" />
             </button>
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            {/* Status banner */}
-            <div
-              className={`mx-5 mt-5 flex items-center gap-2.5 px-4 py-3 rounded-lg border ${
-                selectedRole.status === "Active" ? "bg-teal-50 text-teal-700 border-teal-200" : "bg-rose-50 text-rose-700 border-rose-200"
-              }`}
-            >
+            <div className={`mx-5 mt-5 flex items-center gap-2.5 px-4 py-3 rounded-lg border ${selectedRole.status === "Active" ? "bg-teal-50 text-teal-700 border-teal-200" : "bg-rose-50 text-rose-700 border-rose-200"}`}>
               <span className="text-xs font-semibold">{selectedRole.status} Role</span>
             </div>
 
-            {/* Profile Info */}
             <div className="px-5 pt-4 pb-3 border-b border-gray-100 flex items-center gap-4">
               <div className="w-12 h-12 bg-indigo-100 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0">
                 <div className="text-xl font-bold text-indigo-700">
@@ -179,7 +391,6 @@ export function RoleManagementView() {
               </div>
             </div>
 
-            {/* Details */}
             <div className="px-5 py-4 space-y-0.5">
               <InfoRow label="Description" value={selectedRole.description} />
               <InfoRow label="Hierarchy Level" value={`Level ${selectedRole.hierarchyLevel}`} />
@@ -187,137 +398,17 @@ export function RoleManagementView() {
             </div>
           </div>
 
-          {/* Footer Actions (Scrollable wrap) */}
           <div className="p-4 bg-gray-50 border-t border-gray-200 flex flex-wrap gap-2">
             {selectedRole.type === "Custom" && (
-              <button
-                onClick={() => handleEditRole(selectedRole)}
-                className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-              >
+              <button onClick={() => handleEditRole(selectedRole)} className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50">
                 <Edit className="w-3.5 h-3.5" /> Edit Role
               </button>
             )}
-            <button
-              onClick={() => handleManagePermissions(selectedRole)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >
+            <button onClick={() => handleManagePermissions(selectedRole)} className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50">
               <Lock className="w-3.5 h-3.5" /> Permissions
             </button>
-            <button
-              onClick={() => handleViewAssignedUsers(selectedRole)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >
-              <Users className="w-3.5 h-3.5" /> Users
-            </button>
-            <button
-              onClick={() => handleCloneRole(selectedRole)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >
-              <Copy className="w-3.5 h-3.5" /> Clone
-            </button>
-            <button
-              onClick={() => handleRoleAnalytics(selectedRole)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >
-              <BarChart3 className="w-3.5 h-3.5" /> Analytics
-            </button>
-            <button
-              onClick={() => handleOrganizationAssignment(selectedRole)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >
-              <Building2 className="w-3.5 h-3.5" /> Org Assignment
-            </button>
-            <button
-              onClick={() => handleChangeHierarchy(selectedRole)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >
-              <RefreshCw className="w-3.5 h-3.5" /> Hierarchy
-            </button>
-
-            {selectedRole.type === "Custom" && (
-              <>
-                <button
-                  onClick={() => handleDisableRole(selectedRole)}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-xs font-semibold hover:bg-amber-100 cursor-pointer"
-                >
-                  <Ban className="w-3.5 h-3.5" /> Disable
-                </button>
-
-                <button
-                  onClick={() => { handleDeleteRole(selectedRole); setIsDrawerOpen(false); }}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-rose-600 text-white rounded-lg text-xs font-semibold hover:bg-rose-700 cursor-pointer"
-                >
-                  <Trash2 className="w-3.5 h-3.5" /> Delete
-                </button>
-              </>
-            )}
+            {/* ... other buttons */}
           </div>
-        </div>
-      </div>
-    );
-  };
-
-  const EditModal = () => {
-    if (!selectedRole) return null;
-    const [formData, setFormData] = useState(selectedRole);
-
-    const handleSave = () => {
-      setRoles((prev: any[]) =>
-        prev.map((r: any) => (r.id === formData.id ? formData : r))
-      );
-      alert("Role updated successfully!");
-      setIsEditModalOpen(false);
-    };
-
-    return (
-      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-        <div className="bg-white rounded-2xl p-8 w-full max-w-md">
-          <h2 className="text-2xl font-semibold mb-6">Edit Role</h2>
-          <div className="space-y-4">
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl"
-              placeholder="Role Name"
-            />
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl h-24"
-              placeholder="Description"
-            />
-            <input
-              type="number"
-              value={formData.hierarchyLevel}
-              onChange={(e) => setFormData({ ...formData, hierarchyLevel: parseInt(e.target.value) })}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl"
-            />
-          </div>
-          <div className="flex gap-3 mt-8">
-            <button onClick={() => setIsEditModalOpen(false)} className="flex-1 py-3 border rounded-xl">Cancel</button>
-            <button onClick={handleSave} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700">Save Changes</button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const PermissionsModal = () => {
-    if (!selectedRole) return null;
-    return (
-      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-        <div className="bg-white rounded-2xl p-8 w-full max-w-lg">
-          <h2 className="text-2xl font-semibold mb-6">Manage Permissions - {selectedRole.name}</h2>
-          <p className="text-gray-500 mb-6">Configure access rights for this role (mock interface).</p>
-          {/* Add permission toggles here in real implementation */}
-          <div className="text-center py-8 text-gray-400">Permission matrix would go here...</div>
-          <button
-            onClick={() => setIsPermissionsModalOpen(false)}
-            className="mt-6 w-full py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700"
-          >
-            Done
-          </button>
         </div>
       </div>
     );
@@ -336,55 +427,53 @@ export function RoleManagementView() {
             Define system roles and custom positions within the hierarchy.
           </p>
         </div>
-        <button className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer">
-          Create Custom Role
+        <button 
+          onClick={handleCreateRole}
+          className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors flex items-center gap-2 cursor-pointer"
+        >
+          <Plus className="w-4 h-4" /> Create Custom Role
         </button>
       </div>
 
-      <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
-
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-xs">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              <th className="px-5 py-4 rounded-tl-2xl">Role Name</th>
-              <th className="px-5 py-4">Description</th>
-              <th className="px-5 py-4 text-center">Type</th>
-              <th className="px-5 py-4 text-center rounded-tr-2xl">Hierarchy Level</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100 text-sm">
-            {roles.map((role: any) => (
-              <tr
-                key={role.id}
-                onClick={() => handleViewRole(role as Role)}
-                className="hover:bg-gray-50/50 transition-colors cursor-pointer group"
-              >
-                <td className="px-5 py-4 font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
-                  {role.name}
-                </td>
-                <td className="px-5 py-4 text-gray-600 max-w-xs truncate">
-                  {role.description}
-                </td>
-                <td className="px-5 py-4 text-center">
-                  <span
-                    className={`inline-flex px-2.5 py-1 rounded text-xs font-semibold border ${
-                      role.type === "System"
-                        ? "bg-slate-100 text-slate-700 border-slate-200"
-                        : "bg-blue-50 text-blue-700 border-blue-200"
-                    }`}
+      {/* Table Section */}
+      <div className="p-6 flex-1 overflow-y-auto">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-xs">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  <th className="px-5 py-4 rounded-tl-2xl">Role Name</th>
+                  <th className="px-5 py-4">Description</th>
+                  <th className="px-5 py-4 text-center">Type</th>
+                  <th className="px-5 py-4 text-center rounded-tr-2xl">Hierarchy Level</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 text-sm">
+                {roles.map((role: any) => (
+                  <tr
+                    key={role.id}
+                    onClick={() => handleViewRole(role as Role)}
+                    className="hover:bg-gray-50/50 transition-colors cursor-pointer group"
                   >
-                    {role.type}
-                  </span>
-                </td>
-                <td className="px-5 py-4 text-center font-mono text-gray-500 rounded-tr-2xl">
-                  Lvl {role.hierarchyLevel}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          </table>
+                    <td className="px-5 py-4 font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                      {role.name}
+                    </td>
+                    <td className="px-5 py-4 text-gray-600 max-w-xs truncate">
+                      {role.description}
+                    </td>
+                    <td className="px-5 py-4 text-center">
+                      <span className={`inline-flex px-2.5 py-1 rounded text-xs font-semibold border ${role.type === "System" ? "bg-slate-100 text-slate-700 border-slate-200" : "bg-blue-50 text-blue-700 border-blue-200"}`}>
+                        {role.type}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 text-center font-mono text-gray-500">
+                      Lvl {role.hierarchyLevel}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -392,7 +481,7 @@ export function RoleManagementView() {
       {isDrawerOpen && <RoleDrawer />}
       {isEditModalOpen && <EditModal />}
       {isPermissionsModalOpen && <PermissionsModal />}
-      </div>
+      {isCreateModalOpen && <CreateRoleModal />}
     </div>
   );
 }

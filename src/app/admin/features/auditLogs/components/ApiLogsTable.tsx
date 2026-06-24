@@ -60,6 +60,8 @@ export function ApiLogsTable({
     return "text-gray-700 bg-gray-50";
   };
 
+  const closeModal = () => setSelectedLog(null);
+
   return (
     <div className="space-y-4">
       {/* Search & Filters */}
@@ -123,7 +125,11 @@ export function ApiLogsTable({
           </thead>
           <tbody className="divide-y divide-gray-100 text-sm font-medium text-gray-700">
             {filtered.map((log) => (
-              <tr key={log.id} className="hover:bg-gray-50/50 transition-colors">
+              <tr 
+                key={log.id} 
+                onClick={() => setSelectedLog(log)}
+                className="hover:bg-gray-50/50 transition-colors cursor-pointer"
+              >
                 <td className="px-5 py-4">
                   <div className="text-gray-900 font-semibold">{log.apiName}</div>
                   <div className="text-xs font-normal text-gray-500 font-mono mt-0.5">{log.endpoint}</div>
@@ -145,7 +151,7 @@ export function ApiLogsTable({
                 </td>
                 <td className="px-5 py-4 text-sm text-gray-700">{log.user}</td>
                 <td className="px-5 py-4 font-mono text-xs">{new Date(log.date).toLocaleString()}</td>
-                <td className="px-5 py-4 text-right">
+                <td className="px-5 py-4 text-right" onClick={(e) => e.stopPropagation()}>
                   <button
                     onClick={() => setSelectedLog(log)}
                     className="text-indigo-600 hover:text-indigo-800 font-semibold text-xs"
@@ -166,76 +172,91 @@ export function ApiLogsTable({
         </table>
       </div>
 
-      {/* Drawer Overlay */}
+      {/* ====================== CENTERED MODAL ====================== */}
       {selectedLog && (
-        <div className="fixed inset-0 bg-gray-950/20 backdrop-blur-sm flex justify-end z-50">
-          <div className="w-full max-w-md bg-white h-full shadow-2xl p-6 flex flex-col">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                <Network className="w-4 h-4 text-indigo-500" /> API Trace Details
-              </h3>
-              <button onClick={() => setSelectedLog(null)} className="text-gray-400 hover:text-gray-600">
-                <X className="w-4 h-4" />
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="px-8 py-6 border-b flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Network className="w-5 h-5 text-indigo-600" />
+                <h3 className="text-xl font-semibold text-gray-900">API Trace Details</h3>
+              </div>
+              <button 
+                onClick={closeModal} 
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
               </button>
             </div>
 
-            <div className="mt-6 space-y-6 flex-1">
-              <div className="bg-gray-50 p-4 rounded-xl space-y-1">
-                <div className="flex items-center justify-between mb-2">
-                  <span className={`px-2 py-1 rounded text-xs font-bold tracking-wider ${getMethodColor(selectedLog.method)}`}>
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto p-8 space-y-8">
+              {/* Main Info Card */}
+              <div className="bg-gray-50 p-6 rounded-2xl space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className={`px-3 py-1 rounded-lg text-sm font-bold tracking-wider ${getMethodColor(selectedLog.method)}`}>
                     {selectedLog.method}
                   </span>
-                  <span className={`px-2 py-1 rounded text-xs font-bold ${getStatusColor(selectedLog.statusCode)}`}>
+                  <span className={`px-3 py-1 rounded-lg text-sm font-bold ${getStatusColor(selectedLog.statusCode)}`}>
                     {selectedLog.statusCode}
                   </span>
                 </div>
-                <p className="text-sm font-semibold text-gray-900">{selectedLog.apiName}</p>
-                <p className="text-xs text-gray-500 font-mono break-all">{selectedLog.endpoint}</p>
+                <p className="text-xl font-semibold text-gray-900">{selectedLog.apiName}</p>
+                <p className="text-sm text-gray-500 font-mono break-all">{selectedLog.endpoint}</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-xs">
+              {/* Details Grid */}
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <span className="block font-medium text-gray-500 uppercase">Response Time</span>
-                  <span className="font-semibold flex items-center gap-1 mt-1">
-                    <Activity className="w-3.5 h-3.5 text-gray-400" />
+                  <span className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Response Time</span>
+                  <div className="flex items-center gap-2 text-lg font-semibold">
+                    <Activity className="w-5 h-5 text-gray-400" />
                     {selectedLog.responseTimeMs} ms
-                  </span>
+                  </div>
                 </div>
                 <div>
-                  <span className="block font-medium text-gray-500 uppercase">Client</span>
-                  <span className="font-semibold flex items-center gap-1 mt-1">
-                    <Server className="w-3.5 h-3.5 text-gray-400" />
+                  <span className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Client / User</span>
+                  <div className="flex items-center gap-2 text-lg font-semibold">
+                    <Server className="w-5 h-5 text-gray-400" />
                     {selectedLog.user}
-                  </span>
+                  </div>
                 </div>
               </div>
 
+              {/* Error Message */}
               {selectedLog.errorMessage && (
-                <div className="space-y-2 pt-4 border-t border-gray-100">
-                  <span className="block font-medium text-rose-500 uppercase text-xs">Error Detail</span>
-                  <div className="bg-rose-50 text-rose-700 p-3 rounded-lg text-xs font-mono">
+                <div className="pt-4 border-t border-gray-100">
+                  <span className="block font-medium text-rose-500 uppercase text-xs mb-2">Error Detail</span>
+                  <div className="bg-rose-50 text-rose-700 p-4 rounded-2xl text-sm font-mono">
                     {selectedLog.errorMessage}
                   </div>
                 </div>
               )}
 
-              <div className="space-y-3 pt-4 border-t border-gray-100">
-                <div className="flex gap-3 text-xs">
-                  <Calendar className="w-4 h-4 text-gray-400" />
+              {/* Timestamp */}
+              <div className="pt-4 border-t border-gray-100">
+                <div className="flex gap-3">
+                  <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
                   <div>
                     <p className="font-medium text-gray-500">Timestamp</p>
-                    <p className="font-semibold">{new Date(selectedLog.date).toString()}</p>
+                    <p className="font-semibold text-gray-900 mt-1">
+                      {new Date(selectedLog.date).toLocaleString()}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <button
-              onClick={() => setSelectedLog(null)}
-              className="w-full py-2 bg-gray-900 text-white rounded-lg text-xs font-semibold"
-            >
-              Close Trace
-            </button>
+            {/* Footer */}
+            <div className="px-8 py-6 border-t bg-gray-50 flex justify-end">
+              <button
+                onClick={closeModal}
+                className="px-8 py-3 bg-gray-900 text-white font-semibold rounded-2xl hover:bg-gray-800 transition-colors"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

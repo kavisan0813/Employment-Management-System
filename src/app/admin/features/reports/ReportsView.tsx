@@ -228,8 +228,8 @@ export function ReportsView() {
       {/* Header Profile Section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between pb-5 border-b border-gray-200 gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-950 flex items-center gap-2">
-            <AreaChart className="w-6 h-6 text-indigo-650" />
+          <h1 className="text-2xl font-bold tracking-tight text-gray-950 flex items-center gap-2">
+            <AreaChart className="w-6 h-6 text-indigo-650 font-semibold" />
             Reports & Analytics
           </h1>
           <p className="text-xs text-gray-500 font-medium mt-1">
