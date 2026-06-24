@@ -13,6 +13,7 @@ import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router";
 import { StatusBadge } from "../components/workflow/StatusBadge";
+import { useAttendance } from "../context/AttendanceContext";
 
 interface RegularizationRequest {
   id: string;
@@ -485,6 +486,14 @@ const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export function EmployeeAttendance() {
   const navigate = useNavigate();
+  const {
+    punchState,
+    handlePunchIn,
+    handlePunchOut,
+    handleStartBreak,
+    handleEndBreak,
+    handleResetPunch,
+  } = useAttendance();
   const [selectedMonth, setSelectedMonth] = useState(3); // April
   const [selectedYear] = useState(2026);
   const [isRegModalOpen, setIsRegModalOpen] = useState(false);
@@ -698,6 +707,138 @@ export function EmployeeAttendance() {
             </p>
           </div>
         ))}
+      </div>
+
+      {/* TODAY'S SCHEDULE */}
+      <div className="bg-card rounded-2xl p-7 border border-border shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-[15px] font-black text-foreground">
+            Today's Shift Attendance
+          </h3>
+          <span className="text-[12px] font-bold text-muted-foreground bg-secondary px-3 py-1 rounded-lg border border-border">
+            {new Date().toLocaleDateString(undefined, {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </span>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-6 items-center justify-between bg-secondary/50 rounded-2xl p-6 border-l-[4px] border-primary">
+          <div className="flex-1">
+            <p className="text-[11px] font-black text-primary uppercase tracking-widest mb-1">
+              MORNING SHIFT (09:00 – 18:00)
+            </p>
+            {punchState.isPunchedIn ? (
+              <div className="flex flex-col gap-1 mt-1">
+                <p className="text-[16px] font-black text-foreground flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping inline-block" />
+                  Active Shift In Progress
+                </p>
+                <p className="text-[13px] font-semibold text-muted-foreground">
+                  Punched in at:{" "}
+                  <span className="text-foreground font-bold">
+                    {punchState.punchInTime}
+                  </span>
+                </p>
+              </div>
+            ) : punchState.punchOutTime ? (
+              <div className="flex flex-col gap-1 mt-1">
+                <p className="text-[16px] font-black text-emerald-600 dark:text-emerald-500 flex items-center gap-2">
+                  ✓ Shift Completed
+                </p>
+                <p className="text-[13px] font-semibold text-muted-foreground">
+                  In:{" "}
+                  <span className="text-foreground font-bold">
+                    {punchState.punchInTime}
+                  </span>{" "}
+                  | Out:{" "}
+                  <span className="text-foreground font-bold">
+                    {punchState.punchOutTime}
+                  </span>
+                </p>
+                <p className="text-[13px] font-semibold text-muted-foreground">
+                  Total worked:{" "}
+                  <span className="text-primary font-black">
+                    {punchState.workedHours}
+                  </span>
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-1 mt-1">
+                <p className="text-[16px] font-black text-muted-foreground">
+                  Not Punched In Yet
+                </p>
+                <p className="text-[13px] font-semibold text-muted-foreground">
+                  Please punch in to record your attendance.
+                </p>
+              </div>
+            )}
+
+            {/* Display Today's Logs Timeline */}
+            {punchState.logs && punchState.logs.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-border/50">
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-wider mb-3">
+                  Today's Activity Timeline
+                </p>
+                <div className="space-y-3">
+                  {punchState.logs.map((log, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className={`w-2 h-2 rounded-full ${
+                        log.type === "in" || log.type === "break_end" ? "bg-emerald-500" :
+                        log.type === "break_start" ? "bg-amber-500" : "bg-rose-500"
+                      }`} />
+                      <span className="text-[12px] font-bold text-foreground w-[65px]">{log.time}</span>
+                      <span className="text-[12px] font-medium text-muted-foreground">{log.action}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            {punchState.isPunchedIn ? (
+              <>
+                {!punchState.isOnBreak ? (
+                  <button
+                    onClick={handleStartBreak}
+                    className="px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-[13px] uppercase tracking-wider hover:shadow-lg hover:shadow-amber-500/20 active:scale-[0.98] transition-all border-none cursor-pointer"
+                  >
+                    Take Break
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleEndBreak}
+                    className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-[13px] uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all border-none cursor-pointer"
+                  >
+                    End Break
+                  </button>
+                )}
+                <button
+                  onClick={handlePunchOut}
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-black text-[13px] uppercase tracking-wider hover:shadow-lg hover:shadow-red-500/20 active:scale-[0.98] transition-all border-none cursor-pointer"
+                >
+                  Punch Out
+                </button>
+              </>
+            ) : punchState.punchOutTime ? (
+              <button
+                onClick={handleResetPunch}
+                className="px-6 py-3 rounded-xl bg-[#00B87C] hover:bg-[#009966] text-white font-black text-[13px] uppercase tracking-wider hover:shadow-lg active:scale-[0.98] transition-all border-none cursor-pointer"
+              >
+                Reset Shift
+              </button>
+            ) : (
+              <button
+                onClick={handlePunchIn}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#00B87C] to-[#009966] hover:from-[#00c987] hover:to-[#00a36d] text-white font-black text-[13px] uppercase tracking-wider hover:shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all border-none cursor-pointer"
+              >
+                Punch In
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* ─── Main Content Row ────────────────────────────────────── */}

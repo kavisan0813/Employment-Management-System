@@ -29,6 +29,10 @@ interface PersonalGoal {
   progress: number;
   status: string;
   isComplete?: boolean;
+  priority?: "High" | "Medium" | "Low";
+  kr?: string;
+  deadline?: string;
+  lastUpdated?: string;
 }
 
 const initialPersonalGoals: PersonalGoal[] = [
@@ -38,6 +42,10 @@ const initialPersonalGoals: PersonalGoal[] = [
     category: "Technical",
     progress: 80,
     status: "On track",
+    priority: "High",
+    kr: "Design new event-driven microservices architecture",
+    deadline: "Q2 Target",
+    lastUpdated: "May 8",
   },
   {
     id: "2",
@@ -45,6 +53,10 @@ const initialPersonalGoals: PersonalGoal[] = [
     category: "Leadership",
     progress: 60,
     status: "On track",
+    priority: "High",
+    kr: "Hire and onboard 4 new senior React/Node engineers",
+    deadline: "Q3 Target",
+    lastUpdated: "May 10",
   },
   {
     id: "3",
@@ -53,6 +65,10 @@ const initialPersonalGoals: PersonalGoal[] = [
     progress: 100,
     status: "Completed",
     isComplete: true,
+    priority: "Medium",
+    kr: "Obtain professional PMP accreditation",
+    deadline: "Completed",
+    lastUpdated: "Apr 25",
   },
   {
     id: "4",
@@ -61,6 +77,10 @@ const initialPersonalGoals: PersonalGoal[] = [
     progress: 95,
     status: "Completed",
     isComplete: true,
+    priority: "High",
+    kr: "Increase sprint delivery rate by 15%",
+    deadline: "Completed",
+    lastUpdated: "Apr 28",
   },
   {
     id: "5",
@@ -68,6 +88,10 @@ const initialPersonalGoals: PersonalGoal[] = [
     category: "Technical",
     progress: 25,
     status: "At risk",
+    priority: "Medium",
+    kr: "Reduce pipeline deploy failures to < 2%",
+    deadline: "Q4 Target",
+    lastUpdated: "May 4",
   },
 ];
 
@@ -103,6 +127,7 @@ export function ManagerPersonalPerformance() {
   const [personalGoals, setPersonalGoals] =
     useState<PersonalGoal[]>(initialPersonalGoals);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState<PersonalGoal | null>(null);
 
   const handleSubmitSelfReview = () => {
     showToast(
@@ -231,6 +256,7 @@ export function ManagerPersonalPerformance() {
                     progress={goal.progress}
                     status={goal.status}
                     isComplete={goal.isComplete}
+                    onClick={() => setSelectedGoal(goal)}
                   />
                 ))}
               </div>
@@ -414,6 +440,102 @@ export function ManagerPersonalPerformance() {
         onClose={() => setIsRequestModalOpen(false)}
         onSubmit={handleRequestGoalSubmit}
       />
+
+      {/* VIEW DETAILS GOAL MODAL */}
+      {selectedGoal && (
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
+          <div
+            onClick={() => setSelectedGoal(null)}
+            className="absolute inset-0 bg-black/45 backdrop-blur-sm"
+          />
+          <div className="relative w-full max-w-[480px] bg-card border border-border rounded-[32px] shadow-2xl p-8 animate-in zoom-in-95 flex flex-col">
+            <div className="flex items-center justify-between pb-4 border-b border-border">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="text-[#00B87C]" size={20} />
+                <h3 className="text-lg font-bold text-foreground">
+                  Goal Details
+                </h3>
+              </div>
+              <button
+                onClick={() => setSelectedGoal(null)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="py-6 space-y-5 text-sm">
+              <div>
+                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
+                  Objective
+                </span>
+                <p className="font-bold text-foreground text-[15px]">
+                  {selectedGoal.title}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
+                    Category
+                  </span>
+                  <span className="px-2 py-0.5 bg-secondary text-foreground text-[10px] font-bold uppercase rounded">
+                    {selectedGoal.category}
+                  </span>
+                </div>
+                <div>
+                  <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
+                    Priority
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${
+                      selectedGoal.priority === "High"
+                        ? "bg-rose-500/10 text-rose-500 border-rose-200"
+                        : "bg-amber-500/10 text-amber-500 border-amber-200"
+                    }`}
+                  >
+                    {selectedGoal.priority || "Medium"}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                  Key Results (KRs)
+                </span>
+                <p className="text-xs font-semibold text-foreground bg-secondary/40 p-3 rounded-xl border border-border italic leading-relaxed">
+                  {selectedGoal.kr || "Progress updates and milestone achievements."}
+                </p>
+              </div>
+              <div>
+                <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                  Progress
+                </span>
+                <div className="flex items-center gap-3">
+                  <div className="h-2 w-full bg-secondary rounded-full overflow-hidden flex-1 border">
+                    <div
+                      className="h-full bg-primary rounded-full"
+                      style={{ width: `${selectedGoal.progress}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-bold text-primary">
+                    {selectedGoal.progress}%
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t text-[11px] font-bold text-muted-foreground uppercase">
+                <span>Deadline: {selectedGoal.deadline || "FY End"}</span>
+                <span>Last Updated: {selectedGoal.lastUpdated || "May 8"}</span>
+              </div>
+            </div>
+            <div className="pt-4 border-t border-border flex items-center justify-end">
+              <button
+                onClick={() => setSelectedGoal(null)}
+                className="px-6 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:opacity-90 shadow-lg shadow-[#00B87C]/20"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -474,12 +596,14 @@ function GoalRow({
   progress,
   status,
   isComplete,
+  onClick,
 }: {
   title: string;
   category: string;
   progress: number;
   status: string;
   isComplete?: boolean;
+  onClick: () => void;
 }) {
   const statusColor =
     status === "On track" || status === "Completed"
@@ -489,7 +613,10 @@ function GoalRow({
         : "text-rose-600 bg-rose-500/10 border-rose-500/20";
 
   return (
-    <div className="flex items-center justify-between p-6 h-[72px] hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all group border-b border-border last:border-0 cursor-pointer">
+    <div
+      onClick={onClick}
+      className="flex items-center justify-between p-6 h-[72px] hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all group border-b border-border last:border-0 cursor-pointer"
+    >
       <div className="flex items-center gap-4 flex-1">
         <div
           className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isComplete ? "bg-[#00B87C] border-[#00B87C]" : "border-border group-hover:border-[#00B87C]"}`}

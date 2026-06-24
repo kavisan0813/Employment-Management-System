@@ -16,9 +16,15 @@ import {
   Settings,
   ShieldCheck,
   Megaphone,
+  Fingerprint,
+  Cpu,
+  Layers,
+  HelpCircle,
+  ChevronDown,
+  Zap,
+  User,
   Bell,
 } from "lucide-react";
-import { IoIosPerson } from "react-icons/io";
 
 const CURRENT_ADMIN_EMAIL = "admin@ems.io";
 
@@ -146,7 +152,7 @@ export function Sidebar() {
         {/* Header branding lock */}
         <div className="p-4 border-b border-gray-200 flex items-center gap-2.5 shrink-0">
           <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-extrabold text-sm tracking-widest">
-            <IoIosPerson />
+            <User size={18} />
           </div>
           <div>
             <span className="font-extrabold text-xs tracking-wider block text-gray-950">

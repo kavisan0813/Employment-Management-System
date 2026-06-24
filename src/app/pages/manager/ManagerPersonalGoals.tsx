@@ -295,6 +295,7 @@ export function ManagerPersonalGoals() {
                 onDelete={() => {
                   setGoals((prev) => prev.filter((g) => g.id !== goal.id));
                   showToast("Deleted!", "info", "Goal has been deleted.");
+                  setActiveMenuGoalId(null);
                 }}
                 onMarkCompleted={() => {
                   setGoals((prev) =>
@@ -305,10 +306,12 @@ export function ManagerPersonalGoals() {
                     ),
                   );
                   showToast("Success", "success", "Goal marked as Completed!");
+                  setActiveMenuGoalId(null);
                 }}
                 onEdit={() => {
                   setEditingGoal(goal);
                   setIsModalOpen(true);
+                  setActiveMenuGoalId(null);
                 }}
               />
             ))}
@@ -328,116 +331,27 @@ export function ManagerPersonalGoals() {
       />
 
       {/* CHECK-IN GOAL MODAL */}
-      {selectedGoalForCheckIn &&
-        (() => {
-          const [progress, setProgress] = useState(
-            selectedGoalForCheckIn.progress,
+      <CheckInGoalModal
+        goal={selectedGoalForCheckIn}
+        isOpen={selectedGoalForCheckIn !== null}
+        onClose={() => setSelectedGoalForCheckIn(null)}
+        onSave={(progress, status) => {
+          setGoals((prev) =>
+            prev.map((g) =>
+              g.id === selectedGoalForCheckIn?.id
+                ? {
+                    ...g,
+                    progress,
+                    status,
+                    lastUpdated: "Today",
+                  }
+                : g,
+            ),
           );
-          const [status, setStatus] = useState(selectedGoalForCheckIn.status);
-          const [checkInComment, setCheckInComment] = useState("");
-
-          const handleSaveCheckIn = () => {
-            setGoals((prev) =>
-              prev.map((g) =>
-                g.id === selectedGoalForCheckIn.id
-                  ? {
-                      ...g,
-                      progress,
-                      status,
-                      lastUpdated: "Today",
-                    }
-                  : g,
-              ),
-            );
-            showToast("Saved!", "success", "Progress checked in successfully.");
-            setSelectedGoalForCheckIn(null);
-          };
-
-          return (
-            <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-              <div
-                onClick={() => setSelectedGoalForCheckIn(null)}
-                className="absolute inset-0 bg-black/45 backdrop-blur-sm"
-              />
-              <div className="relative w-full max-w-[440px] bg-card border border-border rounded-[32px] shadow-2xl p-6 animate-in zoom-in-95 flex flex-col">
-                <div className="flex items-center justify-between pb-4 border-b border-border">
-                  <h3 className="text-base font-bold text-foreground">
-                    Goal Check-in
-                  </h3>
-                  <button
-                    onClick={() => setSelectedGoalForCheckIn(null)}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-                <div className="py-6 space-y-4 text-sm flex-1">
-                  <div>
-                    <span className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                      Goal
-                    </span>
-                    <p className="font-bold text-foreground text-sm">
-                      {selectedGoalForCheckIn.title}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                      Progress: {progress}%
-                    </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={progress}
-                      onChange={(e) => setProgress(parseInt(e.target.value))}
-                      className="w-full accent-primary"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                      Goal Status
-                    </label>
-                    <select
-                      value={status}
-                      onChange={(e) => setStatus(e.target.value as GoalStatus)}
-                      className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none appearance-none cursor-pointer focus:border-[#00B87C] bg-card text-foreground dark:bg-zinc-900"
-                    >
-                      <option value="In Progress">In Progress</option>
-                      <option value="Completed">Completed</option>
-                      <option value="At Risk">At Risk</option>
-                      <option value="Not Started">Not Started</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                      Check-in Comments
-                    </label>
-                    <textarea
-                      value={checkInComment}
-                      onChange={(e) => setCheckInComment(e.target.value)}
-                      placeholder="What updates do you have on this goal?"
-                      className="w-full h-20 p-3 rounded-xl border bg-transparent text-xs outline-none resize-none focus:border-[#00B87C] text-foreground"
-                    />
-                  </div>
-                </div>
-                <div className="pt-4 border-t border-border flex items-center justify-end gap-3 bg-secondary/10 rounded-b-2xl">
-                  <button
-                    onClick={() => setSelectedGoalForCheckIn(null)}
-                    className="px-4 py-2.5 rounded-xl border text-xs font-bold text-muted-foreground hover:bg-secondary"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveCheckIn}
-                    className="px-5 py-2.5 rounded-xl text-white text-xs font-bold bg-[#00B87C] hover:opacity-90 shadow-lg shadow-emerald-500/20"
-                  >
-                    Save Check-in
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })()}
+          showToast("Saved!", "success", "Progress checked in successfully.");
+          setSelectedGoalForCheckIn(null);
+        }}
+      />
 
       {/* VIEW DETAILS GOAL MODAL */}
       {selectedGoalForDetails && (
@@ -958,6 +872,121 @@ function AddGoalModal({
           </div>
         </div>
       </motion.div>
+    </div>
+  );
+}
+
+function CheckInGoalModal({
+  goal,
+  isOpen,
+  onClose,
+  onSave,
+}: {
+  goal: Goal | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (progress: number, status: GoalStatus) => void;
+}) {
+  const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState<GoalStatus>("In Progress");
+  const [checkInComment, setCheckInComment] = useState("");
+
+  useEffect(() => {
+    if (goal) {
+      setProgress(goal.progress);
+      setStatus(goal.status);
+      setCheckInComment("");
+    }
+  }, [goal, isOpen]);
+
+  if (!isOpen || !goal) return null;
+
+  const handleSaveCheckIn = () => {
+    onSave(progress, status);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
+      <div
+        onClick={onClose}
+        className="absolute inset-0 bg-black/45 backdrop-blur-sm"
+      />
+      <div className="relative w-full max-w-[440px] bg-card border border-border rounded-[32px] shadow-2xl p-6 animate-in zoom-in-95 flex flex-col">
+        <div className="flex items-center justify-between pb-4 border-b border-border">
+          <h3 className="text-base font-bold text-foreground">
+            Goal Check-in
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <div className="py-6 space-y-4 text-sm flex-1">
+          <div>
+            <span className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+              Goal
+            </span>
+            <p className="font-bold text-foreground text-sm">
+              {goal.title}
+            </p>
+          </div>
+          <div>
+            <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+              Progress: {progress}%
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={progress}
+              onChange={(e) => setProgress(parseInt(e.target.value))}
+              className="w-full accent-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+              Goal Status
+            </label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as GoalStatus)}
+              className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none appearance-none cursor-pointer focus:border-[#00B87C] bg-card text-foreground dark:bg-zinc-900"
+            >
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="At Risk">At Risk</option>
+              <option value="Not Started">Not Started</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">
+              Check-in Comments
+            </label>
+            <textarea
+              value={checkInComment}
+              onChange={(e) => setCheckInComment(e.target.value)}
+              placeholder="What updates do you have on this goal?"
+              className="w-full h-20 p-3 rounded-xl border bg-transparent text-xs outline-none resize-none focus:border-[#00B87C] text-foreground"
+            />
+          </div>
+        </div>
+        <div className="pt-4 border-t border-border flex items-center justify-end gap-3 bg-secondary/10 rounded-b-2xl">
+          <button
+            onClick={onClose}
+            className="px-4 py-2.5 rounded-xl border text-xs font-bold text-muted-foreground hover:bg-secondary"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSaveCheckIn}
+            className="px-5 py-2.5 rounded-xl text-white text-xs font-bold bg-[#00B87C] hover:opacity-90 shadow-lg shadow-emerald-500/20"
+          >
+            Save Check-in
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

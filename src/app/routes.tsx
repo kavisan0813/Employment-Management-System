@@ -888,6 +888,9 @@ function EmployeeDashboardWrapper() {
 // ── Settings Wrapper: role-based view ─────────────────────────
 function SettingsWrapper() {
   const { user } = useAuth();
+  if (user?.role === "Manager") {
+    return lazyRoute(ManagerSettings);
+  }
   if (user?.role === "Finance") {
     return lazyRoute(FinanceSettings);
   }

@@ -327,6 +327,23 @@ export function Attendance() {
   const [isDownloading, setIsDownloading] = useState(false);
   const itemsPerPage = 8;
 
+  // ─── Rolling Date Filter Helper ───
+  const { startDate, endDate, endDay } = useMemo(() => {
+    const today = new Date();
+    const targetMonth = selectedMonth;
+    const targetYear = selectedYear;
+    
+    const daysInTargetMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+    const capDay = Math.min(today.getDate(), daysInTargetMonth);
+    
+    const startYear = Math.min(2026, targetYear);
+    
+    const start = new Date(startYear, 0, 1, 0, 0, 0, 0);
+    const end = new Date(targetYear, targetMonth, capDay, 23, 59, 59, 999);
+    
+    return { startDate: start, endDate: end, endDay: capDay };
+  }, [selectedMonth, selectedYear]);
+
   const deptRef = useRef<HTMLDivElement>(null);
   const empRef = useRef<HTMLDivElement>(null);
 
@@ -643,20 +660,17 @@ export function Attendance() {
         if (!nameMatch && !roleMatch && !idMatch) return false;
       }
 
-      // 4. Filter by Period (Month & Year)
-      const monthPrefix = (Reflect.get(MONTH_NAMES, selectedMonth) || "").substring(0, 3);
-      const isCorrectMonth = log.date.startsWith(monthPrefix);
-      const isCorrectYear = log.date.endsWith(selectedYear.toString());
-
-      return isCorrectMonth && isCorrectYear;
+      // 4. Filter by Period (Rolling Date Range)
+      const logDate = new Date(log.date);
+      return logDate >= startDate && logDate <= endDate;
     });
   }, [
     records,
     selectedDept,
     selectedEmpId,
     searchQuery,
-    selectedMonth,
-    selectedYear,
+    startDate,
+    endDate,
   ]);
 
   // Calendar Math
@@ -675,11 +689,8 @@ export function Attendance() {
       if (selectedDept !== "All Departments" && log.department !== selectedDept) return false;
       if (selectedEmpId !== "All Employees" && log.employeeId !== selectedEmpId) return false;
       
-      const monthPrefix = (Reflect.get(MONTH_NAMES, selectedMonth) || "").substring(0, 3);
-      const isCorrectMonth = log.date.startsWith(monthPrefix);
-      const isCorrectYear = log.date.endsWith(selectedYear.toString());
-
-      return isCorrectMonth && isCorrectYear;
+      const logDate = new Date(log.date);
+      return logDate >= startDate && logDate <= endDate;
     });
 
     const total = periodLogs.length;
@@ -692,15 +703,24 @@ export function Attendance() {
     const attendanceRate =
       total > 0 ? Math.round((present / total) * 100) : 100;
 
+    const uniqueEmpCount = selectedEmpId === "All Employees"
+      ? (new Set(periodLogs.map(l => l.employeeId)).size || 1)
+      : 1;
+
+    const rawTotalDays = total || 22;
+    const rawPresent = present || 19;
+    const rawAbsent = absent || 1;
+    const rawLate = late || 2;
+
     return {
-      totalDays: total || 22,
-      present: present || 19,
-      absent: absent || 1,
-      late: late || 2,
-      attendanceRate: total > 0 ? attendanceRate : 92,
+      totalDays: selectedEmpId === "All Employees" ? parseFloat((rawTotalDays / uniqueEmpCount).toFixed(1)) : rawTotalDays,
+      present: selectedEmpId === "All Employees" ? parseFloat((rawPresent / uniqueEmpCount).toFixed(1)) : rawPresent,
+      absent: selectedEmpId === "All Employees" ? parseFloat((rawAbsent / uniqueEmpCount).toFixed(1)) : rawAbsent,
+      late: selectedEmpId === "All Employees" ? parseFloat((rawLate / uniqueEmpCount).toFixed(1)) : rawLate,
+      attendanceRate: total > 0 ? Math.round((present / total) * 100) : 100,
       lateTrend: -5,
     };
-  }, [records, selectedDept, selectedEmpId, selectedMonth, selectedYear]);
+  }, [records, selectedDept, selectedEmpId, startDate, endDate]);
 
   const selectedDayRecord = useMemo(() => {
     if (selectedDayDetail === null) return null;
@@ -1690,7 +1710,7 @@ export function Attendance() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
-            label: "Total Working Days",
+            label: selectedEmpId === "All Employees" ? "Avg. Working Days" : "Total Working Days",
             value: metrics.totalDays,
             icon: CalendarIcon,
             color: "var(--primary)",
@@ -1698,7 +1718,7 @@ export function Attendance() {
             trend: null,
           },
           {
-            label: "Present Days",
+            label: selectedEmpId === "All Employees" ? "Avg. Present Days" : "Present Days",
             value: metrics.present,
             icon: CheckCircle2,
             color: "var(--primary)",
@@ -1707,7 +1727,7 @@ export function Attendance() {
             trendUp: true,
           },
           {
-            label: "Absent Days",
+            label: selectedEmpId === "All Employees" ? "Avg. Absent Days" : "Absent Days",
             value: metrics.absent,
             icon: XCircle,
             color: "#EF4444",
@@ -1716,7 +1736,7 @@ export function Attendance() {
             trendUp: false,
           },
           {
-            label: "Late Count",
+            label: selectedEmpId === "All Employees" ? "Avg. Late Count" : "Late Count",
             value: metrics.late,
             icon: Clock,
             color: "#F59E0B",
@@ -2141,6 +2161,7 @@ export function Attendance() {
                       );
 
                     const isWeekend = i % 7 === 0 || i % 7 === 6;
+                    const isFutureDay = day > endDay;
                     const dateStr = formatDate(
                       day,
                       selectedMonth,
@@ -2149,6 +2170,8 @@ export function Attendance() {
                     let status = "Present";
                     if (isWeekend) {
                       status = "Weekend";
+                    } else if (isFutureDay) {
+                      status = "Future";
                     } else {
                       const dayRec = records.find((r) => {
                         const matchesDate = r.date === dateStr;
@@ -2206,6 +2229,9 @@ export function Attendance() {
                         backgroundColor: "rgba(20, 184, 166, 0.08)",
                       };
                       textColor = "#14B8A6";
+                    } else if (status === "Future") {
+                      textColor = "var(--muted-foreground)";
+                      cellStyle = { opacity: 0.4 };
                     } else if (isWeekend) {
                       textColor = "var(--muted-foreground)";
                       cellStyle = { opacity: 0.6 };
@@ -2219,9 +2245,9 @@ export function Attendance() {
                       <button
                         key={day}
                         onClick={() =>
-                          status !== "Weekend" && setSelectedDayDetail(day)
+                          status !== "Weekend" && status !== "Future" && setSelectedDayDetail(day)
                         }
-                        className={`aspect-[4/3] relative rounded-2xl flex flex-col items-center justify-center transition-all duration-200 group ${status !== "Weekend" ? "hover:scale-[1.02] active:scale-95" : "cursor-default"}`}
+                        className={`aspect-[4/3] relative rounded-2xl flex flex-col items-center justify-center transition-all duration-200 group ${status !== "Weekend" && status !== "Future" ? "hover:scale-[1.02] active:scale-95" : "cursor-default"}`}
                         style={cellStyle}
                       >
                         <span
