@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   ArrowLeft,
@@ -21,7 +21,8 @@ import {
   ChevronRight,
   MoreVertical,
 } from "lucide-react";
-import { employees, performanceData } from "../data/mockData";
+import { performanceData } from "../data/mockData";
+import { useEmployees } from "../context/AppContext";
 import {
   LineChart,
   Line,
@@ -102,6 +103,17 @@ const docs = [
 export function EmployeeProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const {
+    employeesList,
+    updateEmployee,
+    promoteEmployee,
+    initiateTransfer,
+    approveTransfer,
+    rejectTransfer,
+  } = useEmployees();
+
+  const employee = employeesList.find((e) => e.id === id) || employeesList[0];
+
   const [activeTab, setActiveTab] = useState("employment");
   const [isSalaryVisible, setIsSalaryVisible] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -109,8 +121,81 @@ export function EmployeeProfile() {
   const [isTrainingModalOpen, setIsTrainingModalOpen] = useState(false);
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const [isPromoteModalOpen, setIsPromoteModalOpen] = useState(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
-  const employee = employees.find((e) => e.id === id) || employees[0];
+  // Edit states
+  const [editName, setEditName] = useState(employee ? employee.name : "");
+  const [editDesignation, setEditDesignation] = useState(employee ? employee.designation : "");
+  const [editDepartment, setEditDepartment] = useState(employee ? employee.department : "");
+
+  // Request Asset states
+  const [assetName, setAssetName] = useState("");
+  const [assetCategory, setAssetCategory] = useState("Hardware");
+  const [assetReason, setAssetReason] = useState("");
+
+  // Add Note states
+  const [noteText, setNoteText] = useState("");
+
+  // Promote states
+  const [newDesignation, setNewDesignation] = useState("");
+  const [newSalary, setNewSalary] = useState("");
+  const [effectiveDate, setEffectiveDate] = useState("");
+
+  // Transfer states
+  const [transferType, setTransferType] = useState("Department Transfer");
+  const [transferValue, setTransferValue] = useState("");
+
+  useEffect(() => {
+    if (employee) {
+      setEditName(employee.name);
+      setEditDesignation(employee.designation);
+      setEditDepartment(employee.department);
+    }
+  }, [employee]);
+
+  const handleGeneratePromotionLetter = (promo: { oldDesignation: string; newDesignation: string; oldSalary: number; newSalary: number; effectiveDate: string; }) => {
+    const letterContent = `
+=========================================
+          PROMOTION LETTER
+=========================================
+
+Date: ${promo.effectiveDate || new Date().toISOString().split("T")[0]}
+
+To,
+${employee.name}
+Employee ID: ${employee.id}
+
+Dear ${employee.name},
+
+We are pleased to inform you that you have been promoted to the position of ${promo.newDesignation} effective from ${promo.effectiveDate}.
+
+Below are the details of your revised compensation:
+- Previous Designation: ${promo.oldDesignation}
+- New Designation: ${promo.newDesignation}
+- Previous Salary: ₹${promo.oldSalary.toLocaleString()}
+- Revised Salary: ₹${promo.newSalary.toLocaleString()}
+
+Your dedication, hard work, and performance have contributed significantly to the success of NexHR. We look forward to your continued contribution in your new role.
+
+Congratulations on your promotion!
+
+Sincerely,
+David Chen
+VP Engineering
+NexHR Management
+=========================================
+    `;
+    const blob = new Blob([letterContent.trim()], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${employee.name.replace(/\s+/g, "_")}_Promotion_Letter.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   const handleDownloadProfile = () => {
     const dataStr = JSON.stringify(employee, null, 2);
@@ -250,6 +335,46 @@ export function EmployeeProfile() {
         Back to Directory
       </button>
 
+      {employee.status === "Inactive" && (
+        <div className="mb-6 p-4 rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-200 animate-in slide-in-from-top duration-300">
+          <p className="font-bold text-sm">⚠️ Account Deactivated</p>
+          <p className="text-xs opacity-90 mt-0.5">
+            This employee's account has been deactivated. They will not be able to log in or access company resources.
+          </p>
+        </div>
+      )}
+
+      {(() => {
+        const pendingTransfer = (employee.transfers || []).find(tr => tr.status === "Pending");
+        if (pendingTransfer) {
+          return (
+            <div className="mb-6 p-4 rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-200 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in slide-in-from-top duration-300">
+              <div>
+                <p className="font-bold text-sm">Pending Transfer Request</p>
+                <p className="text-xs opacity-90 mt-0.5">
+                  Request to transfer {employee.name} via <strong>{pendingTransfer.type}</strong> from <em>{pendingTransfer.oldValue}</em> to <strong>{pendingTransfer.newValue}</strong>.
+                </p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button
+                  onClick={() => approveTransfer(employee.id, pendingTransfer.id)}
+                  className="px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-primary hover:opacity-90 transition-opacity"
+                >
+                  Approve
+                </button>
+                <button
+                  onClick={() => rejectTransfer(employee.id, pendingTransfer.id)}
+                  className="px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-rose-600 hover:opacity-90 transition-opacity"
+                >
+                  Reject
+                </button>
+              </div>
+            </div>
+          );
+        }
+        return null;
+      })()}
+
       <div className="flex flex-col xl:flex-row gap-6">
         {/* LEFT COLUMN (70%) */}
         <div className="flex-1 flex flex-col gap-6 xl:w-[70%] min-w-0">
@@ -363,13 +488,33 @@ export function EmployeeProfile() {
                         >
                           View Analytics
                         </button>
+                        <button
+                          className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-primary/10 text-foreground"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            setIsMoreMenuOpen(false);
+                            setIsPromoteModalOpen(true);
+                          }}
+                        >
+                          Promote Employee
+                        </button>
+                        <button
+                          className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-primary/10 text-foreground"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            setIsMoreMenuOpen(false);
+                            setIsTransferModalOpen(true);
+                          }}
+                        >
+                          Initiate Transfer
+                        </button>
                         <div className="h-px w-full my-1 bg-border"></div>
                         <button
                           className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-rose-500/10 text-rose-500"
                           onMouseDown={(e) => {
                             e.preventDefault();
                             setIsMoreMenuOpen(false);
-                            alert("Account deactivated.");
+                            updateEmployee(employee.id, { status: "Inactive" });
                           }}
                         >
                           Deactivate Account
@@ -592,6 +737,71 @@ export function EmployeeProfile() {
                         </div>
                       </div>
                     ))}
+                  </div>
+                </div>
+
+                {/* Promotion History Card */}
+                <div className="rounded-2xl p-7 shadow-sm transition-all bg-card border border-border">
+                  <h3 className="text-lg font-black mb-6 text-foreground">
+                    Promotion History
+                  </h3>
+                  <div className="space-y-4">
+                    {(employee.promotions || []).map((promo, idx) => (
+                      <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-border bg-background gap-4">
+                        <div>
+                          <p className="text-[15px] font-bold text-foreground">
+                            Promoted to {promo.newDesignation}
+                          </p>
+                          <p className="text-[13px] font-semibold mt-1 text-muted-foreground">
+                            Effective Date: {promo.effectiveDate} • Salary revised: ₹{promo.oldSalary.toLocaleString()} → ₹{promo.newSalary.toLocaleString()}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleGeneratePromotionLetter(promo)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-primary bg-secondary hover:opacity-80 shrink-0 self-start sm:self-center"
+                        >
+                          <Download size={14} /> Generate Letter
+                        </button>
+                      </div>
+                    ))}
+                    {(employee.promotions || []).length === 0 && (
+                      <p className="text-xs text-muted-foreground text-center py-4">No promotion records found.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Transfer History Card */}
+                <div className="rounded-2xl p-7 shadow-sm transition-all bg-card border border-border">
+                  <h3 className="text-lg font-black mb-6 text-foreground">
+                    Internal Transfers History
+                  </h3>
+                  <div className="space-y-4">
+                    {(employee.transfers || []).map((tr, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-4 rounded-xl border border-border bg-background">
+                        <div>
+                          <p className="text-[15px] font-bold text-foreground">
+                            {tr.type}
+                          </p>
+                          <p className="text-[13px] font-semibold mt-1 text-muted-foreground">
+                            {tr.oldValue} → {tr.newValue} • Initiated: {tr.initiatedDate}
+                          </p>
+                        </div>
+                        <span
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                            tr.status === "Approved"
+                              ? "bg-primary/10 text-primary border border-primary/20"
+                              : tr.status === "Rejected"
+                              ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                              : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                          }`}
+                        >
+                          {tr.status}
+                        </span>
+                      </div>
+                    ))}
+                    {(employee.transfers || []).length === 0 && (
+                      <p className="text-xs text-muted-foreground text-center py-4">No transfer records found.</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -909,29 +1119,7 @@ export function EmployeeProfile() {
                   </button>
                 </div>
                 <div className="space-y-4">
-                  {[
-                    {
-                      id: "AST-2022-041",
-                      name: 'MacBook Pro 16"',
-                      category: "Laptop",
-                      date: "01 Mar 2022",
-                      status: "Assigned",
-                    },
-                    {
-                      id: "AST-2022-089",
-                      name: 'Dell UltraSharp 27"',
-                      category: "Monitor",
-                      date: "15 Mar 2022",
-                      status: "Assigned",
-                    },
-                    {
-                      id: "AST-2024-102",
-                      name: "Magic Keyboard",
-                      category: "Accessory",
-                      date: "10 Jan 2024",
-                      status: "Assigned",
-                    },
-                  ].map((ast, i) => (
+                  {(employee.assets || []).map((ast, i) => (
                     <div
                       key={i}
                       className="flex items-center justify-between p-4 rounded-xl border border-border bg-background"
@@ -1070,7 +1258,7 @@ export function EmployeeProfile() {
             </div>
             <button
               className="w-full mt-6 py-2.5 rounded-xl font-bold text-sm transition-colors hover:opacity-80 text-foreground border border-border bg-background"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/settings/audit-logs")}
             >
               View All Activity
             </button>
@@ -1080,16 +1268,21 @@ export function EmployeeProfile() {
             <h3 className="text-base font-black mb-5 text-foreground">
               Manager Notes
             </h3>
-            <div className="p-4 rounded-xl mb-4 relative overflow-hidden bg-secondary">
-              <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
-              <p className="text-[13px] font-medium italic text-primary leading-relaxed">
-                "Arjun has been performing exceptionally well in the recent Q3
-                sprint. Needs to focus slightly more on peer code reviews going
-                forward."
-              </p>
-              <p className="text-[11px] font-bold mt-3 text-right text-primary opacity-80">
-                — {employee.manager || "David Chen"}, 2 weeks ago
-              </p>
+            <div className="space-y-3 mb-4 max-h-[300px] overflow-y-auto pr-1">
+              {(employee.notes || []).map((note) => (
+                <div key={note.id} className="p-4 rounded-xl relative overflow-hidden bg-secondary border border-border animate-in fade-in duration-200">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+                  <p className="text-[13px] font-medium italic text-primary leading-relaxed">
+                    "{note.text}"
+                  </p>
+                  <p className="text-[11px] font-bold mt-2 text-right text-primary opacity-80">
+                    — {note.author}, {note.time}
+                  </p>
+                </div>
+              ))}
+              {(employee.notes || []).length === 0 && (
+                <p className="text-xs text-muted-foreground text-center py-4">No manager notes yet.</p>
+              )}
             </div>
             <button
               className="w-full py-2.5 rounded-xl font-bold text-sm transition-opacity hover:opacity-90 shadow-sm text-white bg-primary"
@@ -1134,7 +1327,7 @@ export function EmployeeProfile() {
             </div>
             <button
               className="w-full mt-4 py-2.5 rounded-xl font-bold text-sm transition-colors hover:opacity-80 text-foreground border border-border bg-transparent"
-              onClick={() => setActiveTab("documents")}
+              onClick={() => navigate("/documents")}
             >
               View Document Center
             </button>
@@ -1156,7 +1349,8 @@ export function EmployeeProfile() {
                 </label>
                 <input
                   type="text"
-                  defaultValue={employee.name}
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary"
                 />
               </div>
@@ -1166,7 +1360,8 @@ export function EmployeeProfile() {
                 </label>
                 <input
                   type="text"
-                  defaultValue={employee.designation}
+                  value={editDesignation}
+                  onChange={(e) => setEditDesignation(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary"
                 />
               </div>
@@ -1176,7 +1371,8 @@ export function EmployeeProfile() {
                 </label>
                 <input
                   type="text"
-                  defaultValue={employee.department}
+                  value={editDepartment}
+                  onChange={(e) => setEditDepartment(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary"
                 />
               </div>
@@ -1188,10 +1384,190 @@ export function EmployeeProfile() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => setIsEditModalOpen(false)}
+                  onClick={() => {
+                    updateEmployee(employee.id, { name: editName, designation: editDesignation, department: editDepartment, role: editDesignation });
+                    setIsEditModalOpen(false);
+                  }}
                   className="flex-1 py-3 rounded-xl text-sm font-bold text-white transition-all bg-primary hover:opacity-90"
                 >
                   Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Promote Modal */}
+      {isPromoteModalOpen && (
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-md p-6 rounded-2xl shadow-xl animate-in zoom-in-95 duration-200 bg-card border border-border">
+            <h3 className="text-[18px] font-black text-foreground mb-4">
+              Promote Employee
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  Old Designation
+                </label>
+                <input
+                  type="text"
+                  value={employee.designation}
+                  disabled
+                  className="w-full px-4 py-2.5 rounded-xl bg-secondary border border-border text-muted-foreground text-[14px] cursor-not-allowed"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  New Designation
+                </label>
+                <input
+                  type="text"
+                  value={newDesignation}
+                  onChange={(e) => setNewDesignation(e.target.value)}
+                  placeholder="e.g. Lead Developer"
+                  className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  Old Salary
+                </label>
+                <input
+                  type="text"
+                  value={`₹${(employee.salary || 0).toLocaleString()}`}
+                  disabled
+                  className="w-full px-4 py-2.5 rounded-xl bg-secondary border border-border text-muted-foreground text-[14px] cursor-not-allowed"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  New Salary
+                </label>
+                <input
+                  type="number"
+                  value={newSalary}
+                  onChange={(e) => setNewSalary(e.target.value)}
+                  placeholder="e.g. 1200000"
+                  className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  Effective Date
+                </label>
+                <input
+                  type="date"
+                  value={effectiveDate}
+                  onChange={(e) => setEffectiveDate(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary"
+                />
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setIsPromoteModalOpen(false)}
+                  className="flex-1 py-3 rounded-xl text-sm font-bold transition-all bg-background border border-border text-foreground hover:bg-secondary"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    promoteEmployee(employee.id, newDesignation, Number(newSalary), effectiveDate);
+                    setIsPromoteModalOpen(false);
+                    setNewDesignation("");
+                    setNewSalary("");
+                    setEffectiveDate("");
+                  }}
+                  disabled={!newDesignation || !newSalary || !effectiveDate}
+                  className="flex-1 py-3 rounded-xl text-sm font-bold text-white transition-all bg-primary hover:opacity-90 disabled:opacity-50"
+                >
+                  Promote
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Transfer Modal */}
+      {isTransferModalOpen && (
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-md p-6 rounded-2xl shadow-xl animate-in zoom-in-95 duration-200 bg-card border border-border">
+            <h3 className="text-[18px] font-black text-foreground mb-4">
+              Initiate Employee Transfer
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  Transfer Type
+                </label>
+                <select
+                  value={transferType}
+                  onChange={(e) => setTransferType(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary appearance-none"
+                >
+                  <option>Department Transfer</option>
+                  <option>Location Transfer</option>
+                  <option>Manager Transfer</option>
+                  <option>Project Transfer</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  Current Value
+                </label>
+                <input
+                  type="text"
+                  value={
+                    transferType === "Department Transfer"
+                      ? employee.department
+                      : transferType === "Location Transfer"
+                      ? employee.location
+                      : transferType === "Manager Transfer"
+                      ? employee.manager || "Sarah Jenkins"
+                      : "None"
+                  }
+                  disabled
+                  className="w-full px-4 py-2.5 rounded-xl bg-secondary border border-border text-muted-foreground text-[14px] cursor-not-allowed"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  New Value
+                </label>
+                <input
+                  type="text"
+                  value={transferValue}
+                  onChange={(e) => setTransferValue(e.target.value)}
+                  placeholder={
+                    transferType === "Department Transfer"
+                      ? "e.g. Marketing"
+                      : transferType === "Location Transfer"
+                      ? "e.g. San Francisco, CA"
+                      : transferType === "Manager Transfer"
+                      ? "e.g. David Chen"
+                      : "e.g. Project Apollo"
+                  }
+                  className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary"
+                />
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setIsTransferModalOpen(false)}
+                  className="flex-1 py-3 rounded-xl text-sm font-bold transition-all bg-background border border-border text-foreground hover:bg-secondary"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    initiateTransfer(employee.id, transferType, transferValue);
+                    setIsTransferModalOpen(false);
+                    setTransferValue("");
+                  }}
+                  disabled={!transferValue}
+                  className="flex-1 py-3 rounded-xl text-sm font-bold text-white transition-all bg-primary hover:opacity-90 disabled:opacity-50"
+                >
+                  Initiate Transfer
                 </button>
               </div>
             </div>
@@ -1223,7 +1599,7 @@ export function EmployeeProfile() {
                     Date
                   </label>
                   <input
-                    type="text"
+                     type="text"
                     placeholder="Jan 2026"
                     className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary"
                   />
@@ -1272,6 +1648,8 @@ export function EmployeeProfile() {
                 </label>
                 <input
                   type="text"
+                  value={assetName}
+                  onChange={(e) => setAssetName(e.target.value)}
                   placeholder="e.g. Wireless Mouse"
                   className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary"
                 />
@@ -1280,7 +1658,11 @@ export function EmployeeProfile() {
                 <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
                   Category
                 </label>
-                <select className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary appearance-none">
+                <select
+                  value={assetCategory}
+                  onChange={(e) => setAssetCategory(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary appearance-none"
+                >
                   <option>Hardware</option>
                   <option>Peripheral</option>
                   <option>License / Software</option>
@@ -1292,6 +1674,8 @@ export function EmployeeProfile() {
                 </label>
                 <textarea
                   rows={3}
+                  value={assetReason}
+                  onChange={(e) => setAssetReason(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary resize-none"
                 ></textarea>
               </div>
@@ -1303,7 +1687,22 @@ export function EmployeeProfile() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => setIsAssetModalOpen(false)}
+                  onClick={() => {
+                    const newAsset = {
+                      id: `AST-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
+                      name: assetName,
+                      category: assetCategory,
+                      date: new Date().toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" }),
+                      status: "Pending",
+                    };
+                    updateEmployee(employee.id, {
+                      assets: [...(employee.assets || []), newAsset]
+                    });
+                    setIsAssetModalOpen(false);
+                    setAssetName("");
+                    setAssetCategory("Hardware");
+                    setAssetReason("");
+                  }}
                   className="flex-1 py-3 rounded-xl text-sm font-bold text-white transition-all bg-primary hover:opacity-90"
                 >
                   Submit Request
@@ -1328,6 +1727,8 @@ export function EmployeeProfile() {
                 </label>
                 <textarea
                   rows={4}
+                  value={noteText}
+                  onChange={(e) => setNoteText(e.target.value)}
                   placeholder="Type your note here..."
                   className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary resize-none"
                 ></textarea>
@@ -1340,7 +1741,19 @@ export function EmployeeProfile() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => setIsNoteModalOpen(false)}
+                  onClick={() => {
+                    const newNote = {
+                      id: `N${Date.now()}`,
+                      text: noteText,
+                      author: "David Chen",
+                      time: "Just now",
+                    };
+                    updateEmployee(employee.id, {
+                      notes: [...(employee.notes || []), newNote]
+                    });
+                    setIsNoteModalOpen(false);
+                    setNoteText("");
+                  }}
                   className="flex-1 py-3 rounded-xl text-sm font-bold text-white transition-all bg-primary hover:opacity-90"
                 >
                   Save Note

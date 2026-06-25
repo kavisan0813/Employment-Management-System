@@ -10,6 +10,8 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
+import { useEmployees } from "../context/AppContext";
 
 /* ─── Types ─────────────────────────────── */
 interface Department {
@@ -27,6 +29,8 @@ interface Department {
   description?: string;
   createdDate?: string;
   lastUpdated?: string;
+  parentDepartment?: string;
+  location?: string;
 }
 
 /* ─── Enhanced Mock Data ─────────────────── */
@@ -46,6 +50,8 @@ const initialDeptsData: Department[] = [
     description: "Core technology development and infrastructure scaling.",
     createdDate: "Jan 15, 2023",
     lastUpdated: "Apr 20, 2026",
+    parentDepartment: "None",
+    location: "New York, NY",
   },
   {
     id: "DEPT002",
@@ -62,6 +68,8 @@ const initialDeptsData: Department[] = [
     description: "Revenue acquisition and client relationship onboarding.",
     createdDate: "Mar 10, 2023",
     lastUpdated: "Apr 18, 2026",
+    parentDepartment: "None",
+    location: "Chicago, IL",
   },
   {
     id: "DEPT003",
@@ -79,6 +87,8 @@ const initialDeptsData: Department[] = [
       "Product placement, digital campaigns, and branding initiatives.",
     createdDate: "Feb 20, 2023",
     lastUpdated: "Mar 15, 2026",
+    parentDepartment: "None",
+    location: "San Francisco, CA",
   },
   {
     id: "DEPT004",
@@ -96,6 +106,8 @@ const initialDeptsData: Department[] = [
       "Talent scouting, organizational benefits, and policy rollout.",
     createdDate: "Jan 05, 2023",
     lastUpdated: "Feb 28, 2026",
+    parentDepartment: "None",
+    location: "Boston, MA",
   },
   {
     id: "DEPT005",
@@ -113,6 +125,8 @@ const initialDeptsData: Department[] = [
       "Corporate audits, payroll compliance, and bookkeeping operations.",
     createdDate: "Jun 01, 2023",
     lastUpdated: "Apr 10, 2026",
+    parentDepartment: "None",
+    location: "New York, NY",
   },
   {
     id: "DEPT006",
@@ -130,6 +144,8 @@ const initialDeptsData: Department[] = [
       "Logistics fulfillment, quality checks, and supply parameters.",
     createdDate: "May 12, 2023",
     lastUpdated: "Dec 15, 2025",
+    parentDepartment: "None",
+    location: "Chicago, IL",
   },
 ];
 
@@ -150,6 +166,8 @@ function DepartmentFormModal({
     budget: dept ? String(dept.annualBudget) : "",
     status: dept?.status || "Active",
     description: dept?.description || "",
+    parentDepartment: dept?.parentDepartment || "None",
+    location: dept?.location || "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -185,6 +203,8 @@ function DepartmentFormModal({
       description: form.description,
       createdDate: dept?.createdDate || "Apr 27, 2026",
       lastUpdated: "Apr 27, 2026",
+      parentDepartment: form.parentDepartment,
+      location: form.location,
     });
     onClose();
   };
@@ -315,6 +335,34 @@ function DepartmentFormModal({
             )}
           </div>
 
+          {/* Parent Department */}
+          <div>
+            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
+              Parent Department
+            </label>
+            <input
+              type="text"
+              className="w-full rounded-xl px-4 py-2.5 text-sm border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-bold"
+              placeholder="e.g. Engineering (or None)"
+              value={form.parentDepartment}
+              onChange={(e) => setForm({ ...form, parentDepartment: e.target.value })}
+            />
+          </div>
+
+          {/* Location */}
+          <div>
+            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
+              Location
+            </label>
+            <input
+              type="text"
+              className="w-full rounded-xl px-4 py-2.5 text-sm border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-bold"
+              placeholder="e.g. New York, NY"
+              value={form.location}
+              onChange={(e) => setForm({ ...form, location: e.target.value })}
+            />
+          </div>
+
           {/* Status */}
           <div>
             <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
@@ -380,11 +428,18 @@ function DepartmentDetailModal({
   dept: Department;
   onClose: () => void;
 }) {
+  const navigate = useNavigate();
+  const { employeesList } = useEmployees();
+
   const formatCurrency = (val: number) => {
     if (val >= 10000000) return `₹${(val / 10000000).toFixed(1)}Cr`;
     if (val >= 100000) return `₹${(val / 100000).toFixed(0)}L`;
     return `₹${val.toLocaleString()}`;
   };
+
+  const deptEmployees = employeesList.filter(
+    (emp) => emp.department.toLowerCase() === dept.name.toLowerCase()
+  );
 
   return (
     <div
@@ -491,6 +546,24 @@ function DepartmentDetailModal({
                 {dept.head}
               </div>
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <span className="text-xs font-black text-muted-foreground uppercase tracking-wider block mb-1">
+                  Parent Department
+                </span>
+                <div className="text-sm font-bold text-foreground">
+                  {dept.parentDepartment || "None"}
+                </div>
+              </div>
+              <div>
+                <span className="text-xs font-black text-muted-foreground uppercase tracking-wider block mb-1">
+                  Location
+                </span>
+                <div className="text-sm font-bold text-foreground">
+                  {dept.location || "Not Specified"}
+                </div>
+              </div>
+            </div>
             <div>
               <span className="text-xs font-black text-muted-foreground uppercase tracking-wider block mb-1">
                 Description
@@ -526,35 +599,37 @@ function DepartmentDetailModal({
               <span>Department Roster Preview</span>
             </h4>
             <div className="space-y-2 max-h-[250px] overflow-y-auto border border-border rounded-2xl p-2 bg-neutral-50 dark:bg-zinc-800/50">
-              {[
-                {
-                  name: "Rohan Sharma",
-                  role: "Lead Engineer",
-                  status: "Active",
-                },
-                { name: "Aarti Gupta", role: "Staff Dev", status: "Active" },
-                { name: "Vijay Kumar", role: "QA Analyst", status: "On Leave" },
-                { name: "Divya S.", role: "Frontend Dev", status: "Active" },
-              ].map((emp, idx) => (
+              {deptEmployees.map((emp) => (
                 <div
-                  key={idx}
-                  className="flex items-center justify-between p-2 hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-700/40 rounded-xl transition-colors"
+                  key={emp.id}
+                  onClick={() => {
+                    onClose();
+                    navigate(`/employees/${emp.id}`);
+                  }}
+                  className="flex items-center justify-between p-2 hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-700/40 rounded-xl transition-colors cursor-pointer"
                 >
                   <div>
                     <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
                       {emp.name}
                     </p>
                     <p className="text-[11px] text-muted-foreground font-medium">
-                      {emp.role}
+                      {emp.role || emp.designation}
                     </p>
                   </div>
                   <span
-                    className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${emp.status === "Active" ? "bg-[#E6F4EA] text-[#00B87C]" : "bg-amber-50 text-amber-600"}`}
+                    className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                      emp.status === "Active"
+                        ? "bg-[#E6F4EA] text-[#00B87C]"
+                        : "bg-amber-50 text-amber-600"
+                    }`}
                   >
                     {emp.status}
                   </span>
                 </div>
               ))}
+              {deptEmployees.length === 0 && (
+                <p className="text-xs text-muted-foreground text-center py-4">No employees in this department.</p>
+              )}
             </div>
           </div>
         </div>
@@ -575,6 +650,7 @@ function DepartmentDetailModal({
 
 /* ─── Main Departments Page ──────────────── */
 export function Departments() {
+  const { employeesList } = useEmployees();
   const [depts, setDepts] = useState<Department[]>(initialDeptsData);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<
@@ -596,6 +672,42 @@ export function Departments() {
   );
   const [headInput, setHeadInput] = useState("");
   const [showMenu, setShowMenu] = useState<string | null>(null);
+
+  // Move Dept states
+  const [moveDept, setMoveDept] = useState<Department | null>(null);
+  const [newParentInput, setNewParentInput] = useState("None");
+
+  // Export Report states
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [reportType, setReportType] = useState("Employee List");
+  const [reportFormat, setReportFormat] = useState("CSV");
+
+  const handleExportReport = () => {
+    let content = "";
+    if (reportType === "Employee List") {
+      content = `Employee ID,Name,Department,Role,Status,Location\n` +
+        employeesList.map(e => `${e.id},${e.name},${e.department},${e.role},${e.status},${e.location}`).join("\n");
+    } else if (reportType === "Analytics Report") {
+      content = `Department Code,Department Name,Total Employees,Active,On Leave,Growth\n` +
+        depts.map(d => `${d.code},${d.name},${d.employees},${d.activeEmployees},${d.onLeaveEmployees},${d.growth}%`).join("\n");
+    } else {
+      content = `Department Code,Department Name,Annual Budget,Budget Used,Budget Remaining\n` +
+        depts.map(d => `${d.code},${d.name},${d.annualBudget},${d.budgetUsed},${d.annualBudget - d.budgetUsed}`).join("\n");
+    }
+
+    const mimeType = reportFormat === "CSV" ? "text/csv" : reportFormat === "Excel" ? "application/vnd.ms-excel" : "text/plain";
+    const ext = reportFormat.toLowerCase();
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${reportType.replace(/\s+/g, "_")}_Export.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setShowExportModal(false);
+  };
 
   // Currencies formating
   const formatCurrency = (val: number) => {
@@ -641,13 +753,21 @@ export function Departments() {
             Manage organizational capacity boundaries efficiently.
           </p>
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-white transition-all bg-[#00B87C] hover:bg-[#00a36d] font-bold text-xs active:scale-95 shadow-sm"
-        >
-          <Plus size={18} />
-          Add Department
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowExportModal(true)}
+            className="flex items-center gap-2 rounded-xl px-4 py-2.5 transition-colors border border-border bg-card text-foreground hover:bg-secondary font-bold text-xs active:scale-95 shadow-sm"
+          >
+            Export Report
+          </button>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-white transition-all bg-[#00B87C] hover:bg-[#00a36d] font-bold text-xs active:scale-95 shadow-sm"
+          >
+            <Plus size={18} />
+            Add Department
+          </button>
+        </div>
       </div>
 
       {/* ── Filters Section ── */}
@@ -730,6 +850,7 @@ export function Departments() {
                       {[
                         "View Department",
                         "Edit Department",
+                        "Move Department",
                         "Assign Head",
                         "View Employees",
                         "Delete Department",
@@ -743,8 +864,14 @@ export function Departments() {
                             if (action === "View Department")
                               setSelectedDept(dept);
                             if (action === "Edit Department") setEditDept(dept);
-                            if (action === "Assign Head")
+                            if (action === "Move Department") {
+                              setMoveDept(dept);
+                              setNewParentInput(dept.parentDepartment || "None");
+                            }
+                            if (action === "Assign Head") {
                               setAssignHeadDept(dept);
+                              setHeadInput(dept.head);
+                            }
                             if (action === "View Employees")
                               setViewEmployeesDept(dept);
                             if (action === "Delete Department")
@@ -772,8 +899,8 @@ export function Departments() {
                     <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                       {dept.name}
                     </h3>
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                      {dept.code}
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-2">
+                      {dept.code} <span className="w-1 h-1 rounded-full bg-border" /> 📍 {dept.location || "Global"}
                     </p>
                   </div>
                 </div>
@@ -826,7 +953,14 @@ export function Departments() {
 
               {/* Footer */}
               <div className="flex items-center justify-between pt-3 border-t border-border">
-                <div className="flex items-center gap-1 text-xs font-bold text-slate-600 dark:text-slate-300">
+                <div
+                  className="flex items-center gap-1 text-xs font-bold text-slate-600 dark:text-slate-300 cursor-pointer hover:text-primary transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setAssignHeadDept(dept);
+                    setHeadInput(dept.head);
+                  }}
+                >
                   <User size={14} className="text-slate-400" />
                   <span>{dept.head}</span>
                 </div>
@@ -927,7 +1061,7 @@ export function Departments() {
                 type="text"
                 placeholder="Enter head name..."
                 className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-bold"
-                value={headInput !== "" ? headInput : assignHeadDept.head}
+                value={headInput}
                 onChange={(e) => setHeadInput(e.target.value)}
               />
             </div>
@@ -1090,6 +1224,145 @@ export function Departments() {
           dept={selectedDept}
           onClose={() => setSelectedDept(null)}
         />
+      )}
+
+      {moveDept && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setMoveDept(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-card shadow-xl border border-border p-6 animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100 mb-1">
+              Move Department
+            </h3>
+            <p className="text-xs text-muted-foreground mb-4">
+              Change the parent unit for <strong>"{moveDept.name}"</strong>.
+            </p>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  Current Parent
+                </label>
+                <input
+                  type="text"
+                  value={moveDept.parentDepartment || "None"}
+                  disabled
+                  className="w-full px-4 py-2.5 rounded-xl bg-secondary border border-border text-muted-foreground text-[14px] cursor-not-allowed"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  New Parent
+                </label>
+                <div className="relative">
+                  <select
+                    value={newParentInput}
+                    onChange={(e) => setNewParentInput(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl outline-none bg-background border border-border text-foreground text-[14px] focus:border-primary appearance-none font-bold"
+                  >
+                    <option value="None">None</option>
+                    {depts
+                      .filter((d) => d.id !== moveDept.id)
+                      .map((d) => (
+                        <option key={d.id} value={d.name}>
+                          {d.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                className="w-full py-2.5 rounded-xl text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 hover:bg-neutral-200 transition-colors"
+                onClick={() => setMoveDept(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="w-full py-2.5 rounded-xl text-xs font-extrabold text-white bg-primary hover:opacity-90 shadow-sm transition-all"
+                onClick={() => {
+                  setDepts((prev) =>
+                    prev.map((d) =>
+                      d.id === moveDept.id
+                        ? { ...d, parentDepartment: newParentInput }
+                        : d,
+                    ),
+                  );
+                  setMoveDept(null);
+                }}
+              >
+                Confirm Move
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showExportModal && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setShowExportModal(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-card shadow-xl border border-border p-6 animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100 mb-1">
+              Export Department Report
+            </h3>
+            <p className="text-xs text-muted-foreground mb-4">
+              Download current department configurations and lists.
+            </p>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  Report Type
+                </label>
+                <select
+                  value={reportType}
+                  onChange={(e) => setReportType(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl outline-none bg-background border border-border text-foreground text-[14px] focus:border-primary appearance-none font-bold"
+                >
+                  <option>Employee List</option>
+                  <option>Analytics Report</option>
+                  <option>Budget Report</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
+                  Format
+                </label>
+                <select
+                  value={reportFormat}
+                  onChange={(e) => setReportFormat(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl outline-none bg-background border border-border text-foreground text-[14px] focus:border-primary appearance-none font-bold"
+                >
+                  <option>CSV</option>
+                  <option>Excel</option>
+                  <option>PDF</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                className="w-full py-2.5 rounded-xl text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 hover:bg-neutral-200 transition-colors"
+                onClick={() => setShowExportModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="w-full py-2.5 rounded-xl text-xs font-extrabold text-white bg-primary hover:opacity-90 shadow-sm transition-all"
+                onClick={handleExportReport}
+              >
+                Export
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

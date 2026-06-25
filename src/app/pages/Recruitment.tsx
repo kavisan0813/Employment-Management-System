@@ -27,6 +27,8 @@ import {
   ChevronLeft,
   Edit3,
   Upload,
+  Download,
+  FileText,
 } from "lucide-react";
 import { recruitmentPipeline } from "../data/mockData";
 import type { JobPosting, ScheduledInterview } from "../context/AppContext";
@@ -1032,16 +1034,18 @@ function ScheduleModal({
   candidate,
   onClose,
   onSchedule,
+  interview,
 }: {
   candidate: Candidate;
   onClose: () => void;
-  onSchedule: (iv: Omit<ScheduledInterview, "id">) => void;
+  onSchedule: (iv: Omit<ScheduledInterview, "id"> & { id?: string }) => void;
+  interview?: ScheduledInterview;
 }) {
   const [form, setForm] = useState({
-    date: "",
-    time: "",
-    type: "Video Call",
-    interviewer: "",
+    date: interview?.date || "",
+    time: interview?.time || "",
+    type: interview?.type || "Video Call",
+    interviewer: interview?.interviewer || "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState(false);
@@ -1061,6 +1065,7 @@ function ScheduleModal({
     }
 
     onSchedule({
+      id: interview?.id,
       candidateId: candidate.id,
       candidateName: candidate.name,
       candidateInitials: candidate.initials,
@@ -1333,10 +1338,12 @@ function AddCandidateModal({
   stage,
   onClose,
   onAdd,
+  initialFile,
 }: {
   stage: Stage;
   onClose: () => void;
   onAdd: (stage: Stage, c: Candidate) => void;
+  initialFile?: File | null;
 }) {
   const [form, setForm] = useState({
     name: "",
@@ -1352,6 +1359,12 @@ function AddCandidateModal({
   const [parseSuccess, setParseSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   useEscapeKey(onClose);
+
+  useEffect(() => {
+    if (initialFile) {
+      handleResumeUpload(initialFile);
+    }
+  }, [initialFile]);
 
   const handleResumeUpload = (file: File) => {
     if (!file) return;
@@ -1480,7 +1493,29 @@ function AddCandidateModal({
         </div>
         <div className="px-6 py-5 space-y-4 overflow-y-auto flex-1">
           {/* Resume Parser Dropzone */}
-          <div className="p-5 border-2 border-dashed border-emerald-500/20 hover:border-emerald-500/50 rounded-2xl bg-emerald-500/[0.02] dark:bg-emerald-500/[0.01] transition-all text-center relative overflow-hidden group">
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onDragEnter={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onDragLeave={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (e.dataTransfer.files?.[0]) {
+                handleResumeUpload(e.dataTransfer.files[0]);
+              }
+            }}
+            className="p-5 border-2 border-dashed border-emerald-500/20 hover:border-emerald-500/50 rounded-2xl bg-emerald-500/[0.02] dark:bg-emerald-500/[0.01] transition-all text-center relative overflow-hidden group cursor-pointer"
+            onClick={() => fileInputRef.current?.click()}
+          >
             <input
               type="file"
               ref={fileInputRef}
@@ -1762,7 +1797,7 @@ function PostJobModal({
   job?: JobPosting;
   onClose: () => void;
   onPost: (
-    j: Omit<JobPosting, "id" | "postedAt" | "applicants"> & { id?: string },
+    j: Omit<JobPosting, "id" | "postedAt" | "applicants"> & { id?: string; vacancies?: string | number },
   ) => void;
 }) {
   const [form, setForm] = useState({
@@ -1773,6 +1808,8 @@ function PostJobModal({
     experience: job?.experience || "",
     salary: job?.salary || "",
     description: job?.description || "",
+    jobId: job?.jobId || "",
+    vacancies: job?.vacancies ? String(job.vacancies) : "1",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState(false);
@@ -1906,6 +1943,10 @@ function PostJobModal({
             "e.g. Senior React Developer",
             <Briefcase size={13} />,
           )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {field("Job ID", "jobId", "e.g. JOB-2026-001")}
+            {field("Vacancies", "vacancies", "e.g. 5")}
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {(["department", "location"] as const).map((k) => (
               <div key={k}>
@@ -2291,6 +2332,7 @@ function CandidateDetailSidePanel({
     "Overview" | "Interviews" | "Activity" | "Offer Letter"
   >("Overview");
   const [isEditing, setIsEditing] = useState(false);
+  const [showResumeModal, setShowResumeModal] = useState(false);
   const [editForm, setEditForm] = useState({
     name: candidate.name,
     role: candidate.role,
@@ -2920,6 +2962,84 @@ Signature of \${candidate.name}          Date
                     ))}
                   </div>
                 </div>
+
+                {/* Resume Card */}
+                <div
+                  className="p-4 rounded-2xl border bg-card space-y-4 mt-6"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400">
+                    Candidate Resume
+                  </h4>
+                  <div className="flex items-center justify-between p-3 rounded-xl border bg-background" style={{ borderColor: "var(--border)" }}>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center bg-secondary text-primary shrink-0"
+                      >
+                        <Upload size={18} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-foreground truncate">
+                          {candidate.name.replace(/\s+/g, "_")}_Resume.pdf
+                        </p>
+                        <p className="text-[11px] font-medium text-slate-400">
+                          Uploaded: {candidate.date || "Just now"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setShowResumeModal(true)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-bold text-primary bg-secondary hover:opacity-80"
+                      >
+                        View
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const textContent = `
+=========================================
+          RESUME: ${candidate.name.toUpperCase()}
+=========================================
+
+Name: ${candidate.name}
+Role: ${candidate.role}
+Location: ${candidate.location}
+Type: ${candidate.type}
+Source: ${candidate.source || "LinkedIn"}
+
+PROFESSIONAL EXPERIENCE:
+Senior Software Developer (Mock Experience)
+- Led frontend design systems migration to react-router and CSS variables.
+- Maintained 99.9% uptime for core recruitment pipeline tools.
+- Directed peer code reviews and mentored junior staff.
+
+SKILLS:
+React, TypeScript, Node.js, REST APIs, Git, Agile, Docker, AWS
+
+EDUCATION:
+Bachelor of Science in Computer Science (Mock Education)
+
+=========================================
+                          `;
+                          const blob = new Blob([textContent.trim()], { type: "text/plain" });
+                          const url = URL.createObjectURL(blob);
+                          const anchor = document.createElement("a");
+                          anchor.href = url;
+                          anchor.download = `${candidate.name.replace(/\s+/g, "_")}_Resume.txt`;
+                          document.body.appendChild(anchor);
+                          anchor.click();
+                          document.body.removeChild(anchor);
+                          URL.revokeObjectURL(url);
+                        }}
+                        className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
+                      >
+                        <Download size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
 
@@ -3346,7 +3466,79 @@ Signature of \${candidate.name}          Date
           </div>
         )}
       </div>
+
+      {showResumeModal && (
+        <ResumeModal
+          candidate={candidate}
+          onClose={() => setShowResumeModal(false)}
+        />
+      )}
     </>
+  );
+}
+
+/* ─── Resume Modal ────────────────────────────────────────── */
+interface ResumeModalProps {
+  candidate: Candidate;
+  onClose: () => void;
+}
+
+function ResumeModal({ candidate, onClose }: ResumeModalProps) {
+  useEscapeKey(onClose);
+  return (
+    <div
+      className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg rounded-2xl bg-card shadow-xl border border-border p-6 flex flex-col max-h-[80vh] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between pb-4 border-b border-border mb-4 flex-shrink-0">
+          <h3 className="text-base font-extrabold text-foreground">
+            Resume: {candidate.name}
+          </h3>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto pr-1 text-sm text-foreground space-y-4 font-sans text-left">
+          <div>
+            <p className="font-extrabold text-xs uppercase tracking-wider text-muted-foreground mb-1">Personal Info</p>
+            <p><strong>Name:</strong> {candidate.name}</p>
+            <p><strong>Email:</strong> {candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com</p>
+            <p><strong>Location:</strong> {candidate.location}</p>
+          </div>
+          <hr className="border-border" />
+          <div>
+            <p className="font-extrabold text-xs uppercase tracking-wider text-muted-foreground mb-1">Experience</p>
+            <p className="font-bold text-foreground">Senior Developer — NexHR (5+ Years)</p>
+            <p className="text-xs text-muted-foreground mb-2">Jan 2021 - Present</p>
+            <ul className="list-disc pl-5 text-xs space-y-1 text-muted-foreground">
+              <li>Designed and built high-performance enterprise applications with React and TypeScript.</li>
+              <li>Migrated legacy infrastructure to modernized Docker/AWS stack.</li>
+              <li>Improved loading speed by 40% using virtualization and bundle optimization.</li>
+            </ul>
+          </div>
+          <hr className="border-border" />
+          <div>
+            <p className="font-extrabold text-xs uppercase tracking-wider text-muted-foreground mb-1">Skills</p>
+            <p className="text-xs text-muted-foreground font-semibold">React, TypeScript, Node.js, Redux, TailwindCSS, AWS, Docker</p>
+          </div>
+        </div>
+        <div className="pt-4 border-t border-border mt-4 flex justify-end flex-shrink-0">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 hover:bg-neutral-200 transition-colors"
+          >
+            Close Resume
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -3356,11 +3548,13 @@ function CandidatesView({
   onDetail,
   onSchedule,
   onMessage,
+  onViewResume,
 }: {
   candidates: Candidate[];
   onDetail: (c: Candidate) => void;
   onSchedule: (c: Candidate) => void;
   onMessage: (c: Candidate) => void;
+  onViewResume: (c: Candidate) => void;
 }) {
   return (
     <div
@@ -3377,6 +3571,7 @@ function CandidatesView({
             }}
           >
             {[
+              "Application ID",
               "Candidate",
               "Role",
               "Applied Date",
@@ -3403,6 +3598,11 @@ function CandidatesView({
               style={{ backgroundColor: "var(--card)" }}
               onClick={() => onDetail(c)}
             >
+              <td
+                className="px-8 py-4 text-sm font-bold text-slate-500"
+              >
+                {c.id}
+              </td>
               <td className="px-8 py-4">
                 <div className="flex items-center gap-3">
                   <div
@@ -3487,10 +3687,22 @@ function CandidatesView({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      onViewResume(c);
+                    }}
+                    className="p-2 rounded-lg transition-all hover:text-emerald-500"
+                    style={{ color: "var(--muted-foreground)" }}
+                    title="View Resume"
+                  >
+                    <FileText size={16} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
                       onMessage(c);
                     }}
-                    className="p-2 rounded-lg transition-all"
+                    className="p-2 rounded-lg transition-all hover:text-blue-500"
                     style={{ color: "var(--muted-foreground)" }}
+                    title="Send Message"
                   >
                     <MessageSquare size={16} />
                   </button>
@@ -3499,8 +3711,9 @@ function CandidatesView({
                       e.stopPropagation();
                       onSchedule(c);
                     }}
-                    className="p-2 rounded-lg transition-all"
+                    className="p-2 rounded-lg transition-all hover:text-emerald-500"
                     style={{ color: "var(--muted-foreground)" }}
+                    title="Schedule Interview"
                   >
                     <Calendar size={16} />
                   </button>
@@ -3519,10 +3732,14 @@ function InterviewsView({
   interviews,
   onDismiss,
   onJoinCall,
+  onReschedule,
+  onViewProfile,
 }: {
   interviews: ScheduledInterview[];
   onDismiss: (id: string) => void;
   onJoinCall: (iv: ScheduledInterview) => void;
+  onReschedule?: (iv: ScheduledInterview) => void;
+  onViewProfile?: (candidateId: string) => void;
 }) {
   if (interviews.length === 0) {
     return (
@@ -3639,6 +3856,7 @@ function InterviewsView({
                     <X size={18} />
                   </button>
                   <button
+                    onClick={() => onReschedule?.(iv)}
                     className="p-2.5 rounded-xl transition-all hover:bg-[#00B87C]/[0.08]"
                     style={{ color: "var(--muted-foreground)" }}
                     title="Reschedule"
@@ -3702,6 +3920,7 @@ function InterviewsView({
               </div>
               <div className="flex gap-3 mt-2">
                 <button
+                  onClick={() => onJoinCall(iv)}
                   className="flex-[2] py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all shadow-md hover:shadow-lg text-white"
                   style={{
                     backgroundColor: "var(--primary)",
@@ -3710,6 +3929,7 @@ function InterviewsView({
                   Join Meeting
                 </button>
                 <button
+                  onClick={() => onViewProfile?.(iv.candidateId)}
                   className="flex-1 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-widest border transition-all hover:bg-[#00B87C]/[0.08]"
                   style={{
                     backgroundColor: "var(--card)",
@@ -4335,9 +4555,11 @@ function JobsView({
               }}
             >
               {[
+                "Job ID",
                 "Job Title",
                 "Department",
                 "Location",
+                "Vacancy",
                 "Posted",
                 "Applicants",
                 "Status",
@@ -4361,6 +4583,11 @@ function JobsView({
                 style={{ backgroundColor: "var(--card)" }}
                 onClick={() => onSelectJob(j)}
               >
+                <td
+                  className="px-8 py-5 text-sm font-bold text-slate-500"
+                >
+                  {j.jobId || "N/A"}
+                </td>
                 <td className="px-8 py-5">
                   <p
                     className="text-sm font-black"
@@ -4389,6 +4616,12 @@ function JobsView({
                     <MapPin size={14} className="text-slate-400" />
                     {j.location}
                   </div>
+                </td>
+                <td
+                  className="px-8 py-5 text-sm font-bold"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  {j.vacancies || 1}
                 </td>
                 <td
                   className="px-8 py-5 text-sm font-bold"
@@ -4506,10 +4739,12 @@ function DropZone({
   stage,
   onDrop,
   onDragDrop,
+  onFileDrop,
 }: {
   stage: Stage;
   onDrop: () => void;
   onDragDrop: () => void;
+  onFileDrop?: (file: File) => void;
 }) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -4519,13 +4754,19 @@ function DropZone({
       onClick={onDrop}
       onDragOver={(e) => {
         e.preventDefault();
+        e.stopPropagation();
         setIsDragOver(true);
       }}
       onDragLeave={() => setIsDragOver(false)}
       onDrop={(e) => {
         e.preventDefault();
+        e.stopPropagation();
         setIsDragOver(false);
-        onDragDrop();
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          onFileDrop?.(e.dataTransfer.files[0]);
+        } else {
+          onDragDrop();
+        }
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -4841,6 +5082,8 @@ function RecruitmentTabs({
 const INITIAL_JOBS: JobPosting[] = [
   {
     id: "J001",
+    jobId: "JOB-2026-001",
+    vacancies: 3,
     title: "Senior React Developer",
     department: "Engineering",
     location: "Remote",
@@ -4854,6 +5097,8 @@ const INITIAL_JOBS: JobPosting[] = [
   },
   {
     id: "J002",
+    jobId: "JOB-2026-002",
+    vacancies: 2,
     title: "Backend Engineer",
     department: "Engineering",
     location: "Remote",
@@ -4867,6 +5112,8 @@ const INITIAL_JOBS: JobPosting[] = [
   },
   {
     id: "J003",
+    jobId: "JOB-2026-003",
+    vacancies: 1,
     title: "Product Designer",
     department: "Design",
     location: "Hybrid",
@@ -4880,6 +5127,8 @@ const INITIAL_JOBS: JobPosting[] = [
   },
   {
     id: "J004",
+    jobId: "JOB-2026-004",
+    vacancies: 4,
     title: "HR Specialist",
     department: "HR",
     location: "On-site",
@@ -5189,6 +5438,10 @@ export function Recruitment() {
   } | null>(null);
   const [activeVideoCall, setActiveVideoCall] =
     useState<ScheduledInterview | null>(null);
+  const [rescheduleInterview, setRescheduleInterview] =
+    useState<ScheduledInterview | null>(null);
+  const [resumeCandidate, setResumeCandidate] =
+    useState<Candidate | null>(null);
 
   const dragRef = useRef<{ candidateId: string; fromStage: Stage } | null>(
     null,
@@ -5279,6 +5532,8 @@ export function Recruitment() {
   const handlePostJob = (
     jobForm: Omit<JobPosting, "id" | "postedAt" | "applicants"> & {
       id?: string;
+      jobId?: string;
+      vacancies?: string | number;
     },
   ) => {
     if (jobForm.id) {
@@ -5294,6 +5549,8 @@ export function Recruitment() {
               experience: jobForm.experience,
               salary: jobForm.salary,
               description: jobForm.description,
+              jobId: jobForm.jobId,
+              vacancies: Number(jobForm.vacancies) || 1,
             }
           : j,
       );
@@ -5310,6 +5567,8 @@ export function Recruitment() {
         experience: jobForm.experience || "Any",
         salary: jobForm.salary || "Not Specified",
         description: jobForm.description,
+        jobId: jobForm.jobId || `JOB-${Date.now()}`,
+        vacancies: Number(jobForm.vacancies) || 1,
         postedAt: new Date().toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
@@ -5330,37 +5589,67 @@ export function Recruitment() {
   };
 
   // CRUD - Interview Scheduling
-  const handleSchedule = (iv: Omit<ScheduledInterview, "id">) => {
-    const newInterview: ScheduledInterview = {
-      ...iv,
-      id: `IV${Date.now()}`,
-      candidateInitials:
-        iv.candidateInitials || iv.candidateName.slice(0, 2).toUpperCase(),
-    };
-    updateInterviews([...interviews, newInterview]);
+  const handleSchedule = (iv: Omit<ScheduledInterview, "id"> & { id?: string }) => {
+    if (iv.id) {
+      // Rescheduling: update the existing interview
+      const updatedInterviews = interviews.map((x) =>
+        x.id === iv.id ? { ...x, ...iv, id: x.id } : x
+      );
+      updateInterviews(updatedInterviews);
 
-    // Add interviewDate to candidate
-    let foundStage: Stage | null = null;
-    for (const st of STAGES) {
-      const c = (pipeline[st] || []).find((x) => x.id === iv.candidateId);
-      if (c) {
-        foundStage = st;
-        break;
+      // Update candidate's interviewDate
+      let foundStage: Stage | null = null;
+      for (const st of STAGES) {
+        const c = (pipeline[st] || []).find((x) => x.id === iv.candidateId);
+        if (c) {
+          foundStage = st;
+          break;
+        }
       }
-    }
-    if (foundStage) {
-      const newPipeline = {
-        ...pipeline,
-        [foundStage]: (pipeline[foundStage] || []).map((x) =>
-          x.id === iv.candidateId
-            ? { ...x, interviewDate: `${iv.date} ${iv.time}` }
-            : x,
-        ),
-      };
-      updatePipeline(newPipeline);
-    }
+      if (foundStage) {
+        const newPipeline = {
+          ...pipeline,
+          [foundStage]: (pipeline[foundStage] || []).map((x) =>
+            x.id === iv.candidateId
+              ? { ...x, interviewDate: `${iv.date} ${iv.time}` }
+              : x
+          ),
+        };
+        updatePipeline(newPipeline);
+      }
+      toast(`Interview rescheduled with ${iv.candidateName} on ${iv.date}`, "info");
+    } else {
+      // Creating a new interview
+      const newInterview: ScheduledInterview = {
+        ...iv,
+        id: `IV${Date.now()}`,
+        candidateInitials:
+          iv.candidateInitials || iv.candidateName.slice(0, 2).toUpperCase(),
+      } as ScheduledInterview;
+      updateInterviews([...interviews, newInterview]);
 
-    toast(`Interview scheduled with ${iv.candidateName} on ${iv.date}`, "info");
+      // Add interviewDate to candidate
+      let foundStage: Stage | null = null;
+      for (const st of STAGES) {
+        const c = (pipeline[st] || []).find((x) => x.id === iv.candidateId);
+        if (c) {
+          foundStage = st;
+          break;
+        }
+      }
+      if (foundStage) {
+        const newPipeline = {
+          ...pipeline,
+          [foundStage]: (pipeline[foundStage] || []).map((x) =>
+            x.id === iv.candidateId
+              ? { ...x, interviewDate: `${iv.date} ${iv.time}` }
+              : x
+          ),
+        };
+        updatePipeline(newPipeline);
+      }
+      toast(`Interview scheduled with ${iv.candidateName} on ${iv.date}`, "info");
+    }
   };
 
   const handleCancelInterview = (id: string) => {
@@ -5396,8 +5685,29 @@ export function Recruitment() {
     toast("Interview cancelled", "warning");
   };
 
+  const handleViewProfile = (candidateId: string) => {
+    let foundStage: Stage | null = null;
+    let candidate: Candidate | null = null;
+    for (const st of STAGES) {
+      const c = (pipeline[st] || []).find((x) => x.id === candidateId);
+      if (c) {
+        candidate = c;
+        foundStage = st;
+        break;
+      }
+    }
+    if (candidate && foundStage) {
+      setDetailCandidate({ candidate, stage: foundStage });
+    } else {
+      toast("Candidate profile not found", "error");
+    }
+  };
+
   // Dynamic Statistics Calculations
   const allCandidates = Object.values(pipeline).flat();
+  const candidateForReschedule = rescheduleInterview
+    ? allCandidates.find((c) => c.id === rescheduleInterview.candidateId)
+    : null;
   const openPositions = jobs.length;
   const applications = allCandidates.length;
   const newApps = (pipeline.Applied || []).length;
@@ -5432,7 +5742,11 @@ export function Recruitment() {
       {addStage && (
         <AddCandidateModal
           stage={addStage}
-          onClose={() => setAddStage(null)}
+          initialFile={initialResumeFile}
+          onClose={() => {
+            setAddStage(null);
+            setInitialResumeFile(null);
+          }}
           onAdd={handleAddCandidate}
         />
       )}
@@ -5484,6 +5798,14 @@ export function Recruitment() {
           onSchedule={handleSchedule}
         />
       )}
+      {rescheduleInterview && candidateForReschedule && (
+        <ScheduleModal
+          candidate={candidateForReschedule}
+          interview={rescheduleInterview}
+          onClose={() => setRescheduleInterview(null)}
+          onSchedule={handleSchedule}
+        />
+      )}
       {deleteTarget && (
         <DeleteConfirmDialog
           candidate={deleteTarget.candidate}
@@ -5495,6 +5817,12 @@ export function Recruitment() {
         <VideoCallSimulator
           interview={activeVideoCall}
           onClose={() => setActiveVideoCall(null)}
+        />
+      )}
+      {resumeCandidate && (
+        <ResumeModal
+          candidate={resumeCandidate}
+          onClose={() => setResumeCandidate(null)}
         />
       )}
 
@@ -5627,6 +5955,10 @@ export function Recruitment() {
                         );
                         dragRef.current = null;
                       }}
+                      onFileDrop={(file) => {
+                        setInitialResumeFile(file);
+                        setAddStage(stage);
+                      }}
                     />
                   </div>
                 </div>
@@ -5664,6 +5996,7 @@ export function Recruitment() {
           }}
           onSchedule={(c) => setScheduleCandidate(c)}
           onMessage={(c) => setMessageCandidate(c)}
+          onViewResume={(c) => setResumeCandidate(c)}
         />
       )}
       {activeTab === "Interviews" && (
@@ -5671,6 +6004,8 @@ export function Recruitment() {
           interviews={interviews}
           onDismiss={handleCancelInterview}
           onJoinCall={(iv) => setActiveVideoCall(iv)}
+          onReschedule={(iv) => setRescheduleInterview(iv)}
+          onViewProfile={(candidateId) => handleViewProfile(candidateId)}
         />
       )}
       {activeTab === "Analytics" && <AnalyticsView pipeline={pipeline} />}

@@ -19,10 +19,15 @@ import {
   MoreHorizontal,
   CheckCircle2,
   ChevronDown,
+  AlertTriangle,
+  Lock,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "motion/react";
 import { useAuth } from "../context/AuthContext";
+import { DocumentPreviewContent } from "./EmployeeDocuments";
 
 const TABS = [
   "Personal Info",
@@ -774,6 +779,13 @@ function EmploymentTab() {
 }
 
 function DocumentsTab() {
+  const [viewingDoc, setViewingDoc] = useState<string | null>(null);
+  const [replacingDoc, setReplacingDoc] = useState<string | null>(null);
+  const [fileToUpload, setFileToUpload] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const docs = [
     {
       name: "Aadhar Card",
@@ -813,47 +825,257 @@ function DocumentsTab() {
     },
   ];
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {docs.map((doc) => (
-        <div
-          key={doc.name}
-          className="bg-card rounded-2xl p-7 border border-border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group"
-        >
-          <div className="flex items-start justify-between mb-5">
-            <div className="w-11 h-11 rounded-[10px] flex items-center justify-center bg-background group-hover:bg-primary/10 transition-colors shadow-inner">
-              <FileText size={22} style={{ color: doc.color }} />
-            </div>
-            <span
-              className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
-                doc.status === "Verified"
-                  ? "bg-primary/10 text-primary border-primary/20"
-                  : doc.status === "Pending"
-                    ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
-                    : "bg-blue-500/10 text-blue-600 border-blue-500/20"
-              }`}
-            >
-              {doc.status}
-            </span>
-          </div>
-          <h4 className="text-[16px] font-black text-foreground mb-1 group-hover:text-primary transition-colors">
-            {doc.name}
-          </h4>
-          <p className="text-[13px] font-bold text-muted-foreground mb-8 uppercase tracking-wide">
-            {doc.type}
-          </p>
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFileToUpload(e.target.files[0]);
+    }
+  };
 
-          <div className="flex gap-3">
-            <button className="flex-1 py-3 rounded-xl bg-background text-foreground text-[12px] font-black border border-border hover:bg-secondary transition-all">
-              View
-            </button>
-            <button className="flex-1 py-3 rounded-xl border border-primary text-primary text-[12px] font-black hover:bg-primary/10 transition-all">
-              Replace
-            </button>
+  const handleReplaceSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!fileToUpload) return;
+
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    // Simulate progress
+    const interval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setIsUploading(false);
+            setReplacingDoc(null);
+            setFileToUpload(null);
+            showToast(
+              "Replacement Successful",
+              "success",
+              `${replacingDoc} replacement file uploaded and queued for HR review.`,
+            );
+          }, 400);
+          return 100;
+        }
+        return prev + 25;
+      });
+    }, 200);
+  };
+
+  return (
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {docs.map((doc) => (
+          <div
+            key={doc.name}
+            className="bg-card rounded-2xl p-7 border border-border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group"
+          >
+            <div className="flex items-start justify-between mb-5">
+              <div className="w-11 h-11 rounded-[10px] flex items-center justify-center bg-background group-hover:bg-primary/10 transition-colors shadow-inner">
+                <FileText size={22} style={{ color: doc.color }} />
+              </div>
+              <span
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
+                  doc.status === "Verified"
+                    ? "bg-primary/10 text-primary border-primary/20"
+                    : doc.status === "Pending"
+                      ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                      : "bg-blue-500/10 text-blue-600 border-blue-500/20"
+                }`}
+              >
+                {doc.status}
+              </span>
+            </div>
+            <h4 className="text-[16px] font-black text-foreground mb-1 group-hover:text-primary transition-colors">
+              {doc.name}
+            </h4>
+            <p className="text-[13px] font-bold text-muted-foreground mb-8 uppercase tracking-wide">
+              {doc.type}
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setViewingDoc(doc.name)}
+                className="flex-1 py-3 rounded-xl bg-background text-foreground text-[12px] font-black border border-border hover:bg-secondary transition-all"
+              >
+                View
+              </button>
+              <button
+                onClick={() => {
+                  setReplacingDoc(doc.name);
+                  setFileToUpload(null);
+                }}
+                className="flex-1 py-3 rounded-xl border border-primary text-primary text-[12px] font-black hover:bg-primary/10 transition-all"
+              >
+                Replace
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      {/* --- Document View Modal --- */}
+      <AnimatePresence>
+        {viewingDoc && (
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 animate-in fade-in duration-200">
+            <div
+              className="absolute inset-0 bg-background/40"
+              onClick={() => setViewingDoc(null)}
+            />
+            <div className="relative bg-card w-full max-w-[420px] rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-border">
+              <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                    <FileText size={20} className="text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-black text-foreground">
+                      {viewingDoc}
+                    </h3>
+                    <p className="text-[11px] font-bold text-primary">Preview</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setViewingDoc(null)}
+                  className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="p-8 flex flex-col items-center gap-6 bg-white dark:bg-card">
+                <div className="w-full flex items-center justify-center p-2">
+                  <DocumentPreviewContent docName={viewingDoc} />
+                </div>
+                <button
+                  onClick={() => {
+                    showToast("Downloading", "info", "File download started.");
+                    setViewingDoc(null);
+                  }}
+                  className="w-full py-4 bg-primary text-white text-[14px] font-black rounded-2xl shadow-xl shadow-[#00B87C]/20 hover:opacity-95 transition-all"
+                >
+                  Download File
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* --- Document Replace Upload Modal --- */}
+      <AnimatePresence>
+        {replacingDoc && (
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
+            <div
+              className="absolute inset-0 bg-background/40"
+              onClick={() => {
+                if (!isUploading) setReplacingDoc(null);
+              }}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col"
+            >
+              <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-primary border border-primary/20">
+                    <Paperclip size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-[18px] font-black text-foreground">
+                      Replace Document
+                    </h3>
+                    <p className="text-[12px] font-bold text-muted-foreground">
+                      {replacingDoc}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  disabled={isUploading}
+                  onClick={() => setReplacingDoc(null)}
+                  className="p-2 hover:bg-secondary rounded-xl text-muted-foreground transition-colors disabled:opacity-50"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleReplaceSubmit} className="p-6 space-y-6 bg-white dark:bg-card">
+                <div className="space-y-4">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">
+                    Select Replacement File
+                  </label>
+                  
+                  <div
+                    onClick={() => {
+                      if (!isUploading) fileInputRef.current?.click();
+                    }}
+                    className="border-2 border-dashed border-border rounded-2xl p-8 bg-secondary/30 flex flex-col items-center justify-center gap-2 hover:border-primary transition-all cursor-pointer group"
+                  >
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      className="hidden"
+                      onChange={handleFileChange}
+                      accept="image/*,application/pdf"
+                      disabled={isUploading}
+                    />
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                      <Paperclip size={20} />
+                    </div>
+                    {fileToUpload ? (
+                      <p className="text-[13px] font-black text-foreground text-center truncate max-w-xs">
+                        {fileToUpload.name}
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-[13px] font-black text-foreground">
+                          Browse Files
+                        </p>
+                        <p className="text-[11px] font-bold text-muted-foreground">
+                          PDF, JPG, PNG (Max 10MB)
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {isUploading && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-[11px] font-bold text-muted-foreground uppercase">
+                      <span>Uploading...</span>
+                      <span>{uploadProgress}%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary transition-all duration-150"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    disabled={isUploading}
+                    onClick={() => setReplacingDoc(null)}
+                    className="flex-1 px-6 py-3.5 border border-border rounded-xl text-[13px] font-black text-muted-foreground hover:bg-secondary transition-all disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!fileToUpload || isUploading}
+                    className="flex-1 px-6 py-3.5 bg-primary text-white rounded-xl font-black text-[13px] shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isUploading ? "Uploading..." : "Replace File"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -898,6 +1120,43 @@ function SettingsTab() {
     announcements: false,
   });
 
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
+
+  const handlePasswordUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      showToast("Verification Failed", "error", "Please fill out all fields.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      showToast("Mismatch Error", "error", "New passwords do not match.");
+      return;
+    }
+    if (newPassword.length < 8) {
+      showToast("Weak Password", "error", "Password must be at least 8 characters long.");
+      return;
+    }
+
+    setShowPasswordModal(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    showToast("Password Secure", "success", "Your account security credentials have been updated.");
+  };
+
+  const handleDeactivateConfirm = () => {
+    setShowDeactivateModal(false);
+    showToast("Action Restricted", "error", "Deactivation request has been sent to HR for verification.");
+  };
+
   const toggle = (key: keyof typeof preferences) => {
     setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
   };
@@ -933,105 +1192,293 @@ function SettingsTab() {
   );
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8">
-      <div className="lg:w-[60%] space-y-6">
-        <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
-          <Label>ACCOUNT PREFERENCES</Label>
+    <>
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="lg:w-[60%] space-y-6">
+          <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
+            <Label>ACCOUNT PREFERENCES</Label>
 
-          <div className="space-y-10">
-            {/* Delivery Channels */}
-            <div>
-              <h4 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-4">
-                Delivery Channels
-              </h4>
-              <div className="space-y-1 divide-y divide-border/50">
-                <ToggleItem
-                  label="Email Notifications"
-                  value={preferences.email}
-                  onToggle={() => toggle("email")}
-                />
-                <ToggleItem
-                  label="In-App Notifications"
-                  value={preferences.inApp}
-                  onToggle={() => toggle("inApp")}
-                />
-                <ToggleItem
-                  label="SMS Notifications"
-                  value={preferences.sms}
-                  onToggle={() => toggle("sms")}
-                />
+            <div className="space-y-10">
+              {/* Delivery Channels */}
+              <div>
+                <h4 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-4">
+                  Delivery Channels
+                </h4>
+                <div className="space-y-1 divide-y divide-border/50">
+                  <ToggleItem
+                    label="Email Notifications"
+                    value={preferences.email}
+                    onToggle={() => toggle("email")}
+                  />
+                  <ToggleItem
+                    label="In-App Notifications"
+                    value={preferences.inApp}
+                    onToggle={() => toggle("inApp")}
+                  />
+                  <ToggleItem
+                    label="SMS Notifications"
+                    value={preferences.sms}
+                    onToggle={() => toggle("sms")}
+                  />
+                </div>
+              </div>
+
+              {/* Alert Types */}
+              <div>
+                <h4 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-4">
+                  Alert Types
+                </h4>
+                <div className="space-y-1 divide-y divide-border/50">
+                  <ToggleItem
+                    label="Leave Request Updates"
+                    value={preferences.leave}
+                    onToggle={() => toggle("leave")}
+                  />
+                  <ToggleItem
+                    label="Expense Claim Status"
+                    value={preferences.expense}
+                    onToggle={() => toggle("expense")}
+                  />
+                  <ToggleItem
+                    label="Monthly Payslip Alerts"
+                    value={preferences.payslip}
+                    onToggle={() => toggle("payslip")}
+                  />
+                  <ToggleItem
+                    label="Company Announcements"
+                    value={preferences.announcements}
+                    onToggle={() => toggle("announcements")}
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Alert Types */}
-            <div>
-              <h4 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-4">
-                Alert Types
-              </h4>
-              <div className="space-y-1 divide-y divide-border/50">
-                <ToggleItem
-                  label="Leave Request Updates"
-                  value={preferences.leave}
-                  onToggle={() => toggle("leave")}
-                />
-                <ToggleItem
-                  label="Expense Claim Status"
-                  value={preferences.expense}
-                  onToggle={() => toggle("expense")}
-                />
-                <ToggleItem
-                  label="Monthly Payslip Alerts"
-                  value={preferences.payslip}
-                  onToggle={() => toggle("payslip")}
-                />
-                <ToggleItem
-                  label="Company Announcements"
-                  value={preferences.announcements}
-                  onToggle={() => toggle("announcements")}
-                />
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 pt-8 border-t border-border">
+              <DropdownField
+                label="Preferred Language"
+                value="English (US)"
+                options={["English (US)", "English (UK)", "Hindi"]}
+                disabled={false}
+              />
+              <DropdownField
+                label="Timezone"
+                value="(GMT+05:30) India Standard Time"
+                options={["(GMT+05:30) IST", "(GMT-08:00) PST"]}
+                disabled={false}
+              />
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 pt-8 border-t border-border">
-            <DropdownField
-              label="Preferred Language"
-              value="English (US)"
-              options={["English (US)", "English (UK)", "Hindi"]}
-              disabled={false}
-            />
-            <DropdownField
-              label="Timezone"
-              value="(GMT+05:30) India Standard Time"
-              options={["(GMT+05:30) IST", "(GMT-08:00) PST"]}
-              disabled={false}
-            />
           </div>
         </div>
-      </div>
 
-      <div className="lg:w-[40%] space-y-6">
-        <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
-          <Label>SECURITY</Label>
-          <button className="w-full py-4 rounded-2xl border border-border text-foreground font-black text-[14px] flex items-center justify-center gap-3 hover:bg-secondary transition-all shadow-sm">
-            <Shield size={18} className="text-primary" /> Change Password
-          </button>
-
-          <div className="mt-8 pt-8 border-t border-border">
-            <h4 className="text-[13px] font-black text-rose-500 mb-2 uppercase tracking-widest">
-              Danger Zone
-            </h4>
-            <p className="text-[12px] text-muted-foreground mb-6 font-bold">
-              Once you deactivate your account, there is no going back. Please
-              be certain.
-            </p>
-            <button className="w-full py-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 font-black text-[14px] flex items-center justify-center gap-3 hover:bg-rose-500 hover:text-white transition-all shadow-sm">
-              <ShieldAlert size={18} /> Deactivate Account
+        <div className="lg:w-[40%] space-y-6">
+          <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
+            <Label>SECURITY</Label>
+            <button
+              onClick={() => {
+                setShowPasswordModal(true);
+                setCurrentPassword("");
+                setNewPassword("");
+                setConfirmPassword("");
+              }}
+              className="w-full py-4 rounded-2xl border border-border text-foreground font-black text-[14px] flex items-center justify-center gap-3 hover:bg-secondary transition-all shadow-sm cursor-pointer"
+            >
+              <Shield size={18} className="text-primary" /> Change Password
             </button>
+
+            <div className="mt-8 pt-8 border-t border-border">
+              <h4 className="text-[13px] font-black text-rose-500 mb-2 uppercase tracking-widest">
+                Danger Zone
+              </h4>
+              <p className="text-[12px] text-muted-foreground mb-6 font-bold">
+                Once you deactivate your account, there is no going back. Please
+                be certain.
+              </p>
+              <button
+                onClick={() => setShowDeactivateModal(true)}
+                className="w-full py-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 font-black text-[14px] flex items-center justify-center gap-3 hover:bg-rose-500 hover:text-white transition-all shadow-sm cursor-pointer"
+              >
+                <ShieldAlert size={18} /> Deactivate Account
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* --- Change Password Modal --- */}
+      <AnimatePresence>
+        {showPasswordModal && (
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
+            <div
+              className="absolute inset-0 bg-background/40"
+              onClick={() => setShowPasswordModal(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative bg-card w-full max-w-[440px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col p-8 bg-white dark:bg-card"
+            >
+              <button
+                onClick={() => setShowPasswordModal(false)}
+                className="absolute right-6 top-6 p-2 rounded-xl text-muted-foreground hover:bg-secondary transition-all border-none bg-transparent cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-9 h-9 rounded-[10px] bg-emerald-500/10 flex items-center justify-center text-primary border border-primary/20">
+                  <Lock size={18} />
+                </div>
+                <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">
+                  Change Password
+                </h3>
+              </div>
+
+              <form onSubmit={handlePasswordUpdate} className="space-y-5">
+                <div className="flex flex-col gap-2">
+                  <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider ml-1">
+                    Current Password
+                  </label>
+                  <div className="flex items-center gap-2.5 rounded-xl px-4 bg-background border border-border h-12 transition-all focus-within:border-primary">
+                    <Lock size={14} className="text-muted-foreground" />
+                    <input
+                      type={showCurrentPw ? "text" : "password"}
+                      required
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-transparent border-none outline-none text-[13px] text-foreground font-bold"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPw(!showCurrentPw)}
+                      className="text-muted-foreground hover:text-foreground border-none bg-transparent cursor-pointer flex items-center"
+                    >
+                      {showCurrentPw ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider ml-1">
+                    New Password
+                  </label>
+                  <div className="flex items-center gap-2.5 rounded-xl px-4 bg-background border border-border h-12 transition-all focus-within:border-primary">
+                    <Lock size={14} className="text-muted-foreground" />
+                    <input
+                      type={showNewPw ? "text" : "password"}
+                      required
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-transparent border-none outline-none text-[13px] text-foreground font-bold"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPw(!showNewPw)}
+                      className="text-muted-foreground hover:text-foreground border-none bg-transparent cursor-pointer flex items-center"
+                    >
+                      {showNewPw ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider ml-1">
+                    Confirm New Password
+                  </label>
+                  <div className="flex items-center gap-2.5 rounded-xl px-4 bg-background border border-border h-12 transition-all focus-within:border-primary">
+                    <Lock size={14} className="text-muted-foreground" />
+                    <input
+                      type={showConfirmPw ? "text" : "password"}
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-transparent border-none outline-none text-[13px] text-foreground font-bold"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPw(!showConfirmPw)}
+                      className="text-muted-foreground hover:text-foreground border-none bg-transparent cursor-pointer flex items-center"
+                    >
+                      {showConfirmPw ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordModal(false)}
+                    className="flex-1 py-3.5 border border-border rounded-xl text-[13px] font-black text-muted-foreground hover:bg-secondary transition-all cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-3.5 bg-primary text-white rounded-xl font-black text-[13px] shadow-lg shadow-[#00B87C]/20 hover:opacity-95 transition-all cursor-pointer"
+                  >
+                    Update
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* --- Deactivate Account Modal --- */}
+      <AnimatePresence>
+        {showDeactivateModal && (
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
+            <div
+              className="absolute inset-0 bg-background/40"
+              onClick={() => setShowDeactivateModal(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative bg-card w-full max-w-[440px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col p-8 items-center text-center gap-6 bg-white dark:bg-card"
+            >
+              <button
+                onClick={() => setShowDeactivateModal(false)}
+                className="absolute right-6 top-6 p-2 rounded-xl text-muted-foreground hover:bg-secondary transition-all border-none bg-transparent cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="w-16 h-16 rounded-[24px] bg-rose-500/10 flex items-center justify-center text-rose-500 border border-rose-500/20 shadow-inner">
+                <AlertTriangle size={28} />
+              </div>
+              <div>
+                <h3 className="text-[20px] font-black text-foreground uppercase tracking-tight mb-2">
+                  Deactivate Account?
+                </h3>
+                <p className="text-[13px] font-bold text-muted-foreground leading-relaxed">
+                  Are you sure you want to deactivate your profile? This will lock your account and send a verification request to HR.
+                </p>
+              </div>
+              <div className="flex gap-4 w-full mt-2">
+                <button
+                  onClick={() => setShowDeactivateModal(false)}
+                  className="flex-1 py-4 bg-background border border-border rounded-2xl text-[14px] font-black text-muted-foreground hover:bg-secondary transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeactivateConfirm}
+                  className="flex-1 py-4 bg-rose-500 text-white rounded-2xl text-[14px] font-black hover:bg-rose-600 shadow-xl shadow-rose-500/25 transition-all cursor-pointer"
+                >
+                  Deactivate
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
