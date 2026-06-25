@@ -41,16 +41,18 @@ export function ExportLogsTable({
 
     const fileName = `${log.module}_export_${new Date(log.timestamp).toISOString().slice(0,10)}.${log.format.toLowerCase()}`;
     
-    // Simulate realistic download
-    alert(`✅ Downloading: ${fileName}`);
+    // Create mock file data
+    const fileContent = `Export Data for ${log.module}\nUser: ${log.user}\nOrganization: ${log.organization}\nTimestamp: ${new Date(log.timestamp).toLocaleString()}\n\n[Simulated Data Content]`;
+    const blob = new Blob([fileContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
     
-    // Real implementation would be:
-    // const link = document.createElement("a");
-    // link.href = `/api/exports/download/${log.id}`;
-    // link.download = fileName;
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const closeModal = () => setSelectedLog(null);

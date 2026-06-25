@@ -24,6 +24,11 @@ const DEMO_ACCOUNTS: Record<
   UserRole,
   { email: string; name: string; initials: string }
 > = {
+  "Platform Admin": {
+    email: "platform@nexushr.com",
+    name: "System Root",
+    initials: "SR",
+  },
   "Super Admin": {
     email: "admin@nexushr.com",
     name: "Ryan Park",
@@ -52,6 +57,7 @@ const DEMO_ACCOUNTS: Record<
 };
 
 const ROLE_ICONS: Record<UserRole, React.ComponentType<any>> = {
+  "Platform Admin": ShieldCheck,
   "Super Admin": ShieldAlert,
   "HR Manager": Users,
   Finance: Coins,
@@ -89,6 +95,7 @@ export function Login() {
 
     // Fallback to keyword detection
     const lower = emailVal.toLowerCase();
+    if (lower.includes("platform")) return "Platform Admin";
     if (lower.includes("admin")) return "Super Admin";
     if (lower.includes("hr")) return "HR Manager";
     if (lower.includes("finance")) return "Finance";

@@ -173,7 +173,7 @@ export function SubscriptionPlansTable() {
                       </td>
                       <td className="px-6 py-4 text-right relative" onClick={e => e.stopPropagation()}>
                         <button 
-                          onClick={() => setOpenMenuId(openMenuId === row.subId ? null : row.subId)}
+                          onClick={() => openSubscriptionModal(row)}
                           className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
                         >
                           <MoreVertical className="w-5 h-5" />

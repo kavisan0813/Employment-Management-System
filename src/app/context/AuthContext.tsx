@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 export type UserRole =
+  | "Platform Admin"
   | "Super Admin"
   | "HR Manager"
   | "Finance"
@@ -26,6 +27,11 @@ export const ROLE_CONFIG: Record<
   UserRole,
   { label: string; color: string; bg: string }
 > = {
+  "Platform Admin": {
+    label: "Platform Admin",
+    color: "#6366F1", // Indigo accent
+    bg: "rgba(99,102,241,0.1)",
+  },
   "Super Admin": {
     label: "Super Admin",
     color: "#8B5CF6", // Purple accent
@@ -54,7 +60,8 @@ export const ROLE_CONFIG: Record<
 };
 
 export const ROLE_HOME_ROUTE: Record<UserRole, string> = {
-  "Super Admin": "/hr/dashboard",
+  "Platform Admin": "/platform-admin/dashboard",
+  "Super Admin": "/admin/dashboard",
   "HR Manager": "/hr/dashboard",
   Finance: "/finance/dashboard",
   Manager: "/manager/dashboard",
@@ -84,14 +91,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const hasAccess = (path: string) => {
     if (!user) return false;
 
-    // Super Admin has access to everything
-    if (user.role === "Super Admin") return true;
+    // Platform Admin has access to everything
+    if (user.role === "Platform Admin") return true;
 
     // Normalize path (remove trailing slash)
     const normalizedPath = path === "/" ? "/" : path.replace(/\/$/, "");
 
+    // Super Admin has access to everything EXCEPT /platform-admin
+    if (user.role === "Super Admin") {
+      return !normalizedPath.startsWith("/platform-admin");
+    }
+
     if (user.role === "HR Manager") {
       const restricted = [
+        "/platform-admin",
         "/settings/security",
         "/settings/integrations",
         "/settings/roles",
