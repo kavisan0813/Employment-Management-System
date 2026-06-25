@@ -175,10 +175,10 @@ export function Login() {
     setIsLoading(true);
     setTimeout(() => {
       login({
-        name: "Ryan Park",
-        email: "admin@nexushr.com",
-        role: "Super Admin",
-        initials: "RP",
+        name: "System Root",
+        email: "platform@nexushr.com",
+        role: "Platform Admin",
+        initials: "SR",
       });
       navigate("/platform-admin/dashboard", { replace: true });
       setIsLoading(false);
@@ -474,11 +474,13 @@ export function Login() {
             <span>Quick Demo Access</span>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            {Object.keys(DEMO_ACCOUNTS).map((roleKey, idx) => {
+            {Object.keys(DEMO_ACCOUNTS)
+              .filter((k) => k !== "Platform Admin")
+              .map((roleKey, idx, arr) => {
               const role = roleKey as UserRole;
               const demo = DEMO_ACCOUNTS[role];
               const config = ROLE_CONFIG[role];
-              const isLast = idx === Object.keys(DEMO_ACCOUNTS).length - 1;
+              const isLast = idx === arr.length - 1;
               const Icon = ROLE_ICONS[role];
               return (
                 <button
@@ -527,25 +529,25 @@ export function Login() {
               disabled={isLoading}
               className="w-full flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group justify-center"
               style={{
-                borderColor: "#8B5CF630",
-                backgroundColor: "rgba(139,92,246,0.06)",
+                borderColor: "#6366F130",
+                backgroundColor: "rgba(99,102,241,0.06)",
               }}
             >
               <div
                 className="p-1 rounded-lg"
                 style={{
-                  backgroundColor: "rgba(139, 92, 246, 0.12)",
-                  color: "#8B5CF6",
+                  backgroundColor: "rgba(99, 102, 241, 0.12)",
+                  color: "#6366F1",
                 }}
               >
-                <ShieldAlert size={14} />
+                <ShieldCheck size={14} />
               </div>
               <div className="flex flex-col">
                 <span
                   className="text-[11px] font-extrabold uppercase tracking-wide group-hover:underline leading-tight"
-                  style={{ color: "#8B5CF6" }}
+                  style={{ color: "#6366F1" }}
                 >
-                  Platform Super Admin Console
+                  Platform System Admin Console
                 </span>
               </div>
             </button>

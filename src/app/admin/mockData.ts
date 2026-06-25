@@ -634,7 +634,7 @@ const initialFeatureFlags: FeatureFlag[] = [
 const initialRoleTemplates: RoleTemplate[] = [
   {
     id: "role-1",
-    name: "Platform Super Admin",
+    name: "Platform System Admin",
     description:
       "Has absolute root capability inside the dashboard structure. Restricted to platform operators.",
     scope: "Platform",

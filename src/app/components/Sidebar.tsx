@@ -311,7 +311,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     if (path === "/") {
       return (
         currentPath === "/" ||
-        currentPath === "/platform-admin/dashboard" ||
+        currentPath === "/admin/dashboard" ||
         currentPath === "/hr/dashboard" ||
         currentPath === "/finance/dashboard" ||
         currentPath === "/manager/dashboard"

@@ -1,6 +1,6 @@
 import { RouterProvider } from "react-router";
 import { router } from "./routes";
-import { RecruitmentProvider } from "./context/AppContext";
+import { RecruitmentProvider, EmployeesProvider } from "./context/AppContext";
 import { WorkflowProvider } from "./context/WorkflowContext";
 import { AuthProvider } from "./context/AuthContext";
 import { AttendanceProvider } from "./context/AttendanceContext";
@@ -10,9 +10,11 @@ export default function App() {
     <AuthProvider>
       <AttendanceProvider>
         <WorkflowProvider>
-          <RecruitmentProvider>
-            <RouterProvider router={router} />
-          </RecruitmentProvider>
+          <EmployeesProvider>
+            <RecruitmentProvider>
+              <RouterProvider router={router} />
+            </RecruitmentProvider>
+          </EmployeesProvider>
         </WorkflowProvider>
       </AttendanceProvider>
     </AuthProvider>
