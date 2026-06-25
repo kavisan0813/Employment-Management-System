@@ -922,7 +922,7 @@ function RootRedirect() {
   if (!user) return <Navigate to="/login" replace />;
 
   const roleRoutes: Record<string, string> = {
-    "Super Admin": "/platform-admin/dashboard",
+    "Super Admin": "/admin/dashboard",
     "HR Manager": "/hr/dashboard",
     Finance: "/finance/dashboard",
     Manager: "/manager/dashboard",

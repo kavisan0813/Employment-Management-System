@@ -26,10 +26,13 @@ import {
   Bell,
 } from "lucide-react";
 
+import { useAuth } from "../../../context/AuthContext";
+
 const CURRENT_ADMIN_EMAIL = "admin@ems.io";
 
 export function Sidebar() {
   const location = useLocation();
+  const { user } = useAuth();
 
   // Navigation schema defining the core clusters
   const superAdminGroups = [
@@ -201,14 +204,14 @@ export function Sidebar() {
       <div className="p-4 border-t border-gray-200 bg-gray-50/50 space-y-2 shrink-0">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-xs text-indigo-700 border border-indigo-200 uppercase shrink-0">
-            PK
+            {user?.initials || "SR"}
           </div>
           <div className="overflow-hidden">
-            <span className="block text-[11px] font-bold text-gray-900 truncate">
-              {CURRENT_ADMIN_EMAIL}
+            <span className="block text-[11px] font-bold text-gray-900 truncate" title={user?.email || "platform@nexushr.com"}>
+              {user?.email || "platform@nexushr.com"}
             </span>
             <span className="text-[10px] text-emerald-600 font-bold block uppercase tracking-wide">
-              Platform Super Admin
+              Platform System Admin
             </span>
           </div>
         </div>
