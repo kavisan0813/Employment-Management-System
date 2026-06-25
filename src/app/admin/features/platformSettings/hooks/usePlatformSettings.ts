@@ -11,13 +11,20 @@ import { pushAuditLog } from "../../../mockData";
 const CURRENT_ADMIN_EMAIL = "admin@ems.io";
 
 export function usePlatformSettings() {
-  const [config, setConfig] = useState<SystemConfig>(() => platformSettingsService.loadSettings());
+  const [config, setConfig] = useState<SystemConfig>(() =>
+    platformSettingsService.loadSettings(),
+  );
   const [activeTab, setActiveTab] = useState<keyof SystemConfig>("general");
   const [showAlert, setShowAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
-  const [alertType, setAlertType] = useState<"success" | "info" | "error">("success");
+  const [alertType, setAlertType] = useState<"success" | "info" | "error">(
+    "success",
+  );
 
-  const triggerAlert = (msg: string, type: "success" | "info" | "error" = "success") => {
+  const triggerAlert = (
+    msg: string,
+    type: "success" | "info" | "error" = "success",
+  ) => {
     setAlertMsg(msg);
     setAlertType(type);
     setShowAlert(true);
@@ -29,7 +36,7 @@ export function usePlatformSettings() {
   const handleSave = (section: keyof SystemConfig) => {
     try {
       platformSettingsService.saveSettings(config);
-      
+
       pushAuditLog(
         `platform_settings.${section}_updated`,
         "Admin Action",
@@ -37,12 +44,15 @@ export function usePlatformSettings() {
         "platform_admin",
         null,
         "Active",
-        { updated_fields: Object.keys(config[section]).join(",") }
+        { updated_fields: Object.keys(config[section]).join(",") },
       );
-      
-      triggerAlert(`System Configuration: ${section.toUpperCase()} settings saved successfully.`, "success");
-    } catch (e) {
-      triggerAlert("Failed to save settings.", "error");
+
+      triggerAlert(
+        `System Configuration: ${section.toUpperCase()} settings saved successfully.`,
+        "success",
+      );
+    } catch (err) {
+      console.log("Failed to save settings.", err);
     }
   };
 
@@ -52,7 +62,7 @@ export function usePlatformSettings() {
     const day = String(d.getDate()).padStart(2, "0");
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const year = d.getFullYear();
-    
+
     if (config.localization.dateFormat === "MM/DD/YYYY") {
       return `${month}/${day}/${year}`;
     }
@@ -72,7 +82,7 @@ export function usePlatformSettings() {
   const getFormattedCurrencyPreview = () => {
     const symbol = config.currency.symbol;
     const amount = (123456.789).toFixed(config.currency.decimalPlaces);
-    
+
     let formattedAmount = amount;
     if (config.localization.numberFormat === "India") {
       const parts = amount.split(".");
@@ -86,7 +96,7 @@ export function usePlatformSettings() {
     } else {
       formattedAmount = Number(amount).toLocaleString("en-US", {
         minimumFractionDigits: config.currency.decimalPlaces,
-        maximumFractionDigits: config.currency.decimalPlaces
+        maximumFractionDigits: config.currency.decimalPlaces,
       });
     }
 
@@ -108,6 +118,6 @@ export function usePlatformSettings() {
     handleSave,
     getFormattedDatePreview,
     getFormattedNumberPreview,
-    getFormattedCurrencyPreview
+    getFormattedCurrencyPreview,
   };
 }

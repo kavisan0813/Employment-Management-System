@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Search, Network, X, Calendar, Activity, Info, Server } from "lucide-react";
+import { useState } from "react";
+import { Search, Network, X, Calendar, Activity, Server } from "lucide-react";
 import { ApiLog } from "../types/logs.types";
 
 interface ApiLogsTableProps {
@@ -29,13 +29,18 @@ export function ApiLogsTable({
       log.endpoint.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.user.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesMethod = selectedMethod === "ALL" || log.method === selectedMethod;
+    const matchesMethod =
+      selectedMethod === "ALL" || log.method === selectedMethod;
     const matchesStatus =
       selectedStatus === "ALL" ||
-      (selectedStatus === "Success" && log.statusCode >= 200 && log.statusCode < 300) ||
+      (selectedStatus === "Success" &&
+        log.statusCode >= 200 &&
+        log.statusCode < 300) ||
       (selectedStatus === "Error" && log.statusCode >= 400);
 
-    return matchesSearch && matchesMethod && matchesStatus && filterByDate(log.date);
+    return (
+      matchesSearch && matchesMethod && matchesStatus && filterByDate(log.date)
+    );
   });
 
   const getMethodColor = (method: string) => {
@@ -125,33 +130,48 @@ export function ApiLogsTable({
           </thead>
           <tbody className="divide-y divide-gray-100 text-sm font-medium text-gray-700">
             {filtered.map((log) => (
-              <tr 
-                key={log.id} 
+              <tr
+                key={log.id}
                 onClick={() => setSelectedLog(log)}
                 className="hover:bg-gray-50/50 transition-colors cursor-pointer"
               >
                 <td className="px-5 py-4">
-                  <div className="text-gray-900 font-semibold">{log.apiName}</div>
-                  <div className="text-xs font-normal text-gray-500 font-mono mt-0.5">{log.endpoint}</div>
+                  <div className="text-gray-900 font-semibold">
+                    {log.apiName}
+                  </div>
+                  <div className="text-xs font-normal text-gray-500 font-mono mt-0.5">
+                    {log.endpoint}
+                  </div>
                 </td>
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-2">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-wider ${getMethodColor(log.method)}`}>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-wider ${getMethodColor(log.method)}`}
+                    >
                       {log.method}
                     </span>
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${getStatusColor(log.statusCode)}`}>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold ${getStatusColor(log.statusCode)}`}
+                    >
                       {log.statusCode}
                     </span>
                   </div>
                 </td>
                 <td className="px-5 py-4">
-                  <span className={`text-xs ${log.responseTimeMs > 1000 ? 'text-amber-600 font-semibold' : 'text-gray-500'}`}>
+                  <span
+                    className={`text-xs ${log.responseTimeMs > 1000 ? "text-amber-600 font-semibold" : "text-gray-500"}`}
+                  >
                     {log.responseTimeMs} ms
                   </span>
                 </td>
                 <td className="px-5 py-4 text-sm text-gray-700">{log.user}</td>
-                <td className="px-5 py-4 font-mono text-xs">{new Date(log.date).toLocaleString()}</td>
-                <td className="px-5 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                <td className="px-5 py-4 font-mono text-xs">
+                  {new Date(log.date).toLocaleString()}
+                </td>
+                <td
+                  className="px-5 py-4 text-right"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <button
                     onClick={() => setSelectedLog(log)}
                     className="text-indigo-600 hover:text-indigo-800 font-semibold text-xs"
@@ -163,7 +183,10 @@ export function ApiLogsTable({
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-5 py-8 text-center text-gray-500 text-sm">
+                <td
+                  colSpan={6}
+                  className="px-5 py-8 text-center text-gray-500 text-sm"
+                >
                   No API logs found matching your filters.
                 </td>
               </tr>
@@ -180,10 +203,12 @@ export function ApiLogsTable({
             <div className="px-8 py-6 border-b flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Network className="w-5 h-5 text-indigo-600" />
-                <h3 className="text-xl font-semibold text-gray-900">API Trace Details</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  API Trace Details
+                </h3>
               </div>
-              <button 
-                onClick={closeModal} 
+              <button
+                onClick={closeModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <X className="w-6 h-6" />
@@ -195,28 +220,40 @@ export function ApiLogsTable({
               {/* Main Info Card */}
               <div className="bg-gray-50 p-6 rounded-2xl space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className={`px-3 py-1 rounded-lg text-sm font-bold tracking-wider ${getMethodColor(selectedLog.method)}`}>
+                  <span
+                    className={`px-3 py-1 rounded-lg text-sm font-bold tracking-wider ${getMethodColor(selectedLog.method)}`}
+                  >
                     {selectedLog.method}
                   </span>
-                  <span className={`px-3 py-1 rounded-lg text-sm font-bold ${getStatusColor(selectedLog.statusCode)}`}>
+                  <span
+                    className={`px-3 py-1 rounded-lg text-sm font-bold ${getStatusColor(selectedLog.statusCode)}`}
+                  >
                     {selectedLog.statusCode}
                   </span>
                 </div>
-                <p className="text-xl font-semibold text-gray-900">{selectedLog.apiName}</p>
-                <p className="text-sm text-gray-500 font-mono break-all">{selectedLog.endpoint}</p>
+                <p className="text-xl font-semibold text-gray-900">
+                  {selectedLog.apiName}
+                </p>
+                <p className="text-sm text-gray-500 font-mono break-all">
+                  {selectedLog.endpoint}
+                </p>
               </div>
 
               {/* Details Grid */}
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <span className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Response Time</span>
+                  <span className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                    Response Time
+                  </span>
                   <div className="flex items-center gap-2 text-lg font-semibold">
                     <Activity className="w-5 h-5 text-gray-400" />
                     {selectedLog.responseTimeMs} ms
                   </div>
                 </div>
                 <div>
-                  <span className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Client / User</span>
+                  <span className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
+                    Client / User
+                  </span>
                   <div className="flex items-center gap-2 text-lg font-semibold">
                     <Server className="w-5 h-5 text-gray-400" />
                     {selectedLog.user}
@@ -227,7 +264,9 @@ export function ApiLogsTable({
               {/* Error Message */}
               {selectedLog.errorMessage && (
                 <div className="pt-4 border-t border-gray-100">
-                  <span className="block font-medium text-rose-500 uppercase text-xs mb-2">Error Detail</span>
+                  <span className="block font-medium text-rose-500 uppercase text-xs mb-2">
+                    Error Detail
+                  </span>
                   <div className="bg-rose-50 text-rose-700 p-4 rounded-2xl text-sm font-mono">
                     {selectedLog.errorMessage}
                   </div>

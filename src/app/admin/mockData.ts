@@ -43,7 +43,6 @@ import {
 import {
   UserSession,
   CustomRole,
-  Permission,
 } from "./features/userManagement/types/userManagement.types";
 
 // Helper to load or initialize from localStorage
@@ -95,7 +94,16 @@ const initialOrganizations: Organization[] = [
     pincode: "94105",
     storageUsedGB: 42.5,
     storageAllocatedGB: 100,
-    enabledModules: ["Employee Management", "Attendance", "Leave Management", "Payroll", "Recruitment", "Performance", "Assets", "Training"],
+    enabledModules: [
+      "Employee Management",
+      "Attendance",
+      "Leave Management",
+      "Payroll",
+      "Recruitment",
+      "Performance",
+      "Assets",
+      "Training",
+    ],
     joinedAt: "2024-01-15T08:00:00Z",
     lastActiveAt: "2026-06-20T01:00:00Z",
   },
@@ -124,7 +132,12 @@ const initialOrganizations: Organization[] = [
     pincode: "EC3A 7BB",
     storageUsedGB: 18.2,
     storageAllocatedGB: 50,
-    enabledModules: ["Employee Management", "Attendance", "Leave Management", "Payroll"],
+    enabledModules: [
+      "Employee Management",
+      "Attendance",
+      "Leave Management",
+      "Payroll",
+    ],
     joinedAt: "2024-05-10T12:30:00Z",
     lastActiveAt: "2026-06-19T23:45:00Z",
   },

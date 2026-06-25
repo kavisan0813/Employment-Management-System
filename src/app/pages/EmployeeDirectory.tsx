@@ -5,7 +5,6 @@ import {
   LayoutGrid,
   List,
   Mail,
-  Phone,
   MessageSquare,
   ChevronRight,
   X,
@@ -1087,7 +1086,9 @@ export function EmployeeDirectory() {
               </button>
               <button
                 onClick={() => {
-                  const el = document.getElementById("msg-area") as HTMLTextAreaElement;
+                  const el = document.getElementById(
+                    "msg-area",
+                  ) as HTMLTextAreaElement;
                   const messageVal = el ? el.value : "";
                   const mailtoUrl = `mailto:${targetColleague.email}?subject=${encodeURIComponent("Message from Colleague")}&body=${encodeURIComponent(messageVal)}`;
                   window.location.href = mailtoUrl;
@@ -1176,7 +1177,7 @@ export function EmployeeDirectory() {
                       "success",
                       `Drafting email to ${targetColleague.name}`,
                     );
-                    
+
                     // Reset fields & close modal
                     setEmailSubject("");
                     setEmailBody("");

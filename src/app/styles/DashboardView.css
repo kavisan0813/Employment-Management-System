@@ -20,7 +20,7 @@
   background: var(--card, #fff);
   border-radius: 14px;
   padding: 12px 14px;
-  border: 0.5px solid var(--border, #E8E5DF);
+  border: 0.5px solid var(--border, #e8e5df);
   display: flex;
   flex-direction: column;
 }
@@ -37,34 +37,34 @@
 }
 
 .ki-amber {
-  background: var(--warning-light, #FAEEDA);
-  color: var(--warning, #854F0B);
+  background: var(--warning-light, #faeeda);
+  color: var(--warning, #854f0b);
 }
 
 .ki-green {
-  background: var(--success-light, #EAF3DE);
-  color: var(--success, #3B6D11);
+  background: var(--success-light, #eaf3de);
+  color: var(--success, #3b6d11);
 }
 
 .ki-red {
-  background: var(--danger-light, #FCEBEB);
-  color: var(--danger, #A32D2D);
+  background: var(--danger-light, #fcebeb);
+  color: var(--danger, #a32d2d);
 }
 
 .ki-blue {
-  background: var(--info-light, #E6F1FB);
-  color: var(--info, #185FA5);
+  background: var(--info-light, #e6f1fb);
+  color: var(--info, #185fa5);
 }
 
 .ki-purple {
-  background: var(--secondary, #EEEDFE);
-  color: var(--primary, #534AB7);
+  background: var(--secondary, #eeedfe);
+  color: var(--primary, #534ab7);
 }
 
 .kpi-val {
   font-size: 20px;
   font-weight: 500;
-  color: var(--foreground, #2C2C2A);
+  color: var(--foreground, #2c2c2a);
   line-height: 1;
 }
 
@@ -81,11 +81,11 @@
 }
 
 .chg-up {
-  color: var(--success, #3B6D11);
+  color: var(--success, #3b6d11);
 }
 
 .chg-dn {
-  color: var(--danger, #A32D2D);
+  color: var(--danger, #a32d2d);
 }
 
 .two-col {
@@ -116,13 +116,13 @@
   background: var(--card, #fff);
   border-radius: 14px;
   padding: 14px;
-  border: 0.5px solid var(--border, #E8E5DF);
+  border: 0.5px solid var(--border, #e8e5df);
 }
 
 .ptitle {
   font-size: 12px;
   font-weight: 500;
-  color: var(--foreground, #2C2C2A);
+  color: var(--foreground, #2c2c2a);
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -131,7 +131,7 @@
 
 .pmore {
   font-size: 10px;
-  color: var(--warning, #BA7517);
+  color: var(--warning, #ba7517);
   cursor: pointer;
   background: none;
   border: none;
@@ -147,7 +147,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 5px 0;
-  border-bottom: 0.5px solid var(--background, #F4F1EC);
+  border-bottom: 0.5px solid var(--background, #f4f1ec);
 }
 
 .stat-row:last-child {
@@ -156,13 +156,13 @@
 
 .sk {
   font-size: 11px;
-  color: var(--muted-foreground, #5F5E5A);
+  color: var(--muted-foreground, #5f5e5a);
 }
 
 .sv {
   font-size: 11px;
   font-weight: 500;
-  color: var(--foreground, #2C2C2A);
+  color: var(--foreground, #2c2c2a);
 }
 
 .bdg {
@@ -174,33 +174,33 @@
 }
 
 .bg-green {
-  background: var(--success-light, #EAF3DE);
-  color: var(--success, #27500A);
+  background: var(--success-light, #eaf3de);
+  color: var(--success, #27500a);
 }
 
 .bg-red {
-  background: var(--danger-light, #FCEBEB);
-  color: var(--danger, #791F1F);
+  background: var(--danger-light, #fcebeb);
+  color: var(--danger, #791f1f);
 }
 
 .bg-amber {
-  background: var(--warning-light, #FAEEDA);
+  background: var(--warning-light, #faeeda);
   color: var(--warning, #633806);
 }
 
 .bg-blue {
-  background: var(--info-light, #E6F1FB);
-  color: var(--info, #0C447C);
+  background: var(--info-light, #e6f1fb);
+  color: var(--info, #0c447c);
 }
 
 .bg-gray {
-  background: var(--neutral-light, #F1EFE8);
-  color: var(--neutral, #5F5E5A);
+  background: var(--neutral-light, #f1efe8);
+  color: var(--neutral, #5f5e5a);
 }
 
 .alert-bar {
-  background: var(--warning-light, #FAEEDA);
-  border: 0.5px solid var(--warning, #FAC775);
+  background: var(--warning-light, #faeeda);
+  border: 0.5px solid var(--warning, #fac775);
   border-radius: 9px;
   padding: 8px 11px;
   display: flex;
@@ -210,7 +210,7 @@
 }
 
 .alert-bar svg {
-  color: var(--warning, #BA7517);
+  color: var(--warning, #ba7517);
   font-size: 13px;
   flex-shrink: 0;
 }
@@ -224,7 +224,7 @@
 .ad {
   font-size: 9px;
   font-weight: 500;
-  background: var(--warning, #FAC775);
+  background: var(--warning, #fac775);
   color: var(--warning-light, #412402);
   padding: 2px 6px;
   border-radius: 8px;
@@ -235,7 +235,7 @@
   display: flex;
   gap: 9px;
   padding: 7px 0;
-  border-bottom: 0.5px solid var(--background, #F4F1EC);
+  border-bottom: 0.5px solid var(--background, #f4f1ec);
   align-items: flex-start;
 }
 
@@ -253,13 +253,13 @@
 
 .atext {
   font-size: 11px;
-  color: var(--muted-foreground, #5F5E5A);
+  color: var(--muted-foreground, #5f5e5a);
   line-height: 1.4;
 }
 
 .atime {
   font-size: 9px;
-  color: var(--muted-foreground, #B4B2A9);
+  color: var(--muted-foreground, #b4b2a9);
   margin-top: 2px;
 }
 
@@ -268,7 +268,7 @@
   align-items: center;
   gap: 8px;
   padding: 6px 0;
-  border-bottom: 0.5px solid var(--background, #F4F1EC);
+  border-bottom: 0.5px solid var(--background, #f4f1ec);
 }
 
 .torg:last-child {
@@ -277,7 +277,7 @@
 
 .trank {
   font-size: 10px;
-  color: var(--muted-foreground, #B4B2A9);
+  color: var(--muted-foreground, #b4b2a9);
   width: 14px;
 }
 
@@ -285,7 +285,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--warning-light, #FAEEDA);
+  background: var(--warning-light, #faeeda);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -298,13 +298,13 @@
 .tname {
   font-size: 11px;
   font-weight: 500;
-  color: var(--foreground, #2C2C2A);
+  color: var(--foreground, #2c2c2a);
   flex: 1;
 }
 
 .temp {
   font-size: 10px;
-  color: var(--muted-foreground, #B4B2A9);
+  color: var(--muted-foreground, #b4b2a9);
 }
 
 .qgrid {
@@ -320,25 +320,25 @@
   gap: 5px;
   padding: 10px 6px;
   border-radius: 10px;
-  background: var(--background, #F4F1EC);
-  border: 0.5px solid var(--border, #E8E5DF);
+  background: var(--background, #f4f1ec);
+  border: 0.5px solid var(--border, #e8e5df);
   cursor: pointer;
   transition: all 0.12s ease;
 }
 
 .qbtn:hover {
-  background: var(--warning-light, #FAEEDA);
-  border-color: var(--warning, #FAC775);
+  background: var(--warning-light, #faeeda);
+  border-color: var(--warning, #fac775);
 }
 
 .qbtn svg {
   font-size: 18px;
-  color: var(--warning, #BA7517);
+  color: var(--warning, #ba7517);
 }
 
 .qbtn span {
   font-size: 10px;
-  color: var(--muted-foreground, #5F5E5A);
+  color: var(--muted-foreground, #5f5e5a);
   text-align: center;
   line-height: 1.3;
 }

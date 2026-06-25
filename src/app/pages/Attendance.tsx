@@ -193,7 +193,8 @@ const initialRecords: AttendanceRecord[] = (() => {
 
   const generated: AttendanceRecord[] = [];
   dailyLogs.forEach((log, index) => {
-    const emp = Reflect.get(employees, index % employees.length) || employees[0];
+    const emp =
+      Reflect.get(employees, index % employees.length) || employees[0];
     generated.push({
       id: `ATT-${1000 + index}`,
       employeeId: emp.id,
@@ -332,15 +333,19 @@ export function Attendance() {
     const today = new Date();
     const targetMonth = selectedMonth;
     const targetYear = selectedYear;
-    
-    const daysInTargetMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+
+    const daysInTargetMonth = new Date(
+      targetYear,
+      targetMonth + 1,
+      0,
+    ).getDate();
     const capDay = Math.min(today.getDate(), daysInTargetMonth);
-    
+
     const startYear = Math.min(2026, targetYear);
-    
+
     const start = new Date(startYear, 0, 1, 0, 0, 0, 0);
     const end = new Date(targetYear, targetMonth, capDay, 23, 59, 59, 999);
-    
+
     return { startDate: start, endDate: end, endDay: capDay };
   }, [selectedMonth, selectedYear]);
 
@@ -664,14 +669,7 @@ export function Attendance() {
       const logDate = new Date(log.date);
       return logDate >= startDate && logDate <= endDate;
     });
-  }, [
-    records,
-    selectedDept,
-    selectedEmpId,
-    searchQuery,
-    startDate,
-    endDate,
-  ]);
+  }, [records, selectedDept, selectedEmpId, searchQuery, startDate, endDate]);
 
   // Calendar Math
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
@@ -685,10 +683,12 @@ export function Attendance() {
 
   // Dynamic Metrics Calculation
   const metrics = useMemo(() => {
-    const periodLogs = records.filter(log => {
-      if (selectedDept !== "All Departments" && log.department !== selectedDept) return false;
-      if (selectedEmpId !== "All Employees" && log.employeeId !== selectedEmpId) return false;
-      
+    const periodLogs = records.filter((log) => {
+      if (selectedDept !== "All Departments" && log.department !== selectedDept)
+        return false;
+      if (selectedEmpId !== "All Employees" && log.employeeId !== selectedEmpId)
+        return false;
+
       const logDate = new Date(log.date);
       return logDate >= startDate && logDate <= endDate;
     });
@@ -700,12 +700,10 @@ export function Attendance() {
     const absent = periodLogs.filter((l) => l.status === "Absent").length;
     const late = periodLogs.filter((l) => l.status === "Late").length;
 
-    const attendanceRate =
-      total > 0 ? Math.round((present / total) * 100) : 100;
-
-    const uniqueEmpCount = selectedEmpId === "All Employees"
-      ? (new Set(periodLogs.map(l => l.employeeId)).size || 1)
-      : 1;
+    const uniqueEmpCount =
+      selectedEmpId === "All Employees"
+        ? new Set(periodLogs.map((l) => l.employeeId)).size || 1
+        : 1;
 
     const rawTotalDays = total || 22;
     const rawPresent = present || 19;
@@ -713,10 +711,22 @@ export function Attendance() {
     const rawLate = late || 2;
 
     return {
-      totalDays: selectedEmpId === "All Employees" ? parseFloat((rawTotalDays / uniqueEmpCount).toFixed(1)) : rawTotalDays,
-      present: selectedEmpId === "All Employees" ? parseFloat((rawPresent / uniqueEmpCount).toFixed(1)) : rawPresent,
-      absent: selectedEmpId === "All Employees" ? parseFloat((rawAbsent / uniqueEmpCount).toFixed(1)) : rawAbsent,
-      late: selectedEmpId === "All Employees" ? parseFloat((rawLate / uniqueEmpCount).toFixed(1)) : rawLate,
+      totalDays:
+        selectedEmpId === "All Employees"
+          ? parseFloat((rawTotalDays / uniqueEmpCount).toFixed(1))
+          : rawTotalDays,
+      present:
+        selectedEmpId === "All Employees"
+          ? parseFloat((rawPresent / uniqueEmpCount).toFixed(1))
+          : rawPresent,
+      absent:
+        selectedEmpId === "All Employees"
+          ? parseFloat((rawAbsent / uniqueEmpCount).toFixed(1))
+          : rawAbsent,
+      late:
+        selectedEmpId === "All Employees"
+          ? parseFloat((rawLate / uniqueEmpCount).toFixed(1))
+          : rawLate,
       attendanceRate: total > 0 ? Math.round((present / total) * 100) : 100,
       lateTrend: -5,
     };
@@ -737,7 +747,8 @@ export function Attendance() {
     if (rec) return rec;
 
     if (selectedMonth === 3 && selectedYear === 2026) {
-      const mockStatus = Reflect.get(attendanceCalendar, selectedDayDetail) || "Present";
+      const mockStatus =
+        Reflect.get(attendanceCalendar, selectedDayDetail) || "Present";
       const emp = selectedEmployee || employees[0];
       return {
         id: `ATT-MOCK-${selectedDayDetail}`,
@@ -1227,8 +1238,8 @@ export function Attendance() {
                     className="text-lg font-black"
                     style={{ color: "var(--foreground)" }}
                   >
-                    {Reflect.get(MONTH_NAMES, selectedMonth)} {selectedDayDetail},{" "}
-                    {selectedYear}
+                    {Reflect.get(MONTH_NAMES, selectedMonth)}{" "}
+                    {selectedDayDetail}, {selectedYear}
                   </h3>
                   <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
                     Daily Attendance Detail
@@ -1710,7 +1721,10 @@ export function Attendance() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
-            label: selectedEmpId === "All Employees" ? "Avg. Working Days" : "Total Working Days",
+            label:
+              selectedEmpId === "All Employees"
+                ? "Avg. Working Days"
+                : "Total Working Days",
             value: metrics.totalDays,
             icon: CalendarIcon,
             color: "var(--primary)",
@@ -1718,7 +1732,10 @@ export function Attendance() {
             trend: null,
           },
           {
-            label: selectedEmpId === "All Employees" ? "Avg. Present Days" : "Present Days",
+            label:
+              selectedEmpId === "All Employees"
+                ? "Avg. Present Days"
+                : "Present Days",
             value: metrics.present,
             icon: CheckCircle2,
             color: "var(--primary)",
@@ -1727,7 +1744,10 @@ export function Attendance() {
             trendUp: true,
           },
           {
-            label: selectedEmpId === "All Employees" ? "Avg. Absent Days" : "Absent Days",
+            label:
+              selectedEmpId === "All Employees"
+                ? "Avg. Absent Days"
+                : "Absent Days",
             value: metrics.absent,
             icon: XCircle,
             color: "#EF4444",
@@ -1736,7 +1756,10 @@ export function Attendance() {
             trendUp: false,
           },
           {
-            label: selectedEmpId === "All Employees" ? "Avg. Late Count" : "Late Count",
+            label:
+              selectedEmpId === "All Employees"
+                ? "Avg. Late Count"
+                : "Late Count",
             value: metrics.late,
             icon: Clock,
             color: "#F59E0B",
@@ -2184,13 +2207,16 @@ export function Attendance() {
                         status = dayRec.status;
                       } else {
                         if (selectedMonth === 3 && selectedYear === 2026) {
-                          status = Reflect.get(attendanceCalendar, day) || "Present";
+                          status =
+                            Reflect.get(attendanceCalendar, day) || "Present";
                         } else {
                           status = "Absent";
                         }
                       }
                     }
-                    const config = Reflect.get(STATUS_CONFIG, status) || STATUS_CONFIG.Present;
+                    const config =
+                      Reflect.get(STATUS_CONFIG, status) ||
+                      STATUS_CONFIG.Present;
                     const isToday = day === 22 && selectedMonth === 3;
                     const isSelected = selectedDayDetail === day;
 
@@ -2245,7 +2271,9 @@ export function Attendance() {
                       <button
                         key={day}
                         onClick={() =>
-                          status !== "Weekend" && status !== "Future" && setSelectedDayDetail(day)
+                          status !== "Weekend" &&
+                          status !== "Future" &&
+                          setSelectedDayDetail(day)
                         }
                         className={`aspect-[4/3] relative rounded-2xl flex flex-col items-center justify-center transition-all duration-200 group ${status !== "Weekend" && status !== "Future" ? "hover:scale-[1.02] active:scale-95" : "cursor-default"}`}
                         style={cellStyle}

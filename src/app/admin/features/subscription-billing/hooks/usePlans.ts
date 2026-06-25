@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from "react";
-import { Plan, PlanTier } from "../types/plan.types";
+import { Plan } from "../types/plan.types";
 import { PlanService } from "../services/plan.service";
 
 export function usePlans() {

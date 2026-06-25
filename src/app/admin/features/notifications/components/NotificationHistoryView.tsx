@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
-import { Search, CheckCircle2, AlertCircle, History } from "lucide-react";
+import { useState } from "react";
+import { Search, CheckCircle2, AlertCircle } from "lucide-react";
 import { NotificationHistoryItem } from "../types/notifications.types";
 
 interface Props {
@@ -14,14 +14,14 @@ interface Props {
 export function NotificationHistoryView({ history }: Props) {
   const [search, setSearch] = useState("");
 
-  const filtered = history.filter(h => 
-    h.alertName.toLowerCase().includes(search.toLowerCase()) || 
-    h.channel.toLowerCase().includes(search.toLowerCase())
+  const filtered = history.filter(
+    (h) =>
+      h.alertName.toLowerCase().includes(search.toLowerCase()) ||
+      h.channel.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <div className="space-y-6 font-semibold">
-      
       {/* Search Bar */}
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-inner">
         <div className="relative w-full sm:w-80">
@@ -30,7 +30,7 @@ export function NotificationHistoryView({ history }: Props) {
             type="text"
             placeholder="Search sent alerts history..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-white border border-gray-200 rounded-lg pl-9 pr-4 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
           />
         </div>
@@ -48,11 +48,18 @@ export function NotificationHistoryView({ history }: Props) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 text-gray-700">
-            {filtered.map(item => (
-              <tr key={item.id} className="hover:bg-indigo-50/20 transition-colors">
+            {filtered.map((item) => (
+              <tr
+                key={item.id}
+                className="hover:bg-indigo-50/20 transition-colors"
+              >
                 <td className="px-5 py-4">
-                  <div className="font-semibold text-gray-900">{item.alertName}</div>
-                  <div className="text-[10px] text-gray-500 mt-0.5 font-medium uppercase tracking-wider">ID: {item.id}</div>
+                  <div className="font-semibold text-gray-900">
+                    {item.alertName}
+                  </div>
+                  <div className="text-[10px] text-gray-500 mt-0.5 font-medium uppercase tracking-wider">
+                    ID: {item.id}
+                  </div>
                 </td>
                 <td className="px-5 py-4 text-gray-400 font-medium">
                   {new Date(item.date).toLocaleString()}
@@ -61,17 +68,25 @@ export function NotificationHistoryView({ history }: Props) {
                   {item.channel}
                 </td>
                 <td className="px-5 py-4">
-                  <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold ${
-                    item.status === "Delivered" || item.status === "Sent" 
-                      ? "text-emerald-600" 
-                      : "text-rose-600"
-                  }`}>
+                  <span
+                    className={`inline-flex items-center gap-1.5 text-[11px] font-semibold ${
+                      item.status === "Delivered" || item.status === "Sent"
+                        ? "text-emerald-600"
+                        : "text-rose-600"
+                    }`}
+                  >
                     {item.status === "Delivered" ? (
-                      <><CheckCircle2 className="w-3.5 h-3.5" /> Delivered</>
+                      <>
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Delivered
+                      </>
                     ) : item.status === "Sent" ? (
-                      <><CheckCircle2 className="w-3.5 h-3.5" /> Sent Relay</>
+                      <>
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Sent Relay
+                      </>
                     ) : (
-                      <><AlertCircle className="w-3.5 h-3.5" /> Failed Delivery</>
+                      <>
+                        <AlertCircle className="w-3.5 h-3.5" /> Failed Delivery
+                      </>
                     )}
                   </span>
                 </td>
@@ -79,7 +94,10 @@ export function NotificationHistoryView({ history }: Props) {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="p-8 text-center text-gray-400 font-medium">
+                <td
+                  colSpan={4}
+                  className="p-8 text-center text-gray-400 font-medium"
+                >
                   No sent log records found.
                 </td>
               </tr>

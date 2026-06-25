@@ -1,10 +1,4 @@
-import {
-  Bell,
-  Search,
-  Plus,
-  ChevronDown,
-  Moon,
-} from "lucide-react";
+import { Bell, Search, ChevronDown, Moon } from "lucide-react";
 import { Link } from "react-router";
 
 export default function Navbar() {
@@ -29,7 +23,10 @@ export default function Navbar() {
       {/* Right Actions */}
       <div className="flex items-center gap-4 ml-6">
         {/* Notification */}
-        <Link to="/platform-admin/notifications" className="relative p-2 rounded-lg hover:bg-gray-100 transition text-gray-900 block">
+        <Link
+          to="/platform-admin/notifications"
+          className="relative p-2 rounded-lg hover:bg-gray-100 transition text-gray-900 block"
+        >
           <Bell size={20} />
 
           <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
@@ -49,18 +46,11 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:block">
-            <h4 className="text-sm font-semibold">
-              Platform Admin
-            </h4>
-            <p className="text-xs text-gray-500">
-              Super Admin
-            </p>
+            <h4 className="text-sm font-semibold">Platform Admin</h4>
+            <p className="text-xs text-gray-500">Super Admin</p>
           </div>
 
-          <ChevronDown
-            size={16}
-            className="text-gray-500"
-          />
+          <ChevronDown size={16} className="text-gray-500" />
         </div>
       </div>
     </header>

@@ -1,5 +1,4 @@
-import React from "react";
-import { PLAN_DISTRIBUTION } from "@/app/admin/constants/dashboard";
+import { PLAN_DISTRIBUTION } from "../../constants/dashboard";
 
 export function PlanDistributionCard() {
   return (

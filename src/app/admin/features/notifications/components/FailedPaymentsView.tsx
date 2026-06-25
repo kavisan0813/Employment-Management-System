@@ -3,8 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
-import { Coins, AlertCircle, RefreshCw, CheckCircle2, Search, Link2, DollarSign } from "lucide-react";
+import { useState } from "react";
+import {
+  AlertCircle,
+  RefreshCw,
+  CheckCircle2,
+  Search,
+  Link2,
+} from "lucide-react";
 import { FailedPaymentAlert } from "../types/notifications.types";
 
 interface Props {
@@ -15,14 +21,14 @@ interface Props {
 export function FailedPaymentsView({ failedPayments, onRetryPayment }: Props) {
   const [search, setSearch] = useState("");
 
-  const filtered = failedPayments.filter(p => 
-    p.orgName.toLowerCase().includes(search.toLowerCase()) || 
-    p.invoiceId.toLowerCase().includes(search.toLowerCase())
+  const filtered = failedPayments.filter(
+    (p) =>
+      p.orgName.toLowerCase().includes(search.toLowerCase()) ||
+      p.invoiceId.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <div className="space-y-6 font-semibold">
-      
       {/* Search Bar with Tint */}
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-inner">
         <div className="relative w-full sm:w-80">
@@ -31,7 +37,7 @@ export function FailedPaymentsView({ failedPayments, onRetryPayment }: Props) {
             type="text"
             placeholder="Search invoice or company name..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-white border border-gray-200 rounded-lg pl-9 pr-4 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
           />
         </div>
@@ -52,24 +58,37 @@ export function FailedPaymentsView({ failedPayments, onRetryPayment }: Props) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 text-gray-700">
-            {filtered.map(payment => (
-              <tr key={payment.id} className="hover:bg-indigo-50/20 transition-colors">
+            {filtered.map((payment) => (
+              <tr
+                key={payment.id}
+                className="hover:bg-indigo-50/20 transition-colors"
+              >
                 <td className="px-5 py-4">
-                  <div className="font-semibold text-gray-900">{payment.orgName}</div>
-                  <div className="text-[10px] text-gray-500 mt-0.5">ID: {payment.id}</div>
+                  <div className="font-semibold text-gray-900">
+                    {payment.orgName}
+                  </div>
+                  <div className="text-[10px] text-gray-500 mt-0.5">
+                    ID: {payment.id}
+                  </div>
                 </td>
                 <td className="px-5 py-4 font-mono text-indigo-700 flex items-center gap-1">
                   <Link2 className="w-3.5 h-3.5" /> {payment.invoiceId}
                 </td>
-                <td className="px-5 py-4 font-mono text-gray-900">{payment.amount}</td>
+                <td className="px-5 py-4 font-mono text-gray-900">
+                  {payment.amount}
+                </td>
                 <td className="px-5 py-4">
                   <span className="text-[11px] text-rose-600 flex items-center gap-1.5 font-medium">
                     <AlertCircle className="w-3.5 h-3.5" /> {payment.reason}
                   </span>
                 </td>
-                <td className="px-5 py-4 text-gray-400">{new Date(payment.date).toLocaleString()}</td>
+                <td className="px-5 py-4 text-gray-400">
+                  {new Date(payment.date).toLocaleString()}
+                </td>
                 <td className="px-5 py-4">
-                  <span className={`text-[10px] font-semibold ${payment.resolved ? "text-emerald-600" : "text-amber-600"}`}>
+                  <span
+                    className={`text-[10px] font-semibold ${payment.resolved ? "text-emerald-600" : "text-amber-600"}`}
+                  >
                     {payment.resolved ? "Resolved" : "Payment Failed"}
                   </span>
                 </td>
@@ -95,7 +114,9 @@ export function FailedPaymentsView({ failedPayments, onRetryPayment }: Props) {
       <div className="p-4 bg-amber-50/50 border border-amber-100 rounded-xl text-xs text-amber-900 leading-relaxed font-medium flex items-start gap-3">
         <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
         <div>
-          <strong>Revenue Protection Warning:</strong> Invoices remaining unresolved for more than 7 days will automatically trigger a temporary platform access freeze for the tenant.
+          <strong>Revenue Protection Warning:</strong> Invoices remaining
+          unresolved for more than 7 days will automatically trigger a temporary
+          platform access freeze for the tenant.
         </div>
       </div>
     </div>

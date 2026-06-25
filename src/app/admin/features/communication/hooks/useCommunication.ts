@@ -4,14 +4,22 @@
  */
 
 import { useState } from "react";
-import { CommunicationState, Announcement, EmailTemplate, SmsTemplate, Broadcast, CommunicationLog, CommunicationSettings } from "../types/communication.types";
+import {
+  CommunicationState,
+  Announcement,
+  EmailTemplate,
+  SmsTemplate,
+  CommunicationSettings,
+} from "../types/communication.types";
 import { communicationService } from "../services/communication.service";
 import { pushAuditLog } from "../../../mockData";
 
 const CURRENT_ADMIN_EMAIL = "admin@ems.io";
 
 export function useCommunication() {
-  const [state, setState] = useState<CommunicationState>(() => communicationService.loadData());
+  const [state, setState] = useState<CommunicationState>(() =>
+    communicationService.loadData(),
+  );
   const [activeTab, setActiveTab] = useState<
     | "dashboard"
     | "announcements"
@@ -27,12 +35,15 @@ export function useCommunication() {
   // Alert State
   const [showAlert, setShowAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
-  const [alertType, setAlertType] = useState<"success" | "info" | "error" | "warning">("success");
+  const [alertType, setAlertType] = useState<
+    "success" | "info" | "error" | "warning"
+  >("success");
 
   // Announcements form
   const [annTitle, setAnnTitle] = useState("");
   const [annContent, setAnnContent] = useState("");
-  const [annPriority, setAnnPriority] = useState<Announcement["priority"]>("Medium");
+  const [annPriority, setAnnPriority] =
+    useState<Announcement["priority"]>("Medium");
   const [annTarget, setAnnTarget] = useState("Everyone");
   const [annDisplay, setAnnDisplay] = useState("Dashboard Banner");
 
@@ -49,7 +60,11 @@ export function useCommunication() {
   const [pushTitle, setPushTitle] = useState("");
   const [pushMessage, setPushMessage] = useState("");
   const [pushRedirect, setPushRedirect] = useState("/features");
-  const [pushTargetChannels, setPushTargetChannels] = useState<string[]>(["Android", "iOS", "Web"]);
+  const [pushTargetChannels, setPushTargetChannels] = useState<string[]>([
+    "Android",
+    "iOS",
+    "Web",
+  ]);
 
   // Broadcast wizard state
   const [bcStep, setBcStep] = useState<number>(1);
@@ -59,7 +74,10 @@ export function useCommunication() {
   const [bcChannels, setBcChannels] = useState<string[]>(["Email"]);
   const [bcMessageText, setBcMessageText] = useState("");
 
-  const triggerAlert = (msg: string, type: "success" | "info" | "error" | "warning" = "success") => {
+  const triggerAlert = (
+    msg: string,
+    type: "success" | "info" | "error" | "warning" = "success",
+  ) => {
     setAlertMsg(msg);
     setAlertType(type);
     setShowAlert(true);
@@ -81,12 +99,15 @@ export function useCommunication() {
       priority: annPriority,
       targetAudience: annTarget,
       displayOption: annDisplay,
-      status: "Active"
+      status: "Active",
     });
     setState(newState);
     setAnnTitle("");
     setAnnContent("");
-    triggerAlert("Global Platform Announcement launched successfully.", "success");
+    triggerAlert(
+      "Global Platform Announcement launched successfully.",
+      "success",
+    );
     pushAuditLog(
       "announcement.created",
       "Admin Action",
@@ -94,15 +115,18 @@ export function useCommunication() {
       "platform_admin",
       null,
       "Active",
-      { title: annTitle, priority: annPriority, target: annTarget }
+      { title: annTitle, priority: annPriority, target: annTarget },
     );
   };
 
   const handleToggleAnnouncement = (id: string) => {
     const newState = communicationService.toggleAnnouncement(state, id);
     setState(newState);
-    const target = newState.announcements.find(a => a.id === id);
-    triggerAlert(`Announcement status set to ${target?.status.toUpperCase()}`, "info");
+    const target = newState.announcements.find((a) => a.id === id);
+    triggerAlert(
+      `Announcement status set to ${target?.status.toUpperCase()}`,
+      "info",
+    );
   };
 
   const handleDeleteAnnouncement = (id: string) => {
@@ -115,7 +139,10 @@ export function useCommunication() {
   const handleSaveEmailTemplate = (template: EmailTemplate) => {
     const newState = communicationService.saveEmailTemplate(state, template);
     setState(newState);
-    triggerAlert("Email notification template successfully committed.", "success");
+    triggerAlert(
+      "Email notification template successfully committed.",
+      "success",
+    );
     pushAuditLog(
       "email_template.updated",
       "Admin Action",
@@ -123,7 +150,7 @@ export function useCommunication() {
       "platform_admin",
       null,
       "Active",
-      { template_name: template.template_name, category: template.category }
+      { template_name: template.template_name, category: template.category },
     );
   };
 
@@ -139,7 +166,7 @@ export function useCommunication() {
       "platform_admin",
       null,
       "Active",
-      { template_name: template.template_name }
+      { template_name: template.template_name },
     );
   };
 
@@ -150,7 +177,10 @@ export function useCommunication() {
       return;
     }
     if (bcChannels.length === 0) {
-      triggerAlert("Select at least one outbound communication delivery channel.", "error");
+      triggerAlert(
+        "Select at least one outbound communication delivery channel.",
+        "error",
+      );
       return;
     }
 
@@ -160,7 +190,7 @@ export function useCommunication() {
       bcCampaign,
       bcAudience,
       bcChannels,
-      bcMessageText
+      bcMessageText,
     );
 
     setState(result.state);
@@ -177,7 +207,11 @@ export function useCommunication() {
       "platform_admin",
       null,
       "Active",
-      { campaign: bcCampaign, audience: bcAudience, channels: bcChannels.join(", ") }
+      {
+        campaign: bcCampaign,
+        audience: bcAudience,
+        channels: bcChannels.join(", "),
+      },
     );
   };
 
@@ -185,7 +219,10 @@ export function useCommunication() {
   const handleSaveSettings = (settings: CommunicationSettings) => {
     const newState = communicationService.updateSettings(state, settings);
     setState(newState);
-    triggerAlert("Global mail SMTP and SMS Gateway integrations updated.", "success");
+    triggerAlert(
+      "Global mail SMTP and SMS Gateway integrations updated.",
+      "success",
+    );
     pushAuditLog(
       "communication_settings.updated",
       "Admin Action",
@@ -193,7 +230,7 @@ export function useCommunication() {
       "platform_admin",
       null,
       "Active",
-      { gateway: settings.smsGateway }
+      { gateway: settings.smsGateway },
     );
   };
 
@@ -251,6 +288,6 @@ export function useCommunication() {
     handleSaveEmailTemplate,
     handleSaveSmsTemplate,
     handleSendBroadcast,
-    handleSaveSettings
+    handleSaveSettings,
   };
 }
