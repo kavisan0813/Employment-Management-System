@@ -30,6 +30,11 @@ const AdminDashboardPage = lazy(() =>
     default: m.default,
   })),
 );
+const SuperAdminDashboardPage = lazy(() =>
+  import("./components/dashboards/SuperAdminDashboard").then((m) => ({
+    default: m.SuperAdminDashboard,
+  })),
+);
 const AdminOrganizationsPage = lazy(() =>
   import("./admin/features/organizations/OrganizationManagementView").then(
     (m) => ({
@@ -917,7 +922,7 @@ function RootRedirect() {
   if (!user) return <Navigate to="/login" replace />;
 
   const roleRoutes: Record<string, string> = {
-    "Super Admin": "/hr/dashboard",
+    "Super Admin": "/platform-admin/dashboard",
     "HR Manager": "/hr/dashboard",
     Finance: "/finance/dashboard",
     Manager: "/manager/dashboard",
@@ -1021,6 +1026,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "403", element: <AccessDenied /> },
       { index: true, element: <RootRedirect /> },
+      { path: "admin/dashboard", element: protectedRoute(SuperAdminDashboardPage) },
       { path: "hr/dashboard", element: protectedRoute(Dashboard) },
       { path: "finance/dashboard", element: protectedRoute(Dashboard) },
       { path: "manager/dashboard", element: protectedRoute(Dashboard) },

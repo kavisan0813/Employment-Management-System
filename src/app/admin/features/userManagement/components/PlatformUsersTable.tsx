@@ -117,102 +117,85 @@ const PlatformUsersTable: React.FC = () => {
 
   // ====================== MODALS ======================
 
-  const PlatformUserDrawer = () => {
+  const PlatformUserModal = () => {
     if (!selectedUser) return null;
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setIsDrawerOpen(false)}>
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setIsDrawerOpen(false)}>
         <div 
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+          className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-indigo-600" />
-              <h3 className="text-sm font-semibold text-gray-900">
-                User Profile
-              </h3>
+          <div className="px-8 py-6 border-b flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">User Profile</h2>
+              <p className="text-gray-500 mt-1">{selectedUser.name}</p>
             </div>
-            <button
-              onClick={() => setIsDrawerOpen(false)}
-              className="p-1.5 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-md bg-white cursor-pointer"
-            >
-              <X className="w-4 h-4" />
+            <button onClick={() => setIsDrawerOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <X className="w-6 h-6" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto">
-            {/* Status banner */}
-            <div
-              className={`mx-5 mt-5 flex items-center gap-2.5 px-4 py-3 rounded-lg border ${
-                selectedUser.status === "Active" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-amber-700 border-amber-200"
-              }`}
-            >
-              <span className="text-xs font-semibold">{selectedUser.status} User</span>
-            </div>
-
-            {/* Profile Info */}
-            <div className="px-5 pt-4 pb-3 border-b border-gray-100 flex items-center gap-4">
-              <div className="w-12 h-12 bg-indigo-100 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0">
-                {selectedUser.avatarUrl ? (
-                  <img src={selectedUser.avatarUrl} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="text-xl font-bold text-indigo-700">
-                    {selectedUser.name.charAt(0)}
-                  </div>
-                )}
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-8 space-y-8">
+            <div className="grid grid-cols-2 gap-6 text-sm">
+              <div>
+                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">Email</p>
+                <p className="font-medium text-gray-900">{selectedUser.email}</p>
               </div>
               <div>
-                <p className="text-sm font-bold text-gray-900">{selectedUser.name}</p>
-                <p className="text-[11px] text-gray-400 font-mono">{selectedUser.email}</p>
+                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">Role</p>
+                <p className="font-semibold text-indigo-600">{selectedUser.role}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">Organization</p>
+                <p className="font-medium text-gray-900">{selectedUser.organization}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">Last Active</p>
+                <p className="font-medium text-gray-900">{selectedUser.lastLoginAt}</p>
               </div>
             </div>
 
-            {/* Details */}
-            <div className="px-5 py-4 space-y-0.5">
-              <InfoRow label="Role" value={selectedUser.role} />
-              <InfoRow label="Organization" value={selectedUser.organization} />
-              <InfoRow label="Status" value={selectedUser.status} />
-              <InfoRow label="Last Active" value={selectedUser.lastLoginAt} />
+            <div>
+              <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">Status</p>
+              <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold ${
+                selectedUser.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+              }`}>
+                {selectedUser.status}
+              </span>
+            </div>
+
+            {/* Actions */}
+            <div className="pt-6 border-t">
+              <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-4">Manage User</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button onClick={() => handleEditUser(selectedUser)} className="flex items-center justify-center gap-2 px-3 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+                  <Edit className="w-4 h-4" /> Edit
+                </button>
+                <button onClick={() => handleResetPassword(selectedUser)} className="flex items-center justify-center gap-2 px-3 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+                  <KeyRound className="w-4 h-4" /> Password Reset
+                </button>
+                {selectedUser.status === "Active" ? (
+                  <button onClick={() => handleSuspendUser(selectedUser)} className="flex items-center justify-center gap-2 px-3 py-3 bg-amber-50 text-amber-700 border border-amber-200 rounded-2xl text-xs font-semibold hover:bg-amber-100 transition-colors">
+                    <UserX className="w-4 h-4" /> Suspend
+                  </button>
+                ) : (
+                  <button onClick={() => handleActivateUser(selectedUser)} className="flex items-center justify-center gap-2 px-3 py-3 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-2xl text-xs font-semibold hover:bg-emerald-100 transition-colors">
+                    <UserCheck className="w-4 h-4" /> Activate
+                  </button>
+                )}
+                <button onClick={() => { handleDeleteUser(selectedUser); setIsDrawerOpen(false); }} className="flex items-center justify-center gap-2 px-3 py-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-2xl text-xs font-semibold hover:bg-rose-100 transition-colors">
+                  <Trash2 className="w-4 h-4" /> Delete
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Footer Actions */}
-          <div className="p-4 bg-gray-50 border-t border-gray-200 flex flex-wrap gap-2">
-            <button
-              onClick={() => handleEditUser(selectedUser)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >
-              <Edit className="w-3.5 h-3.5" /> Edit
-            </button>
-            <button
-              onClick={() => handleResetPassword(selectedUser)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >
-              <KeyRound className="w-3.5 h-3.5" /> Password Reset
-            </button>
-            
-            {selectedUser.status === "Active" ? (
-              <button
-                onClick={() => handleSuspendUser(selectedUser)}
-                className="flex items-center gap-1.5 px-3 py-2 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-xs font-semibold hover:bg-amber-100 cursor-pointer"
-              >
-                <UserX className="w-3.5 h-3.5" /> Suspend
-              </button>
-            ) : (
-              <button
-                onClick={() => handleActivateUser(selectedUser)}
-                className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-semibold hover:bg-emerald-100 cursor-pointer"
-              >
-                <UserCheck className="w-3.5 h-3.5" /> Activate
-              </button>
-            )}
-
-            <button
-              onClick={() => { handleDeleteUser(selectedUser); setIsDrawerOpen(false); }}
-              className="ml-auto flex items-center gap-1.5 px-3 py-2 bg-rose-600 text-white rounded-lg text-xs font-semibold hover:bg-rose-700 cursor-pointer"
-            >
-              <Trash2 className="w-3.5 h-3.5" /> Delete
+          {/* Footer */}
+          <div className="px-8 py-5 border-t bg-gray-50 flex justify-end gap-3">
+            <button onClick={() => setIsDrawerOpen(false)} className="px-6 py-3 text-gray-700 font-semibold hover:bg-gray-100 rounded-2xl transition-colors">
+              Close
             </button>
           </div>
         </div>
@@ -349,8 +332,11 @@ const PlatformUsersTable: React.FC = () => {
               <th className="px-5 py-4 text-left text-sm font-medium text-gray-500">
                 Status
               </th>
-              <th className="px-5 py-4 text-left text-sm font-medium text-gray-500 rounded-tr-2xl">
+              <th className="px-5 py-4 text-left text-sm font-medium text-gray-500">
                 Last Active
+              </th>
+              <th className="px-5 py-4 text-right text-sm font-medium text-gray-500 rounded-tr-2xl">
+                Actions
               </th>
             </tr>
           </thead>
@@ -403,6 +389,14 @@ const PlatformUsersTable: React.FC = () => {
                 <td className="px-5 py-4 text-sm text-gray-500">
                   {user.lastLoginAt}
                 </td>
+                <td className="px-5 py-4 text-right relative" onClick={e => e.stopPropagation()}>
+                  <button 
+                    onClick={() => handleViewUser(user)}
+                    className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <MoreVertical className="w-5 h-5" />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -412,7 +406,7 @@ const PlatformUsersTable: React.FC = () => {
       </div>
 
       {/* Modals */}
-      {isDrawerOpen && <PlatformUserDrawer />}
+      {isDrawerOpen && <PlatformUserModal />}
       {isEditModalOpen && <EditModal />}
     </div>
   );

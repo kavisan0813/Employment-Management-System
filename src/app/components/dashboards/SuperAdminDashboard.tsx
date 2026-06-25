@@ -237,7 +237,7 @@ interface PendingActionItem {
   bg: string;
 }
 
-export function AdminDashboard() {
+export function SuperAdminDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 

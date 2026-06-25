@@ -1,7 +1,7 @@
 import { useLocation } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import { EmployeeSelfService } from "./EmployeeSelfService";
-import { AdminDashboard } from "../components/dashboards/AdminDashboard";
+
 import { HRDashboard } from "../components/dashboards/HRDashboard";
 import { FinanceDashboard } from "../components/dashboards/FinanceDashboard";
 import { ManagerDashboard } from "../components/dashboards/ManagerDashboard";
@@ -18,14 +18,9 @@ export function Dashboard() {
   // Determine dashboard based on path
   const path = location.pathname;
 
-  if (path.includes("/platform-admin/dashboard")) {
-    return <AdminDashboard />;
-  }
+
 
   if (path.includes("/hr/dashboard")) {
-    if (user?.role === "Super Admin") {
-      return <AdminDashboard />;
-    }
     return <HRDashboard />;
   }
 
@@ -38,7 +33,7 @@ export function Dashboard() {
   }
 
   // Fallback for root path or unexpected paths
-  if (user?.role === "Super Admin") return <AdminDashboard />;
+
   if (user?.role === "HR Manager") return <HRDashboard />;
   if (user?.role === "Finance") return <FinanceDashboard />;
   if (user?.role === "Manager") return <ManagerDashboard />;
