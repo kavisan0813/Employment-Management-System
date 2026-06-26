@@ -20,6 +20,8 @@ import {
   Activity,
   ChevronRight,
   MoreVertical,
+  ArrowUpCircle,
+  Repeat,
 } from "lucide-react";
 import { performanceData } from "../data/mockData";
 import { useEmployees } from "../context/AppContext";
@@ -484,6 +486,18 @@ NexHR Management
                     onClick={() => setIsEditModalOpen(true)}
                   >
                     <Pencil size={16} /> Edit Profile
+                  </button>
+                  <button
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold transition-all hover:opacity-90 active:scale-95 whitespace-nowrap bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20"
+                    onClick={() => setIsPromoteModalOpen(true)}
+                  >
+                    <ArrowUpCircle size={16} /> Promote
+                  </button>
+                  <button
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold transition-all hover:opacity-90 active:scale-95 whitespace-nowrap bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 hover:bg-blue-500/20"
+                    onClick={() => setIsTransferModalOpen(true)}
+                  >
+                    <Repeat size={16} /> Transfer
                   </button>
                   <div className="relative">
                     <button

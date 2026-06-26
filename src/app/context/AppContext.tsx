@@ -414,7 +414,7 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
     const newList = employeesList.map((e) => {
       if (e.id !== empId) return e;
       const transfersHistory = e.transfers || [];
-      let updatedFields: Partial<Employee> = {};
+      const updatedFields: Partial<Employee> = {};
       const updatedTransfers = transfersHistory.map((tr) => {
         if (tr.id !== transferId) return tr;
         if (tr.type === "Department Transfer")
