@@ -279,17 +279,59 @@ const ACTION_CONFIG: Record<ActionType, { chip: string }> = {
   SUBMIT: { chip: "bg-[#EDE9FE] text-[#8B5CF6] border-[#DDD6FE]" },
 };
 
-const ALL_MODULES: ModuleType[] = ["Employees", "Leave", "Attendance", "Recruitment", "Performance", "Training", "Onboarding", "Documents", "HR Settings"];
-const ALL_ACTIONS: ActionType[] = ["APPROVE", "DELETE", "UPDATE", "EXPORT", "CREATE", "VIEW", "REJECT", "SUBMIT"];
-const ALL_USERS = [...new Set(LOGS.map(l => l.user))];
+const ALL_MODULES: ModuleType[] = [
+  "Employees",
+  "Leave",
+  "Attendance",
+  "Recruitment",
+  "Performance",
+  "Training",
+  "Onboarding",
+  "Documents",
+  "HR Settings",
+];
+const ALL_ACTIONS: ActionType[] = [
+  "APPROVE",
+  "DELETE",
+  "UPDATE",
+  "EXPORT",
+  "CREATE",
+  "VIEW",
+  "REJECT",
+  "SUBMIT",
+];
+const ALL_USERS = [...new Set(LOGS.map((l) => l.user))];
 const DATE_OPTIONS = ["Today", "Last 7 Days", "Last 30 Days", "All Time"];
 
 /* ─── KPI Card ─── */
-function KPICard({ title, value, sub, color, icon: Icon }: { title: string; value: string; sub: string; color: "green" | "red" | "teal" | "amber"; icon: React.ElementType }) {
-  const colors = { green: { text: "#00B87C", bg: "#DCFCE7" }, red: { text: "#EF4444", bg: "#FEE2E2" }, teal: { text: "#0EA5E9", bg: "#E0F2FE" }, amber: { text: "#D97706", bg: "#FEF3C7" } };
+function KPICard({
+  title,
+  value,
+  sub,
+  color,
+  icon: Icon,
+}: {
+  title: string;
+  value: string;
+  sub: string;
+  color: "green" | "red" | "teal" | "amber";
+  icon: React.ElementType;
+}) {
+  const colors = {
+    green: { text: "#00B87C", bg: "#DCFCE7" },
+    red: { text: "#EF4444", bg: "#FEE2E2" },
+    teal: { text: "#0EA5E9", bg: "#E0F2FE" },
+    amber: { text: "#D97706", bg: "#FEF3C7" },
+  };
   return (
-    <motion.div whileHover={{ y: -5 }} className="p-6 bg-card border border-border rounded-2xl shadow-sm hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group">
-      <div className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-4 transition-transform group-hover:scale-110" style={{ backgroundColor: colors[color].bg }}>
+    <motion.div
+      whileHover={{ y: -5 }}
+      className="p-6 bg-card border border-border rounded-2xl shadow-sm hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group"
+    >
+      <div
+        className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
+        style={{ backgroundColor: colors[color].bg }}
+      >
         <Icon size={20} style={{ color: colors[color].text }} />
       </div>
       <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">
@@ -325,7 +367,8 @@ function FilterDropdown({
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -337,7 +380,7 @@ function FilterDropdown({
   return (
     <div ref={ref} className="relative">
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => setOpen((o) => !o)}
         className={`flex items-center gap-2.5 px-4 py-2.5 border rounded-xl text-[12px] font-bold hover:border-[#00B87C]/50 transition-all shadow-sm whitespace-nowrap ${
           isActive
             ? "bg-[#00B87C]/10 border-[#00B87C]/40 text-[#00B87C]"
@@ -347,13 +390,19 @@ function FilterDropdown({
         {displayLabel}
         {isActive ? (
           <span
-            onClick={(e) => { e.stopPropagation(); onClear(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClear();
+            }}
             className="ml-1 w-4 h-4 rounded-full bg-[#00B87C]/20 flex items-center justify-center hover:bg-[#00B87C]/40 transition-all"
           >
             <X size={10} className="text-[#00B87C]" />
           </span>
         ) : (
-          <ChevronDown size={14} className={`text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} />
+          <ChevronDown
+            size={14}
+            className={`text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
+          />
         )}
       </button>
       <AnimatePresence>
@@ -368,9 +417,14 @@ function FilterDropdown({
             {options.map((opt) => (
               <button
                 key={opt}
-                onClick={() => { onSelect(opt); setOpen(false); }}
+                onClick={() => {
+                  onSelect(opt);
+                  setOpen(false);
+                }}
                 className={`w-full text-left px-4 py-2.5 text-[12px] font-semibold hover:bg-[#00B87C]/10 hover:text-[#00B87C] transition-all ${
-                  selected === opt ? "bg-[#00B87C]/10 text-[#00B87C]" : "text-foreground"
+                  selected === opt
+                    ? "bg-[#00B87C]/10 text-[#00B87C]"
+                    : "text-foreground"
                 }`}
               >
                 {opt}
@@ -411,36 +465,62 @@ export function HRAuditLogs() {
   // Reviewed logs tracking
   const [reviewedLogs, setReviewedLogs] = useState<Set<string>>(new Set());
 
-  const todayLogs = LOGS.filter(l => l.timestamp.startsWith("Today")).length;
-  const flaggedCount = LOGS.filter(l => l.isFlagged).length;
-  const sensitiveEdits = LOGS.filter(l => l.action === "UPDATE" && l.severity !== "info").length + LOGS.filter(l => l.action === "DELETE").length;
+  const todayLogs = LOGS.filter((l) => l.timestamp.startsWith("Today")).length;
+  const flaggedCount = LOGS.filter((l) => l.isFlagged).length;
+  const sensitiveEdits =
+    LOGS.filter((l) => l.action === "UPDATE" && l.severity !== "info").length +
+    LOGS.filter((l) => l.action === "DELETE").length;
 
   /* ─── Filtered logs ─── */
   const filteredLogs = useMemo(() => {
-    let logs = flaggedFilter ? LOGS.filter(l => l.isFlagged) : LOGS;
+    let logs = flaggedFilter ? LOGS.filter((l) => l.isFlagged) : LOGS;
     if (search.trim()) {
       const q = search.toLowerCase();
-      logs = logs.filter(l =>
-        l.user.toLowerCase().includes(q) ||
-        l.action.toLowerCase().includes(q) ||
-        l.module.toLowerCase().includes(q) ||
-        l.ip.toLowerCase().includes(q) ||
-        l.record.toLowerCase().includes(q)
+      logs = logs.filter(
+        (l) =>
+          l.user.toLowerCase().includes(q) ||
+          l.action.toLowerCase().includes(q) ||
+          l.module.toLowerCase().includes(q) ||
+          l.ip.toLowerCase().includes(q) ||
+          l.record.toLowerCase().includes(q),
       );
     }
-    if (moduleFilter) logs = logs.filter(l => l.module === moduleFilter);
-    if (actionFilter) logs = logs.filter(l => l.action === actionFilter);
-    if (userFilter) logs = logs.filter(l => l.user === userFilter);
-    if (dateFilter === "Today") logs = logs.filter(l => l.timestamp.startsWith("Today"));
-    if (severityFilter) logs = logs.filter(l => l.severity === severityFilter.toLowerCase());
+    if (moduleFilter) logs = logs.filter((l) => l.module === moduleFilter);
+    if (actionFilter) logs = logs.filter((l) => l.action === actionFilter);
+    if (userFilter) logs = logs.filter((l) => l.user === userFilter);
+    if (dateFilter === "Today")
+      logs = logs.filter((l) => l.timestamp.startsWith("Today"));
+    if (severityFilter)
+      logs = logs.filter((l) => l.severity === severityFilter.toLowerCase());
     return logs;
-  }, [flaggedFilter, search, moduleFilter, actionFilter, userFilter, dateFilter, severityFilter]);
+  }, [
+    flaggedFilter,
+    search,
+    moduleFilter,
+    actionFilter,
+    userFilter,
+    dateFilter,
+    severityFilter,
+  ]);
 
   const totalPages = Math.max(1, Math.ceil(filteredLogs.length / PAGE_SIZE));
-  const paginatedLogs = filteredLogs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const paginatedLogs = filteredLogs.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE,
+  );
 
   // Reset page when filters change
-  useEffect(() => { setPage(1); }, [search, moduleFilter, actionFilter, userFilter, dateFilter, severityFilter, flaggedFilter]);
+  useEffect(() => {
+    setPage(1);
+  }, [
+    search,
+    moduleFilter,
+    actionFilter,
+    userFilter,
+    dateFilter,
+    severityFilter,
+    flaggedFilter,
+  ]);
 
   const handleReset = () => {
     setSearch("");
@@ -454,7 +534,7 @@ export function HRAuditLogs() {
   };
 
   const handleMarkReviewed = (logId: string) => {
-    setReviewedLogs(prev => new Set(prev).add(logId));
+    setReviewedLogs((prev) => new Set(prev).add(logId));
     setSelectedLog(null);
   };
 
@@ -463,10 +543,10 @@ export function HRAuditLogs() {
       setExportedModules(["All"]);
       return;
     }
-    setExportedModules(prev => {
-      const without = prev.filter(m => m !== "All");
+    setExportedModules((prev) => {
+      const without = prev.filter((m) => m !== "All");
       if (without.includes(mod)) {
-        const next = without.filter(m => m !== mod);
+        const next = without.filter((m) => m !== mod);
         return next.length === 0 ? ["All"] : next;
       }
       return [...without, mod];
@@ -483,7 +563,12 @@ export function HRAuditLogs() {
     } else {
       pages.push(1);
       if (page > 3) pages.push("...");
-      for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) pages.push(i);
+      for (
+        let i = Math.max(2, page - 1);
+        i <= Math.min(totalPages - 1, page + 1);
+        i++
+      )
+        pages.push(i);
       if (page < totalPages - 2) pages.push("...");
       pages.push(totalPages);
     }
@@ -549,25 +634,55 @@ export function HRAuditLogs() {
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard title="HR ACTIONS TODAY" value="842" sub="across all HR modules" color="green" icon={FileText} />
-        <KPICard title="FLAGGED (HR)" value={String(flaggedCount)} sub="needs review" color="red" icon={AlertTriangle} />
-        <KPICard title="HR USERS ACTIVE" value="12" sub="logged in today" color="teal" icon={Globe} />
-        <KPICard title="SENSITIVE EDITS" value={String(sensitiveEdits)} sub="delete / critical updates" color="amber" icon={ShieldAlert} />
+        <KPICard
+          title="HR ACTIONS TODAY"
+          value="842"
+          sub="across all HR modules"
+          color="green"
+          icon={FileText}
+        />
+        <KPICard
+          title="FLAGGED (HR)"
+          value={String(flaggedCount)}
+          sub="needs review"
+          color="red"
+          icon={AlertTriangle}
+        />
+        <KPICard
+          title="HR USERS ACTIVE"
+          value="12"
+          sub="logged in today"
+          color="teal"
+          icon={Globe}
+        />
+        <KPICard
+          title="SENSITIVE EDITS"
+          value={String(sensitiveEdits)}
+          sub="delete / critical updates"
+          color="amber"
+          icon={ShieldAlert}
+        />
       </div>
 
       {/* FILTER BAR */}
       <div className="flex flex-wrap items-center gap-3 bg-muted/10 p-4 rounded-2xl border border-border/50">
         <div className="relative flex-1 min-w-[260px]">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            size={16}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
           <input
             type="text"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by user, action, module, IP..."
             className="w-full bg-card border border-border rounded-xl pl-10 pr-4 py-2.5 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all font-bold"
           />
           {search && (
-            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-all">
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-all"
+            >
               <X size={14} />
             </button>
           )}
@@ -645,7 +760,10 @@ export function HRAuditLogs() {
                 Dismiss
               </button>
               <button
-                onClick={() => { setFlaggedFilter(true); setShowFlags(false); }}
+                onClick={() => {
+                  setFlaggedFilter(true);
+                  setShowFlags(false);
+                }}
                 className="text-[12px] font-black text-[#EF4444] hover:underline"
               >
                 Review All Flags →
@@ -659,17 +777,32 @@ export function HRAuditLogs() {
       <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
         <div className="px-6 py-4 border-b border-border bg-card flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h2 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">SYSTEM AUDIT LOG</h2>
+            <h2 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+              SYSTEM AUDIT LOG
+            </h2>
             <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#F0FDF4] border border-[#00B87C]/20">
               <span className="w-1.5 h-1.5 rounded-full bg-[#00B87C] animate-pulse" />
-              <span className="text-[9px] font-black text-[#00B87C] uppercase tracking-wider">Live</span>
+              <span className="text-[9px] font-black text-[#00B87C] uppercase tracking-wider">
+                Live
+              </span>
             </span>
             {filteredLogs.length !== LOGS.length && (
-              <span className="text-[11px] font-semibold text-muted-foreground">({filteredLogs.length} results)</span>
+              <span className="text-[11px] font-semibold text-muted-foreground">
+                ({filteredLogs.length} results)
+              </span>
             )}
           </div>
-          {(flaggedFilter || search || moduleFilter || actionFilter || userFilter || dateFilter || severityFilter) && (
-            <button onClick={handleReset} className="text-[11px] font-black text-muted-foreground hover:text-foreground transition-all flex items-center gap-1">
+          {(flaggedFilter ||
+            search ||
+            moduleFilter ||
+            actionFilter ||
+            userFilter ||
+            dateFilter ||
+            severityFilter) && (
+            <button
+              onClick={handleReset}
+              className="text-[11px] font-black text-muted-foreground hover:text-foreground transition-all flex items-center gap-1"
+            >
               <X size={14} /> Clear filters
             </button>
           )}
@@ -679,15 +812,33 @@ export function HRAuditLogs() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[#F9FAFB] dark:bg-muted/10 border-b border-border">
-                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">TIMESTAMP</th>
-                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">USER</th>
-                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">ACTION</th>
-                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">MODULE</th>
-                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">RECORD / DETAIL</th>
-                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">IP ADDRESS</th>
-                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">DEVICE</th>
-                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">SEVERITY</th>
-                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8] text-center">ACTION</th>
+                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
+                  TIMESTAMP
+                </th>
+                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
+                  USER
+                </th>
+                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
+                  ACTION
+                </th>
+                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
+                  MODULE
+                </th>
+                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
+                  RECORD / DETAIL
+                </th>
+                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
+                  IP ADDRESS
+                </th>
+                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
+                  DEVICE
+                </th>
+                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
+                  SEVERITY
+                </th>
+                <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8] text-center">
+                  ACTION
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F3F4F6]">
@@ -698,8 +849,15 @@ export function HRAuditLogs() {
                       <div className="w-12 h-12 rounded-2xl bg-muted/30 flex items-center justify-center">
                         <Search size={20} className="text-muted-foreground" />
                       </div>
-                      <p className="text-[13px] font-bold text-muted-foreground">No audit logs found matching your filters.</p>
-                      <button onClick={handleReset} className="text-[12px] font-black text-[#00B87C] hover:underline">Clear all filters</button>
+                      <p className="text-[13px] font-bold text-muted-foreground">
+                        No audit logs found matching your filters.
+                      </p>
+                      <button
+                        onClick={handleReset}
+                        className="text-[12px] font-black text-[#00B87C] hover:underline"
+                      >
+                        Clear all filters
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -714,40 +872,98 @@ export function HRAuditLogs() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className={`group hover:bg-[#00B87C]/[0.05] transition-all cursor-pointer ${isReviewed ? "opacity-60" : ""}`}
-                      style={{ borderLeft: log.severity === "critical" ? "3px solid #EF4444" : log.severity === "warning" ? "3px solid #F59E0B" : "3px solid transparent", minHeight: "52px" }}
+                      style={{
+                        borderLeft:
+                          log.severity === "critical"
+                            ? "3px solid #EF4444"
+                            : log.severity === "warning"
+                              ? "3px solid #F59E0B"
+                              : "3px solid transparent",
+                        minHeight: "52px",
+                      }}
                       onClick={() => setSelectedLog(log)}
                     >
                       <td className="px-5 py-3">
-                        <span className="text-[12px] font-bold text-foreground whitespace-nowrap">{log.timestamp}</span>
+                        <span className="text-[12px] font-bold text-foreground whitespace-nowrap">
+                          {log.timestamp}
+                        </span>
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2.5">
-                          {log.user === "Unknown" || log.user === "Unknown IP" ? (
-                            <div className="w-7 h-7 rounded-full bg-[#FEF2F2] flex items-center justify-center text-[#EF4444] font-black text-[9px]"><ShieldAlert size={14} /></div>
+                          {log.user === "Unknown" ||
+                          log.user === "Unknown IP" ? (
+                            <div className="w-7 h-7 rounded-full bg-[#FEF2F2] flex items-center justify-center text-[#EF4444] font-black text-[9px]">
+                              <ShieldAlert size={14} />
+                            </div>
                           ) : (
-                            <div className="w-7 h-7 rounded-full bg-[#EDE9FE] flex items-center justify-center text-[#8B5CF6] font-black text-[9px]">{initials(log.user)}</div>
+                            <div className="w-7 h-7 rounded-full bg-[#EDE9FE] flex items-center justify-center text-[#8B5CF6] font-black text-[9px]">
+                              {initials(log.user)}
+                            </div>
                           )}
                           <div>
-                            <span className={`text-[12px] font-bold ${log.severity === "critical" ? "text-[#EF4444]" : "text-foreground"}`}>{log.user}</span>
-                            <p className="text-[10px] text-muted-foreground">{log.userRole}</p>
+                            <span
+                              className={`text-[12px] font-bold ${log.severity === "critical" ? "text-[#EF4444]" : "text-foreground"}`}
+                            >
+                              {log.user}
+                            </span>
+                            <p className="text-[10px] text-muted-foreground">
+                              {log.userRole}
+                            </p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-3"><span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${act.chip}`}>{log.action}</span></td>
-                      <td className="px-5 py-3"><span className="px-2.5 py-0.5 rounded-full bg-[#F3F4F6] text-[#6B7280] text-[11px] font-semibold">{log.module}</span></td>
+                      <td className="px-5 py-3">
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${act.chip}`}
+                        >
+                          {log.action}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#F3F4F6] text-[#6B7280] text-[11px] font-semibold">
+                          {log.module}
+                        </span>
+                      </td>
                       <td className="px-5 py-3">
                         <span className="text-[12px] font-medium text-foreground">
                           {log.record}
-                          {log.isFlagged && !isReviewed && <span className="ml-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#FEF2F2] text-[#EF4444] text-[9px] font-black border border-[#FECACA]"><Flag size={9} /> FLAGGED</span>}
-                          {isReviewed && <span className="ml-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#F0FDF4] text-[#00B87C] text-[9px] font-black border border-[#A7F3D0]"><Check size={9} /> REVIEWED</span>}
+                          {log.isFlagged && !isReviewed && (
+                            <span className="ml-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#FEF2F2] text-[#EF4444] text-[9px] font-black border border-[#FECACA]">
+                              <Flag size={9} /> FLAGGED
+                            </span>
+                          )}
+                          {isReviewed && (
+                            <span className="ml-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#F0FDF4] text-[#00B87C] text-[9px] font-black border border-[#A7F3D0]">
+                              <Check size={9} /> REVIEWED
+                            </span>
+                          )}
                         </span>
                       </td>
-                      <td className="px-5 py-3"><span className={`text-[11px] font-mono font-bold ${log.severity === "critical" ? "text-[#EF4444]" : "text-muted-foreground"}`}>{log.ip}</span></td>
-                      <td className="px-5 py-3"><span className="text-[11px] font-medium text-muted-foreground">{log.device}</span></td>
-                      <td className="px-5 py-3"><span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${sev.chip}`}>{sev.icon} {sev.label}</span></td>
+                      <td className="px-5 py-3">
+                        <span
+                          className={`text-[11px] font-mono font-bold ${log.severity === "critical" ? "text-[#EF4444]" : "text-muted-foreground"}`}
+                        >
+                          {log.ip}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
+                        <span className="text-[11px] font-medium text-muted-foreground">
+                          {log.device}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${sev.chip}`}
+                        >
+                          {sev.icon} {sev.label}
+                        </span>
+                      </td>
                       <td className="px-5 py-3 text-center">
                         <button
-                          onClick={(e) => { e.stopPropagation(); setSelectedLog(log); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedLog(log);
+                          }}
                           className={`text-[11px] font-black ${log.severity === "critical" ? "text-[#EF4444]" : "text-[#00B87C]"} hover:underline whitespace-nowrap`}
                         >
                           {log.severity === "critical" ? "Review →" : "View →"}
@@ -766,11 +982,13 @@ export function HRAuditLogs() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <span className="text-[12px] font-bold text-muted-foreground">
-            Showing {Math.min((page - 1) * PAGE_SIZE + 1, filteredLogs.length)}–{Math.min(page * PAGE_SIZE, filteredLogs.length)} of {filteredLogs.length} logs
+            Showing {Math.min((page - 1) * PAGE_SIZE + 1, filteredLogs.length)}–
+            {Math.min(page * PAGE_SIZE, filteredLogs.length)} of{" "}
+            {filteredLogs.length} logs
           </span>
           <div className="flex items-center gap-1.5">
             <button
-              onClick={() => setPage(p => Math.max(1, p - 1))}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
               className="w-8 h-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:bg-muted transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
@@ -778,7 +996,12 @@ export function HRAuditLogs() {
             </button>
             {getPageNumbers().map((p, i) =>
               p === "..." ? (
-                <span key={`ellipsis-${i}`} className="text-[12px] font-bold text-muted-foreground px-1">...</span>
+                <span
+                  key={`ellipsis-${i}`}
+                  className="text-[12px] font-bold text-muted-foreground px-1"
+                >
+                  ...
+                </span>
               ) : (
                 <button
                   key={p}
@@ -791,10 +1014,10 @@ export function HRAuditLogs() {
                 >
                   {p}
                 </button>
-              )
+              ),
             )}
             <button
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
               className="w-8 h-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:bg-muted transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
@@ -808,14 +1031,20 @@ export function HRAuditLogs() {
       <AnimatePresence>
         {selectedLog && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={() => setSelectedLog(null)} />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/50 backdrop-blur-md"
+              onClick={() => setSelectedLog(null)}
+            />
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", damping: 20, stiffness: 300 }}
               className="relative w-full max-w-[520px] bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="px-6 py-5 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -834,7 +1063,10 @@ export function HRAuditLogs() {
                     Audit Log Detail
                   </h3>
                 </div>
-                <button onClick={() => setSelectedLog(null)} className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-all">
+                <button
+                  onClick={() => setSelectedLog(null)}
+                  className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-all"
+                >
                   <X size={16} className="text-muted-foreground" />
                 </button>
               </div>
@@ -889,9 +1121,20 @@ export function HRAuditLogs() {
 
                 <div className="border-t border-border" />
                 <div>
-                  <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-2">Event Description</p>
+                  <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-2">
+                    Event Description
+                  </p>
                   <p className="text-[12px] font-medium text-muted-foreground bg-muted/30 px-4 py-3 rounded-xl leading-relaxed">
-                    {selectedLog.user} ({selectedLog.userRole}) performed a <strong className="text-foreground">{selectedLog.action}</strong> action on the <strong className="text-foreground">{selectedLog.module}</strong> module. {selectedLog.record}. Source IP: {selectedLog.ip} via {selectedLog.device}.
+                    {selectedLog.user} ({selectedLog.userRole}) performed a{" "}
+                    <strong className="text-foreground">
+                      {selectedLog.action}
+                    </strong>{" "}
+                    action on the{" "}
+                    <strong className="text-foreground">
+                      {selectedLog.module}
+                    </strong>{" "}
+                    module. {selectedLog.record}. Source IP: {selectedLog.ip}{" "}
+                    via {selectedLog.device}.
                   </p>
                 </div>
               </div>
@@ -906,19 +1149,20 @@ export function HRAuditLogs() {
                   </button>
                 </div>
                 <div className="flex items-center gap-2">
-                  {selectedLog.severity !== "info" && !reviewedLogs.has(selectedLog.id) && (
-                    <>
-                      <button className="px-3 py-2 rounded-xl border border-amber-500/30 text-[11px] font-semibold text-amber-500 uppercase tracking-widest hover:bg-amber-500/5 transition-all flex items-center gap-1.5">
-                        <Flag size={13} /> Flag
-                      </button>
-                      <button
-                        onClick={() => handleMarkReviewed(selectedLog.id)}
-                        className="px-3 py-2 rounded-xl bg-[#00B87C]/10 text-[#00B87C] text-[11px] font-semibold uppercase tracking-wider hover:bg-[#00B87C]/20 transition-all border border-[#00B87C]/20 flex items-center gap-1.5"
-                      >
-                        <Check size={13} /> Mark Reviewed
-                      </button>
-                    </>
-                  )}
+                  {selectedLog.severity !== "info" &&
+                    !reviewedLogs.has(selectedLog.id) && (
+                      <>
+                        <button className="px-3 py-2 rounded-xl border border-amber-500/30 text-[11px] font-semibold text-amber-500 uppercase tracking-widest hover:bg-amber-500/5 transition-all flex items-center gap-1.5">
+                          <Flag size={13} /> Flag
+                        </button>
+                        <button
+                          onClick={() => handleMarkReviewed(selectedLog.id)}
+                          className="px-3 py-2 rounded-xl bg-[#00B87C]/10 text-[#00B87C] text-[11px] font-semibold uppercase tracking-wider hover:bg-[#00B87C]/20 transition-all border border-[#00B87C]/20 flex items-center gap-1.5"
+                        >
+                          <Check size={13} /> Mark Reviewed
+                        </button>
+                      </>
+                    )}
                   {reviewedLogs.has(selectedLog.id) && (
                     <span className="px-3 py-2 rounded-xl bg-[#F0FDF4] text-[#00B87C] text-[11px] font-semibold border border-[#A7F3D0] flex items-center gap-1.5">
                       <Check size={13} /> Reviewed
@@ -926,7 +1170,10 @@ export function HRAuditLogs() {
                   )}
                   {selectedLog.severity === "critical" && (
                     <button
-                      onClick={() => { setSelectedLog(null); setShowBlockModal(true); }}
+                      onClick={() => {
+                        setSelectedLog(null);
+                        setShowBlockModal(true);
+                      }}
                       className="px-3 py-2 rounded-xl border border-[#EF4444]/30 text-[11px] font-semibold text-[#EF4444] uppercase tracking-widest hover:bg-[#EF4444]/5 transition-all flex items-center gap-1.5"
                     >
                       <Ban size={13} /> Block IP
@@ -943,14 +1190,20 @@ export function HRAuditLogs() {
       <AnimatePresence>
         {showExportModal && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={() => setShowExportModal(false)} />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/50 backdrop-blur-md"
+              onClick={() => setShowExportModal(false)}
+            />
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", damping: 20, stiffness: 300 }}
               className="relative w-full max-w-[440px] bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="px-6 py-5 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -961,19 +1214,32 @@ export function HRAuditLogs() {
                     Export Audit Logs
                   </h3>
                 </div>
-                <button onClick={() => setShowExportModal(false)} className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-all">
+                <button
+                  onClick={() => setShowExportModal(false)}
+                  className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-all"
+                >
                   <X size={16} className="text-muted-foreground" />
                 </button>
               </div>
               <div className="px-6 py-5 space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">From</label>
-                    <input type="date" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">
+                      From
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                    />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">To</label>
-                    <input type="date" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">
+                      To
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                    />
                   </div>
                 </div>
                 <div>
@@ -981,7 +1247,7 @@ export function HRAuditLogs() {
                     Modules (HR scope)
                   </label>
                   <div className="flex flex-wrap gap-1.5">
-                    {["All", ...ALL_MODULES].map(m => (
+                    {["All", ...ALL_MODULES].map((m) => (
                       <button
                         key={m}
                         onClick={() => toggleExportModule(m)}
@@ -997,9 +1263,11 @@ export function HRAuditLogs() {
                   </div>
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">Format</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">
+                    Format
+                  </label>
                   <div className="flex gap-2">
-                    {["CSV", "PDF", "Excel"].map(f => (
+                    {["CSV", "PDF", "Excel"].map((f) => (
                       <button
                         key={f}
                         onClick={() => setExportFormat(f)}
@@ -1015,9 +1283,11 @@ export function HRAuditLogs() {
                   </div>
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">Severity</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest block mb-1.5">
+                    Severity
+                  </label>
                   <div className="flex gap-2">
-                    {["All", "Critical only", "Warning+"].map(s => (
+                    {["All", "Critical only", "Warning+"].map((s) => (
                       <button
                         key={s}
                         onClick={() => setExportSeverity(s)}
@@ -1040,7 +1310,12 @@ export function HRAuditLogs() {
                 </div>
               </div>
               <div className="px-6 py-5 border-t border-border flex items-center justify-end gap-3">
-                <button onClick={() => setShowExportModal(false)} className="px-4 py-2.5 rounded-xl text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all">Cancel</button>
+                <button
+                  onClick={() => setShowExportModal(false)}
+                  className="px-4 py-2.5 rounded-xl text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all"
+                >
+                  Cancel
+                </button>
                 <button
                   onClick={() => setShowExportModal(false)}
                   className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5"
@@ -1057,21 +1332,41 @@ export function HRAuditLogs() {
       <AnimatePresence>
         {showBlockModal && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/50 backdrop-blur-md" onClick={() => setShowBlockModal(false)} />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/50 backdrop-blur-md"
+              onClick={() => setShowBlockModal(false)}
+            />
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", damping: 20, stiffness: 300 }}
               className="relative w-full max-w-sm bg-card rounded-2xl p-8 text-center shadow-2xl border border-border"
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-14 h-14 rounded-full bg-[#FEF2F2] flex items-center justify-center mx-auto mb-4"><Ban size={24} className="text-[#EF4444]" /></div>
-              <h3 className="text-lg font-black text-foreground tracking-tight mb-2">Block IP Address</h3>
-              <p className="text-[13px] font-medium text-muted-foreground mb-1">Are you sure you want to block <strong className="text-foreground">203.45.67.12</strong>?</p>
-              <p className="text-[11px] font-bold text-amber-500 mb-6">This IP will be permanently blocked from accessing the system.</p>
+              <div className="w-14 h-14 rounded-full bg-[#FEF2F2] flex items-center justify-center mx-auto mb-4">
+                <Ban size={24} className="text-[#EF4444]" />
+              </div>
+              <h3 className="text-lg font-black text-foreground tracking-tight mb-2">
+                Block IP Address
+              </h3>
+              <p className="text-[13px] font-medium text-muted-foreground mb-1">
+                Are you sure you want to block{" "}
+                <strong className="text-foreground">203.45.67.12</strong>?
+              </p>
+              <p className="text-[11px] font-bold text-amber-500 mb-6">
+                This IP will be permanently blocked from accessing the system.
+              </p>
               <div className="flex gap-3">
-                <button onClick={() => setShowBlockModal(false)} className="flex-1 px-4 py-2.5 rounded-xl border border-border text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all">Cancel</button>
+                <button
+                  onClick={() => setShowBlockModal(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-border text-[11px] font-black text-muted-foreground uppercase tracking-widest hover:text-foreground transition-all"
+                >
+                  Cancel
+                </button>
                 <button
                   onClick={() => setShowBlockModal(false)}
                   className="flex-1 px-4 py-2.5 rounded-xl bg-[#EF4444] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all flex items-center justify-center gap-1.5"

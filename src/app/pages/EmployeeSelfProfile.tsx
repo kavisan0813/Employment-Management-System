@@ -930,7 +930,9 @@ function DocumentsTab() {
                     <h3 className="text-[15px] font-black text-foreground">
                       {viewingDoc}
                     </h3>
-                    <p className="text-[11px] font-bold text-primary">Preview</p>
+                    <p className="text-[11px] font-bold text-primary">
+                      Preview
+                    </p>
                   </div>
                 </div>
                 <button
@@ -998,12 +1000,15 @@ function DocumentsTab() {
                 </button>
               </div>
 
-              <form onSubmit={handleReplaceSubmit} className="p-6 space-y-6 bg-white dark:bg-card">
+              <form
+                onSubmit={handleReplaceSubmit}
+                className="p-6 space-y-6 bg-white dark:bg-card"
+              >
                 <div className="space-y-4">
                   <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest block">
                     Select Replacement File
                   </label>
-                  
+
                   <div
                     onClick={() => {
                       if (!isUploading) fileInputRef.current?.click();
@@ -1141,7 +1146,11 @@ function SettingsTab() {
       return;
     }
     if (newPassword.length < 8) {
-      showToast("Weak Password", "error", "Password must be at least 8 characters long.");
+      showToast(
+        "Weak Password",
+        "error",
+        "Password must be at least 8 characters long.",
+      );
       return;
     }
 
@@ -1149,12 +1158,20 @@ function SettingsTab() {
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
-    showToast("Password Secure", "success", "Your account security credentials have been updated.");
+    showToast(
+      "Password Secure",
+      "success",
+      "Your account security credentials have been updated.",
+    );
   };
 
   const handleDeactivateConfirm = () => {
     setShowDeactivateModal(false);
-    showToast("Action Restricted", "error", "Deactivation request has been sent to HR for verification.");
+    showToast(
+      "Action Restricted",
+      "error",
+      "Deactivation request has been sent to HR for verification.",
+    );
   };
 
   const toggle = (key: keyof typeof preferences) => {
@@ -1457,7 +1474,8 @@ function SettingsTab() {
                   Deactivate Account?
                 </h3>
                 <p className="text-[13px] font-bold text-muted-foreground leading-relaxed">
-                  Are you sure you want to deactivate your profile? This will lock your account and send a verification request to HR.
+                  Are you sure you want to deactivate your profile? This will
+                  lock your account and send a verification request to HR.
                 </p>
               </div>
               <div className="flex gap-4 w-full mt-2">

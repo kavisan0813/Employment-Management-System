@@ -40,9 +40,15 @@ const defaultPunchState: PunchState = {
   logs: [],
 };
 
-const AttendanceContext = createContext<AttendanceContextType | undefined>(undefined);
+const AttendanceContext = createContext<AttendanceContextType | undefined>(
+  undefined,
+);
 
-export function AttendanceProvider({ children }: { children: React.ReactNode }) {
+export function AttendanceProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { user } = useAuth();
   const [punchState, setPunchState] = useState<PunchState>(defaultPunchState);
 
@@ -70,7 +76,10 @@ export function AttendanceProvider({ children }: { children: React.ReactNode }) 
 
   const handlePunchIn = () => {
     const now = new Date();
-    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const timeStr = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
     const timestamp = Date.now();
     const newState: PunchState = {
       isPunchedIn: true,
@@ -84,17 +93,27 @@ export function AttendanceProvider({ children }: { children: React.ReactNode }) 
     };
     setPunchState(newState);
     if (user?.email) {
-      localStorage.setItem(`nexus_punch_${user.email}`, JSON.stringify(newState));
+      localStorage.setItem(
+        `nexus_punch_${user.email}`,
+        JSON.stringify(newState),
+      );
     }
-    showToast("Punched In", "success", `Shift started successfully at ${timeStr}.`);
+    showToast(
+      "Punched In",
+      "success",
+      `Shift started successfully at ${timeStr}.`,
+    );
   };
 
   const handlePunchOut = () => {
-    const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const timeStr = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
     const elapsedMs = Date.now() - (punchState.punchInTimestamp || Date.now());
     const elapsedSecs = Math.floor(elapsedMs / 1000);
     const elapsedMins = Math.floor(elapsedSecs / 60);
-    
+
     let workedStr = "";
     if (elapsedMins < 1) {
       workedStr = `${elapsedSecs} seconds`;
@@ -110,39 +129,75 @@ export function AttendanceProvider({ children }: { children: React.ReactNode }) 
       isOnBreak: false,
       punchOutTime: timeStr,
       workedHours: workedStr,
-      logs: [...punchState.logs, { time: timeStr, action: "Swipe Out (End of Shift)", type: "out" }],
+      logs: [
+        ...punchState.logs,
+        { time: timeStr, action: "Swipe Out (End of Shift)", type: "out" },
+      ],
     };
     setPunchState(newState);
     if (user?.email) {
-      localStorage.setItem(`nexus_punch_${user.email}`, JSON.stringify(newState));
+      localStorage.setItem(
+        `nexus_punch_${user.email}`,
+        JSON.stringify(newState),
+      );
     }
-    showToast("Punched Out", "success", `Shift completed at ${timeStr}. Duration: ${workedStr}`);
+    showToast(
+      "Punched Out",
+      "success",
+      `Shift completed at ${timeStr}. Duration: ${workedStr}`,
+    );
   };
 
   const handleStartBreak = () => {
-    const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const timeStr = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
     const newState: PunchState = {
       ...punchState,
       isOnBreak: true,
-      logs: [...punchState.logs, { time: timeStr, action: "Swipe Out (Lunch Break)", type: "break_start" }],
+      logs: [
+        ...punchState.logs,
+        {
+          time: timeStr,
+          action: "Swipe Out (Lunch Break)",
+          type: "break_start",
+        },
+      ],
     };
     setPunchState(newState);
     if (user?.email) {
-      localStorage.setItem(`nexus_punch_${user.email}`, JSON.stringify(newState));
+      localStorage.setItem(
+        `nexus_punch_${user.email}`,
+        JSON.stringify(newState),
+      );
     }
-    showToast("Break Started", "success", `Enjoy your break! Started at ${timeStr}.`);
+    showToast(
+      "Break Started",
+      "success",
+      `Enjoy your break! Started at ${timeStr}.`,
+    );
   };
 
   const handleEndBreak = () => {
-    const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const timeStr = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
     const newState: PunchState = {
       ...punchState,
       isOnBreak: false,
-      logs: [...punchState.logs, { time: timeStr, action: "Swipe In (Back to Desk)", type: "break_end" }],
+      logs: [
+        ...punchState.logs,
+        { time: timeStr, action: "Swipe In (Back to Desk)", type: "break_end" },
+      ],
     };
     setPunchState(newState);
     if (user?.email) {
-      localStorage.setItem(`nexus_punch_${user.email}`, JSON.stringify(newState));
+      localStorage.setItem(
+        `nexus_punch_${user.email}`,
+        JSON.stringify(newState),
+      );
     }
     showToast("Break Ended", "success", `Welcome back! Resumed at ${timeStr}.`);
   };

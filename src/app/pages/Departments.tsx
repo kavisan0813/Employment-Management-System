@@ -345,7 +345,9 @@ function DepartmentFormModal({
               className="w-full rounded-xl px-4 py-2.5 text-sm border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-bold"
               placeholder="e.g. Engineering (or None)"
               value={form.parentDepartment}
-              onChange={(e) => setForm({ ...form, parentDepartment: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, parentDepartment: e.target.value })
+              }
             />
           </div>
 
@@ -438,7 +440,7 @@ function DepartmentDetailModal({
   };
 
   const deptEmployees = employeesList.filter(
-    (emp) => emp.department.toLowerCase() === dept.name.toLowerCase()
+    (emp) => emp.department.toLowerCase() === dept.name.toLowerCase(),
   );
 
   return (
@@ -628,7 +630,9 @@ function DepartmentDetailModal({
                 </div>
               ))}
               {deptEmployees.length === 0 && (
-                <p className="text-xs text-muted-foreground text-center py-4">No employees in this department.</p>
+                <p className="text-xs text-muted-foreground text-center py-4">
+                  No employees in this department.
+                </p>
               )}
             </div>
           </div>
@@ -685,17 +689,40 @@ export function Departments() {
   const handleExportReport = () => {
     let content = "";
     if (reportType === "Employee List") {
-      content = `Employee ID,Name,Department,Role,Status,Location\n` +
-        employeesList.map(e => `${e.id},${e.name},${e.department},${e.role},${e.status},${e.location}`).join("\n");
+      content =
+        `Employee ID,Name,Department,Role,Status,Location\n` +
+        employeesList
+          .map(
+            (e) =>
+              `${e.id},${e.name},${e.department},${e.role},${e.status},${e.location}`,
+          )
+          .join("\n");
     } else if (reportType === "Analytics Report") {
-      content = `Department Code,Department Name,Total Employees,Active,On Leave,Growth\n` +
-        depts.map(d => `${d.code},${d.name},${d.employees},${d.activeEmployees},${d.onLeaveEmployees},${d.growth}%`).join("\n");
+      content =
+        `Department Code,Department Name,Total Employees,Active,On Leave,Growth\n` +
+        depts
+          .map(
+            (d) =>
+              `${d.code},${d.name},${d.employees},${d.activeEmployees},${d.onLeaveEmployees},${d.growth}%`,
+          )
+          .join("\n");
     } else {
-      content = `Department Code,Department Name,Annual Budget,Budget Used,Budget Remaining\n` +
-        depts.map(d => `${d.code},${d.name},${d.annualBudget},${d.budgetUsed},${d.annualBudget - d.budgetUsed}`).join("\n");
+      content =
+        `Department Code,Department Name,Annual Budget,Budget Used,Budget Remaining\n` +
+        depts
+          .map(
+            (d) =>
+              `${d.code},${d.name},${d.annualBudget},${d.budgetUsed},${d.annualBudget - d.budgetUsed}`,
+          )
+          .join("\n");
     }
 
-    const mimeType = reportFormat === "CSV" ? "text/csv" : reportFormat === "Excel" ? "application/vnd.ms-excel" : "text/plain";
+    const mimeType =
+      reportFormat === "CSV"
+        ? "text/csv"
+        : reportFormat === "Excel"
+          ? "application/vnd.ms-excel"
+          : "text/plain";
     const ext = reportFormat.toLowerCase();
     const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
@@ -866,7 +893,9 @@ export function Departments() {
                             if (action === "Edit Department") setEditDept(dept);
                             if (action === "Move Department") {
                               setMoveDept(dept);
-                              setNewParentInput(dept.parentDepartment || "None");
+                              setNewParentInput(
+                                dept.parentDepartment || "None",
+                              );
                             }
                             if (action === "Assign Head") {
                               setAssignHeadDept(dept);
@@ -900,7 +929,9 @@ export function Departments() {
                       {dept.name}
                     </h3>
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                      {dept.code} <span className="w-1 h-1 rounded-full bg-border" /> 📍 {dept.location || "Global"}
+                      {dept.code}{" "}
+                      <span className="w-1 h-1 rounded-full bg-border" /> 📍{" "}
+                      {dept.location || "Global"}
                     </p>
                   </div>
                 </div>

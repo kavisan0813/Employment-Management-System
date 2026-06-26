@@ -829,9 +829,13 @@ export function FinancePayrollSettings() {
                             .sort((a, b) => {
                               if (!sortField) return 0;
                               const fieldA =
-                                (a as Record<string, unknown>)[sortField]?.toString() || "";
+                                (a as Record<string, unknown>)[
+                                  sortField
+                                ]?.toString() || "";
                               const fieldB =
-                                (b as Record<string, unknown>)[sortField]?.toString() || "";
+                                (b as Record<string, unknown>)[
+                                  sortField
+                                ]?.toString() || "";
                               return sortAsc
                                 ? fieldA.localeCompare(fieldB)
                                 : fieldB.localeCompare(fieldA);
@@ -2095,14 +2099,20 @@ export function FinancePayrollSettings() {
                     if (editingItem) {
                       setSalaryBands((prev) =>
                         prev.map((g) =>
-                          g.id === editingItem.id ? { ...g, ...formattedData } : g,
+                          g.id === editingItem.id
+                            ? { ...g, ...formattedData }
+                            : g,
                         ),
                       );
                       showLocalToast("Grade updated successfully");
                     } else {
                       setSalaryBands((prev) => [
                         ...prev,
-                        { ...formattedData, id: Date.now().toString(), employees: 0 },
+                        {
+                          ...formattedData,
+                          id: Date.now().toString(),
+                          employees: 0,
+                        },
                       ]);
                       showLocalToast("Grade created successfully");
                     }
@@ -2117,7 +2127,9 @@ export function FinancePayrollSettings() {
                   item={editingItem}
                   onSave={(data) => {
                     if (editingItem?.id && editingItem?.regime) {
-                      const regime = editingItem.regime as "oldRegime" | "newRegime";
+                      const regime = editingItem.regime as
+                        | "oldRegime"
+                        | "newRegime";
                       setTdsSlabs((prev) => ({
                         ...prev,
                         [regime]: prev[regime].map((s) =>
@@ -2125,7 +2137,9 @@ export function FinancePayrollSettings() {
                         ),
                       }));
                     } else if (editingItem?.regime) {
-                      const regime = editingItem.regime as "oldRegime" | "newRegime";
+                      const regime = editingItem.regime as
+                        | "oldRegime"
+                        | "newRegime";
                       setTdsSlabs((prev) => ({
                         ...prev,
                         [regime]: [
@@ -2297,7 +2311,13 @@ function SalaryComponentForm({
   onCancel,
 }: {
   item: EditingItem | null;
-  onSave: (data: { name: string; type: string; taxable: boolean; formula: string; order: number }) => void;
+  onSave: (data: {
+    name: string;
+    type: string;
+    taxable: boolean;
+    formula: string;
+    order: number;
+  }) => void;
   onCancel: () => void;
 }) {
   const [name, setName] = useState(item?.name || "");
@@ -2403,7 +2423,12 @@ function SalaryGradeForm({
   onCancel,
 }: {
   item: EditingItem | null;
-  onSave: (data: { grade: string; minSalary: number | string; maxSalary: number | string; desc: string }) => void;
+  onSave: (data: {
+    grade: string;
+    minSalary: number | string;
+    maxSalary: number | string;
+    desc: string;
+  }) => void;
   onCancel: () => void;
 }) {
   const [grade, setGrade] = useState(item?.grade || "");
@@ -2556,7 +2581,12 @@ function ProfessionalTaxForm({
   onCancel,
 }: {
   item: EditingItem | null;
-  onSave: (data: { state: string; minSalary: number; maxSalary: number; amount: number }) => void;
+  onSave: (data: {
+    state: string;
+    minSalary: number;
+    maxSalary: number;
+    amount: number;
+  }) => void;
   onCancel: () => void;
 }) {
   const [state, setState] = useState(item?.state || "");
@@ -2639,7 +2669,11 @@ function MonthScheduleForm({
   onCancel,
 }: {
   item: EditingItem | null;
-  onSave: (data: { month: string; processingDate: string; transferDate: string }) => void;
+  onSave: (data: {
+    month: string;
+    processingDate: string;
+    transferDate: string;
+  }) => void;
   onCancel: () => void;
 }) {
   const [month, setMonth] = useState(item?.month || "");
@@ -2709,7 +2743,12 @@ function ConnectBankForm({
   onSave,
   onCancel,
 }: {
-  onSave: (data: { bank: string; accountNo: string; ifsc: string; branch: string }) => void;
+  onSave: (data: {
+    bank: string;
+    accountNo: string;
+    ifsc: string;
+    branch: string;
+  }) => void;
   onCancel: () => void;
 }) {
   const [bank, setBank] = useState("");

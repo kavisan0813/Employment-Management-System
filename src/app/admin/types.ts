@@ -20,7 +20,13 @@ export interface Organization {
   domain: string;
   logoUrl?: string;
   status: EntityStatus;
-  plan: "Trial" | "Basic" | "Professional" | "Enterprise" | "Starter" | "Growth";
+  plan:
+    | "Trial"
+    | "Basic"
+    | "Professional"
+    | "Enterprise"
+    | "Starter"
+    | "Growth";
   userCount: number;
   seatLimit: number;
   mrr: number;

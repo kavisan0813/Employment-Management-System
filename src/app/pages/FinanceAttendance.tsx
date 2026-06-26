@@ -83,7 +83,12 @@ export function FinanceAttendance() {
       }
 
       if (day < 6) {
-        return { date: dateStr, in: "09:00 AM", out: "06:00 PM", status: "Present" };
+        return {
+          date: dateStr,
+          in: "09:00 AM",
+          out: "06:00 PM",
+          status: "Present",
+        };
       }
 
       return { date: dateStr, in: "-", out: "-", status: "-" };
@@ -149,9 +154,9 @@ export function FinanceAttendance() {
             onClick={() => {
               if (selectedMonth === 0) {
                 setSelectedMonth(11);
-                setSelectedYear(prev => prev - 1);
+                setSelectedYear((prev) => prev - 1);
               } else {
-                setSelectedMonth(prev => prev - 1);
+                setSelectedMonth((prev) => prev - 1);
               }
             }}
             className="p-1.5 hover:bg-secondary rounded-lg text-muted-foreground transition-colors"
@@ -168,9 +173,9 @@ export function FinanceAttendance() {
             onClick={() => {
               if (selectedMonth === 11) {
                 setSelectedMonth(0);
-                setSelectedYear(prev => prev + 1);
+                setSelectedYear((prev) => prev + 1);
               } else {
-                setSelectedMonth(prev => prev + 1);
+                setSelectedMonth((prev) => prev + 1);
               }
             }}
             className="p-1.5 hover:bg-secondary rounded-lg text-muted-foreground transition-colors"
@@ -205,19 +210,29 @@ export function FinanceAttendance() {
             </button>
             {showEmployeeDropdown && (
               <div className="absolute top-full right-0 mt-2 w-48 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden">
-                {EMPLOYEES.map(emp => (
+                {EMPLOYEES.map((emp) => (
                   <button
                     key={emp.id}
-                    onClick={() => { setSelectedEmployee(emp); setShowEmployeeDropdown(false); }}
+                    onClick={() => {
+                      setSelectedEmployee(emp);
+                      setShowEmployeeDropdown(false);
+                    }}
                     className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted transition-colors text-[13px] font-bold ${
-                      selectedEmployee.id === emp.id ? "text-[#00B87C]" : "text-foreground"
+                      selectedEmployee.id === emp.id
+                        ? "text-[#00B87C]"
+                        : "text-foreground"
                     }`}
                   >
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ backgroundColor: emp.color }}>
+                    <div
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                      style={{ backgroundColor: emp.color }}
+                    >
                       {emp.initials}
                     </div>
                     {emp.name}
-                    {selectedEmployee.id === emp.id && <span className="ml-auto text-[#00B87C]">✓</span>}
+                    {selectedEmployee.id === emp.id && (
+                      <span className="ml-auto text-[#00B87C]">✓</span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -292,15 +307,18 @@ export function FinanceAttendance() {
                   textStyle = "text-white font-extrabold";
                   dotColor = "bg-white";
                 } else if (log.status === "Leave") {
-                  cellStyle = "bg-[#FEF3C7] border-transparent text-[#F59E0B] hover:bg-[#FEF3C7]/90";
+                  cellStyle =
+                    "bg-[#FEF3C7] border-transparent text-[#F59E0B] hover:bg-[#FEF3C7]/90";
                   textStyle = "text-[#F59E0B]";
                   dotColor = "bg-[#F59E0B]";
                 } else if (log.status === "Weekend") {
-                  cellStyle = "bg-card border-transparent opacity-60 text-[#D1D5DB] hover:opacity-80";
+                  cellStyle =
+                    "bg-card border-transparent opacity-60 text-[#D1D5DB] hover:opacity-80";
                   textStyle = "text-[#D1D5DB]";
                   dotColor = "bg-transparent";
                 } else if (log.status === "Present") {
-                  cellStyle = "bg-[#DCFCE7] border-transparent text-[#00B87C] hover:bg-[#DCFCE7]/90";
+                  cellStyle =
+                    "bg-[#DCFCE7] border-transparent text-[#00B87C] hover:bg-[#DCFCE7]/90";
                   textStyle = "text-[#00B87C]";
                   dotColor = "bg-[#00B87C]";
                 }
@@ -370,7 +388,9 @@ export function FinanceAttendance() {
                   </div>
                   <span
                     className={`text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${
-                      selectedDayLog.status === "Present" || selectedDayLog.status === "WFH" || selectedDayLog.status === "On-site"
+                      selectedDayLog.status === "Present" ||
+                      selectedDayLog.status === "WFH" ||
+                      selectedDayLog.status === "On-site"
                         ? "bg-[#DCFCE7] text-[#00B87C] border border-[#00B87C]/20"
                         : selectedDayLog.status === "Late"
                           ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
@@ -383,38 +403,61 @@ export function FinanceAttendance() {
                                 : "bg-secondary text-muted-foreground/40 border border-border"
                     }`}
                   >
-                    {selectedDayLog.status === "-" ? "No Record" : selectedDayLog.status}
+                    {selectedDayLog.status === "-"
+                      ? "No Record"
+                      : selectedDayLog.status}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   <div className="p-3 bg-background rounded-xl border border-border/80 text-center">
-                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Punch In</p>
-                    <p className="text-[13px] font-bold text-foreground">{selectedDayLog.in}</p>
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                      Punch In
+                    </p>
+                    <p className="text-[13px] font-bold text-foreground">
+                      {selectedDayLog.in}
+                    </p>
                   </div>
                   <div className="p-3 bg-background rounded-xl border border-border/80 text-center">
-                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Punch Out</p>
-                    <p className="text-[13px] font-bold text-foreground">{selectedDayLog.out}</p>
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                      Punch Out
+                    </p>
+                    <p className="text-[13px] font-bold text-foreground">
+                      {selectedDayLog.out}
+                    </p>
                   </div>
                   <div className="p-3 bg-background rounded-xl border border-border/80 text-center">
-                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Hours</p>
+                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                      Hours
+                    </p>
                     <p className="text-[13px] font-black text-[#00B87C]">
-                      {selectedDayLog.status === "Present" || selectedDayLog.status === "Late" || selectedDayLog.status === "WFH" || selectedDayLog.status === "On-site" ? "9h 00m" : "-"}
+                      {selectedDayLog.status === "Present" ||
+                      selectedDayLog.status === "Late" ||
+                      selectedDayLog.status === "WFH" ||
+                      selectedDayLog.status === "On-site"
+                        ? "9h 00m"
+                        : "-"}
                     </p>
                   </div>
                 </div>
 
-                {(selectedDayLog.status === "Absent" || selectedDayLog.status === "Late" || selectedDayLog.status === "-") && (
+                {(selectedDayLog.status === "Absent" ||
+                  selectedDayLog.status === "Late" ||
+                  selectedDayLog.status === "-") && (
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/10">
                     <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400">
-                      {selectedDayLog.status === "Absent" || selectedDayLog.status === "-"
+                      {selectedDayLog.status === "Absent" ||
+                      selectedDayLog.status === "-"
                         ? "Missed logging this day? Submit a regularization request."
                         : "Late punch-in? Correct details with manager approval."}
                     </span>
                     <button
                       onClick={() => {
                         const dayPadded = String(selectedDay).padStart(2, "0");
-                        const monthPadded = String(selectedMonth + 1).padStart(2, "0");
+                        const monthPadded = String(selectedMonth + 1).padStart(
+                          2,
+                          "0",
+                        );
                         const dateStr = `${selectedYear}-${monthPadded}-${dayPadded}`;
                         setRegDate(dateStr);
                         setIsRegModalOpen(true);

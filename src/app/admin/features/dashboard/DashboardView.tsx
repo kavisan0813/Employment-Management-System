@@ -55,22 +55,25 @@ export default function DashboardView({
     }
 
     const pathMap: Record<string, string> = {
-      'dashboard': '/platform-admin/dashboard',
-      'organizations': '/platform-admin/organizations',
-      'org-create': '/platform-admin/organizations',
-      'org-suspended': '/platform-admin/organizations',
-      'employees': '/platform-admin/organizations',
-      'users': '/platform-admin/users',
-      'subscriptions': '/platform-admin/subscriptions',
-      'revenue': '/platform-admin/subscriptions',
-      'tickets': '/platform-admin/support-tickets',
-      'audit': '/platform-admin/audit-logs',
-      'reports': '/platform-admin/reports',
-      'plans': '/platform-admin/roles',
-      'settings': '/platform-admin/settings'
+      dashboard: "/platform-admin/dashboard",
+      organizations: "/platform-admin/organizations",
+      "org-create": "/platform-admin/organizations",
+      "org-suspended": "/platform-admin/organizations",
+      employees: "/platform-admin/organizations",
+      users: "/platform-admin/users",
+      subscriptions: "/platform-admin/subscriptions",
+      revenue: "/platform-admin/subscriptions",
+      tickets: "/platform-admin/support-tickets",
+      audit: "/platform-admin/audit-logs",
+      reports: "/platform-admin/reports",
+      plans: "/platform-admin/roles",
+      settings: "/platform-admin/settings",
     };
-    
-    const targetPath = pathMap[view.toLowerCase()] || pathMap[view] || `/platform-admin/${view.toLowerCase()}`;
+
+    const targetPath =
+      pathMap[view.toLowerCase()] ||
+      pathMap[view] ||
+      `/platform-admin/${view.toLowerCase()}`;
     navigate(targetPath);
   };
 
@@ -114,17 +117,6 @@ export default function DashboardView({
     },
     {},
   );
-
-  const plans = Object.keys(planDistribution).map((key) => ({
-    name: key,
-    value: planDistribution[key],
-    color:
-      key === "Enterprise"
-        ? "#6366F1"
-        : key === "Growth"
-          ? "#3B82F6"
-          : "#10B981",
-  }));
 
   // Formatted rupee calculations (standard rupees conversion representation)
   const formatRupeesLakhs = (valInUSD: number) => {

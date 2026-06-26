@@ -446,7 +446,8 @@ export function FinanceMyExpenses() {
   const [newExpenseTitle, setNewExpenseTitle] = useState("");
   const [newExpenseAmount, setNewExpenseAmount] = useState("");
   const [newExpenseDate, setNewExpenseDate] = useState("");
-  const [newExpensePaymentMode, setNewExpensePaymentMode] = useState("Personal Card");
+  const [newExpensePaymentMode, setNewExpensePaymentMode] =
+    useState("Personal Card");
 
   const categoryMap: Record<string, ExpenseCategory> = {
     Travel: "Travel",
@@ -455,7 +456,7 @@ export function FinanceMyExpenses() {
     Stay: "Accommodation",
     Medical: "Medical",
     Training: "Training",
-    Other: "Other"
+    Other: "Other",
   };
 
   const handleExport = () => {
@@ -520,7 +521,10 @@ export function FinanceMyExpenses() {
       .reduce((sum, e) => sum + e.amount, 0);
   }, [expenses]);
 
-  const percentUsed = Math.min(Math.round((totalClaimedThisMonth / 15000) * 100), 100);
+  const percentUsed = Math.min(
+    Math.round((totalClaimedThisMonth / 15000) * 100),
+    100,
+  );
 
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
@@ -581,7 +585,7 @@ export function FinanceMyExpenses() {
           bg="bg-amber-500/10"
           label="CLAIMED THIS MONTH"
           value={`₹${totalClaimedThisMonth.toLocaleString()}`}
-          subValue={`${expenses.filter(e => e.status !== "Draft" && e.status !== "Rejected").length} expense claims`}
+          subValue={`${expenses.filter((e) => e.status !== "Draft" && e.status !== "Rejected").length} expense claims`}
           chip="↑ ₹1,200 vs last month"
           chipColor="amber"
         />
@@ -591,7 +595,7 @@ export function FinanceMyExpenses() {
           bg="bg-emerald-500/10"
           label="APPROVED"
           value={`₹${totalApproved.toLocaleString()}`}
-          subValue={`${expenses.filter(e => e.status === "Approved").length} claims approved`}
+          subValue={`${expenses.filter((e) => e.status === "Approved").length} claims approved`}
           chip="Credited Apr 1"
           chipColor="green"
         />
@@ -601,7 +605,7 @@ export function FinanceMyExpenses() {
           bg="bg-sky-500/10"
           label="PENDING REVIEW"
           value={`₹${totalPending.toLocaleString()}`}
-          subValue={`${expenses.filter(e => e.status === "Pending").length} claims in review`}
+          subValue={`${expenses.filter((e) => e.status === "Pending").length} claims in review`}
           chip="Avg 2 days response"
           chipColor="sky"
         />
@@ -865,28 +869,47 @@ export function FinanceMyExpenses() {
               {[
                 {
                   label: "Travel",
-                  val: expenses.filter(e => e.category === "Travel" && e.status !== "Rejected").reduce((sum, e) => sum + e.amount, 0),
+                  val: expenses
+                    .filter(
+                      (e) => e.category === "Travel" && e.status !== "Rejected",
+                    )
+                    .reduce((sum, e) => sum + e.amount, 0),
                   limit: 15000,
                   color: "text-sky-500",
                   bar: "bg-sky-500",
                 },
                 {
                   label: "Food",
-                  val: expenses.filter(e => e.category === "Food" && e.status !== "Rejected").reduce((sum, e) => sum + e.amount, 0),
+                  val: expenses
+                    .filter(
+                      (e) => e.category === "Food" && e.status !== "Rejected",
+                    )
+                    .reduce((sum, e) => sum + e.amount, 0),
                   limit: 15000,
                   color: "text-amber-500",
                   bar: "bg-amber-500",
                 },
                 {
                   label: "Equipment",
-                  val: expenses.filter(e => e.category === "Equipment" && e.status !== "Rejected").reduce((sum, e) => sum + e.amount, 0),
+                  val: expenses
+                    .filter(
+                      (e) =>
+                        e.category === "Equipment" && e.status !== "Rejected",
+                    )
+                    .reduce((sum, e) => sum + e.amount, 0),
                   limit: 15000,
                   color: "text-purple-500",
                   bar: "bg-purple-500",
                 },
                 {
                   label: "Accommodation",
-                  val: expenses.filter(e => e.category === "Accommodation" && e.status !== "Rejected").reduce((sum, e) => sum + e.amount, 0),
+                  val: expenses
+                    .filter(
+                      (e) =>
+                        e.category === "Accommodation" &&
+                        e.status !== "Rejected",
+                    )
+                    .reduce((sum, e) => sum + e.amount, 0),
                   limit: 15000,
                   color: "text-emerald-500",
                   bar: "bg-emerald-500",
@@ -902,19 +925,27 @@ export function FinanceMyExpenses() {
                   <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full ${item.bar}`}
-                      style={{ width: `${Math.min((item.val / item.limit) * 100, 100)}%` }}
+                      style={{
+                        width: `${Math.min((item.val / item.limit) * 100, 100)}%`,
+                      }}
                     />
                   </div>
                   <p className="text-[11px] font-bold text-muted-foreground/60 text-right uppercase tracking-tighter">
-                    ₹{Math.max(item.limit - item.val, 0).toLocaleString()} remaining
+                    ₹{Math.max(item.limit - item.val, 0).toLocaleString()}{" "}
+                    remaining
                   </p>
                 </div>
               ))}
             </div>
             <div className="mt-8 pt-6 border-t border-border">
               <div className="flex items-center justify-between mb-3 text-[13px] font-semibold uppercase tracking-wider">
-                <span className="text-foreground">Used: ₹{totalClaimedThisMonth.toLocaleString()}</span>
-                <span className="text-primary">Left: ₹{Math.max(15000 - totalClaimedThisMonth, 0).toLocaleString()}</span>
+                <span className="text-foreground">
+                  Used: ₹{totalClaimedThisMonth.toLocaleString()}
+                </span>
+                <span className="text-primary">
+                  Left: ₹
+                  {Math.max(15000 - totalClaimedThisMonth, 0).toLocaleString()}
+                </span>
               </div>
               <div className="h-2 w-full bg-secondary rounded-full overflow-hidden mb-2">
                 <div
@@ -1146,14 +1177,16 @@ export function FinanceMyExpenses() {
                     <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       PAYMENT MODE
                     </label>
-                    <select 
+                    <select
                       value={newExpensePaymentMode}
                       onChange={(e) => setNewExpensePaymentMode(e.target.value)}
                       className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
                     >
                       <option value="Personal Card">Personal Card</option>
                       <option value="Cash">Cash</option>
-                      <option value="UPI / Bank Transfer">UPI / Bank Transfer</option>
+                      <option value="UPI / Bank Transfer">
+                        UPI / Bank Transfer
+                      </option>
                       <option value="Corporate Card">Corporate Card</option>
                     </select>
                   </div>
@@ -1199,8 +1232,16 @@ export function FinanceMyExpenses() {
               </button>
               <button
                 onClick={() => {
-                  if (!newExpenseTitle.trim() || !newExpenseAmount || !newExpenseDate) {
-                    showToast("Validation Error", "error", "Please fill in all required fields.");
+                  if (
+                    !newExpenseTitle.trim() ||
+                    !newExpenseAmount ||
+                    !newExpenseDate
+                  ) {
+                    showToast(
+                      "Validation Error",
+                      "error",
+                      "Please fill in all required fields.",
+                    );
                     return;
                   }
 
@@ -1211,7 +1252,20 @@ export function FinanceMyExpenses() {
                       const year = parts[0];
                       const monthIndex = parseInt(parts[1], 10) - 1;
                       const day = parseInt(parts[2], 10);
-                      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                      const monthNames = [
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec",
+                      ];
                       formattedDate = `${monthNames[monthIndex]} ${day}, ${year}`;
                     }
                   }
@@ -1227,14 +1281,14 @@ export function FinanceMyExpenses() {
                     status: "Pending",
                     description: newExpenseDesc,
                     project: "NexusHR Internal",
-                    paymentMode: newExpensePaymentMode
+                    paymentMode: newExpensePaymentMode,
                   };
 
                   setExpenses([newExp, ...expenses]);
                   showToast(
                     "Expense Submitted",
                     "success",
-                    "Your expense claim has been submitted for review."
+                    "Your expense claim has been submitted for review.",
                   );
 
                   setShowAddModal(false);

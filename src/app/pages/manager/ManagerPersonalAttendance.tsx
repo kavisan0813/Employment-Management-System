@@ -486,7 +486,9 @@ export function ManagerPersonalAttendance() {
                 return (
                   <div
                     key={day}
-                    onClick={() => setSelectedDay(day === selectedDay ? null : day)}
+                    onClick={() =>
+                      setSelectedDay(day === selectedDay ? null : day)
+                    }
                     className={`aspect-square rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer hover:scale-105 border ${cellStyle} ${selectedDay === day ? "ring-2 ring-[#00B87C] ring-offset-1" : ""}`}
                   >
                     <span className={`text-base font-bold ${textStyle}`}>
@@ -504,44 +506,81 @@ export function ManagerPersonalAttendance() {
 
             {/* Day Detail Popup */}
             {selectedDay !== null && (
-              <div className="mt-5 rounded-xl border overflow-hidden animate-in slide-in-from-top-2" style={{ borderColor: "var(--border)" }}>
-                <div className="px-5 py-3 flex items-center justify-between" style={{ background: "#00B87C" }}>
+              <div
+                className="mt-5 rounded-xl border overflow-hidden animate-in slide-in-from-top-2"
+                style={{ borderColor: "var(--border)" }}
+              >
+                <div
+                  className="px-5 py-3 flex items-center justify-between"
+                  style={{ background: "#00B87C" }}
+                >
                   <div>
-                    <span className="text-[14px] font-black text-white">{MONTH_NAMES[selectedMonth]} {selectedDay}, {selectedYear}</span>
-                    <span className="text-[11px] text-white/80 ml-3">Daily Log Detail</span>
+                    <span className="text-[14px] font-black text-white">
+                      {MONTH_NAMES[selectedMonth]} {selectedDay}, {selectedYear}
+                    </span>
+                    <span className="text-[11px] text-white/80 ml-3">
+                      Daily Log Detail
+                    </span>
                   </div>
-                  <button onClick={() => setSelectedDay(null)}
-                    className="text-white/80 hover:text-white text-lg font-black leading-none w-6 h-6 flex items-center justify-center rounded-lg hover:bg-white/20 transition-colors">×</button>
+                  <button
+                    onClick={() => setSelectedDay(null)}
+                    className="text-white/80 hover:text-white text-lg font-black leading-none w-6 h-6 flex items-center justify-center rounded-lg hover:bg-white/20 transition-colors"
+                  >
+                    ×
+                  </button>
                 </div>
                 {(() => {
-                  const dayStr = selectedDay.toString().padStart(2, '0');
-                  const log = ATTENDANCE_LOGS.find(l => l.date.startsWith(dayStr)) || { in: "-", out: "-", status: "No Data" };
+                  const dayStr = selectedDay.toString().padStart(2, "0");
+                  const log = ATTENDANCE_LOGS.find((l) =>
+                    l.date.startsWith(dayStr),
+                  ) || { in: "-", out: "-", status: "No Data" };
                   const isWknd = log.status === "Weekend";
                   return (
                     <div className="p-5 bg-card flex flex-col gap-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                            log.status === "Present" ? "bg-[#00B87C]/10 text-[#00B87C]" : 
-                            log.status === "Late" ? "bg-amber-500/10 text-amber-600" : 
-                            log.status === "Weekend" ? "bg-secondary text-muted-foreground" :
-                            "bg-red-500/10 text-red-600"
-                          }`}>{log.status}</span>
+                          <span
+                            className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                              log.status === "Present"
+                                ? "bg-[#00B87C]/10 text-[#00B87C]"
+                                : log.status === "Late"
+                                  ? "bg-amber-500/10 text-amber-600"
+                                  : log.status === "Weekend"
+                                    ? "bg-secondary text-muted-foreground"
+                                    : "bg-red-500/10 text-red-600"
+                            }`}
+                          >
+                            {log.status}
+                          </span>
                         </div>
                         {!isWknd && log.status !== "No Data" && (
-                          <button onClick={() => { setIsRegModalOpen(true); setSelectedDay(null); }} className="text-[11px] font-bold text-[#00B87C] hover:underline">
+                          <button
+                            onClick={() => {
+                              setIsRegModalOpen(true);
+                              setSelectedDay(null);
+                            }}
+                            className="text-[11px] font-bold text-[#00B87C] hover:underline"
+                          >
                             Request Regularization
                           </button>
                         )}
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-secondary/30 p-3 rounded-lg border border-border">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">Check-in</p>
-                          <p className="text-[13px] font-black text-foreground">{log.in}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">
+                            Check-in
+                          </p>
+                          <p className="text-[13px] font-black text-foreground">
+                            {log.in}
+                          </p>
                         </div>
                         <div className="bg-secondary/30 p-3 rounded-lg border border-border">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">Check-out</p>
-                          <p className="text-[13px] font-black text-foreground">{log.out}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">
+                            Check-out
+                          </p>
+                          <p className="text-[13px] font-black text-foreground">
+                            {log.out}
+                          </p>
                         </div>
                       </div>
                     </div>

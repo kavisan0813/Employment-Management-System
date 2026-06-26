@@ -397,7 +397,14 @@ export function ManagerTeamTraining() {
         <div className="space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4 bg-card p-3 rounded-2xl border border-border shadow-sm">
             <div className="flex gap-2">
-              {["All", "Engineering", "Frontend", "Security", "DevOps", "Compliance"].map((cat) => (
+              {[
+                "All",
+                "Engineering",
+                "Frontend",
+                "Security",
+                "DevOps",
+                "Compliance",
+              ].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setCatalogFilter(cat)}
@@ -413,7 +420,9 @@ export function ManagerTeamTraining() {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {MOCK_CATALOG.filter((c) => catalogFilter === "All" || c.category === catalogFilter).map((course) => (
+            {MOCK_CATALOG.filter(
+              (c) => catalogFilter === "All" || c.category === catalogFilter,
+            ).map((course) => (
               <div
                 key={course.id}
                 className="bg-card border border-border rounded-2xl overflow-hidden hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-shadow flex flex-col"
@@ -470,7 +479,10 @@ export function ManagerTeamTraining() {
         <div className="space-y-4">
           <div className="flex items-center gap-3 bg-card p-3 rounded-2xl border border-border shadow-sm">
             <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                size={16}
+              />
               <input
                 type="text"
                 placeholder="Search assignments..."
@@ -485,13 +497,19 @@ export function ManagerTeamTraining() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
                   <tr>
-                    <th className="px-6 py-4 border-b border-border">Employee</th>
+                    <th className="px-6 py-4 border-b border-border">
+                      Employee
+                    </th>
                     <th className="px-6 py-4 border-b border-border">Course</th>
                     <th className="px-6 py-4 border-b border-border">
                       Assigned On
                     </th>
-                    <th className="px-6 py-4 border-b border-border">Due Date</th>
-                    <th className="px-6 py-4 border-b border-border">Progress</th>
+                    <th className="px-6 py-4 border-b border-border">
+                      Due Date
+                    </th>
+                    <th className="px-6 py-4 border-b border-border">
+                      Progress
+                    </th>
                     <th className="px-6 py-4 border-b border-border">Status</th>
                     <th className="px-6 py-4 border-b border-border text-right">
                       Action
@@ -501,7 +519,10 @@ export function ManagerTeamTraining() {
                 <tbody className="divide-y divide-border">
                   {MOCK_ASSIGNMENTS.filter((a) => {
                     const query = assignmentSearch.toLowerCase();
-                    return a.emp.toLowerCase().includes(query) || a.course.toLowerCase().includes(query);
+                    return (
+                      a.emp.toLowerCase().includes(query) ||
+                      a.course.toLowerCase().includes(query)
+                    );
                   }).map((row) => (
                     <tr
                       key={row.id}
@@ -541,7 +562,11 @@ export function ManagerTeamTraining() {
                       </td>
                       <td className="px-6 py-2 text-right">
                         <button
-                          onClick={() => alert(`Managing details for ${row.emp}'s assignment.`)}
+                          onClick={() =>
+                            alert(
+                              `Managing details for ${row.emp}'s assignment.`,
+                            )
+                          }
                           className="p-1.5 text-muted-foreground hover:bg-secondary rounded-lg transition-colors"
                         >
                           <MoreHorizontal size={16} />
@@ -720,7 +745,9 @@ export function ManagerTeamTraining() {
                     alert("Please select at least one team member.");
                     return;
                   }
-                  alert("Successfully assigned training to selected team members!");
+                  alert(
+                    "Successfully assigned training to selected team members!",
+                  );
                   setAssignModalOpen(false);
                   setSelectedAssignees([]);
                   setCourseSearch("");

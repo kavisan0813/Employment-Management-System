@@ -47,7 +47,6 @@ export default function AuditLogsView() {
     errorLogs,
     exportLogs,
     apiLogs,
-    retentionPolicy,
     stats,
     loading,
     organizations,
@@ -66,7 +65,6 @@ export default function AuditLogsView() {
     dateRange,
     setDateRange,
     resolveSecurityEvent,
-    updateRetentionPolicy,
     purgeAuditTrail,
     filterByDate,
   } = useAuditLogs();

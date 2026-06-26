@@ -227,22 +227,55 @@ function PayslipModal({
     const num = Math.round(payslip.netPay);
     if (num === 0) return "Zero";
     const a = [
-      "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
-      "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+      "",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
     ];
-    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-    
+    const b = [
+      "",
+      "",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
+    ];
+
     function g(n: number): string {
       if (n < 20) return a[n];
       const digit = n % 10;
       return b[Math.floor(n / 10)] + (digit ? " " + a[digit] : "");
     }
-    
+
     function h(n: number): string {
       if (n < 100) return g(n);
-      return a[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " and " + g(n % 100) : "");
+      return (
+        a[Math.floor(n / 100)] +
+        " Hundred" +
+        (n % 100 ? " and " + g(n % 100) : "")
+      );
     }
-    
+
     function c(n: number): string {
       const parts: string[] = [];
       if (n >= 10000000) {
@@ -310,17 +343,24 @@ function PayslipModal({
           <div className="flex justify-between items-start border-b border-neutral-300 pb-4">
             <div>
               <h1 className="text-2xl font-black text-foreground tracking-tight flex items-center gap-1.5">
-                <span className="bg-[#00B87C] text-white p-1.5 rounded-xl text-lg leading-none font-bold">N</span>
+                <span className="bg-[#00B87C] text-white p-1.5 rounded-xl text-lg leading-none font-bold">
+                  N
+                </span>
                 NexusHR Inc.
               </h1>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                100 Marine Parkway, Redwood City, CA 94065<br />
+                100 Marine Parkway, Redwood City, CA 94065
+                <br />
                 Phone: +1 (650) 555-0199 | Email: payroll@nexushr.com
               </p>
             </div>
             <div className="text-right">
-              <h2 className="text-lg font-black text-foreground uppercase tracking-wider">Salary Payslip</h2>
-              <p className="text-xs font-bold text-muted-foreground mt-1">Pay Period: {payslip.month} {payslip.year}</p>
+              <h2 className="text-lg font-black text-foreground uppercase tracking-wider">
+                Salary Payslip
+              </h2>
+              <p className="text-xs font-bold text-muted-foreground mt-1">
+                Pay Period: {payslip.month} {payslip.year}
+              </p>
               <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border bg-emerald-500/10 text-[#00B87C] border-emerald-500/20">
                 <CheckCircle2 size={12} /> {payslip.status}
               </div>
@@ -330,35 +370,57 @@ function PayslipModal({
           {/* Employee Details Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-muted/20">
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Employee Name</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">
+                Employee Name
+              </p>
               <p className="text-sm font-bold text-foreground">Priya Sharma</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Employee ID</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">
+                Employee ID
+              </p>
               <p className="text-sm font-bold text-foreground">EMP-0142</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Designation</p>
-              <p className="text-sm font-bold text-foreground">Senior Software Engineer</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">
+                Designation
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                Senior Software Engineer
+              </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Department</p>
-              <p className="text-sm font-bold text-foreground">Engineering Team</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">
+                Department
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                Engineering Team
+              </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Bank Name</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">
+                Bank Name
+              </p>
               <p className="text-sm font-bold text-foreground">HDFC Bank</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Bank A/c No.</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">
+                Bank A/c No.
+              </p>
               <p className="text-sm font-bold text-foreground">****4821</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">PF Number</p>
-              <p className="text-sm font-bold text-foreground">PF/EMP-0142/2026</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">
+                PF Number
+              </p>
+              <p className="text-sm font-bold text-foreground">
+                PF/EMP-0142/2026
+              </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Tax Account (PAN)</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">
+                Tax Account (PAN)
+              </p>
               <p className="text-sm font-bold text-foreground">PAN/EMP/0142</p>
             </div>
           </div>
@@ -368,26 +430,54 @@ function PayslipModal({
             <table className="w-full border-collapse text-xs">
               <thead>
                 <tr className="bg-muted/50 border-b border-neutral-200 dark:border-neutral-800">
-                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-left font-black uppercase text-foreground">Earnings</th>
-                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-right font-black uppercase text-foreground">Amount</th>
-                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-left font-black uppercase text-foreground">Deductions</th>
-                  <th className="px-4 py-2.5 text-right font-black uppercase text-foreground">Amount</th>
+                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-left font-black uppercase text-foreground">
+                    Earnings
+                  </th>
+                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-right font-black uppercase text-foreground">
+                    Amount
+                  </th>
+                  <th className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-left font-black uppercase text-foreground">
+                    Deductions
+                  </th>
+                  <th className="px-4 py-2.5 text-right font-black uppercase text-foreground">
+                    Amount
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
                 {rows.map((row, index) => (
                   <tr key={index} className="h-9">
-                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">{row.earning?.label || ""}</td>
-                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-right font-medium text-foreground">{row.earning ? `₹${row.earning.value.toLocaleString()}` : ""}</td>
-                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">{row.deduction?.label || ""}</td>
-                    <td className="px-4 py-2 text-right font-medium text-red-500">{row.deduction ? `₹${row.deduction.value.toLocaleString()}` : ""}</td>
+                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">
+                      {row.earning?.label || ""}
+                    </td>
+                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-right font-medium text-foreground">
+                      {row.earning
+                        ? `₹${row.earning.value.toLocaleString()}`
+                        : ""}
+                    </td>
+                    <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">
+                      {row.deduction?.label || ""}
+                    </td>
+                    <td className="px-4 py-2 text-right font-medium text-red-500">
+                      {row.deduction
+                        ? `₹${row.deduction.value.toLocaleString()}`
+                        : ""}
+                    </td>
                   </tr>
                 ))}
                 <tr className="bg-muted/20 font-bold border-t border-neutral-200 dark:border-neutral-800 h-10 text-foreground">
-                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800">Gross Earnings</td>
-                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-right font-black">₹{payslip.grossPay.toLocaleString()}</td>
-                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800">Total Deductions</td>
-                  <td className="px-4 py-2.5 text-right font-black text-red-500">₹{payslip.deductions.toLocaleString()}</td>
+                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800">
+                    Gross Earnings
+                  </td>
+                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800 text-right font-black">
+                    ₹{payslip.grossPay.toLocaleString()}
+                  </td>
+                  <td className="px-4 py-2.5 border-r border-neutral-200 dark:border-neutral-800">
+                    Total Deductions
+                  </td>
+                  <td className="px-4 py-2.5 text-right font-black text-red-500">
+                    ₹{payslip.deductions.toLocaleString()}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -397,17 +487,29 @@ function PayslipModal({
           <div className="p-5 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.03] space-y-2">
             <div className="flex justify-between items-center">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-wider text-[#00B87C]">Net Take-Home Salary</p>
-                <h3 className="text-2xl font-black text-foreground mt-0.5">₹{payslip.netPay.toLocaleString()}</h3>
+                <p className="text-[10px] font-black uppercase tracking-wider text-[#00B87C]">
+                  Net Take-Home Salary
+                </p>
+                <h3 className="text-2xl font-black text-foreground mt-0.5">
+                  ₹{payslip.netPay.toLocaleString()}
+                </h3>
               </div>
               <div className="text-right">
-                <p className="text-[10px] font-bold text-muted-foreground uppercase">Payment Mode</p>
-                <p className="text-xs font-bold text-foreground mt-0.5">Direct Bank Transfer</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                  Payment Mode
+                </p>
+                <p className="text-xs font-bold text-foreground mt-0.5">
+                  Direct Bank Transfer
+                </p>
               </div>
             </div>
             <div className="pt-2 border-t border-dashed border-emerald-500/20 text-xs">
-              <span className="font-bold text-muted-foreground">Amount in Words: </span>
-              <span className="font-black text-foreground italic">{netInWords}</span>
+              <span className="font-bold text-muted-foreground">
+                Amount in Words:{" "}
+              </span>
+              <span className="font-black text-foreground italic">
+                {netInWords}
+              </span>
             </div>
           </div>
 
@@ -415,16 +517,25 @@ function PayslipModal({
           <div className="pt-8 grid grid-cols-2 gap-12 text-center text-xs">
             <div className="space-y-12">
               <div className="h-0.5 bg-neutral-300 w-3/4 mx-auto" />
-              <p className="font-bold text-muted-foreground uppercase tracking-wider">Employee Signature</p>
+              <p className="font-bold text-muted-foreground uppercase tracking-wider">
+                Employee Signature
+              </p>
             </div>
             <div className="space-y-12">
               <div className="h-0.5 bg-neutral-300 w-3/4 mx-auto" />
-              <p className="font-bold text-muted-foreground uppercase tracking-wider">Authorized Signatory<br /><span className="text-[10px] lowercase font-normal">for NexusHR Inc.</span></p>
+              <p className="font-bold text-muted-foreground uppercase tracking-wider">
+                Authorized Signatory
+                <br />
+                <span className="text-[10px] lowercase font-normal">
+                  for NexusHR Inc.
+                </span>
+              </p>
             </div>
           </div>
 
           <p className="text-center text-[9px] text-muted-foreground/60 italic pt-6 border-t border-dashed border-neutral-200 dark:border-neutral-800">
-            This is a system-generated payslip and does not require a physical stamp or signature.
+            This is a system-generated payslip and does not require a physical
+            stamp or signature.
           </p>
         </div>
 

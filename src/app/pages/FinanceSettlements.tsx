@@ -199,9 +199,9 @@ export function FinanceSettlements() {
   const approvedThisMonth = settlements.filter(
     (s) => s.status === "Approved",
   ).length;
-  const totalDisbursed = settlements.filter(
-    (s) => s.status === "Approved",
-  ).reduce((sum, s) => sum + s.netFF, 0);
+  const totalDisbursed = settlements
+    .filter((s) => s.status === "Approved")
+    .reduce((sum, s) => sum + s.netFF, 0);
 
   const handleApprove = () => {
     if (!processingSettlement) return;
@@ -210,10 +210,8 @@ export function FinanceSettlements() {
       setApprovalLoading(false);
       setSettlements((prev) =>
         prev.map((s) =>
-          s.id === processingSettlement.id
-            ? { ...s, status: "Approved" }
-            : s
-        )
+          s.id === processingSettlement.id ? { ...s, status: "Approved" } : s,
+        ),
       );
       showToast(
         "Settlement Processed",
@@ -230,10 +228,8 @@ export function FinanceSettlements() {
     if (rejectingSettlement) {
       setSettlements((prev) =>
         prev.map((s) =>
-          s.id === rejectingSettlement.id
-            ? { ...s, status: "Rejected" }
-            : s
-        )
+          s.id === rejectingSettlement.id ? { ...s, status: "Rejected" } : s,
+        ),
       );
       showToast(
         "Settlement Rejected",

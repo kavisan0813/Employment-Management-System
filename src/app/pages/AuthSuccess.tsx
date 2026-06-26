@@ -26,8 +26,14 @@ export function AuthSuccess() {
   } = location.state || {};
 
   const handleGoToDashboard = () => {
-    const initials = name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) || "JD";
-    
+    const initials =
+      name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2) || "JD";
+
     login({
       name,
       email,

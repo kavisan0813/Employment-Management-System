@@ -31,7 +31,6 @@ export interface JobPosting {
   applicants: number;
 }
 
-
 export interface ScheduledInterview {
   id: string;
   candidateId: string;
@@ -188,27 +187,60 @@ export interface Employee {
   address: string;
   emergencyContact: string;
   performance: number;
-  notes?: Array<{ id: string; text: string; author: string; time: string; }>;
-  promotions?: Array<{ oldDesignation: string; newDesignation: string; oldSalary: number; newSalary: number; effectiveDate: string; }>;
-  transfers?: Array<{ id: string; type: string; oldValue: string; newValue: string; status: "Pending" | "Approved" | "Rejected"; initiatedDate: string; }>;
-  assets?: Array<{ id: string; name: string; category: string; date: string; status: string; }>;
+  notes?: Array<{ id: string; text: string; author: string; time: string }>;
+  promotions?: Array<{
+    oldDesignation: string;
+    newDesignation: string;
+    oldSalary: number;
+    newSalary: number;
+    effectiveDate: string;
+  }>;
+  transfers?: Array<{
+    id: string;
+    type: string;
+    oldValue: string;
+    newValue: string;
+    status: "Pending" | "Approved" | "Rejected";
+    initiatedDate: string;
+  }>;
+  assets?: Array<{
+    id: string;
+    name: string;
+    category: string;
+    date: string;
+    status: string;
+  }>;
 }
+
+export type EmployeeInput = Pick<
+  Employee,
+  "name" | "email" | "department" | "designation" | "joinDate"
+> & { salary: string | number } & Partial<Employee>;
 
 interface EmployeesContextType {
   employeesList: Employee[];
-  addEmployee: (emp: Omit<Employee, "id" | "grossSalary" | "deductions" | "netPay" | "avatar">) => void;
+  addEmployee: (emp: EmployeeInput) => void;
   updateEmployee: (id: string, emp: Partial<Employee>) => void;
   deleteEmployee: (id: string) => void;
-  promoteEmployee: (id: string, newDesignation: string, newSalary: number, effectiveDate: string) => void;
+  promoteEmployee: (
+    id: string,
+    newDesignation: string,
+    newSalary: number,
+    effectiveDate: string,
+  ) => void;
   initiateTransfer: (id: string, type: string, newValue: string) => void;
   approveTransfer: (empId: string, transferId: string) => void;
   rejectTransfer: (empId: string, transferId: string) => void;
-  bulkImportEmployees: (emps: Omit<Employee, "id" | "grossSalary" | "deductions" | "netPay" | "avatar">[]) => void;
+  bulkImportEmployees: (emps: EmployeeInput[]) => void;
 }
 
-const EmployeesContext = createContext<EmployeesContextType | undefined>(undefined);
+const EmployeesContext = createContext<EmployeesContextType | undefined>(
+  undefined,
+);
 
-export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [employeesList, setEmployeesList] = useState<Employee[]>(() => {
     // Look up in localStorage or load initialEmployees
     const saved = localStorage.getItem("nexus_employees");
@@ -219,7 +251,7 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
         console.error(e);
       }
     }
-    return initialEmployees.map(emp => ({
+    return initialEmployees.map((emp) => ({
       ...emp,
       notes: [
         {
@@ -227,7 +259,7 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
           text: "Arjun has been performing exceptionally well in the recent Q3 sprint. Needs to focus slightly more on peer code reviews going forward.",
           author: emp.manager || "David Chen",
           time: "2 weeks ago",
-        }
+        },
       ],
       assets: [
         {
@@ -251,7 +283,7 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
           date: "10 Jan 2024",
           status: "Assigned",
         },
-      ]
+      ],
     }));
   });
 
@@ -260,7 +292,7 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
     localStorage.setItem("nexus_employees", JSON.stringify(list));
   };
 
-  const addEmployee = (emp: Omit<Employee, "id" | "grossSalary" | "deductions" | "netPay" | "avatar">) => {
+  const addEmployee = (emp: EmployeeInput) => {
     const salaryVal = Number(emp.salary) || 0;
     const gross = Math.round(salaryVal / 12);
     const deductions = Math.round(gross * 0.12);
@@ -272,7 +304,8 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
       deductions,
       netPay,
       id: `EMP${String(employeesList.length + 1).padStart(3, "0")}`,
-      avatar: "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+      avatar:
+        "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
       status: "Active",
       phone: emp.phone || "+1 (555) 000-0000",
       employmentType: emp.employmentType || "Full-time",
@@ -280,6 +313,9 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
       dob: emp.dob || "1995-01-01",
       address: emp.address || "123 Street",
       emergencyContact: emp.emergencyContact || "Contact - 123",
+      role: emp.role || "Employee",
+      location: emp.location || "Office",
+      manager: emp.manager || "Unassigned",
       performance: 85,
       notes: [],
     };
@@ -289,7 +325,10 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
   const updateEmployee = (id: string, updatedFields: Partial<Employee>) => {
     const newList = employeesList.map((e) => {
       if (e.id !== id) return e;
-      const newSalary = updatedFields.salary !== undefined ? Number(updatedFields.salary) : e.salary;
+      const newSalary =
+        updatedFields.salary !== undefined
+          ? Number(updatedFields.salary)
+          : e.salary;
       const gross = Math.round(newSalary / 12);
       const deductions = Math.round(gross * 0.12);
       const netPay = gross - deductions;
@@ -310,7 +349,12 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
     saveEmployees(newList);
   };
 
-  const promoteEmployee = (id: string, newDesignation: string, newSalary: number, effectiveDate: string) => {
+  const promoteEmployee = (
+    id: string,
+    newDesignation: string,
+    newSalary: number,
+    effectiveDate: string,
+  ) => {
     const newList = employeesList.map((e) => {
       if (e.id !== id) return e;
       const oldDesignation = e.designation;
@@ -349,7 +393,7 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
       else if (type === "Location Transfer") oldValue = e.location;
       else if (type === "Manager Transfer") oldValue = e.manager;
       else if (type === "Project Transfer") oldValue = "None";
-      
+
       const newTransfer = {
         id: `TR${Date.now()}`,
         type,
@@ -373,9 +417,12 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
       const updatedFields: Partial<Employee> = {};
       const updatedTransfers = transfersHistory.map((tr) => {
         if (tr.id !== transferId) return tr;
-        if (tr.type === "Department Transfer") updatedFields.department = tr.newValue;
-        else if (tr.type === "Location Transfer") updatedFields.location = tr.newValue;
-        else if (tr.type === "Manager Transfer") updatedFields.manager = tr.newValue;
+        if (tr.type === "Department Transfer")
+          updatedFields.department = tr.newValue;
+        else if (tr.type === "Location Transfer")
+          updatedFields.location = tr.newValue;
+        else if (tr.type === "Manager Transfer")
+          updatedFields.manager = tr.newValue;
         return { ...tr, status: "Approved" as const };
       });
       return {
@@ -403,7 +450,7 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
     saveEmployees(newList);
   };
 
-  const bulkImportEmployees = (emps: Omit<Employee, "id" | "grossSalary" | "deductions" | "netPay" | "avatar">[]) => {
+  const bulkImportEmployees = (emps: EmployeeInput[]) => {
     let currentLength = employeesList.length;
     const newEmps = emps.map((emp) => {
       currentLength++;
@@ -418,7 +465,8 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({ children 
         deductions,
         netPay,
         id: `EMP${String(currentLength).padStart(3, "0")}`,
-        avatar: "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+        avatar:
+          "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
         status: emp.status || "Active",
         phone: emp.phone || "+1 (555) 000-0000",
         employmentType: emp.employmentType || "Full-time",

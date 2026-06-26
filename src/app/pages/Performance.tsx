@@ -132,7 +132,10 @@ const loadPerformanceReviews = (): ReviewHistory[] => {
       console.error("Failed to parse performance reviews", e);
     }
   }
-  localStorage.setItem("nexus_performance_reviews", JSON.stringify(reviewHistory));
+  localStorage.setItem(
+    "nexus_performance_reviews",
+    JSON.stringify(reviewHistory),
+  );
   return reviewHistory;
 };
 
@@ -143,8 +146,6 @@ const trendData = [
   { name: "Apr", score: 88 },
   { name: "May", score: 92 },
 ];
-
-
 
 /* ─── Components ─────────────────────────────────────────── */
 
@@ -211,7 +212,9 @@ export function Performance() {
   const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [history, setHistory] = useState<ReviewHistory[]>(loadPerformanceReviews);
+  const [history, setHistory] = useState<ReviewHistory[]>(
+    loadPerformanceReviews,
+  );
   const [activeReview, setActiveReview] = useState<ReviewHistory | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "view" | "edit">(
     "create",
@@ -226,7 +229,8 @@ export function Performance() {
   const [formAttendanceScore, setFormAttendanceScore] = useState(95);
   const [formPerformanceScore, setFormPerformanceScore] = useState(90);
   const [formRating, setFormRating] = useState(4.5);
-  const [formRecommendation, setFormRecommendation] = useState<Recommendation>("No Change");
+  const [formRecommendation, setFormRecommendation] =
+    useState<Recommendation>("No Change");
   const [formStatus, setFormStatus] = useState<ReviewStatus>("Pending");
   const [formStrengths, setFormStrengths] = useState("");
   const [formImprovement, setFormImprovement] = useState("");
@@ -285,7 +289,7 @@ export function Performance() {
     const avgPerf = Math.round(totalPerf / count);
     const avgAtt = Math.round(totalAtt / count);
     const avgRating = Number((totalRating / count).toFixed(1));
-    
+
     const avgProd = Math.min(100, Math.max(0, avgPerf + 2));
     const avgTeam = Math.min(100, Math.max(0, Math.round(avgPerf * 0.95)));
     const avgTask = Math.min(100, Math.max(0, Math.round(avgPerf * 0.98 - 1)));
@@ -295,10 +299,19 @@ export function Performance() {
 
     let increment = "No Increment";
     let eligible = false;
-    if (avgPerf >= 95) { increment = "15%"; eligible = true; }
-    else if (avgPerf >= 90) { increment = "12.5%"; eligible = true; }
-    else if (avgPerf >= 85) { increment = "10%"; eligible = true; }
-    else if (avgPerf >= 80) { increment = "8%"; eligible = true; }
+    if (avgPerf >= 95) {
+      increment = "15%";
+      eligible = true;
+    } else if (avgPerf >= 90) {
+      increment = "12.5%";
+      eligible = true;
+    } else if (avgPerf >= 85) {
+      increment = "10%";
+      eligible = true;
+    } else if (avgPerf >= 80) {
+      increment = "8%";
+      eligible = true;
+    }
 
     return {
       performanceScore: avgPerf,
@@ -320,11 +333,13 @@ export function Performance() {
       return averages;
     }
 
-    const review = history.find((r) => r.employeeId === mainSelectedEmployee.id);
+    const review = history.find(
+      (r) => r.employeeId === mainSelectedEmployee.id,
+    );
     if (review) {
       const perf = review.performanceScore;
       const att = review.attendanceScore;
-      
+
       const prod = Math.min(100, Math.max(0, perf + 2));
       const team = Math.min(100, Math.max(0, Math.round(perf * 0.95)));
       const task = Math.min(100, Math.max(0, Math.round(perf * 0.98 - 1)));
@@ -334,10 +349,19 @@ export function Performance() {
 
       let increment = "No Increment";
       let eligible = false;
-      if (perf >= 95) { increment = "15%"; eligible = true; }
-      else if (perf >= 90) { increment = "12.5%"; eligible = true; }
-      else if (perf >= 85) { increment = "10%"; eligible = true; }
-      else if (perf >= 80) { increment = "8%"; eligible = true; }
+      if (perf >= 95) {
+        increment = "15%";
+        eligible = true;
+      } else if (perf >= 90) {
+        increment = "12.5%";
+        eligible = true;
+      } else if (perf >= 85) {
+        increment = "10%";
+        eligible = true;
+      } else if (perf >= 80) {
+        increment = "8%";
+        eligible = true;
+      }
 
       return {
         performanceScore: perf,
@@ -367,10 +391,19 @@ export function Performance() {
 
     let increment = "No Increment";
     let eligible = false;
-    if (empPerf >= 95) { increment = "15%"; eligible = true; }
-    else if (empPerf >= 90) { increment = "12.5%"; eligible = true; }
-    else if (empPerf >= 85) { increment = "10%"; eligible = true; }
-    else if (empPerf >= 80) { increment = "8%"; eligible = true; }
+    if (empPerf >= 95) {
+      increment = "15%";
+      eligible = true;
+    } else if (empPerf >= 90) {
+      increment = "12.5%";
+      eligible = true;
+    } else if (empPerf >= 85) {
+      increment = "10%";
+      eligible = true;
+    } else if (empPerf >= 80) {
+      increment = "8%";
+      eligible = true;
+    }
 
     return {
       performanceScore: empPerf,
@@ -390,18 +423,34 @@ export function Performance() {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       if (rating >= i) {
-        stars.push(<Star key={i} size={16} fill="currentColor" className="text-amber-500" />);
+        stars.push(
+          <Star
+            key={i}
+            size={16}
+            fill="currentColor"
+            className="text-amber-500"
+          />,
+        );
       } else if (rating >= i - 0.5) {
         stars.push(
-          <div key={i} className="relative text-amber-500 inline-flex items-center justify-center w-4 h-4 shrink-0 select-none">
+          <div
+            key={i}
+            className="relative text-amber-500 inline-flex items-center justify-center w-4 h-4 shrink-0 select-none"
+          >
             <Star size={16} fill="none" className="absolute" />
             <div className="absolute top-0 left-0 overflow-hidden w-1/2 h-full">
-              <Star size={16} fill="currentColor" className="absolute top-0 left-0 text-amber-500" />
+              <Star
+                size={16}
+                fill="currentColor"
+                className="absolute top-0 left-0 text-amber-500"
+              />
             </div>
-          </div>
+          </div>,
         );
       } else {
-        stars.push(<Star key={i} size={16} fill="none" className="text-amber-500" />);
+        stars.push(
+          <Star key={i} size={16} fill="none" className="text-amber-500" />,
+        );
       }
     }
     return stars;
@@ -425,17 +474,37 @@ export function Performance() {
   }, [search, status, selectedDept, history]);
 
   const distributionData = useMemo(() => {
-    const exceptional = history.filter(r => r.rating >= 4.5).length;
-    const exceeds = history.filter(r => r.rating >= 4.0 && r.rating < 4.5).length;
-    const meets = history.filter(r => r.rating >= 3.0 && r.rating < 4.0).length;
-    const below = history.filter(r => r.rating < 3.0).length;
+    const exceptional = history.filter((r) => r.rating >= 4.5).length;
+    const exceeds = history.filter(
+      (r) => r.rating >= 4.0 && r.rating < 4.5,
+    ).length;
+    const meets = history.filter(
+      (r) => r.rating >= 3.0 && r.rating < 4.0,
+    ).length;
+    const below = history.filter((r) => r.rating < 3.0).length;
     const total = history.length || 1;
 
     return [
-      { name: "Exceptional", value: Math.round((exceptional / total) * 100), color: "#10B981" },
-      { name: "Exceeds", value: Math.round((exceeds / total) * 100), color: "#14B8A6" },
-      { name: "Meets", value: Math.round((meets / total) * 100), color: "#F59E0B" },
-      { name: "Below", value: Math.round((below / total) * 100), color: "#EF4444" },
+      {
+        name: "Exceptional",
+        value: Math.round((exceptional / total) * 100),
+        color: "#10B981",
+      },
+      {
+        name: "Exceeds",
+        value: Math.round((exceeds / total) * 100),
+        color: "#14B8A6",
+      },
+      {
+        name: "Meets",
+        value: Math.round((meets / total) * 100),
+        color: "#F59E0B",
+      },
+      {
+        name: "Below",
+        value: Math.round((below / total) * 100),
+        color: "#EF4444",
+      },
     ];
   }, [history]);
 
@@ -466,7 +535,10 @@ export function Performance() {
 
   const handleStartReview = () => {
     // If no specific employee is selected, default to the first one in the list
-    const defaultEmp = selectedEmpId !== "All Employees" ? selectedEmpId : (employees[0]?.id || "");
+    const defaultEmp =
+      selectedEmpId !== "All Employees"
+        ? selectedEmpId
+        : employees[0]?.id || "";
     setSelectedEmpId(defaultEmp);
     setFormPeriod(`Q1 ${year}`);
     setFormAttendanceScore(95);
@@ -491,8 +563,12 @@ export function Performance() {
     setFormRating(review.rating);
     setFormRecommendation(review.recommendation);
     setFormStatus(review.status);
-    setFormStrengths("Exceptional attention to detail and consistent high-quality output.");
-    setFormImprovement("Could improve communication frequency with external stakeholders.");
+    setFormStrengths(
+      "Exceptional attention to detail and consistent high-quality output.",
+    );
+    setFormImprovement(
+      "Could improve communication frequency with external stakeholders.",
+    );
     setFormErrors({});
     setIsModalOpen(true);
   };
@@ -506,8 +582,12 @@ export function Performance() {
     setFormRating(review.rating);
     setFormRecommendation(review.recommendation);
     setFormStatus(review.status);
-    setFormStrengths("Exceptional attention to detail and consistent high-quality output.");
-    setFormImprovement("Could improve communication frequency with external stakeholders.");
+    setFormStrengths(
+      "Exceptional attention to detail and consistent high-quality output.",
+    );
+    setFormImprovement(
+      "Could improve communication frequency with external stakeholders.",
+    );
     setFormErrors({});
     setIsModalOpen(true);
   };
@@ -521,7 +601,10 @@ export function Performance() {
     if (deleteTarget) {
       const updated = history.filter((r) => r.id !== deleteTarget.id);
       setHistory(updated);
-      localStorage.setItem("nexus_performance_reviews", JSON.stringify(updated));
+      localStorage.setItem(
+        "nexus_performance_reviews",
+        JSON.stringify(updated),
+      );
       toast.success("Review deleted successfully");
       setIsDeleteOpen(false);
       setDeleteTarget(null);
@@ -531,17 +614,26 @@ export function Performance() {
   const handleSaveReview = () => {
     const errors: Record<string, string> = {};
     if (!formPeriod.trim()) errors.period = "Period is required";
-    if (isNaN(formAttendanceScore) || formAttendanceScore < 0 || formAttendanceScore > 100) {
+    if (
+      isNaN(formAttendanceScore) ||
+      formAttendanceScore < 0 ||
+      formAttendanceScore > 100
+    ) {
       errors.attendanceScore = "Attendance score must be between 0 and 100";
     }
-    if (isNaN(formPerformanceScore) || formPerformanceScore < 0 || formPerformanceScore > 100) {
+    if (
+      isNaN(formPerformanceScore) ||
+      formPerformanceScore < 0 ||
+      formPerformanceScore > 100
+    ) {
       errors.performanceScore = "Performance score must be between 0 and 100";
     }
     if (isNaN(formRating) || formRating < 1.0 || formRating > 5.0) {
       errors.rating = "Rating must be between 1.0 and 5.0";
     }
     if (!formStrengths.trim()) errors.strengths = "Strengths field is required";
-    if (!formImprovement.trim()) errors.improvement = "Improvement Areas field is required";
+    if (!formImprovement.trim())
+      errors.improvement = "Improvement Areas field is required";
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -564,12 +656,15 @@ export function Performance() {
         return r;
       });
       setHistory(updated);
-      localStorage.setItem("nexus_performance_reviews", JSON.stringify(updated));
+      localStorage.setItem(
+        "nexus_performance_reviews",
+        JSON.stringify(updated),
+      );
       toast.success("Review updated successfully");
     } else {
       const emp = employees.find((e) => e.id === selectedEmpId) || employees[0];
       const newReview: ReviewHistory = {
-        id: `R${100 + history.length + Date.now() % 100}`,
+        id: `R${100 + history.length + (Date.now() % 100)}`,
         employeeId: emp.id,
         employeeName: emp.name,
         department: emp.department,
@@ -582,7 +677,10 @@ export function Performance() {
       };
       const updated = [newReview, ...history];
       setHistory(updated);
-      localStorage.setItem("nexus_performance_reviews", JSON.stringify(updated));
+      localStorage.setItem(
+        "nexus_performance_reviews",
+        JSON.stringify(updated),
+      );
       toast.success("New review submitted successfully");
     }
     setIsModalOpen(false);
@@ -599,7 +697,9 @@ export function Performance() {
     },
     {
       label: "Pending Reviews",
-      val: history.filter(r => r.status === "Pending" || r.status === "In Review").length.toString(),
+      val: history
+        .filter((r) => r.status === "Pending" || r.status === "In Review")
+        .length.toString(),
       sub: "Awaiting your action",
       icon: <Clock size={18} />,
       color: "#F59E0B",
@@ -607,15 +707,20 @@ export function Performance() {
     },
     {
       label: "Completed Reviews",
-      val: history.filter(r => r.status === "Completed" || r.status === "Approved").length.toString(),
-      sub: `${Math.round((history.filter(r => r.status === "Completed" || r.status === "Approved").length / (history.length || 1)) * 100)}% completion rate`,
+      val: history
+        .filter((r) => r.status === "Completed" || r.status === "Approved")
+        .length.toString(),
+      sub: `${Math.round((history.filter((r) => r.status === "Completed" || r.status === "Approved").length / (history.length || 1)) * 100)}% completion rate`,
       icon: <CheckCircle2 size={18} />,
       color: "#10B981",
       bg: "rgba(16,185,129,0.1)",
     },
     {
       label: "Average Score",
-      val: (history.reduce((acc, r) => acc + r.performanceScore, 0) / (history.length || 1)).toFixed(1),
+      val: (
+        history.reduce((acc, r) => acc + r.performanceScore, 0) /
+        (history.length || 1)
+      ).toFixed(1),
       sub: "Average out of 100",
       icon: <TrendingUp size={18} />,
       color: "#0D9488",
@@ -623,7 +728,9 @@ export function Performance() {
     },
     {
       label: "Eligible for Increment",
-      val: history.filter(r => r.recommendation === "Increment").length.toString(),
+      val: history
+        .filter((r) => r.recommendation === "Increment")
+        .length.toString(),
       sub: "Based on perf scores",
       icon: <Award size={18} />,
       color: "#8B5CF6",
@@ -631,7 +738,9 @@ export function Performance() {
     },
     {
       label: "Promotion Recommended",
-      val: history.filter(r => r.recommendation === "Promotion").length.toString(),
+      val: history
+        .filter((r) => r.recommendation === "Promotion")
+        .length.toString(),
       sub: "High performers list",
       icon: <UserCheck size={18} />,
       color: "#F43F5E",
@@ -696,9 +805,7 @@ export function Performance() {
               <h3 className="text-[28px] font-bold text-foreground mb-1">
                 {s.val}
               </h3>
-              <p className="text-[12px] text-[#6B7280]">
-                {s.sub}
-              </p>
+              <p className="text-[12px] text-[#6B7280]">{s.sub}</p>
             </div>
           </div>
         ))}
@@ -904,7 +1011,11 @@ export function Performance() {
             </thead>
             <tbody>
               {filteredHistory.map((r) => (
-                <tr key={r.id} className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors cursor-pointer" onClick={() => setSelectedEmpId(r.employeeId)}>
+                <tr
+                  key={r.id}
+                  className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors cursor-pointer"
+                  onClick={() => setSelectedEmpId(r.employeeId)}
+                >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center font-black text-muted-foreground text-xs uppercase">
@@ -980,19 +1091,28 @@ export function Performance() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={(e) => { e.stopPropagation(); handleView(r); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleView(r);
+                        }}
                         className="p-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-600 transition-all"
                       >
                         <FileText size={16} />
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); handleEdit(r); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(r);
+                        }}
                         className="p-2 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-500/10 text-muted-foreground hover:text-amber-600 transition-all"
                       >
                         <Edit3 size={16} />
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); handleDelete(r.id, r.employeeName); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(r.id, r.employeeName);
+                        }}
                         className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-muted-foreground hover:text-red-600 transition-all"
                       >
                         <Trash2 size={16} />
@@ -1011,9 +1131,13 @@ export function Performance() {
           <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-4 animate-pulse">
             <Users size={32} />
           </div>
-          <h3 className="text-lg font-black text-foreground mb-2">No Employee Selected</h3>
+          <h3 className="text-lg font-black text-foreground mb-2">
+            No Employee Selected
+          </h3>
           <p className="text-sm text-muted-foreground max-w-md">
-            Select an employee from the dropdown filter above or click on any employee's row in the Review History table below to view their detailed performance and overall score.
+            Select an employee from the dropdown filter above or click on any
+            employee's row in the Review History table below to view their
+            detailed performance and overall score.
           </p>
         </div>
       ) : (
@@ -1051,7 +1175,9 @@ export function Performance() {
                       Overall Performance Score
                     </p>
                     <div className="flex items-center gap-3">
-                      <h4 className="text-[28px] font-bold text-emerald-600">{currentEmployeeMetrics.performanceScore}</h4>
+                      <h4 className="text-[28px] font-bold text-emerald-600">
+                        {currentEmployeeMetrics.performanceScore}
+                      </h4>
                       <div className="flex items-center gap-1 text-amber-500">
                         {renderStars(currentEmployeeMetrics.rating)}
                       </div>
@@ -1060,10 +1186,26 @@ export function Performance() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  <MetricItem label="Attendance Score" val={currentEmployeeMetrics.attendanceScore} icon={Calendar} />
-                  <MetricItem label="Productivity" val={currentEmployeeMetrics.productivity} icon={Activity} />
-                  <MetricItem label="Teamwork" val={currentEmployeeMetrics.teamwork} icon={Users} />
-                  <MetricItem label="Task Completion" val={currentEmployeeMetrics.taskCompletion} icon={Target} />
+                  <MetricItem
+                    label="Attendance Score"
+                    val={currentEmployeeMetrics.attendanceScore}
+                    icon={Calendar}
+                  />
+                  <MetricItem
+                    label="Productivity"
+                    val={currentEmployeeMetrics.productivity}
+                    icon={Activity}
+                  />
+                  <MetricItem
+                    label="Teamwork"
+                    val={currentEmployeeMetrics.teamwork}
+                    icon={Users}
+                  />
+                  <MetricItem
+                    label="Task Completion"
+                    val={currentEmployeeMetrics.taskCompletion}
+                    icon={Target}
+                  />
                 </div>
               </div>
             </div>
@@ -1079,40 +1221,54 @@ export function Performance() {
                 <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
                   Attendance %
                 </p>
-                <p className="text-xl font-black text-foreground">{currentEmployeeMetrics.attendanceScore}%</p>
+                <p className="text-xl font-black text-foreground">
+                  {currentEmployeeMetrics.attendanceScore}%
+                </p>
               </div>
               <div className="p-4 rounded-2xl bg-muted border border-border">
                 <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
                   Late Count
                 </p>
-                <p className="text-xl font-black text-amber-600">{String(currentEmployeeMetrics.lateCount).padStart(2, '0')}</p>
+                <p className="text-xl font-black text-amber-600">
+                  {String(currentEmployeeMetrics.lateCount).padStart(2, "0")}
+                </p>
               </div>
               <div className="p-4 rounded-2xl bg-muted border border-border">
                 <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
                   Leave Count
                 </p>
-                <p className="text-xl font-black text-foreground">{String(currentEmployeeMetrics.leaveCount).padStart(2, '0')}</p>
+                <p className="text-xl font-black text-foreground">
+                  {String(currentEmployeeMetrics.leaveCount).padStart(2, "0")}
+                </p>
               </div>
               <div className="p-4 rounded-2xl bg-muted border border-border">
                 <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
                   Perf. Score
                 </p>
-                <p className="text-xl font-black text-emerald-600">{currentEmployeeMetrics.performanceScore}/100</p>
+                <p className="text-xl font-black text-emerald-600">
+                  {currentEmployeeMetrics.performanceScore}/100
+                </p>
               </div>
               <div className="p-4 rounded-2xl bg-muted border border-border lg:col-span-2">
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                     Eligibility
                   </p>
-                  <span className={`text-[9px] font-black px-2 py-0.5 rounded text-white ${currentEmployeeMetrics.eligible ? "bg-emerald-500" : "bg-red-500"}`}>
-                    {currentEmployeeMetrics.eligible ? "ELIGIBLE" : "NOT ELIGIBLE"}
+                  <span
+                    className={`text-[9px] font-black px-2 py-0.5 rounded text-white ${currentEmployeeMetrics.eligible ? "bg-emerald-500" : "bg-red-500"}`}
+                  >
+                    {currentEmployeeMetrics.eligible
+                      ? "ELIGIBLE"
+                      : "NOT ELIGIBLE"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-lg font-black text-foreground">
                     Suggested Increment
                   </p>
-                  <p className="text-2xl font-black text-emerald-600">{currentEmployeeMetrics.increment}</p>
+                  <p className="text-2xl font-black text-emerald-600">
+                    {currentEmployeeMetrics.increment}
+                  </p>
                 </div>
               </div>
             </div>
@@ -1327,9 +1483,9 @@ export function Performance() {
                       </label>
                       <div className="relative">
                         <select
-                           value={selectedEmpId}
-                           onChange={(e) => setSelectedEmpId(e.target.value)}
-                           className="w-full appearance-none px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer bg-card"
+                          value={selectedEmpId}
+                          onChange={(e) => setSelectedEmpId(e.target.value)}
+                          className="w-full appearance-none px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer bg-card"
                         >
                           {employees.map((e) => (
                             <option key={e.id} value={e.id}>
@@ -1355,7 +1511,10 @@ export function Performance() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          modalEmployee?.name?.split(" ").map(n => n[0]).join("") || "EMP"
+                          modalEmployee?.name
+                            ?.split(" ")
+                            .map((n) => n[0])
+                            .join("") || "EMP"
                         )}
                       </div>
                       <div>
@@ -1363,7 +1522,9 @@ export function Performance() {
                           {modalEmployee?.name || "Select Employee"}
                         </h4>
                         <p className="text-xs font-bold text-muted-foreground">
-                          {modalEmployee?.role || modalEmployee?.designation || "Staff"}
+                          {modalEmployee?.role ||
+                            modalEmployee?.designation ||
+                            "Staff"}
                         </p>
                       </div>
                     </div>
@@ -1392,12 +1553,22 @@ export function Performance() {
                               min="0"
                               max="100"
                               value={formAttendanceScore}
-                              onChange={(e) => setFormAttendanceScore(parseInt(e.target.value) || 0)}
+                              onChange={(e) =>
+                                setFormAttendanceScore(
+                                  parseInt(e.target.value) || 0,
+                                )
+                              }
                               className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"
-                              style={{ borderColor: formErrors.attendanceScore ? "#EF4444" : "var(--border)" }}
+                              style={{
+                                borderColor: formErrors.attendanceScore
+                                  ? "#EF4444"
+                                  : "var(--border)",
+                              }}
                             />
                             {formErrors.attendanceScore && (
-                              <p className="text-xs text-red-500 mt-1">{formErrors.attendanceScore}</p>
+                              <p className="text-xs text-red-500 mt-1">
+                                {formErrors.attendanceScore}
+                              </p>
                             )}
                           </div>
                           <div className="space-y-1.5">
@@ -1409,12 +1580,22 @@ export function Performance() {
                               min="0"
                               max="100"
                               value={formPerformanceScore}
-                              onChange={(e) => setFormPerformanceScore(parseInt(e.target.value) || 0)}
+                              onChange={(e) =>
+                                setFormPerformanceScore(
+                                  parseInt(e.target.value) || 0,
+                                )
+                              }
                               className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"
-                              style={{ borderColor: formErrors.performanceScore ? "#EF4444" : "var(--border)" }}
+                              style={{
+                                borderColor: formErrors.performanceScore
+                                  ? "#EF4444"
+                                  : "var(--border)",
+                              }}
                             />
                             {formErrors.performanceScore && (
-                              <p className="text-xs text-red-500 mt-1">{formErrors.performanceScore}</p>
+                              <p className="text-xs text-red-500 mt-1">
+                                {formErrors.performanceScore}
+                              </p>
                             )}
                           </div>
                         </>
@@ -1442,10 +1623,16 @@ export function Performance() {
                         onChange={(e) => setFormPeriod(e.target.value)}
                         readOnly={modalMode === "view"}
                         className={`w-full px-4 py-2.5 rounded-xl border text-sm font-bold text-foreground outline-none bg-card ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
-                        style={{ borderColor: formErrors.period ? "#EF4444" : "var(--border)" }}
+                        style={{
+                          borderColor: formErrors.period
+                            ? "#EF4444"
+                            : "var(--border)",
+                        }}
                       />
                       {formErrors.period && (
-                        <p className="text-xs text-red-500 mt-1">{formErrors.period}</p>
+                        <p className="text-xs text-red-500 mt-1">
+                          {formErrors.period}
+                        </p>
                       )}
                     </div>
                     <div className="space-y-1.5">
@@ -1458,13 +1645,21 @@ export function Performance() {
                         min="1.0"
                         max="5.0"
                         value={formRating}
-                        onChange={(e) => setFormRating(parseFloat(e.target.value) || 0)}
+                        onChange={(e) =>
+                          setFormRating(parseFloat(e.target.value) || 0)
+                        }
                         readOnly={modalMode === "view"}
                         className={`w-full px-4 py-2.5 rounded-xl border text-sm font-bold text-foreground outline-none bg-card ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
-                        style={{ borderColor: formErrors.rating ? "#EF4444" : "var(--border)" }}
+                        style={{
+                          borderColor: formErrors.rating
+                            ? "#EF4444"
+                            : "var(--border)",
+                        }}
                       />
                       {formErrors.rating && (
-                        <p className="text-xs text-red-500 mt-1">{formErrors.rating}</p>
+                        <p className="text-xs text-red-500 mt-1">
+                          {formErrors.rating}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1489,7 +1684,9 @@ export function Performance() {
                         <select
                           disabled={modalMode === "view"}
                           value={formStatus}
-                          onChange={(e) => setFormStatus(e.target.value as ReviewStatus)}
+                          onChange={(e) =>
+                            setFormStatus(e.target.value as ReviewStatus)
+                          }
                           className={`w-full appearance-none px-4 py-2.5 rounded-xl border text-sm font-bold text-foreground outline-none cursor-pointer bg-card ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
                         >
                           <option value="Pending">Pending</option>
@@ -1518,10 +1715,16 @@ export function Performance() {
                       readOnly={modalMode === "view"}
                       placeholder="Key strengths..."
                       className={`w-full px-4 py-2.5 rounded-xl border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
-                      style={{ borderColor: formErrors.strengths ? "#EF4444" : "var(--border)" }}
+                      style={{
+                        borderColor: formErrors.strengths
+                          ? "#EF4444"
+                          : "var(--border)",
+                      }}
                     />
                     {formErrors.strengths && (
-                      <p className="text-xs text-red-500 mt-1">{formErrors.strengths}</p>
+                      <p className="text-xs text-red-500 mt-1">
+                        {formErrors.strengths}
+                      </p>
                     )}
                   </div>
 
@@ -1536,10 +1739,16 @@ export function Performance() {
                       readOnly={modalMode === "view"}
                       placeholder="Areas to grow..."
                       className={`w-full px-4 py-2.5 rounded-xl border text-sm font-bold outline-none focus:border-emerald-500 transition-all bg-card text-foreground ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
-                      style={{ borderColor: formErrors.improvement ? "#EF4444" : "var(--border)" }}
+                      style={{
+                        borderColor: formErrors.improvement
+                          ? "#EF4444"
+                          : "var(--border)",
+                      }}
                     />
                     {formErrors.improvement && (
-                      <p className="text-xs text-red-500 mt-1">{formErrors.improvement}</p>
+                      <p className="text-xs text-red-500 mt-1">
+                        {formErrors.improvement}
+                      </p>
                     )}
                   </div>
 
@@ -1551,7 +1760,11 @@ export function Performance() {
                       <select
                         disabled={modalMode === "view"}
                         value={formRecommendation}
-                        onChange={(e) => setFormRecommendation(e.target.value as Recommendation)}
+                        onChange={(e) =>
+                          setFormRecommendation(
+                            e.target.value as Recommendation,
+                          )
+                        }
                         className={`w-full appearance-none px-4 py-2.5 rounded-xl border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer bg-card ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
                       >
                         <option value="No Change">No Change</option>

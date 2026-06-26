@@ -21982,7 +21982,6 @@ export function Settings() {
           {activeSubTab === "email_templates" && renderEmailTemplates()}
           {activeSubTab === "notification_rules" && renderNotificationRules()}
           {activeSubTab === "sms" && renderSmsSettings()}
-
           {activeSubTab === "appearance" && renderAppearance()}
           {activeSubTab === "language" && renderLanguageRegion()}
           {activeSubTab === "backup" && renderBackupRestore()}

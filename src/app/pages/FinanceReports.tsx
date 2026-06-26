@@ -171,10 +171,12 @@ export function FinanceReports() {
 
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleFilterChange = (setter: (val: string) => void) => (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setter(e.target.value);
-    setRefreshKey((prev) => prev + 1);
-  };
+  const handleFilterChange =
+    (setter: (val: string) => void) =>
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setter(e.target.value);
+      setRefreshKey((prev) => prev + 1);
+    };
 
   const executeExport = () => {
     setIsExporting(true);
@@ -567,7 +569,8 @@ export function FinanceReports() {
 
 function DashboardsTab() {
   const [period, setPeriod] = useState<"1Y" | "6M">("1Y");
-  const chartData = period === "6M" ? PAYROLL_TREND_DATA.slice(-6) : PAYROLL_TREND_DATA;
+  const chartData =
+    period === "6M" ? PAYROLL_TREND_DATA.slice(-6) : PAYROLL_TREND_DATA;
 
   return (
     <div className="space-y-6">
@@ -580,14 +583,17 @@ function DashboardsTab() {
                 Payroll Cost Trend
               </h3>
               <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
-                {period === "1Y" ? "Last 12 Months" : "Last 6 Months"} Financial Performance
+                {period === "1Y" ? "Last 12 Months" : "Last 6 Months"} Financial
+                Performance
               </p>
             </div>
             <div className="flex bg-muted/30 p-1 rounded-xl border border-border">
               <button
                 onClick={() => setPeriod("1Y")}
                 className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all ${
-                  period === "1Y" ? "bg-[#00B87C] text-white" : "text-muted-foreground hover:text-foreground"
+                  period === "1Y"
+                    ? "bg-[#00B87C] text-white"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 1Y
@@ -595,7 +601,9 @@ function DashboardsTab() {
               <button
                 onClick={() => setPeriod("6M")}
                 className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all ${
-                  period === "6M" ? "bg-[#00B87C] text-white" : "text-muted-foreground hover:text-foreground"
+                  period === "6M"
+                    ? "bg-[#00B87C] text-white"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 6M
@@ -605,7 +613,6 @@ function DashboardsTab() {
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
-
                 <defs>
                   <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.1} />
@@ -1491,8 +1498,6 @@ function ReportCard({
     </motion.div>
   );
 }
-
-
 
 /* ─── MODAL COMPONENTS ─── */
 

@@ -83,7 +83,9 @@ export function ManagerExpenseApprovals() {
   const [activeTab, setActiveTab] = useState<ExpenseStatus>("Pending");
   const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [selectedExpense, setSelectedExpense] = useState<ExpenseItem | null>(null);
+  const [selectedExpense, setSelectedExpense] = useState<ExpenseItem | null>(
+    null,
+  );
   const [rejectReason, setRejectReason] = useState("");
 
   const handleApproveClick = (expense: ExpenseItem) => {
@@ -100,22 +102,38 @@ export function ManagerExpenseApprovals() {
   const confirmApprove = () => {
     if (!selectedExpense) return;
     setExpenses((prev) =>
-      prev.map((e) => (e.id === selectedExpense.id ? { ...e, status: "Approved" as ExpenseStatus } : e))
+      prev.map((e) =>
+        e.id === selectedExpense.id
+          ? { ...e, status: "Approved" as ExpenseStatus }
+          : e,
+      ),
     );
     setApproveModalOpen(false);
     setSelectedExpense(null);
-    showToast("Expense Approved", "success", `${selectedExpense.empName}'s expense has been approved and sent to Finance.`);
+    showToast(
+      "Expense Approved",
+      "success",
+      `${selectedExpense.empName}'s expense has been approved and sent to Finance.`,
+    );
   };
 
   const confirmReject = () => {
     if (!selectedExpense) return;
     setExpenses((prev) =>
-      prev.map((e) => (e.id === selectedExpense.id ? { ...e, status: "Rejected" as ExpenseStatus } : e))
+      prev.map((e) =>
+        e.id === selectedExpense.id
+          ? { ...e, status: "Rejected" as ExpenseStatus }
+          : e,
+      ),
     );
     setRejectModalOpen(false);
     setSelectedExpense(null);
     setRejectReason("");
-    showToast("Expense Rejected", "error", `${selectedExpense.empName}'s expense has been rejected.`);
+    showToast(
+      "Expense Rejected",
+      "error",
+      `${selectedExpense.empName}'s expense has been rejected.`,
+    );
   };
 
   const getCategoryIcon = (cat: string) => {
@@ -128,25 +146,38 @@ export function ManagerExpenseApprovals() {
   const getCategoryColor = (cat: string) => {
     if (cat === "Food") return "text-amber-600 bg-amber-50 border-amber-100";
     if (cat === "Travel") return "text-teal-600 bg-teal-50 border-teal-100";
-    if (cat === "Equipment") return "text-purple-600 bg-purple-50 border-purple-100";
+    if (cat === "Equipment")
+      return "text-purple-600 bg-purple-50 border-purple-100";
     return "text-teal-600 bg-teal-50 border-teal-100";
   };
 
   const filteredExpenses = expenses.filter((e) => e.status === activeTab);
 
   const handleExport = () => {
-    const headers = ["Expense ID", "Employee Name", "Designation", "Description", "Category", "Amount", "Receipt", "Date", "Status"];
-    const rows = filteredExpenses.map((e) => [
-      e.id,
-      `"${e.empName}"`,
-      `"${e.designation}"`,
-      `"${e.description}"`,
-      e.category,
-      `"${e.amount}"`,
-      e.receiptStatus,
-      `"${e.date}"`,
-      e.status,
-    ].join(","));
+    const headers = [
+      "Expense ID",
+      "Employee Name",
+      "Designation",
+      "Description",
+      "Category",
+      "Amount",
+      "Receipt",
+      "Date",
+      "Status",
+    ];
+    const rows = filteredExpenses.map((e) =>
+      [
+        e.id,
+        `"${e.empName}"`,
+        `"${e.designation}"`,
+        `"${e.description}"`,
+        e.category,
+        `"${e.amount}"`,
+        e.receiptStatus,
+        `"${e.date}"`,
+        e.status,
+      ].join(","),
+    );
     const csv = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -155,7 +186,11 @@ export function ManagerExpenseApprovals() {
     a.download = `${activeTab.toLowerCase()}_expenses_export.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast("Exported!", "success", `${activeTab} expense claims downloaded as CSV.`);
+    showToast(
+      "Exported!",
+      "success",
+      `${activeTab} expense claims downloaded as CSV.`,
+    );
   };
   const pendingCount = expenses.filter((e) => e.status === "Pending").length;
   const approvedCount = expenses.filter((e) => e.status === "Approved").length;
@@ -199,22 +234,30 @@ export function ManagerExpenseApprovals() {
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
             Pending My Approval
           </p>
-          <p className="text-3xl font-bold text-amber-500 leading-none">{pendingCount}</p>
+          <p className="text-3xl font-bold text-amber-500 leading-none">
+            {pendingCount}
+          </p>
           <p className="text-xs text-muted-foreground mt-1">need your action</p>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:border-emerald-300 transition-all">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
             Approved
           </p>
-          <p className="text-3xl font-bold text-emerald-600 leading-none">{approvedCount}</p>
+          <p className="text-3xl font-bold text-emerald-600 leading-none">
+            {approvedCount}
+          </p>
           <p className="text-xs text-muted-foreground mt-1">sent to Finance</p>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:border-rose-300 transition-all">
           <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
             Rejected
           </p>
-          <p className="text-3xl font-bold text-rose-500 leading-none">{rejectedCount}</p>
-          <p className="text-xs text-muted-foreground mt-1">returned to employee</p>
+          <p className="text-3xl font-bold text-rose-500 leading-none">
+            {rejectedCount}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            returned to employee
+          </p>
         </div>
       </div>
 
@@ -245,60 +288,94 @@ export function ManagerExpenseApprovals() {
             <thead className="bg-secondary/50 text-muted-foreground text-xs font-bold uppercase tracking-wider">
               <tr>
                 <th className="px-6 py-4 border-b border-border">Employee</th>
-                <th className="px-6 py-4 border-b border-border">Description</th>
+                <th className="px-6 py-4 border-b border-border">
+                  Description
+                </th>
                 <th className="px-6 py-4 border-b border-border">Category</th>
                 <th className="px-6 py-4 border-b border-border">Amount</th>
                 <th className="px-6 py-4 border-b border-border">Receipt</th>
                 <th className="px-6 py-4 border-b border-border">Date</th>
                 <th className="px-6 py-4 border-b border-border">Status</th>
                 {activeTab === "Pending" && (
-                  <th className="px-6 py-4 border-b border-border text-right">Action</th>
+                  <th className="px-6 py-4 border-b border-border text-right">
+                    Action
+                  </th>
                 )}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {filteredExpenses.length === 0 ? (
                 <tr>
-                  <td colSpan={activeTab === "Pending" ? 8 : 7} className="px-6 py-12 text-center text-muted-foreground font-medium">
+                  <td
+                    colSpan={activeTab === "Pending" ? 8 : 7}
+                    className="px-6 py-12 text-center text-muted-foreground font-medium"
+                  >
                     No {activeTab.toLowerCase()} expenses
                   </td>
                 </tr>
               ) : (
                 filteredExpenses.map((row) => (
-                  <tr key={row.id} className="hover:bg-[#00B87C]/[0.04] transition-colors h-[64px]">
+                  <tr
+                    key={row.id}
+                    className="hover:bg-[#00B87C]/[0.04] transition-colors h-[64px]"
+                  >
                     <td className="px-6 py-2">
                       <div className="flex items-center gap-3">
-                        <img src={row.avatar} className="w-9 h-9 rounded-full border border-border" />
+                        <img
+                          src={row.avatar}
+                          className="w-9 h-9 rounded-full border border-border"
+                        />
                         <div>
-                          <p className="text-sm font-bold text-foreground">{row.empName}</p>
-                          <p className="text-xs text-muted-foreground">{row.designation}</p>
+                          <p className="text-sm font-bold text-foreground">
+                            {row.empName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {row.designation}
+                          </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-2 font-semibold text-foreground max-w-[200px] truncate" title={row.description}>
+                    <td
+                      className="px-6 py-2 font-semibold text-foreground max-w-[200px] truncate"
+                      title={row.description}
+                    >
                       {row.description}
                     </td>
                     <td className="px-6 py-2">
-                      <span className={`px-2 py-1 flex items-center gap-1.5 w-max rounded-md text-[11px] font-bold border ${getCategoryColor(row.category)}`}>
+                      <span
+                        className={`px-2 py-1 flex items-center gap-1.5 w-max rounded-md text-[11px] font-bold border ${getCategoryColor(row.category)}`}
+                      >
                         {getCategoryIcon(row.category)} {row.category}
                       </span>
                     </td>
-                    <td className="px-6 py-2 font-bold text-foreground">{row.amount}</td>
+                    <td className="px-6 py-2 font-bold text-foreground">
+                      {row.amount}
+                    </td>
                     <td className="px-6 py-2">
-                      <span className={`text-xs font-bold ${row.receiptStatus === "Attached" ? "text-emerald-600" : "text-red-500"}`}>
+                      <span
+                        className={`text-xs font-bold ${row.receiptStatus === "Attached" ? "text-emerald-600" : "text-red-500"}`}
+                      >
                         {row.receiptStatus}
                       </span>
                     </td>
-                    <td className="px-6 py-2 text-xs font-semibold text-muted-foreground">{row.date}</td>
+                    <td className="px-6 py-2 text-xs font-semibold text-muted-foreground">
+                      {row.date}
+                    </td>
                     <td className="px-6 py-2">
-                      <span className={`text-[11px] font-bold px-2 py-1 rounded-md border w-max ${
-                        row.status === "Approved"
-                          ? "text-emerald-600 bg-emerald-50 border-emerald-100"
+                      <span
+                        className={`text-[11px] font-bold px-2 py-1 rounded-md border w-max ${
+                          row.status === "Approved"
+                            ? "text-emerald-600 bg-emerald-50 border-emerald-100"
+                            : row.status === "Rejected"
+                              ? "text-red-600 bg-red-50 border-red-100"
+                              : "text-amber-600 bg-amber-50 border-amber-100"
+                        }`}
+                      >
+                        {row.status === "Approved"
+                          ? "Approved → Finance"
                           : row.status === "Rejected"
-                            ? "text-red-600 bg-red-50 border-red-100"
-                            : "text-amber-600 bg-amber-50 border-amber-100"
-                      }`}>
-                        {row.status === "Approved" ? "Approved → Finance" : row.status === "Rejected" ? "Rejected" : "Pending L1"}
+                            ? "Rejected"
+                            : "Pending L1"}
                       </span>
                     </td>
                     {activeTab === "Pending" && (
@@ -313,7 +390,11 @@ export function ManagerExpenseApprovals() {
                           <button
                             onClick={() => handleApproveClick(row)}
                             disabled={row.receiptStatus === "Missing"}
-                            title={row.receiptStatus === "Missing" ? "Receipt required for approval" : ""}
+                            title={
+                              row.receiptStatus === "Missing"
+                                ? "Receipt required for approval"
+                                : ""
+                            }
                             className={`px-3 py-1.5 text-xs font-bold rounded-lg shadow-sm transition-all ${
                               row.receiptStatus === "Missing"
                                 ? "bg-secondary text-muted-foreground border border-border cursor-not-allowed opacity-50"
@@ -344,16 +425,27 @@ export function ManagerExpenseApprovals() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-emerald-50/50">
-              <h3 className="text-[15px] font-bold text-foreground">Confirm Approval</h3>
-              <button onClick={() => setApproveModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
+              <h3 className="text-[15px] font-bold text-foreground">
+                Confirm Approval
+              </h3>
+              <button
+                onClick={() => setApproveModalOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors"
+              >
                 <X size={16} className="text-muted-foreground" />
               </button>
             </div>
             <div className="p-6">
               <p className="text-sm text-muted-foreground mb-2">
                 You are approving{" "}
-                <strong className="text-foreground">{selectedExpense.empName}</strong>'s expense claim of{" "}
-                <strong className="text-foreground">{selectedExpense.amount}</strong>.
+                <strong className="text-foreground">
+                  {selectedExpense.empName}
+                </strong>
+                's expense claim of{" "}
+                <strong className="text-foreground">
+                  {selectedExpense.amount}
+                </strong>
+                .
               </p>
               <p className="text-xs text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-100 mt-4">
                 This will send the claim to Finance for Level 2 processing.
@@ -388,16 +480,27 @@ export function ManagerExpenseApprovals() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-red-50/50">
-              <h3 className="text-[15px] font-bold text-foreground">Reject Expense</h3>
-              <button onClick={() => setRejectModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
+              <h3 className="text-[15px] font-bold text-foreground">
+                Reject Expense
+              </h3>
+              <button
+                onClick={() => setRejectModalOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors"
+              >
                 <X size={16} className="text-muted-foreground" />
               </button>
             </div>
             <div className="p-6 space-y-4">
               <p className="text-sm text-muted-foreground">
                 Rejecting{" "}
-                <strong className="text-foreground">{selectedExpense.empName}</strong>'s expense of{" "}
-                <strong className="text-foreground">{selectedExpense.amount}</strong> for "{selectedExpense.description}".
+                <strong className="text-foreground">
+                  {selectedExpense.empName}
+                </strong>
+                's expense of{" "}
+                <strong className="text-foreground">
+                  {selectedExpense.amount}
+                </strong>{" "}
+                for "{selectedExpense.description}".
               </p>
               <div>
                 <label className="block text-xs font-bold text-foreground mb-1.5">

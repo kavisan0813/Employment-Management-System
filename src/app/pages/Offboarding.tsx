@@ -25,7 +25,12 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 
 /* ─── Types ─── */
-type ExitType = "Resignation" | "Termination" | "Retirement" | "Contract End" | "Other";
+type ExitType =
+  | "Resignation"
+  | "Termination"
+  | "Retirement"
+  | "Contract End"
+  | "Other";
 type ClearanceStatus = "cleared" | "pending" | "not_started";
 type TabType = "Active" | "Completed" | "Scheduled" | "Exit Analytics";
 
@@ -527,11 +532,21 @@ const clearanceChip = (status: ClearanceStatus) => {
 };
 
 const ACTIVE_EMPLOYEES = [
-  { id: "ae1", name: "Vikram Malhotra", role: "Product Manager", dept: "Product" },
+  {
+    id: "ae1",
+    name: "Vikram Malhotra",
+    role: "Product Manager",
+    dept: "Product",
+  },
   { id: "ae2", name: "Neha Sen", role: "Senior HR Specialist", dept: "HR" },
   { id: "ae3", name: "Kunal Kapoor", role: "Data Engineer", dept: "Analytics" },
   { id: "ae4", name: "Ananya Roy", role: "Content Writer", dept: "Marketing" },
-  { id: "ae5", name: "Amit Goel", role: "Infrastructure Architect", dept: "IT" },
+  {
+    id: "ae5",
+    name: "Amit Goel",
+    role: "Infrastructure Architect",
+    dept: "IT",
+  },
 ];
 
 /* ─── MAIN COMPONENT ─── */
@@ -541,101 +556,191 @@ export function Offboarding() {
   const [showDetail, setShowDetail] = useState<string | null>(null);
   const [showReminder, setShowReminder] = useState<string | null>(null);
   const [showComplete, setShowComplete] = useState<string | null>(null);
-  const [showSchedule, setShowSchedule] = useState<{id: string; type: "interview" | "clearance"} | null>(null);
+  const [showSchedule, setShowSchedule] = useState<{
+    id: string;
+    type: "interview" | "clearance";
+  } | null>(null);
   const [exits, setExits] = useState<ExitEmployee[]>(EXITS);
-  const activeExits = exits.filter(e => e.progress < 100);
-  const completedExits = exits.filter(e => e.progress === 100);
-  const scheduledExits = exits.filter(e => e.progress < 30 && e.progress > 0);
+  const activeExits = exits.filter((e) => e.progress < 100);
+  const completedExits = exits.filter((e) => e.progress === 100);
+  const scheduledExits = exits.filter((e) => e.progress < 30 && e.progress > 0);
   const stats = {
     activeExits: activeExits.length,
     completedThisMonth: completedExits.length,
-    pendingFF: exits.filter(e => e.ffStatus === "Awaiting Finance Clearance" || e.ffStatus === "Pending").length,
-    assetsPending: exits.filter(e => e.assets.some(a => a.status === "pending")).length,
-    docsPending: exits.filter(e => e.documents.some(d => d.status === "pending" || d.status === "not_generated")).length,
-    interviewsDone: `${exits.filter(e => e.interviewDone).length}/${exits.length}`,
+    pendingFF: exits.filter(
+      (e) =>
+        e.ffStatus === "Awaiting Finance Clearance" || e.ffStatus === "Pending",
+    ).length,
+    assetsPending: exits.filter((e) =>
+      e.assets.some((a) => a.status === "pending"),
+    ).length,
+    docsPending: exits.filter((e) =>
+      e.documents.some(
+        (d) => d.status === "pending" || d.status === "not_generated",
+      ),
+    ).length,
+    interviewsDone: `${exits.filter((e) => e.interviewDone).length}/${exits.length}`,
   };
-  const currentExit = showDetail ? exits.find(e => e.id === showDetail) : null;
-  const completeExit = showComplete ? exits.find(e => e.id === showComplete) : null;
+  const currentExit = showDetail
+    ? exits.find((e) => e.id === showDetail)
+    : null;
+  const completeExit = showComplete
+    ? exits.find((e) => e.id === showComplete)
+    : null;
   const handleExportCSV = () => {
-    const content = `Offboarding Report\nName,Designation,Department,LWD,Progress,InterviewDone,F&F Status\n${exits.map(e => `"${e.name}","${e.designation}","${e.department}","${e.lwd}",${e.progress}%,${e.interviewDone},"${e.ffStatus}"`).join("\n")}`;
+    const content = `Offboarding Report\nName,Designation,Department,LWD,Progress,InterviewDone,F&F Status\n${exits.map((e) => `"${e.name}","${e.designation}","${e.department}","${e.lwd}",${e.progress}%,${e.interviewDone},"${e.ffStatus}"`).join("\n")}`;
     const blob = new Blob([content], { type: "text/csv" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `Offboarding_Report_${Date.now()}.csv`;
     a.click();
-    showToast("Export Completed", "success", "Offboarding report CSV downloaded.");
+    showToast(
+      "Export Completed",
+      "success",
+      "Offboarding report CSV downloaded.",
+    );
   };
 
   const handleSignOff = (exitId: string, dept: string) => {
-    setExits(prev => prev.map(e => {
-      if (e.id !== exitId) return e;
-      const clearance = e.clearance.map(c => c.dept === dept ? { ...c, status: "cleared" as const } : c);
-      
-      const clearedCount = clearance.filter(c => c.status === "cleared").length;
-      const clearanceWeight = (clearedCount / clearance.length) * 50;
+    setExits((prev) =>
+      prev.map((e) => {
+        if (e.id !== exitId) return e;
+        const clearance = e.clearance.map((c) =>
+          c.dept === dept ? { ...c, status: "cleared" as const } : c,
+        );
 
-      const returnedAssets = e.assets.filter(a => a.status === "returned").length;
-      const assetsWeight = e.assets.length > 0 ? (returnedAssets / e.assets.length) * 25 : 25;
+        const clearedCount = clearance.filter(
+          (c) => c.status === "cleared",
+        ).length;
+        const clearanceWeight = (clearedCount / clearance.length) * 50;
 
-      const uploadedDocs = e.documents.filter(d => d.status === "uploaded").length;
-      const docsWeight = e.documents.length > 0 ? (uploadedDocs / e.documents.length) * 25 : 25;
+        const returnedAssets = e.assets.filter(
+          (a) => a.status === "returned",
+        ).length;
+        const assetsWeight =
+          e.assets.length > 0 ? (returnedAssets / e.assets.length) * 25 : 25;
 
-      const progress = Math.round(clearanceWeight + assetsWeight + docsWeight);
-      return { ...e, clearance, progress };
-    }));
+        const uploadedDocs = e.documents.filter(
+          (d) => d.status === "uploaded",
+        ).length;
+        const docsWeight =
+          e.documents.length > 0
+            ? (uploadedDocs / e.documents.length) * 25
+            : 25;
+
+        const progress = Math.round(
+          clearanceWeight + assetsWeight + docsWeight,
+        );
+        return { ...e, clearance, progress };
+      }),
+    );
     showToast("Clearance Sign-Off", "success", `${dept} clearance signed off.`);
   };
 
   const handleGenerateDoc = (exitId: string, docName: string) => {
-    setExits(prev => prev.map(e => {
-      if (e.id !== exitId) return e;
-      const documents = e.documents.map(d => d.name === docName ? { ...d, status: "uploaded" as const } : d);
+    setExits((prev) =>
+      prev.map((e) => {
+        if (e.id !== exitId) return e;
+        const documents = e.documents.map((d) =>
+          d.name === docName ? { ...d, status: "uploaded" as const } : d,
+        );
 
-      const clearedCount = e.clearance.filter(c => c.status === "cleared").length;
-      const clearanceWeight = (clearedCount / e.clearance.length) * 50;
+        const clearedCount = e.clearance.filter(
+          (c) => c.status === "cleared",
+        ).length;
+        const clearanceWeight = (clearedCount / e.clearance.length) * 50;
 
-      const returnedAssets = e.assets.filter(a => a.status === "returned").length;
-      const assetsWeight = e.assets.length > 0 ? (returnedAssets / e.assets.length) * 25 : 25;
+        const returnedAssets = e.assets.filter(
+          (a) => a.status === "returned",
+        ).length;
+        const assetsWeight =
+          e.assets.length > 0 ? (returnedAssets / e.assets.length) * 25 : 25;
 
-      const uploadedDocs = documents.filter(d => d.status === "uploaded").length;
-      const docsWeight = documents.length > 0 ? (uploadedDocs / documents.length) * 25 : 25;
+        const uploadedDocs = documents.filter(
+          (d) => d.status === "uploaded",
+        ).length;
+        const docsWeight =
+          documents.length > 0 ? (uploadedDocs / documents.length) * 25 : 25;
 
-      const progress = Math.round(clearanceWeight + assetsWeight + docsWeight);
-      return { ...e, documents, progress };
-    }));
-    showToast("Document Generated", "success", `${docName} generated successfully.`);
+        const progress = Math.round(
+          clearanceWeight + assetsWeight + docsWeight,
+        );
+        return { ...e, documents, progress };
+      }),
+    );
+    showToast(
+      "Document Generated",
+      "success",
+      `${docName} generated successfully.`,
+    );
   };
 
   const handleSendToFinance = (exitId: string) => {
-    setExits(prev => prev.map(e => {
-      if (e.id !== exitId) return e;
-      return { ...e, ffStatus: "Approved & Processed" };
-    }));
-    showToast("F&F Settlement", "success", "F&F settlement approved and sent to bank.");
+    setExits((prev) =>
+      prev.map((e) => {
+        if (e.id !== exitId) return e;
+        return { ...e, ffStatus: "Approved & Processed" };
+      }),
+    );
+    showToast(
+      "F&F Settlement",
+      "success",
+      "F&F settlement approved and sent to bank.",
+    );
   };
 
   const handleConfirmComplete = (exitId: string) => {
-    setExits(prev => prev.map(e => {
-      if (e.id !== exitId) return e;
-      const timeline = e.timeline.map(t => ({ ...t, status: "done" as const }));
-      return { ...e, progress: 100, timeline };
-    }));
-    showToast("Exit Completed", "success", "Employee exit process marked as completed.");
+    setExits((prev) =>
+      prev.map((e) => {
+        if (e.id !== exitId) return e;
+        const timeline = e.timeline.map((t) => ({
+          ...t,
+          status: "done" as const,
+        }));
+        return { ...e, progress: 100, timeline };
+      }),
+    );
+    showToast(
+      "Exit Completed",
+      "success",
+      "Employee exit process marked as completed.",
+    );
     setShowComplete(null);
   };
 
   const handleCompleteInterview = (exitId: string) => {
-    setExits(prev => prev.map(e => {
-      if (e.id !== exitId) return e;
-      const documents = e.documents.map(d => d.name === "Exit Interview Form" ? { ...d, status: "uploaded" as const } : d);
-      return { ...e, interviewDone: true, documents };
-    }));
-    showToast("Interview Completed", "success", "Exit interview recorded successfully.");
+    setExits((prev) =>
+      prev.map((e) => {
+        if (e.id !== exitId) return e;
+        const documents = e.documents.map((d) =>
+          d.name === "Exit Interview Form"
+            ? { ...d, status: "uploaded" as const }
+            : d,
+        );
+        return { ...e, interviewDone: true, documents };
+      }),
+    );
+    showToast(
+      "Interview Completed",
+      "success",
+      "Exit interview recorded successfully.",
+    );
     setShowSchedule(null);
   };
 
-  const handleInitiateExit = (name: string, type: ExitType, lwd: string, noticeDays: number) => {
-    const formattedLWD = lwd ? new Date(lwd).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "May 10, 2026";
+  const handleInitiateExit = (
+    name: string,
+    type: ExitType,
+    lwd: string,
+    noticeDays: number,
+  ) => {
+    const formattedLWD = lwd
+      ? new Date(lwd).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })
+      : "May 10, 2026";
     const newExit: ExitEmployee = {
       id: `exit${Date.now()}`,
       name,
@@ -644,8 +749,16 @@ export function Offboarding() {
       type,
       lwd: formattedLWD,
       progress: 10,
-      resumptionDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-      acceptedDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      resumptionDate: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
+      acceptedDate: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
       noticePeriodDays: noticeDays || 30,
       timeline: [
         { label: "Resignation Letter Received", date: "Today", status: "done" },
@@ -655,11 +768,46 @@ export function Offboarding() {
         { label: "Exit Complete", date: "Pending", status: "pending" },
       ],
       clearance: [
-        { dept: "Manager", person: "Rahul Sharma", status: "cleared", icon: User, color: "#00B87C", bgColor: "#DCFCE7" },
-        { dept: "IT", person: "IT Team", status: "pending", icon: Laptop, color: "#0EA5E9", bgColor: "#E0F2FE" },
-        { dept: "Finance", person: "Finance Team", status: "pending", icon: Briefcase, color: "#F59E0B", bgColor: "#FEF3C7" },
-        { dept: "HR", person: "HR Team", status: "pending", icon: User, color: "#8B5CF6", bgColor: "#EDE9FE" },
-        { dept: "Admin", person: "Admin Team", status: "cleared", icon: ShieldCheck, color: "#14B8A6", bgColor: "#CCFBF1" },
+        {
+          dept: "Manager",
+          person: "Rahul Sharma",
+          status: "cleared",
+          icon: User,
+          color: "#00B87C",
+          bgColor: "#DCFCE7",
+        },
+        {
+          dept: "IT",
+          person: "IT Team",
+          status: "pending",
+          icon: Laptop,
+          color: "#0EA5E9",
+          bgColor: "#E0F2FE",
+        },
+        {
+          dept: "Finance",
+          person: "Finance Team",
+          status: "pending",
+          icon: Briefcase,
+          color: "#F59E0B",
+          bgColor: "#FEF3C7",
+        },
+        {
+          dept: "HR",
+          person: "HR Team",
+          status: "pending",
+          icon: User,
+          color: "#8B5CF6",
+          bgColor: "#EDE9FE",
+        },
+        {
+          dept: "Admin",
+          person: "Admin Team",
+          status: "cleared",
+          icon: ShieldCheck,
+          color: "#14B8A6",
+          bgColor: "#CCFBF1",
+        },
       ],
       assets: [
         { name: "Laptop", status: "pending", detail: "Pending return" },
@@ -679,7 +827,7 @@ export function Offboarding() {
       ffStatus: "Pending",
       interviewDone: false,
     };
-    setExits(prev => [newExit, ...prev]);
+    setExits((prev) => [newExit, ...prev]);
   };
 
   return (
@@ -804,7 +952,14 @@ export function Offboarding() {
             ["Active", "Completed", "Scheduled", "Exit Analytics"] as TabType[]
           ).map((tab) => {
             const isActive = activeTab === tab;
-            const count = tab === "Active" ? stats.activeExits : tab === "Completed" ? stats.completedThisMonth : tab === "Scheduled" ? scheduledExits.length : null;
+            const count =
+              tab === "Active"
+                ? stats.activeExits
+                : tab === "Completed"
+                  ? stats.completedThisMonth
+                  : tab === "Scheduled"
+                    ? scheduledExits.length
+                    : null;
             return (
               <button
                 key={tab}
@@ -862,7 +1017,9 @@ export function Offboarding() {
                     onViewDetail={() => setShowDetail(exit.id)}
                     onSendReminder={() => setShowReminder(exit.id)}
                     onComplete={() => setShowComplete(exit.id)}
-                    onScheduleInterview={() => setShowSchedule({id: exit.id, type: "interview"})}
+                    onScheduleInterview={() =>
+                      setShowSchedule({ id: exit.id, type: "interview" })
+                    }
                   />
                 ))}
                 {completedExits.length === 0 && (
@@ -881,7 +1038,9 @@ export function Offboarding() {
                     onViewDetail={() => setShowDetail(exit.id)}
                     onSendReminder={() => setShowReminder(exit.id)}
                     onComplete={() => setShowComplete(exit.id)}
-                    onScheduleInterview={() => setShowSchedule({id: exit.id, type: "interview"})}
+                    onScheduleInterview={() =>
+                      setShowSchedule({ id: exit.id, type: "interview" })
+                    }
                   />
                 ))}
                 {scheduledExits.length === 0 && (
@@ -904,9 +1063,9 @@ export function Offboarding() {
 
       {/* INITIATE EXIT MODAL */}
       {showInitiateModal && (
-        <InitiateExitModal 
-          onClose={() => setShowInitiateModal(false)} 
-          onInitiate={handleInitiateExit} 
+        <InitiateExitModal
+          onClose={() => setShowInitiateModal(false)}
+          onInitiate={handleInitiateExit}
         />
       )}
 
@@ -917,8 +1076,14 @@ export function Offboarding() {
           onClose={() => setShowDetail(null)}
           onSignOff={(dept) => handleSignOff(currentExit.id, dept)}
           onGenerateDoc={(doc) => handleGenerateDoc(currentExit.id, doc)}
-          onSendReminder={() => { setShowDetail(null); setShowReminder(currentExit.id); }}
-          onScheduleInterview={() => { setShowDetail(null); setShowSchedule({id: currentExit.id, type: "interview"}); }}
+          onSendReminder={() => {
+            setShowDetail(null);
+            setShowReminder(currentExit.id);
+          }}
+          onScheduleInterview={() => {
+            setShowDetail(null);
+            setShowSchedule({ id: currentExit.id, type: "interview" });
+          }}
           onSendToFinance={() => handleSendToFinance(currentExit.id)}
         />
       )}
@@ -926,7 +1091,7 @@ export function Offboarding() {
       {/* SEND REMINDER MODAL */}
       {showReminder && (
         <ReminderModal
-          exitName={exits.find(e => e.id === showReminder)?.name || ""}
+          exitName={exits.find((e) => e.id === showReminder)?.name || ""}
           onClose={() => setShowReminder(null)}
         />
       )}
@@ -941,21 +1106,22 @@ export function Offboarding() {
       )}
 
       {/* EXIT INTERVIEW MODAL */}
-      {showSchedule && (() => {
-        const emp = exits.find(e => e.id === showSchedule.id);
-        if (!emp) return null;
-        if (showSchedule.type === "interview") {
-          return (
-            <ExitInterviewModal
-              employeeName={emp.name}
-              interviewDone={emp.interviewDone}
-              onClose={() => setShowSchedule(null)}
-              onComplete={() => handleCompleteInterview(emp.id)}
-            />
-          );
-        }
-        return null;
-      })()}
+      {showSchedule &&
+        (() => {
+          const emp = exits.find((e) => e.id === showSchedule.id);
+          if (!emp) return null;
+          if (showSchedule.type === "interview") {
+            return (
+              <ExitInterviewModal
+                employeeName={emp.name}
+                interviewDone={emp.interviewDone}
+                onClose={() => setShowSchedule(null)}
+                onComplete={() => handleCompleteInterview(emp.id)}
+              />
+            );
+          }
+          return null;
+        })()}
     </div>
   );
 }
@@ -1202,7 +1368,18 @@ function ExitCard({
   );
 }
 
-function InitiateExitModal({ onClose, onInitiate }: { onClose: () => void; onInitiate: (name: string, type: ExitType, lwd: string, noticeDays: number) => void }) {
+function InitiateExitModal({
+  onClose,
+  onInitiate,
+}: {
+  onClose: () => void;
+  onInitiate: (
+    name: string,
+    type: ExitType,
+    lwd: string,
+    noticeDays: number,
+  ) => void;
+}) {
   const [exitType, setExitType] = useState<ExitType>("Resignation");
   const [step, setStep] = useState<"form" | "preview" | "success">("form");
 
@@ -1212,8 +1389,23 @@ function InitiateExitModal({ onClose, onInitiate }: { onClose: () => void; onIni
   const [noticeDays, setNoticeDays] = useState(30);
   const [hrOwner, setHrOwner] = useState("");
 
-  const exitTypes: ExitType[] = ["Resignation", "Retirement", "Termination", "Contract End", "Other"];
-  const reasonCategories = ["Personal", "Career Growth", "Relocation", "Work Culture", "Compensation", "Health", "Education", "Other"];
+  const exitTypes: ExitType[] = [
+    "Resignation",
+    "Retirement",
+    "Termination",
+    "Contract End",
+    "Other",
+  ];
+  const reasonCategories = [
+    "Personal",
+    "Career Growth",
+    "Relocation",
+    "Work Culture",
+    "Compensation",
+    "Health",
+    "Education",
+    "Other",
+  ];
 
   if (step === "success") {
     return (
@@ -1292,18 +1484,36 @@ function InitiateExitModal({ onClose, onInitiate }: { onClose: () => void; onIni
                 type="text"
                 placeholder="Search employee name..."
                 value={empName}
-                onChange={e => setEmpName(e.target.value)}
+                onChange={(e) => setEmpName(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
               />
             </div>
             {empName && (
               <div className="mt-2 space-y-1 max-h-32 overflow-y-auto bg-muted/20 rounded-xl p-1">
-                {ACTIVE_EMPLOYEES.filter(emp => emp.name.toLowerCase().includes(empName.toLowerCase())).map(emp => (
-                  <button key={emp.id} onClick={() => {
-                    setEmpName(emp.name);
-                  }} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted transition-all text-left">
-                    <div className="w-7 h-7 rounded-full bg-[#EF4444]/10 flex items-center justify-center text-[#EF4444] text-[9px] font-black">{emp.name.split(" ").map(n=>n[0]).join("")}</div>
-                    <div><p className="text-[12px] font-bold text-foreground">{emp.name}</p><p className="text-[11px] text-muted-foreground">{emp.role} · {emp.dept}</p></div>
+                {ACTIVE_EMPLOYEES.filter((emp) =>
+                  emp.name.toLowerCase().includes(empName.toLowerCase()),
+                ).map((emp) => (
+                  <button
+                    key={emp.id}
+                    onClick={() => {
+                      setEmpName(emp.name);
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted transition-all text-left"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-[#EF4444]/10 flex items-center justify-center text-[#EF4444] text-[9px] font-black">
+                      {emp.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </div>
+                    <div>
+                      <p className="text-[12px] font-bold text-foreground">
+                        {emp.name}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {emp.role} · {emp.dept}
+                      </p>
+                    </div>
                   </button>
                 ))}
               </div>
@@ -1339,8 +1549,16 @@ function InitiateExitModal({ onClose, onInitiate }: { onClose: () => void; onIni
                 LAST WORKING DATE
               </label>
               <div className="relative">
-                <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input type="date" value={lwdDate} onChange={e => setLwdDate(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+                <Calendar
+                  size={16}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  type="date"
+                  value={lwdDate}
+                  onChange={(e) => setLwdDate(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                />
               </div>
             </div>
             <div>
@@ -1348,16 +1566,31 @@ function InitiateExitModal({ onClose, onInitiate }: { onClose: () => void; onIni
                 RESIGNATION DATE
               </label>
               <div className="relative">
-                <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input type="date" value={resDate} onChange={e => setResDate(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+                <Calendar
+                  size={16}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  type="date"
+                  value={resDate}
+                  onChange={(e) => setResDate(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                />
               </div>
             </div>
           </div>
 
           {/* Notice Period */}
           <div>
-            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">NOTICE PERIOD (DAYS)</label>
-            <input type="number" value={noticeDays} onChange={e => setNoticeDays(parseInt(e.target.value) || 0)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2 block">
+              NOTICE PERIOD (DAYS)
+            </label>
+            <input
+              type="number"
+              value={noticeDays}
+              onChange={(e) => setNoticeDays(parseInt(e.target.value) || 0)}
+              className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+            />
           </div>
 
           {/* Reason Category */}
@@ -1395,8 +1628,17 @@ function InitiateExitModal({ onClose, onInitiate }: { onClose: () => void; onIni
               ASSIGNED HR OWNER
             </label>
             <div className="relative">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input type="text" placeholder="Search HR employee..." value={hrOwner} onChange={e => setHrOwner(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+              <Search
+                size={16}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
+              <input
+                type="text"
+                placeholder="Search HR employee..."
+                value={hrOwner}
+                onChange={(e) => setHrOwner(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+              />
             </div>
           </div>
 
@@ -1458,7 +1700,11 @@ function InitiateExitModal({ onClose, onInitiate }: { onClose: () => void; onIni
             <button
               onClick={() => {
                 if (!empName.trim()) {
-                  showToast("Validation Error", "error", "Please select or enter an employee name.");
+                  showToast(
+                    "Validation Error",
+                    "error",
+                    "Please select or enter an employee name.",
+                  );
                   return;
                 }
                 onInitiate(empName, exitType, lwdDate, noticeDays);
@@ -2155,7 +2401,9 @@ function ExitInterviewModal({
                       key={o}
                       onClick={() => setRecommendVal(o)}
                       className={`px-4 py-2 rounded-xl text-[11px] font-black border transition-all ${
-                        recommendVal === o ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-muted-foreground hover:border-[#00B87C]/30"
+                        recommendVal === o
+                          ? "bg-[#00B87C] text-white border-[#00B87C]"
+                          : "border-border text-muted-foreground hover:border-[#00B87C]/30"
                       }`}
                     >
                       {o}

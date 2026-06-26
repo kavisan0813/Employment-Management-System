@@ -501,7 +501,8 @@ export function ManagerPersonalPerformance() {
                   Key Results (KRs)
                 </span>
                 <p className="text-xs font-semibold text-foreground bg-secondary/40 p-3 rounded-xl border border-border italic leading-relaxed">
-                  {selectedGoal.kr || "Progress updates and milestone achievements."}
+                  {selectedGoal.kr ||
+                    "Progress updates and milestone achievements."}
                 </p>
               </div>
               <div>

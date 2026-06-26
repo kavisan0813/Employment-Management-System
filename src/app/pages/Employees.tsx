@@ -386,15 +386,18 @@ function EditEmployeeModal({
 }: {
   employee: Employee;
   onClose: () => void;
-  onSave: (id: string, form: {
-    name: string;
-    email: string;
-    department: string;
-    designation: string;
-    salary: string;
-    joinDate: string;
-    status: string;
-  }) => void;
+  onSave: (
+    id: string,
+    form: {
+      name: string;
+      email: string;
+      department: string;
+      designation: string;
+      salary: string;
+      joinDate: string;
+      status: string;
+    },
+  ) => void;
 }) {
   const [form, setForm] = useState({
     name: employee.name,
@@ -983,10 +986,19 @@ function BulkImportModal({
       return;
     }
     const header = lines[0].split(",").map((h) => h.trim().toLowerCase());
-    const expectedHeaders = ["name", "email", "department", "designation", "salary", "joindate"];
+    const expectedHeaders = [
+      "name",
+      "email",
+      "department",
+      "designation",
+      "salary",
+      "joindate",
+    ];
     const hasRequired = expectedHeaders.every((h) => header.includes(h));
     if (!hasRequired) {
-      setError("CSV headers must include: name, email, department, designation, salary, joindate");
+      setError(
+        "CSV headers must include: name, email, department, designation, salary, joindate",
+      );
       return;
     }
 
@@ -1029,10 +1041,17 @@ function BulkImportModal({
       >
         <div className="flex items-center justify-between px-8 py-6 border-b border-border">
           <div>
-            <h3 className="text-lg font-black text-foreground">Bulk Import Employees</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Paste CSV formatted text to import multiple employees</p>
+            <h3 className="text-lg font-black text-foreground">
+              Bulk Import Employees
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Paste CSV formatted text to import multiple employees
+            </p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-secondary text-muted-foreground">
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl hover:bg-secondary text-muted-foreground"
+          >
             <X size={18} />
           </button>
         </div>
@@ -1051,9 +1070,12 @@ function BulkImportModal({
                 onChange={(e) => setCsvText(e.target.value)}
               />
               <p className="text-[10px] text-muted-foreground mt-1">
-                Headers should match: name, email, department, designation, salary, joindate
+                Headers should match: name, email, department, designation,
+                salary, joindate
               </p>
-              {error && <p className="text-xs font-bold text-rose-500 mt-2">{error}</p>}
+              {error && (
+                <p className="text-xs font-bold text-rose-500 mt-2">{error}</p>
+              )}
               <button
                 onClick={handleParse}
                 className="mt-4 px-5 py-2.5 rounded-xl font-bold text-xs bg-primary text-white hover:opacity-90"
@@ -1063,7 +1085,9 @@ function BulkImportModal({
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-xs font-bold text-emerald-600">Parsed {parsedEmployees.length} employees successfully.</p>
+              <p className="text-xs font-bold text-emerald-600">
+                Parsed {parsedEmployees.length} employees successfully.
+              </p>
               <div className="border border-border rounded-xl overflow-hidden max-h-[250px] overflow-y-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-secondary text-muted-foreground">
@@ -1121,7 +1145,13 @@ function BulkImportModal({
 export function Employees() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { employeesList: employees, addEmployee, updateEmployee, deleteEmployee: removeEmployee, bulkImportEmployees } = useEmployees();
+  const {
+    employeesList: employees,
+    addEmployee,
+    updateEmployee,
+    deleteEmployee: removeEmployee,
+    bulkImportEmployees,
+  } = useEmployees();
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const debouncedSearch = useDebounce(search, 300);
@@ -1239,8 +1269,8 @@ export function Employees() {
   // Sort
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
-      let valA = (a as Record<string, string | number>)[sortCol];
-      let valB = (b as Record<string, string | number>)[sortCol];
+      let valA = (a as any)[sortCol];
+      let valB = (b as any)[sortCol];
       if (typeof valA === "string") valA = valA.toLowerCase();
       if (typeof valB === "string") valB = valB.toLowerCase();
       if (valA < valB) return sortDesc ? 1 : -1;
@@ -2658,7 +2688,7 @@ export function Employees() {
         <AddEmployeeModal
           onClose={() => setShowAddModal(false)}
           onAdd={(emp) => {
-            addEmployee(emp);
+            addEmployee({ ...emp, salary: Number(emp.salary) } as any);
             setShowAddModal(false);
           }}
         />
@@ -2677,7 +2707,10 @@ export function Employees() {
           employee={editEmployee}
           onClose={() => setEditEmployee(null)}
           onSave={(id, updated) => {
-            updateEmployee(id, updated);
+            updateEmployee(id, {
+              ...updated,
+              salary: updated.salary ? Number(updated.salary) : undefined,
+            } as any);
             setEditEmployee(null);
           }}
         />

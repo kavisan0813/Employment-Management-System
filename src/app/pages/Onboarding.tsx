@@ -88,7 +88,13 @@ interface Template {
 
 /* ─── Helpers ─── */
 function safeGet<T>(obj: unknown, key: string | number): T | undefined {
-  if (!obj || typeof obj !== "object" || key === "__proto__" || key === "constructor" || key === "prototype") {
+  if (
+    !obj ||
+    typeof obj !== "object" ||
+    key === "__proto__" ||
+    key === "constructor" ||
+    key === "prototype"
+  ) {
     return undefined;
   }
   const desc = Object.getOwnPropertyDescriptor(obj, key);
@@ -142,8 +148,19 @@ const deptBadge = (dept: string, color: string) => (
 );
 
 const statusDot = (status: string) => {
-  const map: Record<string, string> = { "on-track": "#00B87C", delayed: "#F59E0B", "at-risk": "#EF4444", "pre-joining": "#94A3B8", complete: "#00B87C" };
-  return <span className="w-2 h-2 rounded-full inline-block shrink-0" style={{ backgroundColor: safeGet<string>(map, status) || "#94A3B8" }} />;
+  const map: Record<string, string> = {
+    "on-track": "#00B87C",
+    delayed: "#F59E0B",
+    "at-risk": "#EF4444",
+    "pre-joining": "#94A3B8",
+    complete: "#00B87C",
+  };
+  return (
+    <span
+      className="w-2 h-2 rounded-full inline-block shrink-0"
+      style={{ backgroundColor: safeGet<string>(map, status) || "#94A3B8" }}
+    />
+  );
 };
 
 const progressRing = (pct: number, size = 36, stroke = 3) => {
@@ -152,8 +169,27 @@ const progressRing = (pct: number, size = 36, stroke = 3) => {
   const offset = circ - (pct / 100) * circ;
   return (
     <svg width={size} height={size} className="shrink-0">
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeWidth={stroke} className="text-muted/50" />
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#00B87C" strokeWidth={stroke} strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={stroke}
+        className="text-muted/50"
+      />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        fill="none"
+        stroke="#00B87C"
+        strokeWidth={stroke}
+        strokeDasharray={circ}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+      />
     </svg>
   );
 };
@@ -769,7 +805,7 @@ export function Onboarding() {
     const updated = { ...phasesData };
     const hirePhases = safeGet<OnboardingPhase[]>(updated, selectedId);
     if (hirePhases) {
-      let phase = hirePhases.find(p => p.status === "in-progress");
+      let phase = hirePhases.find((p) => p.status === "in-progress");
       if (!phase && hirePhases.length > 0) {
         phase = hirePhases[0];
       }
@@ -780,14 +816,29 @@ export function Onboarding() {
           owner: inlineTaskOwner,
           dueDate: inlineTaskDueDate || "Today",
           status: "pending",
-          assignee: inlineTaskOwner === "Employee" ? (newHires.find(n => n.id === selectedId)?.name || "Employee") : `${inlineTaskOwner} Team`
+          assignee:
+            inlineTaskOwner === "Employee"
+              ? newHires.find((n) => n.id === selectedId)?.name || "Employee"
+              : `${inlineTaskOwner} Team`,
         };
         phase.tasks = [...phase.tasks, newTask];
-        
-        const completed = hirePhases.flatMap(p => p.tasks).filter(t => t.status === "done").length;
-        const total = hirePhases.flatMap(p => p.tasks).length;
+
+        const completed = hirePhases
+          .flatMap((p) => p.tasks)
+          .filter((t) => t.status === "done").length;
+        const total = hirePhases.flatMap((p) => p.tasks).length;
         const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-        setNewHires(prev => prev.map(nh => nh.id === selectedId ? { ...nh, progress, status: progress === 100 ? "complete" : nh.status } : nh));
+        setNewHires((prev) =>
+          prev.map((nh) =>
+            nh.id === selectedId
+              ? {
+                  ...nh,
+                  progress,
+                  status: progress === 100 ? "complete" : nh.status,
+                }
+              : nh,
+          ),
+        );
       }
     }
     setPhasesData(updated);
@@ -796,14 +847,18 @@ export function Onboarding() {
     setInlineTaskOpen(false);
   };
 
-  const selected = newHires.find(n => n.id === selectedId) || newHires[0] || NEW_HIRES[0];
-  const phases = safeGet<OnboardingPhase[]>(phasesData, selected.id) || phasesData.nh1;
-  const filteredList = newHires.filter(n => {
-    if (activeTab === "active") return n.status !== "pre-joining" && n.status !== "complete";
-    if (activeTab === "pre-joining") return n.status === "pre-joining";
-    if (activeTab === "completed") return n.status === "complete";
-    return true;
-  })
+  const selected =
+    newHires.find((n) => n.id === selectedId) || newHires[0] || NEW_HIRES[0];
+  const phases =
+    safeGet<OnboardingPhase[]>(phasesData, selected.id) || phasesData.nh1;
+  const filteredList = newHires
+    .filter((n) => {
+      if (activeTab === "active")
+        return n.status !== "pre-joining" && n.status !== "complete";
+      if (activeTab === "pre-joining") return n.status === "pre-joining";
+      if (activeTab === "completed") return n.status === "complete";
+      return true;
+    })
     .filter((n) => {
       if (filterPill === "week")
         return n.joiningDate >= "2026-04-06" && n.joiningDate <= "2026-04-12";
@@ -817,12 +872,20 @@ export function Onboarding() {
         n.role.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
-  const activeCount = newHires.filter(n => n.status !== "pre-joining" && n.status !== "complete").length;
-  const preJoiningCount = newHires.filter(n => n.status === "pre-joining").length;
-  const completedCount = newHires.filter(n => n.status === "complete").length;
-  const overdueTasks = phases.flatMap(p => p.tasks).filter(t => t.status === "overdue").length;
-  const pendingDocs = documents.filter(d => d.status === "pending" || d.status === "missing").length;
-  const uploadedDocs = documents.filter(d => d.status === "uploaded").length;
+  const activeCount = newHires.filter(
+    (n) => n.status !== "pre-joining" && n.status !== "complete",
+  ).length;
+  const preJoiningCount = newHires.filter(
+    (n) => n.status === "pre-joining",
+  ).length;
+  const completedCount = newHires.filter((n) => n.status === "complete").length;
+  const overdueTasks = phases
+    .flatMap((p) => p.tasks)
+    .filter((t) => t.status === "overdue").length;
+  const pendingDocs = documents.filter(
+    (d) => d.status === "pending" || d.status === "missing",
+  ).length;
+  const uploadedDocs = documents.filter((d) => d.status === "uploaded").length;
 
   const handleMarkDone = (phaseId: string, taskId: string) => {
     const updated = { ...phasesData };
@@ -834,12 +897,24 @@ export function Onboarding() {
           t.id === taskId ? { ...t, status: "done" as const } : t,
         );
       }
-      
-      const completed = hirePhases.flatMap(p => p.tasks).filter(t => t.status === "done").length;
-      const total = hirePhases.flatMap(p => p.tasks).length;
+
+      const completed = hirePhases
+        .flatMap((p) => p.tasks)
+        .filter((t) => t.status === "done").length;
+      const total = hirePhases.flatMap((p) => p.tasks).length;
       const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-      
-      setNewHires(prev => prev.map(nh => nh.id === selected.id ? { ...nh, progress, status: progress === 100 ? "complete" : nh.status } : nh));
+
+      setNewHires((prev) =>
+        prev.map((nh) =>
+          nh.id === selected.id
+            ? {
+                ...nh,
+                progress,
+                status: progress === 100 ? "complete" : nh.status,
+              }
+            : nh,
+        ),
+      );
     }
     setPhasesData(updated);
     showToast("Task Completed", "success", "Task marked as done.");
@@ -856,8 +931,16 @@ export function Onboarding() {
   const handleEscalate = () => setShowEscalateModal(true);
 
   const handleRequestDoc = (name: string) => {
-    setDocuments(prev => prev.map(d => d.name === name ? { ...d, status: "pending" as const } : d));
-    showToast("Request Sent", "success", `Document request for ${name} sent to employee.`);
+    setDocuments((prev) =>
+      prev.map((d) =>
+        d.name === name ? { ...d, status: "pending" as const } : d,
+      ),
+    );
+    showToast(
+      "Request Sent",
+      "success",
+      `Document request for ${name} sent to employee.`,
+    );
   };
 
   const handleUploadClick = (docId: string, docName: string) => {
@@ -867,7 +950,18 @@ export function Onboarding() {
   };
 
   const handleConfirmUpload = () => {
-    setDocuments(prev => prev.map(d => d.id === selectedDocId || d.name === uploadDocType ? { ...d, status: "uploaded" as const, uploadedBy: "HR Team", date: "Today" } : d));
+    setDocuments((prev) =>
+      prev.map((d) =>
+        d.id === selectedDocId || d.name === uploadDocType
+          ? {
+              ...d,
+              status: "uploaded" as const,
+              uploadedBy: "HR Team",
+              date: "Today",
+            }
+          : d,
+      ),
+    );
     showToast("Uploaded", "success", "Document uploaded successfully.");
     setShowUploadModal(false);
     setSelectedDocId(null);
@@ -897,25 +991,59 @@ export function Onboarding() {
       status: "pre-joining",
       daysInOnboarding: 0,
       expectedCompletion: "Apr 29, 2026",
-      manager: formManager || "Arun Nair"
+      manager: formManager || "Arun Nair",
     };
 
     const newPhases = [
-      { id: "p1", name: "Pre-Joining", status: "in-progress" as const, date: "Apr 5, 2026", tasks: [
-        { id: "t1", task: "Welcome email sent", owner: "HR", dueDate: "Apr 1", status: "pending" as const, assignee: "HR Team" },
-        { id: "t2", task: "Offer letter signed", owner: "Employee", dueDate: "Apr 2", status: "pending" as const, assignee: formEmployee },
-        { id: "t3", task: "Background verification completed", owner: "HR", dueDate: "Apr 3", status: "pending" as const, assignee: "HR Team" },
-      ]}
+      {
+        id: "p1",
+        name: "Pre-Joining",
+        status: "in-progress" as const,
+        date: "Apr 5, 2026",
+        tasks: [
+          {
+            id: "t1",
+            task: "Welcome email sent",
+            owner: "HR",
+            dueDate: "Apr 1",
+            status: "pending" as const,
+            assignee: "HR Team",
+          },
+          {
+            id: "t2",
+            task: "Offer letter signed",
+            owner: "Employee",
+            dueDate: "Apr 2",
+            status: "pending" as const,
+            assignee: formEmployee,
+          },
+          {
+            id: "t3",
+            task: "Background verification completed",
+            owner: "HR",
+            dueDate: "Apr 3",
+            status: "pending" as const,
+            assignee: "HR Team",
+          },
+        ],
+      },
     ];
 
-    setPhasesData(prev => safeSet(prev, newId, newPhases) as Record<string, OnboardingPhase[]>);
-    setNewHires(prev => [newHire, ...prev]);
+    setPhasesData(
+      (prev) =>
+        safeSet(prev, newId, newPhases) as Record<string, OnboardingPhase[]>,
+    );
+    setNewHires((prev) => [newHire, ...prev]);
     setSelectedId(newId);
-    
-    showToast("Onboarding Launched", "success", `Onboarding launched for ${formEmployee}!`);
+
+    showToast(
+      "Onboarding Launched",
+      "success",
+      `Onboarding launched for ${formEmployee}!`,
+    );
     setShowInitiateModal(false);
     setInitiateStep(1);
-    
+
     setFormEmployee("");
     setFormDesig("");
     setFormManager("");
@@ -954,14 +1082,29 @@ export function Onboarding() {
         }
       }
       if (idx !== -1) {
-        hirePhases[idx].tasks = hirePhases[idx].tasks.map(t => ({ ...t, status: "done" as const }));
+        hirePhases[idx].tasks = hirePhases[idx].tasks.map((t) => ({
+          ...t,
+          status: "done" as const,
+        }));
       }
-      
-      const completed = hirePhases.flatMap(p => p.tasks).filter(t => t.status === "done").length;
-      const total = hirePhases.flatMap(p => p.tasks).length;
+
+      const completed = hirePhases
+        .flatMap((p) => p.tasks)
+        .filter((t) => t.status === "done").length;
+      const total = hirePhases.flatMap((p) => p.tasks).length;
       const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-      
-      setNewHires(prev => prev.map(nh => nh.id === selected.id ? { ...nh, progress, status: progress === 100 ? "complete" : nh.status } : nh));
+
+      setNewHires((prev) =>
+        prev.map((nh) =>
+          nh.id === selected.id
+            ? {
+                ...nh,
+                progress,
+                status: progress === 100 ? "complete" : nh.status,
+              }
+            : nh,
+        ),
+      );
     }
     setPhasesData(updated);
     showToast("Phase Completed", "success", "Phase marked as complete.");
@@ -974,7 +1117,11 @@ export function Onboarding() {
   };
   const handleDuplicateTemplate = (id: string) => {
     if (id) {
-      showToast("Template Duplicated", "success", "Template duplicated successfully.");
+      showToast(
+        "Template Duplicated",
+        "success",
+        "Template duplicated successfully.",
+      );
     }
     setShowTemplateMenu(null);
   };
@@ -1030,14 +1177,26 @@ export function Onboarding() {
 
       {/* INFO BAR */}
       <div className="flex flex-wrap items-center gap-5 px-5 py-3 rounded-2xl bg-[#00B87C]/[0.06] border border-[#00B87C]/15">
-        <div className="flex items-center gap-2 text-[12px] font-bold text-[#00B87C]"><span className="w-2 h-2 rounded-full bg-[#00B87C]" /> {activeCount} new hires currently onboarding</div>
+        <div className="flex items-center gap-2 text-[12px] font-bold text-[#00B87C]">
+          <span className="w-2 h-2 rounded-full bg-[#00B87C]" /> {activeCount}{" "}
+          new hires currently onboarding
+        </div>
         <div className="w-px h-4 bg-[#00B87C]/20" />
         <div className="flex items-center gap-2 text-[12px] font-bold text-[#F59E0B]">
           <span className="w-2 h-2 rounded-full bg-[#F59E0B]" /> {overdueTasks}{" "}
           tasks overdue across active onboardings
         </div>
         <div className="w-px h-4 bg-[#00B87C]/20" />
-        <div className="flex items-center gap-2 text-[12px] font-bold text-[#14B8A6]"><span className="w-2 h-2 rounded-full bg-[#14B8A6]" /> {newHires.filter(n => n.joiningDate >= "2026-04-06" && n.joiningDate <= "2026-04-12").length} new hires joining this week</div>
+        <div className="flex items-center gap-2 text-[12px] font-bold text-[#14B8A6]">
+          <span className="w-2 h-2 rounded-full bg-[#14B8A6]" />{" "}
+          {
+            newHires.filter(
+              (n) =>
+                n.joiningDate >= "2026-04-06" && n.joiningDate <= "2026-04-12",
+            ).length
+          }{" "}
+          new hires joining this week
+        </div>
       </div>
 
       {/* KPI CARDS (6) */}
@@ -1098,7 +1257,13 @@ export function Onboarding() {
             sub: "from joining to complete",
           },
         ].map((card, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: i * 0.05 }} className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C]/50 hover:shadow-[0_8px_30px_rgb(0,184,124,0.08)] transition-all">
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: i * 0.05 }}
+            className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C]/50 hover:shadow-[0_8px_30px_rgb(0,184,124,0.08)] transition-all"
+          >
             <div className="flex items-center justify-between mb-3">
               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[1.5px]">
                 {card.label}
@@ -1276,25 +1441,62 @@ export function Onboarding() {
                   </span>
                 </div>
                 <div className="relative mb-3">
-                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input type="text" placeholder="Search new hires..." className="w-full pl-9 pr-3 py-2 rounded-xl bg-muted/50 text-foreground text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                  <Search
+                    size={14}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search new hires..."
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-muted/50 text-foreground text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                 </div>
                 <div className="flex items-center gap-2">
-                  {[{ key: "all", label: "All" }, { key: "week", label: "This Week" }, { key: "month", label: "This Month" }].map(p => (
-                    <button key={p.key} onClick={() => setFilterPill(p.key as typeof filterPill)} className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all ${filterPill === p.key ? "bg-[#00B87C] text-white" : "bg-muted/50 text-muted-foreground hover:text-foreground"}`}>{p.label}</button>
+                  {[
+                    { key: "all", label: "All" },
+                    { key: "week", label: "This Week" },
+                    { key: "month", label: "This Month" },
+                  ].map((p) => (
+                    <button
+                      key={p.key}
+                      onClick={() => setFilterPill(p.key as typeof filterPill)}
+                      className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all ${filterPill === p.key ? "bg-[#00B87C] text-white" : "bg-muted/50 text-muted-foreground hover:text-foreground"}`}
+                    >
+                      {p.label}
+                    </button>
                   ))}
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto divide-y divide-border">
-                {filteredList.map(nh => (
-                  <div key={nh.id} onClick={() => setSelectedId(nh.id)} className={`flex items-center gap-3 px-5 py-[14px] cursor-pointer transition-all hover:bg-[#00B87C]/[0.08] ${selectedId === nh.id ? "bg-[#00B87C]/[0.08] border-l-[3px] border-[#00B87C]" : "border-l-[3px] border-transparent"}`}>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[11px] font-black shrink-0" style={{ backgroundColor: nh.avatarColor }}>{nh.initials}</div>
+                {filteredList.map((nh) => (
+                  <div
+                    key={nh.id}
+                    onClick={() => setSelectedId(nh.id)}
+                    className={`flex items-center gap-3 px-5 py-[14px] cursor-pointer transition-all hover:bg-[#00B87C]/[0.08] ${selectedId === nh.id ? "bg-[#00B87C]/[0.08] border-l-[3px] border-[#00B87C]" : "border-l-[3px] border-transparent"}`}
+                  >
+                    <div
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[11px] font-black shrink-0"
+                      style={{ backgroundColor: nh.avatarColor }}
+                    >
+                      {nh.initials}
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-bold text-foreground truncate">{nh.name}</p>
-                      <p className="text-[11px] text-muted-foreground truncate">{nh.role}</p>
+                      <p className="text-[13px] font-bold text-foreground truncate">
+                        {nh.name}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        {nh.role}
+                      </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Calendar size={10} className="text-muted-foreground shrink-0" />
-                        <span className="text-[11px] text-muted-foreground">Joining: {formatDate(nh.joiningDate)}</span>
+                        <Calendar
+                          size={10}
+                          className="text-muted-foreground shrink-0"
+                        />
+                        <span className="text-[11px] text-muted-foreground">
+                          Joining: {formatDate(nh.joiningDate)}
+                        </span>
                         {deptBadge(nh.dept, nh.deptColor)}
                       </div>
                     </div>
@@ -1318,8 +1520,12 @@ export function Onboarding() {
                   {selected.initials}
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-[20px] font-black text-foreground">{selected.name}</h2>
-                  <p className="text-[14px] font-bold text-[#00B87C]">{selected.role} — {selected.dept}</p>
+                  <h2 className="text-[20px] font-black text-foreground">
+                    {selected.name}
+                  </h2>
+                  <p className="text-[14px] font-bold text-[#00B87C]">
+                    {selected.role} — {selected.dept}
+                  </p>
                   <div className="flex items-center gap-4 mt-1 text-[12px] font-semibold text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Calendar size={12} /> Joining:{" "}
@@ -1331,14 +1537,23 @@ export function Onboarding() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
-                  <div className="px-3 py-1.5 rounded-full bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20 text-[11px] font-semibold uppercase tracking-wider flex items-center gap-1.5"><Calendar size={12} /> Day {selected.daysInOnboarding} of Onboarding</div>
+                  <div className="px-3 py-1.5 rounded-full bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20 text-[11px] font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                    <Calendar size={12} /> Day {selected.daysInOnboarding} of
+                    Onboarding
+                  </div>
                 </div>
               </div>
 
               {/* Progress Bar */}
               <div className="px-6 py-3 border-b border-border flex items-center gap-4">
                 <div className="flex-1 h-[6px] bg-muted/50 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: `${selected.progress}%` }} transition={{ duration: 0.8 }} className="h-full rounded-full" style={{ backgroundColor: selected.progressColor }} />
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${selected.progress}%` }}
+                    transition={{ duration: 0.8 }}
+                    className="h-full rounded-full"
+                    style={{ backgroundColor: selected.progressColor }}
+                  />
                 </div>
                 <span
                   className="text-[13px] font-black"
@@ -1357,22 +1572,54 @@ export function Onboarding() {
                   <div key={phase.id} className="relative">
                     {/* Connector line */}
                     {pi < phases.length - 1 && (
-                      <div className={`absolute left-[15px] top-10 bottom-0 w-[2px] ${phase.status === "completed" ? "bg-[#00B87C]" : "bg-border dashed"}`} style={phase.status !== "completed" ? { backgroundImage: "repeating-linear-gradient(to bottom, hsl(var(--border)) 0, hsl(var(--border)) 4px, transparent 4px, transparent 8px)" } : {}} />
+                      <div
+                        className={`absolute left-[15px] top-10 bottom-0 w-[2px] ${phase.status === "completed" ? "bg-[#00B87C]" : "bg-border dashed"}`}
+                        style={
+                          phase.status !== "completed"
+                            ? {
+                                backgroundImage:
+                                  "repeating-linear-gradient(to bottom, hsl(var(--border)) 0, hsl(var(--border)) 4px, transparent 4px, transparent 8px)",
+                              }
+                            : {}
+                        }
+                      />
                     )}
                     <div className="relative pb-6">
                       {/* Phase Header */}
                       <div className="flex items-center gap-3 mb-3">
-                        <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 border-2 ${phase.status === "completed" ? "bg-[#00B87C] border-[#00B87C]" : phase.status === "in-progress" ? "border-[#14B8A6] bg-card" : "border-muted-foreground/30 bg-card"}`}>
-                          {phase.status === "completed" ? <Check size={14} className="text-white" /> : phase.status === "in-progress" ? <div className="w-2.5 h-2.5 rounded-full bg-[#14B8A6] animate-pulse" /> : <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/40" />}
+                        <div
+                          className={`w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 border-2 ${phase.status === "completed" ? "bg-[#00B87C] border-[#00B87C]" : phase.status === "in-progress" ? "border-[#14B8A6] bg-card" : "border-muted-foreground/30 bg-card"}`}
+                        >
+                          {phase.status === "completed" ? (
+                            <Check size={14} className="text-white" />
+                          ) : phase.status === "in-progress" ? (
+                            <div className="w-2.5 h-2.5 rounded-full bg-[#14B8A6] animate-pulse" />
+                          ) : (
+                            <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/40" />
+                          )}
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-3">
-                            <h4 className={`text-[14px] font-black ${phase.status === "completed" ? "text-[#00B87C]" : phase.status === "in-progress" ? "text-[#14B8A6]" : "text-muted-foreground"}`}>{phase.name}</h4>
-                            {phase.date && <span className="text-[11px] font-semibold text-muted-foreground">{phase.date}</span>}
+                            <h4
+                              className={`text-[14px] font-black ${phase.status === "completed" ? "text-[#00B87C]" : phase.status === "in-progress" ? "text-[#14B8A6]" : "text-muted-foreground"}`}
+                            >
+                              {phase.name}
+                            </h4>
+                            {phase.date && (
+                              <span className="text-[11px] font-semibold text-muted-foreground">
+                                {phase.date}
+                              </span>
+                            )}
                           </div>
                         </div>
-                        <div className={`px-2.5 py-1 rounded-full text-[9px] font-semibold uppercase tracking-wider ${phase.status === "completed" ? "bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20" : phase.status === "in-progress" ? "bg-[#14B8A6]/10 text-[#14B8A6] border border-[#14B8A6]/20" : "bg-muted/50 text-muted-foreground border border-border"}`}>
-                          {phase.status === "completed" ? "Completed" : phase.status === "in-progress" ? "In Progress" : "Upcoming"}
+                        <div
+                          className={`px-2.5 py-1 rounded-full text-[9px] font-semibold uppercase tracking-wider ${phase.status === "completed" ? "bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20" : phase.status === "in-progress" ? "bg-[#14B8A6]/10 text-[#14B8A6] border border-[#14B8A6]/20" : "bg-muted/50 text-muted-foreground border border-border"}`}
+                        >
+                          {phase.status === "completed"
+                            ? "Completed"
+                            : phase.status === "in-progress"
+                              ? "In Progress"
+                              : "Upcoming"}
                         </div>
                       </div>
 
@@ -1386,8 +1633,14 @@ export function Onboarding() {
                             <div className="flex items-center gap-3 min-w-0 flex-1">
                               <TaskStatusIcon status={task.status} />
                               <div className="min-w-0 flex-1">
-                                <span className={`text-[12px] font-bold ${task.status === "overdue" ? "text-[#EF4444]" : task.status === "done" ? "text-foreground line-through opacity-60" : "text-foreground"}`}>{task.task}</span>
-                                <span className="text-[11px] font-semibold text-muted-foreground ml-2">({task.assignee})</span>
+                                <span
+                                  className={`text-[12px] font-bold ${task.status === "overdue" ? "text-[#EF4444]" : task.status === "done" ? "text-foreground line-through opacity-60" : "text-foreground"}`}
+                                >
+                                  {task.task}
+                                </span>
+                                <span className="text-[11px] font-semibold text-muted-foreground ml-2">
+                                  ({task.assignee})
+                                </span>
                               </div>
                             </div>
                             <div className="flex items-center gap-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1435,25 +1688,56 @@ export function Onboarding() {
                     Required Documents
                   </h4>
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 h-[6px] w-24 bg-muted/50 rounded-full overflow-hidden"><div className="h-full rounded-full bg-[#8B5CF6]" style={{ width: `${(uploadedDocs / documents.length) * 100}%` }} /></div>
-                    <span className="text-[11px] font-bold text-muted-foreground">{uploadedDocs} / {documents.length} uploaded</span>
+                    <div className="flex-1 h-[6px] w-24 bg-muted/50 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-[#8B5CF6]"
+                        style={{
+                          width: `${(uploadedDocs / documents.length) * 100}%`,
+                        }}
+                      />
+                    </div>
+                    <span className="text-[11px] font-bold text-muted-foreground">
+                      {uploadedDocs} / {documents.length} uploaded
+                    </span>
                   </div>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
-                    <thead><tr className="border-b border-border text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      <th className="pb-2 pr-4">Document</th><th className="pb-2 pr-4">Status</th><th className="pb-2 pr-4">Uploaded By</th><th className="pb-2 pr-4">Date</th><th className="pb-2 text-right">Action</th>
-                    </tr></thead>
+                    <thead>
+                      <tr className="border-b border-border text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
+                        <th className="pb-2 pr-4">Document</th>
+                        <th className="pb-2 pr-4">Status</th>
+                        <th className="pb-2 pr-4">Uploaded By</th>
+                        <th className="pb-2 pr-4">Date</th>
+                        <th className="pb-2 text-right">Action</th>
+                      </tr>
+                    </thead>
                     <tbody className="divide-y divide-border/50">
-                      {documents.map(doc => (
+                      {documents.map((doc) => (
                         <tr key={doc.id} className="text-[12px]">
                           <td className="py-2.5 pr-4 font-bold text-foreground">
                             {doc.name}
                           </td>
                           <td className="py-2.5 pr-4">
-                            <span className={`inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider ${doc.status === "uploaded" ? "text-[#00B87C]" : doc.status === "pending" ? "text-[#F59E0B]" : doc.status === "missing" ? "text-[#EF4444]" : "text-muted-foreground"}`}>
-                              {doc.status === "uploaded" ? <CheckCircle2 size={12} /> : doc.status === "pending" ? <Clock size={12} /> : doc.status === "missing" ? <XCircle size={12} /> : <HelpCircle size={12} />}
-                              {doc.status === "uploaded" ? "Uploaded" : doc.status === "pending" ? "Pending" : doc.status === "missing" ? "Missing" : "Optional"}
+                            <span
+                              className={`inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider ${doc.status === "uploaded" ? "text-[#00B87C]" : doc.status === "pending" ? "text-[#F59E0B]" : doc.status === "missing" ? "text-[#EF4444]" : "text-muted-foreground"}`}
+                            >
+                              {doc.status === "uploaded" ? (
+                                <CheckCircle2 size={12} />
+                              ) : doc.status === "pending" ? (
+                                <Clock size={12} />
+                              ) : doc.status === "missing" ? (
+                                <XCircle size={12} />
+                              ) : (
+                                <HelpCircle size={12} />
+                              )}
+                              {doc.status === "uploaded"
+                                ? "Uploaded"
+                                : doc.status === "pending"
+                                  ? "Pending"
+                                  : doc.status === "missing"
+                                    ? "Missing"
+                                    : "Optional"}
                             </span>
                           </td>
                           <td className="py-2.5 pr-4 text-muted-foreground">
@@ -1463,14 +1747,44 @@ export function Onboarding() {
                             {doc.date || "—"}
                           </td>
                           <td className="py-2.5 text-right">
-                            {doc.status === "uploaded" ? <button onClick={() => handleViewDoc(doc.name)} className="text-[11px] font-semibold text-[#00B87C] uppercase tracking-wider hover:underline">View</button> : doc.status === "pending" ? <button onClick={() => handleRequestDoc(doc.name)} className="text-[11px] font-semibold text-[#F59E0B] uppercase tracking-wider hover:underline">Request</button> : doc.status === "missing" ? <button onClick={() => handleUploadClick(doc.id, doc.name)} className="text-[11px] font-semibold text-[#EF4444] uppercase tracking-wider hover:underline">Upload</button> : <span className="text-muted-foreground">—</span>}
+                            {doc.status === "uploaded" ? (
+                              <button
+                                onClick={() => handleViewDoc(doc.name)}
+                                className="text-[11px] font-semibold text-[#00B87C] uppercase tracking-wider hover:underline"
+                              >
+                                View
+                              </button>
+                            ) : doc.status === "pending" ? (
+                              <button
+                                onClick={() => handleRequestDoc(doc.name)}
+                                className="text-[11px] font-semibold text-[#F59E0B] uppercase tracking-wider hover:underline"
+                              >
+                                Request
+                              </button>
+                            ) : doc.status === "missing" ? (
+                              <button
+                                onClick={() =>
+                                  handleUploadClick(doc.id, doc.name)
+                                }
+                                className="text-[11px] font-semibold text-[#EF4444] uppercase tracking-wider hover:underline"
+                              >
+                                Upload
+                              </button>
+                            ) : (
+                              <span className="text-muted-foreground">—</span>
+                            )}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-                <button onClick={handleUploadDoc} className="mt-4 flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:border-[#00B87C]/50 hover:text-[#00B87C] transition-all"><Upload size={14} /> Upload Document for Employee</button>
+                <button
+                  onClick={handleUploadDoc}
+                  className="mt-4 flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:border-[#00B87C]/50 hover:text-[#00B87C] transition-all"
+                >
+                  <Upload size={14} /> Upload Document for Employee
+                </button>
               </div>
 
               {/* Task Actions Toolbar */}
@@ -1508,64 +1822,192 @@ export function Onboarding() {
       </AnimatePresence>
 
       {/* ─── INITIATE ONBOARDING MODAL ─── */}
-      <AnimatePresence>{showInitiateModal && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowInitiateModal(false)}>
-          <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} onClick={e => e.stopPropagation()} className="bg-card border border-border rounded-[32px] w-full max-w-[520px] max-h-[90vh] overflow-hidden shadow-2xl">
-            {/* Header */}
-            <div className="px-8 py-6 border-b border-border flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#00B87C]/10 flex items-center justify-center"><UserPlus size={20} className="text-[#00B87C]" /></div>
-                <div><h2 className="text-lg font-black text-foreground tracking-tight">Initiate New Onboarding</h2><p className="text-[12px] font-semibold text-muted-foreground">Start the onboarding journey for a new hire</p></div>
+      <AnimatePresence>
+        {showInitiateModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowInitiateModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-card border border-border rounded-[32px] w-full max-w-[520px] max-h-[90vh] overflow-hidden shadow-2xl"
+            >
+              {/* Header */}
+              <div className="px-8 py-6 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-[#00B87C]/10 flex items-center justify-center">
+                    <UserPlus size={20} className="text-[#00B87C]" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-black text-foreground tracking-tight">
+                      Initiate New Onboarding
+                    </h2>
+                    <p className="text-[12px] font-semibold text-muted-foreground">
+                      Start the onboarding journey for a new hire
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowInitiateModal(false)}
+                  className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-all"
+                >
+                  <X size={18} className="text-muted-foreground" />
+                </button>
               </div>
-              <button onClick={() => setShowInitiateModal(false)} className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-all"><X size={18} className="text-muted-foreground" /></button>
-            </div>
-            {/* Step dots */}
-            <div className="px-8 py-3 border-b border-border flex items-center gap-2">
-              {[1, 2, 3].map(s => <div key={s} className={`w-2.5 h-2.5 rounded-full transition-all ${initiateStep >= s ? "bg-[#00B87C]" : "bg-border"}`} />)}
-              <span className="ml-auto text-[11px] font-bold text-muted-foreground">Step {initiateStep} of 3</span>
-            </div>
+              {/* Step dots */}
+              <div className="px-8 py-3 border-b border-border flex items-center gap-2">
+                {[1, 2, 3].map((s) => (
+                  <div
+                    key={s}
+                    className={`w-2.5 h-2.5 rounded-full transition-all ${initiateStep >= s ? "bg-[#00B87C]" : "bg-border"}`}
+                  />
+                ))}
+                <span className="ml-auto text-[11px] font-bold text-muted-foreground">
+                  Step {initiateStep} of 3
+                </span>
+              </div>
 
-            {initiateStep === 1 && (
-              <div className="px-8 py-6 space-y-5 overflow-y-auto max-h-[50vh]">
-                <h3 className="text-[13px] font-black text-foreground uppercase tracking-wider">Employee Details</h3>
-                <div>
-                  <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Select Employee</label>
-                  <div className="relative">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <input type="text" placeholder="Search from active employees or new hire records..." value={formEmployee} onChange={e => setFormEmployee(e.target.value)} className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" />
+              {initiateStep === 1 && (
+                <div className="px-8 py-6 space-y-5 overflow-y-auto max-h-[50vh]">
+                  <h3 className="text-[13px] font-black text-foreground uppercase tracking-wider">
+                    Employee Details
+                  </h3>
+                  <div>
+                    <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                      Select Employee
+                    </label>
+                    <div className="relative">
+                      <Search
+                        size={14}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Search from active employees or new hire records..."
+                        value={formEmployee}
+                        onChange={(e) => setFormEmployee(e.target.value)}
+                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                      />
+                    </div>
+                    <div className="mt-2 space-y-1 max-h-32 overflow-y-auto bg-muted/20 rounded-xl p-1">
+                      {employees
+                        .filter((emp) =>
+                          emp.name
+                            .toLowerCase()
+                            .includes(formEmployee.toLowerCase()),
+                        )
+                        .slice(0, 5)
+                        .map((emp) => (
+                          <button
+                            key={emp.id}
+                            onClick={() => {
+                              setFormEmployee(emp.name);
+                              setFormDesig(emp.role);
+                              setFormDept(emp.dept);
+                              setFormManager("Suresh Iyer");
+                            }}
+                            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted transition-all text-left"
+                          >
+                            <div className="w-7 h-7 rounded-full bg-[#00B87C]/10 flex items-center justify-center text-[#00B87C] text-[9px] font-black">
+                              {initials(emp.name)}
+                            </div>
+                            <div>
+                              <p className="text-[12px] font-bold text-foreground">
+                                {emp.name}
+                              </p>
+                              <p className="text-[11px] text-muted-foreground">
+                                {emp.role} · {emp.dept}
+                              </p>
+                            </div>
+                          </button>
+                        ))}
+                    </div>
                   </div>
-                  <div className="mt-2 space-y-1 max-h-32 overflow-y-auto bg-muted/20 rounded-xl p-1">
-                    {employees.filter(emp => emp.name.toLowerCase().includes(formEmployee.toLowerCase())).slice(0, 5).map(emp => (
-                      <button key={emp.id} onClick={() => {
-                        setFormEmployee(emp.name);
-                        setFormDesig(emp.role);
-                        setFormDept(emp.dept);
-                        setFormManager("Suresh Iyer");
-                      }} className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted transition-all text-left">
-                        <div className="w-7 h-7 rounded-full bg-[#00B87C]/10 flex items-center justify-center text-[#00B87C] text-[9px] font-black">{initials(emp.name)}</div>
-                        <div><p className="text-[12px] font-bold text-foreground">{emp.name}</p><p className="text-[11px] text-muted-foreground">{emp.role} · {emp.dept}</p></div>
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                        Joining Date
+                      </label>
+                      <input
+                        type="date"
+                        value={formJoinDate}
+                        onChange={(e) => setFormJoinDate(e.target.value)}
+                        className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                        Department
+                      </label>
+                      <select
+                        value={formDept}
+                        onChange={(e) => setFormDept(e.target.value)}
+                        className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                      >
+                        <option>Engineering</option>
+                        <option>Sales</option>
+                        <option>Finance</option>
+                        <option>Marketing</option>
+                        <option>Design</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                      Designation
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Senior Frontend Developer"
+                      value={formDesig}
+                      onChange={(e) => setFormDesig(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                      Reporting Manager
+                    </label>
+                    <div className="relative">
+                      <Search
+                        size={14}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Search employee..."
+                        value={formManager}
+                        onChange={(e) => setFormManager(e.target.value)}
+                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                      Employment Type
+                    </label>
+                    <div className="flex gap-2">
+                      {["Full-time", "Part-time", "Contract", "Intern"].map(
+                        (t) => (
+                          <button
+                            key={t}
+                            onClick={() => setFormEmpType(t)}
+                            className={`px-4 py-2 rounded-xl border text-[11px] font-black uppercase tracking-wider transition-all ${formEmpType === t ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border hover:bg-muted text-muted-foreground"}`}
+                          >
+                            {t}
+                          </button>
+                        ),
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Joining Date</label><input type="date" value={formJoinDate} onChange={e => setFormJoinDate(e.target.value)} className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
-                  <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Department</label><select value={formDept} onChange={e => setFormDept(e.target.value)} className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"><option>Engineering</option><option>Sales</option><option>Finance</option><option>Marketing</option><option>Design</option></select></div>
-                </div>
-                <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Designation</label><input type="text" placeholder="e.g. Senior Frontend Developer" value={formDesig} onChange={e => setFormDesig(e.target.value)} className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
-                <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Reporting Manager</label>
-                  <div className="relative"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" /><input type="text" placeholder="Search employee..." value={formManager} onChange={e => setFormManager(e.target.value)} className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
-                </div>
-                <div>
-                  <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Employment Type</label>
-                  <div className="flex gap-2">{
-                    ["Full-time", "Part-time", "Contract", "Intern"].map(t => (
-                      <button key={t} onClick={() => setFormEmpType(t)} className={`px-4 py-2 rounded-xl border text-[11px] font-black uppercase tracking-wider transition-all ${formEmpType === t ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border hover:bg-muted text-muted-foreground"}`}>{t}</button>
-                    ))
-                  }</div>
-                </div>
-              </div>
-            )}
+              )}
 
               {initiateStep === 2 && (
                 <div className="px-8 py-6 space-y-5 overflow-y-auto max-h-[50vh]">
@@ -1609,32 +2051,74 @@ export function Onboarding() {
                 </div>
               )}
 
-            {initiateStep === 3 && (
-              <div className="px-8 py-6 space-y-5 overflow-y-auto max-h-[50vh]">
-                <h3 className="text-[13px] font-black text-foreground uppercase tracking-wider">Team Assignments</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  {[
-                    { label: "Assigned HR Owner", icon: UserCheck },
-                    { label: "Buddy / Mentor", icon: Star },
-                    { label: "IT Contact", icon: Laptop },
-                    { label: "Finance Contact", icon: Briefcase },
-                  ].map(field => (
-                    <div key={field.label}><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">{field.label}</label>
-                      <div className="relative"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" /><input type="text" placeholder="Search..." className="w-full pl-9 pr-3 py-2 rounded-xl border border-border bg-background text-[11px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">Notifications</label>
-                  <div className="space-y-2">
-                    {["Send welcome email to employee", "Notify reporting manager", "Notify IT team for equipment", "Notify Finance for enrollment"].map(n => (
-                      <label key={n} className="flex items-center gap-2 cursor-pointer"><input type="checkbox" defaultChecked className="w-4 h-4 rounded border-border accent-[#00B87C]" /><span className="text-[12px] font-bold text-foreground">{n}</span></label>
+              {initiateStep === 3 && (
+                <div className="px-8 py-6 space-y-5 overflow-y-auto max-h-[50vh]">
+                  <h3 className="text-[13px] font-black text-foreground uppercase tracking-wider">
+                    Team Assignments
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[
+                      { label: "Assigned HR Owner", icon: UserCheck },
+                      { label: "Buddy / Mentor", icon: Star },
+                      { label: "IT Contact", icon: Laptop },
+                      { label: "Finance Contact", icon: Briefcase },
+                    ].map((field) => (
+                      <div key={field.label}>
+                        <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                          {field.label}
+                        </label>
+                        <div className="relative">
+                          <Search
+                            size={14}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Search..."
+                            className="w-full pl-9 pr-3 py-2 rounded-xl border border-border bg-background text-[11px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                          />
+                        </div>
+                      </div>
                     ))}
-                    <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" className="w-4 h-4 rounded border-border accent-[#00B87C]" /><span className="text-[12px] font-bold text-foreground">Notify all department heads</span></label>
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                      Notifications
+                    </label>
+                    <div className="space-y-2">
+                      {[
+                        "Send welcome email to employee",
+                        "Notify reporting manager",
+                        "Notify IT team for equipment",
+                        "Notify Finance for enrollment",
+                      ].map((n) => (
+                        <label
+                          key={n}
+                          className="flex items-center gap-2 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            defaultChecked
+                            className="w-4 h-4 rounded border-border accent-[#00B87C]"
+                          />
+                          <span className="text-[12px] font-bold text-foreground">
+                            {n}
+                          </span>
+                        </label>
+                      ))}
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 rounded border-border accent-[#00B87C]"
+                        />
+                        <span className="text-[12px] font-bold text-foreground">
+                          Notify all department heads
+                        </span>
+                      </label>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
               {/* Footer */}
               <div className="px-8 py-4 border-t border-border flex items-center justify-between">
@@ -1676,38 +2160,93 @@ export function Onboarding() {
       </AnimatePresence>
 
       {/* ─── TEMPLATES SLIDE PANEL ─── */}
-      <AnimatePresence>{showTemplatesPanel && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/30 z-50" onClick={() => setShowTemplatesPanel(false)}>
-          <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} onClick={e => e.stopPropagation()} className="absolute right-0 top-0 bottom-0 w-full max-w-[480px] bg-card border-l border-border shadow-2xl overflow-y-auto">
-            <div className="px-6 py-5 border-b border-border flex items-center justify-between sticky top-0 bg-card z-10">
-              <div className="flex items-center gap-3">
-                <FileText size={20} className="text-[#00B87C]" />
-                <h2 className="text-lg font-black text-foreground">Onboarding Templates</h2>
-              </div>
-              <button onClick={() => setShowTemplatesPanel(false)} className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-all"><X size={18} /></button>
-            </div>
-            <div className="p-6 space-y-4">
-              <button onClick={() => { setShowTemplatesPanel(false); setShowTemplateEditor(true); setEditingTemplate(null); }} className="w-full py-3 rounded-xl bg-[#00B87C] text-white text-[12px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md">+ Create Template</button>
-              {TEMPLATES.map(tpl => (
-                <div key={tpl.id} className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all">
-                  <div className="flex items-start justify-between mb-3">
-                    <h4 className="text-[14px] font-bold text-foreground">{tpl.name}</h4>
-                    <div className="flex items-center gap-2">
-                      {deptBadge(tpl.dept, tpl.deptColor)}
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${tpl.avgDays !== "—" ? "bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20" : "bg-muted/50 text-muted-foreground border border-border"}`}>{tpl.avgDays !== "—" ? "Active" : "Draft"}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 text-[11px] font-bold text-muted-foreground mb-3">
-                    <span>{tpl.phases} phases</span><span className="w-1 h-1 rounded-full bg-muted-foreground/40" /><span>{tpl.tasks} tasks</span><span className="w-1 h-1 rounded-full bg-muted-foreground/40" />Avg {tpl.avgDays}
-                  </div>
-                  <p className="text-[11px] font-bold text-muted-foreground mb-3">Used for {tpl.usageCount} employees</p>
-                  <button onClick={() => { setEditingTemplate(tpl.id); setShowTemplateEditor(true); setShowTemplatesPanel(false); }} className="w-full py-2.5 rounded-xl border border-border text-[11px] font-black text-foreground uppercase tracking-widest hover:bg-muted/50 transition-all">Edit Template</button>
+      <AnimatePresence>
+        {showTemplatesPanel && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/30 z-50"
+            onClick={() => setShowTemplatesPanel(false)}
+          >
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              onClick={(e) => e.stopPropagation()}
+              className="absolute right-0 top-0 bottom-0 w-full max-w-[480px] bg-card border-l border-border shadow-2xl overflow-y-auto"
+            >
+              <div className="px-6 py-5 border-b border-border flex items-center justify-between sticky top-0 bg-card z-10">
+                <div className="flex items-center gap-3">
+                  <FileText size={20} className="text-[#00B87C]" />
+                  <h2 className="text-lg font-black text-foreground">
+                    Onboarding Templates
+                  </h2>
                 </div>
-              ))}
-            </div>
+                <button
+                  onClick={() => setShowTemplatesPanel(false)}
+                  className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-all"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="p-6 space-y-4">
+                <button
+                  onClick={() => {
+                    setShowTemplatesPanel(false);
+                    setShowTemplateEditor(true);
+                    setEditingTemplate(null);
+                  }}
+                  className="w-full py-3 rounded-xl bg-[#00B87C] text-white text-[12px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md"
+                >
+                  + Create Template
+                </button>
+                {TEMPLATES.map((tpl) => (
+                  <div
+                    key={tpl.id}
+                    className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <h4 className="text-[14px] font-bold text-foreground">
+                        {tpl.name}
+                      </h4>
+                      <div className="flex items-center gap-2">
+                        {deptBadge(tpl.dept, tpl.deptColor)}
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${tpl.avgDays !== "—" ? "bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20" : "bg-muted/50 text-muted-foreground border border-border"}`}
+                        >
+                          {tpl.avgDays !== "—" ? "Active" : "Draft"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px] font-bold text-muted-foreground mb-3">
+                      <span>{tpl.phases} phases</span>
+                      <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
+                      <span>{tpl.tasks} tasks</span>
+                      <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
+                      Avg {tpl.avgDays}
+                    </div>
+                    <p className="text-[11px] font-bold text-muted-foreground mb-3">
+                      Used for {tpl.usageCount} employees
+                    </p>
+                    <button
+                      onClick={() => {
+                        setEditingTemplate(tpl.id);
+                        setShowTemplateEditor(true);
+                        setShowTemplatesPanel(false);
+                      }}
+                      className="w-full py-2.5 rounded-xl border border-border text-[11px] font-black text-foreground uppercase tracking-widest hover:bg-muted/50 transition-all"
+                    >
+                      Edit Template
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}</AnimatePresence>
+        )}
+      </AnimatePresence>
 
       {/* ─── ESCALATION MODAL ─── */}
       <AnimatePresence>
@@ -1764,42 +2303,128 @@ export function Onboarding() {
       </AnimatePresence>
 
       {/* ─── PHASE COMPLETE CONFIRMATION ─── */}
-      <AnimatePresence>{showPhaseConfirm && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowPhaseConfirm(false)}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} onClick={e => e.stopPropagation()} className="bg-card border border-border rounded-[32px] w-full max-w-sm p-6 shadow-2xl">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#00B87C]/10 flex items-center justify-center"><CheckCircle2 size={24} className="text-[#00B87C]" /></div>
-              <div><h2 className="text-lg font-black text-foreground">Mark Phase Complete</h2><p className="text-[12px] text-muted-foreground">Are you sure this phase is fully complete?</p></div>
-            </div>
-            <div className="flex items-center justify-end gap-3 mt-4">
-              <button onClick={() => setShowPhaseConfirm(false)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all">Cancel</button>
-              <button onClick={confirmPhaseComplete} className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md">Confirm</button>
-            </div>
+      <AnimatePresence>
+        {showPhaseConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowPhaseConfirm(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-card border border-border rounded-[32px] w-full max-w-sm p-6 shadow-2xl"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#00B87C]/10 flex items-center justify-center">
+                  <CheckCircle2 size={24} className="text-[#00B87C]" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-black text-foreground">
+                    Mark Phase Complete
+                  </h2>
+                  <p className="text-[12px] text-muted-foreground">
+                    Are you sure this phase is fully complete?
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-3 mt-4">
+                <button
+                  onClick={() => setShowPhaseConfirm(false)}
+                  className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmPhaseComplete}
+                  className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md"
+                >
+                  Confirm
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}</AnimatePresence>
+        )}
+      </AnimatePresence>
 
       {/* ─── UPLOAD DOCUMENT MODAL ─── */}
-      <AnimatePresence>{showUploadModal && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowUploadModal(false)}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} onClick={e => e.stopPropagation()} className="bg-card border border-border rounded-[32px] w-full max-w-md p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-[#EDE9FE] flex items-center justify-center"><Upload size={20} className="text-[#8B5CF6]" /></div><h2 className="text-lg font-black text-foreground">Upload Document</h2></div>
-              <button onClick={() => setShowUploadModal(false)} className="w-8 h-8 rounded-lg hover:bg-muted transition-all flex items-center justify-center"><X size={16} className="text-muted-foreground" /></button>
-            </div>
-            <div className="border-2 border-dashed border-border rounded-2xl p-8 text-center hover:border-[#8B5CF6]/40 transition-all cursor-pointer">
-              <Upload size={32} className="mx-auto text-muted-foreground/60 mb-3" />
-              <p className="text-[13px] font-bold text-foreground">Drop files here or click to browse</p>
-              <p className="text-[11px] text-muted-foreground mt-1">PDF, JPG, PNG — Max 10MB</p>
-            </div>
-            <div className="mt-4"><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Document Type</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none"><option>Experience Letter</option><option>Bank Account Details</option><option>Passport Photo</option><option>Other</option></select></div>
-            <div className="flex items-center justify-end gap-3 mt-5">
-              <button onClick={() => setShowUploadModal(false)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all">Cancel</button>
-              <button onClick={handleConfirmUpload} className="px-5 py-2.5 rounded-xl bg-[#8B5CF6] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md">Upload</button>
-            </div>
+      <AnimatePresence>
+        {showUploadModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowUploadModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-card border border-border rounded-[32px] w-full max-w-md p-6 shadow-2xl"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#EDE9FE] flex items-center justify-center">
+                    <Upload size={20} className="text-[#8B5CF6]" />
+                  </div>
+                  <h2 className="text-lg font-black text-foreground">
+                    Upload Document
+                  </h2>
+                </div>
+                <button
+                  onClick={() => setShowUploadModal(false)}
+                  className="w-8 h-8 rounded-lg hover:bg-muted transition-all flex items-center justify-center"
+                >
+                  <X size={16} className="text-muted-foreground" />
+                </button>
+              </div>
+              <div className="border-2 border-dashed border-border rounded-2xl p-8 text-center hover:border-[#8B5CF6]/40 transition-all cursor-pointer">
+                <Upload
+                  size={32}
+                  className="mx-auto text-muted-foreground/60 mb-3"
+                />
+                <p className="text-[13px] font-bold text-foreground">
+                  Drop files here or click to browse
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  PDF, JPG, PNG — Max 10MB
+                </p>
+              </div>
+              <div className="mt-4">
+                <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                  Document Type
+                </label>
+                <select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none">
+                  <option>Experience Letter</option>
+                  <option>Bank Account Details</option>
+                  <option>Passport Photo</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div className="flex items-center justify-end gap-3 mt-5">
+                <button
+                  onClick={() => setShowUploadModal(false)}
+                  className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmUpload}
+                  className="px-5 py-2.5 rounded-xl bg-[#8B5CF6] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md"
+                >
+                  Upload
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}</AnimatePresence>
+        )}
+      </AnimatePresence>
 
       {/* ─── REMINDER MODAL ─── */}
       <AnimatePresence>
@@ -1877,58 +2502,220 @@ export function Onboarding() {
       </AnimatePresence>
 
       {/* ─── TEMPLATE EDITOR MODAL ─── */}
-      <AnimatePresence>{showTemplateEditor && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4" onClick={() => setShowTemplateEditor(false)}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} onClick={e => e.stopPropagation()} className="bg-card border border-border rounded-[32px] w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl">
-            <div className="px-8 py-6 border-b border-border flex items-center justify-between">
-              <h2 className="text-lg font-black text-foreground">{editingTemplate ? "Edit Template" : "Create New Template"}</h2>
-              <button onClick={() => setShowTemplateEditor(false)} className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-all"><X size={18} /></button>
-            </div>
-            <div className="px-8 py-6 space-y-5 overflow-y-auto max-h-[60vh]">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2"><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Template Name</label><input type="text" placeholder="e.g. Engineering Onboarding" className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all" /></div>
-                <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Department</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none"><option>All Departments</option><option>Engineering</option><option>Sales</option><option>Finance</option></select></div>
-                <div><label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Status</label><select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none"><option>Draft</option><option>Published</option></select></div>
+      <AnimatePresence>
+        {showTemplateEditor && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+            onClick={() => setShowTemplateEditor(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-card border border-border rounded-[32px] w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl"
+            >
+              <div className="px-8 py-6 border-b border-border flex items-center justify-between">
+                <h2 className="text-lg font-black text-foreground">
+                  {editingTemplate ? "Edit Template" : "Create New Template"}
+                </h2>
+                <button
+                  onClick={() => setShowTemplateEditor(false)}
+                  className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-all"
+                >
+                  <X size={18} />
+                </button>
               </div>
-              <div><h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">Phases & Tasks</h4>
-                <div className="space-y-3">
-                  {["Pre-Joining", "Day 1", "Week 1", "Month 1", "Completion"].map((phase, i) => (
-                    <div key={i} className="p-4 rounded-2xl border border-border bg-muted/10">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2"><span className="text-[12px] font-black text-foreground">{phase}</span><span className="text-[11px] text-muted-foreground">({i === 0 ? 6 : i === 1 ? 7 : i === 2 ? 8 : i === 3 ? 7 : 0} tasks)</span></div>
-                        <button className="text-[11px] font-semibold text-[#EF4444] uppercase tracking-wider hover:underline">Remove</button>
+              <div className="px-8 py-6 space-y-5 overflow-y-auto max-h-[60vh]">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2">
+                    <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                      Template Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Engineering Onboarding"
+                      className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                      Department
+                    </label>
+                    <select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none">
+                      <option>All Departments</option>
+                      <option>Engineering</option>
+                      <option>Sales</option>
+                      <option>Finance</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">
+                      Status
+                    </label>
+                    <select className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none">
+                      <option>Draft</option>
+                      <option>Published</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                    Phases & Tasks
+                  </h4>
+                  <div className="space-y-3">
+                    {[
+                      "Pre-Joining",
+                      "Day 1",
+                      "Week 1",
+                      "Month 1",
+                      "Completion",
+                    ].map((phase, i) => (
+                      <div
+                        key={i}
+                        className="p-4 rounded-2xl border border-border bg-muted/10"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[12px] font-black text-foreground">
+                              {phase}
+                            </span>
+                            <span className="text-[11px] text-muted-foreground">
+                              (
+                              {i === 0
+                                ? 6
+                                : i === 1
+                                  ? 7
+                                  : i === 2
+                                    ? 8
+                                    : i === 3
+                                      ? 7
+                                      : 0}{" "}
+                              tasks)
+                            </span>
+                          </div>
+                          <button className="text-[11px] font-semibold text-[#EF4444] uppercase tracking-wider hover:underline">
+                            Remove
+                          </button>
+                        </div>
+                        <div className="space-y-1.5">
+                          {["Welcome email", "Offer letter", "Background check"]
+                            .slice(0, 3)
+                            .map((t, j) => (
+                              <div
+                                key={j}
+                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card border border-border"
+                              >
+                                <Edit3
+                                  size={12}
+                                  className="text-muted-foreground shrink-0"
+                                />
+                                <span className="text-[11px] font-bold text-foreground flex-1">
+                                  {t}
+                                </span>
+                                <select className="text-[9px] border-none bg-transparent font-bold text-muted-foreground outline-none">
+                                  <option>HR</option>
+                                  <option>IT</option>
+                                  <option>Manager</option>
+                                  <option>Finance</option>
+                                </select>
+                              </div>
+                            ))}
+                        </div>
+                        <button className="mt-2 text-[11px] font-semibold text-[#00B87C] uppercase tracking-wider flex items-center gap-1 hover:underline">
+                          <Plus size={12} /> Add Task
+                        </button>
                       </div>
-                      <div className="space-y-1.5">{["Welcome email", "Offer letter", "Background check"].slice(0, 3).map((t, j) => (
-                        <div key={j} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card border border-border"><Edit3 size={12} className="text-muted-foreground shrink-0" /><span className="text-[11px] font-bold text-foreground flex-1">{t}</span><select className="text-[9px] border-none bg-transparent font-bold text-muted-foreground outline-none"><option>HR</option><option>IT</option><option>Manager</option><option>Finance</option></select></div>
-                      ))}</div>
-                      <button className="mt-2 text-[11px] font-semibold text-[#00B87C] uppercase tracking-wider flex items-center gap-1 hover:underline"><Plus size={12} /> Add Task</button>
-                    </div>
-                  ))}
-                  <button className="w-full py-3 rounded-2xl border-2 border-dashed border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:border-[#00B87C]/50 hover:text-[#00B87C] transition-all"><Plus size={14} className="inline mr-1" /> Add Phase</button>
+                    ))}
+                    <button className="w-full py-3 rounded-2xl border-2 border-dashed border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider hover:border-[#00B87C]/50 hover:text-[#00B87C] transition-all">
+                      <Plus size={14} className="inline mr-1" /> Add Phase
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="px-8 py-4 border-t border-border flex items-center justify-between">
-              <button onClick={() => setShowTemplateEditor(false)} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all">Cancel</button>
-              <div className="flex items-center gap-3">
-                <button onClick={() => { showToast("Saved as Draft", "success"); setShowTemplateEditor(false); }} className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all">Save as Draft</button>
-                <button onClick={() => { showToast("Template Published", "success", "Onboarding template has been published."); setShowTemplateEditor(false); }} className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md">Publish</button>
+              <div className="px-8 py-4 border-t border-border flex items-center justify-between">
+                <button
+                  onClick={() => setShowTemplateEditor(false)}
+                  className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all"
+                >
+                  Cancel
+                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      showToast("Saved as Draft", "success");
+                      setShowTemplateEditor(false);
+                    }}
+                    className="px-5 py-2.5 rounded-xl border border-border text-[11px] font-semibold uppercase tracking-wider hover:bg-muted transition-all"
+                  >
+                    Save as Draft
+                  </button>
+                  <button
+                    onClick={() => {
+                      showToast(
+                        "Template Published",
+                        "success",
+                        "Onboarding template has been published.",
+                      );
+                      setShowTemplateEditor(false);
+                    }}
+                    className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md"
+                  >
+                    Publish
+                  </button>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}</AnimatePresence>
+        )}
+      </AnimatePresence>
 
       {/* Inline Task Form */}
       {inlineTaskOpen && (
         <div className="fixed bottom-24 right-8 w-80 bg-card border border-border rounded-2xl shadow-2xl p-4 z-40">
-          <div className="flex items-center justify-between mb-3"><h4 className="text-[12px] font-black text-foreground uppercase tracking-wider">Add Task</h4><button onClick={() => setInlineTaskOpen(false)}><X size={16} className="text-muted-foreground" /></button></div>
-          <input type="text" placeholder="Task description..." className="w-full px-3 py-2 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all mb-2" value={inlineTaskText} onChange={e => setInlineTaskText(e.target.value)} />
-          <div className="flex items-center gap-2 mb-3">
-            <select className="flex-1 px-3 py-2 rounded-xl border border-border bg-background text-[11px] font-bold outline-none" value={inlineTaskOwner} onChange={e => setInlineTaskOwner(e.target.value)}><option>HR</option><option>IT</option><option>Manager</option><option>Finance</option><option>Employee</option></select>
-            <input type="date" className="flex-1 px-3 py-2 rounded-xl border border-border bg-background text-[11px] font-bold outline-none" value={inlineTaskDueDate} onChange={e => setInlineTaskDueDate(e.target.value)} />
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-[12px] font-black text-foreground uppercase tracking-wider">
+              Add Task
+            </h4>
+            <button onClick={() => setInlineTaskOpen(false)}>
+              <X size={16} className="text-muted-foreground" />
+            </button>
           </div>
-          <button onClick={handleAddInlineTask} className="w-full py-2 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all">Add Task</button>
+          <input
+            type="text"
+            placeholder="Task description..."
+            className="w-full px-3 py-2 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all mb-2"
+            value={inlineTaskText}
+            onChange={(e) => setInlineTaskText(e.target.value)}
+          />
+          <div className="flex items-center gap-2 mb-3">
+            <select
+              className="flex-1 px-3 py-2 rounded-xl border border-border bg-background text-[11px] font-bold outline-none"
+              value={inlineTaskOwner}
+              onChange={(e) => setInlineTaskOwner(e.target.value)}
+            >
+              <option>HR</option>
+              <option>IT</option>
+              <option>Manager</option>
+              <option>Finance</option>
+              <option>Employee</option>
+            </select>
+            <input
+              type="date"
+              className="flex-1 px-3 py-2 rounded-xl border border-border bg-background text-[11px] font-bold outline-none"
+              value={inlineTaskDueDate}
+              onChange={(e) => setInlineTaskDueDate(e.target.value)}
+            />
+          </div>
+          <button
+            onClick={handleAddInlineTask}
+            className="w-full py-2 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all"
+          >
+            Add Task
+          </button>
         </div>
       )}
 

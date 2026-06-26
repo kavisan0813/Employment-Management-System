@@ -16,14 +16,10 @@ import {
   ShieldCheck,
   Megaphone,
   User,
-  Bell,
   ToggleLeft,
   ShieldAlert,
 } from "lucide-react";
-
 import { useAuth } from "../../../context/AuthContext";
-
-const CURRENT_ADMIN_EMAIL = "admin@ems.io";
 
 export function Sidebar() {
   const location = useLocation();
@@ -204,7 +200,10 @@ export function Sidebar() {
             {user?.initials || "SR"}
           </div>
           <div className="overflow-hidden">
-            <span className="block text-[11px] font-bold text-gray-900 truncate" title={user?.email || "platform@nexushr.com"}>
+            <span
+              className="block text-[11px] font-bold text-gray-900 truncate"
+              title={user?.email || "platform@nexushr.com"}
+            >
               {user?.email || "platform@nexushr.com"}
             </span>
             <span className="text-[10px] text-emerald-600 font-bold block uppercase tracking-wide">

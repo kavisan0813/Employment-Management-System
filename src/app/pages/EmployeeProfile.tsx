@@ -128,8 +128,12 @@ export function EmployeeProfile() {
 
   // Edit states
   const [editName, setEditName] = useState(employee ? employee.name : "");
-  const [editDesignation, setEditDesignation] = useState(employee ? employee.designation : "");
-  const [editDepartment, setEditDepartment] = useState(employee ? employee.department : "");
+  const [editDesignation, setEditDesignation] = useState(
+    employee ? employee.designation : "",
+  );
+  const [editDepartment, setEditDepartment] = useState(
+    employee ? employee.department : "",
+  );
 
   // Request Asset states
   const [assetName, setAssetName] = useState("");
@@ -156,7 +160,13 @@ export function EmployeeProfile() {
     }
   }, [employee]);
 
-  const handleGeneratePromotionLetter = (promo: { oldDesignation: string; newDesignation: string; oldSalary: number; newSalary: number; effectiveDate: string; }) => {
+  const handleGeneratePromotionLetter = (promo: {
+    oldDesignation: string;
+    newDesignation: string;
+    oldSalary: number;
+    newSalary: number;
+    effectiveDate: string;
+  }) => {
     const letterContent = `
 =========================================
           PROMOTION LETTER
@@ -341,31 +351,41 @@ NexHR Management
         <div className="mb-6 p-4 rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-200 animate-in slide-in-from-top duration-300">
           <p className="font-bold text-sm">⚠️ Account Deactivated</p>
           <p className="text-xs opacity-90 mt-0.5">
-            This employee's account has been deactivated. They will not be able to log in or access company resources.
+            This employee's account has been deactivated. They will not be able
+            to log in or access company resources.
           </p>
         </div>
       )}
 
       {(() => {
-        const pendingTransfer = (employee.transfers || []).find(tr => tr.status === "Pending");
+        const pendingTransfer = (employee.transfers || []).find(
+          (tr) => tr.status === "Pending",
+        );
         if (pendingTransfer) {
           return (
             <div className="mb-6 p-4 rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-200 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in slide-in-from-top duration-300">
               <div>
                 <p className="font-bold text-sm">Pending Transfer Request</p>
                 <p className="text-xs opacity-90 mt-0.5">
-                  Request to transfer {employee.name} via <strong>{pendingTransfer.type}</strong> from <em>{pendingTransfer.oldValue}</em> to <strong>{pendingTransfer.newValue}</strong>.
+                  Request to transfer {employee.name} via{" "}
+                  <strong>{pendingTransfer.type}</strong> from{" "}
+                  <em>{pendingTransfer.oldValue}</em> to{" "}
+                  <strong>{pendingTransfer.newValue}</strong>.
                 </p>
               </div>
               <div className="flex gap-2 shrink-0">
                 <button
-                  onClick={() => approveTransfer(employee.id, pendingTransfer.id)}
+                  onClick={() =>
+                    approveTransfer(employee.id, pendingTransfer.id)
+                  }
                   className="px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-primary hover:opacity-90 transition-opacity"
                 >
                   Approve
                 </button>
                 <button
-                  onClick={() => rejectTransfer(employee.id, pendingTransfer.id)}
+                  onClick={() =>
+                    rejectTransfer(employee.id, pendingTransfer.id)
+                  }
                   className="px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-rose-600 hover:opacity-90 transition-opacity"
                 >
                   Reject
@@ -761,13 +781,18 @@ NexHR Management
                   </h3>
                   <div className="space-y-4">
                     {(employee.promotions || []).map((promo, idx) => (
-                      <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-border bg-background gap-4">
+                      <div
+                        key={idx}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-border bg-background gap-4"
+                      >
                         <div>
                           <p className="text-[15px] font-bold text-foreground">
                             Promoted to {promo.newDesignation}
                           </p>
                           <p className="text-[13px] font-semibold mt-1 text-muted-foreground">
-                            Effective Date: {promo.effectiveDate} • Salary revised: ₹{promo.oldSalary.toLocaleString()} → ₹{promo.newSalary.toLocaleString()}
+                            Effective Date: {promo.effectiveDate} • Salary
+                            revised: ₹{promo.oldSalary.toLocaleString()} → ₹
+                            {promo.newSalary.toLocaleString()}
                           </p>
                         </div>
                         <button
@@ -779,7 +804,9 @@ NexHR Management
                       </div>
                     ))}
                     {(employee.promotions || []).length === 0 && (
-                      <p className="text-xs text-muted-foreground text-center py-4">No promotion records found.</p>
+                      <p className="text-xs text-muted-foreground text-center py-4">
+                        No promotion records found.
+                      </p>
                     )}
                   </div>
                 </div>
@@ -791,13 +818,17 @@ NexHR Management
                   </h3>
                   <div className="space-y-4">
                     {(employee.transfers || []).map((tr, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-4 rounded-xl border border-border bg-background">
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between p-4 rounded-xl border border-border bg-background"
+                      >
                         <div>
                           <p className="text-[15px] font-bold text-foreground">
                             {tr.type}
                           </p>
                           <p className="text-[13px] font-semibold mt-1 text-muted-foreground">
-                            {tr.oldValue} → {tr.newValue} • Initiated: {tr.initiatedDate}
+                            {tr.oldValue} → {tr.newValue} • Initiated:{" "}
+                            {tr.initiatedDate}
                           </p>
                         </div>
                         <span
@@ -805,8 +836,8 @@ NexHR Management
                             tr.status === "Approved"
                               ? "bg-primary/10 text-primary border border-primary/20"
                               : tr.status === "Rejected"
-                              ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
-                              : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                                ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                                : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
                           }`}
                         >
                           {tr.status}
@@ -814,7 +845,9 @@ NexHR Management
                       </div>
                     ))}
                     {(employee.transfers || []).length === 0 && (
-                      <p className="text-xs text-muted-foreground text-center py-4">No transfer records found.</p>
+                      <p className="text-xs text-muted-foreground text-center py-4">
+                        No transfer records found.
+                      </p>
                     )}
                   </div>
                 </div>
@@ -1284,7 +1317,10 @@ NexHR Management
             </h3>
             <div className="space-y-3 mb-4 max-h-[300px] overflow-y-auto pr-1">
               {(employee.notes || []).map((note) => (
-                <div key={note.id} className="p-4 rounded-xl relative overflow-hidden bg-secondary border border-border animate-in fade-in duration-200">
+                <div
+                  key={note.id}
+                  className="p-4 rounded-xl relative overflow-hidden bg-secondary border border-border animate-in fade-in duration-200"
+                >
                   <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
                   <p className="text-[13px] font-medium italic text-primary leading-relaxed">
                     "{note.text}"
@@ -1295,7 +1331,9 @@ NexHR Management
                 </div>
               ))}
               {(employee.notes || []).length === 0 && (
-                <p className="text-xs text-muted-foreground text-center py-4">No manager notes yet.</p>
+                <p className="text-xs text-muted-foreground text-center py-4">
+                  No manager notes yet.
+                </p>
               )}
             </div>
             <button
@@ -1399,7 +1437,12 @@ NexHR Management
                 </button>
                 <button
                   onClick={() => {
-                    updateEmployee(employee.id, { name: editName, designation: editDesignation, department: editDepartment, role: editDesignation });
+                    updateEmployee(employee.id, {
+                      name: editName,
+                      designation: editDesignation,
+                      department: editDepartment,
+                      role: editDesignation,
+                    });
                     setIsEditModalOpen(false);
                   }}
                   className="flex-1 py-3 rounded-xl text-sm font-bold text-white transition-all bg-primary hover:opacity-90"
@@ -1486,7 +1529,12 @@ NexHR Management
                 </button>
                 <button
                   onClick={() => {
-                    promoteEmployee(employee.id, newDesignation, Number(newSalary), effectiveDate);
+                    promoteEmployee(
+                      employee.id,
+                      newDesignation,
+                      Number(newSalary),
+                      effectiveDate,
+                    );
                     setIsPromoteModalOpen(false);
                     setNewDesignation("");
                     setNewSalary("");
@@ -1536,10 +1584,10 @@ NexHR Management
                     transferType === "Department Transfer"
                       ? employee.department
                       : transferType === "Location Transfer"
-                      ? employee.location
-                      : transferType === "Manager Transfer"
-                      ? employee.manager || "Sarah Jenkins"
-                      : "None"
+                        ? employee.location
+                        : transferType === "Manager Transfer"
+                          ? employee.manager || "Sarah Jenkins"
+                          : "None"
                   }
                   disabled
                   className="w-full px-4 py-2.5 rounded-xl bg-secondary border border-border text-muted-foreground text-[14px] cursor-not-allowed"
@@ -1557,10 +1605,10 @@ NexHR Management
                     transferType === "Department Transfer"
                       ? "e.g. Marketing"
                       : transferType === "Location Transfer"
-                      ? "e.g. San Francisco, CA"
-                      : transferType === "Manager Transfer"
-                      ? "e.g. David Chen"
-                      : "e.g. Project Apollo"
+                        ? "e.g. San Francisco, CA"
+                        : transferType === "Manager Transfer"
+                          ? "e.g. David Chen"
+                          : "e.g. Project Apollo"
                   }
                   className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary"
                 />
@@ -1613,7 +1661,7 @@ NexHR Management
                     Date
                   </label>
                   <input
-                     type="text"
+                    type="text"
                     placeholder="Jan 2026"
                     className="w-full px-4 py-2.5 rounded-xl outline-none transition-all bg-background border border-border text-foreground text-[14px] focus:border-primary"
                   />
@@ -1706,11 +1754,15 @@ NexHR Management
                       id: `AST-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
                       name: assetName,
                       category: assetCategory,
-                      date: new Date().toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" }),
+                      date: new Date().toLocaleDateString("en-US", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }),
                       status: "Pending",
                     };
                     updateEmployee(employee.id, {
-                      assets: [...(employee.assets || []), newAsset]
+                      assets: [...(employee.assets || []), newAsset],
                     });
                     setIsAssetModalOpen(false);
                     setAssetName("");
@@ -1763,7 +1815,7 @@ NexHR Management
                       time: "Just now",
                     };
                     updateEmployee(employee.id, {
-                      notes: [...(employee.notes || []), newNote]
+                      notes: [...(employee.notes || []), newNote],
                     });
                     setIsNoteModalOpen(false);
                     setNoteText("");

@@ -214,8 +214,11 @@ export function ManagerTeamOnboarding() {
     ];
 
     TASKS_DATA.forEach((task) => {
-      const isDone = completedTasks.includes(task.id) || task.urgency === "green";
-      lines.push(`- ${task.title} [${isDone ? "Completed" : "Pending"}] (Due: ${task.due})`);
+      const isDone =
+        completedTasks.includes(task.id) || task.urgency === "green";
+      lines.push(
+        `- ${task.title} [${isDone ? "Completed" : "Pending"}] (Due: ${task.due})`,
+      );
     });
 
     COMPLETED_TASKS.forEach((task) => {
@@ -229,7 +232,11 @@ export function ManagerTeamOnboarding() {
     a.download = `${NEW_JOINER.name.replace(/\s+/g, "_")}_onboarding_summary.txt`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast("Exported!", "success", "Onboarding summary exported successfully.");
+    showToast(
+      "Exported!",
+      "success",
+      "Onboarding summary exported successfully.",
+    );
   };
 
   const [scheduleTitle, setScheduleTitle] = useState(
