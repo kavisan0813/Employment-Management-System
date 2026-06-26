@@ -203,14 +203,19 @@ export function ManagerDashboard() {
   const [showAddShiftModal, setShowAddShiftModal] = useState(false);
   const navigate = useNavigate();
 
-  const [selectedEmployee, setSelectedEmployee] = useState<(typeof TEAM_MEMBERS)[0] | null>(TEAM_MEMBERS[3]); // Default to Sanya Gupta
+  const [selectedEmployee, setSelectedEmployee] = useState<
+    (typeof TEAM_MEMBERS)[0] | null
+  >(TEAM_MEMBERS[3]); // Default to Sanya Gupta
   const [pendingApprovals, setPendingApprovals] = useState(PENDING_APPROVALS);
   const [teamToday, setTeamToday] = useState(TEAM_TODAY);
 
-  const presentTodayCount = teamToday.filter((m) => m.status === "present" || m.status === "wfh").length;
+  const presentTodayCount = teamToday.filter(
+    (m) => m.status === "present" || m.status === "wfh",
+  ).length;
   const totalTodayCount = teamToday.length;
 
-  const chartData = activeRange === "6M" ? ATTENDANCE_TREND_6M : ATTENDANCE_TREND_1Y;
+  const chartData =
+    activeRange === "6M" ? ATTENDANCE_TREND_6M : ATTENDANCE_TREND_1Y;
 
   const handleApproveApproval = (name: string) => {
     setPendingApprovals((prev) => prev.filter((a) => a.name !== name));
@@ -284,7 +289,12 @@ export function ManagerDashboard() {
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-amber-500" />
           <span className="text-[12px] font-bold text-foreground/80 tracking-tight">
-            {pendingApprovals.filter((a) => a.badge === "Leave").length} leave request{pendingApprovals.filter((a) => a.badge === "Leave").length !== 1 ? "s" : ""} need approval
+            {pendingApprovals.filter((a) => a.badge === "Leave").length} leave
+            request
+            {pendingApprovals.filter((a) => a.badge === "Leave").length !== 1
+              ? "s"
+              : ""}{" "}
+            need approval
           </span>
         </div>
         <div className="flex items-center gap-2 md:border-l border-border md:pl-8">
@@ -741,8 +751,9 @@ export function ManagerDashboard() {
               </button>
             </div>
             <div className="p-6 space-y-4">
-              {pendingApprovals.filter((a) => a.badge === "Leave").map(
-                (item, i) => (
+              {pendingApprovals
+                .filter((a) => a.badge === "Leave")
+                .map((item, i) => (
                   <div
                     key={i}
                     className="flex items-center justify-between p-4 rounded-2xl border border-border bg-secondary/10"
@@ -775,9 +786,9 @@ export function ManagerDashboard() {
                       </button>
                     </div>
                   </div>
-                ),
-              )}
-              {pendingApprovals.filter((a) => a.badge === "Leave").length === 0 && (
+                ))}
+              {pendingApprovals.filter((a) => a.badge === "Leave").length ===
+                0 && (
                 <p className="text-center text-sm font-bold text-muted-foreground py-4">
                   No pending leave requests
                 </p>
@@ -791,7 +802,11 @@ export function ManagerDashboard() {
                 Close
               </button>
               <button
-                onClick={() => setPendingApprovals((prev) => prev.filter((a) => a.badge !== "Leave"))}
+                onClick={() =>
+                  setPendingApprovals((prev) =>
+                    prev.filter((a) => a.badge !== "Leave"),
+                  )
+                }
                 className="px-6 py-2 rounded-xl bg-[#00B87C] text-white text-sm font-bold"
               >
                 Approve All

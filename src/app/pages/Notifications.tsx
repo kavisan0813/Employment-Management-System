@@ -26,12 +26,25 @@ import { useAuth } from "../context/AuthContext";
 
 interface NotificationItem {
   id: number;
-  type: "Leave" | "Payroll" | "Alert" | "Info" | "Birthday" | "Expense" | "Success";
+  type:
+    | "Leave"
+    | "Payroll"
+    | "Alert"
+    | "Info"
+    | "Birthday"
+    | "Expense"
+    | "Success";
   title: string;
   description: string;
   time: string;
   read: boolean;
-  category: "Approvals" | "Payroll" | "Mentions" | "System" | "Expenses" | "Alerts";
+  category:
+    | "Approvals"
+    | "Payroll"
+    | "Mentions"
+    | "System"
+    | "Expenses"
+    | "Alerts";
 }
 
 interface AnnouncementItem {
@@ -53,7 +66,20 @@ interface AnnouncementItem {
 
 const getFormattedDate = (): string => {
   const today = new Date();
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const month = months[today.getMonth()];
   const day = today.getDate().toString().padStart(2, "0");
   const year = today.getFullYear();
@@ -66,7 +92,8 @@ const initialNotificationsList: NotificationItem[] = [
     id: 1,
     type: "Alert",
     title: "MFA Verification Required",
-    description: "Ensure multi-factor authentication is verified before April 30.",
+    description:
+      "Ensure multi-factor authentication is verified before April 30.",
     time: "2h ago",
     read: false,
     category: "System",
@@ -75,7 +102,8 @@ const initialNotificationsList: NotificationItem[] = [
     id: 2,
     type: "Leave",
     title: "Leave Request Approved",
-    description: "Your annual leave request for May 12-15 has been approved by HR.",
+    description:
+      "Your annual leave request for May 12-15 has been approved by HR.",
     time: "3h ago",
     read: false,
     category: "Approvals",
@@ -120,7 +148,8 @@ const initialNotificationsList: NotificationItem[] = [
     id: 7,
     type: "Info",
     title: "Appraisal Complete",
-    description: "Quarterly increments have been logged into the performance matrix.",
+    description:
+      "Quarterly increments have been logged into the performance matrix.",
     time: "3d ago",
     read: true,
     category: "System",
@@ -132,7 +161,8 @@ const initialAnnouncementsList: AnnouncementItem[] = [
     id: 1,
     type: "URGENT",
     title: "System Downtime: Scheduled Maintenance",
-    content: "Core HR systems will be offline on Saturday, May 2, from 12:00 AM to 4:00 AM IST for server upgrades.",
+    content:
+      "Core HR systems will be offline on Saturday, May 2, from 12:00 AM to 4:00 AM IST for server upgrades.",
     author: "Tech Infrastructure Team",
     authorRole: "IT",
     authorAvatar: "TI",
@@ -146,7 +176,8 @@ const initialAnnouncementsList: AnnouncementItem[] = [
     id: 2,
     type: "IMPORTANT",
     title: "Quarterly Townhall Meeting",
-    content: "Join us for our Q1 business review this Thursday at 3:00 PM. The meeting link is provided in your calendar.",
+    content:
+      "Join us for our Q1 business review this Thursday at 3:00 PM. The meeting link is provided in your calendar.",
     author: "Sarah Johnson",
     authorRole: "HR Director",
     authorAvatar: "SJ",
@@ -160,7 +191,8 @@ const initialAnnouncementsList: AnnouncementItem[] = [
     id: 3,
     type: "HR UPDATE",
     title: "Enhanced Health Insurance Benefits",
-    content: "We are proud to announce expanded medical benefits for employees starting next month.",
+    content:
+      "We are proud to announce expanded medical benefits for employees starting next month.",
     author: "Sarah Johnson",
     authorRole: "HR Director",
     authorAvatar: "SJ",
@@ -174,7 +206,8 @@ const initialAnnouncementsList: AnnouncementItem[] = [
     id: 4,
     type: "INFO",
     title: "Eco-Friendly Workplace Initiative",
-    content: "NexusHR is moving paperless. Check out our new sustainability guidelines today.",
+    content:
+      "NexusHR is moving paperless. Check out our new sustainability guidelines today.",
     author: "Green Committee",
     authorRole: "Internal",
     authorAvatar: "GC",
@@ -195,7 +228,10 @@ const loadNotifications = (): NotificationItem[] => {
       console.error(e);
     }
   }
-  localStorage.setItem("nexus_notifications", JSON.stringify(initialNotificationsList));
+  localStorage.setItem(
+    "nexus_notifications",
+    JSON.stringify(initialNotificationsList),
+  );
   return initialNotificationsList;
 };
 
@@ -208,7 +244,10 @@ const loadAnnouncements = (): AnnouncementItem[] => {
       console.error(e);
     }
   }
-  localStorage.setItem("nexus_announcements", JSON.stringify(initialAnnouncementsList));
+  localStorage.setItem(
+    "nexus_announcements",
+    JSON.stringify(initialAnnouncementsList),
+  );
   return initialAnnouncementsList;
 };
 
@@ -223,25 +262,32 @@ export function Notifications() {
   const [activeFilter, setActiveFilter] = useState<
     "All" | "Unread" | "Approvals" | "Mentions" | "System"
   >("All");
-  const [activeModal, setActiveModal] = useState<"create_announcement" | "edit_announcement" | null>(
-    null,
-  );
+  const [activeModal, setActiveModal] = useState<
+    "create_announcement" | "edit_announcement" | null
+  >(null);
   const [showPreferences, setShowPreferences] = useState(false);
 
   // Storage-backed state
-  const [notifications, setNotifications] = useState<NotificationItem[]>(loadNotifications);
-  const [announcements, setAnnouncements] = useState<AnnouncementItem[]>(loadAnnouncements);
+  const [notifications, setNotifications] =
+    useState<NotificationItem[]>(loadNotifications);
+  const [announcements, setAnnouncements] =
+    useState<AnnouncementItem[]>(loadAnnouncements);
 
   // Visual/a11y and CRUD states
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [activeAnnouncementMenu, setActiveAnnouncementMenu] = useState<number | null>(null);
-  const [editAnnouncement, setEditAnnouncement] = useState<AnnouncementItem | null>(null);
-  const [deleteAnnouncementConfirm, setDeleteAnnouncementConfirm] = useState<AnnouncementItem | null>(null);
+  const [activeAnnouncementMenu, setActiveAnnouncementMenu] = useState<
+    number | null
+  >(null);
+  const [editAnnouncement, setEditAnnouncement] =
+    useState<AnnouncementItem | null>(null);
+  const [deleteAnnouncementConfirm, setDeleteAnnouncementConfirm] =
+    useState<AnnouncementItem | null>(null);
 
   // Form State
   const [formTitle, setFormTitle] = useState("");
-  const [formCategory, setFormCategory] = useState<AnnouncementItem["type"]>("INFO");
+  const [formCategory, setFormCategory] =
+    useState<AnnouncementItem["type"]>("INFO");
   const [formAudience, setFormAudience] = useState("All Employees");
   const [formContent, setFormContent] = useState("");
   const [formPinned, setFormPinned] = useState(false);
@@ -305,8 +351,14 @@ export function Notifications() {
     }
 
     const authorName = user?.name || "Sarah Johnson";
-    const authorRoleName = user?.role === "Finance" ? "Finance Manager" : "HR Director";
-    const initials = authorName.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+    const authorRoleName =
+      user?.role === "Finance" ? "Finance Manager" : "HR Director";
+    const initials = authorName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .substring(0, 2)
+      .toUpperCase();
 
     const newAnn: AnnouncementItem = {
       id: Date.now(),
@@ -345,7 +397,7 @@ export function Notifications() {
       return;
     }
 
-    const updated = announcements.map(ann => {
+    const updated = announcements.map((ann) => {
       if (ann.id === editAnnouncement.id) {
         return {
           ...ann,
@@ -369,7 +421,7 @@ export function Notifications() {
   };
 
   const handleDeleteAnnouncement = (id: number) => {
-    const updated = announcements.filter(ann => ann.id !== id);
+    const updated = announcements.filter((ann) => ann.id !== id);
     setAnnouncements(updated);
     localStorage.setItem("nexus_announcements", JSON.stringify(updated));
     setDeleteAnnouncementConfirm(null);
@@ -380,7 +432,7 @@ export function Notifications() {
   };
 
   const handleTogglePin = (ann: AnnouncementItem) => {
-    const updated = announcements.map(a => {
+    const updated = announcements.map((a) => {
       if (a.id === ann.id) {
         return { ...a, pinned: !a.pinned };
       }
@@ -389,14 +441,16 @@ export function Notifications() {
     setAnnouncements(updated);
     localStorage.setItem("nexus_announcements", JSON.stringify(updated));
 
-    setToastMessage(ann.pinned ? "Announcement unpinned" : "Announcement pinned");
+    setToastMessage(
+      ann.pinned ? "Announcement unpinned" : "Announcement pinned",
+    );
     setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 3000);
   };
 
   const handleDismissNotification = (id: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    const updated = notifications.filter(n => n.id !== id);
+    const updated = notifications.filter((n) => n.id !== id);
     setNotifications(updated);
     localStorage.setItem("nexus_notifications", JSON.stringify(updated));
 
@@ -820,7 +874,7 @@ export function Notifications() {
                         >
                           {ann.date}
                         </span>
-                        
+
                         <div className="relative">
                           <button
                             className="p-1 rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors cursor-pointer"
@@ -828,13 +882,15 @@ export function Notifications() {
                             onClick={(e) => {
                               e.stopPropagation();
                               setActiveAnnouncementMenu(
-                                activeAnnouncementMenu === ann.id ? null : ann.id
+                                activeAnnouncementMenu === ann.id
+                                  ? null
+                                  : ann.id,
                               );
                             }}
                           >
                             <MoreVertical size={14} />
                           </button>
-                          
+
                           {activeAnnouncementMenu === ann.id && (
                             <div className="absolute right-0 mt-1 w-32 bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-lg z-30 py-1 text-left animate-in fade-in slide-in-from-top-1">
                               <button
@@ -988,7 +1044,9 @@ export function Notifications() {
                             onClick={(e) => {
                               e.stopPropagation();
                               setActiveAnnouncementMenu(
-                                activeAnnouncementMenu === ann.id ? null : ann.id
+                                activeAnnouncementMenu === ann.id
+                                  ? null
+                                  : ann.id,
                               );
                             }}
                           >
@@ -1098,7 +1156,8 @@ export function Notifications() {
       </div>
 
       {/* MODAL: CREATE/EDIT ANNOUNCEMENT */}
-      {(activeModal === "create_announcement" || activeModal === "edit_announcement") && (
+      {(activeModal === "create_announcement" ||
+        activeModal === "edit_announcement") && (
         <div
           role="dialog"
           aria-modal="true"
@@ -1129,7 +1188,9 @@ export function Notifications() {
                   margin: 0,
                 }}
               >
-                {activeModal === "create_announcement" ? "New Announcement" : "Edit Announcement"}
+                {activeModal === "create_announcement"
+                  ? "New Announcement"
+                  : "Edit Announcement"}
               </h2>
               <button
                 onClick={() => {
@@ -1174,7 +1235,15 @@ export function Notifications() {
                   }}
                 />
                 {formErrors.title && (
-                  <p style={{ color: "#EF4444", fontSize: "12px", marginTop: "4px" }}>{formErrors.title}</p>
+                  <p
+                    style={{
+                      color: "#EF4444",
+                      fontSize: "12px",
+                      marginTop: "4px",
+                    }}
+                  >
+                    {formErrors.title}
+                  </p>
                 )}
               </div>
 
@@ -1194,7 +1263,11 @@ export function Notifications() {
                   </label>
                   <select
                     value={formCategory}
-                    onChange={(e) => setFormCategory(e.target.value as AnnouncementItem["type"])}
+                    onChange={(e) =>
+                      setFormCategory(
+                        e.target.value as AnnouncementItem["type"],
+                      )
+                    }
                     className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border"
                     style={{
                       backgroundColor: "var(--input-background)",
@@ -1255,7 +1328,11 @@ export function Notifications() {
                 </label>
                 <div
                   className="rounded-xl border overflow-hidden"
-                  style={{ borderColor: formErrors.content ? "#EF4444" : "var(--border)" }}
+                  style={{
+                    borderColor: formErrors.content
+                      ? "#EF4444"
+                      : "var(--border)",
+                  }}
                 >
                   <div
                     className="flex items-center gap-1 px-2 py-1 border-b"
@@ -1264,23 +1341,41 @@ export function Notifications() {
                       borderColor: "var(--border)",
                     }}
                   >
-                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button
+                      type="button"
+                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
+                    >
                       <Bold size={14} />
                     </button>
-                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button
+                      type="button"
+                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
+                    >
                       <Italic size={14} />
                     </button>
-                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button
+                      type="button"
+                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
+                    >
                       <Underline size={14} />
                     </button>
                     <div className="w-px h-4 bg-gray-300 mx-1" />
-                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button
+                      type="button"
+                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
+                    >
                       <List size={14} />
                     </button>
-                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700">
+                    <button
+                      type="button"
+                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
+                    >
                       <Link2 size={14} />
                     </button>
-                    <button type="button" className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700 ml-auto">
+                    <button
+                      type="button"
+                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700 ml-auto"
+                    >
                       <RotateCcw size={14} />
                     </button>
                   </div>
@@ -1297,7 +1392,15 @@ export function Notifications() {
                   />
                 </div>
                 {formErrors.content && (
-                  <p style={{ color: "#EF4444", fontSize: "12px", marginTop: "4px" }}>{formErrors.content}</p>
+                  <p
+                    style={{
+                      color: "#EF4444",
+                      fontSize: "12px",
+                      marginTop: "4px",
+                    }}
+                  >
+                    {formErrors.content}
+                  </p>
                 )}
               </div>
 
@@ -1316,7 +1419,11 @@ export function Notifications() {
 
                 <button
                   type="button"
-                  onClick={activeModal === "create_announcement" ? handlePostAnnouncement : handleUpdateAnnouncement}
+                  onClick={
+                    activeModal === "create_announcement"
+                      ? handlePostAnnouncement
+                      : handleUpdateAnnouncement
+                  }
                   style={{
                     backgroundColor: "#00B87C",
                     color: "white",
@@ -1328,7 +1435,9 @@ export function Notifications() {
                     cursor: "pointer",
                   }}
                 >
-                  {activeModal === "create_announcement" ? "Post Announcement" : "Save Changes"}
+                  {activeModal === "create_announcement"
+                    ? "Post Announcement"
+                    : "Save Changes"}
                 </button>
               </div>
             </div>
@@ -1362,9 +1471,12 @@ export function Notifications() {
             <div className="w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center mx-auto mb-4">
               <Trash2 className="text-rose-500" size={24} />
             </div>
-            <h3 className="text-lg font-bold text-foreground mb-2">Delete Announcement?</h3>
+            <h3 className="text-lg font-bold text-foreground mb-2">
+              Delete Announcement?
+            </h3>
             <p className="text-sm text-muted-foreground mb-6">
-              Are you sure you want to delete this announcement? This action cannot be undone.
+              Are you sure you want to delete this announcement? This action
+              cannot be undone.
             </p>
             <div className="flex gap-3 justify-center">
               <button
@@ -1376,7 +1488,9 @@ export function Notifications() {
               </button>
               <button
                 type="button"
-                onClick={() => handleDeleteAnnouncement(deleteAnnouncementConfirm.id)}
+                onClick={() =>
+                  handleDeleteAnnouncement(deleteAnnouncementConfirm.id)
+                }
                 className="px-4 py-2 rounded-xl text-sm font-semibold bg-rose-500 hover:bg-rose-600 text-white transition-colors cursor-pointer"
               >
                 Delete
@@ -1577,7 +1691,7 @@ const initialFinanceNotificationsList: FinanceNotificationItem[] = [
     section: "TODAY",
     category: "Alerts",
     path: "/reports",
-    state: { activeTab: "Tax Reports" }
+    state: { activeTab: "Tax Reports" },
   },
   {
     id: 2,
@@ -1589,7 +1703,7 @@ const initialFinanceNotificationsList: FinanceNotificationItem[] = [
     section: "TODAY",
     category: "Expenses",
     path: "/expenses",
-    state: { activeTab: "Pending" }
+    state: { activeTab: "Pending" },
   },
   {
     id: 3,
@@ -1600,7 +1714,7 @@ const initialFinanceNotificationsList: FinanceNotificationItem[] = [
     read: false,
     section: "TODAY",
     category: "Payroll",
-    path: "/payroll"
+    path: "/payroll",
   },
   {
     id: 4,
@@ -1612,7 +1726,7 @@ const initialFinanceNotificationsList: FinanceNotificationItem[] = [
     read: false,
     section: "TODAY",
     category: "Alerts",
-    path: "/finance/dashboard"
+    path: "/finance/dashboard",
   },
   {
     id: 5,
@@ -1624,7 +1738,7 @@ const initialFinanceNotificationsList: FinanceNotificationItem[] = [
     section: "TODAY",
     category: "System",
     path: "/appraisal",
-    state: { search: "Yuki Tanaka", employeeId: "EMP-002" }
+    state: { search: "Yuki Tanaka", employeeId: "EMP-002" },
   },
   {
     id: 6,
@@ -1635,7 +1749,7 @@ const initialFinanceNotificationsList: FinanceNotificationItem[] = [
     read: true,
     section: "YESTERDAY",
     category: "Payroll",
-    path: "/payroll"
+    path: "/payroll",
   },
   {
     id: 7,
@@ -1647,7 +1761,7 @@ const initialFinanceNotificationsList: FinanceNotificationItem[] = [
     section: "YESTERDAY",
     category: "Expenses",
     path: "/expenses",
-    state: { activeTab: "Rejected" }
+    state: { activeTab: "Rejected" },
   },
   {
     id: 8,
@@ -1658,7 +1772,7 @@ const initialFinanceNotificationsList: FinanceNotificationItem[] = [
     read: true,
     section: "YESTERDAY",
     category: "System",
-    path: "/settings"
+    path: "/settings",
   },
   {
     id: 9,
@@ -1669,7 +1783,7 @@ const initialFinanceNotificationsList: FinanceNotificationItem[] = [
     read: true,
     section: "THIS WEEK",
     category: "Alerts",
-    path: "/payroll"
+    path: "/payroll",
   },
   {
     id: 10,
@@ -1681,8 +1795,8 @@ const initialFinanceNotificationsList: FinanceNotificationItem[] = [
     section: "THIS WEEK",
     category: "System",
     path: "/reports",
-    state: { activeTab: "Tax Reports" }
-  }
+    state: { activeTab: "Tax Reports" },
+  },
 ];
 
 const loadFinanceNotifications = (): FinanceNotificationItem[] => {
@@ -1694,17 +1808,24 @@ const loadFinanceNotifications = (): FinanceNotificationItem[] => {
       console.error(e);
     }
   }
-  localStorage.setItem("nexus_finance_notifications", JSON.stringify(initialFinanceNotificationsList));
+  localStorage.setItem(
+    "nexus_finance_notifications",
+    JSON.stringify(initialFinanceNotificationsList),
+  );
   return initialFinanceNotificationsList;
 };
 
 function FinanceNotificationsView() {
   const navigate = useNavigate();
-  const [activeFilter, setActiveFilter] = useState<"All" | "Unread" | "Payroll" | "Expenses" | "System" | "Alerts">("All");
+  const [activeFilter, setActiveFilter] = useState<
+    "All" | "Unread" | "Payroll" | "Expenses" | "System" | "Alerts"
+  >("All");
   const [showPreferences, setShowPreferences] = useState(false);
 
   // Finance-specific Notifications state
-  const [financeNotifications, setFinanceNotifications] = useState<FinanceNotificationItem[]>(loadFinanceNotifications);
+  const [financeNotifications, setFinanceNotifications] = useState<
+    FinanceNotificationItem[]
+  >(loadFinanceNotifications);
 
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -1738,9 +1859,15 @@ function FinanceNotificationsView() {
   });
 
   const handleMarkAllRead = () => {
-    const updated = financeNotifications.map((n: FinanceNotificationItem) => ({ ...n, read: true }));
+    const updated = financeNotifications.map((n: FinanceNotificationItem) => ({
+      ...n,
+      read: true,
+    }));
     setFinanceNotifications(updated);
-    localStorage.setItem("nexus_finance_notifications", JSON.stringify(updated));
+    localStorage.setItem(
+      "nexus_finance_notifications",
+      JSON.stringify(updated),
+    );
     setToastMessage("All notifications marked as read");
     setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 3000);
@@ -1748,9 +1875,14 @@ function FinanceNotificationsView() {
 
   const handleRowClick = (notif: FinanceNotificationItem) => {
     // Mark row as read
-    const updated = financeNotifications.map((n: FinanceNotificationItem) => n.id === notif.id ? { ...n, read: true } : n);
+    const updated = financeNotifications.map((n: FinanceNotificationItem) =>
+      n.id === notif.id ? { ...n, read: true } : n,
+    );
     setFinanceNotifications(updated);
-    localStorage.setItem("nexus_finance_notifications", JSON.stringify(updated));
+    localStorage.setItem(
+      "nexus_finance_notifications",
+      JSON.stringify(updated),
+    );
     // Navigate with deep-linking state if present
     if (notif.state) {
       navigate(notif.path, { state: notif.state });
@@ -1759,11 +1891,19 @@ function FinanceNotificationsView() {
     }
   };
 
-  const handleDismissFinanceNotification = (id: number, e: React.MouseEvent) => {
+  const handleDismissFinanceNotification = (
+    id: number,
+    e: React.MouseEvent,
+  ) => {
     e.stopPropagation();
-    const updated = financeNotifications.filter((n: FinanceNotificationItem) => n.id !== id);
+    const updated = financeNotifications.filter(
+      (n: FinanceNotificationItem) => n.id !== id,
+    );
     setFinanceNotifications(updated);
-    localStorage.setItem("nexus_finance_notifications", JSON.stringify(updated));
+    localStorage.setItem(
+      "nexus_finance_notifications",
+      JSON.stringify(updated),
+    );
 
     setToastMessage("Notification dismissed");
     setShowSuccessToast(true);
@@ -1787,16 +1927,24 @@ function FinanceNotificationsView() {
   };
 
   // Dynamic KPI stats calculations
-  const unreadTodayCount = financeNotifications.filter((n: FinanceNotificationItem) => !n.read && n.section === "TODAY").length;
-  const pendingActionsCount = financeNotifications.filter((n: FinanceNotificationItem) => !n.read && (n.category === "Expenses" || n.category === "Alerts")).length;
+  const unreadTodayCount = financeNotifications.filter(
+    (n: FinanceNotificationItem) => !n.read && n.section === "TODAY",
+  ).length;
+  const pendingActionsCount = financeNotifications.filter(
+    (n: FinanceNotificationItem) =>
+      !n.read && (n.category === "Expenses" || n.category === "Alerts"),
+  ).length;
 
   const tabs = [
     { key: "All", label: `All (${financeNotifications.length})` },
-    { key: "Unread", label: `Unread (${financeNotifications.filter((n: FinanceNotificationItem) => !n.read).length})` },
+    {
+      key: "Unread",
+      label: `Unread (${financeNotifications.filter((n: FinanceNotificationItem) => !n.read).length})`,
+    },
     { key: "Payroll", label: "Payroll" },
     { key: "Expenses", label: "Expenses" },
     { key: "System", label: "System" },
-    { key: "Alerts", label: "Alerts" }
+    { key: "Alerts", label: "Alerts" },
   ] as const;
 
   const getIconDetails = (type: string) => {
@@ -1820,7 +1968,7 @@ function FinanceNotificationsView() {
     const sections: Record<string, typeof financeNotifications> = {
       TODAY: [],
       YESTERDAY: [],
-      "THIS WEEK": []
+      "THIS WEEK": [],
     };
     list.forEach((n: FinanceNotificationItem) => {
       if (sections[n.section]) {
@@ -1846,14 +1994,18 @@ function FinanceNotificationsView() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: "0 4px 12px rgba(245, 158, 11, 0.15)"
+              boxShadow: "0 4px 12px rgba(245, 158, 11, 0.15)",
             }}
           >
             <Bell size={22} color="#F59E0B" fill="#F59E0B" />
           </div>
           <div>
-            <h1 className="text-[26px] font-black text-[#1E293B] dark:text-white tracking-tight leading-none">Notifications</h1>
-            <p className="text-[13px] font-bold text-muted-foreground mt-1.5">Stay updated on payroll, expenses and financial alerts</p>
+            <h1 className="text-[26px] font-black text-[#1E293B] dark:text-white tracking-tight leading-none">
+              Notifications
+            </h1>
+            <p className="text-[13px] font-bold text-muted-foreground mt-1.5">
+              Stay updated on payroll, expenses and financial alerts
+            </p>
           </div>
         </div>
 
@@ -1876,7 +2028,11 @@ function FinanceNotificationsView() {
       {/* NOTIFICATION STATS ROW */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <KPICard title="UNREAD TODAY" value={unreadTodayCount} color="green" />
-        <KPICard title="PENDING ACTIONS" value={pendingActionsCount} color="green" />
+        <KPICard
+          title="PENDING ACTIONS"
+          value={pendingActionsCount}
+          color="green"
+        />
         <KPICard title="RESOLVED TODAY" value={8} color="green" />
       </div>
 
@@ -1890,7 +2046,9 @@ function FinanceNotificationsView() {
                 key={tab.key}
                 onClick={() => setActiveFilter(tab.key)}
                 className={`px-6 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap cursor-pointer ${
-                  isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"
+                  isActive
+                    ? "text-[#00B87C]"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {tab.label}
@@ -1907,7 +2065,7 @@ function FinanceNotificationsView() {
 
         {/* NOTIFICATION LIST CARD */}
         <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-0">
-          {Object.keys(grouped).map(sectionKey => {
+          {Object.keys(grouped).map((sectionKey) => {
             const items = grouped[sectionKey];
             if (items.length === 0) return null;
             return (
@@ -1923,7 +2081,7 @@ function FinanceNotificationsView() {
                     padding: "12px 24px",
                     borderBottom: "1px solid var(--border)",
                     backgroundColor: "var(--background)",
-                    opacity: 0.8
+                    opacity: 0.8,
                   }}
                 >
                   {sectionKey}
@@ -1939,8 +2097,8 @@ function FinanceNotificationsView() {
                         : "border-l-[3px] border-[#00B87C]"
                       : "border-l-[3px] border-transparent";
 
-                    const bgTint = !notif.read 
-                      ? "bg-[#F0FDF4] dark:bg-emerald-500/5" 
+                    const bgTint = !notif.read
+                      ? "bg-[#F0FDF4] dark:bg-emerald-500/5"
                       : "bg-transparent";
 
                     return (
@@ -1961,7 +2119,7 @@ function FinanceNotificationsView() {
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
-                              flexShrink: 0
+                              flexShrink: 0,
                             }}
                           >
                             <details.icon size={18} color={details.color} />
@@ -1990,13 +2148,15 @@ function FinanceNotificationsView() {
                                   width: "8px",
                                   height: "8px",
                                   borderRadius: "50%",
-                                  backgroundColor: "#00B87C"
+                                  backgroundColor: "#00B87C",
                                 }}
                               />
                             )}
                           </div>
                           <button
-                            onClick={(e) => handleDismissFinanceNotification(notif.id, e)}
+                            onClick={(e) =>
+                              handleDismissFinanceNotification(notif.id, e)
+                            }
                             className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
                             aria-label="Dismiss notification"
                           >
@@ -2023,7 +2183,7 @@ function FinanceNotificationsView() {
               inset: 0,
               backgroundColor: "rgba(0,0,0,0.3)",
               zIndex: 2000,
-              backdropFilter: "blur(2px)"
+              backdropFilter: "blur(2px)",
             }}
             onClick={() => setShowPreferences(false)}
           />
@@ -2038,14 +2198,16 @@ function FinanceNotificationsView() {
               boxShadow: "-4px 0 20px rgba(0,0,0,0.15)",
               padding: "28px",
               display: "flex",
-              flexDirection: "column"
+              flexDirection: "column",
             }}
           >
             {/* Drawer Header */}
             <div className="flex justify-between items-center pb-6 border-b border-border/80">
               <div className="flex items-center gap-3">
                 <Settings size={20} className="text-[#00B87C]" />
-                <h2 className="text-[18px] font-black text-foreground tracking-tight">Notification Preferences</h2>
+                <h2 className="text-[18px] font-black text-foreground tracking-tight">
+                  Notification Preferences
+                </h2>
               </div>
               <button
                 onClick={() => setShowPreferences(false)}
@@ -2061,54 +2223,84 @@ function FinanceNotificationsView() {
                 label="TDS / Tax Deadlines"
                 desc="Critical payroll alerts"
                 value={preferences.tds}
-                onChange={() => setPreferences(prev => ({ ...prev, tds: !prev.tds }))}
+                onChange={() =>
+                  setPreferences((prev) => ({ ...prev, tds: !prev.tds }))
+                }
               />
               <ToggleRow
                 label="Expense Claim Alerts"
                 desc="New claims submitted"
                 value={preferences.expenses}
-                onChange={() => setPreferences(prev => ({ ...prev, expenses: !prev.expenses }))}
+                onChange={() =>
+                  setPreferences((prev) => ({
+                    ...prev,
+                    expenses: !prev.expenses,
+                  }))
+                }
               />
               <ToggleRow
                 label="Payroll Processing"
                 desc="Stage updates"
                 value={preferences.payroll}
-                onChange={() => setPreferences(prev => ({ ...prev, payroll: !prev.payroll }))}
+                onChange={() =>
+                  setPreferences((prev) => ({
+                    ...prev,
+                    payroll: !prev.payroll,
+                  }))
+                }
               />
               <ToggleRow
                 label="Increment Approvals"
                 desc="Pending your action"
                 value={preferences.increments}
-                onChange={() => setPreferences(prev => ({ ...prev, increments: !prev.increments }))}
+                onChange={() =>
+                  setPreferences((prev) => ({
+                    ...prev,
+                    increments: !prev.increments,
+                  }))
+                }
               />
               <ToggleRow
                 label="Budget Alerts"
                 desc="Department over-budget"
                 value={preferences.budget}
-                onChange={() => setPreferences(prev => ({ ...prev, budget: !prev.budget }))}
+                onChange={() =>
+                  setPreferences((prev) => ({ ...prev, budget: !prev.budget }))
+                }
               />
               <ToggleRow
                 label="System Maintenance"
                 desc="Scheduled downtime"
                 value={preferences.maintenance}
-                onChange={() => setPreferences(prev => ({ ...prev, maintenance: !prev.maintenance }))}
+                onChange={() =>
+                  setPreferences((prev) => ({
+                    ...prev,
+                    maintenance: !prev.maintenance,
+                  }))
+                }
               />
               <ToggleRow
                 label="PF/ESI Reminders"
                 desc="Statutory deadlines"
                 value={preferences.pf}
-                onChange={() => setPreferences(prev => ({ ...prev, pf: !prev.pf }))}
+                onChange={() =>
+                  setPreferences((prev) => ({ ...prev, pf: !prev.pf }))
+                }
               />
 
               {/* Channels checkboxes layout */}
               <div className="mt-8 pt-6 border-t border-border">
-                <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">Notification Channels</h3>
+                <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">
+                  Notification Channels
+                </h3>
                 <div className="space-y-3">
                   <label className="flex items-center gap-3 text-[13px] font-bold text-foreground cursor-pointer group">
                     <input
                       type="checkbox"
                       checked={channels.email}
-                      onChange={() => setChannels(prev => ({ ...prev, email: !prev.email }))}
+                      onChange={() =>
+                        setChannels((prev) => ({ ...prev, email: !prev.email }))
+                      }
                       className="w-4 h-4 rounded border-slate-300 text-[#00B87C] focus:ring-[#00B87C] cursor-pointer"
                       style={{ accentColor: "#00B87C" }}
                     />
@@ -2118,7 +2310,9 @@ function FinanceNotificationsView() {
                     <input
                       type="checkbox"
                       checked={channels.push}
-                      onChange={() => setChannels(prev => ({ ...prev, push: !prev.push }))}
+                      onChange={() =>
+                        setChannels((prev) => ({ ...prev, push: !prev.push }))
+                      }
                       className="w-4 h-4 rounded border-slate-300 text-[#00B87C] focus:ring-[#00B87C] cursor-pointer"
                       style={{ accentColor: "#00B87C" }}
                     />
@@ -2128,7 +2322,9 @@ function FinanceNotificationsView() {
                     <input
                       type="checkbox"
                       checked={channels.sms}
-                      onChange={() => setChannels(prev => ({ ...prev, sms: !prev.sms }))}
+                      onChange={() =>
+                        setChannels((prev) => ({ ...prev, sms: !prev.sms }))
+                      }
                       className="w-4 h-4 rounded border-slate-300 text-[#00B87C] focus:ring-[#00B87C] cursor-pointer"
                       style={{ accentColor: "#00B87C" }}
                     />
@@ -2181,16 +2377,40 @@ function FinanceNotificationsView() {
 }
 
 // ─── PRIVATE COMPONENTS FOR FINANCE NOTIFICATIONS ──────────────────
-function KPICard({ title, value, color }: { title: string; value: number; color: "amber" | "red" | "green" }) {
+function KPICard({
+  title,
+  value,
+  color,
+}: {
+  title: string;
+  value: number;
+  color: "amber" | "red" | "green";
+}) {
   const colors = {
-    amber: { text: "text-[#D97706]", bg: "bg-[#FEF3C7]/40 dark:bg-amber-500/5", border: "border-amber-100/50 dark:border-amber-500/10" },
-    red: { text: "text-rose-500", bg: "bg-rose-50 dark:bg-rose-500/5", border: "border-rose-100/50 dark:border-rose-500/10" },
-    green: { text: "text-[#00B87C]", bg: "bg-[#F0FDF4]/40 dark:bg-emerald-500/5", border: "border-[#00B87C]/20 dark:border-emerald-500/10" }
+    amber: {
+      text: "text-[#D97706]",
+      bg: "bg-[#FEF3C7]/40 dark:bg-amber-500/5",
+      border: "border-amber-100/50 dark:border-amber-500/10",
+    },
+    red: {
+      text: "text-rose-500",
+      bg: "bg-rose-50 dark:bg-rose-500/5",
+      border: "border-rose-100/50 dark:border-rose-500/10",
+    },
+    green: {
+      text: "text-[#00B87C]",
+      bg: "bg-[#F0FDF4]/40 dark:bg-emerald-500/5",
+      border: "border-[#00B87C]/20 dark:border-emerald-500/10",
+    },
   };
 
   return (
-    <div className={`p-6 bg-card border ${colors[color].border} ${colors[color].bg} rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all`}>
-      <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">{title}</p>
+    <div
+      className={`p-6 bg-card border ${colors[color].border} ${colors[color].bg} rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all`}
+    >
+      <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">
+        {title}
+      </p>
       <h3 className={`text-[28px] font-bold ${colors[color].text}`}>{value}</h3>
     </div>
   );
@@ -2200,7 +2420,7 @@ function ToggleRow({
   label,
   desc,
   value,
-  onChange
+  onChange,
 }: {
   label: string;
   desc: string;
@@ -2210,8 +2430,12 @@ function ToggleRow({
   return (
     <div className="flex items-center justify-between py-3.5 border-b border-border/40">
       <div>
-        <p className="text-[13px] font-bold text-foreground leading-tight">{label}</p>
-        <p className="text-[11px] font-semibold text-muted-foreground mt-1">{desc}</p>
+        <p className="text-[13px] font-bold text-foreground leading-tight">
+          {label}
+        </p>
+        <p className="text-[11px] font-semibold text-muted-foreground mt-1">
+          {desc}
+        </p>
       </div>
       <button
         onClick={onChange}
@@ -2242,4 +2466,3 @@ function ToggleRow({
     </div>
   );
 }
-

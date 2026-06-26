@@ -483,7 +483,11 @@ export function EmployeeExpenses() {
       showToast("Missing Title", "error", "Please enter an expense title.");
       return;
     }
-    if (!newExpenseAmount || isNaN(Number(newExpenseAmount)) || Number(newExpenseAmount) <= 0) {
+    if (
+      !newExpenseAmount ||
+      isNaN(Number(newExpenseAmount)) ||
+      Number(newExpenseAmount) <= 0
+    ) {
       showToast("Invalid Amount", "error", "Please enter a valid amount.");
       return;
     }
@@ -492,7 +496,17 @@ export function EmployeeExpenses() {
       title: newExpenseTitle,
       vendor: newExpenseVendor || `${newExpenseCat} expense`,
       category: newExpenseCat as ExpenseCategory,
-      date: newExpenseDate ? new Date(newExpenseDate).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+      date: newExpenseDate
+        ? new Date(newExpenseDate).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })
+        : new Date().toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          }),
       amount: Number(newExpenseAmount),
       receiptStatus: "Pending",
       status: "Pending",
@@ -500,8 +514,12 @@ export function EmployeeExpenses() {
       project: "Operations",
       paymentMode: newExpensePayment,
     };
-    setExpenses(prev => [newExp, ...prev]);
-    showToast("Expense Submitted", "success", "Your expense claim has been submitted for review.");
+    setExpenses((prev) => [newExp, ...prev]);
+    showToast(
+      "Expense Submitted",
+      "success",
+      "Your expense claim has been submitted for review.",
+    );
     setShowAddModal(false);
     setNewExpenseTitle("");
     setNewExpenseAmount("");
@@ -1108,11 +1126,13 @@ export function EmployeeExpenses() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">TITLE *</label>
+                  <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                    TITLE *
+                  </label>
                   <input
                     type="text"
                     value={newExpenseTitle}
-                    onChange={e => setNewExpenseTitle(e.target.value)}
+                    onChange={(e) => setNewExpenseTitle(e.target.value)}
                     placeholder="e.g. Flight to Delhi"
                     className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
                   />
@@ -1120,21 +1140,25 @@ export function EmployeeExpenses() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">AMOUNT (₹) *</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                      AMOUNT (₹) *
+                    </label>
                     <input
                       type="number"
                       value={newExpenseAmount}
-                      onChange={e => setNewExpenseAmount(e.target.value)}
+                      onChange={(e) => setNewExpenseAmount(e.target.value)}
                       placeholder="0.00"
                       className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-black text-foreground outline-none focus:border-primary transition-colors"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">VENDOR / MERCHANT</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                      VENDOR / MERCHANT
+                    </label>
                     <input
                       type="text"
                       value={newExpenseVendor}
-                      onChange={e => setNewExpenseVendor(e.target.value)}
+                      onChange={(e) => setNewExpenseVendor(e.target.value)}
                       placeholder="e.g. Indigo Airlines"
                       className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
                     />
@@ -1143,19 +1167,23 @@ export function EmployeeExpenses() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">DATE</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                      DATE
+                    </label>
                     <input
                       type="date"
                       value={newExpenseDate}
-                      onChange={e => setNewExpenseDate(e.target.value)}
+                      onChange={(e) => setNewExpenseDate(e.target.value)}
                       className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">PAYMENT MODE</label>
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                      PAYMENT MODE
+                    </label>
                     <select
                       value={newExpensePayment}
-                      onChange={e => setNewExpensePayment(e.target.value)}
+                      onChange={(e) => setNewExpensePayment(e.target.value)}
                       className="w-full px-4 h-[44px] bg-card border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-colors"
                     >
                       <option>Personal Card</option>

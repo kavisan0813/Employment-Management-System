@@ -82,32 +82,61 @@ const MOCK_TEAM_PERFORMANCE = [
   },
 ];
 
-const MOCK_COMPLETED_REVIEWS: Record<string, {
-  competencies: Record<string, { rating: number; comment: string }>;
-  goals: Record<string, { status: string; comment: string }>;
-  strengths: string;
-  developmentAreas: string;
-  promoRecommended: boolean;
-  promoJustification: string;
-}> = {
+const MOCK_COMPLETED_REVIEWS: Record<
+  string,
+  {
+    competencies: Record<string, { rating: number; comment: string }>;
+    goals: Record<string, { status: string; comment: string }>;
+    strengths: string;
+    developmentAreas: string;
+    promoRecommended: boolean;
+    promoJustification: string;
+  }
+> = {
   p1: {
     competencies: {
-      c1: { rating: 5, comment: "Exceptional coding standards and system design capabilities." },
+      c1: {
+        rating: 5,
+        comment: "Exceptional coding standards and system design capabilities.",
+      },
       c2: { rating: 4, comment: "Handles tough production issues with ease." },
-      c3: { rating: 4, comment: "Communicates technical concepts clearly to stakeholders." },
-      c4: { rating: 5, comment: "Great mentor, goes out of his way to help others." },
+      c3: {
+        rating: 4,
+        comment: "Communicates technical concepts clearly to stakeholders.",
+      },
+      c4: {
+        rating: 5,
+        comment: "Great mentor, goes out of his way to help others.",
+      },
       c5: { rating: 5, comment: "Always delivers milestones on time." },
-      c6: { rating: 4, comment: "Demonstrates strong leadership traits in architecture discussions." }
+      c6: {
+        rating: 4,
+        comment:
+          "Demonstrates strong leadership traits in architecture discussions.",
+      },
     },
     goals: {
-      g1: { status: "Met", comment: "Frontend migration was completed ahead of schedule." },
-      g2: { status: "Met", comment: "Reduced bundle size by 18%, exceeding the target of 15%." },
-      g3: { status: "Partially Met", comment: "Mentored one developer fully; second developer onboarding is ongoing." }
+      g1: {
+        status: "Met",
+        comment: "Frontend migration was completed ahead of schedule.",
+      },
+      g2: {
+        status: "Met",
+        comment: "Reduced bundle size by 18%, exceeding the target of 15%.",
+      },
+      g3: {
+        status: "Partially Met",
+        comment:
+          "Mentored one developer fully; second developer onboarding is ongoing.",
+      },
     },
-    strengths: "System design, high technical expertise, mentorship, and delivery reliability.",
-    developmentAreas: "Could work on delegating more tasks to team members to scale impact.",
+    strengths:
+      "System design, high technical expertise, mentorship, and delivery reliability.",
+    developmentAreas:
+      "Could work on delegating more tasks to team members to scale impact.",
     promoRecommended: true,
-    promoJustification: "Arjun has consistently performed at a Lead Engineer level over the past year."
+    promoJustification:
+      "Arjun has consistently performed at a Lead Engineer level over the past year.",
   },
   p4: {
     competencies: {
@@ -116,37 +145,65 @@ const MOCK_COMPLETED_REVIEWS: Record<string, {
       c3: { rating: 4, comment: "Collaborates well across the backend team." },
       c4: { rating: 4, comment: "Proactive in code reviews." },
       c5: { rating: 4, comment: "Good ownership of backend modules." },
-      c6: { rating: 3, comment: "Starting to take initiative on design docs." }
+      c6: { rating: 3, comment: "Starting to take initiative on design docs." },
     },
     goals: {
-      g1: { status: "Met", comment: "Successfully supported the migration API requirements." },
+      g1: {
+        status: "Met",
+        comment: "Successfully supported the migration API requirements.",
+      },
       g2: { status: "Met", comment: "Optimized DB queries to reduce load." },
-      g3: { status: "Met", comment: "Mentored a junior backend developer." }
+      g3: { status: "Met", comment: "Mentored a junior backend developer." },
     },
-    strengths: "Database optimization, API security, and collaborative team player.",
-    developmentAreas: "Focus on presenting technical architecture diagrams to larger audiences.",
+    strengths:
+      "Database optimization, API security, and collaborative team player.",
+    developmentAreas:
+      "Focus on presenting technical architecture diagrams to larger audiences.",
     promoRecommended: false,
-    promoJustification: ""
+    promoJustification: "",
   },
   p5: {
     competencies: {
-      c1: { rating: 5, comment: "Outstanding technical architect. Highly proficient." },
-      c2: { rating: 5, comment: "Solves deep technical bugs quickly and cleanly." },
+      c1: {
+        rating: 5,
+        comment: "Outstanding technical architect. Highly proficient.",
+      },
+      c2: {
+        rating: 5,
+        comment: "Solves deep technical bugs quickly and cleanly.",
+      },
       c3: { rating: 4, comment: "Articulate and constructive." },
       c4: { rating: 5, comment: "Excellent collaborator, loved by the team." },
-      c5: { rating: 5, comment: "Exceptional delivery speed and code quality." },
-      c6: { rating: 5, comment: "Natural leader, runs standups and sprint planning efficiently." }
+      c5: {
+        rating: 5,
+        comment: "Exceptional delivery speed and code quality.",
+      },
+      c6: {
+        rating: 5,
+        comment:
+          "Natural leader, runs standups and sprint planning efficiently.",
+      },
     },
     goals: {
       g1: { status: "Met", comment: "Flawless React 18 migration execution." },
-      g2: { status: "Met", comment: "Exceeded bundle size goal (reduced by 21%)." },
-      g3: { status: "Met", comment: "Excellent mentorship, both juniors have leveled up significantly." }
+      g2: {
+        status: "Met",
+        comment: "Exceeded bundle size goal (reduced by 21%).",
+      },
+      g3: {
+        status: "Met",
+        comment:
+          "Excellent mentorship, both juniors have leveled up significantly.",
+      },
     },
-    strengths: "Technical leadership, extreme ownership, mentoring, and execution speed.",
-    developmentAreas: "Continue expanding influence to cross-functional product strategy.",
+    strengths:
+      "Technical leadership, extreme ownership, mentoring, and execution speed.",
+    developmentAreas:
+      "Continue expanding influence to cross-functional product strategy.",
     promoRecommended: true,
-    promoJustification: "Aisha is a stellar candidate for promotion to Lead/Staff level. Highly recommended."
-  }
+    promoJustification:
+      "Aisha is a stellar candidate for promotion to Lead/Staff level. Highly recommended.",
+  },
 };
 
 const COMPETENCIES = [
@@ -196,7 +253,9 @@ const GOALS = [
 
 export function ManagerTeamPerformance() {
   const [teamPerformance, setTeamPerformance] = useState(MOCK_TEAM_PERFORMANCE);
-  const [completedReviews, setCompletedReviews] = useState(MOCK_COMPLETED_REVIEWS);
+  const [completedReviews, setCompletedReviews] = useState(
+    MOCK_COMPLETED_REVIEWS,
+  );
 
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [reviewingEmp, setReviewingEmp] = useState<
@@ -236,19 +295,32 @@ export function ManagerTeamPerformance() {
   });
 
   const handleExport = () => {
-    const headers = ["Employee ID", "Name", "Designation", "Department", "Self Rating", "Manager Rating", "Goals Met", "Goals Total", "Final Score", "Status"];
-    const rows = filteredPerformance.map((row) => [
-      row.id,
-      `"${row.name}"`,
-      `"${row.designation}"`,
-      `"${row.dept}"`,
-      row.selfRating,
-      `"${row.managerRating}"`,
-      row.goalsMet,
-      row.goalsTotal,
-      row.finalScore,
-      row.status,
-    ].join(","));
+    const headers = [
+      "Employee ID",
+      "Name",
+      "Designation",
+      "Department",
+      "Self Rating",
+      "Manager Rating",
+      "Goals Met",
+      "Goals Total",
+      "Final Score",
+      "Status",
+    ];
+    const rows = filteredPerformance.map((row) =>
+      [
+        row.id,
+        `"${row.name}"`,
+        `"${row.designation}"`,
+        `"${row.dept}"`,
+        row.selfRating,
+        `"${row.managerRating}"`,
+        row.goalsMet,
+        row.goalsTotal,
+        row.finalScore,
+        row.status,
+      ].join(","),
+    );
     const csv = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -257,13 +329,21 @@ export function ManagerTeamPerformance() {
     a.download = "team_performance_export.csv";
     a.click();
     URL.revokeObjectURL(url);
-    showToast("Exported!", "success", "Team performance report downloaded as CSV.");
+    showToast(
+      "Exported!",
+      "success",
+      "Team performance report downloaded as CSV.",
+    );
   };
 
   const handleExportScorecard = (emp: (typeof MOCK_TEAM_PERFORMANCE)[0]) => {
     const reviewDetails = completedReviews[emp.id];
     if (!reviewDetails) {
-      showToast("No Review Data", "error", "No completed review data found for this employee.");
+      showToast(
+        "No Review Data",
+        "error",
+        "No completed review data found for this employee.",
+      );
       return;
     }
     const lines = [
@@ -335,7 +415,9 @@ export function ManagerTeamPerformance() {
       setGoalStatus(goalStatusMap);
       setGoalComments(goalCommentsMap);
 
-      setOverrideRating(emp.status === "Completed" && emp.finalScore !== "Pending");
+      setOverrideRating(
+        emp.status === "Completed" && emp.finalScore !== "Pending",
+      );
       setFinalRating(emp.finalScore !== "Pending" ? emp.finalScore : "Exceeds");
       setPromoRec(draft.promoRecommended);
       setStrengths(draft.strengths);
@@ -384,7 +466,10 @@ export function ManagerTeamPerformance() {
       ),
     );
 
-    const finalCompetencies: Record<string, { rating: number; comment: string }> = {};
+    const finalCompetencies: Record<
+      string,
+      { rating: number; comment: string }
+    > = {};
     COMPETENCIES.forEach((comp) => {
       finalCompetencies[comp.id] = {
         rating: compRatings[comp.id] || 3,
@@ -416,7 +501,7 @@ export function ManagerTeamPerformance() {
     showToast(
       isSubmit ? "Submitted!" : "Saved!",
       "success",
-      isSubmit ? "Review submitted successfully." : "Draft saved successfully."
+      isSubmit ? "Review submitted successfully." : "Draft saved successfully.",
     );
   };
 
@@ -1089,257 +1174,336 @@ export function ManagerTeamPerformance() {
       )}
 
       {/* VIEW PERFORMANCE SCORECARD MODAL */}
-      {viewModalOpen && viewingEmp && (() => {
-        const defaultReview = {
-          competencies: {
-            c1: { rating: 4, comment: "Demonstrates solid technical capabilities." },
-            c2: { rating: 4, comment: "Analytically strong and resolves issues methodically." },
-            c3: { rating: 4, comment: "Communication is clear and professional." },
-            c4: { rating: 4, comment: "Collaborates effectively within the team." },
-            c5: { rating: 4, comment: "Consistent delivery of assigned responsibilities." },
-            c6: { rating: 3, comment: "Actively participates and takes ownership when prompted." }
-          },
-          goals: {
-            g1: { status: "Met", comment: "Met the core objectives of this goal." },
-            g2: { status: "Met", comment: "Successfully accomplished bundle size reductions." },
-            g3: { status: "Met", comment: "Helped guide junior members during onboarding." }
-          },
-          strengths: "Dependable, technical skills, and team-oriented approach.",
-          developmentAreas: "Continue to drive initiatives independently and build leadership capability.",
-          promoRecommended: false,
-          promoJustification: ""
-        };
+      {viewModalOpen &&
+        viewingEmp &&
+        (() => {
+          const defaultReview = {
+            competencies: {
+              c1: {
+                rating: 4,
+                comment: "Demonstrates solid technical capabilities.",
+              },
+              c2: {
+                rating: 4,
+                comment:
+                  "Analytically strong and resolves issues methodically.",
+              },
+              c3: {
+                rating: 4,
+                comment: "Communication is clear and professional.",
+              },
+              c4: {
+                rating: 4,
+                comment: "Collaborates effectively within the team.",
+              },
+              c5: {
+                rating: 4,
+                comment: "Consistent delivery of assigned responsibilities.",
+              },
+              c6: {
+                rating: 3,
+                comment:
+                  "Actively participates and takes ownership when prompted.",
+              },
+            },
+            goals: {
+              g1: {
+                status: "Met",
+                comment: "Met the core objectives of this goal.",
+              },
+              g2: {
+                status: "Met",
+                comment: "Successfully accomplished bundle size reductions.",
+              },
+              g3: {
+                status: "Met",
+                comment: "Helped guide junior members during onboarding.",
+              },
+            },
+            strengths:
+              "Dependable, technical skills, and team-oriented approach.",
+            developmentAreas:
+              "Continue to drive initiatives independently and build leadership capability.",
+            promoRecommended: false,
+            promoJustification: "",
+          };
 
-        const reviewDetails = completedReviews[viewingEmp.id] || defaultReview;
+          const reviewDetails =
+            completedReviews[viewingEmp.id] || defaultReview;
 
-        return (
-          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="w-full max-w-[640px] max-h-[90vh] bg-card rounded-2xl shadow-2xl border border-border flex flex-col animate-in zoom-in-95">
-              {/* Header */}
-              <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-secondary/30 shrink-0 rounded-t-2xl">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-[10px] bg-emerald-500/15 flex items-center justify-center text-emerald-500">
-                    <CheckCircle2 size={20} className="text-emerald-500" />
+          return (
+            <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+              <div className="w-full max-w-[640px] max-h-[90vh] bg-card rounded-2xl shadow-2xl border border-border flex flex-col animate-in zoom-in-95">
+                {/* Header */}
+                <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-secondary/30 shrink-0 rounded-t-2xl">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-[10px] bg-emerald-500/15 flex items-center justify-center text-emerald-500">
+                      <CheckCircle2 size={20} className="text-emerald-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-foreground leading-none mb-1">
+                        Performance Scorecard
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-muted-foreground">
+                          {viewingEmp.name}
+                        </span>
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-bold uppercase tracking-wider rounded-full">
+                          Submitted
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-foreground leading-none mb-1">
-                      Performance Scorecard
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-muted-foreground">
+                  <button
+                    onClick={() => setViewModalOpen(false)}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-800 text-muted-foreground transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                {/* Body */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                  {/* Profile Details */}
+                  <div className="flex items-center gap-4 bg-secondary/50 p-4 rounded-xl border border-border/50">
+                    <img
+                      src={viewingEmp.avatar}
+                      className="w-12 h-12 rounded-full border-2 border-background shadow-sm"
+                    />
+                    <div>
+                      <h4 className="text-base font-bold text-foreground">
                         {viewingEmp.name}
-                      </span>
-                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-bold uppercase tracking-wider rounded-full">
-                        Submitted
-                      </span>
+                      </h4>
+                      <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground font-medium">
+                        <span>{viewingEmp.designation}</span>
+                        <span className="w-1 h-1 rounded-full bg-border"></span>
+                        <span className="px-1.5 py-0.5 bg-background border border-border rounded text-[11px] uppercase font-bold">
+                          {viewingEmp.dept}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <button
-                  onClick={() => setViewModalOpen(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-800 text-muted-foreground transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
 
-              {/* Body */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                {/* Profile Details */}
-                <div className="flex items-center gap-4 bg-secondary/50 p-4 rounded-xl border border-border/50">
-                  <img
-                    src={viewingEmp.avatar}
-                    className="w-12 h-12 rounded-full border-2 border-background shadow-sm"
-                  />
+                  {/* Metric Cards Summary */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="bg-background border border-border rounded-xl p-3 text-center">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        Final Score
+                      </span>
+                      <div className="mt-1.5 flex justify-center">
+                        {getScoreChip(viewingEmp.finalScore)}
+                      </div>
+                    </div>
+                    <div className="bg-background border border-border rounded-xl p-3 text-center">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        Manager Rating
+                      </span>
+                      <div className="mt-1 flex items-center justify-center gap-1 text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                        <Star size={14} fill="currentColor" />
+                        <span>
+                          {viewingEmp.managerRating.replace(" you", "")}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="bg-background border border-border rounded-xl p-3 text-center">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        Self Rating
+                      </span>
+                      <div className="mt-1 flex items-center justify-center gap-1 text-sm font-bold text-amber-500">
+                        <Star size={14} fill="currentColor" />
+                        <span>{viewingEmp.selfRating}</span>
+                      </div>
+                    </div>
+                    <div className="bg-background border border-border rounded-xl p-3 text-center">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        Goals Met
+                      </span>
+                      <div className="mt-1 flex items-center justify-center gap-1 text-sm font-bold text-foreground">
+                        <Target size={14} className="text-muted-foreground" />
+                        <span>
+                          {viewingEmp.goalsMet}/{viewingEmp.goalsTotal}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Competency Ratings Section */}
                   <div>
-                    <h4 className="text-base font-bold text-foreground">
-                      {viewingEmp.name}
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 border-b border-border pb-2">
+                      Competency Scores & Feedback
                     </h4>
-                    <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground font-medium">
-                      <span>{viewingEmp.designation}</span>
-                      <span className="w-1 h-1 rounded-full bg-border"></span>
-                      <span className="px-1.5 py-0.5 bg-background border border-border rounded text-[11px] uppercase font-bold">
-                        {viewingEmp.dept}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Metric Cards Summary */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div className="bg-background border border-border rounded-xl p-3 text-center">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Final Score</span>
-                    <div className="mt-1.5 flex justify-center">{getScoreChip(viewingEmp.finalScore)}</div>
-                  </div>
-                  <div className="bg-background border border-border rounded-xl p-3 text-center">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Manager Rating</span>
-                    <div className="mt-1 flex items-center justify-center gap-1 text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                      <Star size={14} fill="currentColor" />
-                      <span>{viewingEmp.managerRating.replace(" you", "")}</span>
-                    </div>
-                  </div>
-                  <div className="bg-background border border-border rounded-xl p-3 text-center">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Self Rating</span>
-                    <div className="mt-1 flex items-center justify-center gap-1 text-sm font-bold text-amber-500">
-                      <Star size={14} fill="currentColor" />
-                      <span>{viewingEmp.selfRating}</span>
-                    </div>
-                  </div>
-                  <div className="bg-background border border-border rounded-xl p-3 text-center">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Goals Met</span>
-                    <div className="mt-1 flex items-center justify-center gap-1 text-sm font-bold text-foreground">
-                      <Target size={14} className="text-muted-foreground" />
-                      <span>{viewingEmp.goalsMet}/{viewingEmp.goalsTotal}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Competency Ratings Section */}
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 border-b border-border pb-2">
-                    Competency Scores & Feedback
-                  </h4>
-                  <div className="space-y-3.5">
-                    {COMPETENCIES.map((comp) => {
-                      const score = reviewDetails.competencies[comp.id]?.rating || 4;
-                      const comment = reviewDetails.competencies[comp.id]?.comment || "";
-                      return (
-                        <div key={comp.id} className="bg-background border border-border rounded-xl p-4">
-                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-2.5">
-                            <div>
-                              <p className="text-sm font-bold text-foreground">{comp.name}</p>
-                              <p className="text-[11px] text-muted-foreground mt-0.5">{comp.desc}</p>
-                            </div>
-                            <div className="flex items-center gap-3 shrink-0">
-                              <div className="flex items-center gap-1">
-                                {[1, 2, 3, 4, 5].map((num) => (
-                                  <span
-                                    key={num}
-                                    className={`w-6 h-6 flex items-center justify-center rounded text-[10px] font-bold border ${
-                                      num === score
-                                        ? getRatingColor(num, true)
-                                        : "bg-secondary text-muted-foreground border-transparent"
-                                    }`}
-                                  >
-                                    {num}
-                                  </span>
-                                ))}
+                    <div className="space-y-3.5">
+                      {COMPETENCIES.map((comp) => {
+                        const score =
+                          reviewDetails.competencies[comp.id]?.rating || 4;
+                        const comment =
+                          reviewDetails.competencies[comp.id]?.comment || "";
+                        return (
+                          <div
+                            key={comp.id}
+                            className="bg-background border border-border rounded-xl p-4"
+                          >
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-2.5">
+                              <div>
+                                <p className="text-sm font-bold text-foreground">
+                                  {comp.name}
+                                </p>
+                                <p className="text-[11px] text-muted-foreground mt-0.5">
+                                  {comp.desc}
+                                </p>
                               </div>
-                              <div className="text-[10px] font-bold text-muted-foreground bg-secondary px-1.5 py-0.5 rounded border border-border shrink-0">
-                                Self: ⭐{comp.self}
+                              <div className="flex items-center gap-3 shrink-0">
+                                <div className="flex items-center gap-1">
+                                  {[1, 2, 3, 4, 5].map((num) => (
+                                    <span
+                                      key={num}
+                                      className={`w-6 h-6 flex items-center justify-center rounded text-[10px] font-bold border ${
+                                        num === score
+                                          ? getRatingColor(num, true)
+                                          : "bg-secondary text-muted-foreground border-transparent"
+                                      }`}
+                                    >
+                                      {num}
+                                    </span>
+                                  ))}
+                                </div>
+                                <div className="text-[10px] font-bold text-muted-foreground bg-secondary px-1.5 py-0.5 rounded border border-border shrink-0">
+                                  Self: ⭐{comp.self}
+                                </div>
                               </div>
                             </div>
+                            {comment && (
+                              <div className="mt-2.5 p-2.5 bg-secondary/60 rounded-lg border border-border/50 text-xs text-foreground italic flex gap-2">
+                                <MessageSquare
+                                  size={12}
+                                  className="text-muted-foreground shrink-0 mt-0.5"
+                                />
+                                <span>"{comment}"</span>
+                              </div>
+                            )}
                           </div>
-                          {comment && (
-                            <div className="mt-2.5 p-2.5 bg-secondary/60 rounded-lg border border-border/50 text-xs text-foreground italic flex gap-2">
-                              <MessageSquare size={12} className="text-muted-foreground shrink-0 mt-0.5" />
-                              <span>"{comment}"</span>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Goals Review Section */}
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 border-b border-border pb-2 flex items-center gap-2">
+                      <Target size={14} /> Goal Achievements
+                    </h4>
+                    <div className="space-y-3">
+                      {GOALS.map((goal) => {
+                        const gInfo = reviewDetails.goals[goal.id] || {
+                          status: "Met",
+                          comment: "",
+                        };
+                        return (
+                          <div
+                            key={goal.id}
+                            className="bg-background border border-border rounded-xl p-4"
+                          >
+                            <div className="flex items-center justify-between gap-3 mb-2">
+                              <p className="text-sm font-bold text-foreground">
+                                {goal.text}
+                              </p>
+                              <span
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                                  gInfo.status === "Met"
+                                    ? "bg-emerald-500/10 text-emerald-500 border-emerald-200"
+                                    : gInfo.status === "Partially Met"
+                                      ? "bg-amber-500/10 text-amber-500 border-amber-200"
+                                      : "bg-rose-500/10 text-rose-500 border-rose-200"
+                                }`}
+                              >
+                                {gInfo.status}
+                              </span>
                             </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Goals Review Section */}
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 border-b border-border pb-2 flex items-center gap-2">
-                    <Target size={14} /> Goal Achievements
-                  </h4>
-                  <div className="space-y-3">
-                    {GOALS.map((goal) => {
-                      const gInfo = reviewDetails.goals[goal.id] || { status: "Met", comment: "" };
-                      return (
-                        <div key={goal.id} className="bg-background border border-border rounded-xl p-4">
-                          <div className="flex items-center justify-between gap-3 mb-2">
-                            <p className="text-sm font-bold text-foreground">{goal.text}</p>
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
-                              gInfo.status === "Met"
-                                ? "bg-emerald-500/10 text-emerald-500 border-emerald-200"
-                                : gInfo.status === "Partially Met"
-                                ? "bg-amber-500/10 text-amber-500 border-amber-200"
-                                : "bg-rose-500/10 text-rose-500 border-rose-200"
-                            }`}>
-                              {gInfo.status}
-                            </span>
+                            {gInfo.comment && (
+                              <p className="text-xs text-muted-foreground mt-1 bg-secondary/40 p-2 rounded-lg border border-border/30">
+                                {gInfo.comment}
+                              </p>
+                            )}
                           </div>
-                          {gInfo.comment && (
-                            <p className="text-xs text-muted-foreground mt-1 bg-secondary/40 p-2 rounded-lg border border-border/30">
-                              {gInfo.comment}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Summary Feedback & Promo Recommendations */}
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 border-b border-border pb-2">
+                      Summary Feedback
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-background border border-border rounded-xl p-4">
+                        <span className="text-xs font-bold text-foreground block mb-1">
+                          Key Strengths
+                        </span>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {reviewDetails.strengths}
+                        </p>
+                      </div>
+                      <div className="bg-background border border-border rounded-xl p-4">
+                        <span className="text-xs font-bold text-foreground block mb-1">
+                          Development Areas
+                        </span>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {reviewDetails.developmentAreas}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/50 rounded-xl p-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-bold text-indigo-900 dark:text-indigo-200">
+                          Promotion Recommendation
+                        </span>
+                        <span
+                          className={`px-3 py-1 text-xs font-bold rounded-lg ${
+                            reviewDetails.promoRecommended
+                              ? "bg-indigo-500 text-white"
+                              : "bg-slate-200 dark:bg-zinc-700 text-foreground"
+                          }`}
+                        >
+                          {reviewDetails.promoRecommended
+                            ? "Recommended"
+                            : "Not Recommended"}
+                        </span>
+                      </div>
+                      {reviewDetails.promoRecommended &&
+                        reviewDetails.promoJustification && (
+                          <p className="mt-2.5 text-xs text-indigo-950/80 dark:text-indigo-200/80 italic bg-white/50 dark:bg-black/20 p-2.5 rounded-lg border border-indigo-100/50 dark:border-indigo-900/30">
+                            {reviewDetails.promoJustification}
+                          </p>
+                        )}
+                    </div>
                   </div>
                 </div>
 
-                {/* Summary Feedback & Promo Recommendations */}
-                <div className="space-y-4">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 border-b border-border pb-2">
-                    Summary Feedback
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-background border border-border rounded-xl p-4">
-                      <span className="text-xs font-bold text-foreground block mb-1">Key Strengths</span>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        {reviewDetails.strengths}
-                      </p>
-                    </div>
-                    <div className="bg-background border border-border rounded-xl p-4">
-                      <span className="text-xs font-bold text-foreground block mb-1">Development Areas</span>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        {reviewDetails.developmentAreas}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/50 rounded-xl p-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-indigo-900 dark:text-indigo-200">
-                        Promotion Recommendation
-                      </span>
-                      <span className={`px-3 py-1 text-xs font-bold rounded-lg ${
-                        reviewDetails.promoRecommended
-                          ? "bg-indigo-500 text-white"
-                          : "bg-slate-200 dark:bg-zinc-700 text-foreground"
-                      }`}>
-                        {reviewDetails.promoRecommended ? "Recommended" : "Not Recommended"}
-                      </span>
-                    </div>
-                    {reviewDetails.promoRecommended && reviewDetails.promoJustification && (
-                      <p className="mt-2.5 text-xs text-indigo-950/80 dark:text-indigo-200/80 italic bg-white/50 dark:bg-black/20 p-2.5 rounded-lg border border-indigo-100/50 dark:border-indigo-900/30">
-                        {reviewDetails.promoJustification}
-                      </p>
-                    )}
-                  </div>
+                {/* Footer */}
+                <div className="p-6 border-t border-border bg-secondary/30 rounded-b-2xl flex items-center justify-between shrink-0">
+                  <button
+                    onClick={() => {
+                      if (viewingEmp) {
+                        handleExportScorecard(viewingEmp);
+                      }
+                    }}
+                    className="px-4 py-2.5 text-sm font-bold rounded-xl border border-border bg-background hover:bg-secondary transition-colors flex items-center gap-2"
+                  >
+                    <Download size={16} /> Export PDF
+                  </button>
+                  <button
+                    onClick={() => setViewModalOpen(false)}
+                    className="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
+                  >
+                    Close
+                  </button>
                 </div>
-              </div>
-
-              {/* Footer */}
-              <div className="p-6 border-t border-border bg-secondary/30 rounded-b-2xl flex items-center justify-between shrink-0">
-                <button
-                  onClick={() => {
-                    if (viewingEmp) {
-                      handleExportScorecard(viewingEmp);
-                    }
-                  }}
-                  className="px-4 py-2.5 text-sm font-bold rounded-xl border border-border bg-background hover:bg-secondary transition-colors flex items-center gap-2"
-                >
-                  <Download size={16} /> Export PDF
-                </button>
-                <button
-                  onClick={() => setViewModalOpen(false)}
-                  className="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
-                >
-                  Close
-                </button>
               </div>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })()}
     </div>
   );
 }

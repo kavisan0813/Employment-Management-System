@@ -140,29 +140,45 @@ export function ManagerLeaveApprovals() {
   };
 
   const [historySearch, setHistorySearch] = useState("");
-  const [historyStatusFilter, setHistoryStatusFilter] = useState("All Statuses");
+  const [historyStatusFilter, setHistoryStatusFilter] =
+    useState("All Statuses");
 
   const filteredHistory = MOCK_HISTORY.filter((row) => {
-    const matchesSearch = row.emp.toLowerCase().includes(historySearch.toLowerCase());
+    const matchesSearch = row.emp
+      .toLowerCase()
+      .includes(historySearch.toLowerCase());
     const matchesStatus =
-      historyStatusFilter === "All Statuses" || row.status === historyStatusFilter;
+      historyStatusFilter === "All Statuses" ||
+      row.status === historyStatusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const handleExport = () => {
     if (activeTab === "History") {
-      const headers = ["History ID", "Employee", "Type", "From", "To", "Days", "Reason", "Approved On", "Status"];
-      const rows = filteredHistory.map((h) => [
-        h.id,
-        `"${h.emp}"`,
-        h.type,
-        `"${h.from}"`,
-        `"${h.to}"`,
-        h.days,
-        `"${h.reason}"`,
-        `"${h.approvedOn}"`,
-        h.status,
-      ].join(","));
+      const headers = [
+        "History ID",
+        "Employee",
+        "Type",
+        "From",
+        "To",
+        "Days",
+        "Reason",
+        "Approved On",
+        "Status",
+      ];
+      const rows = filteredHistory.map((h) =>
+        [
+          h.id,
+          `"${h.emp}"`,
+          h.type,
+          `"${h.from}"`,
+          `"${h.to}"`,
+          h.days,
+          `"${h.reason}"`,
+          `"${h.approvedOn}"`,
+          h.status,
+        ].join(","),
+      );
       const csv = [headers.join(","), ...rows].join("\n");
       const blob = new Blob([csv], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
@@ -173,17 +189,28 @@ export function ManagerLeaveApprovals() {
       URL.revokeObjectURL(url);
       showToast("Exported!", "success", "Leave history downloaded as CSV.");
     } else {
-      const headers = ["Request ID", "Name", "Type", "Type Label", "Date Range", "Days", "Reason", "Submitted"];
-      const rows = pendingRequests.map((r) => [
-        r.id,
-        `"${r.name}"`,
-        r.type,
-        `"${r.typeLabel}"`,
-        `"${r.dateRange}"`,
-        `"${r.days}"`,
-        `"${r.reason}"`,
-        `"${r.submitted}"`,
-      ].join(","));
+      const headers = [
+        "Request ID",
+        "Name",
+        "Type",
+        "Type Label",
+        "Date Range",
+        "Days",
+        "Reason",
+        "Submitted",
+      ];
+      const rows = pendingRequests.map((r) =>
+        [
+          r.id,
+          `"${r.name}"`,
+          r.type,
+          `"${r.typeLabel}"`,
+          `"${r.dateRange}"`,
+          `"${r.days}"`,
+          `"${r.reason}"`,
+          `"${r.submitted}"`,
+        ].join(","),
+      );
       const csv = [headers.join(","), ...rows].join("\n");
       const blob = new Blob([csv], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
@@ -192,7 +219,11 @@ export function ManagerLeaveApprovals() {
       a.download = "pending_leave_requests.csv";
       a.click();
       URL.revokeObjectURL(url);
-      showToast("Exported!", "success", "Pending leave requests downloaded as CSV.");
+      showToast(
+        "Exported!",
+        "success",
+        "Pending leave requests downloaded as CSV.",
+      );
     }
   };
 
@@ -486,7 +517,9 @@ export function ManagerLeaveApprovals() {
       {activeTab === "Calendar" && (
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-foreground">{calendarMonth}</h3>
+            <h3 className="text-lg font-bold text-foreground">
+              {calendarMonth}
+            </h3>
             <div className="flex items-center gap-2">
               <button
                 onClick={handlePrevCalendarMonth}

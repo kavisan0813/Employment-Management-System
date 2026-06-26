@@ -324,29 +324,44 @@ export function ManagerTeamDirectory() {
 
   const handleExport = () => {
     const headers = [
-      "ID", "Name", "Role", "Designation", "Department",
-      "Status", "Availability", "Email", "Phone", "Skills",
-      "Location", "Joined Date", "Manager", "Timezone", "Work Schedule", "Is Direct Report"
+      "ID",
+      "Name",
+      "Role",
+      "Designation",
+      "Department",
+      "Status",
+      "Availability",
+      "Email",
+      "Phone",
+      "Skills",
+      "Location",
+      "Joined Date",
+      "Manager",
+      "Timezone",
+      "Work Schedule",
+      "Is Direct Report",
     ];
     const allMatching = [...directReports, ...otherEmployees];
-    const rows = allMatching.map((c) => [
-      c.id,
-      `"${c.name}"`,
-      `"${c.role}"`,
-      `"${c.designation}"`,
-      `"${c.department}"`,
-      c.status,
-      c.availability,
-      c.email,
-      `"${c.phone}"`,
-      `"${c.skills.join("; ")}"`,
-      `"${c.location}"`,
-      `"${c.joinedDate}"`,
-      `"${c.manager}"`,
-      `"${c.timezone}"`,
-      `"${c.workSchedule}"`,
-      c.isDirectReport ? "Yes" : "No",
-    ].join(","));
+    const rows = allMatching.map((c) =>
+      [
+        c.id,
+        `"${c.name}"`,
+        `"${c.role}"`,
+        `"${c.designation}"`,
+        `"${c.department}"`,
+        c.status,
+        c.availability,
+        c.email,
+        `"${c.phone}"`,
+        `"${c.skills.join("; ")}"`,
+        `"${c.location}"`,
+        `"${c.joinedDate}"`,
+        `"${c.manager}"`,
+        `"${c.timezone}"`,
+        `"${c.workSchedule}"`,
+        c.isDirectReport ? "Yes" : "No",
+      ].join(","),
+    );
     const csv = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);

@@ -477,48 +477,48 @@ export function Login() {
             {Object.keys(DEMO_ACCOUNTS)
               .filter((k) => k !== "Platform Admin")
               .map((roleKey, idx, arr) => {
-              const role = roleKey as UserRole;
-              const demo = DEMO_ACCOUNTS[role];
-              const config = ROLE_CONFIG[role];
-              const isLast = idx === arr.length - 1;
-              const Icon = ROLE_ICONS[role];
-              return (
-                <button
-                  key={role}
-                  type="button"
-                  onClick={() => handleDemoLogin(role)}
-                  disabled={isLoading}
-                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group ${
-                    isLast ? "col-span-2 justify-center" : ""
-                  }`}
-                  style={{
-                    borderColor: config.color + "30",
-                    backgroundColor: config.bg,
-                  }}
-                >
-                  <div
-                    className="p-1 rounded-lg"
+                const role = roleKey as UserRole;
+                const demo = DEMO_ACCOUNTS[role];
+                const config = ROLE_CONFIG[role];
+                const isLast = idx === arr.length - 1;
+                const Icon = ROLE_ICONS[role];
+                return (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() => handleDemoLogin(role)}
+                    disabled={isLoading}
+                    className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group ${
+                      isLast ? "col-span-2 justify-center" : ""
+                    }`}
                     style={{
-                      backgroundColor: config.color + "15",
-                      color: config.color,
+                      borderColor: config.color + "30",
+                      backgroundColor: config.bg,
                     }}
                   >
-                    <Icon size={14} />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span
-                      className="text-[11px] font-extrabold uppercase tracking-wide group-hover:underline leading-tight"
-                      style={{ color: config.color }}
+                    <div
+                      className="p-1 rounded-lg"
+                      style={{
+                        backgroundColor: config.color + "15",
+                        color: config.color,
+                      }}
                     >
-                      {config.label}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground truncate leading-normal">
-                      {demo.name}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
+                      <Icon size={14} />
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span
+                        className="text-[11px] font-extrabold uppercase tracking-wide group-hover:underline leading-tight"
+                        style={{ color: config.color }}
+                      >
+                        {config.label}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground truncate leading-normal">
+                        {demo.name}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
           </div>
 
           {/* Separate Platform Admin Login Button */}

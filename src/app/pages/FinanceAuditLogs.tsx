@@ -310,7 +310,8 @@ function FilterSelect({
 }) {
   const [internalValue, setInternalValue] = useState(label);
   const value = externalValue !== undefined ? externalValue : internalValue;
-  const onChange = externalOnChange !== undefined ? externalOnChange : setInternalValue;
+  const onChange =
+    externalOnChange !== undefined ? externalOnChange : setInternalValue;
 
   return (
     <div className="relative group">
@@ -320,11 +321,13 @@ function FilterSelect({
         className="appearance-none flex items-center gap-2.5 px-4 pr-10 py-2.5 bg-card border border-border rounded-xl text-[12px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer"
       >
         <option value={label}>{label}</option>
-        {options.filter((opt) => opt !== label).map((opt, i) => (
-          <option key={i} value={opt}>
-            {opt}
-          </option>
-        ))}
+        {options
+          .filter((opt) => opt !== label)
+          .map((opt, i) => (
+            <option key={i} value={opt}>
+              {opt}
+            </option>
+          ))}
       </select>
       <ChevronDown
         size={14}
@@ -369,27 +372,39 @@ export function FinanceAuditLogs() {
     }
 
     // Module
-    if (moduleFilter !== "All Modules" && log.module !== moduleFilter) return false;
+    if (moduleFilter !== "All Modules" && log.module !== moduleFilter)
+      return false;
 
     // Action
-    if (actionFilter !== "All Actions" && log.action !== actionFilter) return false;
+    if (actionFilter !== "All Actions" && log.action !== actionFilter)
+      return false;
 
     // User
     if (userFilter !== "All Users" && log.user !== userFilter) return false;
 
     // Date
     if (dateFilter !== "All Dates") {
-      if (dateFilter === "Today" && !log.timestamp.startsWith("Today")) return false;
-      if (dateFilter === "Yesterday" && !log.timestamp.startsWith("Yesterday")) return false;
-      if (dateFilter === "Older" && (log.timestamp.startsWith("Today") || log.timestamp.startsWith("Yesterday"))) return false;
+      if (dateFilter === "Today" && !log.timestamp.startsWith("Today"))
+        return false;
+      if (dateFilter === "Yesterday" && !log.timestamp.startsWith("Yesterday"))
+        return false;
+      if (
+        dateFilter === "Older" &&
+        (log.timestamp.startsWith("Today") ||
+          log.timestamp.startsWith("Yesterday"))
+      )
+        return false;
     }
 
     // Severity
-    if (severityFilter !== "All Severities" && log.severity !== severityFilter.toLowerCase()) return false;
+    if (
+      severityFilter !== "All Severities" &&
+      log.severity !== severityFilter.toLowerCase()
+    )
+      return false;
 
     return true;
   });
-
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
@@ -496,19 +511,44 @@ export function FinanceAuditLogs() {
         </div>
         <FilterSelect
           label="All Modules"
-          options={["All Modules", "Payroll", "Expenses", "Increment", "Finance Reports", "Payroll Settings", "F&F Settlement"]}
+          options={[
+            "All Modules",
+            "Payroll",
+            "Expenses",
+            "Increment",
+            "Finance Reports",
+            "Payroll Settings",
+            "F&F Settlement",
+          ]}
           value={moduleFilter}
           onChange={setModuleFilter}
         />
         <FilterSelect
           label="All Actions"
-          options={["All Actions", "APPROVE", "DELETE", "UPDATE", "EXPORT", "CREATE", "VIEW", "REJECT", "RUN", "PROCESS"]}
+          options={[
+            "All Actions",
+            "APPROVE",
+            "DELETE",
+            "UPDATE",
+            "EXPORT",
+            "CREATE",
+            "VIEW",
+            "REJECT",
+            "RUN",
+            "PROCESS",
+          ]}
           value={actionFilter}
           onChange={setActionFilter}
         />
         <FilterSelect
           label="All Users"
-          options={["All Users", "Ananya Das", "Rahul Verma", "Suresh Iyer", "Unknown"]}
+          options={[
+            "All Users",
+            "Ananya Das",
+            "Rahul Verma",
+            "Suresh Iyer",
+            "Unknown",
+          ]}
           value={userFilter}
           onChange={setUserFilter}
         />

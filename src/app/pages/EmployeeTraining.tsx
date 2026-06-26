@@ -405,7 +405,13 @@ export function EmployeeTraining() {
   const [durationFilter, setDurationFilter] = useState("All");
 
   // Add cert form state
-  const [certForm, setCertForm] = useState({ name: "", issuedBy: "", credentialId: "", issueDate: "", expiryDate: "" });
+  const [certForm, setCertForm] = useState({
+    name: "",
+    issuedBy: "",
+    credentialId: "",
+    issueDate: "",
+    expiryDate: "",
+  });
 
   /* Logic Handlers */
   const handleEnroll = (courseId: number) => {
@@ -460,21 +466,45 @@ export function EmployeeTraining() {
   const handleAddCert = (e: React.FormEvent) => {
     e.preventDefault();
     if (!certForm.name.trim() || !certForm.issuedBy.trim()) {
-      showToast("Missing Fields", "error", "Certificate name and issuing organization are required.");
+      showToast(
+        "Missing Fields",
+        "error",
+        "Certificate name and issuing organization are required.",
+      );
       return;
     }
     const newCert: Certification = {
       id: Date.now(),
       name: certForm.name,
       issuedBy: certForm.issuedBy,
-      issueDate: certForm.issueDate ? new Date(certForm.issueDate).toLocaleDateString("en-US", { year: "numeric", month: "short" }) : "N/A",
-      expiryDate: certForm.expiryDate ? new Date(certForm.expiryDate).toLocaleDateString("en-US", { year: "numeric", month: "short" }) : "N/A",
+      issueDate: certForm.issueDate
+        ? new Date(certForm.issueDate).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+          })
+        : "N/A",
+      expiryDate: certForm.expiryDate
+        ? new Date(certForm.expiryDate).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+          })
+        : "N/A",
       status: "Pending Verification",
       isExternal: true,
     };
     setCerts([newCert, ...certs]);
-    showToast("Certificate Submitted", "success", "Pending verification by HR.");
-    setCertForm({ name: "", issuedBy: "", credentialId: "", issueDate: "", expiryDate: "" });
+    showToast(
+      "Certificate Submitted",
+      "success",
+      "Pending verification by HR.",
+    );
+    setCertForm({
+      name: "",
+      issuedBy: "",
+      credentialId: "",
+      issueDate: "",
+      expiryDate: "",
+    });
     setShowAddCertModal(false);
   };
 
@@ -1384,25 +1414,70 @@ export function EmployeeTraining() {
       >
         <form onSubmit={handleAddCert} className="space-y-5">
           <div className="space-y-2">
-            <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">Certificate Name *</label>
-            <input required type="text" value={certForm.name} onChange={e => setCertForm(f => ({ ...f, name: e.target.value }))} className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none focus:ring-2 focus:ring-primary/20" placeholder="e.g. Google Cloud Professional" />
+            <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">
+              Certificate Name *
+            </label>
+            <input
+              required
+              type="text"
+              value={certForm.name}
+              onChange={(e) =>
+                setCertForm((f) => ({ ...f, name: e.target.value }))
+              }
+              className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none focus:ring-2 focus:ring-primary/20"
+              placeholder="e.g. Google Cloud Professional"
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">Issuing Organization *</label>
-              <input required type="text" value={certForm.issuedBy} onChange={e => setCertForm(f => ({ ...f, issuedBy: e.target.value }))} className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none" placeholder="e.g. Google" />
+              <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">
+                Issuing Organization *
+              </label>
+              <input
+                required
+                type="text"
+                value={certForm.issuedBy}
+                onChange={(e) =>
+                  setCertForm((f) => ({ ...f, issuedBy: e.target.value }))
+                }
+                className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none"
+                placeholder="e.g. Google"
+              />
             </div>
             <div className="space-y-2">
-              <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">Credential ID</label>
-              <input type="text" value={certForm.credentialId} onChange={e => setCertForm(f => ({ ...f, credentialId: e.target.value }))} className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none" placeholder="Optional" />
+              <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">
+                Credential ID
+              </label>
+              <input
+                type="text"
+                value={certForm.credentialId}
+                onChange={(e) =>
+                  setCertForm((f) => ({ ...f, credentialId: e.target.value }))
+                }
+                className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none"
+                placeholder="Optional"
+              />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">Issue Date *</label>
+              <label className="text-[11px] font-semibold uppercase text-muted-foreground tracking-widest">
+                Issue Date *
+              </label>
               <div className="relative">
-                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                <input required type="date" value={certForm.issueDate} onChange={e => setCertForm(f => ({ ...f, issueDate: e.target.value }))} className="w-full pl-12 pr-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none" />
+                <Calendar
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  size={16}
+                />
+                <input
+                  required
+                  type="date"
+                  value={certForm.issueDate}
+                  onChange={(e) =>
+                    setCertForm((f) => ({ ...f, issueDate: e.target.value }))
+                  }
+                  className="w-full pl-12 pr-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none"
+                />
               </div>
             </div>
             <div className="space-y-2">
@@ -1410,8 +1485,18 @@ export function EmployeeTraining() {
                 Expiry Date
               </label>
               <div className="relative">
-                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                <input type="date" value={certForm.expiryDate} onChange={e => setCertForm(f => ({ ...f, expiryDate: e.target.value }))} className="w-full pl-12 pr-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none" />
+                <Calendar
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  size={16}
+                />
+                <input
+                  type="date"
+                  value={certForm.expiryDate}
+                  onChange={(e) =>
+                    setCertForm((f) => ({ ...f, expiryDate: e.target.value }))
+                  }
+                  className="w-full pl-12 pr-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none"
+                />
               </div>
             </div>
           </div>

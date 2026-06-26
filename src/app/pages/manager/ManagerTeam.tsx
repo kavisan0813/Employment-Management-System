@@ -126,24 +126,37 @@ export function ManagerTeam() {
 
   const handleExport = () => {
     const headers = [
-      "ID", "Name", "Designation", "Attendance", "Leave Balance", "Performance",
-      "CTC", "Status", "Email", "Phone", "Location", "Join Date", "Work Mode"
+      "ID",
+      "Name",
+      "Designation",
+      "Attendance",
+      "Leave Balance",
+      "Performance",
+      "CTC",
+      "Status",
+      "Email",
+      "Phone",
+      "Location",
+      "Join Date",
+      "Work Mode",
     ];
-    const rows = filteredTeam.map((emp) => [
-      emp.id,
-      `"${emp.name}"`,
-      `"${emp.designation}"`,
-      `"${emp.attendance}"`,
-      `"${emp.leaveBal}"`,
-      emp.performance,
-      `"${emp.ctc}"`,
-      emp.status,
-      emp.email,
-      `"${emp.phone}"`,
-      `"${emp.location}"`,
-      `"${emp.joinDate}"`,
-      `"${emp.workMode}"`,
-    ].join(","));
+    const rows = filteredTeam.map((emp) =>
+      [
+        emp.id,
+        `"${emp.name}"`,
+        `"${emp.designation}"`,
+        `"${emp.attendance}"`,
+        `"${emp.leaveBal}"`,
+        emp.performance,
+        `"${emp.ctc}"`,
+        emp.status,
+        emp.email,
+        `"${emp.phone}"`,
+        `"${emp.location}"`,
+        `"${emp.joinDate}"`,
+        `"${emp.workMode}"`,
+      ].join(","),
+    );
     const csv = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -152,7 +165,11 @@ export function ManagerTeam() {
     a.download = "team_list_export.csv";
     a.click();
     URL.revokeObjectURL(url);
-    showToast("Exported!", "success", "Team member details exported successfully.");
+    showToast(
+      "Exported!",
+      "success",
+      "Team member details exported successfully.",
+    );
   };
 
   return (
@@ -241,14 +258,15 @@ export function ManagerTeam() {
               className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-[#00B87C] transition-all flex flex-col group"
             >
               {/* Card Header Background Block */}
-              <div className="h-2 bg-[#00B87C]/15" style={{ backgroundColor: emp.color + "20" }} />
-              
+              <div
+                className="h-2 bg-[#00B87C]/15"
+                style={{ backgroundColor: emp.color + "20" }}
+              />
+
               <div className="p-6 flex-1 flex flex-col">
                 {/* Employee Info Header */}
                 <div className="flex items-start gap-4 mb-5">
-                  <div
-                    className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-xs shrink-0 shadow-sm border border-border bg-secondary overflow-hidden"
-                  >
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-xs shrink-0 shadow-sm border border-border bg-secondary overflow-hidden">
                     <img
                       src={emp.avatar}
                       alt=""
@@ -256,28 +274,38 @@ export function ManagerTeam() {
                     />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-base font-bold text-foreground truncate">{emp.name}</h3>
-                    <p className="text-xs text-muted-foreground font-semibold">{emp.designation}</p>
-                    <span className="text-[10px] font-bold text-slate-400">#{emp.id}</span>
+                    <h3 className="text-base font-bold text-foreground truncate">
+                      {emp.name}
+                    </h3>
+                    <p className="text-xs text-muted-foreground font-semibold">
+                      {emp.designation}
+                    </p>
+                    <span className="text-[10px] font-bold text-slate-400">
+                      #{emp.id}
+                    </span>
                   </div>
                 </div>
 
                 {/* Status Badge */}
                 <div className="mb-5">
-                  <span className={`px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider border ${
-                    emp.status === "Active"
-                      ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 border border-emerald-100"
-                      : emp.status === "WFH"
-                      ? "bg-teal-50 text-teal-600 dark:bg-teal-500/10 border border-teal-100"
-                      : "bg-red-50 text-red-600 dark:bg-red-500/10 border border-red-100"
-                  }`}>
-                    <span className={`w-1 h-1 rounded-full ${
+                  <span
+                    className={`px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider border ${
                       emp.status === "Active"
-                        ? "bg-emerald-600"
+                        ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 border border-emerald-100"
                         : emp.status === "WFH"
-                        ? "bg-teal-600"
-                        : "bg-red-600"
-                    }`} />
+                          ? "bg-teal-50 text-teal-600 dark:bg-teal-500/10 border border-teal-100"
+                          : "bg-red-50 text-red-600 dark:bg-red-500/10 border border-red-100"
+                    }`}
+                  >
+                    <span
+                      className={`w-1 h-1 rounded-full ${
+                        emp.status === "Active"
+                          ? "bg-emerald-600"
+                          : emp.status === "WFH"
+                            ? "bg-teal-600"
+                            : "bg-red-600"
+                      }`}
+                    />
                     {emp.status}
                   </span>
                 </div>
@@ -285,19 +313,32 @@ export function ManagerTeam() {
                 {/* Details Metrics Grid */}
                 <div className="grid grid-cols-3 gap-2 py-3 border-y border-border/60 text-center mb-5">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Attendance</span>
-                    <span className={`text-sm font-bold block mt-0.5 ${parseInt(emp.attendance) < 85 ? "text-amber-500" : "text-[#00B87C]"}`}>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                      Attendance
+                    </span>
+                    <span
+                      className={`text-sm font-bold block mt-0.5 ${parseInt(emp.attendance) < 85 ? "text-amber-500" : "text-[#00B87C]"}`}
+                    >
                       {emp.attendance}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Leave Bal</span>
-                    <span className="text-sm font-bold text-foreground block mt-0.5">{emp.leaveBal}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                      Leave Bal
+                    </span>
+                    <span className="text-sm font-bold text-foreground block mt-0.5">
+                      {emp.leaveBal}
+                    </span>
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Performance</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                      Performance
+                    </span>
                     <span className="text-sm font-bold text-foreground flex items-center justify-center gap-0.5 mt-0.5">
-                      <Star size={11} className="fill-amber-400 text-amber-400" />
+                      <Star
+                        size={11}
+                        className="fill-amber-400 text-amber-400"
+                      />
                       {emp.performance}
                     </span>
                   </div>
@@ -306,8 +347,12 @@ export function ManagerTeam() {
                 {/* Monthly CTC & Actions */}
                 <div className="flex items-center justify-between mt-auto pt-2">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">Compensation</span>
-                    <span className="text-xs font-bold text-foreground">{emp.ctc} / yr</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                      Compensation
+                    </span>
+                    <span className="text-xs font-bold text-foreground">
+                      {emp.ctc} / yr
+                    </span>
                   </div>
                   <button
                     onClick={() => setSelectedEmployee(emp)}

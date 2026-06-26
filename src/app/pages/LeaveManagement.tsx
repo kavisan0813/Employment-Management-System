@@ -803,8 +803,18 @@ export function LeaveManagement() {
         const parts = str.trim().split(/\s+/);
         if (parts.length < 2) return null;
         const monthMap: Record<string, number> = {
-          Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
-          Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
+          Jan: 0,
+          Feb: 1,
+          Mar: 2,
+          Apr: 3,
+          May: 4,
+          Jun: 5,
+          Jul: 6,
+          Aug: 7,
+          Sep: 8,
+          Oct: 9,
+          Nov: 10,
+          Dec: 11,
         };
         const m = monthMap[parts[0]];
         const d = parseInt(parts[1], 10);
@@ -2037,7 +2047,11 @@ export function LeaveManagement() {
               {(() => {
                 const firstDayOfMonth = new Date(2026, currentMonth, 1);
                 const startOffset = firstDayOfMonth.getDay();
-                const daysInMonth = new Date(2026, currentMonth + 1, 0).getDate();
+                const daysInMonth = new Date(
+                  2026,
+                  currentMonth + 1,
+                  0,
+                ).getDate();
                 const colorMap: Record<string, string> = {
                   "Annual Leave": "#059669",
                   "Sick Leave": "#14B8A6",
@@ -2061,7 +2075,9 @@ export function LeaveManagement() {
                           onClick={() => setClickedDateStr(dStr)}
                           className={`group relative aspect-square flex flex-col justify-between p-1 border rounded-lg cursor-pointer transition-all ${isToday ? "bg-emerald-50 border-emerald-200" : "hover:bg-emerald-50/50 dark:hover:bg-zinc-800"} `}
                           style={{
-                            borderColor: isToday ? "var(--primary)" : "var(--border)",
+                            borderColor: isToday
+                              ? "var(--primary)"
+                              : "var(--border)",
                             backgroundColor: isToday
                               ? "var(--secondary)"
                               : "transparent",
@@ -2077,7 +2093,10 @@ export function LeaveManagement() {
                               <div
                                 key={l.id}
                                 className="w-1.5 h-1.5 rounded-full"
-                                style={{ backgroundColor: colorMap[l.type] || "#A78BFA" }}
+                                style={{
+                                  backgroundColor:
+                                    colorMap[l.type] || "#A78BFA",
+                                }}
                               />
                             ))}
                           </div>
@@ -2602,98 +2621,108 @@ export function LeaveManagement() {
         </div>
       )}
       {/* Clicked Date Leaves Modal */}
-      {clickedDateStr && (() => {
-        const activeLeaves = getLeavesForDate(clickedDateStr);
-        const formattedDate = new Date(clickedDateStr).toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        });
+      {clickedDateStr &&
+        (() => {
+          const activeLeaves = getLeavesForDate(clickedDateStr);
+          const formattedDate = new Date(clickedDateStr).toLocaleDateString(
+            "en-US",
+            {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            },
+          );
 
-        return (
-          <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000] flex items-center justify-center p-4"
-            onClick={() => setClickedDateStr(null)}
-          >
+          return (
             <div
-              className="bg-card rounded-[32px] shadow-2xl border border-border w-full max-w-md overflow-hidden transform transition-all p-6 animate-in zoom-in-95"
-              onClick={(e) => e.stopPropagation()}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000] flex items-center justify-center p-4"
+              onClick={() => setClickedDateStr(null)}
             >
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-foreground">
-                    Active Leaves
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {formattedDate}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setClickedDateStr(null)}
-                  className="p-2 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-full transition-colors text-muted-foreground hover:text-foreground"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
-                {activeLeaves.map((req) => (
-                  <div
-                    key={req.id}
-                    className="p-3.5 rounded-2xl border border-border bg-secondary/30 hover:bg-secondary/50 transition-colors flex items-center justify-between cursor-pointer group"
-                    onClick={() => {
-                      setSelectedRequest(req);
-                      setClickedDateStr(null);
-                    }}
+              <div
+                className="bg-card rounded-[32px] shadow-2xl border border-border w-full max-w-md overflow-hidden transform transition-all p-6 animate-in zoom-in-95"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground">
+                      Active Leaves
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {formattedDate}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setClickedDateStr(null)}
+                    className="p-2 hover:bg-neutral-100 dark:hover:bg-zinc-800 rounded-full transition-colors text-muted-foreground hover:text-foreground"
                   >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0"
-                        style={{ background: req.avatarColor }}
-                      >
-                        {req.initials}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-foreground group-hover:text-emerald-600 transition-colors">
-                          {req.employee}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
-                          {req.department} · {req.type}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <StatusBadge status={req.status} small />
-                      <ExternalLink size={12} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                  </div>
-                ))}
-                {activeLeaves.length === 0 && (
-                  <div className="text-center py-8">
-                    <CheckCircle2 size={28} className="mx-auto mb-2 text-emerald-500" />
-                    <p className="text-xs font-bold text-foreground">
-                      No Active Leaves
-                    </p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
-                      Full team availability on this day.
-                    </p>
-                  </div>
-                )}
-              </div>
+                    <X size={20} />
+                  </button>
+                </div>
 
-              <div className="flex justify-end pt-4 mt-4 border-t border-border">
-                <button
-                  onClick={() => setClickedDateStr(null)}
-                  className="px-5 py-2.5 rounded-xl border border-border text-xs font-bold text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-colors"
-                >
-                  Close
-                </button>
+                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+                  {activeLeaves.map((req) => (
+                    <div
+                      key={req.id}
+                      className="p-3.5 rounded-2xl border border-border bg-secondary/30 hover:bg-secondary/50 transition-colors flex items-center justify-between cursor-pointer group"
+                      onClick={() => {
+                        setSelectedRequest(req);
+                        setClickedDateStr(null);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0"
+                          style={{ background: req.avatarColor }}
+                        >
+                          {req.initials}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-foreground group-hover:text-emerald-600 transition-colors">
+                            {req.employee}
+                          </p>
+                          <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
+                            {req.department} · {req.type}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <StatusBadge status={req.status} small />
+                        <ExternalLink
+                          size={12}
+                          className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  {activeLeaves.length === 0 && (
+                    <div className="text-center py-8">
+                      <CheckCircle2
+                        size={28}
+                        className="mx-auto mb-2 text-emerald-500"
+                      />
+                      <p className="text-xs font-bold text-foreground">
+                        No Active Leaves
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        Full team availability on this day.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-end pt-4 mt-4 border-t border-border">
+                  <button
+                    onClick={() => setClickedDateStr(null)}
+                    className="px-5 py-2.5 rounded-xl border border-border text-xs font-bold text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })()}
     </div>
   );
 }

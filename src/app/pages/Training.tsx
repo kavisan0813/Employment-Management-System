@@ -566,7 +566,7 @@ export function Training() {
   const filteredCertifications = initialCertifications.filter(
     (cert) =>
       cert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cert.authority.toLowerCase().includes(searchTerm.toLowerCase())
+      cert.authority.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const getGradient = (type: string) => {
@@ -1000,73 +1000,72 @@ export function Training() {
 
       {activeTab === "Catalog" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredCourses
-            .map((course) => (
+          {filteredCourses.map((course) => (
+            <div
+              key={course.id}
+              onClick={() => setLearningCourse(course)}
+              className="bg-card rounded-3xl border border-border shadow-sm overflow-hidden flex flex-col relative transition-all hover:-translate-y-1 hover:border-[#00B87C]/50 hover:shadow-[0_8px_30px_rgb(0,184,124,0.08)] cursor-pointer"
+            >
+              {/* Banner */}
               <div
-                key={course.id}
-                onClick={() => setLearningCourse(course)}
-                className="bg-card rounded-3xl border border-border shadow-sm overflow-hidden flex flex-col relative transition-all hover:-translate-y-1 hover:border-[#00B87C]/50 hover:shadow-[0_8px_30px_rgb(0,184,124,0.08)] cursor-pointer"
+                className={`h-[120px] bg-gradient-to-br ${getGradient(course.type)} p-3 relative flex items-start justify-between`}
               >
-                {/* Banner */}
-                <div
-                  className={`h-[120px] bg-gradient-to-br ${getGradient(course.type)} p-3 relative flex items-start justify-between`}
-                >
-                  <span className="px-2.5 py-1 rounded-full bg-white/95 text-foreground text-[9px] font-black tracking-wide uppercase self-start shadow-sm">
-                    {course.type}
+                <span className="px-2.5 py-1 rounded-full bg-white/95 text-foreground text-[9px] font-black tracking-wide uppercase self-start shadow-sm">
+                  {course.type}
+                </span>
+                <Bookmark
+                  size={16}
+                  className="text-white/80 hover:text-white cursor-pointer"
+                />
+              </div>
+
+              {/* Details */}
+              <div className="p-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <span
+                    className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border ${getDiffStyle(course.difficulty)}`}
+                  >
+                    {course.difficulty}
                   </span>
-                  <Bookmark
-                    size={16}
-                    className="text-white/80 hover:text-white cursor-pointer"
-                  />
+                  <h4 className="text-xs font-black text-slate-900 dark:text-slate-100 mt-2 line-clamp-2">
+                    {course.title}
+                  </h4>
+                  <div className="flex items-center gap-3 text-[11px] font-bold text-slate-400 mt-2">
+                    <span>{course.duration}</span>
+                    <span>•</span>
+                    <span>By {course.trainer}</span>
+                  </div>
                 </div>
 
-                {/* Details */}
-                <div className="p-4 flex-1 flex flex-col justify-between">
-                  <div>
-                    <span
-                      className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border ${getDiffStyle(course.difficulty)}`}
-                    >
-                      {course.difficulty}
+                <div className="pt-4 border-t border-border mt-4 flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-amber-500 text-xs font-black">
+                    <Star size={14} className="fill-current" />
+                    <span>{course.rating || 4.5}</span>
+                  </div>
+
+                  {course.progress === 100 ? (
+                    <span className="px-2.5 py-1.5 text-[11px] font-black text-[#00B87C] bg-[#00B87C]/10 rounded-xl border border-[#00B87C]/20 flex items-center gap-1">
+                      Completed ✓
                     </span>
-                    <h4 className="text-xs font-black text-slate-900 dark:text-slate-100 mt-2 line-clamp-2">
-                      {course.title}
-                    </h4>
-                    <div className="flex items-center gap-3 text-[11px] font-bold text-slate-400 mt-2">
-                      <span>{course.duration}</span>
-                      <span>•</span>
-                      <span>By {course.trainer}</span>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-border mt-4 flex items-center justify-between">
-                    <div className="flex items-center gap-1 text-amber-500 text-xs font-black">
-                      <Star size={14} className="fill-current" />
-                      <span>{course.rating || 4.5}</span>
-                    </div>
-
-                    {course.progress === 100 ? (
-                      <span className="px-2.5 py-1.5 text-[11px] font-black text-[#00B87C] bg-[#00B87C]/10 rounded-xl border border-[#00B87C]/20 flex items-center gap-1">
-                        Completed ✓
-                      </span>
-                    ) : course.isEnrolled ? (
-                      <span className="px-2.5 py-1.5 text-[11px] font-black text-slate-500 bg-muted rounded-xl border border-border/50 flex items-center gap-1">
-                        Enrolled ({course.progress}%)
-                      </span>
-                    ) : (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEnroll(course.id);
-                        }}
-                        className="px-4 py-1.5 bg-[#00B87C] hover:bg-[#059669] text-white text-[11px] font-black rounded-xl shadow-lg shadow-[#00B87C]/20 active:scale-95 transition-all cursor-pointer"
-                      >
-                        Enroll
-                      </button>
-                    )}
-                  </div>
+                  ) : course.isEnrolled ? (
+                    <span className="px-2.5 py-1.5 text-[11px] font-black text-slate-500 bg-muted rounded-xl border border-border/50 flex items-center gap-1">
+                      Enrolled ({course.progress}%)
+                    </span>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEnroll(course.id);
+                      }}
+                      className="px-4 py-1.5 bg-[#00B87C] hover:bg-[#059669] text-white text-[11px] font-black rounded-xl shadow-lg shadow-[#00B87C]/20 active:scale-95 transition-all cursor-pointer"
+                    >
+                      Enroll
+                    </button>
+                  )}
                 </div>
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       )}
 
@@ -1130,8 +1129,10 @@ export function Training() {
                           if (!item.isEnrolled) {
                             setCourses((prev) =>
                               prev.map((c) =>
-                                c.id === item.id ? { ...c, isEnrolled: true } : c
-                              )
+                                c.id === item.id
+                                  ? { ...c, isEnrolled: true }
+                                  : c,
+                              ),
                             );
                           }
                           setLearningCourse({

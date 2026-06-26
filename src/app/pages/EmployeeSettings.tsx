@@ -116,8 +116,6 @@ function Breadcrumb({ active }: { active: string }) {
   );
 }
 
-
-
 function Toggle({
   on,
   onChange,
@@ -207,9 +205,7 @@ export default function EmployeeSettings() {
         {/* Right: Content Panel */}
         <div className="flex-1 min-w-0 space-y-6">
           <div className="bg-card rounded-2xl border border-border shadow-sm p-8">
-            {activeSection === "security" && (
-              <AccountSecurity />
-            )}
+            {activeSection === "security" && <AccountSecurity />}
             {activeSection === "privacy" && (
               <PrivacySettings onModal={setActiveModal} />
             )}

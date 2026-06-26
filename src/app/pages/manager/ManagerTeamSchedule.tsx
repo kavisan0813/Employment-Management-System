@@ -108,9 +108,9 @@ const INITIAL_SCHEDULE: EmployeeScheduleRow[] = [
 ];
 
 const BRUSH_SHIFTS: Record<string, ShiftDetails> = {
-  "Morning": { type: "Morning", time: "06:00-14:00" },
-  "Evening": { type: "Evening", time: "14:00-22:00" },
-  "Night": { type: "Night", time: "22:00-06:00" },
+  Morning: { type: "Morning", time: "06:00-14:00" },
+  Evening: { type: "Evening", time: "14:00-22:00" },
+  Night: { type: "Night", time: "22:00-06:00" },
   "Full Day": { type: "Full Day", time: "09:00-18:00" },
 };
 
@@ -121,8 +121,12 @@ export function ManagerTeamSchedule() {
   const [activeBrush, setActiveBrush] = useState<string | null>(null);
 
   // Week navigation state
-  const [weekStartDate, setWeekStartDate] = useState<Date>(new Date(2026, 3, 6)); // Apr 6, 2026
-  const [shiftsByDate, setShiftsByDate] = useState<Record<string, Record<string, ShiftDetails | null>>>({});
+  const [weekStartDate, setWeekStartDate] = useState<Date>(
+    new Date(2026, 3, 6),
+  ); // Apr 6, 2026
+  const [shiftsByDate, setShiftsByDate] = useState<
+    Record<string, Record<string, ShiftDetails | null>>
+  >({});
 
   const getShiftForDate = (empName: string, dateStr: string) => {
     // Check user edits first
@@ -133,11 +137,11 @@ export function ManagerTeamSchedule() {
     // Default mock data mapping for baseline week starting Apr 6, 2026
     const baseDate = new Date(2026, 3, 6);
     const dateObj = new Date(dateStr);
-    
+
     // Check if it lies in the baseline week (Apr 6, 2026 to Apr 12, 2026)
     const diffTime = dateObj.getTime() - baseDate.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
+
     const emp = INITIAL_SCHEDULE.find((e) => e.name === empName);
     if (emp && diffDays >= 0 && diffDays < 7) {
       return emp.shifts[diffDays];
@@ -164,13 +168,15 @@ export function ManagerTeamSchedule() {
 
   const currentWeekScheduleData = useMemo(() => {
     return INITIAL_SCHEDULE.map((emp) => {
-      const shiftsArray: (ShiftDetails | null)[] = Array.from({ length: 7 }).map((_, dayIdx) => {
+      const shiftsArray: (ShiftDetails | null)[] = Array.from({
+        length: 7,
+      }).map((_, dayIdx) => {
         const dateObj = new Date(weekStartDate);
         dateObj.setDate(weekStartDate.getDate() + dayIdx);
         const dateStr = dateObj.toISOString().split("T")[0];
         return getShiftForDate(emp.name, dateStr);
       });
-      
+
       return {
         name: emp.name,
         dept: emp.dept,
@@ -206,9 +212,11 @@ export function ManagerTeamSchedule() {
       details: "Night ↔ Evening",
       dateText: "Tue Apr 7 Night ↔ Wed Apr 8 Evening",
       reason: "Medical check-up scheduled for Tuesday night.",
-    }
+    },
   ]);
-  const [viewingSwap, setViewingSwap] = useState<(typeof swapRequests)[0] | null>(null);
+  const [viewingSwap, setViewingSwap] = useState<
+    (typeof swapRequests)[0] | null
+  >(null);
 
   const handleApproveSwap = (id: string) => {
     const swap = swapRequests.find((s) => s.id === id);
@@ -224,14 +232,18 @@ export function ManagerTeamSchedule() {
     setSwapRequests((prev) => prev.filter((s) => s.id !== id));
   };
 
-  const handleCellDrop = (empName: string, dayIndex: number, shiftType: string) => {
+  const handleCellDrop = (
+    empName: string,
+    dayIndex: number,
+    shiftType: string,
+  ) => {
     const shiftInfo = BRUSH_SHIFTS[shiftType];
     if (!shiftInfo) return;
-    
+
     const dateObj = new Date(weekStartDate);
     dateObj.setDate(weekStartDate.getDate() + dayIndex);
     const dateStr = dateObj.toISOString().split("T")[0];
-    
+
     setShiftsByDate((prev) => ({
       ...prev,
       [empName]: {
@@ -243,7 +255,9 @@ export function ManagerTeamSchedule() {
 
   // Modal specific fields
   const [selectedEmployeeForModal, setSelectedEmployeeForModal] = useState("");
-  const [selectedDayIndexForModal, setSelectedDayIndexForModal] = useState<number | null>(null);
+  const [selectedDayIndexForModal, setSelectedDayIndexForModal] = useState<
+    number | null
+  >(null);
   const [newShiftType, setNewShiftType] = useState("Morning (06:00 - 14:00)");
   const [newShiftDate, setNewShiftDate] = useState("");
   const [newShiftNotes, setNewShiftNotes] = useState("");
@@ -388,13 +402,25 @@ export function ManagerTeamSchedule() {
   });
 
   const handleExport = () => {
-    const headers = ["Employee Name", "Department", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const headers = [
+      "Employee Name",
+      "Department",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun",
+    ];
     const rows = filteredScheduleData.map((row) => {
-      const shiftStrings = row.shifts.map((s) => s ? `${s.type} (${s.time})` : "Off");
+      const shiftStrings = row.shifts.map((s) =>
+        s ? `${s.type} (${s.time})` : "Off",
+      );
       return [
         `"${row.name}"`,
         `"${row.dept}"`,
-        ...shiftStrings.map((s) => `"${s}"`)
+        ...shiftStrings.map((s) => `"${s}"`),
       ].join(",");
     });
     const csv = [headers.join(","), ...rows].join("\n");
@@ -405,24 +431,40 @@ export function ManagerTeamSchedule() {
     a.download = "team_schedule_export.csv";
     a.click();
     URL.revokeObjectURL(url);
-    showToast("Exported!", "success", "Team schedule exported successfully as CSV.");
+    showToast(
+      "Exported!",
+      "success",
+      "Team schedule exported successfully as CSV.",
+    );
   };
 
   const getWeekRangeLabel = () => {
     if (view === "Week") {
-      const startStr = weekStartDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      const startStr = weekStartDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
       const endDate = new Date(weekStartDate);
       endDate.setDate(weekStartDate.getDate() + 6);
       const endStr = endDate.toLocaleDateString("en-US", {
-        month: weekStartDate.getMonth() === endDate.getMonth() ? undefined : "short",
+        month:
+          weekStartDate.getMonth() === endDate.getMonth() ? undefined : "short",
         day: "numeric",
         year: "numeric",
       });
       return `${startStr} - ${endStr}`;
     } else if (view === "Month") {
-      return weekStartDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+      return weekStartDate.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      });
     } else {
-      return weekStartDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", year: "numeric" });
+      return weekStartDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
     }
   };
 
@@ -457,9 +499,15 @@ export function ManagerTeamSchedule() {
           <button
             onClick={() => setActiveBrush(activeBrush ? null : "Morning")}
             className={`px-4 py-2.5 text-sm font-bold rounded-xl border transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800 active:scale-95 flex items-center gap-2 ${
-              activeBrush ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]" : ""
+              activeBrush
+                ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
+                : ""
             }`}
-            style={activeBrush ? {} : { borderColor: "var(--border)", color: "var(--foreground)" }}
+            style={
+              activeBrush
+                ? {}
+                : { borderColor: "var(--border)", color: "var(--foreground)" }
+            }
           >
             <CalendarPlus size={16} /> Shift Painter
           </button>
@@ -760,8 +808,12 @@ export function ManagerTeamSchedule() {
             {Array.from({ length: 7 }).map((_, i) => {
               const dateObj = new Date(weekStartDate);
               dateObj.setDate(weekStartDate.getDate() + i);
-              const dayLabel = dateObj.toLocaleDateString("en-US", { weekday: "short" });
-              const monthLabel = dateObj.toLocaleDateString("en-US", { month: "short" });
+              const dayLabel = dateObj.toLocaleDateString("en-US", {
+                weekday: "short",
+              });
+              const monthLabel = dateObj.toLocaleDateString("en-US", {
+                month: "short",
+              });
               const dateNum = dateObj.getDate();
               return (
                 <div
@@ -783,14 +835,24 @@ export function ManagerTeamSchedule() {
 
           <div className="grid-body divide-y divide-border">
             {filteredScheduleData.map((emp) => (
-              <div key={emp.name} className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]">
-                <EmployeeCell name={emp.name} dept={emp.dept} avatar={emp.avatar} />
+              <div
+                key={emp.name}
+                className="grid grid-cols-[240px_repeat(7,1fr)] hover:bg-neutral-50 dark:hover:bg-zinc-800/40 transition-colors h-[60px]"
+              >
+                <EmployeeCell
+                  name={emp.name}
+                  dept={emp.dept}
+                  avatar={emp.avatar}
+                />
                 {emp.shifts.map((shift, dayIdx) => {
                   if (shift?.type === "Leave") {
                     if (emp.name === "Priya Sharma") {
                       if (dayIdx === 0) {
                         return (
-                          <div key={dayIdx} className="col-span-5 border-l border-border/50 p-1">
+                          <div
+                            key={dayIdx}
+                            className="col-span-5 border-l border-border/50 p-1"
+                          >
                             <div
                               className="w-full h-full rounded-xl flex items-center justify-center text-[11px] font-bold tracking-widest text-[#F59E0B] border-l-4 border-l-[#F59E0B]"
                               style={{ backgroundColor: "#FEF3C7" }}
@@ -804,10 +866,17 @@ export function ManagerTeamSchedule() {
                       }
                     }
                     return (
-                      <div key={dayIdx} className="border-l border-border/50 p-1 flex items-stretch">
+                      <div
+                        key={dayIdx}
+                        className="border-l border-border/50 p-1 flex items-stretch"
+                      >
                         <div className="flex-1 rounded-xl p-2 flex flex-col justify-center text-left bg-[#FEF3C7] text-[#F59E0B] border-l-4 border-l-[#F59E0B]">
-                          <span className="text-[11px] font-bold uppercase tracking-tight">Leave</span>
-                          <span className="text-[11px] font-bold opacity-80">{shift.time}</span>
+                          <span className="text-[11px] font-bold uppercase tracking-tight">
+                            Leave
+                          </span>
+                          <span className="text-[11px] font-bold opacity-80">
+                            {shift.time}
+                          </span>
                         </div>
                       </div>
                     );
@@ -828,7 +897,8 @@ export function ManagerTeamSchedule() {
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => {
                           const shiftType = e.dataTransfer.getData("shiftType");
-                          if (shiftType) handleCellDrop(emp.name, dayIdx, shiftType);
+                          if (shiftType)
+                            handleCellDrop(emp.name, dayIdx, shiftType);
                         }}
                       />
                     );
@@ -851,7 +921,8 @@ export function ManagerTeamSchedule() {
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => {
                         const shiftType = e.dataTransfer.getData("shiftType");
-                        if (shiftType) handleCellDrop(emp.name, dayIdx, shiftType);
+                        if (shiftType)
+                          handleCellDrop(emp.name, dayIdx, shiftType);
                       }}
                     />
                   );
@@ -865,19 +936,34 @@ export function ManagerTeamSchedule() {
       {view === "Day" && (
         <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-6 mb-8 bg-white dark:bg-zinc-900">
           <h3 className="text-sm font-bold text-foreground mb-4">
-            Shifts for {weekStartDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+            Shifts for{" "}
+            {weekStartDate.toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            })}
           </h3>
           <div className="divide-y divide-border">
             {filteredScheduleData.map((emp) => {
               const dateStr = weekStartDate.toISOString().split("T")[0];
               const todayShift = getShiftForDate(emp.name, dateStr);
               return (
-                <div key={emp.name} className="py-3.5 flex items-center justify-between">
+                <div
+                  key={emp.name}
+                  className="py-3.5 flex items-center justify-between"
+                >
                   <div className="flex items-center gap-3">
-                    <img src={emp.avatar} className="w-8 h-8 rounded-full border" />
+                    <img
+                      src={emp.avatar}
+                      className="w-8 h-8 rounded-full border"
+                    />
                     <div>
-                      <p className="text-xs font-bold text-foreground">{emp.name}</p>
-                      <p className="text-[10px] text-muted-foreground">{emp.dept}</p>
+                      <p className="text-xs font-bold text-foreground">
+                        {emp.name}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {emp.dept}
+                      </p>
                     </div>
                   </div>
                   <div>
@@ -886,7 +972,9 @@ export function ManagerTeamSchedule() {
                         {todayShift.type} ({todayShift.time})
                       </span>
                     ) : (
-                      <span className="text-xs text-muted-foreground italic">No shift assigned</span>
+                      <span className="text-xs text-muted-foreground italic">
+                        No shift assigned
+                      </span>
                     )}
                   </div>
                 </div>
@@ -898,42 +986,71 @@ export function ManagerTeamSchedule() {
 
       {view === "Month" && (
         <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-6 mb-8 bg-white dark:bg-zinc-900">
-          <h3 className="text-sm font-bold text-foreground mb-4">Monthly Shift Coverage Summary</h3>
+          <h3 className="text-sm font-bold text-foreground mb-4">
+            Monthly Shift Coverage Summary
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredScheduleData.map((emp) => {
               const year = weekStartDate.getFullYear();
               const month = weekStartDate.getMonth();
               const totalDays = new Date(year, month + 1, 0).getDate();
-              
+
               let scheduledShiftsCount = 0;
               let restDaysCount = 0;
-              
+
               for (let d = 1; d <= totalDays; d++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
                 const shift = getShiftForDate(emp.name, dateStr);
-                if (shift && shift.type !== "Off Day" && shift.type !== "Leave" && shift.type !== "Rest Day") {
+                if (
+                  shift &&
+                  shift.type !== "Off Day" &&
+                  shift.type !== "Leave" &&
+                  shift.type !== "Rest Day"
+                ) {
                   scheduledShiftsCount++;
                 } else {
                   restDaysCount++;
                 }
               }
-              
+
               return (
-                <div key={emp.name} className="p-4 rounded-xl border border-border bg-card space-y-3" style={{ borderColor: "var(--border)" }}>
+                <div
+                  key={emp.name}
+                  className="p-4 rounded-xl border border-border bg-card space-y-3"
+                  style={{ borderColor: "var(--border)" }}
+                >
                   <div className="flex items-center gap-3">
-                    <img src={emp.avatar} className="w-8 h-8 rounded-full border" />
+                    <img
+                      src={emp.avatar}
+                      className="w-8 h-8 rounded-full border"
+                    />
                     <div>
-                      <p className="text-xs font-bold text-foreground">{emp.name}</p>
-                      <p className="text-[10px] text-muted-foreground">{emp.dept}</p>
+                      <p className="text-xs font-bold text-foreground">
+                        {emp.name}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {emp.dept}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center text-xs pt-1 border-t" style={{ borderColor: "var(--border)" }}>
-                    <span className="text-muted-foreground">Scheduled Shifts</span>
-                    <span className="font-bold text-foreground">{scheduledShiftsCount} shifts this month</span>
+                  <div
+                    className="flex justify-between items-center text-xs pt-1 border-t"
+                    style={{ borderColor: "var(--border)" }}
+                  >
+                    <span className="text-muted-foreground">
+                      Scheduled Shifts
+                    </span>
+                    <span className="font-bold text-foreground">
+                      {scheduledShiftsCount} shifts this month
+                    </span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-muted-foreground">Monthly Rest Days</span>
-                    <span className="font-bold text-foreground">{restDaysCount} days</span>
+                    <span className="text-muted-foreground">
+                      Monthly Rest Days
+                    </span>
+                    <span className="font-bold text-foreground">
+                      {restDaysCount} days
+                    </span>
                   </div>
                 </div>
               );
@@ -962,7 +1079,10 @@ export function ManagerTeamSchedule() {
           </div>
           <div className="flex-1 p-4 space-y-4 overflow-y-auto">
             {swapRequests.map((swap) => (
-              <div key={swap.id} className="pb-4 border-b border-border/50 group">
+              <div
+                key={swap.id}
+                className="pb-4 border-b border-border/50 group"
+              >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center -space-x-2">
@@ -1255,16 +1375,24 @@ export function ManagerTeamSchedule() {
             <div className="p-6 space-y-4 text-sm">
               <div className="flex justify-between items-center bg-secondary/30 p-3 rounded-xl border border-border">
                 <div className="text-center flex-1">
-                  <p className="font-bold text-foreground">{viewingSwap.emp1}</p>
-                  <p className="text-xs text-muted-foreground">Original Shift</p>
+                  <p className="font-bold text-foreground">
+                    {viewingSwap.emp1}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Original Shift
+                  </p>
                   <span className="mt-1 inline-block px-2 py-0.5 bg-[#DCFCE7] text-[#00B87C] text-[10px] font-bold rounded">
                     {viewingSwap.details.split(" ↔ ")[0]}
                   </span>
                 </div>
                 <div className="text-muted-foreground px-2">↔</div>
                 <div className="text-center flex-1">
-                  <p className="font-bold text-foreground">{viewingSwap.emp2}</p>
-                  <p className="text-xs text-muted-foreground">Original Shift</p>
+                  <p className="font-bold text-foreground">
+                    {viewingSwap.emp2}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Original Shift
+                  </p>
                   <span className="mt-1 inline-block px-2 py-0.5 bg-[#EDE9FE] text-[#7C3AED] text-[10px] font-bold rounded">
                     {viewingSwap.details.split(" ↔ ")[1]}
                   </span>
@@ -1438,6 +1566,3 @@ function EmployeeCell({
     </div>
   );
 }
-
-
-

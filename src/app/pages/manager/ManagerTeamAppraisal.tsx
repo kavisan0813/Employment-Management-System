@@ -265,26 +265,39 @@ export function ManagerTeamAppraisal() {
 
   const handleExport = () => {
     const headers = [
-      "Employee ID", "Name", "Designation", "Department",
-      "Attendance %", "Leave Days", "Late Marks", "Performance Score", "KPI Score",
-      "Manager Rating", "Recommended Increment %", "Current Salary", "Revised Salary", "Status"
+      "Employee ID",
+      "Name",
+      "Designation",
+      "Department",
+      "Attendance %",
+      "Leave Days",
+      "Late Marks",
+      "Performance Score",
+      "KPI Score",
+      "Manager Rating",
+      "Recommended Increment %",
+      "Current Salary",
+      "Revised Salary",
+      "Status",
     ];
-    const rows = filteredMembers.map((m) => [
-      m.id,
-      `"${m.name}"`,
-      `"${m.designation}"`,
-      `"${m.department}"`,
-      m.attendancePct,
-      m.leaveDays,
-      m.lateMarks,
-      m.performanceScore,
-      m.kpiScore,
-      m.managerRating,
-      `"${m.recommendedIncrement}"`,
-      m.currentSalary,
-      m.revisedSalary,
-      m.status,
-    ].join(","));
+    const rows = filteredMembers.map((m) =>
+      [
+        m.id,
+        `"${m.name}"`,
+        `"${m.designation}"`,
+        `"${m.department}"`,
+        m.attendancePct,
+        m.leaveDays,
+        m.lateMarks,
+        m.performanceScore,
+        m.kpiScore,
+        m.managerRating,
+        `"${m.recommendedIncrement}"`,
+        m.currentSalary,
+        m.revisedSalary,
+        m.status,
+      ].join(","),
+    );
     const csv = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -293,7 +306,11 @@ export function ManagerTeamAppraisal() {
     a.download = "team_appraisal_export.csv";
     a.click();
     URL.revokeObjectURL(url);
-    showToast("Exported!", "success", "Team appraisal report downloaded as CSV.");
+    showToast(
+      "Exported!",
+      "success",
+      "Team appraisal report downloaded as CSV.",
+    );
   };
 
   const selectedMember = members.find((m) => m.id === selectedMemberId);

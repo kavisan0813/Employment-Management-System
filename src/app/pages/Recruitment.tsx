@@ -1797,7 +1797,10 @@ function PostJobModal({
   job?: JobPosting;
   onClose: () => void;
   onPost: (
-    j: Omit<JobPosting, "id" | "postedAt" | "applicants"> & { id?: string; vacancies?: string | number },
+    j: Omit<JobPosting, "id" | "postedAt" | "applicants"> & {
+      id?: string;
+      vacancies?: string | number;
+    },
   ) => void;
 }) {
   const [form, setForm] = useState({
@@ -1830,6 +1833,7 @@ function PostJobModal({
     onPost({
       ...form,
       id: job?.id,
+      vacancies: Number(form.vacancies) || 1,
     });
     onClose();
   };
@@ -2964,11 +2968,12 @@ Signature of \${candidate.name}          Date
                   <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400">
                     Candidate Resume
                   </h4>
-                  <div className="flex items-center justify-between p-3 rounded-xl border bg-background" style={{ borderColor: "var(--border)" }}>
+                  <div
+                    className="flex items-center justify-between p-3 rounded-xl border bg-background"
+                    style={{ borderColor: "var(--border)" }}
+                  >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div
-                        className="w-10 h-10 rounded-lg flex items-center justify-center bg-secondary text-primary shrink-0"
-                      >
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-secondary text-primary shrink-0">
                         <Upload size={18} />
                       </div>
                       <div className="min-w-0">
@@ -3016,7 +3021,9 @@ Bachelor of Science in Computer Science (Mock Education)
 
 =========================================
                           `;
-                          const blob = new Blob([textContent.trim()], { type: "text/plain" });
+                          const blob = new Blob([textContent.trim()], {
+                            type: "text/plain",
+                          });
                           const url = URL.createObjectURL(blob);
                           const anchor = document.createElement("a");
                           anchor.href = url;
@@ -3500,26 +3507,53 @@ function ResumeModal({ candidate, onClose }: ResumeModalProps) {
         </div>
         <div className="flex-1 overflow-y-auto pr-1 text-sm text-foreground space-y-4 font-sans text-left">
           <div>
-            <p className="font-extrabold text-xs uppercase tracking-wider text-muted-foreground mb-1">Personal Info</p>
-            <p><strong>Name:</strong> {candidate.name}</p>
-            <p><strong>Email:</strong> {candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com</p>
-            <p><strong>Location:</strong> {candidate.location}</p>
+            <p className="font-extrabold text-xs uppercase tracking-wider text-muted-foreground mb-1">
+              Personal Info
+            </p>
+            <p>
+              <strong>Name:</strong> {candidate.name}
+            </p>
+            <p>
+              <strong>Email:</strong>{" "}
+              {candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com
+            </p>
+            <p>
+              <strong>Location:</strong> {candidate.location}
+            </p>
           </div>
           <hr className="border-border" />
           <div>
-            <p className="font-extrabold text-xs uppercase tracking-wider text-muted-foreground mb-1">Experience</p>
-            <p className="font-bold text-foreground">Senior Developer — NexHR (5+ Years)</p>
-            <p className="text-xs text-muted-foreground mb-2">Jan 2021 - Present</p>
+            <p className="font-extrabold text-xs uppercase tracking-wider text-muted-foreground mb-1">
+              Experience
+            </p>
+            <p className="font-bold text-foreground">
+              Senior Developer — NexHR (5+ Years)
+            </p>
+            <p className="text-xs text-muted-foreground mb-2">
+              Jan 2021 - Present
+            </p>
             <ul className="list-disc pl-5 text-xs space-y-1 text-muted-foreground">
-              <li>Designed and built high-performance enterprise applications with React and TypeScript.</li>
-              <li>Migrated legacy infrastructure to modernized Docker/AWS stack.</li>
-              <li>Improved loading speed by 40% using virtualization and bundle optimization.</li>
+              <li>
+                Designed and built high-performance enterprise applications with
+                React and TypeScript.
+              </li>
+              <li>
+                Migrated legacy infrastructure to modernized Docker/AWS stack.
+              </li>
+              <li>
+                Improved loading speed by 40% using virtualization and bundle
+                optimization.
+              </li>
             </ul>
           </div>
           <hr className="border-border" />
           <div>
-            <p className="font-extrabold text-xs uppercase tracking-wider text-muted-foreground mb-1">Skills</p>
-            <p className="text-xs text-muted-foreground font-semibold">React, TypeScript, Node.js, Redux, TailwindCSS, AWS, Docker</p>
+            <p className="font-extrabold text-xs uppercase tracking-wider text-muted-foreground mb-1">
+              Skills
+            </p>
+            <p className="text-xs text-muted-foreground font-semibold">
+              React, TypeScript, Node.js, Redux, TailwindCSS, AWS, Docker
+            </p>
           </div>
         </div>
         <div className="pt-4 border-t border-border mt-4 flex justify-end flex-shrink-0">
@@ -3591,9 +3625,7 @@ function CandidatesView({
               style={{ backgroundColor: "var(--card)" }}
               onClick={() => onDetail(c)}
             >
-              <td
-                className="px-8 py-4 text-sm font-bold text-slate-500"
-              >
+              <td className="px-8 py-4 text-sm font-bold text-slate-500">
                 {c.id}
               </td>
               <td className="px-8 py-4">
@@ -4574,9 +4606,7 @@ function JobsView({
                 style={{ backgroundColor: "var(--card)" }}
                 onClick={() => onSelectJob(j)}
               >
-                <td
-                  className="px-8 py-5 text-sm font-bold text-slate-500"
-                >
+                <td className="px-8 py-5 text-sm font-bold text-slate-500">
                   {j.jobId || "N/A"}
                 </td>
                 <td className="px-8 py-5">
@@ -5314,6 +5344,7 @@ function VideoCallSimulator({
 export function Recruitment() {
   const { toasts, toast, dismiss } = useToast();
   const [activeTab, setActiveTab] = useState<TabId>("Pipeline");
+  const [initialResumeFile, setInitialResumeFile] = useState<File | null>(null);
 
   // Local persistent states
   const [pipeline, setPipeline] = useState<Record<Stage, Candidate[]>>(() => {
@@ -5431,8 +5462,9 @@ export function Recruitment() {
     useState<ScheduledInterview | null>(null);
   const [rescheduleInterview, setRescheduleInterview] =
     useState<ScheduledInterview | null>(null);
-  const [resumeCandidate, setResumeCandidate] =
-    useState<Candidate | null>(null);
+  const [resumeCandidate, setResumeCandidate] = useState<Candidate | null>(
+    null,
+  );
 
   const dragRef = useRef<{ candidateId: string; fromStage: Stage } | null>(
     null,
@@ -5580,11 +5612,13 @@ export function Recruitment() {
   };
 
   // CRUD - Interview Scheduling
-  const handleSchedule = (iv: Omit<ScheduledInterview, "id"> & { id?: string }) => {
+  const handleSchedule = (
+    iv: Omit<ScheduledInterview, "id"> & { id?: string },
+  ) => {
     if (iv.id) {
       // Rescheduling: update the existing interview
       const updatedInterviews = interviews.map((x) =>
-        x.id === iv.id ? { ...x, ...iv, id: x.id } : x
+        x.id === iv.id ? { ...x, ...iv, id: x.id } : x,
       );
       updateInterviews(updatedInterviews);
 
@@ -5603,12 +5637,15 @@ export function Recruitment() {
           [foundStage]: (pipeline[foundStage] || []).map((x) =>
             x.id === iv.candidateId
               ? { ...x, interviewDate: `${iv.date} ${iv.time}` }
-              : x
+              : x,
           ),
         };
         updatePipeline(newPipeline);
       }
-      toast(`Interview rescheduled with ${iv.candidateName} on ${iv.date}`, "info");
+      toast(
+        `Interview rescheduled with ${iv.candidateName} on ${iv.date}`,
+        "info",
+      );
     } else {
       // Creating a new interview
       const newInterview: ScheduledInterview = {
@@ -5634,12 +5671,15 @@ export function Recruitment() {
           [foundStage]: (pipeline[foundStage] || []).map((x) =>
             x.id === iv.candidateId
               ? { ...x, interviewDate: `${iv.date} ${iv.time}` }
-              : x
+              : x,
           ),
         };
         updatePipeline(newPipeline);
       }
-      toast(`Interview scheduled with ${iv.candidateName} on ${iv.date}`, "info");
+      toast(
+        `Interview scheduled with ${iv.candidateName} on ${iv.date}`,
+        "info",
+      );
     }
   };
 

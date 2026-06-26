@@ -4926,22 +4926,22 @@ const hcTrendInsights = {
     rate: "+6.9%",
     peak: "248",
     avg: "240",
-    desc: "Steady growth of engineering and product teams in the last 6 months."
+    desc: "Steady growth of engineering and product teams in the last 6 months.",
   },
   "1Y": {
     growth: "+38 Employees",
     rate: "+18.1%",
     peak: "248",
     avg: "225",
-    desc: "Continuous linear expansion with strong hiring trends across all departments."
+    desc: "Continuous linear expansion with strong hiring trends across all departments.",
   },
   "2Y": {
     growth: "+68 Employees",
     rate: "+37.8%",
     peak: "248",
     avg: "213",
-    desc: "Long-term headcount scaling indicating substantial organizational expansion."
-  }
+    desc: "Long-term headcount scaling indicating substantial organizational expansion.",
+  },
 };
 
 const leaveAnalysisData = [
@@ -4973,7 +4973,7 @@ export function Reports() {
   // Filters state
   const [filterDate, setFilterDate] = useState("This Month");
   const [filterDept, setFilterDept] = useState(
-    user?.role === "Manager" ? "Engineering" : "All Departments"
+    user?.role === "Manager" ? "Engineering" : "All Departments",
   );
   const [filterLoc, setFilterLoc] = useState("All Locations");
   const [isLoading, setIsLoading] = useState(false);
@@ -5724,7 +5724,9 @@ export function Reports() {
           {/* Dept filter dropdown */}
           <div style={{ position: "relative" }}>
             <button
-              onClick={() => !isManager && setShowDeptDropdown(!showDeptDropdown)}
+              onClick={() =>
+                !isManager && setShowDeptDropdown(!showDeptDropdown)
+              }
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -6108,12 +6110,20 @@ export function Reports() {
               </div>
               <div className="pt-4 border-t border-border/50 grid grid-cols-2 gap-4 mt-4">
                 <div>
-                  <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block">Peak Count</span>
-                  <span className="text-[15px] font-black text-foreground">{hcTrendInsights[timeRange].peak}</span>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block">
+                    Peak Count
+                  </span>
+                  <span className="text-[15px] font-black text-foreground">
+                    {hcTrendInsights[timeRange].peak}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block">Average</span>
-                  <span className="text-[15px] font-black text-foreground">{hcTrendInsights[timeRange].avg}</span>
+                  <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block">
+                    Average
+                  </span>
+                  <span className="text-[15px] font-black text-foreground">
+                    {hcTrendInsights[timeRange].avg}
+                  </span>
                 </div>
               </div>
             </div>
@@ -6138,7 +6148,11 @@ export function Reports() {
                   >
                     <defs>
                       <linearGradient id="hcGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#00B87C" stopOpacity={0.3} />
+                        <stop
+                          offset="5%"
+                          stopColor="#00B87C"
+                          stopOpacity={0.3}
+                        />
                         <stop
                           offset="95%"
                           stopColor="#DCFCE7"
@@ -6181,7 +6195,6 @@ export function Reports() {
               )}
             </div>
           </div>
-
         </div>
 
         {/* Hiring Pipeline */}

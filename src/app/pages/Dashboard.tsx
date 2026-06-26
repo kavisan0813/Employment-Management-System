@@ -18,8 +18,6 @@ export function Dashboard() {
   // Determine dashboard based on path
   const path = location.pathname;
 
-
-
   if (path.includes("/hr/dashboard")) {
     return <HRDashboard />;
   }

@@ -354,20 +354,34 @@ export function ManagerTeamAssets() {
   });
 
   const handleExport = () => {
-    const headers = ["Asset ID", "Asset Name", "Category", "Serial No", "Value", "Status", "Assigned Date", "Condition", "Employee ID", "Employee Name", "Notes"];
-    const rows = filteredAssets.map((item) => [
-      item.assetId,
-      `"${item.name}"`,
-      `"${item.category}"`,
-      `"${item.serialNo}"`,
-      `"${item.value}"`,
-      item.status,
-      `"${item.assignedDate}"`,
-      `"${item.condition}"`,
-      item.member.id,
-      `"${item.member.name}"`,
-      `"${item.notes || ""}"`,
-    ].join(","));
+    const headers = [
+      "Asset ID",
+      "Asset Name",
+      "Category",
+      "Serial No",
+      "Value",
+      "Status",
+      "Assigned Date",
+      "Condition",
+      "Employee ID",
+      "Employee Name",
+      "Notes",
+    ];
+    const rows = filteredAssets.map((item) =>
+      [
+        item.assetId,
+        `"${item.name}"`,
+        `"${item.category}"`,
+        `"${item.serialNo}"`,
+        `"${item.value}"`,
+        item.status,
+        `"${item.assignedDate}"`,
+        `"${item.condition}"`,
+        item.member.id,
+        `"${item.member.name}"`,
+        `"${item.notes || ""}"`,
+      ].join(","),
+    );
     const csv = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);

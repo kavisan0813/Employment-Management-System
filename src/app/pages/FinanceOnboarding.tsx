@@ -451,8 +451,6 @@ export function FinanceOnboarding() {
     showToast("Preview", "info", "Payslip preview generated");
   };
 
-
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-300 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent relative">
       {/* ── Page Header ─────────────────────────────────────── */}
