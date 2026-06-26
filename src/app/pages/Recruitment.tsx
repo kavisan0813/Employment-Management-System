@@ -1797,7 +1797,10 @@ function PostJobModal({
   job?: JobPosting;
   onClose: () => void;
   onPost: (
-    j: Omit<JobPosting, "id" | "postedAt" | "applicants"> & { id?: string; vacancies?: string | number },
+    j: Omit<JobPosting, "id" | "postedAt" | "applicants" | "vacancies"> & {
+      id?: string;
+      vacancies?: string | number;
+    },
   ) => void;
 }) {
   const [form, setForm] = useState({
@@ -5433,6 +5436,7 @@ export function Recruitment() {
     useState<ScheduledInterview | null>(null);
   const [resumeCandidate, setResumeCandidate] =
     useState<Candidate | null>(null);
+  const [initialResumeFile, setInitialResumeFile] = useState<File | null>(null);
 
   const dragRef = useRef<{ candidateId: string; fromStage: Stage } | null>(
     null,
@@ -5521,7 +5525,7 @@ export function Recruitment() {
 
   // CRUD - Job Posting
   const handlePostJob = (
-    jobForm: Omit<JobPosting, "id" | "postedAt" | "applicants"> & {
+    jobForm: Omit<JobPosting, "id" | "postedAt" | "applicants" | "vacancies"> & {
       id?: string;
       jobId?: string;
       vacancies?: string | number;
