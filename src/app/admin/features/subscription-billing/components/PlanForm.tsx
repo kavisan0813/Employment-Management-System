@@ -1,11 +1,6 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from "react";
 import { X, Package, Check, AlertCircle } from "lucide-react";
-import { Plan, PlanTier, PLAN_COLORS, DEFAULT_PLAN_FEATURES } from "../types/plan.types";
+import { Plan, PlanTier, DEFAULT_PLAN_FEATURES } from "../types/plan.types";
 
 interface PlanFormProps {
   plan: Plan | null;
@@ -187,15 +182,24 @@ export function PlanForm({ plan, isEditing, onSave, onClose }: PlanFormProps) {
             </span>
             <div className="grid grid-cols-2 gap-1">
               {DEFAULT_PLAN_FEATURES[tier].map((feat) => (
-                <div key={feat.name} className="flex items-center gap-1.5 text-[11px]">
+                <div
+                  key={feat.name}
+                  className="flex items-center gap-1.5 text-[11px]"
+                >
                   {feat.included ? (
                     <Check className="w-3 h-3 text-emerald-500" />
                   ) : (
                     <X className="w-3 h-3 text-gray-300" />
                   )}
-                  <span className={feat.included ? "text-gray-700" : "text-gray-400"}>
+                  <span
+                    className={
+                      feat.included ? "text-gray-700" : "text-gray-400"
+                    }
+                  >
                     {feat.name}
-                    {feat.limit && <span className="text-gray-400 ml-1">({feat.limit})</span>}
+                    {feat.limit && (
+                      <span className="text-gray-400 ml-1">({feat.limit})</span>
+                    )}
                   </span>
                 </div>
               ))}

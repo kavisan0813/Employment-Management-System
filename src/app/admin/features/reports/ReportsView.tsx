@@ -37,7 +37,6 @@ import {
   AlertTriangle,
   AlertCircle,
   Info,
-  ChevronDown,
 } from "lucide-react";
 
 export function ReportsView() {
@@ -135,8 +134,6 @@ export function ReportsView() {
       group: "Action Centers",
     },
   ] as const;
-
-
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
@@ -244,35 +241,33 @@ export function ReportsView() {
         </div>
       </div>
 
-     {/* Flat Tab Navigation */}
-<div className="w-full overflow-hidden">
-  <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
-    {navItems.map((tab) => {
-      const Icon = tab.icon;
-      const isActive = activeTab === tab.id;
-      return (
-        <button
-          key={tab.id}
-          onClick={() => setActiveTab(tab.id as any)}
-          className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap border ${
-            isActive
-              ? "bg-indigo-600 text-white border-indigo-600 shadow-md"
-              : "bg-white border-transparent text-gray-600 hover:bg-gray-100 hover:border-gray-200"
-          }`}
-        >
-          <Icon className="w-3.5 h-3.5" />
-          <span>{tab.label}</span>
-        </button>
-      );
-    })}
-  </div>
-</div>
-
-
-          {/* Render block */}
-          <div className="p-6">{renderActiveTabContent()}</div>
+      {/* Flat Tab Navigation */}
+      <div className="w-full overflow-hidden">
+        <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
+          {navItems.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap border ${
+                  isActive
+                    ? "bg-indigo-600 text-white border-indigo-600 shadow-md"
+                    : "bg-white border-transparent text-gray-600 hover:bg-gray-100 hover:border-gray-200"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
-      
+      </div>
+
+      {/* Render block */}
+      <div className="p-6">{renderActiveTabContent()}</div>
+    </div>
   );
 }
 

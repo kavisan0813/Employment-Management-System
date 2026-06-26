@@ -3,28 +3,47 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from "react";
-import { NotificationState, SystemAlert, SubscriptionExpiryAlert, FailedPaymentAlert, SecurityAlert, NotificationTemplate, NotificationHistoryItem, NotificationSettings } from "../types/notifications.types";
+import { useState } from "react";
+import {
+  NotificationState,
+  NotificationTemplate,
+  NotificationSettings,
+} from "../types/notifications.types";
 import { notificationsService } from "../services/notifications.service";
 import { pushAuditLog } from "../../../mockData";
 
 const CURRENT_ADMIN_EMAIL = "admin@ems.io";
 
 export function useNotifications() {
-  const [state, setState] = useState<NotificationState>(() => notificationsService.loadData());
+  const [state, setState] = useState<NotificationState>(() =>
+    notificationsService.loadData(),
+  );
   const [activeTab, setActiveTab] = useState<
-    "dashboard" | "system" | "expiry" | "failedPayments" | "security" | "templates" | "channels" | "history" | "settings"
+    | "dashboard"
+    | "system"
+    | "expiry"
+    | "failedPayments"
+    | "security"
+    | "templates"
+    | "channels"
+    | "history"
+    | "settings"
   >("dashboard");
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
-  const [alertType, setAlertType] = useState<"success" | "info" | "error" | "warning">("success");
+  const [alertType, setAlertType] = useState<
+    "success" | "info" | "error" | "warning"
+  >("success");
 
   // Filter and search variables
   const [searchQuery, setSearchQuery] = useState("");
   const [severityFilter, setSeverityFilter] = useState<string>("all");
 
-  const triggerAlert = (msg: string, type: "success" | "info" | "error" | "warning" = "success") => {
+  const triggerAlert = (
+    msg: string,
+    type: "success" | "info" | "error" | "warning" = "success",
+  ) => {
     setAlertMsg(msg);
     setAlertType(type);
     setShowAlert(true);
@@ -34,12 +53,23 @@ export function useNotifications() {
   };
 
   const handleRetryPayment = async (id: string) => {
-    triggerAlert("Connecting to Razorpay gateway to re-attempt collection...", "info");
+    triggerAlert(
+      "Connecting to Razorpay gateway to re-attempt collection...",
+      "info",
+    );
     const result = await notificationsService.retryPayment(state, id);
     if (result.success) {
       setState(result.state);
       triggerAlert(result.logs, "success");
-      pushAuditLog("payment.retried", "Billing", CURRENT_ADMIN_EMAIL, "platform_admin", null, "Active", { payment_id: id });
+      pushAuditLog(
+        "payment.retried",
+        "Billing",
+        CURRENT_ADMIN_EMAIL,
+        "platform_admin",
+        null,
+        "Active",
+        { payment_id: id },
+      );
     }
   };
 
@@ -48,8 +78,19 @@ export function useNotifications() {
     const result = await notificationsService.sendRenewalReminder(state, id);
     if (result.success) {
       setState(result.state);
-      triggerAlert("SLA Expiry Reminders dispatched successfully to tenant admins via Email and SMS.", "success");
-      pushAuditLog("tenant.reminded", "Admin Action", CURRENT_ADMIN_EMAIL, "platform_admin", null, "Active", { alert_id: id });
+      triggerAlert(
+        "SLA Expiry Reminders dispatched successfully to tenant admins via Email and SMS.",
+        "success",
+      );
+      pushAuditLog(
+        "tenant.reminded",
+        "Admin Action",
+        CURRENT_ADMIN_EMAIL,
+        "platform_admin",
+        null,
+        "Active",
+        { alert_id: id },
+      );
     }
   };
 
@@ -62,23 +103,45 @@ export function useNotifications() {
   const handleSecurityAction = (id: string, action: "warned" | "locked") => {
     const newState = notificationsService.takeSecurityAction(state, id, action);
     setState(newState);
-    triggerAlert(`Security action taken: User forced to ${action.toUpperCase()}`, "warning");
-    pushAuditLog(`security.action_${action}`, "Security", CURRENT_ADMIN_EMAIL, "platform_admin", null, "Active", { alert_id: id });
+    triggerAlert(
+      `Security action taken: User forced to ${action.toUpperCase()}`,
+      "warning",
+    );
+    pushAuditLog(
+      `security.action_${action}`,
+      "Security",
+      CURRENT_ADMIN_EMAIL,
+      "platform_admin",
+      null,
+      "Active",
+      { alert_id: id },
+    );
   };
 
   const handleSaveSettings = (newSettings: NotificationSettings) => {
     const newState = {
       ...state,
-      settings: newSettings
+      settings: newSettings,
     };
     setState(newState);
     notificationsService.saveData(newState);
-    triggerAlert("Global alert dispatch channels saved successfully.", "success");
-    pushAuditLog("notification_settings.updated", "Admin Action", CURRENT_ADMIN_EMAIL, "platform_admin", null, "Active", {});
+    triggerAlert(
+      "Global alert dispatch channels saved successfully.",
+      "success",
+    );
+    pushAuditLog(
+      "notification_settings.updated",
+      "Admin Action",
+      CURRENT_ADMIN_EMAIL,
+      "platform_admin",
+      null,
+      "Active",
+      {},
+    );
   };
 
   const handleSaveTemplate = (updatedTemplate: NotificationTemplate) => {
-    const updatedTemplates = state.templates.map(t => {
+    const updatedTemplates = state.templates.map((t) => {
       if (t.id === updatedTemplate.id) {
         return updatedTemplate;
       }
@@ -87,12 +150,23 @@ export function useNotifications() {
 
     const newState = {
       ...state,
-      templates: updatedTemplates
+      templates: updatedTemplates,
     };
     setState(newState);
     notificationsService.saveData(newState);
-    triggerAlert(`Template '${updatedTemplate.type.toUpperCase()}' committed successfully.`, "success");
-    pushAuditLog(`notification_template.${updatedTemplate.type}_updated`, "Admin Action", CURRENT_ADMIN_EMAIL, "platform_admin", null, "Active", {});
+    triggerAlert(
+      `Template '${updatedTemplate.type.toUpperCase()}' committed successfully.`,
+      "success",
+    );
+    pushAuditLog(
+      `notification_template.${updatedTemplate.type}_updated`,
+      "Admin Action",
+      CURRENT_ADMIN_EMAIL,
+      "platform_admin",
+      null,
+      "Active",
+      {},
+    );
   };
 
   return {
@@ -113,6 +187,6 @@ export function useNotifications() {
     handleAcknowledgeAlert,
     handleSecurityAction,
     handleSaveSettings,
-    handleSaveTemplate
+    handleSaveTemplate,
   };
 }

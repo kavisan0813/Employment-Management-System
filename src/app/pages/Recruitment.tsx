@@ -2356,16 +2356,9 @@ function CandidateDetailSidePanel({
   useEscapeKey(onClose);
 
   const handleDownloadOffer = () => {
-    const formattedDate = new Date().toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-
-    const textContent = `================================================================
+    const textContent = `
                        EMS CORP
                  OFFICIAL OFFER OF EMPLOYMENT
-================================================================
 
 Reference : EMS/OFFER/\${new Date().getFullYear()}/\${candidate.id.slice(0, 4).toUpperCase()}
 Date      : \${formattedDate}
@@ -4160,14 +4153,12 @@ function AnalyticsView({ pipeline }: { pipeline: Record<Stage, Candidate[]> }) {
       role: c.role,
       time: "4h ago",
     })),
-    ...pipeline["Round 2"]
-      .slice(-1)
-      .map((c) => ({
-        type: "Interview" as const,
-        name: c.name,
-        role: c.role,
-        time: "1d ago",
-      })),
+    ...pipeline["Round 2"].slice(-1).map((c) => ({
+      type: "Interview" as const,
+      name: c.name,
+      role: c.role,
+      time: "1d ago",
+    })),
     ...pipeline.Applied.slice(-1).map((c) => ({
       type: "Application" as const,
       name: c.name,

@@ -1,5 +1,4 @@
-import React from "react";
-import { RECENT_ACTIVITY } from "@/app/admin/constants/dashboard";
+import { RECENT_ACTIVITY } from "../../constants/dashboard";
 
 export function RecentActivityCard() {
   return (
@@ -14,8 +13,12 @@ export function RecentActivityCard() {
               className="h-[7px] w-[7px] flex-shrink-0 rounded-full"
               style={{ backgroundColor: a.colorVar }}
             />
-            <span className="flex-1 text-[13px] text-foreground truncate">{a.label}</span>
-            <span className="text-[11px] text-muted-foreground shrink-0">{a.time}</span>
+            <span className="flex-1 text-[13px] text-foreground truncate">
+              {a.label}
+            </span>
+            <span className="text-[11px] text-muted-foreground shrink-0">
+              {a.time}
+            </span>
           </div>
         ))}
       </div>

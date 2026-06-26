@@ -3,10 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
-import { 
-  LayoutDashboard, ShieldAlert, AlertTriangle, Download, History, 
-  UserCheck, Terminal, Settings2, Trash2, Shield, Network
+import { useState } from "react";
+import {
+  LayoutDashboard,
+  ShieldAlert,
+  AlertTriangle,
+  Download,
+  History,
+  UserCheck,
+  Terminal,
+  Trash2,
+  Shield,
+  Network,
 } from "lucide-react";
 import { useAuditLogs } from "./hooks/useAuditLogs";
 import { LogsDashboard } from "./components/LogsDashboard";
@@ -17,19 +25,50 @@ import { SecurityEventsTable } from "./components/SecurityEventsTable";
 import { ErrorLogsTable } from "./components/ErrorLogsTable";
 import { ExportLogsTable } from "./components/ExportLogsTable";
 import { ApiLogsTable } from "./components/ApiLogsTable";
-// ... (Your other component imports remain the same)
 
-type ActiveTab = "dashboard" | "api" | "login" | "activity" | "trail" | "security" | "error" | "export" | "settings";
+type ActiveTab =
+  | "dashboard"
+  | "api"
+  | "login"
+  | "activity"
+  | "trail"
+  | "security"
+  | "error"
+  | "export"
+  | "settings";
 
 export default function AuditLogsView() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("dashboard");
   const {
-    loginLogs, activityLogs, auditTrails, securityEvents, errorLogs, exportLogs, apiLogs,
-    retentionPolicy, stats, loading, organizations, searchQuery, setSearchQuery,
-    selectedOrg, setSelectedOrg, selectedStatus, setSelectedStatus, selectedSeverity,
-    setSelectedSeverity, selectedModule, setSelectedModule, selectedAction,
-    setSelectedAction, dateRange, setDateRange, resolveSecurityEvent,
-    updateRetentionPolicy, purgeAuditTrail, filterByDate,
+    loginLogs,
+    activityLogs,
+    auditTrails,
+    securityEvents,
+    errorLogs,
+    exportLogs,
+    apiLogs,
+    retentionPolicy,
+    stats,
+    loading,
+    organizations,
+    searchQuery,
+    setSearchQuery,
+    selectedOrg,
+    setSelectedOrg,
+    selectedStatus,
+    setSelectedStatus,
+    selectedSeverity,
+    setSelectedSeverity,
+    selectedModule,
+    setSelectedModule,
+    selectedAction,
+    setSelectedAction,
+    dateRange,
+    setDateRange,
+    resolveSecurityEvent,
+    updateRetentionPolicy,
+    purgeAuditTrail,
+    filterByDate,
   } = useAuditLogs();
 
   const handleTabChange = (tab: ActiveTab) => {
@@ -64,11 +103,15 @@ export default function AuditLogsView() {
             Compliance Audit Ledger
           </h1>
           <p className="text-sm text-gray-500 mt-1 font-semibold">
-            Manage platform event logs, API traces, security auditing, and retention policies.
+            Manage platform event logs, API traces, security auditing, and
+            retention policies.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full bg-rose-50 text-rose-750 border border-rose-100 self-start md:self-auto shadow-xs">
-          <button onClick={purgeAuditTrail} className="inline-flex items-center gap-1.5 text-rose-700 hover:text-rose-800 transition-colors">
+          <button
+            onClick={purgeAuditTrail}
+            className="inline-flex items-center gap-1.5 text-rose-700 hover:text-rose-800 transition-colors"
+          >
             <Trash2 className="w-3.5 h-3.5" /> Purge Ledger
           </button>
         </div>
@@ -108,7 +151,7 @@ export default function AuditLogsView() {
           <div className="px-6 py-4 bg-gray-50/50 border-b border-gray-200 flex justify-between items-center">
             <div>
               <h2 className="text-lg font-bold text-gray-900 tracking-wide">
-                {tabsConfig.find(i => i.id === activeTab)?.label}
+                {tabsConfig.find((i) => i.id === activeTab)?.label}
               </h2>
               <p className="text-[11px] text-gray-500 font-medium">
                 Detailed diagnostics workspace for {activeTab} operations.
@@ -119,19 +162,121 @@ export default function AuditLogsView() {
           <div className="p-6">
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <div className="text-sm font-semibold text-gray-500 animate-pulse">Loading secure ledger...</div>
+                <div className="text-sm font-semibold text-gray-500 animate-pulse">
+                  Loading secure ledger...
+                </div>
               </div>
             ) : (
               <div className="animate-in fade-in duration-300">
-            {activeTab === "dashboard" && <LogsDashboard stats={stats} loginLogs={loginLogs} securityEvents={securityEvents} errorLogs={errorLogs} />}
-            {activeTab === "api" && <ApiLogsTable logs={apiLogs} searchQuery={searchQuery} setSearchQuery={setSearchQuery} dateRange={dateRange} setDateRange={setDateRange} filterByDate={filterByDate} />}
-            {activeTab === "login" && <LoginLogsTable logs={loginLogs} organizations={organizations} searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedOrg={selectedOrg} setSelectedOrg={setSelectedOrg} selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus} dateRange={dateRange} setDateRange={setDateRange} filterByDate={filterByDate} />}
-            {activeTab === "activity" && <ActivityLogsTable logs={activityLogs} organizations={organizations} searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedOrg={selectedOrg} setSelectedOrg={setSelectedOrg} selectedModule={selectedModule} setSelectedModule={setSelectedModule} selectedAction={selectedAction} setSelectedAction={setSelectedAction} dateRange={dateRange} setDateRange={setDateRange} filterByDate={filterByDate} />}
-            {activeTab === "trail" && <AuditTrailTable trails={auditTrails} organizations={organizations} searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedOrg={selectedOrg} setSelectedOrg={setSelectedOrg} dateRange={dateRange} setDateRange={setDateRange} filterByDate={filterByDate} />}
-            {activeTab === "security" && <SecurityEventsTable events={securityEvents} organizations={organizations} searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedOrg={selectedOrg} setSelectedOrg={setSelectedOrg} selectedSeverity={selectedSeverity} setSelectedSeverity={setSelectedSeverity} selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus} dateRange={dateRange} setDateRange={setDateRange} filterByDate={filterByDate} resolveSecurityEvent={resolveSecurityEvent} />}
-            {activeTab === "error" && <ErrorLogsTable logs={errorLogs} searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedSeverity={selectedSeverity} setSelectedSeverity={setSelectedSeverity} dateRange={dateRange} setDateRange={setDateRange} filterByDate={filterByDate} />}
-            {activeTab === "export" && <ExportLogsTable logs={exportLogs} organizations={organizations} searchQuery={searchQuery} setSearchQuery={setSearchQuery} selectedOrg={selectedOrg} setSelectedOrg={setSelectedOrg} selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus} dateRange={dateRange} setDateRange={setDateRange} filterByDate={filterByDate} />}
-           </div>
+                {activeTab === "dashboard" && (
+                  <LogsDashboard
+                    stats={stats}
+                    loginLogs={loginLogs}
+                    securityEvents={securityEvents}
+                    errorLogs={errorLogs}
+                  />
+                )}
+                {activeTab === "api" && (
+                  <ApiLogsTable
+                    logs={apiLogs}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                  />
+                )}
+                {activeTab === "login" && (
+                  <LoginLogsTable
+                    logs={loginLogs}
+                    organizations={organizations}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedOrg={selectedOrg}
+                    setSelectedOrg={setSelectedOrg}
+                    selectedStatus={selectedStatus}
+                    setSelectedStatus={setSelectedStatus}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                  />
+                )}
+                {activeTab === "activity" && (
+                  <ActivityLogsTable
+                    logs={activityLogs}
+                    organizations={organizations}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedOrg={selectedOrg}
+                    setSelectedOrg={setSelectedOrg}
+                    selectedModule={selectedModule}
+                    setSelectedModule={setSelectedModule}
+                    selectedAction={selectedAction}
+                    setSelectedAction={setSelectedAction}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                  />
+                )}
+                {activeTab === "trail" && (
+                  <AuditTrailTable
+                    trails={auditTrails}
+                    organizations={organizations}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedOrg={selectedOrg}
+                    setSelectedOrg={setSelectedOrg}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                  />
+                )}
+                {activeTab === "security" && (
+                  <SecurityEventsTable
+                    events={securityEvents}
+                    organizations={organizations}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedOrg={selectedOrg}
+                    setSelectedOrg={setSelectedOrg}
+                    selectedSeverity={selectedSeverity}
+                    setSelectedSeverity={setSelectedSeverity}
+                    selectedStatus={selectedStatus}
+                    setSelectedStatus={setSelectedStatus}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                    resolveSecurityEvent={resolveSecurityEvent}
+                  />
+                )}
+                {activeTab === "error" && (
+                  <ErrorLogsTable
+                    logs={errorLogs}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedSeverity={selectedSeverity}
+                    setSelectedSeverity={setSelectedSeverity}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                  />
+                )}
+                {activeTab === "export" && (
+                  <ExportLogsTable
+                    logs={exportLogs}
+                    organizations={organizations}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    selectedOrg={selectedOrg}
+                    setSelectedOrg={setSelectedOrg}
+                    selectedStatus={selectedStatus}
+                    setSelectedStatus={setSelectedStatus}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
+                    filterByDate={filterByDate}
+                  />
+                )}
+              </div>
             )}
           </div>
         </div>

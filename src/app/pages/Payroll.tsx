@@ -60,7 +60,6 @@ const MONTHS = [
   "December",
 ];
 const YEARS = ["2024", "2025", "2026"];
-const LS_KEY = "nexus_payroll_records";
 const DEPT_COLORS: Record<string, string> = {
   Engineering: "#10b981",
   Marketing: "#6366f1",

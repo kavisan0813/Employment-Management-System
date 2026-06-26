@@ -8,7 +8,6 @@ import {
   X,
 } from "lucide-react";
 import { useAttendance } from "../../context/AttendanceContext";
-import { StatusBadge } from "../../components/workflow/StatusBadge";
 
 // Mock Data for the table
 interface AttendanceRow {
@@ -89,7 +88,10 @@ const MOCK_HEATMAP = Array.from({ length: 5 }, () =>
   Array.from({ length: 30 }, () => Math.floor(Math.random() * 4)),
 );
 
-const MONTH_CONFIGS: Record<string, { days: number; offset: number; label: string }> = {
+const MONTH_CONFIGS: Record<
+  string,
+  { days: number; offset: number; label: string }
+> = {
   "Feb 2026": { days: 28, offset: 0, label: "February 2026" },
   "Mar 2026": { days: 31, offset: 0, label: "March 2026" },
   "Apr 2026": { days: 30, offset: 3, label: "April 2026" },
@@ -110,40 +112,30 @@ export function ManagerAttendance() {
   const [reason, setReason] = useState("Technical issue");
   const [notes, setNotes] = useState("");
 
-  const { getPunchStateForEmail, punchState: globalPunchState } = useAttendance();
+  const { getPunchStateForEmail, punchState: globalPunchState } =
+    useAttendance();
 
   // For testing our context, we'll assume "today" is the 23rd of June 2026
   const todayMockDay = new Date().getDate();
   const todayMockMonth = new Date().getMonth();
 
-  const dayData = (date: number, selectedMonth: number, TEAM_NAMES: string[]) => {
-    return TEAM_NAMES.map((name, mi) => {
-      // Dynamic Hook for Priya Sharma's real-time punch state
-      if (name === "Priya Sharma" && date === todayMockDay && selectedMonth === todayMockMonth) {
-        const priyaPunch = getPunchStateForEmail("emp@nexushr.com");
-        if (priyaPunch?.isPunchedIn || priyaPunch?.punchOutTime) {
-           return 0; // Present
-        } else {
-           return 2; // Absent (Not punched in yet)
-        }
-      }
-
-      // Holiday
-      if (date === 19) return 4;
-      
-      const seed = date * 100 + mi;
-      let val = seed % 100;
-      if (val < 85) return 0; // Present
-      if (val < 92) return 1; // Late
-      if (val < 96) return 3; // Leave
-      return 2; // Absent
-    });
-  };
-
   // Month navigation state - dynamically default to current month
   const [currentMonthIndex, setCurrentMonthIndex] = useState(() => {
     const today = new Date();
-    const mNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const mNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
     const currentMonthStr = `${mNames[today.getMonth()]} ${today.getFullYear()}`;
     const idx = MONTH_LIST.indexOf(currentMonthStr);
     return idx !== -1 ? idx : 4; // default to Jun 2026 (index 4)
@@ -159,30 +151,32 @@ export function ManagerAttendance() {
   // Sync Priya's real-time punch state to the table view
   useEffect(() => {
     const priyaPunch = getPunchStateForEmail("emp@nexushr.com");
-    setAttendanceData(prev => prev.map(row => {
-      if (row.name === "Priya Sharma") {
-        if (priyaPunch?.isPunchedIn || priyaPunch?.punchOutTime) {
-          return {
-            ...row,
-            status: "Present",
-            checkIn: priyaPunch.punchInTime || row.checkIn,
-            checkOut: priyaPunch.punchOutTime || "--:-- --",
-            hours: priyaPunch.workedHours || "--",
-            isLate: false
-          };
-        } else {
-          return {
-            ...row,
-            status: "Absent",
-            checkIn: "--:-- --",
-            checkOut: "--:-- --",
-            hours: "--",
-            isLate: false
-          };
+    setAttendanceData((prev) =>
+      prev.map((row) => {
+        if (row.name === "Priya Sharma") {
+          if (priyaPunch?.isPunchedIn || priyaPunch?.punchOutTime) {
+            return {
+              ...row,
+              status: "Present",
+              checkIn: priyaPunch.punchInTime || row.checkIn,
+              checkOut: priyaPunch.punchOutTime || "--:-- --",
+              hours: priyaPunch.workedHours || "--",
+              isLate: false,
+            };
+          } else {
+            return {
+              ...row,
+              status: "Absent",
+              checkIn: "--:-- --",
+              checkOut: "--:-- --",
+              hours: "--",
+              isLate: false,
+            };
+          }
         }
-      }
-      return row;
-    }));
+        return row;
+      }),
+    );
   }, [globalPunchState]); // re-run if global punch state changes
 
   const handlePrevMonth = () => {
@@ -210,7 +204,9 @@ export function ManagerAttendance() {
     if (regularizeFilter === "Needs Regularization") {
       regMatch = row.action === "Regularize";
     } else if (regularizeFilter === "Regularized") {
-      regMatch = (row.id === "EMP-0145" || row.id === "EMP-0151") && row.status === "Present";
+      regMatch =
+        (row.id === "EMP-0145" || row.id === "EMP-0151") &&
+        row.status === "Present";
     }
 
     return tabMatch && regMatch;
@@ -228,18 +224,20 @@ export function ManagerAttendance() {
 
   const handleConfirmRegularize = () => {
     if (selectedEmployee) {
-      setAttendanceData(prev => prev.map(row => {
-        if (row.id === selectedEmployee.id) {
-          return {
-            ...row,
-            status: "Present",
-            action: "Details",
-            checkIn: correctedTime,
-            isLate: false
-          };
-        }
-        return row;
-      }));
+      setAttendanceData((prev) =>
+        prev.map((row) => {
+          if (row.id === selectedEmployee.id) {
+            return {
+              ...row,
+              status: "Present",
+              action: "Details",
+              checkIn: correctedTime,
+              isLate: false,
+            };
+          }
+          return row;
+        }),
+      );
       setShowRegularizeModal(false);
     }
   };
@@ -307,9 +305,13 @@ export function ManagerAttendance() {
             <button
               onClick={() => setShowRegularizeDropdown(!showRegularizeDropdown)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl border text-[13px] font-bold transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800 bg-white dark:bg-zinc-900 shadow-sm"
-              style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+              style={{
+                borderColor: "var(--border)",
+                color: "var(--foreground)",
+              }}
             >
-              Filter: {regularizeFilter === "All" ? "All" : regularizeFilter} <ChevronDown size={14} />
+              Filter: {regularizeFilter === "All" ? "All" : regularizeFilter}{" "}
+              <ChevronDown size={14} />
             </button>
             {showRegularizeDropdown && (
               <>
@@ -317,10 +319,16 @@ export function ManagerAttendance() {
                   className="fixed inset-0 z-[1000]"
                   onClick={() => setShowRegularizeDropdown(false)}
                 />
-                <div className="absolute right-0 mt-2 w-56 rounded-xl border bg-white dark:bg-zinc-900 shadow-lg z-[1001] p-1.5 space-y-0.5" style={{ borderColor: "var(--border)" }}>
+                <div
+                  className="absolute right-0 mt-2 w-56 rounded-xl border bg-white dark:bg-zinc-900 shadow-lg z-[1001] p-1.5 space-y-0.5"
+                  style={{ borderColor: "var(--border)" }}
+                >
                   {[
                     { value: "All", label: "All Records" },
-                    { value: "Needs Regularization", label: "Needs Regularization" },
+                    {
+                      value: "Needs Regularization",
+                      label: "Needs Regularization",
+                    },
                     { value: "Regularized", label: "Regularized Only" },
                   ].map((opt) => (
                     <button
@@ -527,21 +535,45 @@ export function ManagerAttendance() {
         // 0 = present, 1 = late, 2 = absent, 3 = on leave
         // Key: date (1-30), Value: array of member statuses [m1,m2,...,m12]
         const TEAM_NAMES = [
-          "Priya M.", "Arjun S.", "Kavitha R.", "Rohan D.",
-          "Sneha P.", "Kiran N.", "Deepa K.", "Vikram J.",
-          "Ananya S.", "Rajan I.", "Meera N.", "Suresh B.",
+          "Priya M.",
+          "Arjun S.",
+          "Kavitha R.",
+          "Rohan D.",
+          "Sneha P.",
+          "Kiran N.",
+          "Deepa K.",
+          "Vikram J.",
+          "Ananya S.",
+          "Rajan I.",
+          "Meera N.",
+          "Suresh B.",
         ];
-        const TEAM_AVATARS = ["PM","AS","KR","RD","SP","KN","DK","VJ","AN","RI","MN","SB"];
+        const TEAM_AVATARS = [
+          "PM",
+          "AS",
+          "KR",
+          "RD",
+          "SP",
+          "KN",
+          "DK",
+          "VJ",
+          "AN",
+          "RI",
+          "MN",
+          "SB",
+        ];
         // company holidays in Jun 2026
         const HOLIDAYS: Record<number, string> = { 19: "Eid al-Adha" };
 
         // seeded per-day per-member attendance (deterministic, not random)
         function dayData(date: number): number[] {
-          const seed = [0,1,0,0,3,0,0,0,0,0,0,1,  // member base patterns
-                        0,0,1,0,0,0,0,0,0,0,0,0];
           return TEAM_NAMES.map((name, mi) => {
             // Check real-time punch state for Priya M.
-            if (name === "Priya M." && date === todayMockDay && currentMonthIndex === todayMockMonth) {
+            if (
+              name === "Priya M." &&
+              date === todayMockDay &&
+              currentMonthIndex === todayMockMonth
+            ) {
               const priyaPunch = getPunchStateForEmail("emp@nexushr.com");
               if (priyaPunch?.isPunchedIn || priyaPunch?.punchOutTime) {
                 return 0; // Present
@@ -551,12 +583,12 @@ export function ManagerAttendance() {
             }
 
             // Sneha (index 4) is frequently on leave
-            if (mi === 4 && date >= 5 && date <= 7)  return 3;
+            if (mi === 4 && date >= 5 && date <= 7) return 3;
             if (mi === 4 && (date === 14 || date === 21)) return 3;
             // Ananya (index 8) WFH / late on Mondays
             if (mi === 8 && date % 7 === 1) return 1;
             // Arjun (index 1) was absent on 3rd
-            if (mi === 1 && date === 3)  return 2;
+            if (mi === 1 && date === 3) return 2;
             // Vikram late on 10
             if (mi === 7 && date === 10) return 1;
             // Meera absent on 17
@@ -571,25 +603,47 @@ export function ManagerAttendance() {
           });
         }
 
-        const statusLabel = ["Present", "Late", "Absent", "On Leave"];
         const memberColor = (s: number) =>
-          s === 0 ? "#00B87C" : s === 1 ? "#F59E0B" : s === 2 ? "#EF4444" : "#8B5CF6";
+          s === 0
+            ? "#00B87C"
+            : s === 1
+              ? "#F59E0B"
+              : s === 2
+                ? "#EF4444"
+                : "#8B5CF6";
 
         const today = new Date();
         const formatMonthStr = (d: Date): string => {
-          const mNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          const mNames = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
           return `${mNames[d.getMonth()]} ${d.getFullYear()}`;
         };
         const currentRealMonthStr = formatMonthStr(today);
         const endDay = Math.min(today.getDate(), activeMonthConfig.days);
 
         // Monthly summary
-        let totalPresent = 0, totalLate = 0, totalAbsent = 0, totalLeave = 0;
+        let totalPresent = 0,
+          totalLate = 0,
+          totalAbsent = 0,
+          totalLeave = 0;
         for (let d = 1; d <= endDay; d++) {
-          const isWeekend = (d + activeMonthConfig.offset - 1 + 7) % 7 === 0
-                         || (d + activeMonthConfig.offset - 1 + 7) % 7 === 6;
+          const isWeekend =
+            (d + activeMonthConfig.offset - 1 + 7) % 7 === 0 ||
+            (d + activeMonthConfig.offset - 1 + 7) % 7 === 6;
           if (isWeekend) continue;
-          dayData(d).forEach(s => {
+          dayData(d).forEach((s) => {
             if (s === 0) totalPresent++;
             else if (s === 1) totalLate++;
             else if (s === 2) totalAbsent++;
@@ -603,38 +657,90 @@ export function ManagerAttendance() {
         const avgAbsent = (totalAbsent / memberCount).toFixed(1);
         const avgLeave = (totalLeave / memberCount).toFixed(1);
 
-        const [selectedDay, setSelectedDay] = React.useState<number | null>(null);
+        const [selectedDay, setSelectedDay] = React.useState<number | null>(
+          null,
+        );
         const selectedData = selectedDay ? dayData(selectedDay) : [];
 
         return (
-          <div className="rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm p-6" style={{ borderColor: "var(--border)" }}>
+          <div
+            className="rounded-2xl border bg-white dark:bg-zinc-900 shadow-sm p-6"
+            style={{ borderColor: "var(--border)" }}
+          >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-[14px] font-bold" style={{ color: "var(--foreground)" }}>Monthly Calendar View</h3>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Click any working day to see who attended · {activeMonthConfig.label}</p>
+                <h3
+                  className="text-[14px] font-bold"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  Monthly Calendar View
+                </h3>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Click any working day to see who attended ·{" "}
+                  {activeMonthConfig.label}
+                </p>
               </div>
             </div>
 
             {/* Summary bar */}
             <div className="grid grid-cols-4 gap-3 mb-5">
               {[
-                { label: "Avg. Present Days",  value: avgPresent, color: "#00B87C", bg: "#ECFDF5" },
-                { label: "Avg. Late Arrivals", value: avgLate,    color: "#F59E0B", bg: "#FEF3C7" },
-                { label: "Avg. Absent Days",   value: avgAbsent,  color: "#EF4444", bg: "#FEF2F2" },
-                { label: "Avg. Leave Days",    value: avgLeave,   color: "#8B5CF6", bg: "#F5F3FF" },
-              ].map(s => (
-                <div key={s.label} className="rounded-xl p-3 text-center" style={{ background: s.bg }}>
-                  <div className="text-[20px] font-black" style={{ color: s.color }}>{s.value}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-wide" style={{ color: s.color }}>{s.label}</div>
+                {
+                  label: "Avg. Present Days",
+                  value: avgPresent,
+                  color: "#00B87C",
+                  bg: "#ECFDF5",
+                },
+                {
+                  label: "Avg. Late Arrivals",
+                  value: avgLate,
+                  color: "#F59E0B",
+                  bg: "#FEF3C7",
+                },
+                {
+                  label: "Avg. Absent Days",
+                  value: avgAbsent,
+                  color: "#EF4444",
+                  bg: "#FEF2F2",
+                },
+                {
+                  label: "Avg. Leave Days",
+                  value: avgLeave,
+                  color: "#8B5CF6",
+                  bg: "#F5F3FF",
+                },
+              ].map((s) => (
+                <div
+                  key={s.label}
+                  className="rounded-xl p-3 text-center"
+                  style={{ background: s.bg }}
+                >
+                  <div
+                    className="text-[20px] font-black"
+                    style={{ color: s.color }}
+                  >
+                    {s.value}
+                  </div>
+                  <div
+                    className="text-[10px] font-bold uppercase tracking-wide"
+                    style={{ color: s.color }}
+                  >
+                    {s.label}
+                  </div>
                 </div>
               ))}
             </div>
 
             {/* Day headers */}
             <div className="grid grid-cols-7 gap-2 text-center mb-2">
-              {CALENDAR_DAYS.map(day => (
-                <div key={day} className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">{day}</div>
+              {CALENDAR_DAYS.map((day) => (
+                <div
+                  key={day}
+                  className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider"
+                >
+                  {day}
+                </div>
               ))}
             </div>
 
@@ -649,36 +755,60 @@ export function ManagerAttendance() {
                 const dow = (date + activeMonthConfig.offset - 1 + 7) % 7;
                 const isWeekend = dow === 0 || dow === 6;
                 const isHoliday = !!HOLIDAYS[date];
-                const isToday   = activeMonthStr === currentRealMonthStr && date === today.getDate();
-                const isFuture  = date > endDay;
+                const isToday =
+                  activeMonthStr === currentRealMonthStr &&
+                  date === today.getDate();
+                const isFuture = date > endDay;
 
-                let bg = "", textCol = "", border = "";
-                let presentCount = 0, lateCount = 0, absentCount = 0;
+                let bg = "",
+                  textCol = "",
+                  border = "";
+                let presentCount = 0,
+                  lateCount = 0,
+                  absentCount = 0;
                 let tooltip = "";
 
                 if (isWeekend) {
-                  bg = "var(--secondary)"; textCol = "var(--muted-foreground)"; border = "transparent";
+                  bg = "var(--secondary)";
+                  textCol = "var(--muted-foreground)";
+                  border = "transparent";
                 } else if (isHoliday) {
-                  bg = "#F5F3FF"; textCol = "#8B5CF6"; border = "#DDD6FE";
+                  bg = "#F5F3FF";
+                  textCol = "#8B5CF6";
+                  border = "#DDD6FE";
                   tooltip = HOLIDAYS[date];
                 } else if (isToday) {
-                  bg = "#00B87C"; textCol = "white"; border = "transparent";
+                  bg = "#00B87C";
+                  textCol = "white";
+                  border = "transparent";
                   const d = dayData(date);
-                  presentCount = d.filter(s=>s===0).length;
-                  lateCount    = d.filter(s=>s===1).length;
-                  absentCount  = d.filter(s=>s===2 || s===3).length;
+                  presentCount = d.filter((s) => s === 0).length;
+                  lateCount = d.filter((s) => s === 1).length;
+                  absentCount = d.filter((s) => s === 2 || s === 3).length;
                 } else if (isFuture) {
                   // future days (greyed)
-                  bg = "var(--secondary)"; textCol = "var(--muted-foreground)"; border = "transparent";
+                  bg = "var(--secondary)";
+                  textCol = "var(--muted-foreground)";
+                  border = "transparent";
                 } else {
                   const d = dayData(date);
-                  presentCount = d.filter(s=>s===0).length;
-                  lateCount    = d.filter(s=>s===1).length;
-                  absentCount  = d.filter(s=>s===2).length;
-                  const pct    = ((presentCount + lateCount * 0.5) / 12) * 100;
-                  if (pct >= 90)      { bg="#DCFCE7"; textCol="#059669"; border="#A7F3D0"; }
-                  else if (pct >= 70) { bg="#FEF3C7"; textCol="#D97706"; border="#FDE68A"; }
-                  else                { bg="#FEE2E2"; textCol="#DC2626"; border="#FECACA"; }
+                  presentCount = d.filter((s) => s === 0).length;
+                  lateCount = d.filter((s) => s === 1).length;
+                  absentCount = d.filter((s) => s === 2).length;
+                  const pct = ((presentCount + lateCount * 0.5) / 12) * 100;
+                  if (pct >= 90) {
+                    bg = "#DCFCE7";
+                    textCol = "#059669";
+                    border = "#A7F3D0";
+                  } else if (pct >= 70) {
+                    bg = "#FEF3C7";
+                    textCol = "#D97706";
+                    border = "#FDE68A";
+                  } else {
+                    bg = "#FEE2E2";
+                    textCol = "#DC2626";
+                    border = "#FECACA";
+                  }
                 }
 
                 const canClick = !isWeekend && !isHoliday && !isFuture;
@@ -686,15 +816,33 @@ export function ManagerAttendance() {
                 return (
                   <div
                     key={date}
-                    onClick={() => canClick && setSelectedDay(date === selectedDay ? null : date)}
-                    title={tooltip || (isWeekend ? "Weekend" : date > 15 ? "Upcoming" : "")}
+                    onClick={() =>
+                      canClick &&
+                      setSelectedDay(date === selectedDay ? null : date)
+                    }
+                    title={
+                      tooltip ||
+                      (isWeekend ? "Weekend" : date > 15 ? "Upcoming" : "")
+                    }
                     className={`h-14 rounded-xl flex flex-col items-center justify-center transition-all select-none ${
-                      canClick ? "cursor-pointer hover:scale-105 hover:shadow-md" : "cursor-default"
+                      canClick
+                        ? "cursor-pointer hover:scale-105 hover:shadow-md"
+                        : "cursor-default"
                     } ${selectedDay === date ? "ring-2 ring-[#00B87C] ring-offset-1" : ""}`}
-                    style={{ background: bg, color: textCol, border: `1px solid ${border}` }}
+                    style={{
+                      background: bg,
+                      color: textCol,
+                      border: `1px solid ${border}`,
+                    }}
                   >
-                    <span className="text-[13px] font-black leading-none">{date}</span>
-                    {isHoliday && <span className="text-[8px] font-bold mt-0.5 opacity-80">HOLIDAY</span>}
+                    <span className="text-[13px] font-black leading-none">
+                      {date}
+                    </span>
+                    {isHoliday && (
+                      <span className="text-[8px] font-bold mt-0.5 opacity-80">
+                        HOLIDAY
+                      </span>
+                    )}
                     {!isWeekend && !isHoliday && date <= 15 && (
                       <span className="text-[9px] font-bold mt-0.5 opacity-80">
                         {presentCount}/{12}
@@ -708,74 +856,184 @@ export function ManagerAttendance() {
             </div>
 
             {/* Legend */}
-            <div className="flex items-center gap-5 mt-5 pt-4 border-t flex-wrap" style={{ borderColor: "var(--border)" }}>
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Legend:</span>
+            <div
+              className="flex items-center gap-5 mt-5 pt-4 border-t flex-wrap"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">
+                Legend:
+              </span>
               {[
-                { color: "#DCFCE7", text: "#059669", label: "Full / High Attendance (≥90%)" },
-                { color: "#FEF3C7", text: "#D97706", label: "Moderate (70–89%)" },
+                {
+                  color: "#DCFCE7",
+                  text: "#059669",
+                  label: "Full / High Attendance (≥90%)",
+                },
+                {
+                  color: "#FEF3C7",
+                  text: "#D97706",
+                  label: "Moderate (70–89%)",
+                },
                 { color: "#FEE2E2", text: "#DC2626", label: "Low (<70%)" },
-                { color: "#00B87C", text: "white",   label: "Today" },
+                { color: "#00B87C", text: "white", label: "Today" },
                 { color: "#F5F3FF", text: "#8B5CF6", label: "Holiday" },
-                { color: "var(--secondary)", text: "var(--muted-foreground)", label: "Weekend" },
-              ].map(l => (
+                {
+                  color: "var(--secondary)",
+                  text: "var(--muted-foreground)",
+                  label: "Weekend",
+                },
+              ].map((l) => (
                 <div key={l.label} className="flex items-center gap-1.5">
-                  <div className="w-4 h-4 rounded-md flex-shrink-0" style={{ background: l.color, border: `1px solid ${l.text}40` }} />
-                  <span className="text-[11px] font-semibold text-muted-foreground">{l.label}</span>
+                  <div
+                    className="w-4 h-4 rounded-md flex-shrink-0"
+                    style={{
+                      background: l.color,
+                      border: `1px solid ${l.text}40`,
+                    }}
+                  />
+                  <span className="text-[11px] font-semibold text-muted-foreground">
+                    {l.label}
+                  </span>
                 </div>
               ))}
             </div>
 
             {/* Day detail popup */}
             {selectedDay !== null && (
-              <div className="mt-5 rounded-xl border overflow-hidden" style={{ borderColor: "var(--border)" }}>
-                <div className="px-5 py-3 flex items-center justify-between" style={{ background: "#00B87C" }}>
+              <div
+                className="mt-5 rounded-xl border overflow-hidden"
+                style={{ borderColor: "var(--border)" }}
+              >
+                <div
+                  className="px-5 py-3 flex items-center justify-between"
+                  style={{ background: "#00B87C" }}
+                >
                   <div>
-                    <span className="text-[14px] font-black text-white">{activeMonthConfig.label.split(" ")[0]} {selectedDay}, 2026</span>
-                    <span className="text-[11px] text-white/80 ml-3">Team Attendance Detail</span>
+                    <span className="text-[14px] font-black text-white">
+                      {activeMonthConfig.label.split(" ")[0]} {selectedDay},
+                      2026
+                    </span>
+                    <span className="text-[11px] text-white/80 ml-3">
+                      Team Attendance Detail
+                    </span>
                   </div>
-                  <button onClick={() => setSelectedDay(null)}
-                    className="text-white/80 hover:text-white text-lg font-black leading-none w-6 h-6 flex items-center justify-center rounded-lg hover:bg-white/20 transition-colors">×</button>
+                  <button
+                    onClick={() => setSelectedDay(null)}
+                    className="text-white/80 hover:text-white text-lg font-black leading-none w-6 h-6 flex items-center justify-center rounded-lg hover:bg-white/20 transition-colors"
+                  >
+                    ×
+                  </button>
                 </div>
                 {/* summary chips */}
-                <div className="px-5 py-3 border-b flex gap-4" style={{ borderColor: "var(--border)", background: "#F0FDF4" }}>
+                <div
+                  className="px-5 py-3 border-b flex gap-4"
+                  style={{
+                    borderColor: "var(--border)",
+                    background: "#F0FDF4",
+                  }}
+                >
                   {[
-                    { label: "Present", count: selectedData.filter(s=>s===0).length, color: "#00B87C" },
-                    { label: "Late",    count: selectedData.filter(s=>s===1).length, color: "#F59E0B" },
-                    { label: "Absent",  count: selectedData.filter(s=>s===2).length, color: "#EF4444" },
-                    { label: "On Leave",count: selectedData.filter(s=>s===3).length, color: "#8B5CF6" },
-                  ].map(c => (
+                    {
+                      label: "Present",
+                      count: selectedData.filter((s) => s === 0).length,
+                      color: "#00B87C",
+                    },
+                    {
+                      label: "Late",
+                      count: selectedData.filter((s) => s === 1).length,
+                      color: "#F59E0B",
+                    },
+                    {
+                      label: "Absent",
+                      count: selectedData.filter((s) => s === 2).length,
+                      color: "#EF4444",
+                    },
+                    {
+                      label: "On Leave",
+                      count: selectedData.filter((s) => s === 3).length,
+                      color: "#8B5CF6",
+                    },
+                  ].map((c) => (
                     <div key={c.label} className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ background: c.color }} />
-                      <span className="text-[12px] font-bold" style={{ color: c.color }}>{c.count}</span>
-                      <span className="text-[11px] text-muted-foreground font-semibold">{c.label}</span>
+                      <div
+                        className="w-2.5 h-2.5 rounded-full"
+                        style={{ background: c.color }}
+                      />
+                      <span
+                        className="text-[12px] font-bold"
+                        style={{ color: c.color }}
+                      >
+                        {c.count}
+                      </span>
+                      <span className="text-[11px] text-muted-foreground font-semibold">
+                        {c.label}
+                      </span>
                     </div>
                   ))}
                   <div className="ml-auto">
-                    <span className="text-[11px] font-bold" style={{ color: "#00B87C" }}>
-                      {Math.round((selectedData.filter(s=>s===0||s===1).length/12)*100)}% Attendance Rate
+                    <span
+                      className="text-[11px] font-bold"
+                      style={{ color: "#00B87C" }}
+                    >
+                      {Math.round(
+                        (selectedData.filter((s) => s === 0 || s === 1).length /
+                          12) *
+                          100,
+                      )}
+                      % Attendance Rate
                     </span>
                   </div>
                 </div>
                 {/* member rows */}
-                <div className="grid grid-cols-2 gap-0 divide-x divide-y" style={{ borderColor: "var(--border)" }}>
+                <div
+                  className="grid grid-cols-2 gap-0 divide-x divide-y"
+                  style={{ borderColor: "var(--border)" }}
+                >
                   {TEAM_NAMES.map((name, mi) => {
                     const s = selectedData[mi];
                     const dotColor = memberColor(s);
-                    const badge: Record<number, { bg: string; text: string; label: string }> = {
+                    const badge: Record<
+                      number,
+                      { bg: string; text: string; label: string }
+                    > = {
                       0: { bg: "#ECFDF5", text: "#059669", label: "✓ Present" },
                       1: { bg: "#FEF3C7", text: "#D97706", label: "⏰ Late" },
                       2: { bg: "#FEF2F2", text: "#DC2626", label: "✕ Absent" },
-                      3: { bg: "#F5F3FF", text: "#7C3AED", label: "🏖 On Leave" },
+                      3: {
+                        bg: "#F5F3FF",
+                        text: "#7C3AED",
+                        label: "🏖 On Leave",
+                      },
                     };
                     const b = badge[s];
                     return (
-                      <div key={mi} className="flex items-center gap-3 px-4 py-2.5" style={{ borderColor: "var(--border)" }}>
-                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0"
-                          style={{ background: `${dotColor}25`, color: dotColor, border: `1.5px solid ${dotColor}50` }}>
+                      <div
+                        key={mi}
+                        className="flex items-center gap-3 px-4 py-2.5"
+                        style={{ borderColor: "var(--border)" }}
+                      >
+                        <div
+                          className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0"
+                          style={{
+                            background: `${dotColor}25`,
+                            color: dotColor,
+                            border: `1.5px solid ${dotColor}50`,
+                          }}
+                        >
                           {TEAM_AVATARS[mi]}
                         </div>
-                        <span className="text-[12px] font-semibold flex-1" style={{ color: "var(--foreground)" }}>{name}</span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: b.bg, color: b.text }}>{b.label}</span>
+                        <span
+                          className="text-[12px] font-semibold flex-1"
+                          style={{ color: "var(--foreground)" }}
+                        >
+                          {name}
+                        </span>
+                        <span
+                          className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                          style={{ background: b.bg, color: b.text }}
+                        >
+                          {b.label}
+                        </span>
                       </div>
                     );
                   })}
@@ -1016,12 +1274,22 @@ export function ManagerAttendance() {
             className="w-full max-w-[500px] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-border animate-in zoom-in-95 p-6 space-y-6"
             style={{ borderColor: "var(--border)" }}
           >
-            <div className="flex justify-between items-start border-b pb-4" style={{ borderColor: "var(--border)" }}>
+            <div
+              className="flex justify-between items-start border-b pb-4"
+              style={{ borderColor: "var(--border)" }}
+            >
               <div className="flex items-center gap-3">
-                <img src={selectedEmployee.avatar} className="w-10 h-10 rounded-full" />
+                <img
+                  src={selectedEmployee.avatar}
+                  className="w-10 h-10 rounded-full"
+                />
                 <div>
-                  <h3 className="text-base font-bold text-foreground">{selectedEmployee.name}</h3>
-                  <p className="text-xs text-muted-foreground">{selectedEmployee.id}</p>
+                  <h3 className="text-base font-bold text-foreground">
+                    {selectedEmployee.name}
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedEmployee.id}
+                  </p>
                 </div>
               </div>
               <button
@@ -1034,55 +1302,119 @@ export function ManagerAttendance() {
 
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Status</span>
-                  <p className="text-sm font-bold text-foreground mt-0.5">{selectedEmployee.status}</p>
+                <div
+                  className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Status
+                  </span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">
+                    {selectedEmployee.status}
+                  </p>
                 </div>
-                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Date</span>
-                  <p className="text-sm font-bold text-foreground mt-0.5">{activeMonthStr === "Apr 2026" ? "April 6, 2026" : "Selected Month Day"}</p>
+                <div
+                  className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Date
+                  </span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">
+                    {activeMonthStr === "Apr 2026"
+                      ? "April 6, 2026"
+                      : "Selected Month Day"}
+                  </p>
                 </div>
-                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Check-in</span>
-                  <p className="text-sm font-bold text-foreground mt-0.5">{selectedEmployee.checkIn}</p>
+                <div
+                  className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Check-in
+                  </span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">
+                    {selectedEmployee.checkIn}
+                  </p>
                 </div>
-                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Check-out</span>
-                  <p className="text-sm font-bold text-foreground mt-0.5">{selectedEmployee.checkOut}</p>
+                <div
+                  className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Check-out
+                  </span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">
+                    {selectedEmployee.checkOut}
+                  </p>
                 </div>
-                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Hours Worked</span>
-                  <p className="text-sm font-bold text-foreground mt-0.5">{selectedEmployee.hours}</p>
+                <div
+                  className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Hours Worked
+                  </span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">
+                    {selectedEmployee.hours}
+                  </p>
                 </div>
-                <div className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border" style={{ borderColor: "var(--border)" }}>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Overtime</span>
-                  <p className="text-sm font-bold text-foreground mt-0.5">{selectedEmployee.overtime}</p>
+                <div
+                  className="bg-neutral-50 dark:bg-zinc-800/40 p-3 rounded-xl border border-border"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Overtime
+                  </span>
+                  <p className="text-sm font-bold text-foreground mt-0.5">
+                    {selectedEmployee.overtime}
+                  </p>
                 </div>
               </div>
 
-              <div className="border-t pt-4" style={{ borderColor: "var(--border)" }}>
-                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider mb-2">Today's Logs</h4>
+              <div
+                className="border-t pt-4"
+                style={{ borderColor: "var(--border)" }}
+              >
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider mb-2">
+                  Today's Logs
+                </h4>
                 <div className="space-y-2">
-                  {selectedEmployee.name === "Priya Sharma" && globalPunchState.logs && globalPunchState.logs.length > 0 ? (
+                  {selectedEmployee.name === "Priya Sharma" &&
+                  globalPunchState.logs &&
+                  globalPunchState.logs.length > 0 ? (
                     globalPunchState.logs.map((log, idx) => (
-                      <div key={idx} className="flex justify-between items-center text-xs py-1">
-                        <span className="text-muted-foreground">{log.time}</span>
-                        <span className="font-semibold text-foreground">{log.action}</span>
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center text-xs py-1"
+                      >
+                        <span className="text-muted-foreground">
+                          {log.time}
+                        </span>
+                        <span className="font-semibold text-foreground">
+                          {log.action}
+                        </span>
                       </div>
                     ))
                   ) : (
                     <>
                       <div className="flex justify-between items-center text-xs py-1">
                         <span className="text-muted-foreground">08:45 AM</span>
-                        <span className="font-semibold text-foreground">Swipe In (Office Gate)</span>
+                        <span className="font-semibold text-foreground">
+                          Swipe In (Office Gate)
+                        </span>
                       </div>
                       <div className="flex justify-between items-center text-xs py-1">
                         <span className="text-muted-foreground">01:00 PM</span>
-                        <span className="font-semibold text-foreground">Swipe Out (Lunch Break)</span>
+                        <span className="font-semibold text-foreground">
+                          Swipe Out (Lunch Break)
+                        </span>
                       </div>
                       <div className="flex justify-between items-center text-xs py-1">
                         <span className="text-muted-foreground">02:00 PM</span>
-                        <span className="font-semibold text-foreground">Swipe In (Back to Desk)</span>
+                        <span className="font-semibold text-foreground">
+                          Swipe In (Back to Desk)
+                        </span>
                       </div>
                     </>
                   )}
@@ -1090,7 +1422,10 @@ export function ManagerAttendance() {
               </div>
             </div>
 
-            <div className="border-t pt-4 flex justify-end" style={{ borderColor: "var(--border)" }}>
+            <div
+              className="border-t pt-4 flex justify-end"
+              style={{ borderColor: "var(--border)" }}
+            >
               <button
                 onClick={() => setShowDetailsModal(false)}
                 className="px-5 py-2.5 rounded-xl text-white text-xs font-bold shadow-md hover:opacity-90 transition-opacity"

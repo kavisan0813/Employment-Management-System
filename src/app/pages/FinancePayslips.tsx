@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, Download, X, CheckCircle2, ChevronDown } from "lucide-react";
+import { FileText, Download, X, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../components/workflow/ToastNotification";
 

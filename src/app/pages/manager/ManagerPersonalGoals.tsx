@@ -913,9 +913,7 @@ function CheckInGoalModal({
       />
       <div className="relative w-full max-w-[440px] bg-card border border-border rounded-[32px] shadow-2xl p-6 animate-in zoom-in-95 flex flex-col">
         <div className="flex items-center justify-between pb-4 border-b border-border">
-          <h3 className="text-base font-bold text-foreground">
-            Goal Check-in
-          </h3>
+          <h3 className="text-base font-bold text-foreground">Goal Check-in</h3>
           <button
             onClick={onClose}
             className="text-muted-foreground hover:text-foreground"
@@ -928,9 +926,7 @@ function CheckInGoalModal({
             <span className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
               Goal
             </span>
-            <p className="font-bold text-foreground text-sm">
-              {goal.title}
-            </p>
+            <p className="font-bold text-foreground text-sm">{goal.title}</p>
           </div>
           <div>
             <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">

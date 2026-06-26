@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { showToast } from "../components/workflow/ToastNotification";
 import { useAuth } from "../context/AuthContext";
-import { log } from "node:console";
 
 type SettingsTab =
   | "Profile Settings"

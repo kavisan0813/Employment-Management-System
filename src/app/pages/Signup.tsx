@@ -33,7 +33,7 @@ interface PasswordStrength {
 
 export function Signup() {
   const navigate = useNavigate();
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

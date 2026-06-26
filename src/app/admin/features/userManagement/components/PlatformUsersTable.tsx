@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   Search,
   MoreVertical,
-  Eye,
   Edit,
   KeyRound,
   UserX,
@@ -13,17 +12,6 @@ import {
 } from "lucide-react";
 import { useUserManagement } from "../hooks/useUserManagement";
 import { PlatformUser } from "../../../types";
-
-function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="flex items-center justify-between py-2.5 border-b border-gray-100 last:border-0">
-      <span className="text-[10px] uppercase font-semibold tracking-wide text-gray-400">
-        {label}
-      </span>
-      <span className="text-xs font-medium text-gray-900">{value}</span>
-    </div>
-  );
-}
 
 // FilterSelect Component
 interface FilterSelectProps {
@@ -56,10 +44,9 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   );
 };
 
-
-
 const PlatformUsersTable: React.FC = () => {
-  const { filteredUsers, filters, organizations, actions } = useUserManagement();
+  const { filteredUsers, filters, organizations, actions } =
+    useUserManagement();
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<PlatformUser | null>(null);
@@ -120,8 +107,11 @@ const PlatformUsersTable: React.FC = () => {
   const PlatformUserModal = () => {
     if (!selectedUser) return null;
     return (
-      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setIsDrawerOpen(false)}>
-        <div 
+      <div
+        className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+        onClick={() => setIsDrawerOpen(false)}
+      >
+        <div
           className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
@@ -131,7 +121,10 @@ const PlatformUsersTable: React.FC = () => {
               <h2 className="text-2xl font-bold text-gray-900">User Profile</h2>
               <p className="text-gray-500 mt-1">{selectedUser.name}</p>
             </div>
-            <button onClick={() => setIsDrawerOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+            <button
+              onClick={() => setIsDrawerOpen(false)}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
               <X className="w-6 h-6" />
             </button>
           </div>
@@ -140,52 +133,94 @@ const PlatformUsersTable: React.FC = () => {
           <div className="flex-1 overflow-y-auto p-8 space-y-8">
             <div className="grid grid-cols-2 gap-6 text-sm">
               <div>
-                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">Email</p>
-                <p className="font-medium text-gray-900">{selectedUser.email}</p>
+                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">
+                  Email
+                </p>
+                <p className="font-medium text-gray-900">
+                  {selectedUser.email}
+                </p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">Role</p>
-                <p className="font-semibold text-indigo-600">{selectedUser.role}</p>
+                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">
+                  Role
+                </p>
+                <p className="font-semibold text-indigo-600">
+                  {selectedUser.role}
+                </p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">Organization</p>
-                <p className="font-medium text-gray-900">{selectedUser.organization}</p>
+                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">
+                  Organization
+                </p>
+                <p className="font-medium text-gray-900">
+                  {selectedUser.organization}
+                </p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">Last Active</p>
-                <p className="font-medium text-gray-900">{selectedUser.lastLoginAt}</p>
+                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">
+                  Last Active
+                </p>
+                <p className="font-medium text-gray-900">
+                  {selectedUser.lastLoginAt}
+                </p>
               </div>
             </div>
 
             <div>
-              <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">Status</p>
-              <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold ${
-                selectedUser.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-              }`}>
+              <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">
+                Status
+              </p>
+              <span
+                className={`inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold ${
+                  selectedUser.status === "Active"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-amber-100 text-amber-700"
+                }`}
+              >
                 {selectedUser.status}
               </span>
             </div>
 
             {/* Actions */}
             <div className="pt-6 border-t">
-              <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-4">Manage User</p>
+              <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-4">
+                Manage User
+              </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <button onClick={() => handleEditUser(selectedUser)} className="flex items-center justify-center gap-2 px-3 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+                <button
+                  onClick={() => handleEditUser(selectedUser)}
+                  className="flex items-center justify-center gap-2 px-3 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                >
                   <Edit className="w-4 h-4" /> Edit
                 </button>
-                <button onClick={() => handleResetPassword(selectedUser)} className="flex items-center justify-center gap-2 px-3 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+                <button
+                  onClick={() => handleResetPassword(selectedUser)}
+                  className="flex items-center justify-center gap-2 px-3 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                >
                   <KeyRound className="w-4 h-4" /> Password Reset
                 </button>
                 {selectedUser.status === "Active" ? (
-                  <button onClick={() => handleSuspendUser(selectedUser)} className="flex items-center justify-center gap-2 px-3 py-3 bg-amber-50 text-amber-700 border border-amber-200 rounded-2xl text-xs font-semibold hover:bg-amber-100 transition-colors">
+                  <button
+                    onClick={() => handleSuspendUser(selectedUser)}
+                    className="flex items-center justify-center gap-2 px-3 py-3 bg-amber-50 text-amber-700 border border-amber-200 rounded-2xl text-xs font-semibold hover:bg-amber-100 transition-colors"
+                  >
                     <UserX className="w-4 h-4" /> Suspend
                   </button>
                 ) : (
-                  <button onClick={() => handleActivateUser(selectedUser)} className="flex items-center justify-center gap-2 px-3 py-3 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-2xl text-xs font-semibold hover:bg-emerald-100 transition-colors">
+                  <button
+                    onClick={() => handleActivateUser(selectedUser)}
+                    className="flex items-center justify-center gap-2 px-3 py-3 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-2xl text-xs font-semibold hover:bg-emerald-100 transition-colors"
+                  >
                     <UserCheck className="w-4 h-4" /> Activate
                   </button>
                 )}
-                <button onClick={() => { handleDeleteUser(selectedUser); setIsDrawerOpen(false); }} className="flex items-center justify-center gap-2 px-3 py-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-2xl text-xs font-semibold hover:bg-rose-100 transition-colors">
+                <button
+                  onClick={() => {
+                    handleDeleteUser(selectedUser);
+                    setIsDrawerOpen(false);
+                  }}
+                  className="flex items-center justify-center gap-2 px-3 py-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-2xl text-xs font-semibold hover:bg-rose-100 transition-colors"
+                >
                   <Trash2 className="w-4 h-4" /> Delete
                 </button>
               </div>
@@ -194,7 +229,10 @@ const PlatformUsersTable: React.FC = () => {
 
           {/* Footer */}
           <div className="px-8 py-5 border-t bg-gray-50 flex justify-end gap-3">
-            <button onClick={() => setIsDrawerOpen(false)} className="px-6 py-3 text-gray-700 font-semibold hover:bg-gray-100 rounded-2xl transition-colors">
+            <button
+              onClick={() => setIsDrawerOpen(false)}
+              className="px-6 py-3 text-gray-700 font-semibold hover:bg-gray-100 rounded-2xl transition-colors"
+            >
               Close
             </button>
           </div>
@@ -320,86 +358,97 @@ const PlatformUsersTable: React.FC = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="px-5 py-4 text-left text-sm font-medium text-gray-500 rounded-tl-2xl">
-                User
-              </th>
-              <th className="px-5 py-4 text-left text-sm font-medium text-gray-500">
-                Role
-              </th>
-              <th className="px-5 py-4 text-left text-sm font-medium text-gray-500">
-                Organization
-              </th>
-              <th className="px-5 py-4 text-left text-sm font-medium text-gray-500">
-                Status
-              </th>
-              <th className="px-5 py-4 text-left text-sm font-medium text-gray-500">
-                Last Active
-              </th>
-              <th className="px-5 py-4 text-right text-sm font-medium text-gray-500 rounded-tr-2xl">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {filteredUsers.map((user: PlatformUser) => (
-              <tr key={user.id} onClick={() => handleViewUser(user)} className="hover:bg-gray-50 cursor-pointer group">
-                <td className="px-5 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
-                      {user.avatarUrl ? (
-                        <img
-                          src={user.avatarUrl}
-                          alt={user.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-500 font-medium">
-                          {user.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
-                        {user.name}
-                      </div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-5 py-4">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                    {user.role}
-                  </span>
-                </td>
-                <td className="px-5 py-4 text-gray-600">{user.organization}</td>
-                <td className="px-5 py-4">
-                  <span
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                      user.status === "Active"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-amber-100 text-amber-700"
-                    }`}
-                  >
-                    {user.status}
-                  </span>
-                </td>
-                <td className="px-5 py-4 text-sm text-gray-500">
-                  {user.lastLoginAt}
-                </td>
-                <td className="px-5 py-4 text-right relative" onClick={e => e.stopPropagation()}>
-                  <button 
+                  <th className="px-5 py-4 text-left text-sm font-medium text-gray-500 rounded-tl-2xl">
+                    User
+                  </th>
+                  <th className="px-5 py-4 text-left text-sm font-medium text-gray-500">
+                    Role
+                  </th>
+                  <th className="px-5 py-4 text-left text-sm font-medium text-gray-500">
+                    Organization
+                  </th>
+                  <th className="px-5 py-4 text-left text-sm font-medium text-gray-500">
+                    Status
+                  </th>
+                  <th className="px-5 py-4 text-left text-sm font-medium text-gray-500">
+                    Last Active
+                  </th>
+                  <th className="px-5 py-4 text-right text-sm font-medium text-gray-500 rounded-tr-2xl">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {filteredUsers.map((user: PlatformUser) => (
+                  <tr
+                    key={user.id}
                     onClick={() => handleViewUser(user)}
-                    className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+                    className="hover:bg-gray-50 cursor-pointer group"
                   >
-                    <MoreVertical className="w-5 h-5" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
+                          {user.avatarUrl ? (
+                            <img
+                              src={user.avatarUrl}
+                              alt={user.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-500 font-medium">
+                              {user.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <div className="font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
+                            {user.name}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {user.email}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                        {user.role}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 text-gray-600">
+                      {user.organization}
+                    </td>
+                    <td className="px-5 py-4">
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                          user.status === "Active"
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-amber-100 text-amber-700"
+                        }`}
+                      >
+                        {user.status}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 text-sm text-gray-500">
+                      {user.lastLoginAt}
+                    </td>
+                    <td
+                      className="px-5 py-4 text-right relative"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        onClick={() => handleViewUser(user)}
+                        className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+                      >
+                        <MoreVertical className="w-5 h-5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         </div>

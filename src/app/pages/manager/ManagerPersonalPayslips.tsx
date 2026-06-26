@@ -271,7 +271,7 @@ function PayslipModal({
     }
 
     function c(n: number): string {
-      let parts: string[] = [];
+      const parts: string[] = [];
       if (n >= 10000000) {
         parts.push(h(Math.floor(n / 10000000)) + " Crore");
         n %= 10000000;

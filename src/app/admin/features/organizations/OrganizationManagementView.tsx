@@ -1,15 +1,14 @@
-import React, { useState } from "react";
-import { 
-  Building2, 
-  Plus, 
-  CreditCard, 
-  Settings, 
-  Activity, 
-  Database, 
+import { useState } from "react";
+import {
+  Building2,
+  Plus,
+  CreditCard,
+  Settings,
+  Activity,
+  Database,
   Receipt,
   ShieldAlert,
-  ChevronRight,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
 import { useOrganizations } from "./hooks/useOrganizations";
 
@@ -27,7 +26,13 @@ import { StorageUsage } from "./components/StorageUsage";
 import { BillingHistory } from "./components/BillingHistory";
 
 type GlobalTab = "all" | "add" | "plans";
-type OrgTab = "profile" | "status" | "settings" | "logs" | "storage" | "billing";
+type OrgTab =
+  | "profile"
+  | "status"
+  | "settings"
+  | "logs"
+  | "storage"
+  | "billing";
 
 export function OrganizationManagementView() {
   const hook = useOrganizations();
@@ -60,7 +65,14 @@ export function OrganizationManagementView() {
         case "all":
           return <AllOrganizationsTable hook={hook} />;
         case "add":
-          return <AddOrganizationForm onSuccess={() => { hook.actions.loadData(); setActiveGlobalTab("all"); }} />;
+          return (
+            <AddOrganizationForm
+              onSuccess={() => {
+                hook.actions.loadData();
+                setActiveGlobalTab("all");
+              }}
+            />
+          );
         case "plans":
           return <SubscriptionPlansTable />;
         default:
@@ -134,7 +146,7 @@ export function OrganizationManagementView() {
               {[
                 { id: "all", label: "All Organizations", icon: Building2 },
                 { id: "add", label: "Add Organization", icon: Plus },
-                { id: "plans", label: "Subscription Plans", icon: CreditCard }
+                { id: "plans", label: "Subscription Plans", icon: CreditCard },
               ].map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeGlobalTab === tab.id;
@@ -163,7 +175,7 @@ export function OrganizationManagementView() {
                 { id: "settings", label: "Settings", icon: Settings },
                 { id: "logs", label: "Logs", icon: Activity },
                 { id: "storage", label: "Storage", icon: Database },
-                { id: "billing", label: "Billing", icon: Receipt }
+                { id: "billing", label: "Billing", icon: Receipt },
               ].map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeOrgTab === tab.id;
@@ -188,9 +200,7 @@ export function OrganizationManagementView() {
       </div>
 
       {/* Active Page Content Area */}
-      <div className="w-full">
-        {renderContent()}
-      </div>
+      <div className="w-full">{renderContent()}</div>
     </div>
   );
 }

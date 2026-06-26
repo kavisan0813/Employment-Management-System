@@ -27,15 +27,11 @@ import {
   Globe,
   Coins,
   Clock,
-  Mail,
-  Bell,
-  Lock,
   HardDrive,
   Sliders,
   CheckCircle2,
   AlertCircle,
   Info,
-  ChevronDown
 } from "lucide-react";
 
 export function PlatformSettingsView() {
@@ -51,23 +47,51 @@ export function PlatformSettingsView() {
     handleSave,
     getFormattedDatePreview,
     getFormattedNumberPreview,
-    getFormattedCurrencyPreview
+    getFormattedCurrencyPreview,
   } = usePlatformSettings();
 
   const settingsNavItems = [
-    { id: "general", label: "General Settings", icon: Settings, group: "Foundation" },
-    { id: "branding", label: "Branding Settings", icon: Palette, group: "Foundation" },
-    { id: "localization", label: "Localization & Regional", icon: Globe, group: "Foundation" },
-    { id: "currency", label: "Currency Settings", icon: Coins, group: "Foundation" },
+    {
+      id: "general",
+      label: "General Settings",
+      icon: Settings,
+      group: "Foundation",
+    },
+    {
+      id: "branding",
+      label: "Branding Settings",
+      icon: Palette,
+      group: "Foundation",
+    },
+    {
+      id: "localization",
+      label: "Localization & Regional",
+      icon: Globe,
+      group: "Foundation",
+    },
+    {
+      id: "currency",
+      label: "Currency Settings",
+      icon: Coins,
+      group: "Foundation",
+    },
     { id: "timezone", label: "Time Zones", icon: Clock, group: "Foundation" },
     /* { id: "email", label: "Email Settings", icon: Mail, group: "Channels" }, */
-   /*  { id: "notifications", label: "Notifications Rules", icon: Bell, group: "Channels" }, */
-  /*   { id: "security", label: "Security & MFA", icon: Lock, group: "Governance" }, */
-    { id: "storage", label: "File Storage Policies", icon: HardDrive, group: "Governance" },
-    { id: "preferences", label: "System Preferences", icon: Sliders, group: "Governance" },
+    /*  { id: "notifications", label: "Notifications Rules", icon: Bell, group: "Channels" }, */
+    /*   { id: "security", label: "Security & MFA", icon: Lock, group: "Governance" }, */
+    {
+      id: "storage",
+      label: "File Storage Policies",
+      icon: HardDrive,
+      group: "Governance",
+    },
+    {
+      id: "preferences",
+      label: "System Preferences",
+      icon: Sliders,
+      group: "Governance",
+    },
   ] as const;
-
-
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
@@ -95,15 +119,31 @@ export function PlatformSettingsView() {
       case "timezone":
         return <TimezoneSettingsView config={config} setConfig={setConfig} />;
       case "email":
-        return <EmailSettingsView config={config} setConfig={setConfig} triggerAlert={triggerAlert} />;
+        return (
+          <EmailSettingsView
+            config={config}
+            setConfig={setConfig}
+            triggerAlert={triggerAlert}
+          />
+        );
       case "notifications":
-        return <NotificationSettingsView config={config} setConfig={setConfig} />;
+        return (
+          <NotificationSettingsView config={config} setConfig={setConfig} />
+        );
       case "security":
-        return <SecuritySettingsView config={config} setConfig={setConfig} triggerAlert={triggerAlert} />;
+        return (
+          <SecuritySettingsView
+            config={config}
+            setConfig={setConfig}
+            triggerAlert={triggerAlert}
+          />
+        );
       case "storage":
         return <StorageSettingsView config={config} setConfig={setConfig} />;
       case "preferences":
-        return <PreferencesSettingsView config={config} setConfig={setConfig} />;
+        return (
+          <PreferencesSettingsView config={config} setConfig={setConfig} />
+        );
       default:
         return <GeneralSettingsView config={config} setConfig={setConfig} />;
     }
@@ -113,16 +153,24 @@ export function PlatformSettingsView() {
     <div className="space-y-6 max-w-7xl mx-auto px-1.5 py-4">
       {/* Alert Banner */}
       {showAlert && (
-        <div className={`fixed top-5 right-5 z-50 p-4 rounded-2xl shadow-xl border flex items-center gap-3 transition-all duration-300 transform translate-y-0 ${
-          alertType === "success" 
-            ? "bg-teal-50 border-teal-200 text-teal-800" 
-            : alertType === "error" 
-            ? "bg-rose-50 border-rose-200 text-rose-800" 
-            : "bg-indigo-50 border-indigo-200 text-indigo-800"
-        }`}>
-          {alertType === "success" && <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />}
-          {alertType === "error" && <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />}
-          {alertType === "info" && <Info className="w-5 h-5 text-indigo-650 shrink-0" />}
+        <div
+          className={`fixed top-5 right-5 z-50 p-4 rounded-2xl shadow-xl border flex items-center gap-3 transition-all duration-300 transform translate-y-0 ${
+            alertType === "success"
+              ? "bg-teal-50 border-teal-200 text-teal-800"
+              : alertType === "error"
+                ? "bg-rose-50 border-rose-200 text-rose-800"
+                : "bg-indigo-50 border-indigo-200 text-indigo-800"
+          }`}
+        >
+          {alertType === "success" && (
+            <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
+          )}
+          {alertType === "error" && (
+            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+          )}
+          {alertType === "info" && (
+            <Info className="w-5 h-5 text-indigo-650 shrink-0" />
+          )}
           <span className="text-xs font-bold">{alertMsg}</span>
         </div>
       )}
@@ -135,7 +183,9 @@ export function PlatformSettingsView() {
             System Configuration
           </h1>
           <p className="text-xs text-gray-500 font-medium mt-1 font-semibold">
-            Configure system-wide settings that apply globally to all organizations. Individual tenants can override specific parameters in their local portals.
+            Configure system-wide settings that apply globally to all
+            organizations. Individual tenants can override specific parameters
+            in their local portals.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 self-start md:self-auto shadow-xs">
@@ -144,39 +194,38 @@ export function PlatformSettingsView() {
         </div>
       </div>
 
-     {/* Flat Tab Navigation */}
-<div className="w-full overflow-hidden">
-  <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
-    {settingsNavItems.map((tab) => {
-      const Icon = tab.icon;
-      const isActive = activeTab === tab.id;
-      return (
-        <button
-          key={tab.id}
-          onClick={() => setActiveTab(tab.id as any)}
-          className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-            isActive
-              ? "bg-indigo-600 text-white shadow-sm"
-              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-          }`}
-        >
-          <Icon className="w-3.5 h-3.5" />
-          <span>{tab.label}</span>
-        </button>
-      );
-    })}
-  </div>
-</div>
+      {/* Flat Tab Navigation */}
+      <div className="w-full overflow-hidden">
+        <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
+          {settingsNavItems.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                  isActive
+                    ? "bg-indigo-600 text-white shadow-sm"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Form Workspace View */}
       <div className="space-y-6">
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-          
           {/* Header of Active Tab */}
           <div className="px-6 py-4 bg-gray-50/50 font-semibold border-b border-gray-200 flex justify-between items-center">
             <div>
               <h2 className="text-lg font-bold text-gray-900 tracking-wide">
-                {settingsNavItems.find(i => i.id === activeTab)?.label}
+                {settingsNavItems.find((i) => i.id === activeTab)?.label}
               </h2>
               <p className="text-[11px] text-gray-500 font-medium">
                 Configure default values and limits for the {activeTab} domain.
@@ -186,14 +235,12 @@ export function PlatformSettingsView() {
               onClick={() => handleSave(activeTab)}
               className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-600/10 transition-all cursor-pointer border-none"
             >
-              Save {settingsNavItems.find(i => i.id === activeTab)?.label}
+              Save {settingsNavItems.find((i) => i.id === activeTab)?.label}
             </button>
           </div>
 
           {/* Content Field Render block */}
-          <div className="p-6">
-            {renderActiveTabContent()}
-          </div>
+          <div className="p-6">{renderActiveTabContent()}</div>
         </div>
 
         {/* Tenant Override Sandbox Card */}

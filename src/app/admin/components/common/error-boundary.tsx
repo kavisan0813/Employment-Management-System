@@ -10,7 +10,10 @@ interface ErrorBoundaryProps {
   fallback?: React.ReactNode;
 }
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -32,13 +35,26 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-8">
           <div className="max-w-lg w-full bg-white rounded-xl border border-red-100 shadow-lg p-8 text-center">
             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-6 h-6 text-red-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
-            <h2 className="text-lg font-bold text-gray-900 mb-2">Something went wrong</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-2">
+              Something went wrong
+            </h2>
             <p className="text-sm text-gray-500 mb-4">
-              The admin panel encountered an error. Check the browser console for details.
+              The admin panel encountered an error. Check the browser console
+              for details.
             </p>
             {this.state.error && (
               <pre className="text-left text-xs bg-gray-50 border border-gray-200 rounded-lg p-3 overflow-auto max-h-40 text-red-700 mb-4">

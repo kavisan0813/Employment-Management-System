@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.5
  */
 
-import React from "react";
 import { NavLink, useLocation } from "react-router";
 import {
   Building2,
@@ -16,12 +15,6 @@ import {
   Settings,
   ShieldCheck,
   Megaphone,
-  Fingerprint,
-  Cpu,
-  Layers,
-  HelpCircle,
-  ChevronDown,
-  Zap,
   User,
   Bell,
   ToggleLeft,
@@ -178,7 +171,7 @@ export function Sidebar() {
                   {group.title}
                 </span>
               </div>
-              
+
               {group.items.map((item) => {
                 const IconComp = item.icon;
                 const isActive = location.pathname === item.path;
@@ -192,7 +185,9 @@ export function Sidebar() {
                         : "text-gray-600 hover:bg-gray-100 hover:text-gray-950"
                     }`}
                   >
-                    <IconComp className={`w-4 h-4 ${isActive ? "text-indigo-600" : "text-gray-400"}`} />
+                    <IconComp
+                      className={`w-4 h-4 ${isActive ? "text-indigo-600" : "text-gray-400"}`}
+                    />
                     <span>{item.label}</span>
                   </NavLink>
                 );
