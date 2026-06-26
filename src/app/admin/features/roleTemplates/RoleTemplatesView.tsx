@@ -1,15 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { 
-  ShieldAlert, 
-  Search, 
-  Settings, 
-  CheckCircle, 
-  Lock, 
-  Layers, 
-  UserCheck, 
-  Globe, 
-  Briefcase 
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { ShieldAlert, Search, Lock } from "lucide-react";
 import { db } from "../../mockData";
 import { RoleTemplate } from "../../types";
 
@@ -22,14 +12,16 @@ export default function RoleTemplatesView() {
     setRoles(db.roleTemplates.get());
   }, []);
 
-  const filteredRoles = roles.filter(role => {
-    const matchesSearch = 
+  const filteredRoles = roles.filter((role) => {
+    const matchesSearch =
       role.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       role.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      role.permissions.some(p => p.module.toLowerCase().includes(searchQuery.toLowerCase()));
-      
+      role.permissions.some((p) =>
+        p.module.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+
     const matchesScope = scopeFilter === "ALL" || role.scope === scopeFilter;
-    
+
     return matchesSearch && matchesScope;
   });
 
@@ -43,7 +35,8 @@ export default function RoleTemplatesView() {
             System Role Definitions
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Browse and configure template roles, scopes, and localized module permission parameters.
+            Browse and configure template roles, scopes, and localized module
+            permission parameters.
           </p>
         </div>
       </div>
@@ -77,8 +70,8 @@ export default function RoleTemplatesView() {
       {/* Grid of Roles */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredRoles.map((role) => (
-          <div 
-            key={role.id} 
+          <div
+            key={role.id}
             className="bg-white rounded-2xl border border-gray-200 p-6 shadow-xs flex flex-col justify-between hover:shadow-md hover:border-indigo-300 transition-all"
           >
             <div>
@@ -94,24 +87,32 @@ export default function RoleTemplatesView() {
                     )}
                   </h3>
                   <div className="flex items-center gap-2 text-xs text-gray-400 mt-1 font-semibold">
-                    <span className={`px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${
-                      role.scope === "Platform" 
-                        ? "bg-slate-100 text-slate-700 border border-slate-200" 
-                        : "bg-blue-50 text-blue-700 border border-blue-200"
-                    }`}>
+                    <span
+                      className={`px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${
+                        role.scope === "Platform"
+                          ? "bg-slate-100 text-slate-700 border border-slate-200"
+                          : "bg-blue-50 text-blue-700 border border-blue-200"
+                      }`}
+                    >
                       {role.scope} Scope
                     </span>
                     <span>•</span>
-                    <span>{role.assignedOrgCount} active organizations assigned</span>
+                    <span>
+                      {role.assignedOrgCount} active organizations assigned
+                    </span>
                   </div>
                 </div>
 
-                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${
-                  role.status === "Active" 
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
-                    : "bg-gray-50 text-gray-500 border-gray-200"
-                }`}>
-                  <div className={`w-1.5 h-1.5 rounded-full ${role.status === "Active" ? "bg-emerald-500" : "bg-gray-400"}`} />
+                <span
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${
+                    role.status === "Active"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : "bg-gray-50 text-gray-500 border-gray-200"
+                  }`}
+                >
+                  <div
+                    className={`w-1.5 h-1.5 rounded-full ${role.status === "Active" ? "bg-emerald-500" : "bg-gray-400"}`}
+                  />
                   {role.status}
                 </span>
               </div>
@@ -126,19 +127,22 @@ export default function RoleTemplatesView() {
                 <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-1.5">
                   Module Actions Permissions
                 </h4>
-                
+
                 <div className="divide-y divide-gray-100">
                   {role.permissions.map((perm, idx) => (
-                    <div key={idx} className="py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div
+                      key={idx}
+                      className="py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                    >
                       <span className="text-sm font-bold text-gray-800 flex items-center gap-1.5">
                         <div className="w-1.5 h-3 bg-indigo-500 rounded-sm" />
                         {perm.module}
                       </span>
-                      
+
                       <div className="flex flex-wrap gap-1">
                         {perm.actions.map((act) => (
-                          <span 
-                            key={act} 
+                          <span
+                            key={act}
                             className="bg-gray-50 border border-gray-200 text-gray-600 px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider shadow-2xs"
                           >
                             {act}
@@ -153,8 +157,10 @@ export default function RoleTemplatesView() {
 
             {/* Bottom Actions footer */}
             <div className="border-t border-gray-100 mt-6 pt-4 flex items-center justify-between text-xs text-gray-400 font-semibold">
-              <span>Last updated: {new Date(role.updatedAt).toLocaleDateString()}</span>
-              <button 
+              <span>
+                Last updated: {new Date(role.updatedAt).toLocaleDateString()}
+              </span>
+              <button
                 className="text-indigo-600 hover:text-indigo-800 transition-colors font-bold uppercase tracking-wider cursor-pointer"
                 onClick={() => alert(`Full matrix auditing: ${role.name}`)}
               >
@@ -167,7 +173,9 @@ export default function RoleTemplatesView() {
         {filteredRoles.length === 0 && (
           <div className="col-span-full bg-white rounded-2xl border border-gray-200 py-16 text-center text-gray-500 flex flex-col items-center justify-center gap-3">
             <Lock className="w-8 h-8 text-gray-400" />
-            <p className="text-sm">No role templates found matching your search.</p>
+            <p className="text-sm">
+              No role templates found matching your search.
+            </p>
           </div>
         )}
       </div>

@@ -3,11 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from "react";
 import { usePlatformSettings } from "./hooks/usePlatformSettings";
-import { SystemConfig } from "./types/platformSettings.types";
-
-// Import Modular Components
 import { GeneralSettingsView } from "./components/GeneralSettingsView";
 import { BrandingSettingsView } from "./components/BrandingSettingsView";
 import { LocalizationSettingsView } from "./components/LocalizationSettingsView";

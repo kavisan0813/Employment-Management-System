@@ -19,10 +19,7 @@ interface FilterSelectProps {
   organizations: any[];
 }
 
-const FilterSelect: React.FC<FilterSelectProps> = ({
-  filters,
-  organizations,
-}) => {
+const FilterSelect: React.FC<FilterSelectProps> = ({ organizations }) => {
   return (
     <div className="flex items-center gap-2">
       <select className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500">

@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { 
-  ToggleLeft, 
-  Plus, 
-  Search, 
-  Settings, 
-  Sliders, 
-  Check, 
-  X, 
-  Trash2, 
-  Play, 
+import {
+  ToggleLeft,
+  Plus,
+  Search,
+  Settings,
+  X,
+  Play,
   Pause,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 import { db } from "../../mockData";
 import { FeatureFlag } from "../../types";
@@ -28,7 +25,7 @@ export default function FeatureManagementView() {
     key: "",
     name: "",
     description: "",
-    category: "Core",
+    category: "Core" as "Core" | "Beta" | "Experimental" | "Deprecated",
     status: "Active" as "Active" | "Inactive",
     defaultState: true,
     rolloutPct: 100,
@@ -40,14 +37,17 @@ export default function FeatureManagementView() {
   }, []);
 
   const handleToggleStatus = (id: string) => {
-    const updatedFlags = flags.map(flag => {
+    const updatedFlags = flags.map((flag) => {
       if (flag.id === id) {
-        const nextStatus = flag.status === "Active" ? "Inactive" : "Active";
-        toast.success(`Feature Flag "${flag.name}" status updated to ${nextStatus}.`);
+        const nextStatus: "Active" | "Inactive" =
+          flag.status === "Active" ? "Inactive" : "Active";
+        toast.success(
+          `Feature Flag "${flag.name}" status updated to ${nextStatus}.`,
+        );
         return {
           ...flag,
           status: nextStatus,
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         };
       }
       return flag;
@@ -66,7 +66,9 @@ export default function FeatureManagementView() {
     }
 
     // Verify key uniqueness
-    const keyExists = flags.some(f => f.key.toLowerCase() === newFlag.key.toLowerCase());
+    const keyExists = flags.some(
+      (f) => f.key.toLowerCase() === newFlag.key.toLowerCase(),
+    );
     if (keyExists) {
       toast.error(`Feature Flag key "${newFlag.key}" already exists.`);
       return;
@@ -84,7 +86,7 @@ export default function FeatureManagementView() {
       enabledPlans: ["Enterprise"],
       enabledOrgIds: [],
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     const updatedList = [createdFlag, ...flags];
@@ -107,19 +109,21 @@ export default function FeatureManagementView() {
   };
 
   // Filters logic
-  const filteredFlags = flags.filter(flag => {
-    const matchesSearch = 
+  const filteredFlags = flags.filter((flag) => {
+    const matchesSearch =
       flag.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       flag.key.toLowerCase().includes(searchQuery.toLowerCase()) ||
       flag.description.toLowerCase().includes(searchQuery.toLowerCase());
-      
-    const matchesCategory = categoryFilter === "ALL" || flag.category === categoryFilter;
-    const matchesStatus = statusFilter === "ALL" || flag.status === statusFilter;
-    
+
+    const matchesCategory =
+      categoryFilter === "ALL" || flag.category === categoryFilter;
+    const matchesStatus =
+      statusFilter === "ALL" || flag.status === statusFilter;
+
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  const categories = Array.from(new Set(flags.map(f => f.category)));
+  const categories = Array.from(new Set(flags.map((f) => f.category)));
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-1.5 py-4 font-medium">
@@ -131,7 +135,8 @@ export default function FeatureManagementView() {
             Feature Flag Policies
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Configure system capabilities, beta access, and live rollout percentages across organizations.
+            Configure system capabilities, beta access, and live rollout
+            percentages across organizations.
           </p>
         </div>
         <button
@@ -162,8 +167,10 @@ export default function FeatureManagementView() {
             className="bg-white border border-gray-200 text-sm rounded-lg px-3 py-2 outline-none font-medium text-gray-700 cursor-pointer w-full md:w-auto"
           >
             <option value="ALL">All Categories</option>
-            {categories.map(c => (
-              <option key={c} value={c}>{c}</option>
+            {categories.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
             ))}
           </select>
 
@@ -184,38 +191,51 @@ export default function FeatureManagementView() {
         {filteredFlags.map((flag) => {
           const isActive = flag.status === "Active";
           return (
-            <div 
-              key={flag.id} 
+            <div
+              key={flag.id}
               className={`bg-white rounded-2xl border p-5 flex flex-col justify-between shadow-xs transition-all relative ${
-                isActive ? "border-gray-200 hover:border-indigo-300 hover:shadow-md" : "border-gray-150 bg-gray-50/30 opacity-80"
+                isActive
+                  ? "border-gray-200 hover:border-indigo-300 hover:shadow-md"
+                  : "border-gray-150 bg-gray-50/30 opacity-80"
               }`}
             >
               <div>
                 {/* Badge Category & Status */}
                 <div className="flex items-center justify-between mb-3.5">
-                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
-                    flag.category === "Core" ? "bg-blue-50 text-blue-700 border border-blue-100" :
-                    flag.category === "Beta" ? "bg-purple-50 text-purple-700 border border-purple-100" :
-                    flag.category === "Experimental" ? "bg-amber-50 text-amber-700 border border-amber-100" :
-                    "bg-gray-50 text-gray-600 border border-gray-150"
-                  }`}>
+                  <span
+                    className={`px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
+                      flag.category === "Core"
+                        ? "bg-blue-50 text-blue-700 border border-blue-100"
+                        : flag.category === "Beta"
+                          ? "bg-purple-50 text-purple-700 border border-purple-100"
+                          : flag.category === "Experimental"
+                            ? "bg-amber-50 text-amber-700 border border-amber-100"
+                            : "bg-gray-50 text-gray-600 border border-gray-150"
+                    }`}
+                  >
                     {flag.category}
                   </span>
-                  
+
                   <button
                     onClick={() => handleToggleStatus(flag.id)}
                     className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer border ${
-                      isActive 
+                      isActive
                         ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
                         : "bg-gray-100 text-gray-500 border-gray-300 hover:bg-gray-200"
                     }`}
                   >
-                    {isActive ? <Play className="w-3 h-3 fill-current" /> : <Pause className="w-3 h-3 fill-current" />}
+                    {isActive ? (
+                      <Play className="w-3 h-3 fill-current" />
+                    ) : (
+                      <Pause className="w-3 h-3 fill-current" />
+                    )}
                     {flag.status}
                   </button>
                 </div>
 
-                <h3 className="text-base font-bold text-gray-900 leading-tight">{flag.name}</h3>
+                <h3 className="text-base font-bold text-gray-900 leading-tight">
+                  {flag.name}
+                </h3>
                 <code className="text-xs text-gray-400 block mt-1 select-all font-mono">
                   {flag.key}
                 </code>
@@ -228,11 +248,15 @@ export default function FeatureManagementView() {
               <div className="border-t border-gray-100 mt-5 pt-4 flex flex-col gap-2">
                 <div className="flex items-center justify-between text-xs text-gray-500 font-semibold">
                   <span>Default State:</span>
-                  <span className="text-gray-900 font-bold">{flag.defaultState ? "ON" : "OFF"}</span>
+                  <span className="text-gray-900 font-bold">
+                    {flag.defaultState ? "ON" : "OFF"}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-gray-500 font-semibold">
                   <span>Rollout Target:</span>
-                  <span className="text-gray-900 font-bold">{flag.rolloutPct}%</span>
+                  <span className="text-gray-900 font-bold">
+                    {flag.rolloutPct}%
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-gray-500 font-semibold">
                   <span>Plans Locked:</span>
@@ -248,7 +272,9 @@ export default function FeatureManagementView() {
         {filteredFlags.length === 0 && (
           <div className="col-span-full bg-white rounded-2xl border border-gray-200 py-16 text-center text-gray-500 flex flex-col items-center justify-center gap-3">
             <AlertCircle className="w-8 h-8 text-gray-400" />
-            <p className="text-sm">No feature flags found matching your filter criteria.</p>
+            <p className="text-sm">
+              No feature flags found matching your filter criteria.
+            </p>
           </div>
         )}
       </div>
@@ -262,7 +288,7 @@ export default function FeatureManagementView() {
                 <Settings className="w-5 h-5 text-indigo-600" />
                 Create Feature Policy
               </h2>
-              <button 
+              <button
                 onClick={() => setIsAddModalOpen(false)}
                 className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
               >
@@ -280,7 +306,9 @@ export default function FeatureManagementView() {
                   required
                   placeholder="e.g. intelligent_resume_matching"
                   value={newFlag.key}
-                  onChange={(e) => setNewFlag({ ...newFlag, key: e.target.value })}
+                  onChange={(e) =>
+                    setNewFlag({ ...newFlag, key: e.target.value })
+                  }
                   className="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-gray-50 outline-none focus:bg-white focus:border-indigo-500 transition-colors"
                 />
               </div>
@@ -294,7 +322,9 @@ export default function FeatureManagementView() {
                   required
                   placeholder="e.g. AI Resume Matching v2"
                   value={newFlag.name}
-                  onChange={(e) => setNewFlag({ ...newFlag, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewFlag({ ...newFlag, name: e.target.value })
+                  }
                   className="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-gray-50 outline-none focus:bg-white focus:border-indigo-500 transition-colors"
                 />
               </div>
@@ -305,7 +335,16 @@ export default function FeatureManagementView() {
                 </label>
                 <select
                   value={newFlag.category}
-                  onChange={(e) => setNewFlag({ ...newFlag, category: e.target.value })}
+                  onChange={(e) =>
+                    setNewFlag({
+                      ...newFlag,
+                      category: e.target.value as
+                        | "Core"
+                        | "Beta"
+                        | "Experimental"
+                        | "Deprecated",
+                    })
+                  }
                   className="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-gray-50 outline-none focus:bg-white focus:border-indigo-500 transition-colors cursor-pointer font-semibold"
                 >
                   <option value="Core">Core</option>
@@ -322,7 +361,9 @@ export default function FeatureManagementView() {
                 <textarea
                   placeholder="Summarize what capabilities this feature flag enables..."
                   value={newFlag.description}
-                  onChange={(e) => setNewFlag({ ...newFlag, description: e.target.value })}
+                  onChange={(e) =>
+                    setNewFlag({ ...newFlag, description: e.target.value })
+                  }
                   className="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-gray-50 outline-none focus:bg-white focus:border-indigo-500 transition-colors min-h-[80px]"
                 />
               </div>
@@ -337,7 +378,12 @@ export default function FeatureManagementView() {
                     min="0"
                     max="100"
                     value={newFlag.rolloutPct}
-                    onChange={(e) => setNewFlag({ ...newFlag, rolloutPct: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setNewFlag({
+                        ...newFlag,
+                        rolloutPct: Number(e.target.value),
+                      })
+                    }
                     className="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-gray-50 outline-none focus:bg-white focus:border-indigo-500 transition-colors"
                   />
                 </div>
@@ -348,7 +394,9 @@ export default function FeatureManagementView() {
                   </label>
                   <select
                     value={newFlag.status}
-                    onChange={(e) => setNewFlag({ ...newFlag, status: e.target.value as any })}
+                    onChange={(e) =>
+                      setNewFlag({ ...newFlag, status: e.target.value as any })
+                    }
                     className="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-gray-50 outline-none focus:bg-white focus:border-indigo-500 transition-colors cursor-pointer font-semibold"
                   >
                     <option value="Active">Active</option>
@@ -362,10 +410,15 @@ export default function FeatureManagementView() {
                   type="checkbox"
                   id="defaultState"
                   checked={newFlag.defaultState}
-                  onChange={(e) => setNewFlag({ ...newFlag, defaultState: e.target.checked })}
+                  onChange={(e) =>
+                    setNewFlag({ ...newFlag, defaultState: e.target.checked })
+                  }
                   className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer border-gray-300"
                 />
-                <label htmlFor="defaultState" className="text-xs font-bold text-gray-700 select-none cursor-pointer">
+                <label
+                  htmlFor="defaultState"
+                  className="text-xs font-bold text-gray-700 select-none cursor-pointer"
+                >
                   Default Enabled (State value defaults to True)
                 </label>
               </div>
