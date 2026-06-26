@@ -24,6 +24,8 @@ import {
   Zap,
   User,
   Bell,
+  ToggleLeft,
+  ShieldAlert,
 } from "lucide-react";
 
 import { useAuth } from "../../../context/AuthContext";
@@ -87,7 +89,7 @@ export function Sidebar() {
         { id: "complianceRules", label: "Compliance", icon: Layers, path: "/platform-admin/compliance" }
       ]
     }, */
-   /*  {
+    {
       title: "Security & API",
       id: "security_api",
       items: [
@@ -100,11 +102,11 @@ export function Sidebar() {
         {
           id: "roleTemplates",
           label: "Roles",
-          icon: Users2,
+          icon: ShieldAlert,
           path: "/platform-admin/roles",
         },
       ],
-    }, */
+    },
     {
       title: "SLA & Helpdesk",
       id: "helpdesk",

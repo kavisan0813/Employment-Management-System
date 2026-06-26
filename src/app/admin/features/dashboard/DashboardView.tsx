@@ -40,22 +40,22 @@ export default function DashboardView({ onNavigate = () => {} }: DashboardViewPr
     }
     
     const pathMap: Record<string, string> = {
-      'dashboard': '/admin/dashboard',
-      'organizations': '/admin/organizations',
-      'org-create': '/admin/organizations',
-      'org-suspended': '/admin/organizations',
-      'employees': '/admin/organizations',
-      'users': '/admin/users',
-      'subscriptions': '/admin/subscriptions',
-      'revenue': '/admin/subscriptions',
-      'tickets': '/admin/support-tickets',
-      'audit': '/admin/audit-logs',
-      'reports': '/admin/reports',
-      'plans': '/admin/roles',
-      'settings': '/admin/settings'
+      'dashboard': '/platform-admin/dashboard',
+      'organizations': '/platform-admin/organizations',
+      'org-create': '/platform-admin/organizations',
+      'org-suspended': '/platform-admin/organizations',
+      'employees': '/platform-admin/organizations',
+      'users': '/platform-admin/users',
+      'subscriptions': '/platform-admin/subscriptions',
+      'revenue': '/platform-admin/subscriptions',
+      'tickets': '/platform-admin/support-tickets',
+      'audit': '/platform-admin/audit-logs',
+      'reports': '/platform-admin/reports',
+      'plans': '/platform-admin/roles',
+      'settings': '/platform-admin/settings'
     };
     
-    const targetPath = pathMap[view.toLowerCase()] || pathMap[view] || `/admin/${view.toLowerCase()}`;
+    const targetPath = pathMap[view.toLowerCase()] || pathMap[view] || `/platform-admin/${view.toLowerCase()}`;
     navigate(targetPath);
   };
 
