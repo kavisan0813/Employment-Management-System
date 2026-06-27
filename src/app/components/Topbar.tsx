@@ -3,6 +3,10 @@ import { useNavigate, useLocation } from "react-router";
 import {
   Bell,
   Search,
+  ChevronDown,
+  Settings,
+  LogOut,
+  User,
   Sun,
   Moon,
   X,
@@ -31,7 +35,7 @@ export function Topbar({
   isDark,
   onToggleTheme,
 }: TopbarProps) {
-
+  const [showDropdown, setShowDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAllNotificationsScreen, setShowAllNotificationsScreen] =
     useState(false);
@@ -41,7 +45,7 @@ export function Topbar({
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     setNotifications(user?.role === "Finance" ? 5 : 3);
@@ -469,7 +473,145 @@ export function Topbar({
         )}
       </div>
 
+      {/* User Avatar / Dropdown */}
+      <div className="relative">
+        <button
+          onClick={() => setShowDropdown(!showDropdown)}
+          className="flex items-center gap-2.5 rounded-full px-3 py-1.5 transition-colors"
+          style={{
+            border: "1px solid var(--border)",
+            backgroundColor: showDropdown
+              ? "var(--accent)"
+              : "var(--background)",
+            cursor: "pointer",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+              "var(--accent)";
+          }}
+          onMouseLeave={(e) => {
+            if (!showDropdown)
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                "var(--background)";
+          }}
+        >
+          <div
+            className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
+            style={{ background: "linear-gradient(135deg, #059669, #14B8A6)" }}
+          >
+            <span style={{ color: "white", fontSize: "11px", fontWeight: 700 }}>
+              {user?.initials || "RP"}
+            </span>
+          </div>
+          <div className="text-left hidden md:block">
+            <p
+              style={{
+                color: "var(--foreground)",
+                fontSize: "13px",
+                fontWeight: 600,
+                lineHeight: 1.2,
+              }}
+            >
+              {user?.role === "Finance"
+                ? `${user.name} / ${user.role}`
+                : user?.name || "Ryan Park"}
+            </p>
+            {user?.role !== "Finance" && (
+              <p
+                style={{
+                  color: "var(--muted-foreground)",
+                  fontSize: "11px",
+                  lineHeight: 1.2,
+                }}
+              >
+                {user?.role || "Admin"}
+              </p>
+            )}
+          </div>
+          <ChevronDown
+            size={14}
+            color="var(--muted-foreground)"
+            style={{
+              transition: "transform 0.2s",
+              transform: showDropdown ? "rotate(180deg)" : "rotate(0deg)",
+            }}
+          />
+        </button>
 
+        {showDropdown && (
+          <>
+            <div
+              className="fixed inset-0 z-[1000]"
+              onClick={() => setShowDropdown(false)}
+            />
+            <div
+              className="absolute right-0 top-full mt-2 rounded-xl overflow-hidden z-[1001] shadow-lg"
+              style={{
+                width: "180px",
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+              }}
+            >
+              {[
+                { icon: User, label: "My Profile", path: "/profile" },
+                ...(user?.role !== "Employee"
+                  ? [{ icon: Settings, label: "Settings", path: "/settings" }]
+                  : []),
+              ].map((item) => (
+                <button
+                  key={item.label}
+                  onClick={() => {
+                    setShowDropdown(false);
+                    navigate(item.path);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left"
+                  style={{ color: "var(--foreground)", fontSize: "13px" }}
+                  onMouseEnter={(e) => {
+                    (
+                      e.currentTarget as HTMLButtonElement
+                    ).style.backgroundColor = "var(--accent)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (
+                      e.currentTarget as HTMLButtonElement
+                    ).style.backgroundColor = "transparent";
+                  }}
+                >
+                  <item.icon size={14} color="var(--primary)" />
+                  {item.label}
+                </button>
+              ))}
+              <div
+                style={{
+                  height: "1px",
+                  backgroundColor: "var(--border)",
+                  margin: "4px 0",
+                }}
+              />
+              <button
+                onClick={() => {
+                  logout();
+                  setShowDropdown(false);
+                  navigate("/login");
+                }}
+                className="w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left"
+                style={{ color: "#EF4444", fontSize: "13px" }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                    "rgba(239, 68, 68, 0.1)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                    "transparent";
+                }}
+              >
+                <LogOut size={14} />
+                Sign Out
+              </button>
+            </div>
+          </>
+        )}
+      </div>
 
       {showAllNotificationsScreen && (
         <div
