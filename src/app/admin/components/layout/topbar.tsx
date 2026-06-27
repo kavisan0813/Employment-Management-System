@@ -66,15 +66,6 @@ export function Topbar() {
             help_outline
           </span>
         </button>
-        <div className="h-8 w-[1px] bg-outline-variant/50 mx-1"></div>
-        <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-surface-container-highest transition-all group border-0 bg-transparent cursor-pointer">
-          <span className="text-label-md font-label-md text-on-surface-variant group-hover:text-primary">
-            Profile
-          </span>
-          <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary">
-            expand_more
-          </span>
-        </button>
       </div>
     </header>
   );
