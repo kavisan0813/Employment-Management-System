@@ -10,14 +10,6 @@ export interface ReportTemplate {
   description: string;
 }
 
-export interface ReportSchedule {
-  id: string;
-  templateId: string;
-  reportName: string;
-  frequency: "Daily" | "Weekly" | "Monthly";
-  email: string;
-  active: boolean;
-}
 
 export interface ReportExport {
   id: string;
@@ -36,6 +28,5 @@ export interface ChartDataPoint {
 
 export interface ReportsState {
   templates: ReportTemplate[];
-  schedules: ReportSchedule[];
   exports: ReportExport[];
 }

@@ -17,13 +17,9 @@ export function useReports() {
   const [activeTab, setActiveTab] = useState<
     | "dashboard"
     | "organizations"
-    | "employees"
-    | "attendance"
     | "subscriptions"
     | "revenue"
-    | "usage"
     | "custom"
-    | "scheduled"
     | "exports"
     | "executive"
   >("dashboard");
@@ -119,67 +115,7 @@ export function useReports() {
     );
   };
 
-  // Register a new automated email report schedule
-  const handleCreateSchedule = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!schedEmail.trim()) {
-      triggerAlert("Please enter a valid recipient email address.", "error");
-      return;
-    }
 
-    const template = state.templates.find((t) => t.id === schedTemplateId);
-    const reportName = template ? template.name : "Custom Scheduled Report";
-
-    const newState = reportsService.addSchedule(state, {
-      templateId: schedTemplateId,
-      reportName,
-      frequency: schedFrequency,
-      email: schedEmail,
-    });
-
-    setState(newState);
-    setSchedEmail("");
-    triggerAlert(
-      `Schedules successfully configured: dispatching ${schedFrequency} to ${schedEmail}.`,
-      "success",
-    );
-    pushAuditLog(
-      "report_schedule.created",
-      "Admin Action",
-      CURRENT_ADMIN_EMAIL,
-      "platform_admin",
-      null,
-      "Active",
-      { report_name: reportName, frequency: schedFrequency, email: schedEmail },
-    );
-  };
-
-  // Toggle schedule status (Active/Suspended)
-  const handleToggleSchedule = (id: string) => {
-    const newState = reportsService.toggleSchedule(state, id);
-    setState(newState);
-    const target = newState.schedules.find((s) => s.id === id);
-    triggerAlert(
-      `Schedule automation status set to ${target?.active ? "ACTIVE" : "SUSPENDED"}.`,
-      target?.active ? "success" : "warning",
-    );
-    pushAuditLog(
-      "report_schedule.status_updated",
-      "Admin Action",
-      CURRENT_ADMIN_EMAIL,
-      "platform_admin",
-      null,
-      "Active",
-      { schedule_id: id, active_status: target?.active ? "true" : "false" },
-    );
-  };
-
-  // Delete schedule entry
-  const handleDeleteSchedule = (id: string) => {
-    const newState = reportsService.deleteSchedule(state, id);
-    setState(newState);
-    triggerAlert("Report automation schedule deleted successfully.", "info");
-  };
 
   return {
     state,
@@ -204,8 +140,5 @@ export function useReports() {
     handleCompileCustomReport,
     handleCreateExport,
     handleDeleteExport,
-    handleCreateSchedule,
-    handleToggleSchedule,
-    handleDeleteSchedule,
   };
 }

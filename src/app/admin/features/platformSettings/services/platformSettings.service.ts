@@ -45,53 +45,13 @@ export const DEFAULT_CONFIG: SystemConfig = {
   },
   timezone: {
     defaultTimezone: "Asia/Kolkata",
-    supportedTimezones: ["Asia/Kolkata", "Asia/Dubai", "America/New_York", "Europe/London"],
-    useLocalTimeForPunches: true,
-  },
-  email: {
-    smtpHost: "smtp.emspro.com",
-    smtpPort: 587,
-    smtpUser: "delivery@emspro.com",
-    smtpPass: "••••••••••••",
-    senderEmail: "noreply@emspro.com",
-    templates: {
-      welcome: {
-        subject: "Welcome to EMS Pro — Your Tenant Space is Active!",
-        body: "Hi {{user_name}},\n\nYour secure workspace at {{org_name}} is ready. Log in now using your work credentials to access employee self-service tools.\n\nBest regards,\nSupport Team",
-      },
-      billingFailed: {
-        subject: "Payment Failed: Action Required for {{org_name}}",
-        body: "Hi Admin,\n\nWe were unable to charge your card on file for your EMS Pro subscription plan. Please log in to your tenant dashboard and update your billing parameters to avoid service suspension.\n\nSincerely,\nEMS Billing Department",
-      },
-    },
-  },
-  notifications: {
-    enableEmail: true,
-    enableSms: false,
-    enablePush: true,
-    notifyOnLeave: true,
-    notifyOnPayroll: true,
-    notifyOnSecurityAlert: true,
-  },
-  security: {
-    passwordMinLength: 8,
-    passwordRequireSpecial: true,
-    passwordRequireUppercase: true,
-    mfaRequirement: "admin",
-    ipWhitelist: [
-      { ip: "192.168.1.1/24", label: "Corporate HQ Router" },
-      { ip: "50.14.90.108/32", label: "Audit Agent Gateway Node" }
+    supportedTimezones: [
+      "Asia/Kolkata",
+      "Asia/Dubai",
+      "America/New_York",
+      "Europe/London",
     ],
-  },
-  storage: {
-    maxUploadSizeMb: 10,
-    tenantStorageLimitGb: 100,
-    provider: "s3",
-  },
-  preferences: {
-    maintenanceMode: false,
-    allowSelfRegistration: true,
-    logRetentionDays: 365,
+    useLocalTimeForPunches: true,
   },
 };
 
@@ -108,14 +68,12 @@ export const platformSettingsService = {
           ...parsed,
           general: { ...DEFAULT_CONFIG.general, ...parsed.general },
           branding: { ...DEFAULT_CONFIG.branding, ...parsed.branding },
-          localization: { ...DEFAULT_CONFIG.localization, ...parsed.localization },
+          localization: {
+            ...DEFAULT_CONFIG.localization,
+            ...parsed.localization,
+          },
           currency: { ...DEFAULT_CONFIG.currency, ...parsed.currency },
           timezone: { ...DEFAULT_CONFIG.timezone, ...parsed.timezone },
-          email: { ...DEFAULT_CONFIG.email, ...parsed.email },
-          notifications: { ...DEFAULT_CONFIG.notifications, ...parsed.notifications },
-          security: { ...DEFAULT_CONFIG.security, ...parsed.security },
-          storage: { ...DEFAULT_CONFIG.storage, ...parsed.storage },
-          preferences: { ...DEFAULT_CONFIG.preferences, ...parsed.preferences },
         };
       }
     } catch (e) {
@@ -128,7 +86,12 @@ export const platformSettingsService = {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
   },
 
-  simulateSmtpHandshake(host: string, port: number, user: string, sender: string): Promise<string[]> {
+  simulateSmtpHandshake(
+    host: string,
+    port: number,
+    user: string,
+    sender: string,
+  ): Promise<string[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
         const logs = [
@@ -140,10 +103,10 @@ export const platformSettingsService = {
           `[${new Date().toLocaleTimeString()}] Sender envelope verified: <${sender}>`,
           `[${new Date().toLocaleTimeString()}] Sending payload transaction... Deliverable accepted by downstream SMTP server gateway!`,
           `[${new Date().toLocaleTimeString()}] Message ID assigned: <ems-smtp-test-${Date.now()}@emspro.com>`,
-          `[${new Date().toLocaleTimeString()}] Connection terminated gracefully.`
+          `[${new Date().toLocaleTimeString()}] Connection terminated gracefully.`,
         ];
         resolve(logs);
       }, 3000);
     });
-  }
+  },
 };

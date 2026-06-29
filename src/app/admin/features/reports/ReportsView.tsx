@@ -9,28 +9,19 @@ import { useReports } from "./hooks/useReports";
 // Import Modular Sub-components
 import { DashboardOverview } from "./components/DashboardOverview";
 import { OrganizationReportsView } from "./components/OrganizationReportsView";
-import { EmployeeStatisticsView } from "./components/EmployeeStatisticsView";
-import { AttendanceAnalyticsView } from "./components/AttendanceAnalyticsView";
 import { SubscriptionReportsView } from "./components/SubscriptionReportsView";
 import { RevenueReportsView } from "./components/RevenueReportsView";
-import { SystemUsageReportsView } from "./components/SystemUsageReportsView";
 import { CustomReportsView } from "./components/CustomReportsView";
-import { ScheduledReportsView } from "./components/ScheduledReportsView";
 import { ExportCenterView } from "./components/ExportCenterView";
-import { ExecutiveDashboardView } from "./components/ExecutiveDashboardView";
+
 
 // Import Lucide Icons
 import {
   AreaChart,
   LayoutDashboard,
   Building2,
-  Users,
-  Clock,
   Calendar,
   CreditCard,
-  Activity,
-  Sliders,
-  BellRing,
   Download,
   ShieldCheck,
   CheckCircle2,
@@ -50,19 +41,10 @@ export function ReportsView() {
     customFilters,
     setCustomFilters,
     customReportResult,
-    schedTemplateId,
-    setSchedTemplateId,
-    schedFrequency,
-    setSchedFrequency,
-    schedEmail,
-    setSchedEmail,
     triggerAlert,
     handleCompileCustomReport,
     handleCreateExport,
     handleDeleteExport,
-    handleCreateSchedule,
-    handleToggleSchedule,
-    handleDeleteSchedule,
   } = useReports();
 
   // Sub-Navigation Configuration
@@ -73,30 +55,14 @@ export function ReportsView() {
       icon: LayoutDashboard,
       group: "Overview",
     },
-    {
-      id: "executive",
-      label: "Executive Dashboard",
-      icon: ShieldCheck,
-      group: "Overview",
-    },
+   
     {
       id: "organizations",
       label: "Organization Reports",
       icon: Building2,
       group: "Metrics Panels",
     },
-    {
-      id: "employees",
-      label: "Employee Statistics",
-      icon: Users,
-      group: "Metrics Panels",
-    },
-    {
-      id: "attendance",
-      label: "Attendance Analytics",
-      icon: Clock,
-      group: "Metrics Panels",
-    },
+  
     {
       id: "subscriptions",
       label: "Subscription Reports",
@@ -109,24 +75,7 @@ export function ReportsView() {
       icon: CreditCard,
       group: "Metrics Panels",
     },
-    {
-      id: "usage",
-      label: "System Usage Reports",
-      icon: Activity,
-      group: "Metrics Panels",
-    },
-    {
-      id: "custom",
-      label: "Custom Reports",
-      icon: Sliders,
-      group: "Action Centers",
-    },
-    {
-      id: "scheduled",
-      label: "Scheduled Reports",
-      icon: BellRing,
-      group: "Action Centers",
-    },
+
     {
       id: "exports",
       label: "Export Center",
@@ -139,20 +88,12 @@ export function ReportsView() {
     switch (activeTab) {
       case "dashboard":
         return <DashboardOverview setActiveTab={setActiveTab} />;
-      case "executive":
-        return <ExecutiveDashboardView />;
       case "organizations":
         return <OrganizationReportsView />;
-      case "employees":
-        return <EmployeeStatisticsView />;
-      case "attendance":
-        return <AttendanceAnalyticsView />;
       case "subscriptions":
         return <SubscriptionReportsView triggerAlert={triggerAlert} />;
       case "revenue":
         return <RevenueReportsView />;
-      case "usage":
-        return <SystemUsageReportsView />;
       case "custom":
         return (
           <CustomReportsView
@@ -161,21 +102,6 @@ export function ReportsView() {
             customReportResult={customReportResult}
             handleCompileCustomReport={handleCompileCustomReport}
             handleCreateExport={handleCreateExport}
-          />
-        );
-      case "scheduled":
-        return (
-          <ScheduledReportsView
-            state={state}
-            schedTemplateId={schedTemplateId}
-            setSchedTemplateId={setSchedTemplateId}
-            schedFrequency={schedFrequency}
-            setSchedFrequency={setSchedFrequency}
-            schedEmail={schedEmail}
-            setSchedEmail={setSchedEmail}
-            handleCreateSchedule={handleCreateSchedule}
-            handleToggleSchedule={handleToggleSchedule}
-            handleDeleteSchedule={handleDeleteSchedule}
           />
         );
       case "exports":

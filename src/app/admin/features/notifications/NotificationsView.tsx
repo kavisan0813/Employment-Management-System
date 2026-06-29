@@ -8,11 +8,8 @@ import { useNotifications } from "./hooks/useNotifications";
 
 // Import Modular Components
 import { NotificationsDashboard } from "./components/NotificationsDashboard";
-import { SystemAlertsView } from "./components/SystemAlertsView";
 import { SubscriptionExpiryView } from "./components/SubscriptionExpiryView";
 import { FailedPaymentsView } from "./components/FailedPaymentsView";
-import { SecurityAlertsView } from "./components/SecurityAlertsView";
-import { NotificationTemplatesView } from "./components/NotificationTemplatesView";
 import { DeliveryChannelsView } from "./components/DeliveryChannelsView";
 import { NotificationHistoryView } from "./components/NotificationHistoryView";
 import { NotificationSettingsView } from "./components/NotificationSettingsView";
@@ -20,11 +17,9 @@ import { NotificationSettingsView } from "./components/NotificationSettingsView"
 // Import Lucide Icons
 import {
   Bell,
-  Activity,
   Calendar,
   CreditCard,
   Shield,
-  LayoutTemplate,
   Radio,
   History,
   Settings,
@@ -54,12 +49,7 @@ export function NotificationsView() {
   // Navigation Items
   const navItems = [
     { id: "dashboard", label: "Dashboard", icon: BellRing, group: "General" },
-    {
-      id: "system",
-      label: "System Health Alerts",
-      icon: Activity,
-      group: "Event Monitors",
-    },
+    
     {
       id: "expiry",
       label: "Subscription Expiry Alerts",
@@ -72,18 +62,7 @@ export function NotificationsView() {
       icon: CreditCard,
       group: "Event Monitors",
     },
-    {
-      id: "security",
-      label: "Security & MFA Alerts",
-      icon: Shield,
-      group: "Event Monitors",
-    },
-    {
-      id: "templates",
-      label: "Notification Templates",
-      icon: LayoutTemplate,
-      group: "Delivery Channels",
-    },
+   
     {
       id: "channels",
       label: "Delivery Channels",
@@ -117,13 +96,6 @@ export function NotificationsView() {
             setActiveTab={setActiveTab}
           />
         );
-      case "system":
-        return (
-          <SystemAlertsView
-            alerts={state.systemAlerts}
-            onAcknowledgeAlert={handleAcknowledgeAlert}
-          />
-        );
       case "expiry":
         return (
           <SubscriptionExpiryView
@@ -138,20 +110,7 @@ export function NotificationsView() {
             onRetryPayment={handleRetryPayment}
           />
         );
-      case "security":
-        return (
-          <SecurityAlertsView
-            securityAlerts={state.securityAlerts}
-            onSecurityAction={handleSecurityAction}
-          />
-        );
-      case "templates":
-        return (
-          <NotificationTemplatesView
-            templates={state.templates}
-            onSaveTemplate={handleSaveTemplate}
-          />
-        );
+  
       case "channels":
         return <DeliveryChannelsView />;
       case "history":

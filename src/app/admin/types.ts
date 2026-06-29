@@ -176,7 +176,7 @@ export interface TrendSeries {
 }
 
 // --- Module 10: Audit Logs ---
-export interface AuditLogEntry {
+/* export interface AuditLogEntry {
   action?: string;
   id: string;
   event: string; // e.g. "user.login", "org.plan_upgrade"
@@ -189,7 +189,7 @@ export interface AuditLogEntry {
   result: "Active" | "Pending" | "Inactive"; // Active = success, Pending = in progress, Inactive = failed
   metadata: Record<string, string>;
   timestamp: string;
-}
+} */
 
 // --- Module 11: Support Tickets ---
 export interface SupportTicket {
@@ -363,4 +363,32 @@ export interface AdminTeamMember {
   status: "Active" | "Inactive" | "Pending";
   lastLoginAt: string | null;
   invitedAt: string;
+}
+
+// --- Dashboard Module ---
+export interface DashboardStatsCache {
+  stat_id: string;
+  total_companies: number;
+  active_subscriptions: number;
+  trial_companies: number;
+  expired_companies: number;
+  suspended_companies: number;
+  mrr_total: number;
+  arr_total: number;
+  new_signups_this_month: number;
+  new_signups_today: number;
+  active_companies_count: number;
+  at_risk_companies_count: number;
+  inactive_companies_count: number;
+  total_employees_platform_wide: number;
+  calculated_at: string;
+}
+
+export interface DailySnapshot {
+  snapshot_date: string;
+  total_companies: number;
+  mrr_total: number;
+  new_signups: number;
+  active_companies_count: number;
+  total_employees: number;
 }

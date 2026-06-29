@@ -1,33 +1,16 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React from "react";
 import { useCommunication } from "./hooks/useCommunication";
 
 // Import subtab panels
-import { CommunicationDashboard } from "./components/CommunicationDashboard";
-import { AnnouncementsView } from "./components/AnnouncementsView";
-import { EmailTemplatesView } from "./components/EmailTemplatesView";
-import { SmsTemplatesView } from "./components/SmsTemplatesView";
-import { PushNotificationsView } from "./components/PushNotificationsView";
-import { BroadcastMessagesView } from "./components/BroadcastMessagesView";
-import { CommunicationHistoryView } from "./components/CommunicationHistoryView";
-import { DeliveryReportsView } from "./components/DeliveryReportsView";
-import { CommunicationSettingsView } from "./components/CommunicationSettingsView";
+import { BroadcastAnnouncementsTab } from "./components/BroadcastAnnouncementsTab";
+import { NotificationTemplatesTab } from "./components/NotificationTemplatesTab";
+import { NotificationSettingsTab } from "./components/NotificationSettingsTab";
 
 // Import Lucide icons
 import {
   MessageSquare,
-  LayoutDashboard,
   Megaphone,
-  Mail,
-  MessageCircle,
-  BellRing,
-  Send,
-  History,
-  Activity,
+  FileText,
   Settings,
   CheckCircle2,
   AlertTriangle,
@@ -37,179 +20,52 @@ import {
 
 export function CommunicationView() {
   const {
-    state,
     activeTab,
     setActiveTab,
-    showAlert,
-    alertMsg,
-    alertType,
-    annTitle,
-    setAnnTitle,
-    annContent,
-    setAnnContent,
-    annPriority,
-    setAnnPriority,
-    annTarget,
-    setAnnTarget,
-    annDisplay,
-    setAnnDisplay,
-    pushTitle,
-    setPushTitle,
-    pushMessage,
-    setPushMessage,
-    pushRedirect,
-    setPushRedirect,
-    pushTargetChannels,
-    setPushTargetChannels,
-    bcStep,
-    setBcStep,
-    bcTitle,
-    setBcTitle,
-    bcCampaign,
-    setBcCampaign,
-    bcAudience,
-    setBcAudience,
-    bcChannels,
-    setBcChannels,
-    bcMessageText,
-    setBcMessageText,
-    triggerAlert,
-    handleCreateAnnouncement,
-    handleToggleAnnouncement,
-    handleDeleteAnnouncement,
-    handleSaveEmailTemplate,
-    handleSaveSmsTemplate,
-    handleSendBroadcast,
-    handleSaveSettings,
+    toastMessage,
+    showToast
   } = useCommunication();
 
   const navItems = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { id: "announcements", label: "Announcements", icon: Megaphone },
-    { id: "reports", label: "Delivery Reports", icon: Activity },
-
-    { id: "emailTemplates", label: "Email Templates", icon: Mail },
-    { id: "smsTemplates", label: "SMS Templates", icon: MessageCircle },
-    { id: "pushNotifications", label: "Notifications", icon: BellRing },
-
-    { id: "broadcast", label: "Broadcast Messages", icon: Send },
-    { id: "history", label: "Communication History", icon: History },
-    { id: "settings", label: "Communication", icon: Settings },
+    { id: "broadcast", label: "Broadcast Announcements", icon: Megaphone, desc: "Send platform-wide targeted messages" },
+    { id: "templates", label: "Notification Templates", icon: FileText, desc: "Manage system automated email and SMS content" },
+    { id: "settings", label: "Notification Settings", icon: Settings, desc: "Control mandatory policies per organization" },
   ] as const;
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
-      case "dashboard":
-        return <CommunicationDashboard setActiveTab={setActiveTab} />;
-      case "announcements":
-        return (
-          <AnnouncementsView
-            state={state}
-            annTitle={annTitle}
-            setAnnTitle={setAnnTitle}
-            annContent={annContent}
-            setAnnContent={setAnnContent}
-            annPriority={annPriority}
-            setAnnPriority={setAnnPriority}
-            annTarget={annTarget}
-            setAnnTarget={setAnnTarget}
-            annDisplay={annDisplay}
-            setAnnDisplay={setAnnDisplay}
-            handleCreateAnnouncement={handleCreateAnnouncement}
-            handleToggleAnnouncement={handleToggleAnnouncement}
-            handleDeleteAnnouncement={handleDeleteAnnouncement}
-          />
-        );
-      case "reports":
-        return <DeliveryReportsView />;
-      case "emailTemplates":
-        return (
-          <EmailTemplatesView
-            state={state}
-            handleSaveEmailTemplate={handleSaveEmailTemplate}
-          />
-        );
-      case "smsTemplates":
-        return (
-          <SmsTemplatesView
-            state={state}
-            handleSaveSmsTemplate={handleSaveSmsTemplate}
-          />
-        );
-      case "pushNotifications":
-        return (
-          <PushNotificationsView
-            pushTitle={pushTitle}
-            setPushTitle={setPushTitle}
-            pushMessage={pushMessage}
-            setPushMessage={setPushMessage}
-            pushRedirect={pushRedirect}
-            setPushRedirect={setPushRedirect}
-            pushTargetChannels={pushTargetChannels}
-            setPushTargetChannels={setPushTargetChannels}
-            triggerAlert={triggerAlert}
-          />
-        );
       case "broadcast":
-        return (
-          <BroadcastMessagesView
-            bcStep={bcStep}
-            setBcStep={setBcStep}
-            bcTitle={bcTitle}
-            setBcTitle={setBcTitle}
-            bcCampaign={bcCampaign}
-            setBcCampaign={setBcCampaign}
-            bcAudience={bcAudience}
-            setBcAudience={setBcAudience}
-            bcChannels={bcChannels}
-            setBcChannels={setBcChannels}
-            bcMessageText={bcMessageText}
-            setBcMessageText={setBcMessageText}
-            handleSendBroadcast={handleSendBroadcast}
-          />
-        );
-      case "history":
-        return <CommunicationHistoryView state={state} />;
+        return <BroadcastAnnouncementsTab showToast={showToast} />;
+      case "templates":
+        return <NotificationTemplatesTab showToast={showToast} />;
       case "settings":
-        return (
-          <CommunicationSettingsView
-            state={state}
-            handleSaveSettings={handleSaveSettings}
-          />
-        );
+        return <NotificationSettingsTab showToast={showToast} />;
       default:
-        return <CommunicationDashboard setActiveTab={setActiveTab} />;
+        return <BroadcastAnnouncementsTab showToast={showToast} />;
     }
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-1.5 py-4">
-      {/* Alert banner overlay */}
-      {showAlert && (
+    <div className="space-y-6 max-w-7xl mx-auto px-1.5 py-4 relative">
+      
+      {/* Toast Alert overlay */}
+      {toastMessage && (
         <div
-          className={`fixed top-5 right-5 z-50 p-4 rounded-2xl shadow-xl border flex items-center gap-3 transition-all duration-300 transform translate-y-0 ${
-            alertType === "success"
-              ? "bg-teal-50 border-teal-200 text-teal-800"
-              : alertType === "error"
+          className={`fixed bottom-6 right-6 z-50 p-4 rounded-xl shadow-xl border flex items-center gap-3 transition-all duration-300 ${
+            toastMessage.type === "success"
+              ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+              : toastMessage.type === "error"
                 ? "bg-rose-50 border-rose-200 text-rose-800"
-                : alertType === "warning"
+                : toastMessage.type === "warning"
                   ? "bg-amber-50 border-amber-200 text-amber-800"
                   : "bg-indigo-50 border-indigo-200 text-indigo-800"
           }`}
         >
-          {alertType === "success" && (
-            <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
-          )}
-          {alertType === "error" && (
-            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
-          )}
-          {alertType === "warning" && (
-            <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
-          )}
-          {alertType === "info" && (
-            <Info className="w-5 h-5 text-indigo-650 shrink-0" />
-          )}
-          <span className="text-xs font-bold">{alertMsg}</span>
+          {toastMessage.type === "success" && <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />}
+          {toastMessage.type === "error" && <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />}
+          {toastMessage.type === "warning" && <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />}
+          {toastMessage.type === "info" && <Info className="w-5 h-5 text-indigo-650 shrink-0" />}
+          <span className="text-sm font-semibold">{toastMessage.text}</span>
         </div>
       )}
 
@@ -218,12 +74,10 @@ export function CommunicationView() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
             <MessageSquare className="w-6 h-6 text-indigo-600" />
-            Communication Control Center
+            Notifications & Announcements
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            SaaS Central messaging engine. Dispatch mass bulletins, configure
-            mail templates parameters, review carrier SMS log queues, and
-            monitor mobile device FCM pushes.
+            Platform-wide messaging center. Dispatch announcements, edit system templates, and configure notification policies.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-750 border border-indigo-100 self-start md:self-auto shadow-xs">
@@ -234,7 +88,7 @@ export function CommunicationView() {
 
       {/* Top Tab Navigation Bar */}
       <div className="w-full overflow-hidden">
-        <div className="flex items-center gap-0.3 p-0.5 overflow-x-auto no-scrollbar scroll-smooth">
+        <div className="flex items-center gap-2 p-1 overflow-x-auto no-scrollbar scroll-smooth">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -242,14 +96,14 @@ export function CommunicationView() {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                onClick={() => setActiveTab(item.id as any)}
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
                   isActive
                     ? "bg-indigo-600 text-white shadow-sm"
-                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 bg-white border border-gray-200"
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-4 h-4" />
                 {item.label}
               </button>
             );
@@ -259,17 +113,15 @@ export function CommunicationView() {
 
       {/* Form Workspace View */}
       <div className="space-y-6">
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden min-h-[500px]">
           {/* Header of Active Tab */}
-          <div className="px-6 py-4 bg-gray-50/50 font-semibold border-b border-gray-200 flex justify-between items-center">
-            <div>
-              <h2 className="text-lg font-bold text-gray-900 tracking-wide">
-                {navItems.find((i) => i.id === activeTab)?.label}
-              </h2>
-              <p className="text-[11px] text-gray-500 font-medium">
-                Detailed diagnostics workspace for {activeTab} operations.
-              </p>
-            </div>
+          <div className="px-6 py-4 bg-gray-50/50 font-semibold border-b border-gray-200 flex flex-col">
+            <h2 className="text-lg font-bold text-gray-900 tracking-wide">
+              {navItems.find((i) => i.id === activeTab)?.label}
+            </h2>
+            <p className="text-xs text-gray-500 font-medium mt-0.5">
+              {navItems.find((i) => i.id === activeTab)?.desc}
+            </p>
           </div>
 
           {/* Render block */}

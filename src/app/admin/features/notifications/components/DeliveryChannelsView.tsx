@@ -3,16 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from "react";
-import { Mail, Smartphone, Bell, MessageSquare, PhoneCall, AlertTriangle } from "lucide-react";
+
+import { Bell, MessageSquare, AlertTriangle } from "lucide-react";
 
 export function DeliveryChannelsView() {
   const channels = [
     { id: "in-app", name: "In-App Notification Center", icon: Bell, rate: "99.9%", latency: "4ms", status: "Operational", provider: "Internal Socket", desc: "Delivers notifications directly into client workspaces." },
-    { id: "email", name: "SMTP Outbound Relay", icon: Mail, rate: "98.2%", latency: "1.2s", status: "Operational", provider: "smtp.emspro.com", desc: "Delivers billing invoices and renewal alerts." },
     { id: "sms", name: "SMS Gateway Relay", icon: MessageSquare, rate: "94.7%", latency: "2.8s", status: "Degraded", provider: "Twilio Hub API", desc: "Dispatches critical logs and MFA codes." },
-    { id: "whatsapp", name: "WhatsApp Business API", icon: PhoneCall, rate: "96.5%", latency: "3.1s", status: "Operational", provider: "Meta Cloud API", desc: "Dispatches friendly subscription notices." },
-    { id: "push", name: "Web Push Alerts", icon: Smartphone, rate: "99.0%", latency: "15ms", status: "Operational", provider: "Firebase Cloud", desc: "Delivers live flash warnings to browsers." }
+
   ];
 
   return (

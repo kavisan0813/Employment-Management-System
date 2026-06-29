@@ -59,11 +59,11 @@ const AdminReportsPage = lazy(() =>
     default: m.default,
   })),
 );
-const AdminAuditLogsPage = lazy(() =>
+/* const AdminAuditLogsPage = lazy(() =>
   import("./admin/features/auditLogs/AuditLogsView").then((m) => ({
     default: m.default,
   })),
-);
+); */
 const AdminSupportTicketsPage = lazy(() =>
   import("./admin/features/supportTickets/SupportTicketsView").then((m) => ({
     default: m.default,
@@ -951,7 +951,6 @@ export const router = createBrowserRouter([
       { path: "users", element: lazyRoute(AdminGlobalUsersPage) },
       { path: "subscriptions", element: lazyRoute(AdminSubscriptionsPage) },
       { path: "reports", element: lazyRoute(AdminReportsPage) },
-      { path: "audit-logs", element: lazyRoute(AdminAuditLogsPage) },
       { path: "support-tickets", element: lazyRoute(AdminSupportTicketsPage) },
 //       { path: "announcements", element: lazyRoute(AdminAnnouncementsPage) },
       { path: "features", element: lazyRoute(AdminFeatureManagementPage) },
