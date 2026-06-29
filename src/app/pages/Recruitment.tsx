@@ -1797,7 +1797,7 @@ function PostJobModal({
   job?: JobPosting;
   onClose: () => void;
   onPost: (
-    j: Omit<JobPosting, "id" | "postedAt" | "applicants"> & {
+    j: Omit<JobPosting, "id" | "postedAt" | "applicants" | "vacancies"> & {
       id?: string;
       vacancies?: string | number;
     },
@@ -2330,7 +2330,7 @@ function CandidateDetailSidePanel({
   onEdit: (c: Candidate) => void;
   onSchedule: () => void;
   scheduledInterviews: ScheduledInterview[];
-  toast: (msg: string, kind?: any) => void;
+  toast: (msg: string, kind?: ToastKind) => void;
 }) {
   const [activeTab, setActiveTab] = useState<
     "Overview" | "Interviews" | "Activity" | "Offer Letter"
@@ -5462,9 +5462,8 @@ export function Recruitment() {
     useState<ScheduledInterview | null>(null);
   const [rescheduleInterview, setRescheduleInterview] =
     useState<ScheduledInterview | null>(null);
-  const [resumeCandidate, setResumeCandidate] = useState<Candidate | null>(
-    null,
-  );
+  const [resumeCandidate, setResumeCandidate] =
+    useState<Candidate | null>(null);
 
   const dragRef = useRef<{ candidateId: string; fromStage: Stage } | null>(
     null,
@@ -5553,7 +5552,7 @@ export function Recruitment() {
 
   // CRUD - Job Posting
   const handlePostJob = (
-    jobForm: Omit<JobPosting, "id" | "postedAt" | "applicants"> & {
+    jobForm: Omit<JobPosting, "id" | "postedAt" | "applicants" | "vacancies"> & {
       id?: string;
       jobId?: string;
       vacancies?: string | number;

@@ -82,6 +82,7 @@ export function Topbar() {
             help_outline
           </span>
         </button>
+
         <div className="h-8 w-[1px] bg-outline-variant/50 mx-1"></div>
         <div className="relative" ref={profileRef}>
           <button 
@@ -178,6 +179,7 @@ export function Topbar() {
             </div>
           )}
         </div>
+
       </div>
     </header>
   );
