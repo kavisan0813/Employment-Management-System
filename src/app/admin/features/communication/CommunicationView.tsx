@@ -4,7 +4,7 @@ import { useCommunication } from "./hooks/useCommunication";
 // Import subtab panels
 import { BroadcastAnnouncementsTab } from "./components/BroadcastAnnouncementsTab";
 import { NotificationTemplatesTab } from "./components/NotificationTemplatesTab";
-import { NotificationSettingsTab } from "./components/NotificationSettingsTab";
+
 
 // Import Lucide icons
 import {
@@ -29,7 +29,6 @@ export function CommunicationView() {
   const navItems = [
     { id: "broadcast", label: "Broadcast Announcements", icon: Megaphone, desc: "Send platform-wide targeted messages" },
     { id: "templates", label: "Notification Templates", icon: FileText, desc: "Manage system automated email and SMS content" },
-    { id: "settings", label: "Notification Settings", icon: Settings, desc: "Control mandatory policies per organization" },
   ] as const;
 
   const renderActiveTabContent = () => {
@@ -38,8 +37,7 @@ export function CommunicationView() {
         return <BroadcastAnnouncementsTab showToast={showToast} />;
       case "templates":
         return <NotificationTemplatesTab showToast={showToast} />;
-      case "settings":
-        return <NotificationSettingsTab showToast={showToast} />;
+    
       default:
         return <BroadcastAnnouncementsTab showToast={showToast} />;
     }
