@@ -69,8 +69,8 @@ export function PlatformSettingsView() {
     switch (activeTab) {
       case "general":
         return <GeneralSettingsView config={config} setConfig={setConfig} />;
-      case "branding":
-       /*  return <BrandingSettingsView config={config} setConfig={setConfig} />;
+      /* case "branding":
+        return <BrandingSettingsView config={config} setConfig={setConfig} />;
       case "localization":
         return (
           <LocalizationSettingsView
