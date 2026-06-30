@@ -6,9 +6,9 @@ import {
   useNavigate,
 } from "react-router";
 import { Layout } from "./components/Layout";
-import { Login } from "./pages/Login";
-import { Signup } from "./pages/Signup";
-import { AuthSuccess } from "./pages/AuthSuccess";
+import { Login } from "./pages/shared/Login";
+import { Signup } from "./pages/shared/Signup";
+import { AuthSuccess } from "./pages/shared/AuthSuccess";
 import { useAuth } from "./context/AuthContext";
 import {
   Mail,
@@ -103,229 +103,244 @@ const AdminComingSoonPage = lazy(() =>
 
 // Lazy-loaded page components for code splitting
 const Dashboard = lazy(() =>
-  import("./pages/Dashboard").then((m) => ({ default: m.Dashboard })),
+  import("./pages/shared/Dashboard").then((m) => ({ default: m.Dashboard })),
 );
 const Employees = lazy(() =>
-  import("./pages/Employees").then((m) => ({ default: m.Employees })),
+  import("./pages/hr-admin/Employees").then((m) => ({ default: m.Employees })),
 );
 const EmployeeProfile = lazy(() =>
-  import("./pages/EmployeeProfile").then((m) => ({
+  import("./pages/employee/EmployeeProfile").then((m) => ({
     default: m.EmployeeProfile,
   })),
 );
 const Attendance = lazy(() =>
-  import("./pages/Attendance").then((m) => ({ default: m.Attendance })),
+  import("./pages/hr-admin/Attendance").then((m) => ({ default: m.Attendance })),
 );
 const Payroll = lazy(() =>
-  import("./pages/Payroll").then((m) => ({ default: m.Payroll })),
+  import("./pages/hr-admin/Payroll").then((m) => ({ default: m.Payroll })),
 );
 const Expenses = lazy(() =>
-  import("./pages/ExpenseManagement").then((m) => ({ default: m.Expenses })),
+  import("./pages/hr-admin/ExpenseManagement").then((m) => ({ default: m.Expenses })),
 );
 const Recruitment = lazy(() =>
-  import("./pages/Recruitment").then((m) => ({ default: m.Recruitment })),
+  import("./pages/hr-admin/Recruitment").then((m) => ({ default: m.Recruitment })),
 );
 const Offboarding = lazy(() =>
-  import("./pages/Offboarding").then((m) => ({ default: m.Offboarding })),
+  import("./pages/hr-admin/Offboarding").then((m) => ({ default: m.Offboarding })),
 );
 const Performance = lazy(() =>
-  import("./pages/Performance").then((m) => ({ default: m.Performance })),
+  import("./pages/hr-admin/Performance").then((m) => ({ default: m.Performance })),
 );
 const Reports = lazy(() =>
-  import("./pages/Reports").then((m) => ({ default: m.Reports })),
+  import("./pages/hr-admin/Reports").then((m) => ({ default: m.Reports })),
 );
 const Settings = lazy(() =>
-  import("./pages/Settings").then((m) => ({ default: m.Settings })),
+  import("./pages/hr-admin/Settings").then((m) => ({ default: m.Settings })),
 );
 const LeaveManagement = lazy(() =>
-  import("./pages/LeaveManagement").then((m) => ({
+  import("./pages/hr-admin/LeaveManagement").then((m) => ({
     default: m.LeaveManagement,
   })),
 );
 const Departments = lazy(() =>
-  import("./pages/Departments").then((m) => ({ default: m.Departments })),
+  import("./pages/hr-admin/Departments").then((m) => ({ default: m.Departments })),
 );
 const UserProfile = lazy(() =>
-  import("./pages/UserProfile").then((m) => ({ default: m.UserProfile })),
+  import("./pages/shared/UserProfile").then((m) => ({ default: m.UserProfile })),
 );
-const SmartSearch = lazy(() => import("./pages/SmartSearch"));
+const SmartSearch = lazy(() => import("./pages/shared/SmartSearch"));
 const ShiftSchedule = lazy(() =>
-  import("./pages/ShiftSchedule").then((m) => ({ default: m.ShiftSchedule })),
+  import("./pages/hr-admin/ShiftSchedule").then((m) => ({ default: m.ShiftSchedule })),
 );
 const IncrementAppraisal = lazy(() =>
-  import("./pages/IncrementAppraisal").then((m) => ({
+  import("./pages/hr-admin/IncrementAppraisal").then((m) => ({
     default: m.IncrementAppraisal,
   })),
 );
 const Onboarding = lazy(() =>
-  import("./pages/Onboarding").then((m) => ({ default: m.Onboarding })),
+  import("./pages/hr-admin/Onboarding").then((m) => ({ default: m.Onboarding })),
 );
 const Training = lazy(() =>
-  import("./pages/Training").then((m) => ({ default: m.Training })),
+  import("./pages/hr-admin/Training").then((m) => ({ default: m.Training })),
 );
 const Documents = lazy(() =>
-  import("./pages/Documents").then((m) => ({ default: m.Documents })),
+  import("./pages/hr-admin/Documents").then((m) => ({ default: m.Documents })),
 );
 const Notifications = lazy(() =>
-  import("./pages/Notifications").then((m) => ({ default: m.Notifications })),
+  import("./pages/hr-admin/Notifications").then((m) => ({ default: m.Notifications })),
 );
 const EmployeeSelfService = lazy(() =>
-  import("./pages/EmployeeSelfService").then((m) => ({
+  import("./pages/employee/EmployeeSelfService").then((m) => ({
     default: m.EmployeeSelfService,
   })),
 );
 const MyAssets = lazy(() =>
-  import("./pages/MyAssets").then((m) => ({ default: m.MyAssets })),
+  import("./pages/employee/MyAssets").then((m) => ({ default: m.MyAssets })),
 );
-const EmployeeHRRequests = lazy(() => import("./pages/EmployeeHRRequests"));
+const EmployeeHRRequests = lazy(() => import("./pages/employee/EmployeeHRRequests"));
 const ReimbursementHistory = lazy(() =>
-  import("./pages/ReimbursementHistory").then((m) => ({
+  import("./pages/employee/ReimbursementHistory").then((m) => ({
     default: m.ReimbursementHistory,
   })),
 );
 const ExpensePolicy = lazy(() =>
-  import("./pages/ExpensePolicy").then((m) => ({ default: m.ExpensePolicy })),
+  import("./pages/employee/ExpensePolicy").then((m) => ({ default: m.ExpensePolicy })),
 );
 const ExpenseSupport = lazy(() =>
-  import("./pages/ExpenseSupport").then((m) => ({ default: m.ExpenseSupport })),
+  import("./pages/employee/ExpenseSupport").then((m) => ({ default: m.ExpenseSupport })),
 );
 const EmployeeDocuments = lazy(() =>
-  import("./pages/EmployeeDocuments").then((m) => ({
+  import("./pages/employee/EmployeeDocuments").then((m) => ({
     default: m.EmployeeDocuments,
   })),
 );
 const EmployeePerformance = lazy(() =>
-  import("./pages/EmployeePerformance").then((m) => ({
+  import("./pages/employee/EmployeePerformance").then((m) => ({
     default: m.EmployeePerformance,
   })),
 );
 const EmployeeSchedule = lazy(() =>
-  import("./pages/EmployeeSchedule").then((m) => ({
+  import("./pages/employee/EmployeeSchedule").then((m) => ({
     default: m.EmployeeSchedule,
   })),
 );
 const EmployeeTraining = lazy(() =>
-  import("./pages/EmployeeTraining").then((m) => ({
+  import("./pages/employee/EmployeeTraining").then((m) => ({
     default: m.EmployeeTraining,
   })),
 );
 const EmployeeAnnouncements = lazy(() =>
-  import("./pages/EmployeeAnnouncements").then((m) => ({
+  import("./pages/employee/EmployeeAnnouncements").then((m) => ({
     default: m.EmployeeAnnouncements,
   })),
 );
 const EmployeeSupport = lazy(() =>
-  import("./pages/EmployeeSupport").then((m) => ({
+  import("./pages/employee/EmployeeSupport").then((m) => ({
     default: m.EmployeeSupport,
   })),
 );
 const EmployeeRegularizationHistory = lazy(
-  () => import("./pages/EmployeeRegularizationHistory"),
+  () => import("./pages/employee/EmployeeRegularizationHistory"),
 );
 const EmployeeExit = lazy(() =>
-  import("./pages/EmployeeExit").then((m) => ({ default: m.EmployeeExit })),
+  import("./pages/employee/EmployeeExit").then((m) => ({ default: m.EmployeeExit })),
 );
 const MyOnboarding = lazy(() =>
-  import("./pages/MyOnboarding").then((m) => ({ default: m.MyOnboarding })),
+  import("./pages/employee/MyOnboarding").then((m) => ({ default: m.MyOnboarding })),
 );
 const EmployeeNotifications = lazy(
-  () => import("./pages/EmployeeNotifications"),
+  () => import("./pages/employee/EmployeeNotifications"),
 );
 const EmployeeDirectory = lazy(() =>
-  import("./pages/EmployeeDirectory").then((m) => ({
+  import("./pages/employee/EmployeeDirectory").then((m) => ({
     default: m.EmployeeDirectory,
   })),
 );
 const EmployeePayslips = lazy(() =>
-  import("./pages/EmployeePayslips").then((m) => ({
+  import("./pages/employee/EmployeePayslips").then((m) => ({
     default: m.EmployeePayslips,
   })),
 );
-const EmployeeSettings = lazy(() => import("./pages/EmployeeSettings"));
+const EmployeeSettings = lazy(() => import("./pages/employee/EmployeeSettings"));
+const EmployeeAttendance = lazy(() =>
+  import("./pages/employee/EmployeeAttendance").then((m) => ({
+    default: m.EmployeeAttendance,
+  })),
+);
+const EmployeeLeaves = lazy(() =>
+  import("./pages/employee/EmployeeLeaves").then((m) => ({
+    default: m.EmployeeLeaves,
+  })),
+);
+const EmployeeSelfProfile = lazy(() =>
+  import("./pages/employee/EmployeeSelfProfile").then((m) => ({
+    default: m.EmployeeSelfProfile,
+  })),
+);
 
 // Finance Components
 const FinanceExpenses = lazy(() =>
-  import("./pages/FinanceExpenses").then((m) => ({
+  import("./pages/finance/FinanceExpenses").then((m) => ({
     default: m.FinanceExpenses,
   })),
 );
 const FinancePayroll = lazy(() =>
-  import("./pages/FinancePayroll").then((m) => ({ default: m.FinancePayroll })),
+  import("./pages/finance/FinancePayroll").then((m) => ({ default: m.FinancePayroll })),
 );
 const FinanceReports = lazy(() =>
-  import("./pages/FinanceReports").then((m) => ({ default: m.FinanceReports })),
+  import("./pages/finance/FinanceReports").then((m) => ({ default: m.FinanceReports })),
 );
 const FinanceAssetCostReport = lazy(() =>
-  import("./pages/FinanceAssetCostReport").then((m) => ({
+  import("./pages/finance/FinanceAssetCostReport").then((m) => ({
     default: m.FinanceAssetCostReport,
   })),
 );
 const FinanceOnboarding = lazy(() =>
-  import("./pages/FinanceOnboarding").then((m) => ({
+  import("./pages/finance/FinanceOnboarding").then((m) => ({
     default: m.FinanceOnboarding,
   })),
 );
 const FinancePayrollSettings = lazy(() =>
-  import("./pages/FinancePayrollSettings").then((m) => ({
+  import("./pages/finance/FinancePayrollSettings").then((m) => ({
     default: m.FinancePayrollSettings,
   })),
 );
 const FinanceSettlements = lazy(() =>
-  import("./pages/FinanceSettlements").then((m) => ({
+  import("./pages/finance/FinanceSettlements").then((m) => ({
     default: m.FinanceSettlements,
   })),
 );
 const FinanceAttendance = lazy(() =>
-  import("./pages/FinanceAttendance").then((m) => ({
+  import("./pages/finance/FinanceAttendance").then((m) => ({
     default: m.FinanceAttendance,
   })),
 );
 const FinanceDocuments = lazy(() =>
-  import("./pages/FinanceDocuments").then((m) => ({
+  import("./pages/finance/FinanceDocuments").then((m) => ({
     default: m.FinanceDocuments,
   })),
 );
 const FinanceMyExpenses = lazy(() =>
-  import("./pages/FinanceMyExpenses").then((m) => ({
+  import("./pages/finance/FinanceMyExpenses").then((m) => ({
     default: m.FinanceMyExpenses,
   })),
 );
 const FinancePayslips = lazy(() =>
-  import("./pages/FinancePayslips").then((m) => ({
+  import("./pages/finance/FinancePayslips").then((m) => ({
     default: m.FinancePayslips,
   })),
 );
 const FinanceProfile = lazy(() =>
-  import("./pages/FinanceProfile").then((m) => ({ default: m.FinanceProfile })),
+  import("./pages/finance/FinanceProfile").then((m) => ({ default: m.FinanceProfile })),
 );
 const FinancePerformance = lazy(() =>
-  import("./pages/FinancePerformance").then((m) => ({
+  import("./pages/finance/FinancePerformance").then((m) => ({
     default: m.FinancePerformance,
   })),
 );
 const FinanceGoals = lazy(() =>
-  import("./pages/FinanceGoals").then((m) => ({ default: m.FinanceGoals })),
+  import("./pages/finance/FinanceGoals").then((m) => ({ default: m.FinanceGoals })),
 );
 const FinanceSupport = lazy(() =>
-  import("./pages/FinanceSupport").then((m) => ({ default: m.FinanceSupport })),
+  import("./pages/finance/FinanceSupport").then((m) => ({ default: m.FinanceSupport })),
 );
 const FinanceEmployees = lazy(() =>
-  import("./pages/FinanceEmployees").then((m) => ({
+  import("./pages/finance/FinanceEmployees").then((m) => ({
     default: m.FinanceEmployees,
   })),
 );
 const FinanceIncrement = lazy(() =>
-  import("./pages/FinanceIncrement").then((m) => ({
+  import("./pages/finance/FinanceIncrement").then((m) => ({
     default: m.FinanceIncrement,
   })),
 );
 const FinanceDepartments = lazy(() =>
-  import("./pages/FinanceDepartments").then((m) => ({
+  import("./pages/finance/FinanceDepartments").then((m) => ({
     default: m.FinanceDepartments,
   })),
 );
 const FinancePersonalDashboard = lazy(() =>
-  import("./pages/FinancePersonalDashboard").then((m) => ({
+  import("./pages/finance/FinancePersonalDashboard").then((m) => ({
     default: m.FinancePersonalDashboard,
   })),
 );
@@ -387,10 +402,10 @@ const ManagerPersonalLeaves = lazy(() =>
   })),
 );
 const FinanceLeaves = lazy(() =>
-  import("./pages/FinanceLeaves").then((m) => ({ default: m.FinanceLeaves })),
+  import("./pages/finance/FinanceLeaves").then((m) => ({ default: m.FinanceLeaves })),
 );
 const FinanceSchedule = lazy(() =>
-  import("./pages/FinanceSchedule").then((m) => ({
+  import("./pages/finance/FinanceSchedule").then((m) => ({
     default: m.FinanceSchedule,
   })),
 );
@@ -474,23 +489,23 @@ const ManagerTeamOnboarding = lazy(() =>
   })),
 );
 const FinanceSettings = lazy(() =>
-  import("./pages/FinanceSettings").then((m) => ({
+  import("./pages/finance/FinanceSettings").then((m) => ({
     default: m.FinanceSettings,
   })),
 );
 const AuditLogs = lazy(() =>
-  import("./pages/AuditLogs").then((m) => ({ default: m.AuditLogs })),
+  import("./pages/hr-admin/AuditLogs").then((m) => ({ default: m.AuditLogs })),
 );
 const HRAuditLogs = lazy(() =>
-  import("./pages/HRAuditLogs").then((m) => ({ default: m.HRAuditLogs })),
+  import("./pages/hr-admin/HRAuditLogs").then((m) => ({ default: m.HRAuditLogs })),
 );
 const FinanceAuditLogs = lazy(() =>
-  import("./pages/FinanceAuditLogs").then((m) => ({
+  import("./pages/finance/FinanceAuditLogs").then((m) => ({
     default: m.FinanceAuditLogs,
   })),
 );
 const AssetManagement = lazy(() =>
-  import("./pages/AssetManagement").then((m) => ({
+  import("./pages/hr-admin/AssetManagement").then((m) => ({
     default: m.AssetManagement,
   })),
 );
@@ -1095,6 +1110,34 @@ export const router = createBrowserRouter([
             <EmployeeDashboardWrapper />
           </Protected>
         ),
+      },
+      {
+        path: "employee/attendance",
+        element: protectedRoute(EmployeeAttendance),
+      },
+      {
+        path: "employee/leave",
+        element: protectedRoute(EmployeeLeaves),
+      },
+      {
+        path: "employee/payslip",
+        element: protectedRoute(EmployeePayslips),
+      },
+      {
+        path: "employee/schedule",
+        element: protectedRoute(EmployeeSchedule),
+      },
+      {
+        path: "employee/performance",
+        element: protectedRoute(EmployeePerformance),
+      },
+      {
+        path: "employee/notifications",
+        element: protectedRoute(EmployeeNotifications),
+      },
+      {
+        path: "employee/profile",
+        element: protectedRoute(EmployeeSelfProfile),
       },
       {
         path: "employees",

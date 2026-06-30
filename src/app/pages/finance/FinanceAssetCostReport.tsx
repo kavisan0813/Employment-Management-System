@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
   BarChart3,
@@ -25,14 +25,8 @@ import {
   RefreshCw,
   X,
   Eye,
-  XCircle,
   PieChart,
-  FileText,
   Shield,
-  DollarSign,
-  Percent,
-  Home,
-  Trash2,
   ExternalLink,
   TrendingDown,
 } from "lucide-react";
@@ -44,14 +38,9 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
-  Cell,
-  PieChart as RechartsPieChart,
-  Pie,
-  Sector,
 } from "recharts";
 import { motion, AnimatePresence } from "motion/react";
-import { showToast } from "../components/workflow/ToastNotification";
+import { showToast } from "../../components/workflow/ToastNotification";
 
 /* ─── Adjusted Mock Data to match user KPIs: ₹2.4Cr, ₹42L, ₹8L, 14 ─── */
 const ASSET_COST_BY_CATEGORY = [
@@ -486,8 +475,6 @@ export function FinanceAssetCostReport() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedDept, setSelectedDept] = useState<string | null>(null);
   const [activeKPIModal, setActiveKPIModal] = useState<KPIModalType>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [activeChartIndex, setActiveChartIndex] = useState<number | null>(null);
   const [exportLoading, setExportLoading] = useState<"pdf" | "csv" | null>(
     null,
   );
@@ -495,8 +482,6 @@ export function FinanceAssetCostReport() {
   const [selectedCatFilter, setSelectedCatFilter] = useState("All Categories");
   const [showFYDropdown, setShowFYDropdown] = useState(false);
   const [showCatDropdown, setShowCatDropdown] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const csvRef = useRef<HTMLAnchorElement>(null);
 
   const totalAssetValue = ASSET_COST_BY_CATEGORY.reduce(
     (s, c) => s + c.totalValue,
@@ -526,8 +511,7 @@ export function FinanceAssetCostReport() {
         c.category === selectedCatFilter,
     )
     .sort((a, b) => {
-      // eslint-disable-next-line no-useless-assignment
-      let cmp = 0;
+      let cmp: number;
       switch (sortField) {
         case "category":
           cmp = a.category.localeCompare(b.category);

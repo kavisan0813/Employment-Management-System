@@ -198,6 +198,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const allowed = [
         "/",
         "/employee/dashboard",
+        "/employee/attendance",
+        "/employee/leave",
+        "/employee/payslip",
+        "/employee/schedule",
+        "/employee/performance",
+        "/employee/notifications",
+        "/employee/profile",
         "/profile",
         "/attendance",
         "/leave",

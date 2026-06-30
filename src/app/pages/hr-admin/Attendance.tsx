@@ -1,0 +1,2614 @@
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import { EmployeeAttendance } from "../employee/EmployeeAttendance";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router";
+import {
+  ChevronLeft,
+  ChevronRight,
+  CalendarDays,
+  ChevronDown,
+  Search,
+  RotateCcw,
+  LayoutGrid,
+  List,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Calendar as CalendarIcon,
+  TrendingUp,
+  TrendingDown,
+  User,
+  Users,
+  Download,
+  MoreVertical,
+  ArrowUpRight,
+  Monitor,
+  Home,
+  AlertCircle,
+  Loader2,
+  Plus,
+  X,
+} from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  Cell,
+  PieChart,
+  Pie,
+} from "recharts";
+
+import {
+  attendanceCalendar,
+  dailyLogs,
+  employees,
+  departments,
+} from "../../data/mockData";
+
+export interface AttendanceRecord {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  employeeAvatar?: string;
+  department: string;
+  date: string; // e.g. "Apr 01, 2026"
+  status: string;
+  checkIn: string; // e.g. "08:58 AM"
+  checkOut: string; // e.g. "06:02 PM"
+  hours: string; // e.g. "9h 04m"
+  notes?: string;
+}
+
+interface AttendanceRow {
+  id: string;
+  employeeId: string;
+  name: string;
+  department: string;
+  date: string;
+  status: string;
+  checkIn: string;
+  checkOut: string;
+  hours: string;
+  notes?: string;
+}
+
+/* ─── Helper Functions ───────────────────────── */
+
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const formatDate = (day: number, month: number, year: number): string => {
+  const monthStr = (Reflect.get(MONTH_NAMES, month) || "").substring(0, 3);
+  const dayStr = day < 10 ? `0${day}` : `${day}`;
+  return `${monthStr} ${dayStr}, ${year}`;
+};
+
+const convertToInputDate = (dateStr: string): string => {
+  // dateStr is like "Apr 01, 2026"
+  const parts = dateStr.replace(",", "").split(" ");
+  if (parts.length < 3) return "";
+  const monthName = parts[0];
+  const dayStr = parts[1];
+  const yearStr = parts[2];
+
+  const monthIdx = MONTH_NAMES.findIndex((m) => m.startsWith(monthName));
+  if (monthIdx === -1) return "";
+  const monthStr = monthIdx + 1 < 10 ? `0${monthIdx + 1}` : `${monthIdx + 1}`;
+  return `${yearStr}-${monthStr}-${dayStr}`;
+};
+
+const convertToDisplayDate = (inputDate: string): string => {
+  // inputDate is like "2026-04-01"
+  const parts = inputDate.split("-");
+  if (parts.length < 3) return "";
+  const year = parseInt(parts[0]);
+  const month = parseInt(parts[1]) - 1;
+  const day = parseInt(parts[2]);
+
+  const monthStr = MONTH_NAMES[month].substring(0, 3);
+  const dayStr = day < 10 ? `0${day}` : `${day}`;
+  return `${monthStr} ${dayStr}, ${year}`;
+};
+
+const to12Hour = (time24: string): string => {
+  if (!time24) return "";
+  const [hoursStr, minutesStr] = time24.split(":");
+  const hours = parseInt(hoursStr);
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const displayHours = hours % 12 || 12;
+  const displayHoursStr =
+    displayHours < 10 ? `0${displayHours}` : `${displayHours}`;
+  return `${displayHoursStr}:${minutesStr} ${ampm}`;
+};
+
+const to24Hour = (time12: string): string => {
+  if (!time12) return "";
+  const parts = time12.split(" ");
+  if (parts.length < 2) return "";
+  const timePart = parts[0];
+  const ampm = parts[1];
+  const [hoursStr, minutesStr] = timePart.split(":");
+  let hours = parseInt(hoursStr);
+  if (ampm === "PM" && hours < 12) hours += 12;
+  if (ampm === "AM" && hours === 12) hours = 0;
+  const hoursStr24 = hours < 10 ? `0${hours}` : `${hours}`;
+  return `${hoursStr24}:${minutesStr}`;
+};
+
+const calculateHours = (
+  checkIn: string,
+  checkOut: string,
+  status: string,
+): string => {
+  if (
+    status === "Absent" ||
+    status === "Leave" ||
+    status === "Holiday" ||
+    status === "Weekend"
+  ) {
+    return "0h 00m";
+  }
+  if (!checkIn || !checkOut) return "8h 00m";
+
+  const [inHours, inMins] = checkIn.split(":");
+  const [outHours, outMins] = checkOut.split(":");
+
+  let diffMins =
+    parseInt(outHours) * 60 +
+    parseInt(outMins) -
+    (parseInt(inHours) * 60 + parseInt(inMins));
+  if (diffMins < 0) diffMins += 24 * 60; // Overnight shift
+
+  const hrs = Math.floor(diffMins / 60);
+  const mins = diffMins % 60;
+  const minsStr = mins < 10 ? `0${mins}` : `${mins}`;
+  return `${hrs}h ${minsStr}m`;
+};
+
+// Initialize records from localStorage or initial mock data mapping
+const initialRecords: AttendanceRecord[] = (() => {
+  const local = localStorage.getItem("nexus_attendance_records");
+  if (local) {
+    try {
+      return JSON.parse(local);
+    } catch (e) {
+      console.error("Failed to parse localStorage attendance records", e);
+    }
+  }
+
+  const generated: AttendanceRecord[] = [];
+  dailyLogs.forEach((log, index) => {
+    const emp =
+      Reflect.get(employees, index % employees.length) || employees[0];
+    generated.push({
+      id: `ATT-${1000 + index}`,
+      employeeId: emp.id,
+      employeeName: emp.name,
+      employeeAvatar: emp.avatar,
+      department: emp.department,
+      date: log.date,
+      status: log.status,
+      checkIn: log.checkIn,
+      checkOut: log.checkOut,
+      hours: log.hours,
+      notes: "Initial pre-populated system record",
+    });
+  });
+
+  localStorage.setItem("nexus_attendance_records", JSON.stringify(generated));
+  return generated;
+})();
+
+/* ─── Constants ─────────────────────────────── */
+
+const STATUS_CONFIG: Record<
+  string,
+  { bg: string; color: string; icon: React.ElementType; label: string }
+> = {
+  Present: {
+    bg: "rgba(16, 185, 129, 0.1)",
+    color: "var(--primary)",
+    icon: CheckCircle2,
+    label: "Present",
+  },
+  Absent: {
+    bg: "rgba(239, 68, 68, 0.1)",
+    color: "#EF4444",
+    icon: XCircle,
+    label: "Absent",
+  },
+  Late: {
+    bg: "rgba(245, 158, 11, 0.1)",
+    color: "#F59E0B",
+    icon: Clock,
+    label: "Late",
+  },
+  "Half-day": {
+    bg: "rgba(234, 179, 8, 0.1)",
+    color: "#EAB308",
+    icon: AlertCircle,
+    label: "Half-day",
+  },
+  WFH: {
+    bg: "rgba(59, 130, 246, 0.1)",
+    color: "#3B82F6",
+    icon: Home,
+    label: "WFH",
+  },
+  Leave: {
+    bg: "rgba(167, 139, 250, 0.1)",
+    color: "#A78BFA",
+    icon: CalendarIcon,
+    label: "Leave",
+  },
+  Holiday: {
+    bg: "rgba(20, 184, 166, 0.1)",
+    color: "#14B8A6",
+    icon: CalendarDays,
+    label: "Holiday",
+  },
+  Weekend: {
+    bg: "transparent",
+    color: "var(--muted-foreground)",
+    icon: Monitor,
+    label: "Weekend",
+  },
+};
+
+const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/* ─── Mock Analytics Data ──────────────────── */
+
+const monthlyTrendData = [
+  { month: "Jan", attendance: 94 },
+  { month: "Feb", attendance: 92 },
+  { month: "Mar", attendance: 96 },
+  { month: "Apr", attendance: 91 },
+  { month: "May", attendance: 95 },
+  { month: "Jun", attendance: 93 },
+];
+
+const statusDistribution = [
+  { name: "Present", value: 85, color: "var(--primary)" },
+  { name: "Absent", value: 5, color: "#EF4444" },
+  { name: "Late", value: 6, color: "#F59E0B" },
+  { name: "Leave", value: 4, color: "#A78BFA" },
+];
+
+/* ─── Components ─────────────────────────── */
+
+function StatusBadge({ status }: { status: string }) {
+  const config = Reflect.get(STATUS_CONFIG, status) || STATUS_CONFIG.Present;
+  const Icon = config.icon;
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold"
+      style={{ backgroundColor: config.bg, color: config.color }}
+    >
+      <Icon size={12} />
+      {config.label}
+    </span>
+  );
+}
+
+export function Attendance() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  if (user?.role === "Employee") {
+    return <EmployeeAttendance />;
+  }
+  const [view, setView] = useState<"table" | "calendar">("table");
+  const [selectedDept, setSelectedDept] = useState("All Departments");
+  const [selectedEmpId, setSelectedEmpId] = useState("All Employees");
+  const [selectedMonth, setSelectedMonth] = useState(3); // April
+  const [selectedYear, setSelectedYear] = useState(2026);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showDeptDropdown, setShowDeptDropdown] = useState(false);
+  const [showEmpDropdown, setShowEmpDropdown] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedDayDetail, setSelectedDayDetail] = useState<number | null>(
+    null,
+  );
+  const [isDownloading, setIsDownloading] = useState(false);
+  const itemsPerPage = 8;
+
+  // ─── Rolling Date Filter Helper ───
+  const { startDate, endDate, endDay } = useMemo(() => {
+    const today = new Date();
+    const targetMonth = selectedMonth;
+    const targetYear = selectedYear;
+
+    const daysInTargetMonth = new Date(
+      targetYear,
+      targetMonth + 1,
+      0,
+    ).getDate();
+    const capDay = Math.min(today.getDate(), daysInTargetMonth);
+
+    const startYear = Math.min(2026, targetYear);
+
+    const start = new Date(startYear, 0, 1, 0, 0, 0, 0);
+    const end = new Date(targetYear, targetMonth, capDay, 23, 59, 59, 999);
+
+    return { startDate: start, endDate: end, endDay: capDay };
+  }, [selectedMonth, selectedYear]);
+
+  const deptRef = useRef<HTMLDivElement>(null);
+  const empRef = useRef<HTMLDivElement>(null);
+
+  // CRUD & Interactive States
+  const [records, setRecords] = useState<AttendanceRecord[]>(initialRecords);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editRecord, setEditRecord] = useState<AttendanceRecord | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [activeRowMenu, setActiveRowMenu] = useState<string | null>(null);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  // Form State
+  const [formEmployeeId, setFormEmployeeId] = useState("");
+  const [formDate, setFormDate] = useState("");
+  const [formStatus, setFormStatus] = useState("Present");
+  const [formCheckIn, setFormCheckIn] = useState("09:00");
+  const [formCheckOut, setFormCheckOut] = useState("18:00");
+  const [formNotes, setFormNotes] = useState("");
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  // Close dropdowns and menus on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (deptRef.current && !deptRef.current.contains(e.target as Node))
+        setShowDeptDropdown(false);
+      if (empRef.current && !empRef.current.contains(e.target as Node))
+        setShowEmpDropdown(false);
+      // Close row menus on click outside
+      if (!(e.target as HTMLElement).closest(".relative")) {
+        setActiveRowMenu(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  // Close modals on Escape key press
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setShowAddModal(false);
+        setEditRecord(null);
+        setDeleteConfirm(null);
+        setSelectedDayDetail(null);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Form Handlers
+  const handleOpenAdd = () => {
+    setFormEmployeeId(
+      selectedEmpId !== "All Employees"
+        ? selectedEmpId
+        : employees[0]?.id || "",
+    );
+    const formattedDate = `${selectedYear}-${(selectedMonth + 1).toString().padStart(2, "0")}-01`;
+    setFormDate(formattedDate);
+    setFormStatus("Present");
+    setFormCheckIn("09:00");
+    setFormCheckOut("18:00");
+    setFormNotes("");
+    setFormErrors({});
+    setShowAddModal(true);
+  };
+
+  const handleOpenEdit = (rec: AttendanceRecord) => {
+    setFormEmployeeId(rec.employeeId);
+    setFormDate(convertToInputDate(rec.date));
+    setFormStatus(rec.status);
+    setFormCheckIn(
+      rec.checkIn && rec.checkIn !== "--:--" ? to24Hour(rec.checkIn) : "09:00",
+    );
+    setFormCheckOut(
+      rec.checkOut && rec.checkOut !== "--:--"
+        ? to24Hour(rec.checkOut)
+        : "18:00",
+    );
+    setFormNotes(rec.notes || "");
+    setFormErrors({});
+    setEditRecord(rec);
+  };
+
+  const handleSaveAdd = () => {
+    const errors: Record<string, string> = {};
+    if (!formEmployeeId) errors.employeeId = "Employee is required";
+    if (!formDate) errors.date = "Date is required";
+    if (!formStatus) errors.status = "Status is required";
+
+    const needsTimes = ["Present", "Late", "Half-day", "WFH"].includes(
+      formStatus,
+    );
+    if (needsTimes) {
+      if (!formCheckIn) errors.checkIn = "Punch-in time is required";
+      if (!formCheckOut) errors.checkOut = "Punch-out time is required";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    const emp = employees.find((e) => e.id === formEmployeeId) || employees[0];
+    const displayDate = convertToDisplayDate(formDate);
+    const displayCheckIn = needsTimes ? to12Hour(formCheckIn) : "--:--";
+    const displayCheckOut = needsTimes ? to12Hour(formCheckOut) : "--:--";
+    const displayHours = needsTimes
+      ? calculateHours(formCheckIn, formCheckOut, formStatus)
+      : "0h 00m";
+
+    const newRecord: AttendanceRecord = {
+      id: `ATT-${Date.now()}`,
+      employeeId: emp.id,
+      employeeName: emp.name,
+      employeeAvatar: emp.avatar,
+      department: emp.department,
+      date: displayDate,
+      status: formStatus,
+      checkIn: displayCheckIn,
+      checkOut: displayCheckOut,
+      hours: displayHours,
+      notes: formNotes,
+    };
+
+    const updated = [newRecord, ...records];
+    setRecords(updated);
+    localStorage.setItem("nexus_attendance_records", JSON.stringify(updated));
+
+    setShowAddModal(false);
+    setToastMessage("Attendance record added successfully");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editRecord) return;
+    const errors: Record<string, string> = {};
+    if (!formEmployeeId) errors.employeeId = "Employee is required";
+    if (!formDate) errors.date = "Date is required";
+    if (!formStatus) errors.status = "Status is required";
+
+    const needsTimes = ["Present", "Late", "Half-day", "WFH"].includes(
+      formStatus,
+    );
+    if (needsTimes) {
+      if (!formCheckIn) errors.checkIn = "Punch-in time is required";
+      if (!formCheckOut) errors.checkOut = "Punch-out time is required";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    const emp = employees.find((e) => e.id === formEmployeeId) || employees[0];
+    const displayDate = convertToDisplayDate(formDate);
+    const displayCheckIn = needsTimes ? to12Hour(formCheckIn) : "--:--";
+    const displayCheckOut = needsTimes ? to12Hour(formCheckOut) : "--:--";
+    const displayHours = needsTimes
+      ? calculateHours(formCheckIn, formCheckOut, formStatus)
+      : "0h 00m";
+
+    const updatedRecords = records.map((rec) => {
+      if (rec.id === editRecord.id) {
+        return {
+          ...rec,
+          employeeId: emp.id,
+          employeeName: emp.name,
+          employeeAvatar: emp.avatar,
+          department: emp.department,
+          date: displayDate,
+          status: formStatus,
+          checkIn: displayCheckIn,
+          checkOut: displayCheckOut,
+          hours: displayHours,
+          notes: formNotes,
+        };
+      }
+      return rec;
+    });
+
+    setRecords(updatedRecords);
+    localStorage.setItem(
+      "nexus_attendance_records",
+      JSON.stringify(updatedRecords),
+    );
+
+    setEditRecord(null);
+    setToastMessage("Attendance record updated successfully");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!deleteConfirm) return;
+    const updated = records.filter((rec) => rec.id !== deleteConfirm);
+    setRecords(updated);
+    localStorage.setItem("nexus_attendance_records", JSON.stringify(updated));
+    setDeleteConfirm(null);
+    setToastMessage("Attendance record deleted successfully");
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
+
+  // Dependent Filter Logic
+  const filteredEmployeesList = useMemo(() => {
+    if (selectedDept === "All Departments") return employees;
+    return employees.filter((emp) => emp.department === selectedDept);
+  }, [selectedDept]);
+
+  const displayedEmployees = useMemo(() => {
+    if (!searchQuery) return filteredEmployeesList;
+    return filteredEmployeesList.filter(
+      (emp) =>
+        emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        emp.role.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [filteredEmployeesList, searchQuery]);
+
+  const selectedEmployee = useMemo(() => {
+    return employees.find((emp) => emp.id === selectedEmpId);
+  }, [selectedEmpId]);
+
+  const handleDeptChange = (dept: string) => {
+    setSelectedDept(dept);
+    setSelectedEmpId("All Employees"); // Reset employee when department changes
+    setShowDeptDropdown(false);
+  };
+
+  const handleReset = () => {
+    setSelectedDept("All Departments");
+    setSelectedEmpId("All Employees");
+    setSelectedMonth(3);
+    setSelectedYear(2026);
+    setSearchQuery("");
+  };
+
+  const handleDownload = (
+    e: React.MouseEvent,
+    type: "full" | "row" = "full",
+    rowData?: AttendanceRow,
+  ) => {
+    e.stopPropagation();
+    if (isDownloading) return;
+    if (type === "row" && !rowData) return;
+
+    setIsDownloading(true);
+
+    setTimeout(() => {
+      let csvContent = "";
+      let filename = "attendance_report_bulk.csv";
+
+      if (type === "full") {
+        csvContent =
+          "Date,Employee,Department,Status,Check In,Check Out,Hours\n" +
+          records
+            .map(
+              (log) =>
+                `${log.date},${log.employeeName},${log.department},${log.status},${log.checkIn},${log.checkOut},${log.hours}`,
+            )
+            .join("\n");
+      } else if (rowData) {
+        csvContent = `Date,Employee,Department,Status,Check In,Check Out,Hours\n${rowData.date},${rowData.name},${rowData.department},${rowData.status},${rowData.checkIn},${rowData.checkOut},${rowData.hours}`;
+        filename = `attendance_report_${rowData.name.replace(/\s+/g, "_")}.csv`;
+      }
+
+      if (!csvContent) {
+        setIsDownloading(false);
+        return;
+      }
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", filename);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setIsDownloading(false);
+    }, 1500);
+  };
+
+  const filteredLogs = useMemo(() => {
+    return records.filter((log) => {
+      // 1. Filter by Department
+      if (
+        selectedDept !== "All Departments" &&
+        log.department !== selectedDept
+      ) {
+        return false;
+      }
+
+      // 2. Filter by Employee ID
+      if (
+        selectedEmpId !== "All Employees" &&
+        log.employeeId !== selectedEmpId
+      ) {
+        return false;
+      }
+
+      // 3. Filter by Search Query
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const emp = employees.find((e) => e.id === log.employeeId);
+        const nameMatch = log.employeeName.toLowerCase().includes(query);
+        const roleMatch = emp ? emp.role.toLowerCase().includes(query) : false;
+        const idMatch = log.employeeId.toLowerCase().includes(query);
+
+        if (!nameMatch && !roleMatch && !idMatch) return false;
+      }
+
+      // 4. Filter by Period (Rolling Date Range)
+      const logDate = new Date(log.date);
+      return logDate >= startDate && logDate <= endDate;
+    });
+  }, [records, selectedDept, selectedEmpId, searchQuery, startDate, endDate]);
+
+  // Calendar Math
+  const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+  const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
+  const calendarDays = useMemo(() => {
+    const days = [];
+    for (let i = 0; i < firstDayOfMonth; i++) days.push(null);
+    for (let i = 1; i <= daysInMonth; i++) days.push(i);
+    return days;
+  }, [selectedMonth, selectedYear, daysInMonth, firstDayOfMonth]);
+
+  // Dynamic Metrics Calculation
+  const metrics = useMemo(() => {
+    const periodLogs = records.filter((log) => {
+      if (selectedDept !== "All Departments" && log.department !== selectedDept)
+        return false;
+      if (selectedEmpId !== "All Employees" && log.employeeId !== selectedEmpId)
+        return false;
+
+      const logDate = new Date(log.date);
+      return logDate >= startDate && logDate <= endDate;
+    });
+
+    const total = periodLogs.length;
+    const present = periodLogs.filter(
+      (l) => l.status === "Present" || l.status === "WFH",
+    ).length;
+    const absent = periodLogs.filter((l) => l.status === "Absent").length;
+    const late = periodLogs.filter((l) => l.status === "Late").length;
+
+    const uniqueEmpCount =
+      selectedEmpId === "All Employees"
+        ? new Set(periodLogs.map((l) => l.employeeId)).size || 1
+        : 1;
+
+    const rawTotalDays = total || 22;
+    const rawPresent = present || 19;
+    const rawAbsent = absent || 1;
+    const rawLate = late || 2;
+
+    return {
+      totalDays:
+        selectedEmpId === "All Employees"
+          ? parseFloat((rawTotalDays / uniqueEmpCount).toFixed(1))
+          : rawTotalDays,
+      present:
+        selectedEmpId === "All Employees"
+          ? parseFloat((rawPresent / uniqueEmpCount).toFixed(1))
+          : rawPresent,
+      absent:
+        selectedEmpId === "All Employees"
+          ? parseFloat((rawAbsent / uniqueEmpCount).toFixed(1))
+          : rawAbsent,
+      late:
+        selectedEmpId === "All Employees"
+          ? parseFloat((rawLate / uniqueEmpCount).toFixed(1))
+          : rawLate,
+      attendanceRate: total > 0 ? Math.round((present / total) * 100) : 100,
+      lateTrend: -5,
+    };
+  }, [records, selectedDept, selectedEmpId, startDate, endDate]);
+
+  const selectedDayRecord = useMemo(() => {
+    if (selectedDayDetail === null) return null;
+    const dateStr = formatDate(selectedDayDetail, selectedMonth, selectedYear);
+
+    const rec = records.find((r) => {
+      const dateMatch = r.date === dateStr;
+      if (selectedEmpId !== "All Employees") {
+        return dateMatch && r.employeeId === selectedEmpId;
+      }
+      return dateMatch;
+    });
+
+    if (rec) return rec;
+
+    if (selectedMonth === 3 && selectedYear === 2026) {
+      const mockStatus =
+        Reflect.get(attendanceCalendar, selectedDayDetail) || "Present";
+      const emp = selectedEmployee || employees[0];
+      return {
+        id: `ATT-MOCK-${selectedDayDetail}`,
+        employeeId: emp.id,
+        employeeName: emp.name,
+        employeeAvatar: emp.avatar,
+        department: emp.department,
+        date: dateStr,
+        status: mockStatus,
+        checkIn: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus)
+          ? "08:58 AM"
+          : "--:--",
+        checkOut: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus)
+          ? "06:02 PM"
+          : "--:--",
+        hours: ["Present", "Late", "Half-day", "WFH"].includes(mockStatus)
+          ? "9h 04m"
+          : "0h 00m",
+        notes: "Historical mock log",
+      };
+    }
+
+    const emp = selectedEmployee || employees[0];
+    return {
+      id: `ATT-MOCK-${selectedDayDetail}`,
+      employeeId: emp.id,
+      employeeName: emp.name,
+      employeeAvatar: emp.avatar,
+      department: emp.department,
+      date: dateStr,
+      status: "Absent",
+      checkIn: "--:--",
+      checkOut: "--:--",
+      hours: "0h 00m",
+      notes: "No attendance recorded",
+    };
+  }, [
+    selectedDayDetail,
+    selectedMonth,
+    selectedYear,
+    selectedEmpId,
+    selectedEmployee,
+    records,
+  ]);
+
+  const handleEmployeeRedirect = (id: string) => {
+    navigate(`/employees/${id}`);
+  };
+
+  return (
+    <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-5">
+      {/* Add Attendance Modal */}
+      {showAddModal && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          onClick={() => setShowAddModal(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-modal-title"
+            className="w-full max-w-lg rounded-2xl bg-card border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
+            style={{ borderColor: "var(--border)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="p-6 border-b flex items-center justify-between bg-neutral-50 dark:bg-zinc-800/40"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <div className="flex items-center gap-2">
+                <CalendarIcon className="text-[#00B87C]" size={20} />
+                <h3
+                  id="add-modal-title"
+                  className="text-lg font-extrabold text-slate-900 dark:text-slate-100"
+                >
+                  Add Attendance Record
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-700 text-muted-foreground transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5 overflow-y-auto flex-1">
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                  Select Employee *
+                </label>
+                <select
+                  className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.employeeId ? "border-red-500" : "border-border"}`}
+                  value={formEmployeeId}
+                  onChange={(e) => setFormEmployeeId(e.target.value)}
+                >
+                  <option value="" disabled>
+                    -- Choose Employee --
+                  </option>
+                  {employees.map((emp) => (
+                    <option key={emp.id} value={emp.id}>
+                      {emp.name} ({emp.id}) — {emp.department}
+                    </option>
+                  ))}
+                </select>
+                {formErrors.employeeId && (
+                  <p className="text-red-500 text-[10px] font-bold mt-1">
+                    {formErrors.employeeId}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                    Date *
+                  </label>
+                  <input
+                    type="date"
+                    className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.date ? "border-red-500" : "border-border"}`}
+                    value={formDate}
+                    onChange={(e) => setFormDate(e.target.value)}
+                  />
+                  {formErrors.date && (
+                    <p className="text-red-500 text-[10px] font-bold mt-1">
+                      {formErrors.date}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                    Status *
+                  </label>
+                  <select
+                    className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.status ? "border-red-500" : "border-border"}`}
+                    value={formStatus}
+                    onChange={(e) => setFormStatus(e.target.value)}
+                  >
+                    {Object.keys(STATUS_CONFIG).map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                  {formErrors.status && (
+                    <p className="text-red-500 text-[10px] font-bold mt-1">
+                      {formErrors.status}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {["Present", "Late", "Half-day", "WFH"].includes(formStatus) && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div>
+                    <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                      Punch In Time *
+                    </label>
+                    <input
+                      type="time"
+                      className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.checkIn ? "border-red-500" : "border-border"}`}
+                      value={formCheckIn}
+                      onChange={(e) => setFormCheckIn(e.target.value)}
+                    />
+                    {formErrors.checkIn && (
+                      <p className="text-red-500 text-[10px] font-bold mt-1">
+                        {formErrors.checkIn}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                      Punch Out Time *
+                    </label>
+                    <input
+                      type="time"
+                      className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.checkOut ? "border-red-500" : "border-border"}`}
+                      value={formCheckOut}
+                      onChange={(e) => setFormCheckOut(e.target.value)}
+                    />
+                    {formErrors.checkOut && (
+                      <p className="text-red-500 text-[10px] font-bold mt-1">
+                        {formErrors.checkOut}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                  Notes / Description
+                </label>
+                <textarea
+                  placeholder="e.g. Punch in failed, added manually by HR."
+                  rows={3}
+                  className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-medium"
+                  value={formNotes}
+                  onChange={(e) => setFormNotes(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div
+              className="p-6 bg-neutral-50 dark:bg-zinc-800/40 border-t flex gap-3 flex-shrink-0"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <button
+                type="button"
+                onClick={() => setShowAddModal(false)}
+                className="flex-1 py-2.5 rounded-xl border text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 hover:bg-neutral-200 transition-all active:scale-[0.98]"
+                style={{ borderColor: "var(--border)" }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveAdd}
+                className="flex-1 py-2.5 rounded-xl text-white text-xs font-extrabold shadow-sm hover:opacity-90 transition-all active:scale-[0.98]"
+                style={{
+                  backgroundColor: "#00B87C",
+                }}
+              >
+                Save Record
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Attendance Modal */}
+      {editRecord && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          onClick={() => setEditRecord(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-modal-title"
+            className="w-full max-w-lg rounded-2xl bg-card border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
+            style={{ borderColor: "var(--border)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="p-6 border-b flex items-center justify-between bg-neutral-50 dark:bg-zinc-800/40"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <div className="flex items-center gap-2">
+                <CalendarIcon className="text-[#00B87C]" size={20} />
+                <h3
+                  id="edit-modal-title"
+                  className="text-lg font-extrabold text-slate-900 dark:text-slate-100"
+                >
+                  Edit Attendance Record
+                </h3>
+              </div>
+              <button
+                onClick={() => setEditRecord(null)}
+                className="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-zinc-700 text-muted-foreground transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5 overflow-y-auto flex-1">
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                  Employee
+                </label>
+                <div
+                  className="flex items-center gap-3 p-3 rounded-xl border bg-neutral-50 dark:bg-zinc-800/30"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <img
+                    src={editRecord.employeeAvatar || employees[0].avatar}
+                    alt=""
+                    className="w-10 h-10 rounded-full object-cover border"
+                  />
+                  <div>
+                    <p className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                      {editRecord.employeeName}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground font-bold">
+                      {editRecord.employeeId} • {editRecord.department}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                    Date *
+                  </label>
+                  <input
+                    type="date"
+                    className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.date ? "border-red-500" : "border-border"}`}
+                    value={formDate}
+                    onChange={(e) => setFormDate(e.target.value)}
+                  />
+                  {formErrors.date && (
+                    <p className="text-red-500 text-[10px] font-bold mt-1">
+                      {formErrors.date}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                    Status *
+                  </label>
+                  <select
+                    className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.status ? "border-red-500" : "border-border"}`}
+                    value={formStatus}
+                    onChange={(e) => setFormStatus(e.target.value)}
+                  >
+                    {Object.keys(STATUS_CONFIG).map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                  {formErrors.status && (
+                    <p className="text-red-500 text-[10px] font-bold mt-1">
+                      {formErrors.status}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {["Present", "Late", "Half-day", "WFH"].includes(formStatus) && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div>
+                    <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                      Punch In Time *
+                    </label>
+                    <input
+                      type="time"
+                      className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.checkIn ? "border-red-500" : "border-border"}`}
+                      value={formCheckIn}
+                      onChange={(e) => setFormCheckIn(e.target.value)}
+                    />
+                    {formErrors.checkIn && (
+                      <p className="text-red-500 text-[10px] font-bold mt-1">
+                        {formErrors.checkIn}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                      Punch Out Time *
+                    </label>
+                    <input
+                      type="time"
+                      className={`w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold ${formErrors.checkOut ? "border-red-500" : "border-border"}`}
+                      value={formCheckOut}
+                      onChange={(e) => setFormCheckOut(e.target.value)}
+                    />
+                    {formErrors.checkOut && (
+                      <p className="text-red-500 text-[10px] font-bold mt-1">
+                        {formErrors.checkOut}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
+                  Notes / Description
+                </label>
+                <textarea
+                  placeholder="e.g. Punch in failed, added manually by HR."
+                  rows={3}
+                  className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-medium"
+                  value={formNotes}
+                  onChange={(e) => setFormNotes(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div
+              className="p-6 bg-neutral-50 dark:bg-zinc-800/40 border-t flex gap-3 flex-shrink-0"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <button
+                type="button"
+                onClick={() => setEditRecord(null)}
+                className="flex-1 py-2.5 rounded-xl border text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 hover:bg-neutral-200 transition-all active:scale-[0.98]"
+                style={{ borderColor: "var(--border)" }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveEdit}
+                className="flex-1 py-2.5 rounded-xl text-white text-xs font-extrabold shadow-sm hover:opacity-90 transition-all active:scale-[0.98]"
+                style={{
+                  backgroundColor: "#00B87C",
+                }}
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          onClick={() => setDeleteConfirm(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-modal-title"
+            aria-describedby="delete-modal-description"
+            className="w-full max-w-sm rounded-2xl bg-card shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95"
+            style={{ borderColor: "var(--border)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950/40 text-rose-600 flex items-center justify-center mx-auto mb-4">
+              <AlertCircle size={24} />
+            </div>
+            <h3
+              id="delete-modal-title"
+              className="text-lg font-extrabold text-slate-900 dark:text-slate-100 mb-2"
+            >
+              Delete Attendance Record
+            </h3>
+            <p
+              id="delete-modal-description"
+              className="text-xs text-muted-foreground mb-5"
+            >
+              Are you sure you want to delete this record? This action cannot be
+              undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                className="w-full py-2.5 text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 rounded-xl hover:bg-neutral-200 transition-colors"
+                onClick={() => setDeleteConfirm(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="w-full py-2.5 text-xs font-extrabold text-white bg-rose-600 rounded-xl hover:bg-rose-700 shadow-sm transition-colors active:scale-95"
+                onClick={handleDeleteConfirm}
+              >
+                Confirm Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Day Detail Modal Overlay */}
+      {selectedDayDetail && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          onClick={() => setSelectedDayDetail(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="detail-modal-title"
+            className="w-full max-w-md rounded-2xl bg-card border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+            style={{ borderColor: "var(--border)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="p-6 border-b flex items-center justify-between"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[var(--secondary)] flex items-center justify-center text-[var(--primary)] font-bold">
+                  {selectedDayDetail}
+                </div>
+                <div>
+                  <h3
+                    id="detail-modal-title"
+                    className="text-lg font-black"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    {Reflect.get(MONTH_NAMES, selectedMonth)}{" "}
+                    {selectedDayDetail}, {selectedYear}
+                  </h3>
+                  <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                    Daily Attendance Detail
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedDayDetail(null)}
+                className="p-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors"
+              >
+                <MoreVertical size={18} className="rotate-90" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {selectedDayRecord && (
+                <>
+                  <div
+                    className="flex items-center justify-between p-4 rounded-xl bg-neutral-50 dark:bg-zinc-800/50 border"
+                    style={{ borderColor: "var(--border)" }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[var(--primary)]">
+                        <img
+                          src={
+                            selectedDayRecord.employeeAvatar ||
+                            employees[0].avatar
+                          }
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <p
+                          className="text-sm font-black"
+                          style={{ color: "var(--foreground)" }}
+                        >
+                          {selectedDayRecord.employeeName}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground font-bold">
+                          {employees.find(
+                            (e) => e.id === selectedDayRecord.employeeId,
+                          )?.role || "Senior Developer"}
+                        </p>
+                      </div>
+                    </div>
+                    <StatusBadge status={selectedDayRecord.status} />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div
+                      className="p-4 rounded-xl border bg-card"
+                      style={{ borderColor: "var(--border)" }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <ArrowUpRight size={16} className="text-emerald-500" />
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                          Punch In
+                        </span>
+                      </div>
+                      <p
+                        className="text-lg font-black"
+                        style={{ color: "var(--foreground)" }}
+                      >
+                        {selectedDayRecord.checkIn}
+                      </p>
+                      <p
+                        className={`text-[9px] font-bold mt-1 ${selectedDayRecord.status === "Late" ? "text-amber-500" : "text-emerald-600"}`}
+                      >
+                        {selectedDayRecord.checkIn !== "--:--"
+                          ? selectedDayRecord.status === "Late"
+                            ? "Late"
+                            : "On time"
+                          : "No log"}
+                      </p>
+                    </div>
+                    <div
+                      className="p-4 rounded-xl border bg-card"
+                      style={{ borderColor: "var(--border)" }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <ArrowUpRight
+                          size={16}
+                          className="text-orange-500 rotate-90"
+                        />
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                          Punch Out
+                        </span>
+                      </div>
+                      <p
+                        className="text-lg font-black"
+                        style={{ color: "var(--foreground)" }}
+                      >
+                        {selectedDayRecord.checkOut}
+                      </p>
+                      <p className="text-[9px] text-muted-foreground font-bold mt-1">
+                        {selectedDayRecord.checkOut !== "--:--"
+                          ? "Recorded"
+                          : "No log"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      Log Timeline
+                    </h4>
+                    {selectedDayRecord.checkIn !== "--:--" ? (
+                      <div className="relative pl-6 space-y-4 before:content-[''] before:absolute before:left-2 before:top-1 before:bottom-1 before:w-0.5 before:bg-neutral-100 dark:before:bg-zinc-800">
+                        <div className="relative flex items-center justify-between">
+                          <div className="absolute -left-[22px] w-4 h-4 rounded-full border-2 border-white dark:border-zinc-900 bg-emerald-500" />
+                          <span
+                            className="text-xs font-bold"
+                            style={{ color: "var(--foreground)" }}
+                          >
+                            Check-in recorded
+                          </span>
+                          <span className="text-[10px] font-bold text-muted-foreground">
+                            {selectedDayRecord.checkIn}
+                          </span>
+                        </div>
+                        {selectedDayRecord.checkOut !== "--:--" && (
+                          <div className="relative flex items-center justify-between">
+                            <div className="absolute -left-[22px] w-4 h-4 rounded-full border-2 border-white dark:border-zinc-900 bg-emerald-500" />
+                            <span
+                              className="text-xs font-bold"
+                              style={{ color: "var(--foreground)" }}
+                            >
+                              Checkout recorded
+                            </span>
+                            <span className="text-[10px] font-bold text-muted-foreground">
+                              {selectedDayRecord.checkOut}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-xs font-bold text-muted-foreground italic">
+                        No punch activity recorded for this day.
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div
+              className="p-6 bg-neutral-50 dark:bg-zinc-800/50 border-t flex gap-3"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <button
+                onClick={() => setSelectedDayDetail(null)}
+                className="flex-1 py-3 rounded-xl border text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-900 transition-all"
+                style={{ borderColor: "var(--border)" }}
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedDayDetail(null);
+                  handleEmployeeRedirect(selectedEmployee?.id || "EMP001");
+                }}
+                className="flex-1 py-3 rounded-xl text-white text-xs font-semibold uppercase tracking-wider shadow-lg shadow-emerald-500/20 hover:opacity-90 transition-all"
+                style={{
+                  background: "linear-gradient(135deg, #10B981, #059669)",
+                }}
+              >
+                View Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Header & View Toggle ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div>
+          <h1
+            className="text-xl font-extrabold tracking-tight"
+            style={{ color: "var(--foreground)" }}
+          >
+            Attendance Management
+          </h1>
+          <p
+            className="text-[13px] font-medium mt-0.5"
+            style={{ color: "var(--muted-foreground)" }}
+          >
+            Track and analyze employee presence across the organization.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleOpenAdd}
+            className="flex items-center gap-2 px-4 h-10 bg-[#00B87C] text-white rounded-xl hover:bg-[#00a36d] shadow-sm transition-all text-xs font-bold active:scale-95"
+          >
+            <Plus size={16} />
+            <span>Add Attendance</span>
+          </button>
+
+          <div
+            className="flex items-center gap-1.5 p-1 h-10 rounded-xl border bg-card"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <button
+              onClick={() => setView("table")}
+              className={`flex items-center gap-2 px-3.5 h-full rounded-lg text-xs font-bold transition-all ${view === "table" ? "bg-[var(--secondary)] text-[var(--primary)] shadow-sm" : "text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
+            >
+              <List size={14} /> Table
+            </button>
+            <button
+              onClick={() => setView("calendar")}
+              className={`flex items-center gap-2 px-3.5 h-full rounded-lg text-xs font-bold transition-all ${view === "calendar" ? "bg-[var(--secondary)] text-[var(--primary)] shadow-sm" : "text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
+            >
+              <LayoutGrid size={14} /> Calendar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Success Toast */}
+      {showSuccessToast && (
+        <div className="fixed bottom-5 right-5 z-[2000] bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3 animate-in slide-in-from-right-5 duration-300">
+          <div className="w-6 h-6 rounded-full bg-[#00B87C] flex items-center justify-center text-white font-bold text-xs">
+            ✓
+          </div>
+          <div>
+            <p className="text-xs font-bold">{toastMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Filter Bar ── */}
+      <div
+        className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-end p-4 rounded-2xl border bg-card shadow-sm"
+        style={{ borderColor: "var(--border)" }}
+      >
+        {/* Date Filter */}
+        <div className="lg:col-span-3 space-y-1">
+          <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+            Period Selection
+          </label>
+          <div className="flex items-center gap-2">
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+              className="flex-1 h-10 px-3 rounded-xl border bg-transparent text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
+              style={{
+                borderColor: "var(--border)",
+                color: "var(--foreground)",
+              }}
+            >
+              {MONTH_NAMES.map((name, i) => (
+                <option key={name} value={i}>
+                  {name}
+                </option>
+              ))}
+            </select>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              className="w-20 h-10 px-3 rounded-xl border bg-transparent text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
+              style={{
+                borderColor: "var(--border)",
+                color: "var(--foreground)",
+              }}
+            >
+              {[2024, 2025, 2026].map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Department Dropdown */}
+        <div className="lg:col-span-3 space-y-1 relative" ref={deptRef}>
+          <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+            Department
+          </label>
+          <button
+            onClick={() => setShowDeptDropdown(!showDeptDropdown)}
+            className="w-full h-10 px-4 rounded-xl border bg-transparent flex items-center justify-between text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+            style={{
+              borderColor: showDeptDropdown
+                ? "var(--primary)"
+                : "var(--border)",
+              color: "var(--foreground)",
+            }}
+          >
+            <div className="flex items-center gap-2 overflow-hidden">
+              <Users size={14} className="text-emerald-600 flex-shrink-0" />
+              <span className="truncate">{selectedDept}</span>
+            </div>
+            <ChevronDown
+              size={14}
+              className={`transition-transform duration-200 ${showDeptDropdown ? "rotate-180" : ""}`}
+            />
+          </button>
+
+          {showDeptDropdown && (
+            <div
+              className="absolute top-[calc(100%+8px)] left-0 w-full z-[2000] rounded-2xl border bg-card shadow-xl overflow-hidden"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <div className="max-h-60 overflow-y-auto">
+                <button
+                  onClick={() => handleDeptChange("All Departments")}
+                  className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-[var(--secondary)] transition-colors border-b"
+                  style={{
+                    borderColor: "var(--border)",
+                    color:
+                      selectedDept === "All Departments"
+                        ? "var(--primary)"
+                        : "var(--foreground)",
+                  }}
+                >
+                  All Departments
+                </button>
+                {departments.map((dept) => (
+                  <button
+                    key={dept.id}
+                    onClick={() => handleDeptChange(dept.name)}
+                    className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-[var(--secondary)] transition-colors border-b last:border-0"
+                    style={{
+                      borderColor: "var(--border)",
+                      color:
+                        selectedDept === dept.name
+                          ? "var(--primary)"
+                          : "var(--foreground)",
+                    }}
+                  >
+                    {dept.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Employee Dropdown (Dependent) */}
+        <div className="lg:col-span-4 space-y-1 relative" ref={empRef}>
+          <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+            Employee
+          </label>
+          <button
+            onClick={() => setShowEmpDropdown(!showEmpDropdown)}
+            className="w-full h-10 px-4 rounded-xl border bg-transparent flex items-center justify-between text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
+            style={{
+              borderColor: showEmpDropdown ? "var(--primary)" : "var(--border)",
+              color: "var(--foreground)",
+            }}
+          >
+            <div className="flex items-center gap-2 overflow-hidden">
+              <User size={14} className="text-emerald-600 flex-shrink-0" />
+              <span className="truncate">
+                {selectedEmployee ? selectedEmployee.name : "All Employees"}
+              </span>
+            </div>
+            <ChevronDown
+              size={14}
+              className={`transition-transform duration-200 ${showEmpDropdown ? "rotate-180" : ""}`}
+            />
+          </button>
+
+          {showEmpDropdown && (
+            <div
+              className="absolute top-[calc(100%+8px)] left-0 w-full z-[2000] rounded-2xl border bg-card shadow-xl overflow-hidden"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <div
+                className="p-2 border-b"
+                style={{ borderColor: "var(--border)" }}
+              >
+                <div
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-zinc-800 border"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <Search size={12} className="text-muted-foreground" />
+                  <input
+                    autoFocus
+                    placeholder="Search..."
+                    className="bg-transparent border-none outline-none text-[11px] font-medium w-full"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="max-h-60 overflow-y-auto">
+                <button
+                  onClick={() => {
+                    setSelectedEmpId("All Employees");
+                    setShowEmpDropdown(false);
+                  }}
+                  className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-[var(--secondary)] transition-colors border-b"
+                  style={{
+                    borderColor: "var(--border)",
+                    color:
+                      selectedEmpId === "All Employees"
+                        ? "var(--primary)"
+                        : "var(--foreground)",
+                  }}
+                >
+                  All Employees
+                </button>
+                {displayedEmployees.map((emp) => (
+                  <button
+                    key={emp.id}
+                    onClick={() => {
+                      setSelectedEmpId(emp.id);
+                      setShowEmpDropdown(false);
+                    }}
+                    className="w-full px-4 py-2.5 flex items-center gap-3 text-left transition-colors border-b last:border-0 hover:bg-[var(--secondary)]"
+                    style={{ borderColor: "var(--border)" }}
+                  >
+                    <img
+                      src={emp.avatar}
+                      alt=""
+                      className="w-7 h-7 rounded-full object-cover border-2"
+                      style={{
+                        borderColor:
+                          selectedEmpId === emp.id
+                            ? "var(--primary)"
+                            : "transparent",
+                      }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="text-xs font-bold truncate"
+                        style={{
+                          color:
+                            selectedEmpId === emp.id
+                              ? "var(--primary)"
+                              : "var(--foreground)",
+                        }}
+                      >
+                        {emp.name}
+                      </p>
+                      <p className="text-[9px] text-muted-foreground truncate uppercase">
+                        {emp.role}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className="lg:col-span-2 flex items-center gap-2">
+          <button
+            onClick={handleReset}
+            className="flex-1 h-10 flex items-center justify-center gap-2 rounded-xl border border-dashed text-xs font-bold transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800"
+            style={{
+              borderColor: "var(--border)",
+              color: "var(--muted-foreground)",
+            }}
+          >
+            <RotateCcw size={14} /> Reset
+          </button>
+          <button
+            onClick={(e) => handleDownload(e, "full")}
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-white shadow-lg shadow-emerald-500/20 transition-all hover:opacity-90 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+            style={{ background: "linear-gradient(135deg, #10B981, #059669)" }}
+            disabled={isDownloading}
+          >
+            {isDownloading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Download size={16} />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* ── Summary Cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          {
+            label:
+              selectedEmpId === "All Employees"
+                ? "Avg. Working Days"
+                : "Total Working Days",
+            value: metrics.totalDays,
+            icon: CalendarIcon,
+            color: "var(--primary)",
+            bg: "var(--secondary)",
+            trend: null,
+          },
+          {
+            label:
+              selectedEmpId === "All Employees"
+                ? "Avg. Present Days"
+                : "Present Days",
+            value: metrics.present,
+            icon: CheckCircle2,
+            color: "var(--primary)",
+            bg: "var(--secondary)",
+            trend: "+2%",
+            trendUp: true,
+          },
+          {
+            label:
+              selectedEmpId === "All Employees"
+                ? "Avg. Absent Days"
+                : "Absent Days",
+            value: metrics.absent,
+            icon: XCircle,
+            color: "#EF4444",
+            bg: "rgba(239, 68, 68, 0.1)",
+            trend: "-1%",
+            trendUp: false,
+          },
+          {
+            label:
+              selectedEmpId === "All Employees"
+                ? "Avg. Late Count"
+                : "Late Count",
+            value: metrics.late,
+            icon: Clock,
+            color: "#F59E0B",
+            bg: "rgba(245, 158, 11, 0.1)",
+            trend: metrics.lateTrend + "%",
+            trendUp: false,
+          },
+        ].map((card, i) => (
+          <div
+            key={i}
+            className="group p-4 rounded-2xl border bg-card shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:-translate-y-0.5"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <div className="flex items-start justify-between">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
+                style={{ backgroundColor: card.bg }}
+              >
+                <card.icon size={18} style={{ color: card.color }} />
+              </div>
+              {card.trend && (
+                <div
+                  className={`flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full ${card.trendUp ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10" : "bg-orange-50 text-orange-600 dark:bg-orange-500/10"}`}
+                >
+                  {card.trendUp ? (
+                    <TrendingUp size={10} />
+                  ) : (
+                    <TrendingDown size={10} />
+                  )}
+                  {card.trend}
+                </div>
+              )}
+            </div>
+            <div className="mt-3">
+              <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+                {card.label}
+              </p>
+              <p
+                className="text-2xl font-black mt-0.5"
+                style={{ color: "var(--foreground)" }}
+              >
+                {card.value}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
+        {/* ── Main View (Table or Calendar) ── */}
+        <div className="xl:col-span-8 space-y-6">
+          {view === "table" ? (
+            <div
+              className="rounded-2xl border bg-card shadow-sm overflow-hidden flex flex-col"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <div
+                className="p-4 border-b flex items-center justify-between"
+                style={{ borderColor: "var(--border)" }}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-5 rounded-full bg-emerald-500" />
+                  <h3
+                    className="text-base font-extrabold"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    Attendance Records
+                  </h3>
+                </div>
+                <div className="flex items-center gap-2 text-[11px] font-bold text-muted-foreground">
+                  Showing{" "}
+                  <span className="text-foreground">
+                    {Math.min(filteredLogs.length, itemsPerPage)}
+                  </span>{" "}
+                  of{" "}
+                  <span className="text-foreground">{filteredLogs.length}</span>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto scrollbar-thin">
+                <table className="w-full text-left border-collapse min-w-[800px]">
+                  <thead>
+                    <tr className="bg-neutral-50 dark:bg-zinc-800/50">
+                      <th
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
+                        style={{ borderColor: "var(--border)" }}
+                      >
+                        Employee
+                      </th>
+                      <th
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
+                        style={{ borderColor: "var(--border)" }}
+                      >
+                        Date
+                      </th>
+                      <th
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
+                        style={{ borderColor: "var(--border)" }}
+                      >
+                        Status
+                      </th>
+                      <th
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
+                        style={{ borderColor: "var(--border)" }}
+                      >
+                        Punch In
+                      </th>
+                      <th
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
+                        style={{ borderColor: "var(--border)" }}
+                      >
+                        Punch Out
+                      </th>
+                      <th
+                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b text-center"
+                        style={{ borderColor: "var(--border)" }}
+                      >
+                        Working Hours
+                      </th>
+                      <th
+                        className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b text-right"
+                        style={{ borderColor: "var(--border)" }}
+                      >
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredLogs
+                      .slice(
+                        (currentPage - 1) * itemsPerPage,
+                        currentPage * itemsPerPage,
+                      )
+                      .map((log) => {
+                        const emp =
+                          employees.find((e) => e.id === log.employeeId) ||
+                          employees[0];
+
+                        return (
+                          <tr
+                            key={log.id}
+                            className="group hover:bg-neutral-50/80 dark:hover:bg-zinc-800/40 transition-colors"
+                          >
+                            <td
+                              className="px-5 py-2.5 border-b"
+                              style={{ borderColor: "var(--border)" }}
+                            >
+                              <div
+                                className="flex items-center gap-3 cursor-pointer group/emp"
+                                onClick={() => handleEmployeeRedirect(emp.id)}
+                              >
+                                <div className="relative">
+                                  <img
+                                    src={emp.avatar}
+                                    alt=""
+                                    className="w-8 h-8 rounded-full object-cover border-2 border-white dark:border-zinc-800 shadow-sm transition-transform group-hover/emp:scale-110"
+                                  />
+                                  <div
+                                    className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-zinc-900"
+                                    style={{
+                                      backgroundColor: "var(--primary)",
+                                    }}
+                                  />
+                                </div>
+                                <div>
+                                  <p
+                                    className="text-xs font-bold transition-colors group-hover/emp:text-[var(--primary)]"
+                                    style={{ color: "var(--foreground)" }}
+                                  >
+                                    {emp.name}
+                                  </p>
+                                  <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-tight">
+                                    {emp.department}
+                                  </p>
+                                </div>
+                              </div>
+                            </td>
+                            <td
+                              className="px-5 py-2.5 border-b"
+                              style={{ borderColor: "var(--border)" }}
+                            >
+                              <p
+                                className="text-xs font-semibold"
+                                style={{ color: "var(--foreground)" }}
+                              >
+                                {log.date}
+                              </p>
+                            </td>
+                            <td
+                              className="px-5 py-2.5 border-b"
+                              style={{ borderColor: "var(--border)" }}
+                            >
+                              <StatusBadge status={log.status} />
+                            </td>
+                            <td
+                              className="px-5 py-2.5 border-b"
+                              style={{ borderColor: "var(--border)" }}
+                            >
+                              <div className="flex items-center gap-1.5">
+                                <ArrowUpRight
+                                  size={12}
+                                  className="text-emerald-500"
+                                />
+                                <span
+                                  className="text-xs font-bold"
+                                  style={{ color: "var(--foreground)" }}
+                                >
+                                  {log.checkIn}
+                                </span>
+                              </div>
+                            </td>
+                            <td
+                              className="px-5 py-2.5 border-b"
+                              style={{ borderColor: "var(--border)" }}
+                            >
+                              <div className="flex items-center gap-1.5">
+                                <ArrowUpRight
+                                  size={12}
+                                  className="text-orange-500 rotate-90"
+                                />
+                                <span
+                                  className="text-xs font-bold"
+                                  style={{ color: "var(--foreground)" }}
+                                >
+                                  {log.checkOut}
+                                </span>
+                              </div>
+                            </td>
+                            <td
+                              className="px-5 py-2.5 border-b text-center"
+                              style={{ borderColor: "var(--border)" }}
+                            >
+                              <div className="flex flex-col items-center">
+                                <p
+                                  className="text-xs font-black"
+                                  style={{ color: "var(--foreground)" }}
+                                >
+                                  {log.hours}
+                                </p>
+                                <div className="w-16 h-1 rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden mt-1">
+                                  <div
+                                    className="h-full bg-emerald-500 rounded-full"
+                                    style={{
+                                      width: log.hours.includes("9h")
+                                        ? "95%"
+                                        : "80%",
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </td>
+                            <td
+                              className="px-5 py-2.5 border-b text-right relative"
+                              style={{ borderColor: "var(--border)" }}
+                            >
+                              <div className="flex items-center justify-end gap-1">
+                                <button
+                                  className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors"
+                                  aria-label={`Actions for ${emp.name} on ${log.date}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveRowMenu(
+                                      activeRowMenu === log.id ? null : log.id,
+                                    );
+                                  }}
+                                >
+                                  <MoreVertical size={16} />
+                                </button>
+                                {activeRowMenu === log.id && (
+                                  <div className="absolute right-5 mt-1 w-32 bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-lg z-[2100] py-1 text-left animate-in fade-in slide-in-from-top-1">
+                                    <button
+                                      className="w-full text-left px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/40"
+                                      onClick={() => {
+                                        setActiveRowMenu(null);
+                                        handleOpenEdit(log);
+                                      }}
+                                    >
+                                      Edit
+                                    </button>
+                                    <button
+                                      className="w-full text-left px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20"
+                                      onClick={() => {
+                                        setActiveRowMenu(null);
+                                        setDeleteConfirm(log.id);
+                                      }}
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination */}
+              <div
+                className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t"
+                style={{ borderColor: "var(--border)" }}
+              >
+                <p className="text-[11px] font-bold text-muted-foreground">
+                  Showing{" "}
+                  <span className="text-foreground">
+                    {(currentPage - 1) * itemsPerPage + 1}
+                  </span>{" "}
+                  to{" "}
+                  <span className="text-foreground">
+                    {Math.min(currentPage * itemsPerPage, filteredLogs.length)}
+                  </span>{" "}
+                  of{" "}
+                  <span className="text-foreground">{filteredLogs.length}</span>
+                </p>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(1, prev - 1))
+                    }
+                    className="p-1.5 rounded-lg border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 disabled:opacity-30 transition-all active:scale-95"
+                    style={{ borderColor: "var(--border)" }}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft size={14} />
+                  </button>
+                  {Array.from({
+                    length: Math.ceil(filteredLogs.length / itemsPerPage),
+                  }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`w-7 h-7 rounded-lg text-[11px] font-semibold transition-all ${currentPage === i + 1 ? "bg-[var(--primary)] text-white shadow-lg shadow-emerald-500/20" : "border border-transparent hover:border-border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
+                      style={{
+                        borderColor:
+                          currentPage !== i + 1
+                            ? "var(--border)"
+                            : "transparent",
+                      }}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) =>
+                        Math.min(
+                          Math.ceil(filteredLogs.length / itemsPerPage),
+                          prev + 1,
+                        ),
+                      )
+                    }
+                    className="p-1.5 rounded-lg border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 disabled:opacity-30 transition-all active:scale-95"
+                    style={{ borderColor: "var(--border)" }}
+                    disabled={
+                      currentPage ===
+                      Math.ceil(filteredLogs.length / itemsPerPage)
+                    }
+                  >
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div
+              className="rounded-2xl border bg-card shadow-sm overflow-hidden"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <div
+                className="p-6 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                style={{ borderColor: "var(--border)" }}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-6 rounded-full bg-emerald-500" />
+                  <h3
+                    className="text-lg font-extrabold"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    Monthly Attendance Calendar
+                  </h3>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                  {[
+                    { label: "Present", color: "#10B981" },
+                    { label: "Absent", color: "#EF4444" },
+                    { label: "Leave", color: "#F59E0B" },
+                    { label: "Holiday", color: "#14B8A6" },
+                    { label: "Weekend", color: "#94A3B8" },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center gap-1.5">
+                      <div
+                        className="w-2.5 h-2.5 rounded-full"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="text-[11px] font-bold text-muted-foreground">
+                        {item.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-6">
+                <div className="grid grid-cols-7 mb-6">
+                  {DAYS_OF_WEEK.map((day) => (
+                    <div
+                      key={day}
+                      className="text-center text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+                    >
+                      {day}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-7 gap-3">
+                  {calendarDays.map((day, i) => {
+                    if (day === null)
+                      return (
+                        <div key={`empty-${i}`} className="aspect-[4/3]" />
+                      );
+
+                    const isWeekend = i % 7 === 0 || i % 7 === 6;
+                    const isFutureDay = day > endDay;
+                    const dateStr = formatDate(
+                      day,
+                      selectedMonth,
+                      selectedYear,
+                    );
+                    let status = "Present";
+                    if (isWeekend) {
+                      status = "Weekend";
+                    } else if (isFutureDay) {
+                      status = "Future";
+                    } else {
+                      const dayRec = records.find((r) => {
+                        const matchesDate = r.date === dateStr;
+                        if (selectedEmpId !== "All Employees") {
+                          return matchesDate && r.employeeId === selectedEmpId;
+                        }
+                        return matchesDate;
+                      });
+                      if (dayRec) {
+                        status = dayRec.status;
+                      } else {
+                        if (selectedMonth === 3 && selectedYear === 2026) {
+                          status =
+                            Reflect.get(attendanceCalendar, day) || "Present";
+                        } else {
+                          status = "Absent";
+                        }
+                      }
+                    }
+                    const config =
+                      Reflect.get(STATUS_CONFIG, status) ||
+                      STATUS_CONFIG.Present;
+                    const isToday = day === 22 && selectedMonth === 3;
+                    const isSelected = selectedDayDetail === day;
+
+                    // Custom styling to match image
+                    let cellStyle: React.CSSProperties = {
+                      borderColor: "transparent",
+                      backgroundColor: "transparent",
+                    };
+                    let textColor = "var(--foreground)";
+                    let dotColor = config.color;
+
+                    if (isToday) {
+                      cellStyle = {
+                        backgroundColor: "#10B981",
+                        boxShadow: "0 10px 15px -3px rgba(16, 185, 129, 0.2)",
+                      };
+                      textColor = "white";
+                      dotColor = "white";
+                    } else if (status === "Present") {
+                      cellStyle = {
+                        backgroundColor: "rgba(16, 185, 129, 0.08)",
+                      };
+                      textColor = "#10B981";
+                    } else if (status === "Leave") {
+                      cellStyle = {
+                        backgroundColor: "rgba(245, 158, 11, 0.08)",
+                      };
+                      textColor = "#F59E0B";
+                    } else if (status === "Absent") {
+                      cellStyle = {
+                        backgroundColor: "rgba(239, 68, 68, 0.08)",
+                      };
+                      textColor = "#EF4444";
+                    } else if (status === "Holiday") {
+                      cellStyle = {
+                        backgroundColor: "rgba(20, 184, 166, 0.08)",
+                      };
+                      textColor = "#14B8A6";
+                    } else if (status === "Future") {
+                      textColor = "var(--muted-foreground)";
+                      cellStyle = { opacity: 0.4 };
+                    } else if (isWeekend) {
+                      textColor = "var(--muted-foreground)";
+                      cellStyle = { opacity: 0.6 };
+                    }
+
+                    if (isSelected && !isToday) {
+                      cellStyle.border = `2px solid ${config.color}`;
+                    }
+
+                    return (
+                      <button
+                        key={day}
+                        onClick={() =>
+                          status !== "Weekend" &&
+                          status !== "Future" &&
+                          setSelectedDayDetail(day)
+                        }
+                        className={`aspect-[4/3] relative rounded-2xl flex flex-col items-center justify-center transition-all duration-200 group ${status !== "Weekend" && status !== "Future" ? "hover:scale-[1.02] active:scale-95" : "cursor-default"}`}
+                        style={cellStyle}
+                      >
+                        <span
+                          className="text-base font-black"
+                          style={{ color: textColor }}
+                        >
+                          {day}
+                        </span>
+                        {status !== "Weekend" && (
+                          <div
+                            className="mt-1.5 w-1.5 h-1.5 rounded-full"
+                            style={{ backgroundColor: dotColor }}
+                          />
+                        )}
+
+                        {/* Status Label on Hover */}
+                        {status !== "Weekend" && (
+                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center bg-white/60 dark:bg-zinc-900/60 rounded-2xl pointer-events-none">
+                            <span
+                              className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-md bg-white dark:bg-zinc-900 shadow-sm border"
+                              style={{
+                                color: config.color,
+                                borderColor: "var(--border)",
+                              }}
+                            >
+                              {status}
+                            </span>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Monthly Trend Chart */}
+          <div
+            className="rounded-2xl border bg-card shadow-sm p-5"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 gap-3">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-5 rounded-full bg-emerald-500" />
+                <div>
+                  <h3
+                    className="text-base font-extrabold"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    Attendance Trends
+                  </h3>
+                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                    Monthly visibility
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20">
+                <TrendingUp size={12} className="text-emerald-600" />
+                <span className="text-[11px] font-bold text-emerald-600">
+                  +4.2%
+                </span>
+              </div>
+            </div>
+
+            <div className="h-[240px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={monthlyTrendData}
+                  margin={{ top: 5, right: 5, left: -25, bottom: 0 }}
+                >
+                  <XAxis
+                    dataKey="month"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      fill: "var(--muted-foreground)",
+                    }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      fill: "var(--muted-foreground)",
+                    }}
+                    domain={[80, 100]}
+                  />
+                  <RechartsTooltip
+                    contentStyle={{
+                      backgroundColor: "var(--card)",
+                      borderColor: "var(--border)",
+                      borderRadius: "10px",
+                      fontSize: "11px",
+                      fontWeight: "bold",
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="attendance"
+                    stroke="var(--primary)"
+                    strokeWidth={3}
+                    dot={{
+                      r: 4,
+                      fill: "var(--primary)",
+                      strokeWidth: 2,
+                      stroke: "white",
+                    }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Right Sidebar: Advanced Analytics ── */}
+        <div className="xl:col-span-4 space-y-5">
+          {/* Employee Year Summary */}
+          <div
+            className="rounded-2xl border bg-card shadow-sm p-5"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <h3
+              className="text-sm font-extrabold mb-4"
+              style={{ color: "var(--foreground)" }}
+            >
+              Year-wise Summary
+            </h3>
+
+            <div
+              className="flex items-center gap-3 mb-5 p-3 rounded-2xl bg-neutral-50 dark:bg-zinc-800/50 border border-dashed"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[var(--primary)] p-0.5">
+                <img
+                  src={selectedEmployee?.avatar || employees[0].avatar}
+                  alt=""
+                  className="w-full h-full rounded-full object-cover"
+                />
+              </div>
+              <div className="min-w-0">
+                <p
+                  className="text-xs font-black truncate"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  {selectedEmployee?.name || "Sarah Johnson"}
+                </p>
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                  {selectedYear} Cumulative Data
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 mb-5">
+              {[
+                { label: "Total Days", value: "248", color: "var(--primary)" },
+                {
+                  label: "Attendance %",
+                  value: "96.4%",
+                  color: "var(--primary)",
+                },
+                { label: "Absence %", value: "3.6%", color: "#EF4444" },
+                { label: "Late Mark", value: "12", color: "#F59E0B" },
+              ].map((stat, i) => (
+                <div
+                  key={i}
+                  className="p-3 rounded-xl bg-neutral-50 dark:bg-zinc-800/30 border"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <p className="text-[8px] font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
+                    {stat.label}
+                  </p>
+                  <p
+                    className="text-base font-black"
+                    style={{ color: stat.color }}
+                  >
+                    {stat.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Attendance Stability
+              </h4>
+              <div className="space-y-3">
+                {[
+                  { label: "Punctuality", value: 88, color: "bg-emerald-500" },
+                  { label: "Consistency", value: 94, color: "bg-emerald-500" },
+                  { label: "Balance", value: 72, color: "bg-emerald-500" },
+                ].map((bar, i) => (
+                  <div key={i} className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-bold">
+                      <span style={{ color: "var(--foreground)" }}>
+                        {bar.label}
+                      </span>
+                      <span style={{ color: "var(--foreground)" }}>
+                        {bar.value}%
+                      </span>
+                    </div>
+                    <div className="h-1 w-full bg-neutral-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full ${bar.color} rounded-full`}
+                        style={{ width: `${bar.value}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Status Distribution */}
+          <div
+            className="rounded-2xl border bg-card shadow-sm p-5"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <h3
+              className="text-sm font-extrabold mb-4"
+              style={{ color: "var(--foreground)" }}
+            >
+              Status Distribution
+            </h3>
+
+            <div className="h-[200px] w-full relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={statusDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {statusDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <p
+                  className="text-xl font-black"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  85%
+                </p>
+                <p className="text-[8px] font-bold text-muted-foreground uppercase">
+                  Present
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-4">
+              {statusDistribution.map((item, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <div
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-[11px] font-bold text-muted-foreground truncate">
+                      {item.name}
+                    </span>
+                  </div>
+                  <span
+                    className="text-[11px] font-semibold"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    {item.value}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* System Alerts */}
+          <div
+            className="rounded-2xl border bg-card shadow-sm p-5"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <h3
+              className="text-sm font-extrabold mb-3"
+              style={{ color: "var(--foreground)" }}
+            >
+              System Alerts
+            </h3>
+            <div className="space-y-2">
+              <div className="p-3 rounded-2xl bg-orange-50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 flex gap-2.5">
+                <AlertCircle
+                  className="text-orange-600 flex-shrink-0"
+                  size={16}
+                />
+                <div>
+                  <p className="text-[11px] font-black text-orange-900 dark:text-orange-400">
+                    Late Attendance Peak
+                  </p>
+                  <p className="text-[9px] font-medium text-orange-700 dark:text-orange-500 mt-0.5">
+                    High late count in Marketing this week.
+                  </p>
+                </div>
+              </div>
+              <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 flex gap-2.5">
+                <CheckCircle2
+                  className="text-emerald-600 flex-shrink-0"
+                  size={16}
+                />
+                <div>
+                  <p className="text-[11px] font-black text-emerald-900 dark:text-emerald-400">
+                    Attendance Goal Met
+                  </p>
+                  <p className="text-[9px] font-medium text-emerald-700 dark:text-emerald-500 mt-0.5">
+                    Engineering reached 98% yesterday.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => navigate("/reports")}
+              className="w-full mt-3 py-2.5 rounded-xl border text-[11px] font-semibold uppercase tracking-wider text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-all active:scale-[0.98]"
+              style={{ borderColor: "var(--border)" }}
+            >
+              View Detailed Analytics
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

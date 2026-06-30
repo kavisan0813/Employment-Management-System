@@ -553,7 +553,7 @@ export function Topbar({
               }}
             >
               {[
-                { icon: User, label: "My Profile", path: "/profile" },
+                { icon: User, label: "My Profile", path: user?.role === "Employee" ? "/employee/profile" : "/profile" },
                 ...(user?.role !== "Employee"
                   ? [{ icon: Settings, label: "Settings", path: "/settings" }]
                   : []),
