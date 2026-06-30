@@ -79,7 +79,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         ],
       },
     ];
-  } else if (currentRole === "Super Admin" || currentRole === "HR Manager") {
+  } else if (currentRole === "Super Admin") {
     groups = [
       {
         label: "Home",
@@ -127,6 +127,46 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           { label: "Asset Management", path: "/asset-management" },
           { label: "F&F Settlement", path: "/finance/settlements" },
           { label: "Increment & Appraisal", path: "/appraisal" },
+        ],
+      },
+    ];
+  } else if (currentRole === "HR Manager") {
+    groups = [
+      {
+        label: "Home",
+        icon: Home,
+        items: [
+          { label: "Smart Search", path: "/smart-search" },
+          { label: "Dashboard", path: "/" },
+          { label: "Notifications", path: "/notifications" },
+        ],
+      },
+      {
+        label: "Reports",
+        icon: BarChart3,
+        items: [{ label: "Reports & Analytics", path: "/reports" }],
+      },
+      {
+        label: "Team Management",
+        icon: Users,
+        items: [
+          { label: "Employees", path: "/employees" },
+          { label: "Departments", path: "/departments" },
+          { label: "Recruitment", path: "/recruitment" },
+          { label: "Onboarding", path: "/onboarding" },
+          { label: "Offboarding", path: "/offboarding" },
+        ],
+      },
+      {
+        label: "HR Operations",
+        icon: CalendarCheck,
+        items: [
+          { label: "Attendance", path: "/attendance" },
+          { label: "Schedule", path: "/schedule" },
+          { label: "Leave Management", path: "/leave" },
+          { label: "Performance", path: "/performance" },
+          { label: "Training", path: "/training" },
+          { label: "Documents", path: "/documents" },
         ],
       },
     ];
@@ -781,48 +821,51 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 SETTINGS
               </p>
             )}
-            <NavLink
-              to="/settings/audit-logs"
-              title={collapsed ? "Audit Logs" : undefined}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                padding: collapsed ? "10px 14px" : "9px 12px",
-                borderRadius: "10px",
-                textDecoration: "none",
-                transition: "all 0.15s ease",
-                backgroundColor: isActive("/settings/audit-logs")
-                  ? "var(--sidebar-primary)"
-                  : "transparent",
-                color: isActive("/settings/audit-logs")
-                  ? "var(--sidebar-primary-foreground)"
-                  : "var(--sidebar-foreground)",
-                justifyContent: collapsed ? "center" : "flex-start",
-              }}
-              className={`group ${!isActive("/settings/audit-logs") && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
-            >
-              <FileText
-                size={18}
+            {/* Audit Logs — only for Super Admin & Finance */}
+            {(!currentRole || ["Super Admin", "Finance"].includes(currentRole)) && (
+              <NavLink
+                to="/settings/audit-logs"
+                title={collapsed ? "Audit Logs" : undefined}
                 style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  padding: collapsed ? "10px 14px" : "9px 12px",
+                  borderRadius: "10px",
+                  textDecoration: "none",
+                  transition: "all 0.15s ease",
+                  backgroundColor: isActive("/settings/audit-logs")
+                    ? "var(--sidebar-primary)"
+                    : "transparent",
                   color: isActive("/settings/audit-logs")
                     ? "var(--sidebar-primary-foreground)"
-                    : "inherit",
-                  flexShrink: 0,
+                    : "var(--sidebar-foreground)",
+                  justifyContent: collapsed ? "center" : "flex-start",
                 }}
-              />
-              {!collapsed && (
-                <span
+                className={`group ${!isActive("/settings/audit-logs") && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
+              >
+                <FileText
+                  size={18}
                   style={{
-                    fontSize: "13px",
-                    fontWeight: isActive("/settings/audit-logs") ? 600 : 500,
-                    whiteSpace: "nowrap",
+                    color: isActive("/settings/audit-logs")
+                      ? "var(--sidebar-primary-foreground)"
+                      : "inherit",
+                    flexShrink: 0,
                   }}
-                >
-                  Audit Logs
-                </span>
-              )}
-            </NavLink>
+                />
+                {!collapsed && (
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: isActive("/settings/audit-logs") ? 600 : 500,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    Audit Logs
+                  </span>
+                )}
+              </NavLink>
+            )}
             <NavLink
               to="/settings"
               title={collapsed ? "Settings" : undefined}
