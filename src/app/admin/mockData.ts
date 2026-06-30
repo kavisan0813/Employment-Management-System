@@ -27,18 +27,11 @@ import {
   AiUsageStat,
   PlatformSettings,
   AdminTeamMember,
+  DashboardStatsCache,
+  DailySnapshot,
 } from "./types";
 
-import {
-  LoginLog,
-  ActivityLog,
-  AuditTrail,
-  SecurityEventLog,
-  ErrorLog,
-  ExportLog,
-  LogRetentionPolicy,
-  ApiLog,
-} from "./features/auditLogs/types/logs.types";
+
 
 import {
   UserSession,
@@ -1507,6 +1500,34 @@ const initialPlatformSettings: PlatformSettings = {
   maintenanceMode: false,
 };
 
+// --- DASHBOARD INITIAL STATE ---
+const initialDashboardStatsCache: DashboardStatsCache = {
+  stat_id: "global-stats-1",
+  total_companies: 0,
+  active_subscriptions: 0,
+  trial_companies: 0,
+  expired_companies: 0,
+  suspended_companies: 0,
+  mrr_total: 0,
+  arr_total: 0,
+  new_signups_this_month: 0,
+  new_signups_today: 0,
+  active_companies_count: 0,
+  at_risk_companies_count: 0,
+  inactive_companies_count: 0,
+  total_employees_platform_wide: 0,
+  calculated_at: new Date().toISOString()
+};
+
+const initialDailySnapshots: DailySnapshot[] = [
+  { snapshot_date: new Date(new Date().setMonth(new Date().getMonth() - 5)).toISOString(), total_companies: 15, mrr_total: 105000, new_signups: 4, active_companies_count: 12, total_employees: 300 },
+  { snapshot_date: new Date(new Date().setMonth(new Date().getMonth() - 4)).toISOString(), total_companies: 19, mrr_total: 145000, new_signups: 5, active_companies_count: 15, total_employees: 450 },
+  { snapshot_date: new Date(new Date().setMonth(new Date().getMonth() - 3)).toISOString(), total_companies: 24, mrr_total: 195000, new_signups: 7, active_companies_count: 20, total_employees: 750 },
+  { snapshot_date: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString(), total_companies: 28, mrr_total: 240000, new_signups: 5, active_companies_count: 23, total_employees: 900 },
+  { snapshot_date: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString(), total_companies: 32, mrr_total: 290000, new_signups: 6, active_companies_count: 27, total_employees: 1200 },
+  { snapshot_date: new Date().toISOString(), total_companies: 35, mrr_total: 310000, new_signups: 3, active_companies_count: 30, total_employees: 1450 }
+];
+
 const initialAdminTeamMembers: AdminTeamMember[] = [
   {
     id: "adm-1",
@@ -1546,7 +1567,7 @@ const initialAdminTeamMembers: AdminTeamMember[] = [
   },
 ];
 
-const initialLoginLogs: LoginLog[] = [
+/* const initialLoginLogs: LoginLog[] = [
   {
     id: "login-1",
     user: "Ravi Kumar",
@@ -1863,7 +1884,7 @@ const initialLogRetentionPolicy: LogRetentionPolicy = {
   archiveEnabled: true,
   immutableLock: false,
   complianceStandard: "SOC2",
-};
+}; */
 
 const initialUserSessions: UserSession[] = [
   {
@@ -1951,7 +1972,7 @@ const initialCustomRoles: CustomRole[] = [
   },
 ];
 
-const initialApiLogs: ApiLog[] = [
+/* const initialApiLogs: ApiLog[] = [
   {
     id: "api-1",
     apiName: "Get Employees",
@@ -2006,7 +2027,7 @@ const initialApiLogs: ApiLog[] = [
     errorMessage: "Unauthorized",
   },
 ];
-
+ */
 // ==========================================
 // STATE MANAGEMENT CONTEXT
 // ==========================================
@@ -2117,7 +2138,7 @@ export const db = {
       getStore<AdminTeamMember[]>("admin_team", initialAdminTeamMembers),
     saveTeam: (data: AdminTeamMember[]) => saveStore("admin_team", data),
   },
-  loginLogs: {
+/*   loginLogs: {
     get: () => getStore<LoginLog[]>("loginLogs", initialLoginLogs),
     save: (data: LoginLog[]) => saveStore("loginLogs", data),
   },
@@ -2156,6 +2177,14 @@ export const db = {
   apiLogs: {
     get: () => getStore<ApiLog[]>("apiLogs", initialApiLogs),
     save: (data: ApiLog[]) => saveStore("apiLogs", data),
+  }, */
+  dashboardStats: {
+    get: () => getStore<DashboardStatsCache>("dashboardStats", initialDashboardStatsCache),
+    save: (data: DashboardStatsCache) => saveStore("dashboardStats", data),
+  },
+  dailySnapshots: {
+    get: () => getStore<DailySnapshot[]>("dailySnapshots", initialDailySnapshots),
+    save: (data: DailySnapshot[]) => saveStore("dailySnapshots", data),
   },
 };
 

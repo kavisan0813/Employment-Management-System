@@ -78,7 +78,7 @@ export function Sidebar() {
         { id: "complianceRules", label: "Compliance", icon: Layers, path: "/platform-admin/compliance" }
       ]
     }, */
-    {
+   /*  {
       title: "Security & API",
       id: "security_api",
       items: [
@@ -95,7 +95,7 @@ export function Sidebar() {
           path: "/platform-admin/roles",
         },
       ],
-    },
+    }, */
     {
       title: "SLA & Helpdesk",
       id: "helpdesk",
@@ -112,12 +112,12 @@ export function Sidebar() {
           icon: Megaphone,
           path: "/platform-admin/communication",
         },
-        {
+       /*  {
           id: "auditLogs",
           label: "Audit Logs",
           icon: History,
           path: "/platform-admin/audit-logs",
-        },
+        }, */
         // {
         //   id: "notifications",
         //   label: "Notifications",

@@ -20,7 +20,6 @@ export function DashboardOverview({ setActiveTab }: DashboardOverviewProps) {
     { id: "employees", label: "Total Employees", value: "50,000", subText: "Active: 47,000 | Inactive: 3,000", icon: Users, color: "text-teal-600 bg-white", bg: "bg-teal-50/50", border: "border-teal-100", tab: "employees" },
     { id: "revenue", label: "Monthly Revenue", value: "₹10,00,000", subText: "MRR: ₹10L | ARR: ₹1.2Cr", icon: CreditCard, color: "text-emerald-600 bg-white", bg: "bg-emerald-50/50", border: "border-emerald-100", tab: "revenue" },
     { id: "expiry", label: "Expiring Subs", value: "20 Alerts", subText: "Upcoming renewals (30d)", icon: AlertTriangle, color: "text-amber-600 bg-white", bg: "bg-amber-50/50", border: "border-amber-100", tab: "subscriptions" },
-    { id: "compliance", label: "Attendance Usage", value: "95%", subText: "Compliance & Punch-In Success", icon: CheckCircle2, color: "text-sky-600 bg-white", bg: "bg-sky-50/50", border: "border-sky-100", tab: "attendance" }
   ] as const;
 
   const quickLinks = [

@@ -50,56 +50,10 @@ export interface TimezoneSettings {
   useLocalTimeForPunches: boolean;
 }
 
-export interface EmailSettings {
-  smtpHost: string;
-  smtpPort: number;
-  smtpUser: string;
-  smtpPass: string;
-  senderEmail: string;
-  templates: {
-    welcome: { subject: string; body: string };
-    billingFailed: { subject: string; body: string };
-  };
-}
-
-export interface NotificationSettings {
-  enableEmail: boolean;
-  enableSms: boolean;
-  enablePush: boolean;
-  notifyOnLeave: boolean;
-  notifyOnPayroll: boolean;
-  notifyOnSecurityAlert: boolean;
-}
-
-export interface SecuritySettings {
-  passwordMinLength: number;
-  passwordRequireSpecial: boolean;
-  passwordRequireUppercase: boolean;
-  mfaRequirement: "none" | "admin" | "all";
-  ipWhitelist: { ip: string; label: string }[];
-}
-
-export interface StorageSettings {
-  maxUploadSizeMb: number;
-  tenantStorageLimitGb: number;
-  provider: "local" | "s3" | "azure" | "gcs";
-}
-
-export interface PreferencesSettings {
-  maintenanceMode: boolean;
-  allowSelfRegistration: boolean;
-  logRetentionDays: number;
-}
-
 export interface SystemConfig {
   general: GeneralSettings;
   branding: BrandingSettings;
   localization: LocalizationSettings;
   currency: CurrencySettings;
   timezone: TimezoneSettings;
-  email: EmailSettings;
-  notifications: NotificationSettings;
-  security: SecuritySettings;
-  storage: StorageSettings;
-  preferences: PreferencesSettings;
 }

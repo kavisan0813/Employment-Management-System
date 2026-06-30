@@ -2,11 +2,7 @@ import { useState } from "react";
 import {
   Building2,
   Plus,
-  CreditCard,
-  Settings,
-  Activity,
   Database,
-  Receipt,
   ShieldAlert,
   ArrowLeft,
 } from "lucide-react";
@@ -15,24 +11,18 @@ import { useOrganizations } from "./hooks/useOrganizations";
 // Placeholders for Global Components
 import { AllOrganizationsTable } from "./components/AllOrganizationsTable";
 import { AddOrganizationForm } from "./components/AddOrganizationForm";
-import { SubscriptionPlansTable } from "./components/SubscriptionPlansTable";
+
 
 // Placeholders for Org-Specific Components
 import { OrganizationProfile } from "./components/OrganizationProfile";
 import { OrganizationStatus } from "./components/OrganizationStatus";
-import { OrganizationSettings } from "./components/OrganizationSettings";
-import { OrgActivityLogs } from "./components/OrgActivityLogs";
 import { StorageUsage } from "./components/StorageUsage";
-import { BillingHistory } from "./components/BillingHistory";
 
 type GlobalTab = "all" | "add" | "plans";
 type OrgTab =
   | "profile"
   | "status"
-  | "settings"
-  | "logs"
-  | "storage"
-  | "billing";
+  | "storage";
 
 export function OrganizationManagementView() {
   const hook = useOrganizations();
@@ -48,14 +38,8 @@ export function OrganizationManagementView() {
           return <OrganizationProfile org={hook.activeOrg!} hook={hook} />;
         case "status":
           return <OrganizationStatus org={hook.activeOrg!} hook={hook} />;
-        case "settings":
-          return <OrganizationSettings org={hook.activeOrg!} hook={hook} />;
-        case "logs":
-          return <OrgActivityLogs org={hook.activeOrg!} />;
         case "storage":
           return <StorageUsage org={hook.activeOrg!} />;
-        case "billing":
-          return <BillingHistory org={hook.activeOrg!} hook={hook} />;
         default:
           return <OrganizationProfile org={hook.activeOrg!} hook={hook} />;
       }
@@ -73,8 +57,7 @@ export function OrganizationManagementView() {
               }}
             />
           );
-        case "plans":
-          return <SubscriptionPlansTable />;
+         
         default:
           return <AllOrganizationsTable hook={hook} />;
       }
@@ -146,7 +129,6 @@ export function OrganizationManagementView() {
               {[
                 { id: "all", label: "All Organizations", icon: Building2 },
                 { id: "add", label: "Add Organization", icon: Plus },
-                { id: "plans", label: "Subscription Plans", icon: CreditCard },
               ].map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeGlobalTab === tab.id;
@@ -172,10 +154,7 @@ export function OrganizationManagementView() {
               {[
                 { id: "profile", label: "Profile", icon: Building2 },
                 { id: "status", label: "Status", icon: ShieldAlert },
-                { id: "settings", label: "Settings", icon: Settings },
-                { id: "logs", label: "Logs", icon: Activity },
                 { id: "storage", label: "Storage", icon: Database },
-                { id: "billing", label: "Billing", icon: Receipt },
               ].map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeOrgTab === tab.id;

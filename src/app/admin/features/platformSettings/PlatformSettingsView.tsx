@@ -5,15 +5,9 @@
 
 import { usePlatformSettings } from "./hooks/usePlatformSettings";
 import { GeneralSettingsView } from "./components/GeneralSettingsView";
-import { BrandingSettingsView } from "./components/BrandingSettingsView";
 import { LocalizationSettingsView } from "./components/LocalizationSettingsView";
 import { CurrencySettingsView } from "./components/CurrencySettingsView";
 import { TimezoneSettingsView } from "./components/TimezoneSettingsView";
-import { EmailSettingsView } from "./components/EmailSettingsView";
-import { NotificationSettingsView } from "./components/NotificationSettingsView";
-import { SecuritySettingsView } from "./components/SecuritySettingsView";
-import { StorageSettingsView } from "./components/StorageSettingsView";
-import { PreferencesSettingsView } from "./components/PreferencesSettingsView";
 import { TenantOverrideSimulator } from "./components/TenantOverrideSimulator";
 
 // Import Icons
@@ -23,8 +17,6 @@ import {
   Globe,
   Coins,
   Clock,
-  HardDrive,
-  Sliders,
   CheckCircle2,
   AlertCircle,
   Info,
@@ -39,7 +31,6 @@ export function PlatformSettingsView() {
     showAlert,
     alertMsg,
     alertType,
-    triggerAlert,
     handleSave,
     getFormattedDatePreview,
     getFormattedNumberPreview,
@@ -53,12 +44,7 @@ export function PlatformSettingsView() {
       icon: Settings,
       group: "Foundation",
     },
-    {
-      id: "branding",
-      label: "Branding Settings",
-      icon: Palette,
-      group: "Foundation",
-    },
+    
     {
       id: "localization",
       label: "Localization & Regional",
@@ -75,18 +61,8 @@ export function PlatformSettingsView() {
     /* { id: "email", label: "Email Settings", icon: Mail, group: "Channels" }, */
     /*  { id: "notifications", label: "Notifications Rules", icon: Bell, group: "Channels" }, */
     /*   { id: "security", label: "Security & MFA", icon: Lock, group: "Governance" }, */
-    {
-      id: "storage",
-      label: "File Storage Policies",
-      icon: HardDrive,
-      group: "Governance",
-    },
-    {
-      id: "preferences",
-      label: "System Preferences",
-      icon: Sliders,
-      group: "Governance",
-    },
+    
+
   ] as const;
 
   const renderActiveTabContent = () => {
@@ -94,7 +70,7 @@ export function PlatformSettingsView() {
       case "general":
         return <GeneralSettingsView config={config} setConfig={setConfig} />;
       case "branding":
-        return <BrandingSettingsView config={config} setConfig={setConfig} />;
+       /*  return <BrandingSettingsView config={config} setConfig={setConfig} />;
       case "localization":
         return (
           <LocalizationSettingsView
@@ -103,7 +79,7 @@ export function PlatformSettingsView() {
             getFormattedDatePreview={getFormattedDatePreview}
             getFormattedNumberPreview={getFormattedNumberPreview}
           />
-        );
+        ); */
       case "currency":
         return (
           <CurrencySettingsView
@@ -114,32 +90,7 @@ export function PlatformSettingsView() {
         );
       case "timezone":
         return <TimezoneSettingsView config={config} setConfig={setConfig} />;
-      case "email":
-        return (
-          <EmailSettingsView
-            config={config}
-            setConfig={setConfig}
-            triggerAlert={triggerAlert}
-          />
-        );
-      case "notifications":
-        return (
-          <NotificationSettingsView config={config} setConfig={setConfig} />
-        );
-      case "security":
-        return (
-          <SecuritySettingsView
-            config={config}
-            setConfig={setConfig}
-            triggerAlert={triggerAlert}
-          />
-        );
-      case "storage":
-        return <StorageSettingsView config={config} setConfig={setConfig} />;
-      case "preferences":
-        return (
-          <PreferencesSettingsView config={config} setConfig={setConfig} />
-        );
+
       default:
         return <GeneralSettingsView config={config} setConfig={setConfig} />;
     }

@@ -20,7 +20,6 @@ export function useNotifications() {
   );
   const [activeTab, setActiveTab] = useState<
     | "dashboard"
-    | "system"
     | "expiry"
     | "failedPayments"
     | "security"

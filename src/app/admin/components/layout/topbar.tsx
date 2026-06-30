@@ -1,9 +1,25 @@
+import { useState, useRef, useEffect } from "react";
 import { useLocation, Link } from "react-router";
 import { useThemeContext } from "../../features/context/ThemeContext";
+import { useAuth } from "../../../context/AuthContext";
+import { ShieldCheck, User, Settings, LogOut } from "lucide-react";
 
 export function Topbar() {
   const { theme, toggleTheme } = useThemeContext();
   const location = useLocation();
+  const { user } = useAuth();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="h-header-height fixed top-0 right-0 z-40 bg-surface-bright border-b border-outline-variant flex justify-between items-center w-[calc(100%-280px)] ml-[280px] px-container-padding shadow-sm">
@@ -67,14 +83,101 @@ export function Topbar() {
           </span>
         </button>
         <div className="h-8 w-[1px] bg-outline-variant/50 mx-1"></div>
-        <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-surface-container-highest transition-all group border-0 bg-transparent cursor-pointer">
-          <span className="text-label-md font-label-md text-on-surface-variant group-hover:text-primary">
-            Profile
-          </span>
-          <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary">
-            expand_more
-          </span>
-        </button>
+        <div className="relative" ref={profileRef}>
+          <button 
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-surface-container-highest transition-all group border-0 bg-transparent cursor-pointer"
+          >
+            <span className="text-label-md font-label-md text-on-surface-variant group-hover:text-primary">
+              Profile
+            </span>
+            <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary">
+              expand_more
+            </span>
+          </button>
+          
+          {isProfileOpen && (
+            <div className="absolute right-0 mt-2 w-80 bg-surface-bright border border-outline-variant rounded-2xl shadow-xl z-50 overflow-hidden text-left">
+              {/* Enhanced Profile Header */}
+              <div className="p-6 border-b border-outline-variant bg-surface-container-low">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center font-bold text-2xl text-primary border border-primary/20 shrink-0">
+                    {user?.initials || "SR"}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-xl text-on-surface truncate">
+                        {user?.name || "System Administrator"}
+                      </h3>
+                    </div>
+                    <p className="text-on-surface-variant text-sm truncate" title={user?.email}>
+                      {user?.email || "platform@nexushr.com"}
+                    </p>
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                        Platform System Admin
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Info */}
+                <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-on-surface-variant text-xs">Department</p>
+                    <p className="font-medium text-on-surface">Platform Engineering</p>
+                  </div>
+                  <div>
+                    <p className="text-on-surface-variant text-xs">Member Since</p>
+                    <p className="font-medium text-on-surface">March 2024</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-outline-variant flex items-center gap-2 text-xs text-on-surface-variant">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <span>Secure SSL Active • SOC 2 Compliant</span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="p-2">
+                <Link
+                  to="/platform-admin/profile"
+                  className="w-full text-left px-4 py-3 text-sm text-on-surface hover:bg-surface-container-highest rounded-xl transition-colors flex items-center gap-3 border-0 bg-transparent cursor-pointer"
+                  onClick={() => setIsProfileOpen(false)}
+                >
+                  <User className="w-5 h-5" />
+                  <div>
+                    <div className="font-medium">View Full Profile</div>
+                    <div className="text-xs text-on-surface-variant">Manage personal details &amp; preferences</div>
+                  </div>
+                </Link>
+
+                <Link
+                  to="/platform-admin/settings"
+                  className="w-full text-left px-4 py-3 text-sm text-on-surface hover:bg-surface-container-highest rounded-xl transition-colors flex items-center gap-3 border-0 bg-transparent cursor-pointer"
+                  onClick={() => setIsProfileOpen(false)}
+                >
+                  <Settings className="w-5 h-5" />
+                  <div>
+                    <div className="font-medium">Account Settings</div>
+                    <div className="text-xs text-on-surface-variant">Security, notifications &amp; integrations</div>
+                  </div>
+                </Link>
+
+                <div className="h-px bg-outline-variant my-1 mx-2"></div>
+
+                <button 
+                  className="w-full text-left px-4 py-3 text-sm text-error hover:bg-error/5 rounded-xl transition-colors flex items-center gap-3 border-0 bg-transparent cursor-pointer"
+                  onClick={() => setIsProfileOpen(false)}
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span className="font-medium">Sign Out</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

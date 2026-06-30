@@ -22,7 +22,6 @@ import { FeedbackManagement } from "./components/FeedbackManagement";
 import { SLAManagement } from "./components/SLAManagement";
 import { KnowledgeBase } from "./components/KnowledgeBase";
 import { EscalationRules } from "./components/EscalationRules";
-import { SupportReports } from "./components/SupportReports";
 
 type Tab =
   | "dashboard"
@@ -37,7 +36,6 @@ type Tab =
 
 const tabs: { id: Tab; label: string; icon: any }[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "reports", label: "Reports & Analytics", icon: BarChart3 },
   { id: "tickets", label: "Support Tickets", icon: MessageSquare },
   { id: "issues", label: "Issue Tracking", icon: Bug },
   { id: "features", label: "Feature Requests", icon: Lightbulb },
@@ -105,13 +103,6 @@ export default function SupportTicketsView() {
           />
         );
 
-      case "reports":
-        return (
-          <SupportReports
-            tickets={hook.tickets}
-            feedback={hook.feedback}
-          />
-        );
 
       default:
         return <SupportDashboard stats={hook.stats} />;
