@@ -137,6 +137,9 @@ const Reports = lazy(() =>
 const Settings = lazy(() =>
   import("./pages/super-admin/settings/Settings").then((m) => ({ default: m.Settings })),
 );
+const HRSettings = lazy(() =>
+  import("./pages/hr/settings/HRSettings").then((m) => ({ default: m.HRSettings })),
+);
 const LeaveManagement = lazy(() =>
   import("./pages/hr/hr-operations/LeaveManagement").then((m) => ({
     default: m.LeaveManagement,
@@ -912,6 +915,9 @@ function SettingsWrapper() {
   }
   if (user?.role === "Employee") {
     return lazyRoute(EmployeeSettings);
+  }
+  if (user?.role === "HR Manager") {
+    return lazyRoute(HRSettings);
   }
   return lazyRoute(Settings);
 }
