@@ -16,7 +16,7 @@ import {
   TrendingUp,
   BookOpen,
 } from "lucide-react";
-import { showToast } from "../../components/workflow/ToastNotification";
+import { showToast } from "../../../components/workflow/ToastNotification";
 import { motion, AnimatePresence } from "motion/react";
 
 type NotificationCategory = "All" | "Unread" | "Approvals" | "System";

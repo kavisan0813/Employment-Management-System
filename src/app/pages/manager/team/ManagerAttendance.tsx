@@ -7,7 +7,7 @@ import {
   Clock,
   X,
 } from "lucide-react";
-import { useAttendance } from "../../context/AttendanceContext";
+import { useAttendance } from "../../../context/AttendanceContext";
 
 // Mock Data for the table
 interface AttendanceRow {

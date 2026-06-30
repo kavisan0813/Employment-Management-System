@@ -347,7 +347,7 @@ const FinancePersonalDashboard = lazy(() =>
 
 // Manager Team & Personal Components
 const ManagerAttendance = lazy(() =>
-  import("./pages/manager/ManagerAttendance").then((m) => ({
+  import("./pages/manager/team/ManagerAttendance").then((m) => ({
     default: m.ManagerAttendance,
   })),
 );
@@ -357,7 +357,7 @@ const ManagerTeamSchedule = lazy(() =>
   })),
 );
 const ManagerLeaveApprovals = lazy(() =>
-  import("./pages/manager/ManagerLeaveApprovals").then((m) => ({
+  import("./pages/manager/team/ManagerLeaveApprovals").then((m) => ({
     default: m.ManagerLeaveApprovals,
   })),
 );
@@ -372,7 +372,7 @@ const ManagerTeamTraining = lazy(() =>
   })),
 );
 const ManagerExpenseApprovals = lazy(() =>
-  import("./pages/manager/ManagerExpenseApprovals").then((m) => ({
+  import("./pages/manager/team/ManagerExpenseApprovals").then((m) => ({
     default: m.ManagerExpenseApprovals,
   })),
 );
@@ -446,7 +446,7 @@ const ManagerProfile = lazy(
     })), // Force reload
 );
 const ManagerNotifications = lazy(() =>
-  import("./pages/manager/ManagerNotifications").then((m) => ({
+  import("./pages/manager/workspace/ManagerNotifications").then((m) => ({
     default: m.ManagerNotifications,
   })),
 );
