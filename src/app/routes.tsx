@@ -31,7 +31,7 @@ const AdminDashboardPage = lazy(() =>
   })),
 );
 const SuperAdminDashboardPage = lazy(() =>
-  import("./components/dashboards/SuperAdminDashboard").then((m) => ({
+  import("./pages/super-admin/home/SuperAdminDashboard").then((m) => ({
     default: m.SuperAdminDashboard,
   })),
 );

@@ -2,7 +2,7 @@ import { useLocation } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 import { EmployeeSelfService } from "../employee/EmployeeSelfService";
 
-import { HRDashboard } from "../../components/dashboards/HRDashboard";
+import { HRDashboard } from "../hr/home/HRDashboard";
 import { FinanceDashboard } from "../../components/dashboards/FinanceDashboard";
 import { ManagerDashboard } from "../../components/dashboards/ManagerDashboard";
 
