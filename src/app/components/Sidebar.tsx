@@ -803,9 +803,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           paddingTop: "12px",
         }}
       >
-        {/* Settings Section — for Super Admin, HR Manager & Finance */}
+        {/* Settings Section — for Super Admin & Finance */}
         {(!currentRole ||
-          ["Super Admin", "HR Manager", "Finance"].includes(currentRole)) && (
+          ["Super Admin", "Finance"].includes(currentRole)) && (
           <>
             {!collapsed && (
               <p
