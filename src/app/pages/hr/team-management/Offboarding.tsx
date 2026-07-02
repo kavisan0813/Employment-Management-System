@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import {
   LogOut,
@@ -551,6 +552,7 @@ const ACTIVE_EMPLOYEES = [
 
 /* ─── MAIN COMPONENT ─── */
 export function Offboarding() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("Active");
   const [showInitiateModal, setShowInitiateModal] = useState(false);
   const [showDetail, setShowDetail] = useState<string | null>(null);
@@ -676,16 +678,22 @@ export function Offboarding() {
   };
 
   const handleSendToFinance = (exitId: string) => {
+    const isHR = user?.role === "HR Manager";
     setExits((prev) =>
       prev.map((e) => {
         if (e.id !== exitId) return e;
-        return { ...e, ffStatus: "Approved & Processed" };
+        return {
+          ...e,
+          ffStatus: isHR ? "Awaiting Finance Clearance" : "Approved & Processed",
+        };
       }),
     );
     showToast(
       "F&F Settlement",
       "success",
-      "F&F settlement approved and sent to bank.",
+      isHR
+        ? "F&F initiated and sent to Finance for clearance."
+        : "F&F settlement approved and sent to bank.",
     );
   };
 
@@ -1739,6 +1747,7 @@ function OffboardingDetail({
   onScheduleInterview: () => void;
   onSendToFinance: () => void;
 }) {
+  const { user } = useAuth();
   const colors = progressColor(exit.progress);
 
   return (
@@ -2067,12 +2076,23 @@ function OffboardingDetail({
                   <Clock size={12} /> {exit.ffStatus}
                 </span>
               </div>
-              <button
-                onClick={onSendToFinance}
-                className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm"
-              >
-                <Send size={14} className="inline mr-1.5" /> Send to Finance
-              </button>
+              {user?.role === "HR Manager" ? (
+                <button
+                  disabled={exit.ffStatus !== "Pending"}
+                  onClick={onSendToFinance}
+                  className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={14} className="inline mr-1.5" /> Initiate F&F
+                </button>
+              ) : (
+                <button
+                  disabled={exit.ffStatus === "Approved & Processed"}
+                  onClick={onSendToFinance}
+                  className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={14} className="inline mr-1.5" /> Approve & Process
+                </button>
+              )}
             </div>
 
             {/* Exit Interview */}

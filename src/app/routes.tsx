@@ -906,19 +906,6 @@ function EmployeeDashboardWrapper() {
 
 // ── Settings Wrapper: role-based view ─────────────────────────
 function SettingsWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Manager") {
-    return lazyRoute(ManagerSettings);
-  }
-  if (user?.role === "Finance") {
-    return lazyRoute(FinanceSettings);
-  }
-  if (user?.role === "Employee") {
-    return lazyRoute(EmployeeSettings);
-  }
-  if (user?.role === "HR Manager") {
-    return lazyRoute(HRSettings);
-  }
   return lazyRoute(Settings);
 }
 
@@ -1103,7 +1090,7 @@ export const router = createBrowserRouter([
         element: protectedRoute(ManagerTeamAssets),
       },
       { path: "manager/exit-tasks", element: protectedRoute(ManagerExitTasks) },
-      { path: "manager/settings", element: protectedRoute(ManagerSettings) },
+      { path: "manager/settings", element: protectedRoute(Settings) },
       {
         path: "manager/team-onboarding",
         element: protectedRoute(ManagerTeamOnboarding),

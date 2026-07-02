@@ -1078,6 +1078,8 @@ function EditPayrollModal({
   onClose: () => void;
   onSave: (updated: PayrollEmployee) => void;
 }) {
+  const { user } = useAuth();
+  const isHR = user?.role === "HR Manager";
   const [gross, setGross] = useState(employee.gross.toString());
   const [deductions, setDeductions] = useState(employee.deductions.toString());
   const [bonus, setBonus] = useState((employee.bonus || 0).toString());
@@ -1158,8 +1160,9 @@ function EditPayrollModal({
               type="number"
               value={gross}
               min="0"
+              readOnly={isHR}
               onChange={(e) => setGross(e.target.value)}
-              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${errors.gross ? "border-red-500 focus:border-red-500" : "border-border focus:border-emerald-500"}`}
+              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${isHR ? "bg-muted cursor-not-allowed opacity-75 border-border" : errors.gross ? "border-red-500 focus:border-red-500" : "border-border focus:border-emerald-500"}`}
             />
             {errors.gross && (
               <p className="text-xs text-red-500 mt-1">{errors.gross}</p>
@@ -1192,8 +1195,9 @@ function EditPayrollModal({
               type="number"
               value={deductions}
               min="0"
+              readOnly={isHR}
               onChange={(e) => setDeductions(e.target.value)}
-              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${errors.deductions ? "border-red-500" : "border-border focus:border-emerald-500"}`}
+              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${isHR ? "bg-muted cursor-not-allowed opacity-75 border-border" : errors.deductions ? "border-red-500 focus:border-red-500" : "border-border focus:border-emerald-500"}`}
             />
             {errors.deductions && (
               <p className="text-xs text-red-500 mt-1">{errors.deductions}</p>
@@ -1220,9 +1224,10 @@ function EditPayrollModal({
             <input
               type="text"
               value={bankAccount}
+              readOnly={isHR}
               onChange={(e) => setBankAccount(e.target.value)}
               placeholder="****1234"
-              className="w-full border border-border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 bg-transparent text-foreground transition-colors"
+              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${isHR ? "bg-muted cursor-not-allowed opacity-75 border-border" : "border-border focus:border-emerald-500"}`}
             />
           </div>
 
@@ -1233,10 +1238,11 @@ function EditPayrollModal({
             </label>
             <select
               value={status}
+              disabled={isHR}
               onChange={(e) =>
                 setStatus(e.target.value as PayrollEmployee["status"])
               }
-              className="w-full border border-border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 bg-transparent text-foreground transition-colors"
+              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${isHR ? "bg-muted cursor-not-allowed opacity-75 border-border" : "border-border focus:border-emerald-500"}`}
             >
               <option value="Paid">Paid</option>
               <option value="Pending">Pending</option>
@@ -1713,13 +1719,15 @@ export function Payroll() {
               Analytics
             </button>
 
-            <button
-              onClick={() => setShowRunModal(true)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-500/25 hover:opacity-90 active:scale-95 transition-all"
-            >
-              <Play size={14} className="fill-white" />
-              Run Payroll
-            </button>
+            {user?.role !== "HR Manager" && (
+              <button
+                onClick={() => setShowRunModal(true)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-500/25 hover:opacity-90 active:scale-95 transition-all"
+              >
+                <Play size={14} className="fill-white" />
+                Run Payroll
+              </button>
+            )}
           </div>
         </div>
 
@@ -2303,57 +2311,61 @@ export function Payroll() {
                                   <Mail size={14} className="text-sky-500" />{" "}
                                   Email Payslip
                                 </button>
-                                {emp.status !== "Paid" && (
-                                  <button
-                                    onClick={() => {
-                                      setOpenActionId(null);
-                                      setEmployeesData((prev) =>
-                                        prev.map((e) =>
-                                          e.id === emp.id
-                                            ? {
-                                                ...e,
-                                                status: "Paid" as const,
-                                                transferProgress: 100,
-                                              }
-                                            : e,
-                                        ),
-                                      );
-                                      addToast({
-                                        type: "success",
-                                        title: "Marked as Paid",
-                                        message: `${emp.name}'s payment has been disbursed.`,
-                                      });
-                                    }}
-                                    className="w-full text-left px-4 py-2.5 text-sm text-emerald-600 hover:bg-emerald-500/10 transition-colors flex items-center gap-2.5 font-medium"
-                                  >
-                                    <Unlock size={14} /> Mark as Paid
-                                  </button>
+                                {user?.role !== "HR Manager" && (
+                                  <>
+                                    {emp.status !== "Paid" && (
+                                      <button
+                                        onClick={() => {
+                                          setOpenActionId(null);
+                                          setEmployeesData((prev) =>
+                                            prev.map((e) =>
+                                              e.id === emp.id
+                                                ? {
+                                                    ...e,
+                                                    status: "Paid" as const,
+                                                    transferProgress: 100,
+                                                  }
+                                                : e,
+                                            ),
+                                          );
+                                          addToast({
+                                            type: "success",
+                                            title: "Marked as Paid",
+                                            message: `${emp.name}'s payment has been disbursed.`,
+                                          });
+                                        }}
+                                        className="w-full text-left px-4 py-2.5 text-sm text-emerald-600 hover:bg-emerald-500/10 transition-colors flex items-center gap-2.5 font-medium"
+                                      >
+                                        <Unlock size={14} /> Mark as Paid
+                                      </button>
+                                    )}
+                                    <div className="border-t border-border/50">
+                                      <button
+                                        onClick={() => {
+                                          setOpenActionId(null);
+                                          setEmployeesData((prev) =>
+                                            prev.map((e) =>
+                                              e.id === emp.id
+                                                ? {
+                                                    ...e,
+                                                    status: "On Hold" as const,
+                                                  }
+                                                : e,
+                                            ),
+                                          );
+                                          addToast({
+                                            type: "warning",
+                                            title: "Payment On Hold",
+                                            message: `${emp.name}'s disbursement is now on hold.`,
+                                          });
+                                        }}
+                                        className="w-full text-left px-4 py-2.5 text-sm text-amber-600 hover:bg-amber-500/10 transition-colors flex items-center gap-2.5 font-medium"
+                                      >
+                                        <Lock size={14} /> Hold Payment
+                                      </button>
+                                    </div>
+                                  </>
                                 )}
-                                <div className="border-t border-border/50">
-                                  <button
-                                    onClick={() => {
-                                      setOpenActionId(null);
-                                      setEmployeesData((prev) =>
-                                        prev.map((e) =>
-                                          e.id === emp.id
-                                            ? {
-                                                ...e,
-                                                status: "On Hold" as const,
-                                              }
-                                            : e,
-                                        ),
-                                      );
-                                      addToast({
-                                        type: "warning",
-                                        title: "Payment On Hold",
-                                        message: `${emp.name}'s disbursement is now on hold.`,
-                                      });
-                                    }}
-                                    className="w-full text-left px-4 py-2.5 text-sm text-amber-600 hover:bg-amber-500/10 transition-colors flex items-center gap-2.5 font-medium"
-                                  >
-                                    <Lock size={14} /> Hold Payment
-                                  </button>
-                                </div>
                               </div>
                             )}
                           </div>
@@ -2526,17 +2538,19 @@ export function Payroll() {
       </div>
 
       {/* ── Floating Action Button ── */}
-      <div className="fixed bottom-8 right-8 z-[2000]">
-        <button
-          onClick={() => setShowRunModal(true)}
-          className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all duration-300"
-        >
-          <Play size={20} className="fill-white translate-x-0.5" />
-          <div className="absolute right-full mr-3 px-3 py-1.5 bg-foreground text-background text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
-            Run Payroll
-          </div>
-        </button>
-      </div>
+      {user?.role !== "HR Manager" && (
+        <div className="fixed bottom-8 right-8 z-[2000]">
+          <button
+            onClick={() => setShowRunModal(true)}
+            className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all duration-300"
+          >
+            <Play size={20} className="fill-white translate-x-0.5" />
+            <div className="absolute right-full mr-3 px-3 py-1.5 bg-foreground text-background text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
+              Run Payroll
+            </div>
+          </button>
+        </div>
+      )}
 
       {/* ── Modals ── */}
       {showRunModal && (

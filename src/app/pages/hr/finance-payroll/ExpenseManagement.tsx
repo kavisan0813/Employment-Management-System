@@ -674,11 +674,13 @@ export function Expenses() {
           label={`${managerActionCount} Claims Need Manager Action`}
           onClick={() => setShowManagerQueue(true)}
         />
-        <StatusChip
-          dotColor="bg-emerald-500"
-          label={`${dueTodayCount} Reimbursements Due Today`}
-          onClick={() => setShowDuePayments(true)}
-        />
+        {user?.role !== "HR Manager" && (
+          <StatusChip
+            dotColor="bg-emerald-500"
+            label={`${dueTodayCount} Reimbursements Due Today`}
+            onClick={() => setShowDuePayments(true)}
+          />
+        )}
         <StatusChip
           dotColor="bg-rose-500"
           label={`${rejectedCount} Rejected Claims Need Resubmission`}
@@ -2494,12 +2496,14 @@ export function Expenses() {
                 <p className="text-base font-black text-foreground">
                   {formatCurrency(item.amount)}
                 </p>
-                <button
-                  onClick={() => toast.success("Marked as Paid")}
-                  className="px-5 py-2.5 bg-white text-slate-900 border border-border text-[11px] font-black rounded-xl shadow-lg hover:bg-[#00B87C]/[0.08] transition-all"
-                >
-                  Mark as Paid
-                </button>
+                {user?.role !== "HR Manager" && (
+                  <button
+                    onClick={() => toast.success("Marked as Paid")}
+                    className="px-5 py-2.5 bg-white text-slate-900 border border-border text-[11px] font-black rounded-xl shadow-lg hover:bg-[#00B87C]/[0.08] transition-all"
+                  >
+                    Mark as Paid
+                  </button>
+                )}
               </div>
             </div>
           ))}

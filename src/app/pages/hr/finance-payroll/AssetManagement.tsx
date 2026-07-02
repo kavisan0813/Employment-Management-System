@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import {
   Package,
   Download,
@@ -140,6 +141,7 @@ const MOCK_ASSETS: Asset[] = [
 ];
 
 export function AssetManagement() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("All Assets");
   const [searchQuery, setSearchQuery] = useState("");
   const [assets, setAssets] = useState<Asset[]>(MOCK_ASSETS);
@@ -555,13 +557,15 @@ export function AssetManagement() {
               <Download size={16} />
               Export
             </button>
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-[#00B87C] text-white rounded-xl font-bold text-[13px] hover:bg-[#009665] transition-all shadow-sm hover:shadow active:scale-[0.98]"
-            >
-              <Plus size={16} strokeWidth={3} />
-              Add Asset
-            </button>
+            {user?.role !== "HR Manager" && (
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-[#00B87C] text-white rounded-xl font-bold text-[13px] hover:bg-[#009665] transition-all shadow-sm hover:shadow active:scale-[0.98]"
+              >
+                <Plus size={16} strokeWidth={3} />
+                Add Asset
+              </button>
+            )}
           </div>
         </div>
 

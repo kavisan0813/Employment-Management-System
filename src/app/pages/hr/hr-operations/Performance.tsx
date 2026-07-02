@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import {
   TrendingUp,
   Search,
@@ -204,6 +205,7 @@ function MetricItem({
 
 /* ─── Main Page ──────────────────────────────────────────── */
 export function Performance() {
+  const { user } = useAuth();
   const [selectedDept, setSelectedDept] = useState("All Departments");
   const [selectedEmpId, setSelectedEmpId] = useState("All Employees");
   const [year, setYear] = useState("2026");
@@ -634,6 +636,9 @@ export function Performance() {
     if (!formStrengths.trim()) errors.strengths = "Strengths field is required";
     if (!formImprovement.trim())
       errors.improvement = "Improvement Areas field is required";
+    if (user?.role === "HR Manager" && formRecommendation === "Promotion" && formStatus === "Approved") {
+      errors.status = "HR Managers are not authorized to approve promotion recommendations.";
+    }
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -1692,7 +1697,7 @@ export function Performance() {
                           <option value="Pending">Pending</option>
                           <option value="In Review">In Review</option>
                           <option value="Completed">Completed</option>
-                          <option value="Approved">Approved</option>
+                          <option value="Approved" disabled={user?.role === "HR Manager" && formRecommendation === "Promotion"}>Approved</option>
                         </select>
                         {modalMode !== "view" && (
                           <ChevronDown
@@ -1701,6 +1706,9 @@ export function Performance() {
                           />
                         )}
                       </div>
+                      {formErrors.status && (
+                        <p className="text-xs text-red-500 mt-1">{formErrors.status}</p>
+                      )}
                     </div>
                   </div>
 

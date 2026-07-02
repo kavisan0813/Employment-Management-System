@@ -108,6 +108,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "/settings/security",
         "/settings/integrations",
         "/settings/roles",
+        "/settings/audit-logs",
+        "/settings/backup",
         "/finance/asset-cost-report",
       ];
       return !restricted.some((r) => normalizedPath.startsWith(r));

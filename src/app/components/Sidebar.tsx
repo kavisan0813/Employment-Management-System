@@ -277,15 +277,22 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       },
     ];
   } else {
-    // Regular Employee role or fallback (flat 7 items)
+    // Regular Employee role or fallback (nested under My Workspace)
     groups = [
-      { label: "My Dashboard", icon: Home, path: "/employee/dashboard" },
-      { label: "My Attendance", icon: CalendarCheck, path: "/employee/attendance" },
-      { label: "Leave", icon: Briefcase, path: "/employee/leave" },
-      { label: "Pay Slip", icon: IndianRupee, path: "/employee/payslip" },
-      { label: "Schedule", icon: Clock, path: "/employee/schedule" },
-      { label: "My Performance", icon: BarChart3, path: "/employee/performance" },
-      { label: "Notifications", icon: Bell, path: "/employee/notifications" },
+      {
+        label: "My Workspace",
+        icon: Briefcase,
+        items: [
+          { label: "My Dashboard", path: "/employee/dashboard" },
+          { label: "My Attendance", path: "/employee/attendance" },
+          { label: "Leave", path: "/employee/leave" },
+          { label: "Pay Slip", path: "/employee/payslip" },
+          { label: "Schedule", path: "/employee/schedule" },
+          { label: "My Performance", path: "/employee/performance" },
+          { label: "Training", path: "/training" },
+          { label: "Notifications", path: "/employee/notifications" },
+        ],
+      },
     ];
   }
 
@@ -489,10 +496,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         )}
       </div>
 
-      {/* Unified User Profile Card */}
       {!collapsed &&
         user &&
         currentRole &&
+        currentRole !== "Employee" &&
         !isNewJoinee &&
         (() => {
           const styleConf = getRoleStyle(currentRole);

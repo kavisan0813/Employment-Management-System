@@ -5375,50 +5375,103 @@ export function Reports() {
   };
 
   const getKpis = () => {
-    let employees = 248;
-    let hires = 12;
-    let attrition = 3;
-    let attendance = 91;
-    let payroll = 28.4;
-    let positions = 18;
+    const rawKpis = () => {
+      let employees = 248;
+      let hires = 12;
+      let attrition = 3;
+      let attendance = 91;
+      let payroll = 28.4;
+      let positions = 18;
 
-    if (filterDept === "Engineering") {
-      employees = 98;
-      hires = 5;
-      attrition = 1;
-      attendance = 94;
-      payroll = 14.2;
-      positions = 6;
-    } else if (filterDept === "Design") {
-      employees = 32;
-      hires = 2;
-      attrition = 0;
-      attendance = 91;
-      payroll = 4.1;
-      positions = 3;
-    } else if (filterDept === "Marketing") {
-      employees = 28;
-      hires = 1;
-      attrition = 1;
-      attendance = 87;
-      payroll = 3.2;
-      positions = 2;
-    } else if (filterDept === "Sales") {
-      employees = 35;
-      hires = 3;
-      attrition = 1;
-      attendance = 89;
-      payroll = 3.5;
-      positions = 4;
-    }
+      if (filterDept === "Engineering") {
+        employees = 98;
+        hires = 5;
+        attrition = 1;
+        attendance = 94;
+        payroll = 14.2;
+        positions = 6;
+      } else if (filterDept === "Design") {
+        employees = 32;
+        hires = 2;
+        attrition = 0;
+        attendance = 91;
+        payroll = 4.1;
+        positions = 3;
+      } else if (filterDept === "Marketing") {
+        employees = 28;
+        hires = 1;
+        attrition = 1;
+        attendance = 87;
+        payroll = 3.2;
+        positions = 2;
+      } else if (filterDept === "Sales") {
+        employees = 35;
+        hires = 3;
+        attrition = 1;
+        attendance = 89;
+        payroll = 3.5;
+        positions = 4;
+      }
 
-    if (filterDate === "Last Month") {
-      employees -= 5;
-      hires = Math.max(0, hires - 2);
-      payroll = payroll * 0.95;
-    }
+      if (filterDate === "Last Month") {
+        employees -= 5;
+        hires = Math.max(0, hires - 2);
+        payroll = payroll * 0.95;
+      }
 
-    if (isManager) {
+      if (isManager) {
+        return [
+          {
+            label: "Total Employees",
+            value: `${employees}`,
+            color: "#059669",
+            bg: "rgba(5, 150, 105, 0.15)",
+            trend: "+12",
+            icon: Users,
+          },
+          {
+            label: "New Hires",
+            value: `${hires}`,
+            color: "#0D9488",
+            bg: "rgba(13, 148, 136, 0.15)",
+            trend: "+5",
+            icon: UserPlus,
+          },
+          {
+            label: "Budget Utilization",
+            value: `${((payroll / 28.0) * 100).toFixed(1)}%`,
+            color: "#7C3AED",
+            bg: "rgba(124, 58, 237, 0.15)",
+            trend: "Under Budget",
+            icon: TrendingUp,
+          },
+          {
+            label: "Avg Attendance",
+            value: `${attendance}%`,
+            color: "#059669",
+            bg: "rgba(5, 150, 105, 0.15)",
+            trend: "+2.4%",
+            icon: CalendarCheck,
+          },
+          {
+            label: "Payroll Cost",
+            value: `₹${payroll.toFixed(1)}L`,
+            color: "#0EA5E9",
+            bg: "rgba(14, 165, 233, 0.15)",
+            trend: "+4.2%",
+            icon: DollarSign,
+          },
+          {
+            label: "Active Overtime",
+            value: "42 hrs",
+            color: "#EF4444",
+            bg: "rgba(239, 68, 68, 0.15)",
+            trend: "3 Alerts",
+            icon: Clock,
+          },
+        ];
+      }
+
       return [
         {
           label: "Total Employees",
@@ -5433,16 +5486,16 @@ export function Reports() {
           value: `${hires}`,
           color: "#0D9488",
           bg: "rgba(13, 148, 136, 0.15)",
-          trend: "+5",
+          trend: "+4",
           icon: UserPlus,
         },
         {
-          label: "Budget Utilization",
-          value: `${((payroll / 28.0) * 100).toFixed(1)}%`,
-          color: "#7C3AED",
-          bg: "rgba(124, 58, 237, 0.15)",
-          trend: "Under Budget",
-          icon: TrendingUp,
+          label: "Attrition",
+          value: `${attrition}`,
+          color: "#EF4444",
+          bg: "rgba(239, 68, 68, 0.15)",
+          trend: "-1",
+          icon: UserMinus,
         },
         {
           label: "Avg Attendance",
@@ -5455,79 +5508,44 @@ export function Reports() {
         {
           label: "Payroll Cost",
           value: `₹${payroll.toFixed(1)}L`,
-          color: "#0EA5E9",
-          bg: "rgba(14, 165, 233, 0.15)",
+          color: "#7C3AED",
+          bg: "rgba(124, 58, 237, 0.15)",
           trend: "+4.2%",
           icon: DollarSign,
         },
         {
-          label: "Active Overtime",
-          value: "42 hrs",
-          color: "#EF4444",
-          bg: "rgba(239, 68, 68, 0.15)",
-          trend: "3 Alerts",
-          icon: Clock,
+          label: "Open Positions",
+          value: `${positions}`,
+          color: "#D97706",
+          bg: "rgba(217, 119, 6, 0.15)",
+          trend: "+2",
+          icon: Briefcase,
         },
       ];
-    }
-
-    return [
-      {
-        label: "Total Employees",
-        value: `${employees}`,
-        color: "#059669",
-        bg: "rgba(5, 150, 105, 0.15)",
-        trend: "+12",
-        icon: Users,
-      },
-      {
-        label: "New Hires",
-        value: `${hires}`,
-        color: "#0D9488",
-        bg: "rgba(13, 148, 136, 0.15)",
-        trend: "+4",
-        icon: UserPlus,
-      },
-      {
-        label: "Attrition",
-        value: `${attrition}`,
-        color: "#EF4444",
-        bg: "rgba(239, 68, 68, 0.15)",
-        trend: "-1",
-        icon: UserMinus,
-      },
-      {
-        label: "Avg Attendance",
-        value: `${attendance}%`,
-        color: "#059669",
-        bg: "rgba(5, 150, 105, 0.15)",
-        trend: "+2.4%",
-        icon: CalendarCheck,
-      },
-      {
-        label: "Payroll Cost",
-        value: `₹${payroll.toFixed(1)}L`,
-        color: "#7C3AED",
-        bg: "rgba(124, 58, 237, 0.15)",
-        trend: "+4.2%",
-        icon: DollarSign,
-      },
-      {
-        label: "Open Positions",
-        value: `${positions}`,
-        color: "#D97706",
-        bg: "rgba(217, 119, 6, 0.15)",
-        trend: "+2",
-        icon: Briefcase,
-      },
-    ];
+    };
+    const list = rawKpis();
+    return user?.role === "HR Manager"
+      ? list.filter(
+          (k) =>
+            k.label !== "Payroll Cost" && k.label !== "Budget Utilization"
+        )
+      : list;
   };
 
   // Switch logic for reports
   if (activeReport === "Headcount Report")
     return <HeadcountReport onBack={() => setActiveReport(null)} />;
-  if (activeReport === "Payroll Summary")
+  if (activeReport === "Payroll Summary") {
+    if (user?.role === "HR Manager") {
+      return (
+        <div className="p-8 text-center bg-card border border-border rounded-2xl">
+          <p className="text-red-500 font-bold">Access Denied: You do not have permissions to view Finance reports.</p>
+          <button onClick={() => setActiveReport(null)} className="mt-4 px-4 py-2 bg-[#00B87C] text-white rounded-lg">Back to Reports</button>
+        </div>
+      );
+    }
     return <PayrollSummary onBack={() => setActiveReport(null)} />;
+  }
   if (activeReport === "Attendance Report")
     return <AttendanceReport onBack={() => setActiveReport(null)} />;
   if (activeReport === "Performance Review")
@@ -7225,10 +7243,12 @@ export function Reports() {
             }}
           >
             <div style={{ display: "flex", gap: "12px" }}>
-              {["All", "Workforce", "Finance", "Operations"].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setReportCategory(cat)}
+              {["All", "Workforce", "Finance", "Operations"]
+                .filter((cat) => !(user?.role === "HR Manager" && cat === "Finance"))
+                .map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setReportCategory(cat)}
                   style={{
                     padding: "6px 16px",
                     borderRadius: "9999px",
@@ -7306,6 +7326,10 @@ export function Reports() {
             }}
           >
             {reports
+              .filter(
+                (r) =>
+                  !(user?.role === "HR Manager" && r.category === "Finance"),
+              )
               .filter(
                 (r) =>
                   reportCategory === "All" || r.category === reportCategory,

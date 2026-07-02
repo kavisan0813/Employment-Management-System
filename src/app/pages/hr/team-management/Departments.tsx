@@ -880,7 +880,6 @@ export function Departments() {
                         "Move Department",
                         "Assign Head",
                         "View Employees",
-                        "Delete Department",
                       ].map((action) => (
                         <button
                           key={action}

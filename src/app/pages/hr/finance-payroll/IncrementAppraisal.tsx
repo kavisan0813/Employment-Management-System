@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router";
 import {
   Download,
@@ -376,6 +377,8 @@ function DetailDrawer({
   onApplyPayroll: () => void;
 }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isHR = user?.role === "HR Manager";
   const attScore = emp.attendancePct * 0.4 + emp.performanceScore * 0.6;
   const annualImpact = emp.revisedSalary - emp.currentSalary;
   const monthlyImpact = Math.round(annualImpact / 12);
@@ -1021,57 +1024,59 @@ function DetailDrawer({
             flexShrink: 0,
           }}
         >
+          {!isHR && (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "8px",
+                marginBottom: "8px",
+              }}
+            >
+              <button
+                onClick={onApprove}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                  padding: "10px",
+                  borderRadius: "12px",
+                  background: "linear-gradient(135deg, #059669, #047857)",
+                  color: "white",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                }}
+              >
+                <ThumbsUp size={14} /> Approve Increment
+              </button>
+              <button
+                onClick={onReject}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                  padding: "10px",
+                  borderRadius: "12px",
+                  backgroundColor: "rgba(239,68,68,0.1)",
+                  color: "#DC2626",
+                  border: "1px solid rgba(239,68,68,0.2)",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                }}
+              >
+                <ThumbsDown size={14} /> Reject
+              </button>
+            </div>
+          )}
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "8px",
-              marginBottom: "8px",
-            }}
-          >
-            <button
-              onClick={onApprove}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "6px",
-                padding: "10px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, #059669, #047857)",
-                color: "white",
-                border: "none",
-                cursor: "pointer",
-                fontSize: "13px",
-                fontWeight: 700,
-              }}
-            >
-              <ThumbsUp size={14} /> Approve Increment
-            </button>
-            <button
-              onClick={onReject}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "6px",
-                padding: "10px",
-                borderRadius: "12px",
-                backgroundColor: "rgba(239,68,68,0.1)",
-                color: "#DC2626",
-                border: "1px solid rgba(239,68,68,0.2)",
-                cursor: "pointer",
-                fontSize: "13px",
-                fontWeight: 700,
-              }}
-            >
-              <ThumbsDown size={14} /> Reject
-            </button>
-          </div>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: isHR ? "1fr" : "1fr 1fr",
               gap: "8px",
             }}
           >
@@ -1094,25 +1099,27 @@ function DetailDrawer({
             >
               <Send size={14} /> Send for Review
             </button>
-            <button
-              onClick={onApplyPayroll}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "6px",
-                padding: "10px",
-                borderRadius: "12px",
-                backgroundColor: "rgba(20,184,166,0.1)",
-                color: "#0D9488",
-                border: "1px solid rgba(20,184,166,0.2)",
-                cursor: "pointer",
-                fontSize: "13px",
-                fontWeight: 700,
-              }}
-            >
-              <IndianRupee size={14} /> Apply to Payroll
-            </button>
+            {!isHR && (
+              <button
+                onClick={onApplyPayroll}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                  padding: "10px",
+                  borderRadius: "12px",
+                  backgroundColor: "rgba(20,184,166,0.1)",
+                  color: "#0D9488",
+                  border: "1px solid rgba(20,184,166,0.2)",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                  fontWeight: 700,
+                }}
+              >
+                <IndianRupee size={14} /> Apply to Payroll
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -1255,6 +1262,7 @@ function Toast({
 
 // ─── Main Page ────────────────────────────────────────────
 export function IncrementAppraisal() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedYear, setSelectedYear] = useState("2025–2026");
   const [selectedDept, setSelectedDept] = useState("All Departments");

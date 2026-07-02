@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { useAuth } from "../../../context/AuthContext";
 import { useDebounce } from "../../../hooks/useDebounce";
+import { showToast } from "../../../components/workflow/ToastNotification";
 import {
   Search,
   Plus,
@@ -2311,7 +2312,12 @@ export function Employees() {
                           <button
                             className="w-full text-left px-4 py-2 text-[13px] font-medium text-red-500 transition-colors hover:bg-red-50"
                             onClick={() => {
-                              setDeleteEmployee(emp);
+                              if (user?.role === "HR Manager") {
+                                updateEmployee(emp.id, { ...emp, status: "Inactive" });
+                                showToast("Employee Deactivated", "success", `${emp.name} has been deactivated.`);
+                              } else {
+                                setDeleteEmployee(emp);
+                              }
                               setActionMenuRow(null);
                             }}
                           >
