@@ -496,60 +496,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         )}
       </div>
 
-      {!collapsed &&
-        user &&
-        currentRole &&
-        currentRole !== "Employee" &&
-        !isNewJoinee &&
-        (() => {
-          const styleConf = getRoleStyle(currentRole);
-          return (
-            <div className="mx-4 mt-5 mb-2">
-              <div className="flex items-center gap-3 p-1">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 shadow-sm"
-                  style={{
-                    background: styleConf.avatarBg,
-                    color: styleConf.avatarColor,
-                    border: styleConf.avatarBorder || "none",
-                  }}
-                >
-                  {styleConf.initials}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-black text-foreground truncate leading-tight">
-                    {styleConf.title}
-                  </p>
-                  <p className="text-[11px] font-bold text-muted-foreground truncate">
-                    {styleConf.subtitle}
-                  </p>
-                </div>
-              </div>
-              <div
-                className="mt-2 px-2.5 py-1 rounded-full inline-flex items-center gap-1.5"
-                style={{
-                  backgroundColor: styleConf.badgeBg,
-                  border: styleConf.badgeBorder || "none",
-                }}
-              >
-                <div
-                  className="w-1.5 h-1.5 rounded-full"
-                  style={{
-                    backgroundColor: styleConf.badgeColor,
-                  }}
-                />
-                <span
-                  className="text-[10px] font-black uppercase tracking-widest"
-                  style={{
-                    color: styleConf.badgeColor,
-                  }}
-                >
-                  {currentRole}
-                </span>
-              </div>
-            </div>
-          );
-        })()}
+
 
       {/* Navigation */}
       <nav className="flex-1 py-3 overflow-y-auto no-scrollbar">

@@ -684,7 +684,9 @@ export function Offboarding() {
         if (e.id !== exitId) return e;
         return {
           ...e,
-          ffStatus: isHR ? "Awaiting Finance Clearance" : "Approved & Processed",
+          ffStatus: isHR
+            ? "Awaiting Finance Clearance"
+            : "Approved & Processed",
         };
       }),
     );
