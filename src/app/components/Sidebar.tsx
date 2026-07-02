@@ -169,6 +169,17 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           { label: "Documents", path: "/documents" },
         ],
       },
+      {
+        label: "My Workspace",
+        icon: Briefcase,
+        items: [
+          { label: "My Dashboard", path: "/employee/dashboard" },
+          { label: "My Attendance", path: "/employee/attendance" },
+          { label: "My Leaves", path: "/employee/leave" },
+          { label: "My Schedule", path: "/employee/schedule" },
+          { label: "My Performance", path: "/employee/performance" },
+        ],
+      },
     ];
   } else if (currentRole === "Finance") {
     groups = [

@@ -226,7 +226,7 @@ export function EmployeeSelfService() {
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-700"></div>
         <div className="relative z-10">
           <h2 className="text-[22px] font-black text-foreground mb-1">
-            Good Morning, Priya! 👋
+            Good Morning, {user?.name?.split(" ")[0] || "Employee"}! 👋
           </h2>
           <p className="text-[14px] font-medium text-muted-foreground">
             You have{" "}
@@ -237,15 +237,31 @@ export function EmployeeSelfService() {
         <div className="flex items-center gap-4 relative z-10">
           <div className="flex flex-col items-end hidden sm:flex">
             <div className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-semibold uppercase tracking-wider border border-primary/20">
-              Engineering Team
+              {user?.role === "HR Manager"
+                ? "HR Department"
+                : user?.role === "Finance"
+                  ? "Finance Team"
+                  : user?.role === "Manager"
+                    ? "Management Team"
+                    : user?.role === "Super Admin"
+                      ? "Administration"
+                      : "Engineering Team"}
             </div>
             <p className="text-[11px] font-bold text-muted-foreground mt-1">
-              #EMP-0142
+              {user?.role === "HR Manager"
+                ? "#EMP-0042"
+                : user?.role === "Finance"
+                  ? "#EMP-0088"
+                  : user?.role === "Manager"
+                    ? "#EMP-0099"
+                    : user?.role === "Super Admin"
+                      ? "#EMP-0001"
+                      : "#EMP-0142"}
             </p>
           </div>
           <div className="w-14 h-14 rounded-full border-2 border-primary/20 p-0.5 overflow-hidden shadow-inner">
             <div className="w-full h-full rounded-full bg-primary flex items-center justify-center text-white font-black text-xl shadow-lg">
-              {user?.initials || "PS"}
+              {user?.initials || "EE"}
             </div>
           </div>
         </div>
