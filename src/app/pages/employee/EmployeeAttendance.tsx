@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router";
 import { StatusBadge } from "../../components/workflow/StatusBadge";
 import { useAttendance } from "../../context/AttendanceContext";
+import { useAuth } from "../../context/AuthContext";
 
 interface RegularizationRequest {
   id: string;
@@ -485,6 +486,7 @@ const MONTH_NAMES = [
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export function EmployeeAttendance() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const {
     punchState,
@@ -528,6 +530,27 @@ export function EmployeeAttendance() {
   const [logs, setLogs] = useState(ATTENDANCE_LOGS);
   const [selectedDay, setSelectedDay] = useState<number | null>(6); // Default to April 6 (Today)
   const [regDefaultDate, setRegDefaultDate] = useState("");
+
+  const mergedLogs = useMemo(() => {
+    const todayStr = "06 Apr 2026";
+    let updated = [...logs];
+    const todayIdx = updated.findIndex((l) => l.date === todayStr);
+
+    if (punchState.punchInTime) {
+      const todayLog = {
+        date: todayStr,
+        in: punchState.punchInTime,
+        out: punchState.punchOutTime || "-",
+        status: "Present",
+      };
+      if (todayIdx > -1) {
+        updated[todayIdx] = todayLog;
+      } else {
+        updated.push(todayLog);
+      }
+    }
+    return updated;
+  }, [logs, punchState.punchInTime, punchState.punchOutTime]);
 
   // Calendar Math
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
@@ -1146,7 +1169,7 @@ export function EmployeeAttendance() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {logs.map((log, i) => {
+                  {mergedLogs.map((log, i) => {
                     const logDay = parseInt(log.date.split(" ")[0]);
                     const isSelectedRow = selectedDay === logDay;
                     return (

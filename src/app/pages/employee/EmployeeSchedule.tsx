@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useAuth } from "../../context/AuthContext";
 import {
   Clock,
   ChevronLeft,
@@ -265,6 +266,7 @@ function getShiftForDate(d: Date): Shift {
 /* Main Page Component                                             */
 /* ─────────────────────────────────────────────────────────────── */
 export function EmployeeSchedule() {
+  const { user } = useAuth();
   const [view, setView] = useState<"Week" | "Month" | "Day">("Week");
   const [currentPage, setCurrentPage] = useState<"calendar" | "requests">(
     "calendar",
@@ -665,14 +667,22 @@ export function EmployeeSchedule() {
                     <td className="px-6 py-5 border-b border-border">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white text-[12px] font-black border-2 border-card shadow-sm">
-                          PS
+                          {user?.initials || "PS"}
                         </div>
                         <div>
                           <p className="text-[14px] font-black text-foreground">
-                            Priya Sharma
+                            {user?.name || "Priya Sharma"}
                           </p>
                           <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                            Engineering
+                            {user?.role === "HR Manager"
+                              ? "HR Department"
+                              : user?.role === "Finance"
+                                ? "Finance Team"
+                                : user?.role === "Manager"
+                                  ? "Management Team"
+                                  : user?.role === "Super Admin"
+                                    ? "Administration"
+                                    : "Engineering"}
                           </p>
                         </div>
                       </div>
