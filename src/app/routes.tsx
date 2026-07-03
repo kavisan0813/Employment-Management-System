@@ -42,11 +42,7 @@ const AdminOrganizationsPage = lazy(() =>
     }),
   ),
 );
-const AdminGlobalUsersPage = lazy(() =>
-  import("./admin/features/userManagement/UserManagementView").then((m) => ({
-    default: m.default,
-  })),
-);
+
 const AdminSubscriptionsPage = lazy(() =>
   import("./admin/features/subscription-billing/SubscriptionBillingView").then(
     (m) => ({
@@ -77,8 +73,10 @@ const AdminSupportTicketsPage = lazy(() =>
 const AdminFeatureManagementPage = lazy(() =>
   import("./admin/features/featureManagement/FeatureManagementView")
 );
-const AdminRoleTemplatesPage = lazy(() =>
-  import("./admin/features/roleTemplates/RoleTemplatesView")
+const AdminRolesPermissionsPage = lazy(() =>
+  import("./admin/features/userManagement/RolesPermissionsView").then((m) => ({
+    default: m.default,
+  })),
 );
 const AdminPlatformSettingsPage = lazy(() =>
   import("./admin/features/platformSettings/PlatformSettingsView").then(
@@ -956,13 +954,13 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: "dashboard", element: lazyRoute(AdminDashboardPage) },
       { path: "organizations", element: lazyRoute(AdminOrganizationsPage) },
-      { path: "users", element: lazyRoute(AdminGlobalUsersPage) },
+
       { path: "subscriptions", element: lazyRoute(AdminSubscriptionsPage) },
       { path: "reports", element: lazyRoute(AdminReportsPage) },
       { path: "support-tickets", element: lazyRoute(AdminSupportTicketsPage) },
 //       { path: "announcements", element: lazyRoute(AdminAnnouncementsPage) },
       { path: "features", element: lazyRoute(AdminFeatureManagementPage) },
-      { path: "roles", element: lazyRoute(AdminRoleTemplatesPage) },
+      { path: "roles", element: lazyRoute(AdminRolesPermissionsPage) },
       { path: "settings", element: lazyRoute(AdminPlatformSettingsPage) },
       { path: "notifications", element: lazyRoute(AdminNotificationsPage) },
       { path: "communication", element: lazyRoute(AdminCommunicationPage) },

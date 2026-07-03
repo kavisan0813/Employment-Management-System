@@ -5,6 +5,7 @@ import {
   Database,
   ShieldAlert,
   ArrowLeft,
+  Users,
 } from "lucide-react";
 import { useOrganizations } from "./hooks/useOrganizations";
 
@@ -12,17 +13,14 @@ import { useOrganizations } from "./hooks/useOrganizations";
 import { AllOrganizationsTable } from "./components/AllOrganizationsTable";
 import { AddOrganizationForm } from "./components/AddOrganizationForm";
 
-
 // Placeholders for Org-Specific Components
 import { OrganizationProfile } from "./components/OrganizationProfile";
 import { OrganizationStatus } from "./components/OrganizationStatus";
 import { StorageUsage } from "./components/StorageUsage";
+import { OrganizationUsersTab } from "./components/OrganizationUsersTab";
 
 type GlobalTab = "all" | "add" | "plans";
-type OrgTab =
-  | "profile"
-  | "status"
-  | "storage";
+type OrgTab = "profile" | "status" | "storage" | "users";
 
 export function OrganizationManagementView() {
   const hook = useOrganizations();
@@ -40,6 +38,8 @@ export function OrganizationManagementView() {
           return <OrganizationStatus org={hook.activeOrg!} hook={hook} />;
         case "storage":
           return <StorageUsage org={hook.activeOrg!} />;
+        case "users":
+          return <OrganizationUsersTab org={hook.activeOrg!} />;
         default:
           return <OrganizationProfile org={hook.activeOrg!} hook={hook} />;
       }
@@ -57,7 +57,7 @@ export function OrganizationManagementView() {
               }}
             />
           );
-         
+
         default:
           return <AllOrganizationsTable hook={hook} />;
       }
@@ -155,6 +155,7 @@ export function OrganizationManagementView() {
                 { id: "profile", label: "Profile", icon: Building2 },
                 { id: "status", label: "Status", icon: ShieldAlert },
                 { id: "storage", label: "Storage", icon: Database },
+                { id: "users", label: "User Management", icon: Users },
               ].map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeOrgTab === tab.id;

@@ -33,7 +33,6 @@
   --chart-4: #22c55e;
   --chart-5: #047857;
   --radius: 0.75rem;
-
   --label: #9ca3af;
   --success: #00b87c;
   --success-light: #dcfce7;
@@ -45,8 +44,6 @@
   --info-light: #e0f2fe;
   --purple: #8b5cf6;
   --purple-light: #ede9fe;
-
-  /* Sidebar Light Mode */
   --sidebar-background: #ffffff;
   --sidebar-foreground: #111827;
   --sidebar-primary: #00b87c;
@@ -76,7 +73,6 @@
   --input-background: #04100d;
   --switch-background: #062d24;
   --ring: #00b87c;
-
   --sidebar-background: #04100d;
   --sidebar-foreground: #a7f3d0;
   --sidebar-primary: #00b87c;
