@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../../../context/AuthContext";
+import type { Employee } from "../../../context/AppContext";
 import {
   Settings,
   Plus,
@@ -14,9 +15,18 @@ import {
   RefreshCw,
   Upload,
   ShieldCheck,
+  IndianRupee,
+  AlertCircle,
+  Info,
+  CheckCircle2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
+import { useEmployees } from "../../../context/AppContext";
+import { payrollService } from "../payroll/payroll.service";
+import { calculatePayslip } from "../payroll/calculatePayslip";
+import type { SalaryStructure } from "../payroll/payroll.types";
+import { useForm } from "react-hook-form";
 
 type NavItem = {
   id: string;
@@ -27,6 +37,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { id: "pay-cycle", label: "Pay Cycle", section: "PAYROLL" },
   { id: "salary-components", label: "Salary Components", section: "PAYROLL" },
+  { id: "salary-structures", label: "Salary Structures", section: "PAYROLL" },
   { id: "bands-grades", label: "Salary Bands & Grades", section: "PAYROLL" },
   { id: "pf", label: "Provident Fund (PF)", section: "STATUTORY" },
   { id: "tds", label: "Tax (TDS) Settings", section: "STATUTORY" },
@@ -147,6 +158,8 @@ export interface PayslipTemplateConfig {
 export function FinancePayrollSettings() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("pay-cycle");
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Custom Toast System (for bulletproof toast delivery)
   const [localToasts, setLocalToasts] = useState<
@@ -2030,6 +2043,17 @@ export function FinancePayrollSettings() {
                   />
                 </section>
               )}
+
+              {/* TAB: SALARY STRUCTURES */}
+              {activeTab === "salary-structures" && (
+                <SalaryStructuresSection
+                  key={refreshKey}
+                  onConfigure={(emp) => {
+                    setSelectedEmployee(emp);
+                    setActiveModal("configure-structure");
+                  }}
+                />
+              )}
             </motion.div>
           </AnimatePresence>
         </main>
@@ -2037,8 +2061,8 @@ export function FinancePayrollSettings() {
 
       {/* ─── MODALS ────────────────────────── */}
       <AnimatePresence>
-        {activeModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#031B17]/80 backdrop-blur-sm p-4">
+        {activeModal && activeModal !== "configure-structure" && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#031B17]/80 backdrop-blur-sm p-4 text-foreground">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -2225,6 +2249,19 @@ export function FinancePayrollSettings() {
               )}
             </motion.div>
           </div>
+        )}
+
+        {activeModal === "configure-structure" && selectedEmployee && (
+          <SalaryStructureModal
+            employee={selectedEmployee}
+            onClose={() => {
+              setActiveModal(null);
+              setSelectedEmployee(null);
+            }}
+            onSaveSuccess={() => {
+              setRefreshKey((prev) => prev + 1);
+            }}
+          />
         )}
       </AnimatePresence>
 
@@ -3186,6 +3223,688 @@ function PayslipConfigurator({
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* Salary Structures Section (Table & Badges)                       */
+/* ─────────────────────────────────────────────────────────────── */
+interface SalaryStructuresSectionProps {
+  onConfigure: (employee: Employee) => void;
+}
+
+export function SalaryStructuresSection({ onConfigure }: SalaryStructuresSectionProps) {
+  const { employeesList } = useEmployees();
+  const [structures, setStructures] = useState<SalaryStructure[]>(() =>
+    payrollService.getSalaryStructures()
+  );
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    setStructures(payrollService.getSalaryStructures());
+  }, []);
+
+  const activeEmployees = useMemo(() => {
+    return employeesList.filter((emp: Employee) => emp.status === "Active");
+  }, [employeesList]);
+
+  const filteredEmployees = useMemo(() => {
+    return activeEmployees.filter((emp: Employee) => {
+      const matchQuery =
+        emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        emp.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        emp.designation.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchQuery;
+    });
+  }, [activeEmployees, searchQuery]);
+
+  return (
+    <section className="bg-card border border-border rounded-[20px] overflow-hidden shadow-lg space-y-4">
+      <div className="px-6 py-4 bg-emerald-500/5 border-b border-border flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#00C781] shadow-[0_0_8px_rgba(0,199,129,0.5)]" />
+          <h2 className="text-[12px] font-bold text-[#00C781] uppercase tracking-widest">
+            Employee Salary Structures
+          </h2>
+        </div>
+      </div>
+
+      <div className="p-6 space-y-4">
+        {/* Search Bar */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="relative max-w-xs w-full">
+            <Search
+              size={16}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <input
+              type="text"
+              placeholder="Search employees..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-input-background border border-border rounded-xl pl-10 pr-4 py-2 text-sm text-foreground placeholder-gray-500 focus:border-[#00C781] outline-none transition-all"
+            />
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="overflow-x-auto border border-border rounded-xl bg-input-background">
+          <table className="w-full text-left">
+            <thead className="bg-card border-b border-border">
+              <tr>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Employee
+                </th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Department
+                </th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Annual CTC
+                </th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Monthly Gross
+                </th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-center">
+                  PF
+                </th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-center">
+                  ESI
+                </th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  PT State
+                </th>
+                <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground text-right">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filteredEmployees.map((emp: Employee) => {
+                const struct = structures.find(
+                  (s) => s.employeeId === emp.id
+                );
+                const isConfigured = !!struct;
+                const monthlyGross = struct
+                  ? struct.basic + struct.hra + struct.allowances
+                  : 0;
+
+                return (
+                  <tr
+                    key={emp.id}
+                    className="hover:bg-white/5 transition-all text-xs font-semibold text-foreground h-[56px]"
+                  >
+                    <td className="px-6 py-4">
+                      <div>
+                        <p className="text-[14px] font-bold text-foreground leading-tight truncate">
+                          {emp.name}
+                        </p>
+                        <p className="text-[12px] text-muted-foreground truncate">
+                          {emp.designation}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-muted-foreground">
+                      {emp.department}
+                    </td>
+                    <td className="px-6 py-4">
+                      {isConfigured ? (
+                        <span className="font-bold text-[#00C781]">
+                          ₹{struct.ctc.toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase bg-rose-500/10 text-rose-500 border border-rose-500/20">
+                          Missing Structure
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-muted-foreground">
+                      {isConfigured ? `₹${monthlyGross.toLocaleString()}` : "—"}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {isConfigured ? (
+                        struct.pfApplicable ? (
+                          <span className="text-[#00C781] font-bold">Yes</span>
+                        ) : (
+                          <span className="text-muted-foreground">No</span>
+                        )
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {isConfigured ? (
+                        struct.esiApplicable ? (
+                          <span className="text-[#00C781] font-bold">Yes</span>
+                        ) : (
+                          <span className="text-muted-foreground">No</span>
+                        )
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-muted-foreground">
+                      {isConfigured ? struct.ptState : "—"}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button
+                        onClick={() => onConfigure(emp)}
+                        className={`px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 ml-auto ${
+                          isConfigured
+                            ? "border border-border text-muted-foreground hover:text-foreground hover:bg-white/5"
+                            : "bg-[#00B87C] text-white hover:opacity-90 shadow-md shadow-[#00B87C]/10"
+                        }`}
+                      >
+                        <Edit2 size={12} />
+                        {isConfigured ? "Edit" : "Configure"}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+              {filteredEmployees.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="text-center py-8 text-muted-foreground text-xs"
+                  >
+                    No active employees found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* Salary Structure Configuration & Preview Modal                  */
+/* ─────────────────────────────────────────────────────────────── */
+interface SalaryStructureFormValues {
+  ctc: number;
+  gross: number;
+  basic: number;
+  hra: number;
+  pfApplicable: boolean;
+  ptState: string;
+}
+
+interface SalaryStructureModalProps {
+  employee: Employee;
+  onClose: () => void;
+  onSaveSuccess: () => void;
+}
+
+export function SalaryStructureModal({
+  employee,
+  onClose,
+  onSaveSuccess,
+}: SalaryStructureModalProps) {
+  const PREVIEW_WORKING_DAYS = 22; // preview-only assumption; real run uses actual days for the month.
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<SalaryStructureFormValues>({
+    defaultValues: {
+      ctc: 0,
+      gross: 0,
+      basic: 0,
+      hra: 0,
+      pfApplicable: true,
+      ptState: "Maharashtra",
+    },
+  });
+
+  // Prefill when component mounts/changes
+  useEffect(() => {
+    const structures = payrollService.getSalaryStructures();
+    const struct = structures.find((s) => s.employeeId === employee.id);
+    if (struct) {
+      const grossVal = struct.basic + struct.hra + struct.allowances;
+      setValue("ctc", struct.ctc);
+      setValue("gross", grossVal);
+      setValue("basic", struct.basic);
+      setValue("hra", struct.hra);
+      setValue("pfApplicable", struct.pfApplicable);
+      setValue("ptState", struct.ptState);
+    }
+  }, [employee, setValue]);
+
+  // Watchers for live preview calculations
+  const watchedCtc = watch("ctc") || 0;
+  const watchedGross = watch("gross") || 0;
+  const watchedBasic = watch("basic") || 0;
+  const watchedHra = watch("hra") || 0;
+  const watchedPf = watch("pfApplicable");
+  const watchedPt = watch("ptState");
+
+  // Custom change handlers for controlled cascades
+  const handleCtcChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Math.max(0, Number(e.target.value) || 0);
+    setValue("ctc", val);
+    const derivedGross = Math.round(val / 12);
+    setValue("gross", derivedGross);
+    const derivedBasic = Math.round(derivedGross * 0.4);
+    setValue("basic", derivedBasic);
+    const derivedHra = Math.round(derivedBasic * 0.5);
+    setValue("hra", derivedHra);
+  };
+
+  const handleGrossChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Math.max(0, Number(e.target.value) || 0);
+    setValue("gross", val);
+    const derivedBasic = Math.round(val * 0.4);
+    setValue("basic", derivedBasic);
+    const derivedHra = Math.round(derivedBasic * 0.5);
+    setValue("hra", derivedHra);
+  };
+
+  const handleBasicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Math.max(0, Number(e.target.value) || 0);
+    setValue("basic", val);
+    const derivedHra = Math.round(val * 0.5);
+    setValue("hra", derivedHra);
+  };
+
+  const allowances = Math.max(0, watchedGross - watchedBasic - watchedHra);
+  const esiApplicable = watchedGross <= 21000;
+
+  // Compute live preview using calculatePayslip pure logic
+  const previewPayslip = useMemo(() => {
+    const mockStructure: SalaryStructure = {
+      employeeId: employee.id,
+      employeeName: employee.name,
+      designation: employee.designation,
+      department: employee.department,
+      email: employee.email,
+      ctc: Number(watchedCtc) || 0,
+      basic: Number(watchedBasic) || 0,
+      hra: Number(watchedHra) || 0,
+      allowances,
+      pfApplicable: !!watchedPf,
+      esiApplicable,
+      ptState: watchedPt || "Maharashtra",
+      bankAccount: "****0000",
+    };
+
+    return calculatePayslip(
+      mockStructure,
+      PREVIEW_WORKING_DAYS,
+      0, // 0 LOP
+      "July 2026"
+    );
+  }, [employee, watchedCtc, watchedGross, watchedBasic, watchedHra, allowances, watchedPf, esiApplicable, watchedPt]);
+
+  const onSubmit = (data: SalaryStructureFormValues) => {
+    const ctcVal = Number(data.ctc);
+    const grossVal = Number(data.gross);
+    const basicVal = Number(data.basic);
+    const hraVal = Number(data.hra);
+
+    if (ctcVal <= 0) {
+      toast.error("Annual CTC must be greater than 0.");
+      return;
+    }
+    if (grossVal < 0 || basicVal < 0 || hraVal < 0 || allowances < 0) {
+      toast.error("All salary components must be non-negative.");
+      return;
+    }
+    if (basicVal + hraVal + allowances !== grossVal) {
+      toast.error("Basic Pay + HRA + Allowances must equal monthly Gross Pay.");
+      return;
+    }
+
+    const structureToSave: SalaryStructure = {
+      employeeId: employee.id,
+      employeeName: employee.name,
+      designation: employee.designation,
+      department: employee.department,
+      email: employee.email,
+      ctc: ctcVal,
+      basic: basicVal,
+      hra: hraVal,
+      allowances,
+      pfApplicable: !!data.pfApplicable,
+      esiApplicable,
+      ptState: data.ptState,
+      bankAccount: "****1234",
+    };
+
+    const res = payrollService.saveSalaryStructure(structureToSave);
+    if (res.success) {
+      toast.success(`Salary structure for ${employee.name} saved successfully!`);
+      onSaveSuccess();
+      onClose();
+    } else {
+      toast.error(res.error);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#031B17]/80 backdrop-blur-sm p-4 overflow-y-auto">
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="w-full max-w-4xl bg-card border border-border rounded-[32px] shadow-2xl overflow-hidden text-foreground flex flex-col md:flex-row h-auto max-h-[90vh]"
+      >
+        {/* LEFT COLUMN: FORM */}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex-1 p-8 space-y-5 overflow-y-auto border-b md:border-b-0 md:border-r border-border"
+        >
+          <div className="flex items-center justify-between pb-3 border-b border-border">
+            <div>
+              <h3 className="font-black text-base text-foreground uppercase tracking-widest">
+                Configure Payroll Structure
+              </h3>
+              <p className="text-[12px] font-bold text-muted-foreground mt-1">
+                {employee.name} · {employee.designation} ({employee.department})
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1.5 hover:bg-white/5 rounded-xl text-muted-foreground hover:text-foreground transition-all"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            {/* CTC */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                Annual CTC (INR) *
+              </label>
+              <div className="relative">
+                <IndianRupee
+                  size={16}
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  type="number"
+                  placeholder="e.g. 1200000"
+                  {...register("ctc", {
+                    required: "Annual CTC is required",
+                    min: { value: 1, message: "CTC must be greater than 0" },
+                    onChange: handleCtcChange,
+                  })}
+                  className="w-full bg-input-background border border-border rounded-xl pl-10 pr-4 py-3 text-sm font-bold text-foreground focus:border-[#00C781] outline-none transition-all"
+                />
+              </div>
+              {errors.ctc && (
+                <p className="text-xs text-rose-500 font-bold">{errors.ctc.message}</p>
+              )}
+            </div>
+
+            {/* Monthly Gross */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                Monthly Gross Pay (INR)
+              </label>
+              <input
+                type="number"
+                placeholder="e.g. 100000"
+                {...register("gross", {
+                  required: "Gross pay is required",
+                  min: { value: 0, message: "Gross pay cannot be negative" },
+                  onChange: handleGrossChange,
+                })}
+                className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm font-bold text-foreground focus:border-[#00C781] outline-none transition-all"
+              />
+            </div>
+
+            {/* Basic & HRA Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                  Basic Salary (INR)
+                </label>
+                <input
+                  type="number"
+                  {...register("basic", {
+                    required: "Basic is required",
+                    min: { value: 0, message: "Basic cannot be negative" },
+                    onChange: handleBasicChange,
+                  })}
+                  className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm font-bold text-foreground focus:border-[#00C781] outline-none transition-all"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                  HRA (INR)
+                </label>
+                <input
+                  type="number"
+                  {...register("hra", {
+                    required: "HRA is required",
+                    min: { value: 0, message: "HRA cannot be negative" },
+                  })}
+                  className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm font-bold text-foreground focus:border-[#00C781] outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Special Allowances (Balancing) */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex justify-between">
+                <span>Special Allowances (INR)</span>
+                <span className="text-[9px] font-bold bg-[#00C781]/10 text-[#00C781] px-1.5 rounded">
+                  Balancing Figure
+                </span>
+              </label>
+              <input
+                type="number"
+                value={allowances}
+                readOnly
+                className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-sm font-bold text-muted-foreground cursor-not-allowed outline-none"
+              />
+            </div>
+
+            {/* PT State & Checkboxes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                  Professional Tax State
+                </label>
+                <select
+                  {...register("ptState")}
+                  className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm font-bold text-foreground focus:border-[#00C781] outline-none transition-all"
+                >
+                  <option>Maharashtra</option>
+                  <option>Karnataka</option>
+                  <option>Tamil Nadu</option>
+                  <option>Others</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col justify-end pb-1.5">
+                <label className="flex items-center gap-3 cursor-pointer py-2">
+                  <input
+                    type="checkbox"
+                    {...register("pfApplicable")}
+                    className="w-4.5 h-4.5 rounded border-border text-[#00B87C] focus:ring-[#00B87C]/20 bg-input-background"
+                  />
+                  <div>
+                    <span className="text-xs font-bold text-foreground">PF Applicable</span>
+                    <p className="text-[10px] text-muted-foreground leading-none mt-0.5">
+                      12% of basic (capped at ₹15,000 ceiling)
+                    </p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            {/* ESI Read-only indicator */}
+            <div className="flex gap-4 p-4 rounded-2xl bg-muted border border-border items-start">
+              <Info size={20} className="text-[#00C781] shrink-0 mt-0.5" />
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-foreground">ESI Contribution:</span>
+                  <span
+                    className={`text-xs font-black uppercase ${
+                      esiApplicable ? "text-[#00C781]" : "text-muted-foreground"
+                    }`}
+                  >
+                    {esiApplicable ? "Applicable" : "Not Applicable"}
+                  </span>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
+                  {esiApplicable
+                    ? "Auto-computed: gross salary is ≤ ₹21,000. Employee contribution (0.75% of gross) will be deducted."
+                    : "Auto-computed: gross salary is > ₹21,000 limit. Employee is excluded from statutory ESI."}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-4 pt-4 border-t border-border">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-3 border border-border text-foreground font-black text-[11px] uppercase tracking-widest hover:bg-white/5 rounded-xl transition-all active:scale-95"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 py-3 bg-[#00B87C] text-white font-black text-[11px] uppercase tracking-widest hover:opacity-90 rounded-xl transition-all shadow-lg active:scale-95 shadow-[#00B87C]/20"
+            >
+              Save Structure
+            </button>
+          </div>
+        </form>
+
+        {/* RIGHT COLUMN: LIVE PREVIEW */}
+        <div className="flex-1 p-8 bg-muted/30 flex flex-col justify-between overflow-y-auto">
+          <div>
+            <div className="flex items-center justify-between pb-3 border-b border-border/60 mb-6">
+              <h4 className="font-black text-xs text-foreground uppercase tracking-widest flex items-center gap-2">
+                <Calculator size={16} className="text-[#00C781]" />
+                Live Paycheck Preview
+              </h4>
+              <span className="text-[10px] font-bold text-muted-foreground bg-white/5 border border-border px-2 py-0.5 rounded-full uppercase">
+                {PREVIEW_WORKING_DAYS} Days Cycle
+              </span>
+            </div>
+
+            {previewPayslip ? (
+              <div className="space-y-6">
+                {/* Structure details banner */}
+                <div className="grid grid-cols-2 gap-4 bg-card/60 p-4 rounded-2xl border border-border/40 text-xs font-semibold">
+                  <div>
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block">
+                      Basic Salary (Prorated)
+                    </span>
+                    <span className="text-sm font-bold text-foreground">
+                      ₹{previewPayslip.earnings.basic.toLocaleString()}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block">
+                      HRA (Prorated)
+                    </span>
+                    <span className="text-sm font-bold text-foreground">
+                      ₹{previewPayslip.earnings.hra.toLocaleString()}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block">
+                      Allowances (Prorated)
+                    </span>
+                    <span className="text-sm font-bold text-foreground">
+                      ₹{previewPayslip.earnings.allowances.toLocaleString()}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block">
+                      Monthly Gross Pay
+                    </span>
+                    <span className="text-sm font-black text-[#00C781]">
+                      ₹{previewPayslip.earnings.gross.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Deductions matrix */}
+                <div className="space-y-2">
+                  <h5 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest border-b border-border pb-1 mb-3">
+                    Calculated Monthly Deductions
+                  </h5>
+                  <div className="flex justify-between items-center text-xs font-semibold">
+                    <span className="text-muted-foreground">Provident Fund (PF)</span>
+                    <span className="text-foreground">
+                      {previewPayslip.deductions.pf > 0
+                        ? `₹${previewPayslip.deductions.pf.toLocaleString()}`
+                        : "—"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs font-semibold">
+                    <span className="text-muted-foreground">Employee ESI (0.75%)</span>
+                    <span className="text-foreground">
+                      {previewPayslip.deductions.esi > 0
+                        ? `₹${previewPayslip.deductions.esi.toLocaleString()}`
+                        : "—"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs font-semibold">
+                    <span className="text-muted-foreground">Professional Tax (PT)</span>
+                    <span className="text-foreground">
+                      {previewPayslip.deductions.pt > 0
+                        ? `₹${previewPayslip.deductions.pt.toLocaleString()}`
+                        : "—"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs font-semibold">
+                    <span className="text-muted-foreground">Income Tax (TDS Estimate)</span>
+                    <span className="text-foreground">
+                      {previewPayslip.deductions.tds > 0
+                        ? `₹${previewPayslip.deductions.tds.toLocaleString()}`
+                        : "—"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs font-bold pt-2 border-t border-dashed border-border">
+                    <span className="text-rose-500">Total Deductions</span>
+                    <span className="text-rose-500">
+                      -₹{previewPayslip.deductions.total.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-10 text-muted-foreground text-xs">
+                Enter valid inputs to generate a payroll paycheck preview.
+              </div>
+            )}
+          </div>
+
+          {/* NET DISBURSEMENT CARD */}
+          {previewPayslip && (
+            <div className="bg-[#00B87C]/5 border border-[#00B87C]/20 rounded-2xl p-5 mt-6 flex justify-between items-center">
+              <div>
+                <span className="text-[10px] font-black text-[#00B87C] uppercase tracking-widest block">
+                  Estimated Take-Home Net Pay
+                </span>
+                <span className="text-2xl font-black text-[#00B87C] tracking-tighter">
+                  ₹{previewPayslip.netPay.toLocaleString()}
+                </span>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-[#00B87C]/10 flex items-center justify-center text-[#00B87C]">
+                <IndianRupee size={20} />
+              </div>
+            </div>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 }

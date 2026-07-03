@@ -43,6 +43,11 @@ import {
   SendHorizonal,
 } from "lucide-react";
 import { payrollEmployees, leaveRequests, employees } from "../../../data/mockData";
+import { payrollService } from "../../finance/payroll/payroll.service";
+import { calculatePayslip } from "../../finance/payroll/calculatePayslip";
+import { useAttendance } from "../../../context/AttendanceContext";
+import type { Payslip, SalaryStructure } from "../../finance/payroll/payroll.types";
+import { useEmployees, type Employee } from "../../../context/AppContext";
 
 /* ─── Constants ─────────────────────────── */
 const MONTHS = [
@@ -932,10 +937,10 @@ function RunPayrollModal({
                 </button>
               </div>
               <h3 className="text-2xl font-black text-foreground">
-                Process Payroll
+                Prepare Payroll
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Initiating disbursement for{" "}
+                Initiating pay run preparation for{" "}
                 <span className="text-foreground font-bold">
                   {month} {year}
                 </span>
@@ -944,15 +949,15 @@ function RunPayrollModal({
               <div className="mt-6 rounded-2xl border border-border bg-muted/20 divide-y divide-border/50">
                 {[
                   {
-                    label: "Pending Employees",
+                    label: "Employees to Process",
                     value: pendingEmps.length.toString(),
                   },
                   {
-                    label: "Gross Payout",
+                    label: "Estimated Gross Payout",
                     value: `₹${pendingEmps.reduce((s, e) => s + e.gross, 0).toLocaleString()}`,
                   },
                   {
-                    label: "Net Disbursement",
+                    label: "Estimated Net Payout",
                     value: `₹${totalNet.toLocaleString()}`,
                     highlight: true,
                   },
@@ -979,8 +984,7 @@ function RunPayrollModal({
                   className="text-amber-500 shrink-0 mt-0.5"
                 />
                 <p className="text-xs text-amber-600 leading-relaxed">
-                  Disbursement is immediate and irreversible. Ensure all records
-                  are verified.
+                  This will generate the draft pay run and submit it to the Finance team for review and approval.
                 </p>
               </div>
             </div>
@@ -1002,7 +1006,7 @@ function RunPayrollModal({
               >
                 {pendingEmps.length === 0
                   ? "All Processed"
-                  : "Confirm & Disburse"}
+                  : "Confirm & Submit"}
               </button>
             </div>
           </>
@@ -1017,10 +1021,10 @@ function RunPayrollModal({
               </div>
             </div>
             <h3 className="text-xl font-black text-foreground mb-2">
-              Processing Transfers
+              Preparing Pay Run
             </h3>
             <p className="text-xs text-muted-foreground mb-6 max-w-xs">
-              Securely initiating bank transfers via NexusPay Gateway
+              Calculating taxes, PF, ESI, and LOP deductions...
             </p>
             <div className="w-full mb-2">
               <div className="w-full h-2 bg-muted/50 rounded-full overflow-hidden">
@@ -1032,7 +1036,7 @@ function RunPayrollModal({
             </div>
             <div className="flex justify-between w-full text-[10px] text-muted-foreground font-medium">
               <span className="truncate max-w-[200px]">
-                {currentEmp && `Transferring to ${currentEmp}...`}
+                {currentEmp && `Calculating for ${currentEmp}...`}
               </span>
               <span>{progress}%</span>
             </div>
@@ -1047,13 +1051,13 @@ function RunPayrollModal({
                 <CheckCircle2 size={48} className="text-emerald-500" />
               </div>
             </div>
-            <h3 className="text-2xl font-black text-foreground">Disbursed!</h3>
+            <h3 className="text-2xl font-black text-foreground">Prepared!</h3>
             <p className="text-sm text-muted-foreground mt-2 max-w-xs">
               <span className="text-foreground font-bold">
                 {month} {year}
               </span>{" "}
-              payroll has been processed successfully. ₹
-              {totalNet.toLocaleString()} transferred.
+              payroll has been prepared and submitted to Finance for review. ₹
+              {totalNet.toLocaleString()} pending check.
             </p>
             <button
               onClick={onClose}
@@ -1336,12 +1340,22 @@ export function Payroll() {
   /* ── Guard: Employee role sees their own payslips ── */
   if (user?.role === "Employee") return <EmployeePayslips />;
 
+  /* ── Leave impact helper ── */
+  const getLeaveImpact = useCallback((empId: string, empName: string) => {
+    const leaves = leaveRequests.filter(
+      (lr) => lr.employee.toLowerCase() === empName.toLowerCase() && lr.status === "Approved"
+    );
+    const days = leaves.reduce((s, lr) => s + lr.days, 0);
+    return { days, amount: days > 0 ? Math.round((days / 30) * 1000) : 0 };
+  }, []);
+
   /* ── State ── */
+  const { getPunchStateForEmail } = useAttendance();
   const [selectedMonth, setSelectedMonth] = useState("April");
   const [selectedYear, setSelectedYear] = useState("2026");
-  const [employeesData, setEmployeesData] = useState<PayrollEmployee[]>(() =>
-    loadFromStorage("April", "2026"),
-  );
+  const [employeesData, setEmployeesData] = useState<PayrollEmployee[]>([]);
+  const [draftBonuses, setDraftBonuses] = useState<Record<string, number>>({});
+
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
   const [showYearDropdown, setShowYearDropdown] = useState(false);
   const [statusFilter, setStatusFilter] = useState<
@@ -1364,17 +1378,81 @@ export function Payroll() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [showAnalytics, setShowAnalytics] = useState(true);
   const itemsPerPage = 8;
+
+  const { employeesList } = useEmployees();
+  const structures = useMemo(() => {
+    return payrollService.getSalaryStructures();
+  }, [selectedMonth, selectedYear, showRunModal]);
+
+  const activeEmployees = useMemo(() => {
+    return employeesList.filter((e) => e.status === "Active");
+  }, [employeesList]);
+
+  const missingStructuresEmployees = useMemo(() => {
+    return activeEmployees.filter((emp) => !structures.some((s) => s.employeeId === emp.id));
+  }, [activeEmployees, structures]);
   const actionMenuRef = useRef<HTMLDivElement>(null);
 
-  // Sync to/from localStorage when month/year changes
-  useEffect(() => {
-    setEmployeesData(loadFromStorage(selectedMonth, selectedYear));
-  }, [selectedMonth, selectedYear]);
+  const payRun = useMemo(() => {
+    return payrollService.getPayRun(`${selectedMonth} ${selectedYear}`);
+  }, [selectedMonth, selectedYear, employeesData]);
 
-  /* ── Persist to localStorage ── */
+  // Sync from payrollService when month/year or draftBonuses changes
   useEffect(() => {
-    saveToStorage(selectedMonth, selectedYear, employeesData);
-  }, [employeesData, selectedMonth, selectedYear]);
+    const monthYear = `${selectedMonth} ${selectedYear}`;
+    const run = payrollService.getPayRun(monthYear);
+    if (run) {
+      const mapped = run.payslips.map((ps: Payslip) => {
+        const originalEmp = payrollEmployees.find((pe) => pe.id === ps.employeeId);
+        return {
+          id: ps.employeeId,
+          name: ps.employeeName,
+          designation: ps.designation,
+          department: ps.department,
+          status: run.status === "disbursed" ? ("Paid" as const) : ("Pending" as const),
+          gross: ps.earnings.gross,
+          deductions: ps.deductions.total,
+          net: ps.netPay,
+          avatar: originalEmp?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100",
+          bonus: ps.bonus || 0,
+          bankAccount: ps.bankAccount,
+          transferProgress: run.status === "disbursed" ? 100 : 0,
+        };
+      });
+      setEmployeesData(mapped);
+    } else {
+      const activeStructures = structures.filter((struct) =>
+        activeEmployees.some((emp) => emp.id === struct.employeeId)
+      );
+      const mapped = activeStructures.map((struct: SalaryStructure) => {
+        const leavesInfo = getLeaveImpact(struct.employeeId, struct.employeeName);
+        const bonus = draftBonuses[struct.employeeId] || 0;
+        const ps = calculatePayslip(
+          struct,
+          22,
+          leavesInfo.days,
+          monthYear,
+          bonus
+        );
+        const originalEmp = payrollEmployees.find((pe) => pe.id === struct.employeeId);
+        return {
+          id: struct.employeeId,
+          name: struct.employeeName,
+          designation: struct.designation,
+          department: struct.department,
+          status: "Pending" as const,
+          gross: ps.earnings.gross,
+          deductions: ps.deductions.total,
+          net: ps.netPay,
+          avatar: originalEmp?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100",
+          bonus: bonus,
+          bankAccount: struct.bankAccount,
+          transferProgress: 0,
+        };
+      });
+      setEmployeesData(mapped);
+    }
+  }, [selectedMonth, selectedYear, draftBonuses]);
 
   /* ── Close dropdowns on outside click ── */
   useEffect(() => {
@@ -1490,16 +1568,6 @@ export function Payroll() {
       color: DEPT_COLORS[dept] || "#6b7280",
     }));
   }, [employeesData]);
-
-  /* ── Leave impact ── */
-  const getLeaveImpact = (empId: string) => {
-    const empName = employeesData.find((e) => e.id === empId)?.name || "";
-    const leaves = leaveRequests.filter(
-      (lr) => lr.employee.includes(empName) && lr.status === "Approved",
-    );
-    const days = leaves.reduce((s, lr) => s + lr.days, 0);
-    return { days, amount: days > 0 ? Math.round((days / 30) * 1000) : 0 };
-  };
 
   /* ── Sorting toggle ── */
   const handleSort = (field: typeof sortField) => {
@@ -1719,13 +1787,14 @@ export function Payroll() {
               Analytics
             </button>
 
-            {user?.role !== "HR Manager" && (
+            {!payRun && (user?.role === "HR Manager" || user?.role === "Super Admin") && (
               <button
                 onClick={() => setShowRunModal(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-500/25 hover:opacity-90 active:scale-95 transition-all"
+                disabled={missingStructuresEmployees.length > 0}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-500/25 hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <Play size={14} className="fill-white" />
-                Run Payroll
+                Prepare Payroll
               </button>
             )}
           </div>
@@ -1984,6 +2053,30 @@ export function Payroll() {
           </div>
         )}
 
+        {missingStructuresEmployees.length > 0 && (
+          <div className="mb-6 p-5 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex gap-4 items-start animate-in fade-in duration-300">
+            <AlertCircle size={24} className="text-rose-500 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-black text-rose-500 uppercase tracking-widest leading-none mb-1.5">
+                Blocker: Missing Salary Structures
+              </h4>
+              <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold leading-relaxed">
+                Payroll cannot be processed. The following active employee(s) do not have a salary structure configured in Finance. Please request Finance to configure their structures before running the payroll:
+              </p>
+              <div className="flex flex-wrap gap-2 mt-3">
+                {missingStructuresEmployees.map((emp) => (
+                  <span
+                    key={emp.id}
+                    className="px-2.5 py-1 text-[10px] font-black uppercase rounded-lg bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30"
+                  >
+                    {emp.name} ({emp.id})
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── Data Table ── */}
         <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
@@ -2070,7 +2163,7 @@ export function Payroll() {
                   </tr>
                 )}
                 {paginatedEmployees.map((emp) => {
-                  const impact = getLeaveImpact(emp.id);
+                  const impact = getLeaveImpact(emp.id, emp.name);
                   const isSelected = selectedIds.has(emp.id);
                   return (
                     <tr
@@ -2538,15 +2631,16 @@ export function Payroll() {
       </div>
 
       {/* ── Floating Action Button ── */}
-      {user?.role !== "HR Manager" && (
+      {!payRun && (user?.role === "HR Manager" || user?.role === "Super Admin") && (
         <div className="fixed bottom-8 right-8 z-[2000]">
           <button
             onClick={() => setShowRunModal(true)}
-            className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all duration-300"
+            disabled={missingStructuresEmployees.length > 0}
+            className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
           >
             <Play size={20} className="fill-white translate-x-0.5" />
             <div className="absolute right-full mr-3 px-3 py-1.5 bg-foreground text-background text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
-              Run Payroll
+              Prepare Payroll
             </div>
           </button>
         </div>
@@ -2560,18 +2654,43 @@ export function Payroll() {
           year={selectedYear}
           employees={employeesData}
           onComplete={() => {
-            setEmployeesData((prev) =>
-              prev.map((e) =>
-                e.status === "Pending"
-                  ? { ...e, status: "Paid" as const, transferProgress: 100 }
-                  : e,
-              ),
+            const structures = payrollService.getSalaryStructures();
+            const activeStructures = structures.filter((struct) =>
+              activeEmployees.some((emp) => emp.id === struct.employeeId)
             );
-            addToast({
-              type: "success",
-              title: "Payroll Complete!",
-              message: `All pending disbursements for ${selectedMonth} ${selectedYear} have been processed.`,
+            const payslips = activeStructures.map((struct: SalaryStructure) => {
+              const leavesInfo = getLeaveImpact(struct.employeeId, struct.employeeName);
+              const bonus = draftBonuses[struct.employeeId] || 0;
+              return calculatePayslip(
+                struct,
+                22,
+                leavesInfo.days,
+                `${selectedMonth} ${selectedYear}`,
+                bonus
+              );
             });
+
+            const res = payrollService.createPayRun(
+              `${selectedMonth} ${selectedYear}`,
+              user?.email || "hr@nexushr.com",
+              payslips
+            );
+
+            if (res.success) {
+              setDraftBonuses({});
+              addToast({
+                type: "success",
+                title: "Payroll Submitted",
+                message: `Payroll for ${selectedMonth} ${selectedYear} has been submitted to Finance.`,
+              });
+            } else {
+              addToast({
+                type: "error",
+                title: "Submission Failed",
+                message: res.error,
+              });
+            }
+            setShowRunModal(false);
           }}
         />
       )}
@@ -2590,14 +2709,15 @@ export function Payroll() {
           employee={editingEmp}
           onClose={() => setEditingEmp(null)}
           onSave={(updated) => {
-            setEmployeesData((prev) =>
-              prev.map((e) => (e.id === updated.id ? updated : e)),
-            );
+            setDraftBonuses((prev) => ({
+              ...prev,
+              [updated.id]: updated.bonus || 0,
+            }));
             setEditingEmp(null);
             addToast({
               type: "success",
-              title: "Record Updated",
-              message: `Payroll entry for ${updated.name} has been saved.`,
+              title: "Draft Saved",
+              message: `Draft bonus for ${updated.name} updated to ₹${(updated.bonus || 0).toLocaleString()}.`,
             });
           }}
         />

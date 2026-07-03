@@ -14,6 +14,9 @@ import {
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
 import { motion } from "motion/react";
+import { useAuth } from "../../context/AuthContext";
+import { payrollService } from "../finance/payroll/payroll.service";
+import type { Payslip as RealPayslip } from "../finance/payroll/payroll.types";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types & Data                                                    */
@@ -563,6 +566,7 @@ function PayslipModal({
 /* Main Page                                                       */
 /* ─────────────────────────────────────────────────────────────── */
 export function EmployeePayslips() {
+  const { user } = useAuth();
   const [selectedYear, setSelectedYear] = useState("All Years");
   const [selectedMonth, setSelectedMonth] = useState("All Months");
   const [showYearDrop, setShowYearDrop] = useState(false);
@@ -570,15 +574,77 @@ export function EmployeePayslips() {
   const [previewPayslip, setPreviewPayslip] = useState<Payslip | null>(null);
   const [shouldAutoPrint, setShouldAutoPrint] = useState(false);
 
+  const employeeEmail = useMemo(() => {
+    if (!user) return "sarah.johnson@nexushr.com";
+    const structures = payrollService.getSalaryStructures();
+    const match = structures.find((s) => s.email.toLowerCase() === user.email.toLowerCase());
+    return match ? user.email : "sarah.johnson@nexushr.com";
+  }, [user]);
+
+  const employeePayslips = useMemo(() => {
+    const runs = payrollService.getAllPayRuns();
+    const disbursedRuns = runs.filter((r) => r.status === "disbursed");
+    
+    const realPayslips = disbursedRuns.map((run) => {
+      const ps = run.payslips.find((p: RealPayslip) => p.email.toLowerCase() === employeeEmail.toLowerCase());
+      if (!ps) return null;
+
+      const parts = run.month.split(" ");
+      const monthStr = parts[0];
+      const yearNum = parseInt(parts[1]) || 2026;
+
+      return {
+        id: `PAY-${run.id}`,
+        month: monthStr,
+        year: yearNum,
+        grossPay: ps.earnings.gross,
+        deductions: ps.deductions.total,
+        netPay: ps.netPay,
+        paidDate: run.disbursedAt
+          ? new Date(run.disbursedAt).toLocaleDateString([], {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
+          : "May 1, 2026",
+        status: "Paid" as const,
+        breakdown: {
+          basicSalary: ps.earnings.basic,
+          hra: ps.earnings.hra,
+          conveyance: 0,
+          medicalAllowance: 0,
+          specialAllowance: ps.earnings.allowances + (ps.bonus || 0),
+          providentFund: ps.deductions.pf,
+          professionalTax: ps.deductions.pt,
+          incomeTax: ps.deductions.tds,
+        },
+      };
+    }).filter((p) => p !== null) as Payslip[];
+
+    return realPayslips.length > 0 ? realPayslips : MOCK_PAYSLIPS;
+  }, [employeeEmail]);
+
   const filteredPayslips = useMemo(() => {
-    return MOCK_PAYSLIPS.filter((p) => {
+    return employeePayslips.filter((p) => {
       const yearMatch =
         selectedYear === "All Years" || p.year === parseInt(selectedYear);
       const monthMatch =
         selectedMonth === "All Months" || p.month === selectedMonth;
       return yearMatch && monthMatch;
     });
-  }, [selectedYear, selectedMonth]);
+  }, [employeePayslips, selectedYear, selectedMonth]);
+
+  const structure = useMemo(() => {
+    const structures = payrollService.getSalaryStructures();
+    return structures.find((s) => s.email.toLowerCase() === employeeEmail.toLowerCase());
+  }, [employeeEmail]);
+
+  const ctcDisplay = structure ? `₹${(structure.ctc / 100000).toFixed(1)}L` : "₹18L";
+
+  const latestPayslip = employeePayslips[0];
+  const netPayDisplay = latestPayslip ? `₹${latestPayslip.netPay.toLocaleString()}` : "₹75,150";
+  const deductionsDisplay = latestPayslip ? `₹${latestPayslip.deductions.toLocaleString()}` : "₹19,850";
+  const netSubText = latestPayslip ? `After all deductions · ${latestPayslip.month} ${latestPayslip.year}` : "After all deductions · April 2026";
 
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
@@ -618,7 +684,7 @@ export function EmployeePayslips() {
               Current CTC
             </p>
           </div>
-          <p className="text-[28px] font-black text-indigo-500">₹18L</p>
+          <p className="text-[28px] font-black text-indigo-500">{ctcDisplay}</p>
           <p className="text-[12px] font-bold text-muted-foreground mt-1">
             Annual package · Revised Apr 2025
           </p>
@@ -632,9 +698,9 @@ export function EmployeePayslips() {
               Monthly Net Pay
             </p>
           </div>
-          <p className="text-[28px] font-black text-primary">₹75,150</p>
+          <p className="text-[28px] font-black text-primary">{netPayDisplay}</p>
           <p className="text-[12px] font-bold text-muted-foreground mt-1">
-            After all deductions · April 2026
+            {netSubText}
           </p>
         </div>
         <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
@@ -646,7 +712,7 @@ export function EmployeePayslips() {
               Monthly Deductions
             </p>
           </div>
-          <p className="text-[28px] font-black text-rose-500">₹19,850</p>
+          <p className="text-[28px] font-black text-rose-500">{deductionsDisplay}</p>
           <p className="text-[12px] font-bold text-muted-foreground mt-1">
             PF + Tax + Professional Tax
           </p>

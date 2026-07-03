@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   IndianRupee,
   Download,
@@ -21,6 +21,9 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
+import { useAuth } from "../../../context/AuthContext";
+import { payrollService } from "../payroll/payroll.service";
+import type { Payslip as RealPayslip } from "../payroll/payroll.types";
 
 interface PayrollRecord {
   id: string;
@@ -111,6 +114,10 @@ const MOCK_RECORDS: PayrollRecord[] = [
 ];
 
 export function FinancePayroll() {
+  const { user } = useAuth();
+  const [activeMonth, setActiveMonth] = useState("April 2026");
+  const [refreshKey, setRefreshKey] = useState(0);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEmployee, setSelectedEmployee] =
     useState<PayrollRecord | null>(null);
@@ -121,25 +128,70 @@ export function FinancePayroll() {
   const [departmentFilter, setDepartmentFilter] = useState("All Departments");
   const [statusFilter, setStatusFilter] = useState("Status: All");
 
+  // Load active run from service
+  const activeRun = useMemo(() => {
+    return payrollService.getPayRun(activeMonth);
+  }, [activeMonth, refreshKey]);
+
+  // Dynamic helper for number formatting
+  const formatINR = (num: number) => {
+    if (num >= 100000) {
+      return `₹${(num / 100000).toFixed(1)}L`;
+    }
+    return `₹${num.toLocaleString()}`;
+  };
+
+  // Convert real payslips to PayrollRecord format
+  const records = useMemo(() => {
+    if (!activeRun) {
+      // Fallback to mock data if no run exists yet
+      return MOCK_RECORDS;
+    }
+    return activeRun.payslips.map((ps: RealPayslip) => {
+      let avatarColor = "#8B5CF6";
+      if (ps.department === "Engineering") avatarColor = "#8B5CF6";
+      else if (ps.department === "Product") avatarColor = "#10B981";
+      else if (ps.department === "Design") avatarColor = "#F59E0B";
+      else avatarColor = "#EF4444";
+
+      return {
+        id: ps.employeeId,
+        name: ps.employeeName,
+        role: ps.designation,
+        department: ps.department,
+        basic: ps.earnings.basic,
+        hra: ps.earnings.hra,
+        allowances: ps.earnings.allowances,
+        gross: ps.earnings.gross,
+        deductions: ps.deductions.total,
+        net: ps.netPay,
+        status: activeRun.status === "disbursed"
+          ? ("Processed" as const)
+          : ("Pending" as const),
+        avatarColor,
+      };
+    });
+  }, [activeRun]);
+
   const handleExport = (type: string) => {
     setExportDropdownOpen(false);
-    // Build CSV
     const headers =
       "Employee,Department,Basic,HRA,Allowances,Gross,Deductions,Net,Status";
-    const rows = MOCK_RECORDS.map(
-      (r) =>
+    const rows = records.map(
+      (r: PayrollRecord) =>
         `"${r.name}",${r.department},${r.basic},${r.hra},${r.allowances},${r.gross},${r.deductions},${r.net},${r.status}`,
     );
     const csvContent = [headers, ...rows].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `payroll_${type.toLowerCase().replace(/ /g, "_")}.csv`;
-    link.click();
+    const link = document.createElement;
+    const linkEl = document.createElement("a");
+    linkEl.href = URL.createObjectURL(blob);
+    linkEl.download = `payroll_${type.toLowerCase().replace(/ /g, "_")}.csv`;
+    linkEl.click();
     showToast(`${type} exported successfully.`);
   };
 
-  const filteredRecords = MOCK_RECORDS.filter((rec) => {
+  const filteredRecords = records.filter((rec: PayrollRecord) => {
     const matchesSearch =
       rec.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       rec.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -152,6 +204,12 @@ export function FinancePayroll() {
       rec.status === statusFilter.replace("Status: ", "");
     return matchesSearch && matchesDept && matchesStatus;
   });
+
+  // Calculate aggregates dynamically
+  const totalGrossSum = useMemo(() => records.reduce((sum: number, r: PayrollRecord) => sum + r.gross, 0), [records]);
+  const totalDeductionsSum = useMemo(() => records.reduce((sum: number, r: PayrollRecord) => sum + r.deductions, 0), [records]);
+  const totalNetSum = useMemo(() => records.reduce((sum: number, r: PayrollRecord) => sum + r.net, 0), [records]);
+  const totalEmployeesCount = records.length;
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
@@ -214,11 +272,23 @@ export function FinancePayroll() {
               setShowRunModal(true);
               setRunModalStep(1);
             }}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm transition-all hover:opacity-90 shadow-lg shadow-[#00B87C]/20"
-            style={{ backgroundColor: "#00B87C" }}
+            disabled={!activeRun || activeRun.status === "disbursed"}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm transition-all hover:opacity-90 shadow-lg ${
+              !activeRun || activeRun.status === "disbursed"
+                ? "bg-slate-400 cursor-not-allowed shadow-none"
+                : activeRun.status === "pending"
+                ? "bg-[#8B5CF6] shadow-[#8B5CF6]/20"
+                : "bg-[#00B87C] shadow-[#00B87C]/20"
+            }`}
           >
             <Play size={18} fill="white" />
-            Run Payroll
+            {!activeRun
+              ? "No Active Run"
+              : activeRun.status === "pending"
+              ? "Review & Approve"
+              : activeRun.status === "approved"
+              ? "Disburse Payroll"
+              : "Payroll Disbursed"}
           </button>
         </div>
       </div>
@@ -228,7 +298,7 @@ export function FinancePayroll() {
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-[#00B87C] animate-pulse" />
           <span className="text-[12px] font-bold text-foreground tracking-tight">
-            April 2026 Payroll In Progress
+            {activeMonth} Payroll {activeRun ? `(${activeRun.status.toUpperCase()})` : "In Progress"}
           </span>
         </div>
         <div
@@ -256,7 +326,7 @@ export function FinancePayroll() {
         <div onClick={() => setGenericModalTitle("Total Payroll Breakdown")}>
           <KPICard
             title="TOTAL PAYROLL"
-            value="₹28.4L"
+            value={formatINR(totalGrossSum)}
             color="purple"
             icon={IndianRupee}
           />
@@ -266,7 +336,7 @@ export function FinancePayroll() {
         >
           <KPICard
             title="EMPLOYEES PROCESSED"
-            value="1,248"
+            value={totalEmployeesCount.toString()}
             color="green"
             icon={CheckCircle2}
           />
@@ -274,7 +344,7 @@ export function FinancePayroll() {
         <div onClick={() => setGenericModalTitle("Deductions Breakdown")}>
           <KPICard
             title="TOTAL DEDUCTIONS"
-            value="₹4.2L"
+            value={formatINR(totalDeductionsSum)}
             color="red"
             icon={Activity}
           />
@@ -282,8 +352,8 @@ export function FinancePayroll() {
         <div onClick={() => setGenericModalTitle("Net Disbursement Details")}>
           <KPICard
             title="NET DISBURSEMENT"
-            value="₹24.2L"
-            subValue="(estimated)"
+            value={formatINR(totalNetSum)}
+            subValue={!activeRun ? "(estimated)" : undefined}
             color="green"
             icon={FileSpreadsheet}
           />
@@ -295,49 +365,70 @@ export function FinancePayroll() {
         <div className="flex items-center justify-between relative px-2 mb-8">
           <div className="absolute top-[18px] left-0 right-0 h-[2px] bg-border z-0 mx-12" />
           {[
-            { label: "Data Collection", status: "Done" },
-            { label: "Attendance Lock", status: "Done" },
-            { label: "Calculation", status: "Active" },
-            { label: "Approval", status: "Pending" },
-            { label: "Disbursement", status: "Pending" },
-          ].map((step, i) => (
-            <div
-              key={i}
-              className="flex flex-col items-center gap-3 relative z-10 cursor-pointer group"
-              onClick={() =>
-                setGenericModalTitle(`Stepper Phase: ${step.label}`)
+            { label: "Data Collection", name: "Data Collection" },
+            { label: "Attendance Lock", name: "Attendance Lock" },
+            { label: "Calculation", name: "Calculation" },
+            { label: "Approval", name: "Approval" },
+            { label: "Disbursement", name: "Disbursement" },
+          ].map((step, i) => {
+            const stepStatus = (() => {
+              if (!activeRun) {
+                if (step.name === "Data Collection" || step.name === "Attendance Lock") return "Done";
+                if (step.name === "Calculation") return "Active";
+                return "Pending";
               }
-            >
+              if (activeRun.status === "pending") {
+                if (step.name === "Data Collection" || step.name === "Attendance Lock" || step.name === "Calculation") return "Done";
+                if (step.name === "Approval") return "Active";
+                return "Pending";
+              }
+              if (activeRun.status === "approved") {
+                if (step.name === "Data Collection" || step.name === "Attendance Lock" || step.name === "Calculation" || step.name === "Approval") return "Done";
+                if (step.name === "Disbursement") return "Active";
+                return "Pending";
+              }
+              return "Done"; // disbursed
+            })();
+
+            return (
               <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-500 group-hover:scale-110 ${
-                  step.status === "Done"
-                    ? "bg-[#00B87C] border-[#00B87C] text-white"
-                    : step.status === "Active"
-                      ? "bg-card border-[#0D9488] text-[#0D9488] shadow-[0_0_15px_rgba(13,148,136,0.3)] animate-pulse"
-                      : "bg-card border-border text-muted-foreground group-hover:border-[#0D9488]/50 group-hover:text-[#0D9488]/50"
-                }`}
+                key={i}
+                className="flex flex-col items-center gap-3 relative z-10 cursor-pointer group"
+                onClick={() =>
+                  setGenericModalTitle(`Stepper Phase: ${step.label}`)
+                }
               >
-                {step.status === "Done" ? (
-                  <CheckCircle2 size={18} strokeWidth={2.5} />
-                ) : step.status === "Active" ? (
-                  <Clock size={18} />
-                ) : (
-                  <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />
-                )}
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-500 group-hover:scale-110 ${
+                    stepStatus === "Done"
+                      ? "bg-[#00B87C] border-[#00B87C] text-white"
+                      : stepStatus === "Active"
+                        ? "bg-card border-[#0D9488] text-[#0D9488] shadow-[0_0_15px_rgba(13,148,136,0.3)] animate-pulse"
+                        : "bg-card border-border text-muted-foreground group-hover:border-[#0D9488]/50 group-hover:text-[#0D9488]/50"
+                  }`}
+                >
+                  {stepStatus === "Done" ? (
+                    <CheckCircle2 size={18} strokeWidth={2.5} />
+                  ) : stepStatus === "Active" ? (
+                    <Clock size={18} />
+                  ) : (
+                    <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />
+                  )}
+                </div>
+                <span
+                  className={`text-[11px] font-bold uppercase tracking-widest text-center max-w-[100px] transition-colors group-hover:text-foreground ${
+                    stepStatus === "Done"
+                      ? "text-[#00B87C]"
+                      : stepStatus === "Active"
+                        ? "text-[#0D9488]"
+                        : "text-muted-foreground"
+                  }`}
+                >
+                  {step.label}
+                </span>
               </div>
-              <span
-                className={`text-[11px] font-bold uppercase tracking-widest text-center max-w-[100px] transition-colors group-hover:text-foreground ${
-                  step.status === "Done"
-                    ? "text-[#00B87C]"
-                    : step.status === "Active"
-                      ? "text-[#0D9488]"
-                      : "text-muted-foreground"
-                }`}
-              >
-                {step.label}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <p className="text-center text-sm text-muted-foreground font-semibold">
           Estimated completion: April 20, 2026
@@ -431,7 +522,7 @@ export function FinancePayroll() {
                 : departmentFilter}
             </h2>
             <p className="text-[13px] font-semibold text-muted-foreground">
-              {filteredRecords.length} of {MOCK_RECORDS.length} employees ·
+              {filteredRecords.length} of {records.length} employees ·
               Click row to view slip
             </p>
           </div>
@@ -482,7 +573,7 @@ export function FinancePayroll() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filteredRecords.map((rec, i) => (
+              {filteredRecords.map((rec: PayrollRecord, i: number) => (
                 <motion.tr
                   key={rec.id}
                   initial={{ opacity: 0, x: -10 }}
@@ -499,7 +590,7 @@ export function FinancePayroll() {
                       >
                         {rec.name
                           .split(" ")
-                          .map((n) => n[0])
+                          .map((n: string) => n[0])
                           .join("")}
                       </div>
                       <div className="overflow-hidden">
@@ -748,10 +839,14 @@ export function FinancePayroll() {
                         </div>
                         <div>
                           <h3 className="text-xl font-black text-foreground tracking-tight leading-none">
-                            Run Payroll
+                            {!activeRun
+                              ? "Run Payroll"
+                              : activeRun.status === "pending"
+                              ? "Approve Payroll"
+                              : "Disburse Payroll"}
                           </h3>
                           <p className="text-[12px] font-bold text-muted-foreground mt-1.5 uppercase tracking-widest">
-                            April 2026 Cycle
+                            {activeMonth} Cycle
                           </p>
                         </div>
                       </div>
@@ -770,8 +865,7 @@ export function FinancePayroll() {
                         </label>
                         <div className="relative">
                           <select className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#00B87C]/20 appearance-none">
-                            <option>April 2026</option>
-                            <option>March 2026</option>
+                            <option>{activeMonth}</option>
                           </select>
                           <ChevronDown
                             className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -787,8 +881,6 @@ export function FinancePayroll() {
                           <div className="relative">
                             <select className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#00B87C]/20 appearance-none">
                               <option>All Departments</option>
-                              <option>Engineering</option>
-                              <option>Sales</option>
                             </select>
                             <ChevronDown
                               className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -803,7 +895,6 @@ export function FinancePayroll() {
                           <div className="relative">
                             <select className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#00B87C]/20 appearance-none">
                               <option>Full-Time</option>
-                              <option>Contractors</option>
                             </select>
                             <ChevronDown
                               className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -824,8 +915,8 @@ export function FinancePayroll() {
                         status="success"
                       />
                       <ChecklistItem
-                        label="36 employees have pending expense claims"
-                        status="warning"
+                        label="Compliance & statutory checks passed"
+                        status="success"
                       />
                     </div>
 
@@ -835,7 +926,7 @@ export function FinancePayroll() {
                           Employee Count
                         </p>
                         <p className="text-2xl font-black text-foreground tracking-tighter">
-                          1,284
+                          {totalEmployeesCount.toString()}
                         </p>
                       </div>
                       <div>
@@ -843,7 +934,7 @@ export function FinancePayroll() {
                           Est. Total Payout
                         </p>
                         <p className="text-2xl font-black text-[#00B87C] tracking-tighter">
-                          ₹28.6L
+                          {formatINR(totalNetSum)}
                         </p>
                       </div>
                     </div>
@@ -853,11 +944,15 @@ export function FinancePayroll() {
                         size={24}
                         className="text-rose-500 shrink-0"
                       />
-                      <p className="text-[12px] text-rose-600 font-bold leading-relaxed">
-                        CRITICAL: This action is irreversible. All salary
-                        computations, deductions, and tax withholdings will be
-                        finalized upon review.
-                      </p>
+                      {activeRun?.status === "pending" ? (
+                        <p className="text-[12px] text-rose-600 font-bold leading-relaxed">
+                          CRITICAL: Approval locks the payroll computations. Once approved, the pay run is submitted for final disbursement.
+                        </p>
+                      ) : (
+                        <p className="text-[12px] text-rose-600 font-bold leading-relaxed">
+                          CRITICAL: Disbursement is irreversible. Confirming this action will initiate direct bank transfers for all employees.
+                        </p>
+                      )}
                     </div>
                   </>
                 ) : (
@@ -869,10 +964,10 @@ export function FinancePayroll() {
                         </div>
                         <div>
                           <h3 className="text-xl font-black text-foreground tracking-tight leading-none">
-                            Review & Finalize
+                            {activeRun?.status === "pending" ? "Approve & Lock" : "Review & Disburse"}
                           </h3>
                           <p className="text-[12px] font-bold text-muted-foreground mt-1.5 uppercase tracking-widest">
-                            April 2026 Cycle
+                            {activeMonth} Cycle
                           </p>
                         </div>
                       </div>
@@ -902,7 +997,7 @@ export function FinancePayroll() {
                               Gross Pay
                             </td>
                             <td className="px-4 py-3 text-[13px] font-bold text-foreground text-right">
-                              ₹32.8L
+                              {formatINR(totalGrossSum)}
                             </td>
                           </tr>
                           <tr>
@@ -910,7 +1005,7 @@ export function FinancePayroll() {
                               Total Deductions
                             </td>
                             <td className="px-4 py-3 text-[13px] font-bold text-rose-500 text-right">
-                              -₹4.2L
+                              -{formatINR(totalDeductionsSum)}
                             </td>
                           </tr>
                           <tr className="bg-emerald-500/5">
@@ -918,7 +1013,7 @@ export function FinancePayroll() {
                               Net Disbursement
                             </td>
                             <td className="px-4 py-3 text-[14px] font-black text-[#00B87C] text-right">
-                              ₹28.6L
+                              {formatINR(totalNetSum)}
                             </td>
                           </tr>
                         </tbody>
@@ -945,12 +1040,40 @@ export function FinancePayroll() {
                       setRunModalStep(2);
                     } else {
                       setShowRunModal(false);
-                      showToast("Payroll processing started successfully.");
+                      if (activeRun) {
+                        if (activeRun.status === "pending") {
+                          const res = payrollService.approvePayRun(
+                            activeRun.id,
+                            user?.email || "finance@nexushr.com"
+                          );
+                          if (res.success) {
+                            setRefreshKey((prev) => prev + 1);
+                            showToast("Payroll approved successfully.");
+                          } else {
+                            showToast(res.error, "error");
+                          }
+                        } else if (activeRun.status === "approved") {
+                          const res = payrollService.disbursePayRun(activeRun.id);
+                          if (res.success) {
+                            setRefreshKey((prev) => prev + 1);
+                            showToast("Payroll disbursed successfully.");
+                            handleExport("Bank Transfer Format");
+                          } else {
+                            showToast(res.error, "error");
+                          }
+                        }
+                      } else {
+                        showToast("Payroll processing started successfully.");
+                      }
                     }
                   }}
                   className={`flex-1 py-4 rounded-[20px] text-white font-black text-[13px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg active:scale-95 ${runModalStep === 2 ? "bg-[#8B5CF6] shadow-[#8B5CF6]/20" : "bg-[#00B87C] shadow-[#00B87C]/20"}`}
                 >
-                  {runModalStep === 2 ? "Confirm & Lock" : "Proceed to Review"}
+                  {runModalStep === 2
+                    ? activeRun?.status === "pending"
+                      ? "Confirm & Approve"
+                      : "Confirm & Disburse"
+                    : "Proceed to Review"}
                 </button>
               </div>
             </motion.div>
