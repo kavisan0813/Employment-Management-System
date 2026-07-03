@@ -42,12 +42,18 @@ import {
   Unlock,
   SendHorizonal,
 } from "lucide-react";
-import { payrollEmployees, leaveRequests, employees } from "../../../data/mockData";
+import {
+  payrollEmployees,
+  leaveRequests,
+  employees,
+} from "../../../data/mockData";
 import { payrollService } from "../../finance/payroll/payroll.service";
 import { calculatePayslip } from "../../finance/payroll/calculatePayslip";
-import { useAttendance } from "../../../context/AttendanceContext";
-import type { Payslip, SalaryStructure } from "../../finance/payroll/payroll.types";
-import { useEmployees, type Employee } from "../../../context/AppContext";
+import type {
+  Payslip,
+  SalaryStructure,
+} from "../../finance/payroll/payroll.types";
+import { useEmployees } from "../../../context/AppContext";
 
 /* ─── Constants ─────────────────────────── */
 const MONTHS = [
@@ -154,36 +160,6 @@ const generateMockPayrollForMonthYear = (
       transferProgress: status === "Paid" ? 100 : 0,
     };
   });
-};
-
-const loadFromStorage = (month: string, year: string): PayrollEmployee[] => {
-  const key = `nexus_payroll_records_${month.toLowerCase()}_${year}`;
-  try {
-    const raw = localStorage.getItem(key);
-    if (raw) return JSON.parse(raw) as PayrollEmployee[];
-  } catch {
-    // ignore
-  }
-  const generated = generateMockPayrollForMonthYear(month, year);
-  try {
-    localStorage.setItem(key, JSON.stringify(generated));
-  } catch {
-    // ignore
-  }
-  return generated;
-};
-
-const saveToStorage = (
-  month: string,
-  year: string,
-  data: PayrollEmployee[],
-) => {
-  const key = `nexus_payroll_records_${month.toLowerCase()}_${year}`;
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-  } catch {
-    // ignore
-  }
 };
 
 /* ─── Toast System ───────────────────────── */
@@ -984,7 +960,8 @@ function RunPayrollModal({
                   className="text-amber-500 shrink-0 mt-0.5"
                 />
                 <p className="text-xs text-amber-600 leading-relaxed">
-                  This will generate the draft pay run and submit it to the Finance team for review and approval.
+                  This will generate the draft pay run and submit it to the
+                  Finance team for review and approval.
                 </p>
               </div>
             </div>
@@ -1343,14 +1320,15 @@ export function Payroll() {
   /* ── Leave impact helper ── */
   const getLeaveImpact = useCallback((empId: string, empName: string) => {
     const leaves = leaveRequests.filter(
-      (lr) => lr.employee.toLowerCase() === empName.toLowerCase() && lr.status === "Approved"
+      (lr) =>
+        lr.employee.toLowerCase() === empName.toLowerCase() &&
+        lr.status === "Approved",
     );
     const days = leaves.reduce((s, lr) => s + lr.days, 0);
     return { days, amount: days > 0 ? Math.round((days / 30) * 1000) : 0 };
   }, []);
 
   /* ── State ── */
-  const { getPunchStateForEmail } = useAttendance();
   const [selectedMonth, setSelectedMonth] = useState("April");
   const [selectedYear, setSelectedYear] = useState("2026");
   const [employeesData, setEmployeesData] = useState<PayrollEmployee[]>([]);
@@ -1389,7 +1367,9 @@ export function Payroll() {
   }, [employeesList]);
 
   const missingStructuresEmployees = useMemo(() => {
-    return activeEmployees.filter((emp) => !structures.some((s) => s.employeeId === emp.id));
+    return activeEmployees.filter(
+      (emp) => !structures.some((s) => s.employeeId === emp.id),
+    );
   }, [activeEmployees, structures]);
   const actionMenuRef = useRef<HTMLDivElement>(null);
 
@@ -1403,17 +1383,24 @@ export function Payroll() {
     const run = payrollService.getPayRun(monthYear);
     if (run) {
       const mapped = run.payslips.map((ps: Payslip) => {
-        const originalEmp = payrollEmployees.find((pe) => pe.id === ps.employeeId);
+        const originalEmp = payrollEmployees.find(
+          (pe) => pe.id === ps.employeeId,
+        );
         return {
           id: ps.employeeId,
           name: ps.employeeName,
           designation: ps.designation,
           department: ps.department,
-          status: run.status === "disbursed" ? ("Paid" as const) : ("Pending" as const),
+          status:
+            run.status === "disbursed"
+              ? ("Paid" as const)
+              : ("Pending" as const),
           gross: ps.earnings.gross,
           deductions: ps.deductions.total,
           net: ps.netPay,
-          avatar: originalEmp?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100",
+          avatar:
+            originalEmp?.avatar ||
+            "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100",
           bonus: ps.bonus || 0,
           bankAccount: ps.bankAccount,
           transferProgress: run.status === "disbursed" ? 100 : 0,
@@ -1422,19 +1409,24 @@ export function Payroll() {
       setEmployeesData(mapped);
     } else {
       const activeStructures = structures.filter((struct) =>
-        activeEmployees.some((emp) => emp.id === struct.employeeId)
+        activeEmployees.some((emp) => emp.id === struct.employeeId),
       );
       const mapped = activeStructures.map((struct: SalaryStructure) => {
-        const leavesInfo = getLeaveImpact(struct.employeeId, struct.employeeName);
+        const leavesInfo = getLeaveImpact(
+          struct.employeeId,
+          struct.employeeName,
+        );
         const bonus = draftBonuses[struct.employeeId] || 0;
         const ps = calculatePayslip(
           struct,
           22,
           leavesInfo.days,
           monthYear,
-          bonus
+          bonus,
         );
-        const originalEmp = payrollEmployees.find((pe) => pe.id === struct.employeeId);
+        const originalEmp = payrollEmployees.find(
+          (pe) => pe.id === struct.employeeId,
+        );
         return {
           id: struct.employeeId,
           name: struct.employeeName,
@@ -1444,7 +1436,9 @@ export function Payroll() {
           gross: ps.earnings.gross,
           deductions: ps.deductions.total,
           net: ps.netPay,
-          avatar: originalEmp?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100",
+          avatar:
+            originalEmp?.avatar ||
+            "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100",
           bonus: bonus,
           bankAccount: struct.bankAccount,
           transferProgress: 0,
@@ -1787,16 +1781,17 @@ export function Payroll() {
               Analytics
             </button>
 
-            {!payRun && (user?.role === "HR Manager" || user?.role === "Super Admin") && (
-              <button
-                onClick={() => setShowRunModal(true)}
-                disabled={missingStructuresEmployees.length > 0}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-500/25 hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <Play size={14} className="fill-white" />
-                Prepare Payroll
-              </button>
-            )}
+            {!payRun &&
+              (user?.role === "HR Manager" || user?.role === "Super Admin") && (
+                <button
+                  onClick={() => setShowRunModal(true)}
+                  disabled={missingStructuresEmployees.length > 0}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-500/25 hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <Play size={14} className="fill-white" />
+                  Prepare Payroll
+                </button>
+              )}
           </div>
         </div>
 
@@ -2061,7 +2056,10 @@ export function Payroll() {
                 Blocker: Missing Salary Structures
               </h4>
               <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold leading-relaxed">
-                Payroll cannot be processed. The following active employee(s) do not have a salary structure configured in Finance. Please request Finance to configure their structures before running the payroll:
+                Payroll cannot be processed. The following active employee(s) do
+                not have a salary structure configured in Finance. Please
+                request Finance to configure their structures before running the
+                payroll:
               </p>
               <div className="flex flex-wrap gap-2 mt-3">
                 {missingStructuresEmployees.map((emp) => (
@@ -2631,20 +2629,21 @@ export function Payroll() {
       </div>
 
       {/* ── Floating Action Button ── */}
-      {!payRun && (user?.role === "HR Manager" || user?.role === "Super Admin") && (
-        <div className="fixed bottom-8 right-8 z-[2000]">
-          <button
-            onClick={() => setShowRunModal(true)}
-            disabled={missingStructuresEmployees.length > 0}
-            className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
-          >
-            <Play size={20} className="fill-white translate-x-0.5" />
-            <div className="absolute right-full mr-3 px-3 py-1.5 bg-foreground text-background text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
-              Prepare Payroll
-            </div>
-          </button>
-        </div>
-      )}
+      {!payRun &&
+        (user?.role === "HR Manager" || user?.role === "Super Admin") && (
+          <div className="fixed bottom-8 right-8 z-[2000]">
+            <button
+              onClick={() => setShowRunModal(true)}
+              disabled={missingStructuresEmployees.length > 0}
+              className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
+            >
+              <Play size={20} className="fill-white translate-x-0.5" />
+              <div className="absolute right-full mr-3 px-3 py-1.5 bg-foreground text-background text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
+                Prepare Payroll
+              </div>
+            </button>
+          </div>
+        )}
 
       {/* ── Modals ── */}
       {showRunModal && (
@@ -2656,24 +2655,27 @@ export function Payroll() {
           onComplete={() => {
             const structures = payrollService.getSalaryStructures();
             const activeStructures = structures.filter((struct) =>
-              activeEmployees.some((emp) => emp.id === struct.employeeId)
+              activeEmployees.some((emp) => emp.id === struct.employeeId),
             );
             const payslips = activeStructures.map((struct: SalaryStructure) => {
-              const leavesInfo = getLeaveImpact(struct.employeeId, struct.employeeName);
+              const leavesInfo = getLeaveImpact(
+                struct.employeeId,
+                struct.employeeName,
+              );
               const bonus = draftBonuses[struct.employeeId] || 0;
               return calculatePayslip(
                 struct,
                 22,
                 leavesInfo.days,
                 `${selectedMonth} ${selectedYear}`,
-                bonus
+                bonus,
               );
             });
 
             const res = payrollService.createPayRun(
               `${selectedMonth} ${selectedYear}`,
               user?.email || "hr@nexushr.com",
-              payslips
+              payslips,
             );
 
             if (res.success) {

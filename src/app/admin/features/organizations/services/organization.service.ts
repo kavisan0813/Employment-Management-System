@@ -21,7 +21,9 @@ export const OrganizationService = {
     return db.auditLogs.get();
   },
 
-  createOrganization(params: Partial<Organization> & { ownerName?: string; password?: string }): Organization {
+  createOrganization(
+    params: Partial<Organization> & { ownerName?: string; password?: string },
+  ): Organization {
     const plan = params.plan || "Starter";
     const newOrg: Organization = {
       id: `org-${Date.now()}`,
@@ -102,9 +104,11 @@ export const OrganizationService = {
 
   updateOrganization(orgId: string, updates: Partial<Organization>) {
     const orgs = db.organizations.get();
-    const updated = orgs.map((o) => (o.id === orgId ? { ...o, ...updates } : o));
+    const updated = orgs.map((o) =>
+      o.id === orgId ? { ...o, ...updates } : o,
+    );
     db.organizations.save(updated);
-    
+
     pushAuditLog(
       "org.update",
       "Admin Action",
@@ -112,7 +116,7 @@ export const OrganizationService = {
       "platform_admin",
       updated.find((o) => o.id === orgId)?.name || "Unknown",
       "Active",
-      { updates: JSON.stringify(updates) }
+      { updates: JSON.stringify(updates) },
     );
   },
 
@@ -120,7 +124,7 @@ export const OrganizationService = {
     const orgs = db.organizations.get();
     const updated = orgs.map((o) => (o.id === orgId ? { ...o, status } : o));
     db.organizations.save(updated);
-    
+
     pushAuditLog(
       "org.status_change",
       "Security",
@@ -134,11 +138,17 @@ export const OrganizationService = {
 
   updateSubscriptionPlan(orgId: string, plan: Organization["plan"]) {
     const orgs = db.organizations.get();
-    const updatedOrgs = orgs.map((o) => (o.id === orgId ? { ...o, plan, mrr: PLAN_PRICING[plan] || o.mrr } : o));
+    const updatedOrgs = orgs.map((o) =>
+      o.id === orgId ? { ...o, plan, mrr: PLAN_PRICING[plan] || o.mrr } : o,
+    );
     db.organizations.save(updatedOrgs);
 
     const subs = db.subscriptions.get();
-    const updatedSubs = subs.map((s) => (s.organizationId === orgId ? { ...s, plan: plan as any, amount: PLAN_PRICING[plan] || s.amount } : s));
+    const updatedSubs = subs.map((s) =>
+      s.organizationId === orgId
+        ? { ...s, plan: plan as any, amount: PLAN_PRICING[plan] || s.amount }
+        : s,
+    );
     db.subscriptions.save(updatedSubs);
 
     pushAuditLog(
@@ -163,5 +173,5 @@ export const OrganizationService = {
       return s;
     });
     db.subscriptions.save(updatedSubs);
-  }
+  },
 };

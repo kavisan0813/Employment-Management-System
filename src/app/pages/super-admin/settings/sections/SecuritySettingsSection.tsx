@@ -1,9 +1,5 @@
-import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  ChevronRight,
-  Users,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function SecuritySettingsSection() {
   const {
@@ -53,10 +49,7 @@ export function SecuritySettingsSection() {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
-        <ChevronRight
-          size={12}
-          style={{ color: "var(--muted-foreground)" }}
-        />
+        <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "#00B87C" }}>Security</span>
       </div>
 
@@ -84,9 +77,7 @@ export function SecuritySettingsSection() {
           </p>
         </div>
         <button
-          onClick={() =>
-            showToast("Authentication schemas hardened securely")
-          }
+          onClick={() => showToast("Authentication schemas hardened securely")}
           style={{
             backgroundColor: "#00B87C",
             color: "white",
@@ -546,9 +537,7 @@ export function SecuritySettingsSection() {
           Reset to Defaults
         </button>
         <button
-          onClick={() =>
-            showToast("Authentication schemas hardened securely")
-          }
+          onClick={() => showToast("Authentication schemas hardened securely")}
           style={{
             backgroundColor: "#00B87C",
             color: "white",

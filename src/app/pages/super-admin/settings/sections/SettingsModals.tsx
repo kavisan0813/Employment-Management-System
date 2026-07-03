@@ -1,10 +1,7 @@
 import React from "react";
 import { useSettingsContext } from "../SettingsContext";
 import { useAuth } from "../../../../context/AuthContext";
-import {
-  User,
-  Users,
-} from "lucide-react";
+import { Users } from "lucide-react";
 
 export function SettingsModals() {
   const { user } = useAuth();
@@ -13,7 +10,6 @@ export function SettingsModals() {
   const {
     activeModal,
     confirmEditRoleSubmit,
-    country,
     deptForm,
     deptsList,
     editForm,
@@ -34,7 +30,6 @@ export function SettingsModals() {
     payrollCycle,
     payrollPayout,
     permissionGroups,
-    permissions,
     prHalfDayCalc,
     prLateDeduct,
     prLopEnabled,
@@ -82,7 +77,6 @@ export function SettingsModals() {
     setSchedulesList,
     setUsersList,
     showToast,
-    timezone,
     usersList,
   } = useSettingsContext();
 
@@ -124,7 +118,7 @@ export function SettingsModals() {
         showToast("Schedule created successfully", "success");
       } else {
         setSchedulesList(
-          schedulesList.map((s) =>
+          schedulesList.map((s: { code: any; }) =>
             s.code === selectedSchedule?.code
               ? {
                   ...s,
@@ -162,7 +156,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setSchedulesList(
-        schedulesList.filter((s) => s.code !== selectedSchedule?.code),
+        schedulesList.filter((s: { code: any; }) => s.code !== selectedSchedule?.code),
       );
       setIsSubmitting(false);
       showToast("Schedule deleted successfully", "success");
@@ -204,7 +198,7 @@ export function SettingsModals() {
         showToast("Leave type created successfully", "success");
       } else {
         setLeaveTypesList(
-          leaveTypesList.map((l) =>
+          leaveTypesList.map((l: { code: any; }) =>
             l.code === selectedLeaveType?.code
               ? {
                   ...l,
@@ -238,7 +232,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setLeaveTypesList(
-        leaveTypesList.filter((l) => l.code !== selectedLeaveType?.code),
+        leaveTypesList.filter((l: { code: any; }) => l.code !== selectedLeaveType?.code),
       );
       setIsSubmitting(false);
       showToast("Leave type removed successfully", "success");
@@ -302,9 +296,8 @@ export function SettingsModals() {
         showToast("Holiday created successfully", "success");
       } else {
         setHolidaysList(
-          holidaysList.map((h) =>
-            h.date === selectedHoliday?.date &&
-            h.name === selectedHoliday?.name
+          holidaysList.map((h: { date: any; name: any; }) =>
+            h.date === selectedHoliday?.date && h.name === selectedHoliday?.name
               ? {
                   ...h,
                   name: holidayForm.name,
@@ -332,7 +325,7 @@ export function SettingsModals() {
     setTimeout(() => {
       setHolidaysList(
         holidaysList.filter(
-          (h) =>
+          (h: { date: any; name: any; }) =>
             !(
               h.date === selectedHoliday?.date &&
               h.name === selectedHoliday?.name
@@ -386,7 +379,7 @@ export function SettingsModals() {
         showToast("Location created successfully", "success");
       } else {
         setLocationsList(
-          locationsList.map((l) =>
+          locationsList.map((l: { code: any; }) =>
             l.code === selectedLoc?.code
               ? {
                   ...l,
@@ -423,7 +416,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setLocationsList(
-        locationsList.filter((l) => l.code !== selectedLoc?.code),
+        locationsList.filter((l: { code: any; }) => l.code !== selectedLoc?.code),
       );
       setIsSubmitting(false);
       showToast("Location deleted successfully", "success");
@@ -458,7 +451,7 @@ export function SettingsModals() {
         showToast("Department created successfully", "success");
       } else {
         setDeptsList(
-          deptsList.map((d) =>
+          deptsList.map((d: { code: any; }) =>
             d.code === selectedDept?.code
               ? {
                   ...d,
@@ -487,7 +480,7 @@ export function SettingsModals() {
     }
     setIsSubmitting(true);
     setTimeout(() => {
-      setDeptsList(deptsList.filter((d) => d.code !== selectedDept?.code));
+      setDeptsList(deptsList.filter((d: { code: any; }) => d.code !== selectedDept?.code));
       setIsSubmitting(false);
       showToast("Department deleted successfully", "success");
       closeModal();
@@ -516,7 +509,7 @@ export function SettingsModals() {
     setTimeout(() => {
       const initials = inviteForm.name
         .split(" ")
-        .map((n) => n[0])
+        .map((n: any[]) => n[0])
         .join("")
         .toUpperCase()
         .slice(0, 2);
@@ -563,7 +556,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
-        usersList.map((u) =>
+        usersList.map((u: { email: any; }) =>
           u.email === selectedUser?.email
             ? {
                 ...u,
@@ -587,7 +580,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
-        usersList.map((u) =>
+        usersList.map((u: { email: any; }) =>
           u.email === selectedUser?.email ? { ...u, status: "Active" } : u,
         ),
       );
@@ -601,7 +594,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
-        usersList.map((u) =>
+        usersList.map((u: { email: any; }) =>
           u.email === selectedUser?.email ? { ...u, status: "Inactive" } : u,
         ),
       );
@@ -1653,9 +1646,7 @@ export function SettingsModals() {
             >
               <div>• Updated active Leave Types list</div>
               <div>• Altered entitlement parameters & validations</div>
-              <div>
-                • Revised approval workflows ({lpApprovalLevels} Level)
-              </div>
+              <div>• Revised approval workflows ({lpApprovalLevels} Level)</div>
             </div>
           </div>
 
@@ -1851,9 +1842,7 @@ export function SettingsModals() {
                     color: "var(--foreground)",
                   }}
                 >
-                  <option value="All Locations">
-                    Global (All Locations)
-                  </option>
+                  <option value="All Locations">Global (All Locations)</option>
                   <option value="Bengaluru HQ">Bengaluru HQ</option>
                   <option value="Mumbai Branch">Mumbai Branch</option>
                   <option value="Delhi Warehouse">Delhi Warehouse</option>
@@ -2483,9 +2472,7 @@ export function SettingsModals() {
                         type="button"
                         onClick={() => {
                           const next = isSelected
-                            ? scheduleForm.workingDays.filter(
-                                (d) => d !== day,
-                              )
+                            ? scheduleForm.workingDays.filter((d: string) => d !== day)
                             : [...scheduleForm.workingDays, day];
                           setScheduleForm({
                             ...scheduleForm,
@@ -2497,9 +2484,7 @@ export function SettingsModals() {
                           backgroundColor: isSelected
                             ? "rgba(0, 184, 124, 0.1)"
                             : "transparent",
-                          borderColor: isSelected
-                            ? "#00B87C"
-                            : "var(--border)",
+                          borderColor: isSelected ? "#00B87C" : "var(--border)",
                           color: isSelected ? "#00B87C" : "var(--foreground)",
                         }}
                       >
@@ -2854,8 +2839,7 @@ export function SettingsModals() {
                   margin: 0,
                 }}
               >
-                Code: {selectedSchedule?.code} | Type:{" "}
-                {selectedSchedule?.type}
+                Code: {selectedSchedule?.code} | Type: {selectedSchedule?.type}
               </p>
             </div>
             <button
@@ -2954,9 +2938,7 @@ export function SettingsModals() {
                 <span
                   className="font-semibold text-sm block mt-1"
                   style={{
-                    color: selectedSchedule?.otEligible
-                      ? "#00B87C"
-                      : "#6B7280",
+                    color: selectedSchedule?.otEligible ? "#00B87C" : "#6B7280",
                   }}
                 >
                   {selectedSchedule?.otEligible ? "Eligible" : "Not Eligible"}
@@ -3075,8 +3057,7 @@ export function SettingsModals() {
                     if (
                       !isEdit &&
                       (!locForm.code ||
-                        locForm.code ===
-                          locForm.name.slice(0, 3).toUpperCase())
+                        locForm.code === locForm.name.slice(0, 3).toUpperCase())
                     ) {
                       newCode = newName.slice(0, 3).toUpperCase();
                     }
@@ -3796,8 +3777,7 @@ export function SettingsModals() {
                   if (
                     !isEdit &&
                     (!deptForm.code ||
-                      deptForm.code ===
-                        deptForm.name.slice(0, 2).toUpperCase())
+                      deptForm.code === deptForm.name.slice(0, 2).toUpperCase())
                   ) {
                     newCode = newName.slice(0, 2).toUpperCase();
                   }
@@ -4036,8 +4016,7 @@ export function SettingsModals() {
             }}
           >
             Are you sure you want to delete the{" "}
-            <span className="font-bold">{selectedDept?.name}</span>{" "}
-            department?
+            <span className="font-bold">{selectedDept?.name}</span> department?
           </p>
           {hasEmployees && (
             <div
@@ -5287,9 +5266,7 @@ export function SettingsModals() {
     case "add_leave_type":
     case "edit_leave_type":
       title =
-        activeModal === "add_leave_type"
-          ? "Add Leave Type"
-          : "Edit Leave Type";
+        activeModal === "add_leave_type" ? "Add Leave Type" : "Edit Leave Type";
       content = (
         <div className="space-y-4">
           <div>
@@ -5902,7 +5879,7 @@ export function SettingsModals() {
                   </tr>
                 </thead>
                 <tbody>
-                  {permissionGroups.map((group) => (
+                  {permissionGroups.map((group: { id: React.Key | null | undefined; name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; modules: any[]; }) => (
                     <React.Fragment key={group.id}>
                       <tr>
                         <td
@@ -5918,7 +5895,7 @@ export function SettingsModals() {
                           {group.name}
                         </td>
                       </tr>
-                      {group.modules.map((mod) => {
+                      {group.modules.map((mod: { id: React.Key | null | undefined; name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; }) => {
                         const p = roleForm.permissions[mod.id] || "no";
                         const isView = p === "view" || p === "full";
                         const isFull = p === "full";
@@ -5933,7 +5910,7 @@ export function SettingsModals() {
                           } else if (type === "full") {
                             next = checked ? "full" : "view";
                           }
-                          setRoleForm((prev) => ({
+                          setRoleForm((prev: { permissions: any; }) => ({
                             ...prev,
                             permissions: {
                               ...prev.permissions,

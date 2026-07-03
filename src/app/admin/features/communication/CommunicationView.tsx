@@ -5,13 +5,11 @@ import { useCommunication } from "./hooks/useCommunication";
 import { BroadcastAnnouncementsTab } from "./components/BroadcastAnnouncementsTab";
 import { NotificationTemplatesTab } from "./components/NotificationTemplatesTab";
 
-
 // Import Lucide icons
 import {
   MessageSquare,
   Megaphone,
   FileText,
-  Settings,
   CheckCircle2,
   AlertTriangle,
   AlertCircle,
@@ -19,16 +17,22 @@ import {
 } from "lucide-react";
 
 export function CommunicationView() {
-  const {
-    activeTab,
-    setActiveTab,
-    toastMessage,
-    showToast
-  } = useCommunication();
+  const { activeTab, setActiveTab, toastMessage, showToast } =
+    useCommunication();
 
   const navItems = [
-    { id: "broadcast", label: "Broadcast Announcements", icon: Megaphone, desc: "Send platform-wide targeted messages" },
-    { id: "templates", label: "Notification Templates", icon: FileText, desc: "Manage system automated email and SMS content" },
+    {
+      id: "broadcast",
+      label: "Broadcast Announcements",
+      icon: Megaphone,
+      desc: "Send platform-wide targeted messages",
+    },
+    {
+      id: "templates",
+      label: "Notification Templates",
+      icon: FileText,
+      desc: "Manage system automated email and SMS content",
+    },
   ] as const;
 
   const renderActiveTabContent = () => {
@@ -37,7 +41,7 @@ export function CommunicationView() {
         return <BroadcastAnnouncementsTab showToast={showToast} />;
       case "templates":
         return <NotificationTemplatesTab showToast={showToast} />;
-    
+
       default:
         return <BroadcastAnnouncementsTab showToast={showToast} />;
     }
@@ -45,7 +49,6 @@ export function CommunicationView() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-1.5 py-4 relative">
-      
       {/* Toast Alert overlay */}
       {toastMessage && (
         <div
@@ -59,10 +62,18 @@ export function CommunicationView() {
                   : "bg-indigo-50 border-indigo-200 text-indigo-800"
           }`}
         >
-          {toastMessage.type === "success" && <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />}
-          {toastMessage.type === "error" && <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />}
-          {toastMessage.type === "warning" && <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />}
-          {toastMessage.type === "info" && <Info className="w-5 h-5 text-indigo-650 shrink-0" />}
+          {toastMessage.type === "success" && (
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+          )}
+          {toastMessage.type === "error" && (
+            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+          )}
+          {toastMessage.type === "warning" && (
+            <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
+          )}
+          {toastMessage.type === "info" && (
+            <Info className="w-5 h-5 text-indigo-650 shrink-0" />
+          )}
           <span className="text-sm font-semibold">{toastMessage.text}</span>
         </div>
       )}
@@ -75,7 +86,8 @@ export function CommunicationView() {
             Notifications & Announcements
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Platform-wide messaging center. Dispatch announcements, edit system templates, and configure notification policies.
+            Platform-wide messaging center. Dispatch announcements, edit system
+            templates, and configure notification policies.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-750 border border-indigo-100 self-start md:self-auto shadow-xs">

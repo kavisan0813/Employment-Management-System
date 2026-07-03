@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Label } from "../components/Label";
 import { Breadcrumb } from "../components/Breadcrumb";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../../../context/AuthContext";
 import { showToast } from "../../../../components/workflow/ToastNotification";
-import { ToggleRow } from "../components/ToggleRow";
 
-export function EmployeeLanguageRegionSection({ onModal }: { onModal: (m: string | null) => void }) {
+export function EmployeeLanguageRegionSection({
+  onModal,
+}: {
+  onModal: (m: string | null) => void;
+}) {
   const [lang, setLang] = useState("English");
   const [tz, setTz] = useState("IST (UTC+5:30)");
   const [dateFmt, setDateFmt] = useState("DD-MM-YYYY");

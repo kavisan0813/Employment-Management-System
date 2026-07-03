@@ -54,7 +54,7 @@ let announcements: Announcement[] = [
   },
 ];
 
-let templates: NotificationTemplate[] = [
+const templates: NotificationTemplate[] = [
   {
     template_id: "tpl-001",
     template_name: "Welcome Email",
@@ -172,7 +172,7 @@ let templates: NotificationTemplate[] = [
   },
 ];
 
-let templateVersions: TemplateVersionHistory[] = [
+const templateVersions: TemplateVersionHistory[] = [
   {
     version_id: "v-001",
     template_id: "tpl-001",
@@ -333,7 +333,7 @@ export const communicationService = {
     };
   },
 
-  async getDeliveryStatus(announcementId: string) {
+  async getDeliveryStatus() {
     await delay(400);
     return {
       email: { sent: 1500, delivered: 1480, failed: 20, opened: 850 },
@@ -497,7 +497,7 @@ export const communicationService = {
     ];
   },
 
-  async getNotificationTypeUsageStats(notificationType: NotificationTypeEnum) {
+  async getNotificationTypeUsageStats() {
     await delay(500);
     return {
       totalOrgs: 1240,

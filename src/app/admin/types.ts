@@ -56,7 +56,7 @@ export interface PlatformUser {
   name: string;
   email: string;
   avatarUrl?: string;
-  status: "Active" | "Inactive" | "Pending" | "Suspended";
+  status: "Active" | "Inactive" | "Pending" | "Suspended" | "Pending Invite";
   role: string;
   organization: string;
   organizationId: string;

@@ -1,17 +1,8 @@
-import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  ChevronRight,
-  Download,
-  Upload,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function DocumentSettingsSection() {
-  const {
-    extraConfig,
-    showToast,
-    updateExtraConfig,
-  } = useSettingsContext();
+  const { extraConfig, showToast, updateExtraConfig } = useSettingsContext();
 
   const categories = [
     {

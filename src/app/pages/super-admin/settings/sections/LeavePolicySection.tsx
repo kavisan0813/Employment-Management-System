@@ -1,9 +1,6 @@
 import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  Lock,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function LeavePolicySection() {
   const {
@@ -32,10 +29,7 @@ export function LeavePolicySection() {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
-        <ChevronRight
-          size={12}
-          style={{ color: "var(--muted-foreground)" }}
-        />
+        <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "#00B87C" }}>Leave Policy</span>
       </div>
 
@@ -159,7 +153,7 @@ export function LeavePolicySection() {
             </tr>
           </thead>
           <tbody>
-            {leaveTypesList.map((l, idx) => (
+            {leaveTypesList.map((l: { name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; code: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; days: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; type: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; carryForward: any; maxCarryForward: any; approvalRequired: any; attachmentRequired: any; status: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; encashment: any; minNoticePeriod: any; maxConsecutiveLeave: any; dept: any; location: any; description: any; }, idx: React.Key | null | undefined) => (
               <tr
                 key={idx}
                 style={{
@@ -530,9 +524,7 @@ export function LeavePolicySection() {
               <input
                 type="number"
                 value={lpEncashmentLimit}
-                onChange={(e) =>
-                  setLpEncashmentLimit(parseInt(e.target.value))
-                }
+                onChange={(e) => setLpEncashmentLimit(parseInt(e.target.value))}
                 className="w-full rounded-xl px-3 py-2.5 text-sm border"
                 style={{
                   backgroundColor: "var(--input-background)",
@@ -572,8 +564,7 @@ export function LeavePolicySection() {
                 marginTop: "2px",
               }}
             >
-              Minimum months an employee must complete before applying for
-              leave
+              Minimum months an employee must complete before applying for leave
             </p>
           </div>
           <select
@@ -612,7 +603,7 @@ export function LeavePolicySection() {
           className="text-xs space-y-1"
           style={{ color: "var(--foreground)" }}
         >
-          {leaveTypesList.map((l) => (
+          {leaveTypesList.map((l: { code: boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.Key | null | undefined; name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; days: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; carryForward: any; }) => (
             <div key={l.code}>
               • {l.name} ({l.code}):{" "}
               <span className="font-bold">{l.days} Days</span> per year |

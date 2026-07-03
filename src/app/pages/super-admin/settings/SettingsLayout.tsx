@@ -53,28 +53,38 @@ interface SettingsLayoutProps {
 export function SettingsLayout({ role }: SettingsLayoutProps) {
   // If Employee, we use local state for simplicity and self-containment
   const isEmployee = role === "Employee";
-  
+
   const context = isEmployee ? null : useSettingsContext();
-  
+
   // Local state for Employee active section
   const [empActiveSection, setEmpActiveSection] = useState("emp_security");
-  const [empModal, setEmpModal] = useState<string | null>(null);
+  const [setEmpModal] = useState<string | null>(null);
 
   // Read state from context (for Admin/HR) or local (for Employee)
   const activeSubTab = isEmployee ? empActiveSection : context.activeSubTab;
-  const setActiveSubTab = isEmployee ? setEmpActiveSection : context.setActiveSubTab;
-  
+  const setActiveSubTab = isEmployee
+    ? setEmpActiveSection
+    : context.setActiveSubTab;
+
   const [localSearch, setLocalSearch] = useState("");
   const sidebarSearch = isEmployee ? localSearch : context.sidebarSearch;
-  const setSidebarSearch = isEmployee ? setLocalSearch : context.setSidebarSearch;
-  
+  const setSidebarSearch = isEmployee
+    ? setLocalSearch
+    : context.setSidebarSearch;
+
   const [localCollapsed, setLocalCollapsed] = useState<string[]>([]);
-  const collapsedCategories = isEmployee ? localCollapsed : context.collapsedCategories;
-  const setCollapsedCategories = isEmployee ? setLocalCollapsed : context.setCollapsedCategories;
-  
+  const collapsedCategories = isEmployee
+    ? localCollapsed
+    : context.collapsedCategories;
+  const setCollapsedCategories = isEmployee
+    ? setLocalCollapsed
+    : context.setCollapsedCategories;
+
   const [localSidebarOpen, setLocalSidebarOpen] = useState(false);
   const isSidebarOpen = isEmployee ? localSidebarOpen : context.isSidebarOpen;
-  const setIsSidebarOpen = isEmployee ? setLocalSidebarOpen : context.setIsSidebarOpen;
+  const setIsSidebarOpen = isEmployee
+    ? setLocalSidebarOpen
+    : context.setIsSidebarOpen;
 
   const navigation = ROLE_NAVIGATION[role] || [];
 
@@ -82,7 +92,7 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
   const filteredNavigation = navigation
     .map((category) => {
       const filteredItems = category.items.filter((item) =>
-        item.label.toLowerCase().includes(sidebarSearch.toLowerCase())
+        item.label.toLowerCase().includes(sidebarSearch.toLowerCase()),
       );
       return { ...category, items: filteredItems };
     })
@@ -92,16 +102,21 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
   const renderSectionContent = () => {
     // Enforcement check for RBAC (prevent URL queries bypass)
     if (!isEmployee) {
-      const allowedSectionKeys = navigation.flatMap((c) => c.items.map((i) => i.id));
+      const allowedSectionKeys = navigation.flatMap((c) =>
+        c.items.map((i) => i.id),
+      );
       if (!allowedSectionKeys.includes(activeSubTab)) {
         return (
           <div className="flex flex-col items-center justify-center py-20 px-8 text-center bg-card rounded-3xl border border-border">
             <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center mb-4">
               <Icons.ShieldAlert size={32} className="text-rose-500" />
             </div>
-            <h3 className="text-lg font-black text-foreground mb-2">Access Restricted</h3>
+            <h3 className="text-lg font-black text-foreground mb-2">
+              Access Restricted
+            </h3>
             <p className="text-sm text-muted-foreground max-w-sm">
-              You do not have permission to view this settings section. If you believe this is an error, please contact your administrator.
+              You do not have permission to view this settings section. If you
+              believe this is an error, please contact your administrator.
             </p>
           </div>
         );
@@ -110,46 +125,86 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
 
     switch (activeSubTab) {
       // System Sections
-      case "company": return <CompanyProfileSection />;
-      case "departments": return <DepartmentsSection />;
-      case "locations": return <LocationsSection />;
-      case "schedules": return <WorkSchedulesSection />;
-      case "holidays": return <HolidayCalendarSection />;
-      case "attendance_policy": return <AttendancePolicySection />;
-      case "leave_policy": return <LeavePolicySection />;
-      case "payroll_settings": return <PayrollSettingsSection />;
-      case "performance_settings": return <PerformanceSettingsSection />;
-      case "user_management": return <UserManagementSection />;
-      case "roles": return <RolesPermissionsSection />;
-      case "security": return <SecuritySettingsSection />;
-      case "audit_logs": return <AuditLogsSection />;
-      case "connected_apps": return <ConnectedAppsSection />;
-      case "api": return <ApiSettingsSection />;
-      case "webhooks": return <WebhooksSection />;
-      case "email_templates": return <EmailTemplatesSection />;
-      case "notification_rules": return <NotificationRulesSection />;
-      case "sms": return <SmsSettingsSection />;
-      case "appearance": return <AppearanceSection />;
-      case "language": return <LanguageRegionSection />;
-      case "backup": return <BackupRestoreSection />;
-      case "import_export": return <DataImportExportSection />;
-      case "workflows": return <ApprovalWorkflowsSection />;
-      case "leave_approvals": return <LeaveApprovalsSection />;
-      case "shift_swaps": return <ShiftSwapRulesSection />;
-      case "docs": return <DocumentSettingsSection />;
-      case "training": return <TrainingSettingsSection />;
-      case "onboarding": return <OnboardingSettingsSection />;
+      case "company":
+        return <CompanyProfileSection />;
+      case "departments":
+        return <DepartmentsSection />;
+      case "locations":
+        return <LocationsSection />;
+      case "schedules":
+        return <WorkSchedulesSection />;
+      case "holidays":
+        return <HolidayCalendarSection />;
+      case "attendance_policy":
+        return <AttendancePolicySection />;
+      case "leave_policy":
+        return <LeavePolicySection />;
+      case "payroll_settings":
+        return <PayrollSettingsSection />;
+      case "performance_settings":
+        return <PerformanceSettingsSection />;
+      case "user_management":
+        return <UserManagementSection />;
+      case "roles":
+        return <RolesPermissionsSection />;
+      case "security":
+        return <SecuritySettingsSection />;
+      case "audit_logs":
+        return <AuditLogsSection />;
+      case "connected_apps":
+        return <ConnectedAppsSection />;
+      case "api":
+        return <ApiSettingsSection />;
+      case "webhooks":
+        return <WebhooksSection />;
+      case "email_templates":
+        return <EmailTemplatesSection />;
+      case "notification_rules":
+        return <NotificationRulesSection />;
+      case "sms":
+        return <SmsSettingsSection />;
+      case "appearance":
+        return <AppearanceSection />;
+      case "language":
+        return <LanguageRegionSection />;
+      case "backup":
+        return <BackupRestoreSection />;
+      case "import_export":
+        return <DataImportExportSection />;
+      case "workflows":
+        return <ApprovalWorkflowsSection />;
+      case "leave_approvals":
+        return <LeaveApprovalsSection />;
+      case "shift_swaps":
+        return <ShiftSwapRulesSection />;
+      case "docs":
+        return <DocumentSettingsSection />;
+      case "training":
+        return <TrainingSettingsSection />;
+      case "onboarding":
+        return <OnboardingSettingsSection />;
 
       // Employee Sections
-      case "emp_security": return <EmployeeSecuritySection onModal={setEmpModal} />;
-      case "emp_privacy": return <EmployeePrivacySection onModal={setEmpModal} />;
-      case "emp_notifications": return <EmployeeNotificationsSection onModal={setEmpModal} />;
-      case "emp_appearance": return <EmployeeAppearanceSection />;
-      case "emp_language": return <EmployeeLanguageRegionSection onModal={setEmpModal} />;
-      case "emp_devices": return <ConnectedDevicesSection onModal={setEmpModal} />;
-      case "emp_data": return <DataDownloadsSection onModal={setEmpModal} />;
-      case "emp_help": return <HelpFAQSection navigate={() => {}} />; // Empty navigate for parity
-      case "emp_contact": return <ContactSupportSection onModal={setEmpModal} navigate={() => {}} />;
+      case "emp_security":
+        return <EmployeeSecuritySection onModal={setEmpModal} />;
+      case "emp_privacy":
+        return <EmployeePrivacySection onModal={setEmpModal} />;
+      case "emp_notifications":
+        return <EmployeeNotificationsSection onModal={setEmpModal} />;
+      case "emp_appearance":
+        return <EmployeeAppearanceSection />;
+      case "emp_language":
+        return <EmployeeLanguageRegionSection onModal={setEmpModal} />;
+      case "emp_devices":
+        return <ConnectedDevicesSection onModal={setEmpModal} />;
+      case "emp_data":
+        return <DataDownloadsSection onModal={setEmpModal} />;
+      case "emp_help":
+        return <HelpFAQSection navigate={() => {}} />;
+      case "emp_contact":
+        return (
+          <ContactSupportSection onModal={setEmpModal} navigate={() => {}} />
+        );
 
       default:
         return <div>Section not found: {activeSubTab}</div>;
@@ -278,8 +333,10 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
                   onClick={() => {
                     setCollapsedCategories(
                       isCollapsed
-                        ? collapsedCategories.filter((t: string) => t !== category.title)
-                        : [...collapsedCategories, category.title]
+                        ? collapsedCategories.filter(
+                            (t: string) => t !== category.title,
+                          )
+                        : [...collapsedCategories, category.title],
                     );
                   }}
                 >
@@ -306,7 +363,8 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
                   <div className="flex flex-col gap-1">
                     {category.items.map((item) => {
                       const active = activeSubTab === item.id;
-                      const Icon = (Icons as any)[item.iconName] || Icons.HelpCircle;
+                      const Icon =
+                        (Icons as any)[item.iconName] || Icons.HelpCircle;
                       return (
                         <button
                           key={item.id}
@@ -328,7 +386,9 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
                           <Icon
                             size={14}
                             style={{
-                              color: active ? "white" : "var(--muted-foreground)",
+                              color: active
+                                ? "white"
+                                : "var(--muted-foreground)",
                             }}
                           />
                           <span

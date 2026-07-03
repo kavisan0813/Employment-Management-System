@@ -2,8 +2,6 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-
-import React from "react";
 import { useNotifications } from "./hooks/useNotifications";
 
 // Import Modular Components
@@ -19,7 +17,6 @@ import {
   Bell,
   Calendar,
   CreditCard,
-  Shield,
   Radio,
   History,
   Settings,
@@ -43,13 +40,12 @@ export function NotificationsView() {
     handleAcknowledgeAlert,
     handleSecurityAction,
     handleSaveSettings,
-    handleSaveTemplate,
   } = useNotifications();
 
   // Navigation Items
   const navItems = [
     { id: "dashboard", label: "Dashboard", icon: BellRing, group: "General" },
-    
+
     {
       id: "expiry",
       label: "Subscription Expiry Alerts",
@@ -62,7 +58,7 @@ export function NotificationsView() {
       icon: CreditCard,
       group: "Event Monitors",
     },
-   
+
     {
       id: "channels",
       label: "Delivery Channels",
@@ -110,7 +106,7 @@ export function NotificationsView() {
             onRetryPayment={handleRetryPayment}
           />
         );
-  
+
       case "channels":
         return <DeliveryChannelsView />;
       case "history":

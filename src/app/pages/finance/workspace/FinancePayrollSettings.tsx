@@ -16,9 +16,7 @@ import {
   Upload,
   ShieldCheck,
   IndianRupee,
-  AlertCircle,
   Info,
-  CheckCircle2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
@@ -158,7 +156,9 @@ export interface PayslipTemplateConfig {
 export function FinancePayrollSettings() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("pay-cycle");
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null,
+  );
   const [refreshKey, setRefreshKey] = useState(0);
 
   // Custom Toast System (for bulletproof toast delivery)
@@ -3234,10 +3234,12 @@ interface SalaryStructuresSectionProps {
   onConfigure: (employee: Employee) => void;
 }
 
-export function SalaryStructuresSection({ onConfigure }: SalaryStructuresSectionProps) {
+export function SalaryStructuresSection({
+  onConfigure,
+}: SalaryStructuresSectionProps) {
   const { employeesList } = useEmployees();
   const [structures, setStructures] = useState<SalaryStructure[]>(() =>
-    payrollService.getSalaryStructures()
+    payrollService.getSalaryStructures(),
   );
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -3321,9 +3323,7 @@ export function SalaryStructuresSection({ onConfigure }: SalaryStructuresSection
             </thead>
             <tbody className="divide-y divide-border">
               {filteredEmployees.map((emp: Employee) => {
-                const struct = structures.find(
-                  (s) => s.employeeId === emp.id
-                );
+                const struct = structures.find((s) => s.employeeId === emp.id);
                 const isConfigured = !!struct;
                 const monthlyGross = struct
                   ? struct.basic + struct.hra + struct.allowances
@@ -3538,9 +3538,19 @@ export function SalaryStructureModal({
       mockStructure,
       PREVIEW_WORKING_DAYS,
       0, // 0 LOP
-      "July 2026"
+      "July 2026",
     );
-  }, [employee, watchedCtc, watchedGross, watchedBasic, watchedHra, allowances, watchedPf, esiApplicable, watchedPt]);
+  }, [
+    employee,
+    watchedCtc,
+    watchedGross,
+    watchedBasic,
+    watchedHra,
+    allowances,
+    watchedPf,
+    esiApplicable,
+    watchedPt,
+  ]);
 
   const onSubmit = (data: SalaryStructureFormValues) => {
     const ctcVal = Number(data.ctc);
@@ -3579,7 +3589,9 @@ export function SalaryStructureModal({
 
     const res = payrollService.saveSalaryStructure(structureToSave);
     if (res.success) {
-      toast.success(`Salary structure for ${employee.name} saved successfully!`);
+      toast.success(
+        `Salary structure for ${employee.name} saved successfully!`,
+      );
       onSaveSuccess();
       onClose();
     } else {
@@ -3641,7 +3653,9 @@ export function SalaryStructureModal({
                 />
               </div>
               {errors.ctc && (
-                <p className="text-xs text-rose-500 font-bold">{errors.ctc.message}</p>
+                <p className="text-xs text-rose-500 font-bold">
+                  {errors.ctc.message}
+                </p>
               )}
             </div>
 
@@ -3735,7 +3749,9 @@ export function SalaryStructureModal({
                     className="w-4.5 h-4.5 rounded border-border text-[#00B87C] focus:ring-[#00B87C]/20 bg-input-background"
                   />
                   <div>
-                    <span className="text-xs font-bold text-foreground">PF Applicable</span>
+                    <span className="text-xs font-bold text-foreground">
+                      PF Applicable
+                    </span>
                     <p className="text-[10px] text-muted-foreground leading-none mt-0.5">
                       12% of basic (capped at ₹15,000 ceiling)
                     </p>
@@ -3749,7 +3765,9 @@ export function SalaryStructureModal({
               <Info size={20} className="text-[#00C781] shrink-0 mt-0.5" />
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-foreground">ESI Contribution:</span>
+                  <span className="text-xs font-bold text-foreground">
+                    ESI Contribution:
+                  </span>
                   <span
                     className={`text-xs font-black uppercase ${
                       esiApplicable ? "text-[#00C781]" : "text-muted-foreground"
@@ -3841,7 +3859,9 @@ export function SalaryStructureModal({
                     Calculated Monthly Deductions
                   </h5>
                   <div className="flex justify-between items-center text-xs font-semibold">
-                    <span className="text-muted-foreground">Provident Fund (PF)</span>
+                    <span className="text-muted-foreground">
+                      Provident Fund (PF)
+                    </span>
                     <span className="text-foreground">
                       {previewPayslip.deductions.pf > 0
                         ? `₹${previewPayslip.deductions.pf.toLocaleString()}`
@@ -3849,7 +3869,9 @@ export function SalaryStructureModal({
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-xs font-semibold">
-                    <span className="text-muted-foreground">Employee ESI (0.75%)</span>
+                    <span className="text-muted-foreground">
+                      Employee ESI (0.75%)
+                    </span>
                     <span className="text-foreground">
                       {previewPayslip.deductions.esi > 0
                         ? `₹${previewPayslip.deductions.esi.toLocaleString()}`
@@ -3857,7 +3879,9 @@ export function SalaryStructureModal({
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-xs font-semibold">
-                    <span className="text-muted-foreground">Professional Tax (PT)</span>
+                    <span className="text-muted-foreground">
+                      Professional Tax (PT)
+                    </span>
                     <span className="text-foreground">
                       {previewPayslip.deductions.pt > 0
                         ? `₹${previewPayslip.deductions.pt.toLocaleString()}`
@@ -3865,7 +3889,9 @@ export function SalaryStructureModal({
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-xs font-semibold">
-                    <span className="text-muted-foreground">Income Tax (TDS Estimate)</span>
+                    <span className="text-muted-foreground">
+                      Income Tax (TDS Estimate)
+                    </span>
                     <span className="text-foreground">
                       {previewPayslip.deductions.tds > 0
                         ? `₹${previewPayslip.deductions.tds.toLocaleString()}`

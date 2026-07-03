@@ -1,9 +1,5 @@
-import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  ChevronRight,
-  Calendar,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function LanguageRegionSection() {
   const {
@@ -11,7 +7,6 @@ export function LanguageRegionSection() {
     appLanguage,
     appTimezone,
     country,
-    currency,
     extraConfig,
     setAppDateFormat,
     setAppLanguage,
@@ -216,9 +211,7 @@ export function LanguageRegionSection() {
             </label>
             <select
               value={extraConfig.timeFormat}
-              onChange={(e) =>
-                updateExtraConfig("timeFormat", e.target.value)
-              }
+              onChange={(e) => updateExtraConfig("timeFormat", e.target.value)}
               className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
               style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
             >

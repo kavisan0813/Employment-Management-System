@@ -1,9 +1,7 @@
-import React from "react";
 import { useSettingsContext } from "../SettingsContext";
 import {
   ChevronRight,
   Database,
-  Download,
   CheckCircle,
   RefreshCw,
   CloudUpload,
@@ -12,11 +10,7 @@ import {
 } from "lucide-react";
 
 export function BackupRestoreSection() {
-  const {
-    extraConfig,
-    showToast,
-    updateExtraConfig,
-  } = useSettingsContext();
+  const { extraConfig, showToast, updateExtraConfig } = useSettingsContext();
 
   const backupHistory = [
     {
@@ -190,9 +184,7 @@ export function BackupRestoreSection() {
             <input
               type="time"
               value={extraConfig.backupTime}
-              onChange={(e) =>
-                updateExtraConfig("backupTime", e.target.value)
-              }
+              onChange={(e) => updateExtraConfig("backupTime", e.target.value)}
               className="w-full rounded-xl px-3 py-2 text-sm border bg-white dark:bg-neutral-800"
               style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
             />
@@ -249,9 +241,7 @@ export function BackupRestoreSection() {
             </label>
             <select
               value={extraConfig.encryption}
-              onChange={(e) =>
-                updateExtraConfig("encryption", e.target.value)
-              }
+              onChange={(e) => updateExtraConfig("encryption", e.target.value)}
               className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
               style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
             >
@@ -414,8 +404,7 @@ export function BackupRestoreSection() {
         <div className="flex items-center gap-3 mb-4">
           <AlertTriangle className="text-[#D97706]" size={24} />
           <span className="text-[13px] font-bold text-[#92400E]">
-            Restoring will overwrite current data. This action cannot be
-            undone.
+            Restoring will overwrite current data. This action cannot be undone.
           </span>
         </div>
         <button className="w-full py-3 border border-[#E5E7EB] bg-white hover:bg-[#00B87C]/[0.08] rounded-xl text-[13px] text-gray-700 font-semibold flex items-center justify-center gap-2 cursor-pointer">

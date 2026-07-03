@@ -1,9 +1,5 @@
-import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  Key,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function ApiSettingsSection() {
   const {
@@ -52,10 +48,7 @@ export function ApiSettingsSection() {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
-        <ChevronRight
-          size={12}
-          style={{ color: "var(--muted-foreground)" }}
-        />
+        <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "#00B87C" }}>API Settings</span>
       </div>
 

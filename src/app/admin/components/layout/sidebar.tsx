@@ -3,27 +3,30 @@
  * SPDX-License-Identifier: Apache-2.5
  */
 
-import { NavLink, useLocation } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import {
   Building2,
-  Users,
   CreditCard,
   LayoutDashboard,
   AreaChart,
-  History,
   MessageSquare,
   Settings,
   ShieldCheck,
   Megaphone,
   User,
-  ToggleLeft,
-  ShieldAlert,
+  LogOut,
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
 
 export function Sidebar() {
   const location = useLocation();
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   // Navigation schema defining the core clusters
   const superAdminGroups = [
@@ -78,7 +81,7 @@ export function Sidebar() {
         { id: "complianceRules", label: "Compliance", icon: Layers, path: "/platform-admin/compliance" }
       ]
     }, */
-   /*  {
+    /*  {
       title: "Security & API",
       id: "security_api",
       items: [
@@ -112,7 +115,7 @@ export function Sidebar() {
           icon: Megaphone,
           path: "/platform-admin/communication",
         },
-       /*  {
+        /*  {
           id: "auditLogs",
           label: "Audit Logs",
           icon: History,
@@ -194,12 +197,12 @@ export function Sidebar() {
       </div>
 
       {/* Console Operator Badge Footer section */}
-      <div className="p-4 border-t border-gray-200 bg-gray-50/50 space-y-2 shrink-0">
+      <div className="p-4 border-t border-gray-200 bg-gray-50/50 space-y-3 shrink-0">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-xs text-indigo-700 border border-indigo-200 uppercase shrink-0">
             {user?.initials || "SR"}
           </div>
-          <div className="overflow-hidden">
+          <div className="overflow-hidden flex-1">
             <span
               className="block text-[11px] font-bold text-gray-900 truncate"
               title={user?.email || "platform@nexushr.com"}
@@ -211,6 +214,15 @@ export function Sidebar() {
             </span>
           </div>
         </div>
+
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-xl text-xs font-bold transition-all border border-red-100 shadow-xs cursor-pointer"
+        >
+          <LogOut className="w-3.5 h-3.5" />
+          Sign Out
+        </button>
+
         <div className="flex items-center gap-1.5 pt-1.5 border-t border-gray-150 text-[10px] text-gray-400 font-medium">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
           <span>Secure SSL Active &bull; Compliance</span>

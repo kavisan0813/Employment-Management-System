@@ -1,15 +1,7 @@
-import React, { useState } from "react";
 import { Label } from "../components/Label";
 import { Breadcrumb } from "../components/Breadcrumb";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../../../context/AuthContext";
 import { showToast } from "../../../../components/workflow/ToastNotification";
-import { ToggleRow } from "../components/ToggleRow";
-import {
-  Laptop,
-  AlertTriangle,
-  Smartphone,
-} from "lucide-react";
+import { Laptop, AlertTriangle, Smartphone } from "lucide-react";
 
 export function ConnectedDevicesSection({
   onModal,

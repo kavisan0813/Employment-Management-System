@@ -13,6 +13,8 @@ export interface User {
   email: string;
   role: UserRole;
   initials: string;
+  organization?: string;
+  organizationId?: string;
 }
 
 interface AuthContextType {

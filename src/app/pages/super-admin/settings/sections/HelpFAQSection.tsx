@@ -1,14 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Label } from "../components/Label";
 import { Breadcrumb } from "../components/Breadcrumb";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../../../context/AuthContext";
 import { showToast } from "../../../../components/workflow/ToastNotification";
-import { ToggleRow } from "../components/ToggleRow";
 import {
   User,
   Lock,
-  Download,
   Search,
   Calendar,
   FileText,
@@ -16,7 +12,11 @@ import {
   Target,
 } from "lucide-react";
 
-export function HelpFAQSection({ navigate }: { navigate: (p: string) => void }) {
+export function HelpFAQSection({
+  navigate,
+}: {
+  navigate: (p: string) => void;
+}) {
   const [search, setSearch] = useState("");
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [helpful, setHelpful] = useState<"yes" | "no" | null>(null);

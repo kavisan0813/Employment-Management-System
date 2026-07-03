@@ -5,7 +5,6 @@
 
 import { usePlatformSettings } from "./hooks/usePlatformSettings";
 import { GeneralSettingsView } from "./components/GeneralSettingsView";
-import { LocalizationSettingsView } from "./components/LocalizationSettingsView";
 import { CurrencySettingsView } from "./components/CurrencySettingsView";
 import { TimezoneSettingsView } from "./components/TimezoneSettingsView";
 import { TenantOverrideSimulator } from "./components/TenantOverrideSimulator";
@@ -13,7 +12,6 @@ import { TenantOverrideSimulator } from "./components/TenantOverrideSimulator";
 // Import Icons
 import {
   Settings,
-  Palette,
   Globe,
   Coins,
   Clock,
@@ -32,8 +30,6 @@ export function PlatformSettingsView() {
     alertMsg,
     alertType,
     handleSave,
-    getFormattedDatePreview,
-    getFormattedNumberPreview,
     getFormattedCurrencyPreview,
   } = usePlatformSettings();
 
@@ -44,7 +40,7 @@ export function PlatformSettingsView() {
       icon: Settings,
       group: "Foundation",
     },
-    
+
     {
       id: "localization",
       label: "Localization & Regional",
@@ -61,8 +57,6 @@ export function PlatformSettingsView() {
     /* { id: "email", label: "Email Settings", icon: Mail, group: "Channels" }, */
     /*  { id: "notifications", label: "Notifications Rules", icon: Bell, group: "Channels" }, */
     /*   { id: "security", label: "Security & MFA", icon: Lock, group: "Governance" }, */
-    
-
   ] as const;
 
   const renderActiveTabContent = () => {

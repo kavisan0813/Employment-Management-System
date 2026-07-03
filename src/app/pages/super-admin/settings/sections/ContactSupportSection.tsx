@@ -1,17 +1,7 @@
-import React, { useState } from "react";
 import { Label } from "../components/Label";
 import { Breadcrumb } from "../components/Breadcrumb";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../../../context/AuthContext";
 import { showToast } from "../../../../components/workflow/ToastNotification";
-import { ToggleRow } from "../components/ToggleRow";
-import {
-  Users,
-  Headphones,
-  Monitor,
-  AlertCircle,
-  Copy,
-} from "lucide-react";
+import { Users, Headphones, Monitor, AlertCircle, Copy } from "lucide-react";
 
 export function ContactSupportSection({
   onModal,
@@ -236,4 +226,3 @@ export function ContactSupportSection({
 /* ═══════════════════════════════════════════
    REUSABLE SUB-COMPONENTS
    ═══════════════════════════════════════════ */
-

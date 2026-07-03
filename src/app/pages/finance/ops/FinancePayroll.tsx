@@ -115,7 +115,7 @@ const MOCK_RECORDS: PayrollRecord[] = [
 
 export function FinancePayroll() {
   const { user } = useAuth();
-  const [activeMonth, setActiveMonth] = useState("April 2026");
+  const [activeMonth] = useState("April 2026");
   const [refreshKey, setRefreshKey] = useState(0);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -165,9 +165,10 @@ export function FinancePayroll() {
         gross: ps.earnings.gross,
         deductions: ps.deductions.total,
         net: ps.netPay,
-        status: activeRun.status === "disbursed"
-          ? ("Processed" as const)
-          : ("Pending" as const),
+        status:
+          activeRun.status === "disbursed"
+            ? ("Processed" as const)
+            : ("Pending" as const),
         avatarColor,
       };
     });
@@ -183,7 +184,6 @@ export function FinancePayroll() {
     );
     const csvContent = [headers, ...rows].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
-    const link = document.createElement;
     const linkEl = document.createElement("a");
     linkEl.href = URL.createObjectURL(blob);
     linkEl.download = `payroll_${type.toLowerCase().replace(/ /g, "_")}.csv`;
@@ -206,9 +206,19 @@ export function FinancePayroll() {
   });
 
   // Calculate aggregates dynamically
-  const totalGrossSum = useMemo(() => records.reduce((sum: number, r: PayrollRecord) => sum + r.gross, 0), [records]);
-  const totalDeductionsSum = useMemo(() => records.reduce((sum: number, r: PayrollRecord) => sum + r.deductions, 0), [records]);
-  const totalNetSum = useMemo(() => records.reduce((sum: number, r: PayrollRecord) => sum + r.net, 0), [records]);
+  const totalGrossSum = useMemo(
+    () => records.reduce((sum: number, r: PayrollRecord) => sum + r.gross, 0),
+    [records],
+  );
+  const totalDeductionsSum = useMemo(
+    () =>
+      records.reduce((sum: number, r: PayrollRecord) => sum + r.deductions, 0),
+    [records],
+  );
+  const totalNetSum = useMemo(
+    () => records.reduce((sum: number, r: PayrollRecord) => sum + r.net, 0),
+    [records],
+  );
   const totalEmployeesCount = records.length;
 
   return (
@@ -277,18 +287,18 @@ export function FinancePayroll() {
               !activeRun || activeRun.status === "disbursed"
                 ? "bg-slate-400 cursor-not-allowed shadow-none"
                 : activeRun.status === "pending"
-                ? "bg-[#8B5CF6] shadow-[#8B5CF6]/20"
-                : "bg-[#00B87C] shadow-[#00B87C]/20"
+                  ? "bg-[#8B5CF6] shadow-[#8B5CF6]/20"
+                  : "bg-[#00B87C] shadow-[#00B87C]/20"
             }`}
           >
             <Play size={18} fill="white" />
             {!activeRun
               ? "No Active Run"
               : activeRun.status === "pending"
-              ? "Review & Approve"
-              : activeRun.status === "approved"
-              ? "Disburse Payroll"
-              : "Payroll Disbursed"}
+                ? "Review & Approve"
+                : activeRun.status === "approved"
+                  ? "Disburse Payroll"
+                  : "Payroll Disbursed"}
           </button>
         </div>
       </div>
@@ -298,7 +308,8 @@ export function FinancePayroll() {
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-[#00B87C] animate-pulse" />
           <span className="text-[12px] font-bold text-foreground tracking-tight">
-            {activeMonth} Payroll {activeRun ? `(${activeRun.status.toUpperCase()})` : "In Progress"}
+            {activeMonth} Payroll{" "}
+            {activeRun ? `(${activeRun.status.toUpperCase()})` : "In Progress"}
           </span>
         </div>
         <div
@@ -373,17 +384,32 @@ export function FinancePayroll() {
           ].map((step, i) => {
             const stepStatus = (() => {
               if (!activeRun) {
-                if (step.name === "Data Collection" || step.name === "Attendance Lock") return "Done";
+                if (
+                  step.name === "Data Collection" ||
+                  step.name === "Attendance Lock"
+                )
+                  return "Done";
                 if (step.name === "Calculation") return "Active";
                 return "Pending";
               }
               if (activeRun.status === "pending") {
-                if (step.name === "Data Collection" || step.name === "Attendance Lock" || step.name === "Calculation") return "Done";
+                if (
+                  step.name === "Data Collection" ||
+                  step.name === "Attendance Lock" ||
+                  step.name === "Calculation"
+                )
+                  return "Done";
                 if (step.name === "Approval") return "Active";
                 return "Pending";
               }
               if (activeRun.status === "approved") {
-                if (step.name === "Data Collection" || step.name === "Attendance Lock" || step.name === "Calculation" || step.name === "Approval") return "Done";
+                if (
+                  step.name === "Data Collection" ||
+                  step.name === "Attendance Lock" ||
+                  step.name === "Calculation" ||
+                  step.name === "Approval"
+                )
+                  return "Done";
                 if (step.name === "Disbursement") return "Active";
                 return "Pending";
               }
@@ -522,8 +548,8 @@ export function FinancePayroll() {
                 : departmentFilter}
             </h2>
             <p className="text-[13px] font-semibold text-muted-foreground">
-              {filteredRecords.length} of {records.length} employees ·
-              Click row to view slip
+              {filteredRecords.length} of {records.length} employees · Click row
+              to view slip
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -842,8 +868,8 @@ export function FinancePayroll() {
                             {!activeRun
                               ? "Run Payroll"
                               : activeRun.status === "pending"
-                              ? "Approve Payroll"
-                              : "Disburse Payroll"}
+                                ? "Approve Payroll"
+                                : "Disburse Payroll"}
                           </h3>
                           <p className="text-[12px] font-bold text-muted-foreground mt-1.5 uppercase tracking-widest">
                             {activeMonth} Cycle
@@ -946,11 +972,15 @@ export function FinancePayroll() {
                       />
                       {activeRun?.status === "pending" ? (
                         <p className="text-[12px] text-rose-600 font-bold leading-relaxed">
-                          CRITICAL: Approval locks the payroll computations. Once approved, the pay run is submitted for final disbursement.
+                          CRITICAL: Approval locks the payroll computations.
+                          Once approved, the pay run is submitted for final
+                          disbursement.
                         </p>
                       ) : (
                         <p className="text-[12px] text-rose-600 font-bold leading-relaxed">
-                          CRITICAL: Disbursement is irreversible. Confirming this action will initiate direct bank transfers for all employees.
+                          CRITICAL: Disbursement is irreversible. Confirming
+                          this action will initiate direct bank transfers for
+                          all employees.
                         </p>
                       )}
                     </div>
@@ -964,7 +994,9 @@ export function FinancePayroll() {
                         </div>
                         <div>
                           <h3 className="text-xl font-black text-foreground tracking-tight leading-none">
-                            {activeRun?.status === "pending" ? "Approve & Lock" : "Review & Disburse"}
+                            {activeRun?.status === "pending"
+                              ? "Approve & Lock"
+                              : "Review & Disburse"}
                           </h3>
                           <p className="text-[12px] font-bold text-muted-foreground mt-1.5 uppercase tracking-widest">
                             {activeMonth} Cycle
@@ -1044,7 +1076,7 @@ export function FinancePayroll() {
                         if (activeRun.status === "pending") {
                           const res = payrollService.approvePayRun(
                             activeRun.id,
-                            user?.email || "finance@nexushr.com"
+                            user?.email || "finance@nexushr.com",
                           );
                           if (res.success) {
                             setRefreshKey((prev) => prev + 1);
@@ -1053,7 +1085,9 @@ export function FinancePayroll() {
                             showToast(res.error, "error");
                           }
                         } else if (activeRun.status === "approved") {
-                          const res = payrollService.disbursePayRun(activeRun.id);
+                          const res = payrollService.disbursePayRun(
+                            activeRun.id,
+                          );
                           if (res.success) {
                             setRefreshKey((prev) => prev + 1);
                             showToast("Payroll disbursed successfully.");

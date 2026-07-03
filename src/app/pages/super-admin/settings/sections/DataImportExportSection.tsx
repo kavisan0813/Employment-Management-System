@@ -1,5 +1,4 @@
 import { useState } from "react";
-import React from "react";
 import { useSettingsContext } from "../SettingsContext";
 import {
   ClipboardCheck,
@@ -10,16 +9,11 @@ import {
   CheckCircle,
   UserPlus,
   CloudUpload,
-  Upload,
   Eye,
 } from "lucide-react";
 
 export function DataImportExportSection() {
-  const {
-    extraConfig,
-    showToast,
-    updateExtraConfig,
-  } = useSettingsContext();
+  const { extraConfig, showToast, updateExtraConfig } = useSettingsContext();
 
   const [activeTab, setActiveTab] = useState("import");
   const [selectedType, setSelectedType] = useState("employees");
@@ -266,9 +260,7 @@ export function DataImportExportSection() {
                       style={{
                         position: "absolute",
                         top: "2px",
-                        left: extraConfig[
-                          item.key as keyof typeof extraConfig
-                        ]
+                        left: extraConfig[item.key as keyof typeof extraConfig]
                           ? "18px"
                           : "2px",
                         width: "16px",
@@ -438,9 +430,7 @@ export function DataImportExportSection() {
                     style={{
                       position: "absolute",
                       top: "2px",
-                      left: extraConfig.exportIncludeInactive
-                        ? "18px"
-                        : "2px",
+                      left: extraConfig.exportIncludeInactive ? "18px" : "2px",
                       width: "16px",
                       height: "16px",
                       borderRadius: "50%",

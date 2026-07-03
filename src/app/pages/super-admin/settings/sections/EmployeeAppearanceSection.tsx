@@ -1,16 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Label } from "../components/Label";
 import { Breadcrumb } from "../components/Breadcrumb";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../../../context/AuthContext";
 import { showToast } from "../../../../components/workflow/ToastNotification";
-import { ToggleRow } from "../components/ToggleRow";
-import {
-  Moon,
-  AlertTriangle,
-  Sun,
-  Monitor,
-} from "lucide-react";
+import { Moon, AlertTriangle, Sun, Monitor } from "lucide-react";
 
 export function EmployeeAppearanceSection() {
   const [theme, setTheme] = useState<"light" | "dark" | "system">("light");

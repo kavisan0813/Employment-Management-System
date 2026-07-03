@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import {
   Mail,
@@ -18,6 +18,7 @@ import {
   ROLE_HOME_ROUTE,
   ROLE_CONFIG,
 } from "../../context/AuthContext";
+import { db } from "../../admin/mockData";
 
 // ─── Demo account map (role → credentials) ──────────────────
 const DEMO_ACCOUNTS: Record<
@@ -67,7 +68,7 @@ const ROLE_ICONS: Record<UserRole, React.ComponentType<any>> = {
 
 export function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -76,8 +77,34 @@ export function Login() {
   const [resetEmail, setResetEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Redirect to dashboard if user is already logged in
+  useEffect(() => {
+    if (user) {
+      const homeRoute = ROLE_HOME_ROUTE[user.role] || "/employee/dashboard";
+      navigate(homeRoute, { replace: true });
+    }
+  }, [user, navigate]);
+
   const detectRole = (emailVal: string): UserRole => {
-    // Check registered users list in localStorage first
+    if (!emailVal) return "Employee";
+
+    // 1. Check system db (mock database) first
+    try {
+      const dbUsers = db.users.get();
+      const match = dbUsers.find(
+        (u) => u.email.toLowerCase() === emailVal.toLowerCase(),
+      );
+      if (match && match.role) {
+        if (match.role === "Org Admin") {
+          return "Super Admin";
+        }
+        return match.role as UserRole;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    // 2. Check registered users list in localStorage
     try {
       const registered = localStorage.getItem("nexus_registered_users");
       if (registered) {
@@ -86,6 +113,7 @@ export function Login() {
           (u: any) => u.email.toLowerCase() === emailVal.toLowerCase(),
         );
         if (match && match.role) {
+          if (match.role === "Org Admin") return "Super Admin";
           return match.role as UserRole;
         }
       }
@@ -93,7 +121,7 @@ export function Login() {
       console.log(e);
     }
 
-    // Fallback to keyword detection
+    // 3. Fallback to keyword detection
     const lower = emailVal.toLowerCase();
     if (lower.includes("platform")) return "Platform Admin";
     if (lower.includes("admin")) return "Super Admin";
@@ -103,8 +131,6 @@ export function Login() {
     return "Employee";
   };
 
-  const detectedRole = detectRole(email);
-
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -112,40 +138,74 @@ export function Login() {
     setTimeout(() => {
       const role: UserRole = detectRole(email);
 
-      // Check registered users list for name/initials
+      // Check system db for name/initials
       let accountName = "";
       let accountInitials = "";
       try {
-        const registered = localStorage.getItem("nexus_registered_users");
-        if (registered) {
-          const users = JSON.parse(registered);
-          const match = users.find(
-            (u: any) => u.email.toLowerCase() === email.toLowerCase(),
-          );
-          if (match) {
-            accountName = match.name;
-            accountInitials = match.initials;
-          }
+        const dbUsers = db.users.get();
+        const match = dbUsers.find(
+          (u) => u.email.toLowerCase() === email.toLowerCase(),
+        );
+        if (match) {
+          accountName = match.name;
         }
       } catch (err) {
         console.log(err);
       }
 
-      // Fallback to demo account details if not found in registered list
+      // Check registered users list for name/initials if not found in db
+      if (!accountName) {
+        try {
+          const registered = localStorage.getItem("nexus_registered_users");
+          if (registered) {
+            const users = JSON.parse(registered);
+            const match = users.find(
+              (u: any) => u.email.toLowerCase() === email.toLowerCase(),
+            );
+            if (match) {
+              accountName = match.name;
+              accountInitials = match.initials;
+            }
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      // Fallback to demo account details if not found in either list
       if (!accountName || !accountInitials) {
         const demo = DEMO_ACCOUNTS[role];
-        accountName = demo.name;
-        accountInitials = demo.initials;
+        if (demo) {
+          if (!accountName) accountName = demo.name;
+          if (!accountInitials) accountInitials = demo.initials;
+        } else {
+          if (!accountName) accountName = "User";
+        }
+      }
+
+      if (!accountInitials) {
+        accountInitials =
+          accountName
+            .split(" ")
+            .map((n: string) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2) || "JD";
       }
 
       login({
         name: accountName,
-        email: email || DEMO_ACCOUNTS[role].email,
+        email:
+          email || (DEMO_ACCOUNTS[role] ? DEMO_ACCOUNTS[role].email : email),
         role,
         initials: accountInitials,
       });
 
-      navigate(ROLE_HOME_ROUTE[role], { replace: true });
+      const route =
+        role === "Platform Admin"
+          ? "/platform-admin/dashboard"
+          : ROLE_HOME_ROUTE[role] || "/employee/dashboard";
+      navigate(route, { replace: true });
       setIsLoading(false);
     }, 600);
   };
@@ -351,19 +411,14 @@ export function Login() {
                   }}
                 />
               </div>
-              {email && (
+              {/*   {email && (
                 <div
                   className="mt-2.5 flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all"
                   style={{ backgroundColor: ROLE_CONFIG[detectedRole].bg }}
                 >
-                  <span
-                    className="text-[11px] font-bold uppercase tracking-wider"
-                    style={{ color: ROLE_CONFIG[detectedRole].color }}
-                  >
-                    Access Level: {ROLE_CONFIG[detectedRole].label}
-                  </span>
+                
                 </div>
-              )}
+              )} */}
             </div>
 
             {/* Password */}

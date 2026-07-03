@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from "react";
 import { useReports } from "./hooks/useReports";
 
 // Import Modular Sub-components
@@ -14,7 +13,6 @@ import { RevenueReportsView } from "./components/RevenueReportsView";
 import { CustomReportsView } from "./components/CustomReportsView";
 import { ExportCenterView } from "./components/ExportCenterView";
 
-
 // Import Lucide Icons
 import {
   AreaChart,
@@ -23,7 +21,6 @@ import {
   Calendar,
   CreditCard,
   Download,
-  ShieldCheck,
   CheckCircle2,
   AlertTriangle,
   AlertCircle,
@@ -55,14 +52,14 @@ export function ReportsView() {
       icon: LayoutDashboard,
       group: "Overview",
     },
-   
+
     {
       id: "organizations",
       label: "Organization Reports",
       icon: Building2,
       group: "Metrics Panels",
     },
-  
+
     {
       id: "subscriptions",
       label: "Subscription Reports",

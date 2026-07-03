@@ -71,7 +71,7 @@ export default function DashboardView() {
     await exportReport(format);
   };
 
-  const handleNavigateToOrgs = (filter?: string) => {
+  const handleNavigateToOrgs = (p0: string) => {
     navigate("/platform-admin/organizations");
   };
 

@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Label } from "../components/Label";
 import { Breadcrumb } from "../components/Breadcrumb";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../../../context/AuthContext";
 import { showToast } from "../../../../components/workflow/ToastNotification";
 import { ToggleRow } from "../components/ToggleRow";
 import {
@@ -51,9 +49,7 @@ function PasswordField({
   );
 }
 
-
-
-export function EmployeeSecuritySection({ onModal }: { onModal: (m: string | null) => void }) {
+export function EmployeeSecuritySection() {
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");

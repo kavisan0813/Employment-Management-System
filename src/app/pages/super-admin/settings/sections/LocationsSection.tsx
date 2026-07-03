@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { useSettingsContext } from "../SettingsContext";
 import {
   Building2,
@@ -12,7 +12,6 @@ export function LocationsSection() {
   const {
     SectionTitle,
     allowRemoteWork,
-    country,
     defaultLocCountry,
     geofenceRadius,
     gpsAttendance,
@@ -20,7 +19,6 @@ export function LocationsSection() {
     locSortBy,
     locStatusFilter,
     locTypeFilter,
-    locationsList,
     regionHolidays,
     requireGeofence,
     setActiveModal,
@@ -37,8 +35,9 @@ export function LocationsSection() {
     setRequireGeofence,
     setSelectedLoc,
     showToast,
-    timezone,
   } = useSettingsContext();
+
+  const [locationsList] = useState<Location[]>([]);
 
   // Filter and Sort Logic
   const filteredLocs = locationsList.filter((l) => {
@@ -67,10 +66,7 @@ export function LocationsSection() {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
-        <ChevronRight
-          size={12}
-          style={{ color: "var(--muted-foreground)" }}
-        />
+        <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "#00B87C" }}>Locations</span>
       </div>
 
@@ -150,10 +146,7 @@ export function LocationsSection() {
           },
           {
             label: "Employees Assigned",
-            value: locationsList.reduce(
-              (acc, curr) => acc + curr.empCount,
-              0,
-            ),
+            value: locationsList.reduce((acc, curr) => acc + curr.empCount, 0),
             icon: <Users size={20} />,
             color: "#F59E0B",
             bg: "rgba(245, 158, 11, 0.1)",
@@ -289,10 +282,7 @@ export function LocationsSection() {
 
       {/* Locations Table */}
       <div className="overflow-x-auto mb-6 rounded-2xl border border-[var(--border)] shadow-sm">
-        <table
-          className="w-full border-collapse"
-          style={{ minWidth: "900px" }}
-        >
+        <table className="w-full border-collapse" style={{ minWidth: "900px" }}>
           <thead>
             <tr
               style={{

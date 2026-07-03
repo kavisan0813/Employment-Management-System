@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from "react";
 import { useSettingsContext } from "../SettingsContext";
 import {
   MapPin,
@@ -6,7 +6,6 @@ import {
   PartyPopper,
   Star,
   ChevronRight,
-  Calendar,
 } from "lucide-react";
 
 export function HolidayCalendarSection() {
@@ -40,7 +39,7 @@ export function HolidayCalendarSection() {
     showToast,
   } = useSettingsContext();
 
-  const filteredHols = holidaysList.filter((h) => {
+  const filteredHols = holidaysList.filter((h: { name: string; date: string | number | Date; type: any; location: any; status: any; }) => {
     const matchesSearch = h.name
       .toLowerCase()
       .includes(holSearchQuery.toLowerCase());
@@ -68,10 +67,7 @@ export function HolidayCalendarSection() {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
-        <ChevronRight
-          size={12}
-          style={{ color: "var(--muted-foreground)" }}
-        />
+        <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "#00B87C" }}>Holidays</span>
       </div>
 
@@ -183,7 +179,7 @@ export function HolidayCalendarSection() {
           },
           {
             label: "Upcoming Holidays",
-            value: holidaysList.filter((h) => new Date(h.date) >= new Date())
+            value: holidaysList.filter((h: { date: string | number | Date; }) => new Date(h.date) >= new Date())
               .length,
             icon: <CalendarDays size={20} />,
             color: "#0EA5E9",
@@ -191,14 +187,14 @@ export function HolidayCalendarSection() {
           },
           {
             label: "Optional Holidays",
-            value: holidaysList.filter((h) => h.type === "Optional").length,
+            value: holidaysList.filter((h: { type: string; }) => h.type === "Optional").length,
             icon: <Star size={20} />,
             color: "#F59E0B",
             bg: "rgba(245, 158, 11, 0.1)",
           },
           {
             label: "Regional Holidays",
-            value: holidaysList.filter((h) => h.type === "Regional").length,
+            value: holidaysList.filter((h: { type: string; }) => h.type === "Regional").length,
             icon: <MapPin size={20} />,
             color: "#8B5CF6",
             bg: "rgba(139, 92, 246, 0.1)",
@@ -423,7 +419,7 @@ export function HolidayCalendarSection() {
               </tr>
             </thead>
             <tbody>
-              {filteredHols.map((h, idx) => (
+              {filteredHols.map((h: { name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Iterable<ReactNode> | null | undefined; date: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Iterable<ReactNode> | null | undefined; day: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Iterable<ReactNode> | null | undefined; type: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined; location: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Iterable<ReactNode> | null | undefined; dept: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Iterable<ReactNode> | null | undefined; recurring: any; status: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined; description: any; }, idx: Key | null | undefined) => (
                 <tr
                   key={idx}
                   style={{
@@ -607,7 +603,7 @@ export function HolidayCalendarSection() {
             className="grid grid-cols-7 gap-2"
             style={{ minHeight: "200px" }}
           >
-            {filteredHols.map((h, i) => (
+            {filteredHols.map((h: { date: string; name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Iterable<ReactNode> | null | undefined; }, i: Key | null | undefined) => (
               <div
                 key={i}
                 onClick={() => {

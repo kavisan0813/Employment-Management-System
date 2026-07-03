@@ -1,16 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Label } from "../components/Label";
 import { Breadcrumb } from "../components/Breadcrumb";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../../../context/AuthContext";
 import { showToast } from "../../../../components/workflow/ToastNotification";
 import { ToggleRow } from "../components/ToggleRow";
-import {
-  Download,
-  AlertTriangle,
-} from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
-export function EmployeePrivacySection({ onModal }: { onModal: (m: string | null) => void }) {
+export function EmployeePrivacySection({
+  onModal,
+}: {
+  onModal: (m: string | null) => void;
+}) {
   const [toggles, setToggles] = useState({
     showPhone: false,
     showEmail: true,

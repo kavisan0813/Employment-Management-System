@@ -1,16 +1,8 @@
-import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  ChevronRight,
-  Calendar,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function ShiftSwapRulesSection() {
-  const {
-    extraConfig,
-    showToast,
-    updateExtraConfig,
-  } = useSettingsContext();
+  const { extraConfig, showToast, updateExtraConfig } = useSettingsContext();
 
   return (
     <div>

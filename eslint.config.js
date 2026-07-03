@@ -7,12 +7,4 @@ export default [
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  {
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-vars": "off",
-      "prefer-const": "warn",
-      "no-useless-assignment": "off",
-    },
-  },
 ];

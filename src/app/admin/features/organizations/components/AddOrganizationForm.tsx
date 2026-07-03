@@ -8,10 +8,18 @@ import {
   Shield,
   ChevronRight,
   Plus,
+  User,
+  Mail,
+  Phone,
+  Lock,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
   const [step, setStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     code: "",
@@ -23,15 +31,30 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
     ownerName: "",
     phone: "",
     address: "",
-    country: "United States",
+    country: "India",
     state: "",
     city: "",
     pincode: "",
     plan: "Starter",
     seatLimit: 50,
     password: "",
+    confirmPassword: "",
     enabledModules: ["Employee Management", "Attendance", "Leave Management"],
   });
+
+  const handleNextStep = () => {
+    if (step === 3) {
+      if (!formData.ownerName || !formData.ownerEmail || !formData.phone || !formData.password) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+      if (formData.password !== formData.confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+    }
+    setStep((s) => s + 1);
+  };
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -295,51 +318,107 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
                     <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                      Admin Full Name
+                      Admin Full Name *
                     </label>
-                    <input
-                      name="ownerName"
-                      value={formData.ownerName}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:bg-white"
-                    />
+                    <div className="relative">
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        required
+                        name="ownerName"
+                        value={formData.ownerName}
+                        onChange={handleChange}
+                        className="w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:bg-white transition-colors"
+                        placeholder="Enter admin name"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                       Admin Email *
                     </label>
-                    <input
-                      type="email"
-                      required
-                      name="ownerEmail"
-                      value={formData.ownerEmail}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:bg-white"
-                    />
+                    <div className="relative">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="email"
+                        required
+                        name="ownerEmail"
+                        value={formData.ownerEmail}
+                        onChange={handleChange}
+                        className="w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:bg-white transition-colors"
+                        placeholder="name@nexushr.com"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                      Phone Number
+                      Mobile Number *
                     </label>
-                    <input
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:bg-white"
-                    />
+                    <div className="relative">
+                      <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        required
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className="w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:bg-white transition-colors"
+                        placeholder="+91 XXXXX XXXXX"
+                      />
+                    </div>
                   </div>
-                  <div className="col-span-2">
+                  <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                       Initial Password *
                     </label>
-                    <input
-                      type="password"
-                      required
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:bg-white"
-                    />
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="w-full pl-10 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:bg-white transition-colors"
+                        placeholder="••••••••"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                      Confirm Password *
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        required
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        className="w-full pl-10 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:bg-white transition-colors"
+                        placeholder="••••••••"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="col-span-2">
+                    {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                      <p className="text-xs font-bold text-red-500 mt-1">
+                        Passwords do not match
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -437,7 +516,7 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
               {step < 4 ? (
                 <button
                   type="button"
-                  onClick={() => setStep((s) => s + 1)}
+                  onClick={handleNextStep}
                   className="px-6 py-2.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 text-sm transition-colors shadow-sm flex items-center gap-2 cursor-pointer"
                 >
                   Next Step <ChevronRight className="w-4 h-4" />

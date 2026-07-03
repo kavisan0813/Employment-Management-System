@@ -16,8 +16,6 @@ import {
   FileText,
   Lock,
   Sprout,
-  Clock,
-  Bell,
 } from "lucide-react";
 import { useAuth, type UserRole } from "../context/AuthContext";
 
@@ -128,6 +126,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           { label: "F&F Settlement", path: "/finance/settlements" },
           { label: "Increment & Appraisal", path: "/appraisal" },
         ],
+      },
+      {
+        label: "Account Management",
+        icon: Lock,
+        items: [{ label: "Manage Account", path: "/admin/manage-account" }],
       },
     ];
   } else if (currentRole === "HR Manager") {
@@ -389,72 +392,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     navigate("/login", { replace: true });
   };
 
-  const getRoleStyle = (role: UserRole) => {
-    switch (role) {
-      case "Super Admin":
-        return {
-          avatarBg: "linear-gradient(135deg, #8B5CF6, #6D28D9)",
-          avatarColor: "#FFFFFF",
-          avatarBorder: "none",
-          badgeBg: "rgba(139,92,246,0.1)",
-          badgeColor: "#8B5CF6",
-          badgeBorder: "none",
-          title: user?.name || "Super Admin",
-          subtitle: "System Administrator",
-          initials: user?.initials || "SA",
-        };
-      case "HR Manager":
-        return {
-          avatarBg: "linear-gradient(135deg, #00B87C, #059669)",
-          avatarColor: "#FFFFFF",
-          avatarBorder: "none",
-          badgeBg: "rgba(0,184,124,0.1)",
-          badgeColor: "#00B87C",
-          badgeBorder: "none",
-          title: user?.name || "Ryan Park",
-          subtitle: "HR Manager",
-          initials: user?.initials || "RP",
-        };
-      case "Finance":
-        return {
-          avatarBg: "linear-gradient(135deg, #0EA5E9, #0284C7)",
-          avatarColor: "#FFFFFF",
-          avatarBorder: "none",
-          badgeBg: "#E0F2FE",
-          badgeColor: "#0369A1",
-          badgeBorder: "1px solid #BAE6FD",
-          title: user?.name || "Priya Sharma",
-          subtitle: "Finance Officer",
-          initials: user?.initials || "PS",
-        };
-      case "Manager":
-        return {
-          avatarBg: "linear-gradient(135deg, #F59E0B, #D97706)",
-          avatarColor: "#FFFFFF",
-          avatarBorder: "none",
-          badgeBg: "#FEF3C7",
-          badgeColor: "#92400E",
-          badgeBorder: "1px solid #FDE68A",
-          title: user?.name || "Suresh Iyer",
-          subtitle: "Engineering Manager",
-          initials: user?.initials || "SI",
-        };
-      case "Employee":
-      default:
-        return {
-          avatarBg: "linear-gradient(135deg, #00B87C, #059669)",
-          avatarColor: "#FFFFFF",
-          avatarBorder: "none",
-          badgeBg: "rgba(0,184,124,0.1)",
-          badgeColor: "#00B87C",
-          badgeBorder: "none",
-          title: user?.name || "John Doe",
-          subtitle: user?.name === "Priya Sharma" ? "Frontend Developer · Engineering" : "Employee",
-          initials: user?.initials || "JD",
-        };
-    }
-  };
-
   return (
     <div
       className="fixed top-0 left-0 h-screen flex flex-col transition-all duration-300 ease-in-out z-[2000] shadow-sm"
@@ -507,8 +444,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         )}
       </div>
 
-
-
       {/* Navigation */}
       <nav className="flex-1 py-3 overflow-y-auto no-scrollbar">
         {isNewJoinee && !collapsed && (
@@ -558,7 +493,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             // Check if any child item inside this group is active
             const isGroupActive = group.path
               ? isActive(group.path)
-              : group.items?.some((item) => !item.disabled && isActive(item.path)) || false;
+              : group.items?.some(
+                  (item) => !item.disabled && isActive(item.path),
+                ) || false;
 
             return (
               <div key={group.label} className="px-2">
@@ -651,7 +588,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                             {group.label}
                           </span>
                           {/* Chevron Indicator */}
-                          {(expandedGroups[group.label] || false) ? (
+                          {expandedGroups[group.label] || false ? (
                             <ChevronDown size={14} style={{ opacity: 0.7 }} />
                           ) : (
                             <ChevronRight size={14} style={{ opacity: 0.7 }} />
@@ -661,97 +598,99 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     </button>
 
                     {/* Sub-items list (if expanded and sidebar is not collapsed) */}
-                    {!collapsed && (expandedGroups[group.label] || false) && group.items && (
-                      <ul
-                        className="mt-1 space-y-0.5"
-                        style={{ paddingLeft: "28px" }}
-                      >
-                        {group.items.map((item) => {
-                          if (item.disabled) {
+                    {!collapsed &&
+                      (expandedGroups[group.label] || false) &&
+                      group.items && (
+                        <ul
+                          className="mt-1 space-y-0.5"
+                          style={{ paddingLeft: "28px" }}
+                        >
+                          {group.items.map((item) => {
+                            if (item.disabled) {
+                              return (
+                                <li key={item.label}>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "12px",
+                                      padding: "7px 12px",
+                                      borderRadius: "8px",
+                                      textDecoration: "none",
+                                      opacity: 0.45,
+                                      cursor: "not-allowed",
+                                      position: "relative",
+                                    }}
+                                    className="group"
+                                  >
+                                    <div className="relative flex items-center">
+                                      <Lock
+                                        size={12}
+                                        style={{
+                                          color: "var(--muted-foreground)",
+                                          marginRight: "6px",
+                                        }}
+                                      />
+                                      <span
+                                        style={{
+                                          fontSize: "13px",
+                                          fontWeight: 500,
+                                          color: "var(--muted-foreground)",
+                                          whiteSpace: "nowrap",
+                                        }}
+                                      >
+                                        {item.label}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </li>
+                              );
+                            }
+
+                            const active = isActive(item.path);
                             return (
                               <li key={item.label}>
-                                <div
+                                <NavLink
+                                  to={item.path}
                                   style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: "12px",
                                     padding: "7px 12px",
                                     borderRadius: "8px",
                                     textDecoration: "none",
-                                    opacity: 0.45,
-                                    cursor: "not-allowed",
-                                    position: "relative",
+                                    transition: "all 0.15s ease",
+                                    backgroundColor: active
+                                      ? "rgba(0, 184, 124, 0.12)"
+                                      : "transparent",
+                                    color: active
+                                      ? "#00B87C"
+                                      : "var(--sidebar-foreground)",
                                   }}
-                                  className="group"
+                                  className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
                                 >
-                                  <div className="relative flex items-center">
-                                    <Lock
-                                      size={12}
-                                      style={{
-                                        color: "var(--muted-foreground)",
-                                        marginRight: "6px",
-                                      }}
-                                    />
+                                  <span
+                                    style={{
+                                      fontSize: "13px",
+                                      fontWeight: active ? 600 : 500,
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                    }}
+                                  >
+                                    {item.label}
+                                  </span>
+                                  {active && (
                                     <span
-                                      style={{
-                                        fontSize: "13px",
-                                        fontWeight: 500,
-                                        color: "var(--muted-foreground)",
-                                        whiteSpace: "nowrap",
-                                      }}
-                                    >
-                                      {item.label}
-                                    </span>
-                                  </div>
-                                </div>
+                                      className="ml-auto w-1.5 h-1.5 rounded-full bg-[#00B87C]"
+                                      style={{ flexShrink: 0 }}
+                                    />
+                                  )}
+                                </NavLink>
                               </li>
                             );
-                          }
-
-                          const active = isActive(item.path);
-                          return (
-                            <li key={item.label}>
-                              <NavLink
-                                to={item.path}
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  padding: "7px 12px",
-                                  borderRadius: "8px",
-                                  textDecoration: "none",
-                                  transition: "all 0.15s ease",
-                                  backgroundColor: active
-                                    ? "rgba(0, 184, 124, 0.12)"
-                                    : "transparent",
-                                  color: active
-                                    ? "#00B87C"
-                                    : "var(--sidebar-foreground)",
-                                }}
-                                className={`group ${!active && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
-                              >
-                                <span
-                                  style={{
-                                    fontSize: "13px",
-                                    fontWeight: active ? 600 : 500,
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                  }}
-                                >
-                                  {item.label}
-                                </span>
-                                {active && (
-                                  <span
-                                    className="ml-auto w-1.5 h-1.5 rounded-full bg-[#00B87C]"
-                                    style={{ flexShrink: 0 }}
-                                  />
-                                )}
-                              </NavLink>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
+                          })}
+                        </ul>
+                      )}
                   </>
                 )}
               </div>
@@ -769,8 +708,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         }}
       >
         {/* Settings Section — for Super Admin & Finance */}
-        {(!currentRole ||
-          ["Super Admin", "Finance"].includes(currentRole)) && (
+        {(!currentRole || ["Super Admin", "Finance"].includes(currentRole)) && (
           <>
             {!collapsed && (
               <p
@@ -787,7 +725,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               </p>
             )}
             {/* Audit Logs — only for Super Admin & Finance */}
-            {(!currentRole || ["Super Admin", "Finance"].includes(currentRole)) && (
+            {(!currentRole ||
+              ["Super Admin", "Finance"].includes(currentRole)) && (
               <NavLink
                 to="/settings/audit-logs"
                 title={collapsed ? "Audit Logs" : undefined}

@@ -1,5 +1,3 @@
-import React from "react";
-
 function Toggle({
   on,
   onChange,
@@ -22,7 +20,6 @@ function Toggle({
     </button>
   );
 }
-
 
 export function ToggleRow({
   label,

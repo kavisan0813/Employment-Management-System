@@ -1,10 +1,6 @@
-import React, { useState } from "react";
 import { Label } from "../components/Label";
 import { Breadcrumb } from "../components/Breadcrumb";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../../../context/AuthContext";
 import { showToast } from "../../../../components/workflow/ToastNotification";
-import { ToggleRow } from "../components/ToggleRow";
 import {
   Download,
   Clock,
@@ -17,7 +13,11 @@ import {
   Info,
 } from "lucide-react";
 
-export function DataDownloadsSection({ onModal }: { onModal: (m: string | null) => void }) {
+export function DataDownloadsSection({
+  onModal,
+}: {
+  onModal: (m: string | null) => void;
+}) {
   const cards = [
     {
       icon: FileText,

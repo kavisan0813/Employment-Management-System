@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   LayoutDashboard,
   MessageSquare,
@@ -8,7 +8,6 @@ import {
   Shield,
   BookOpen,
   Zap,
-  BarChart3,
   Headphones,
 } from "lucide-react";
 
@@ -58,12 +57,7 @@ export default function SupportTicketsView() {
         return <TicketsTable hook={hook} />;
 
       case "issues":
-        return (
-          <IssueTracker
-            issues={hook.issues}
-            actions={hook.actions}
-          />
-        );
+        return <IssueTracker issues={hook.issues} actions={hook.actions} />;
 
       case "features":
         return (
@@ -74,11 +68,7 @@ export default function SupportTicketsView() {
         );
 
       case "feedback":
-        return (
-          <FeedbackManagement
-            feedback={hook.feedback}
-          />
-        );
+        return <FeedbackManagement feedback={hook.feedback} />;
 
       case "sla":
         return (
@@ -89,11 +79,7 @@ export default function SupportTicketsView() {
         );
 
       case "kb":
-        return (
-          <KnowledgeBase
-            kbArticles={hook.kbArticles}
-          />
-        );
+        return <KnowledgeBase kbArticles={hook.kbArticles} />;
 
       case "escalation":
         return (
@@ -102,7 +88,6 @@ export default function SupportTicketsView() {
             actions={hook.actions}
           />
         );
-
 
       default:
         return <SupportDashboard stats={hook.stats} />;
@@ -133,7 +118,7 @@ export default function SupportTicketsView() {
 
       {/* Top Tab Navigation Bar */}
       <div className="w-full overflow-hidden">
-  <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
+        <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -157,9 +142,7 @@ export default function SupportTicketsView() {
       </div>
 
       {/* Main Workspace */}
-      <div className="pt-2 font-semibold">
-        {renderContent()}
-      </div>
+      <div className="pt-2 font-semibold">{renderContent()}</div>
     </div>
   );
 }

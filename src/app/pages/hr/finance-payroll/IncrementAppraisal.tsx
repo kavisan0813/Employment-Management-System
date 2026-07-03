@@ -1262,7 +1262,6 @@ function Toast({
 
 // ─── Main Page ────────────────────────────────────────────
 export function IncrementAppraisal() {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedYear, setSelectedYear] = useState("2025–2026");
   const [selectedDept, setSelectedDept] = useState("All Departments");
