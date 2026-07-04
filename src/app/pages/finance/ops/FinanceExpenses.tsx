@@ -122,6 +122,7 @@ const MOCK_EXPENSES: ExpenseClaim[] = [
 
 export function FinanceExpenses() {
   const location = useLocation();
+  const [expenses, setExpenses] = useState<ExpenseClaim[]>(MOCK_EXPENSES);
   const [activeTab, setActiveTab] = useState<
     "All" | "Pending" | "Approved" | "Rejected"
   >(location.state?.activeTab || "Pending");
@@ -158,8 +159,8 @@ export function FinanceExpenses() {
     setTimeout(() => {
       const expensesToExport =
         exportMode === "selected"
-          ? MOCK_EXPENSES.filter((exp) => selectedRows.includes(exp.id))
-          : MOCK_EXPENSES;
+          ? expenses.filter((exp) => selectedRows.includes(exp.id))
+          : expenses;
 
       const headers = [
         "ID,Employee,Department,Category,Description,Amount,Receipt Status,Submitted On,Status",
@@ -188,7 +189,7 @@ export function FinanceExpenses() {
     }, 1500);
   };
 
-  const filteredExpenses = MOCK_EXPENSES.filter((exp) => {
+  const filteredExpenses = expenses.filter((exp) => {
     const matchesTab = activeTab === "All" || exp.status === activeTab;
     const matchesSearch =
       exp.employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -231,6 +232,11 @@ export function FinanceExpenses() {
     }
   };
 
+  const pendingCount = 34 + expenses.filter((e) => e.status === "Pending").length;
+  const approvedCount = 83 + expenses.filter((e) => e.status === "Approved").length;
+  const rejectedCount = 11 + expenses.filter((e) => e.status === "Rejected").length;
+  const approvedAmount = 127000 + expenses.filter((e) => e.status === "Approved").reduce((sum, e) => sum + e.amount, 0);
+
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
@@ -259,15 +265,15 @@ export function FinanceExpenses() {
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard title="TOTAL PENDING" value="36" color="amber" icon={Clock} />
+        <KPICard title="TOTAL PENDING" value={String(pendingCount)} color="amber" icon={Clock} />
         <KPICard
           title="APPROVED THIS MONTH"
-          value="84"
-          subValue="₹1,28,400"
+          value={String(approvedCount)}
+          subValue={`₹${approvedAmount.toLocaleString()}`}
           color="green"
           icon={CheckCircle2}
         />
-        <KPICard title="REJECTED" value="12" color="red" icon={XCircle} />
+        <KPICard title="REJECTED" value={String(rejectedCount)} color="red" icon={XCircle} />
         <KPICard
           title="AVG APPROVAL TIME"
           value="1.8d"
@@ -393,6 +399,13 @@ export function FinanceExpenses() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => {
+                    setExpenses((prev) =>
+                      prev.map((exp) =>
+                        selectedRows.includes(exp.id)
+                          ? { ...exp, status: "Approved" }
+                          : exp
+                      )
+                    );
                     showToast(
                       `${selectedRows.length} claims approved successfully!`,
                     );
@@ -403,9 +416,17 @@ export function FinanceExpenses() {
                   Approve All
                 </button>
                 <button
-                  onClick={() =>
-                    showToast(`Rejected ${selectedRows.length} claims.`)
-                  }
+                  onClick={() => {
+                    setExpenses((prev) =>
+                      prev.map((exp) =>
+                        selectedRows.includes(exp.id)
+                          ? { ...exp, status: "Rejected" }
+                          : exp
+                      )
+                    );
+                    showToast(`Rejected ${selectedRows.length} claims.`);
+                    setSelectedRows([]);
+                  }}
                   className="px-5 py-2 rounded-xl bg-rose-500 text-white text-[12px] font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-md shadow-rose-500/20"
                 >
                   Reject All
@@ -543,9 +564,14 @@ export function FinanceExpenses() {
                         <>
                           <button
                             disabled={exp.receiptStatus === "Missing"}
-                            onClick={() =>
-                              showToast(`Expense ${exp.id} Approved!`)
-                            }
+                            onClick={() => {
+                              setExpenses((prev) =>
+                                prev.map((e) =>
+                                  e.id === exp.id ? { ...e, status: "Approved" } : e
+                                )
+                              );
+                              showToast(`Expense ${exp.id} Approved!`);
+                            }}
                             className={`p-1.5 rounded-lg border transition-all ${
                               exp.receiptStatus === "Missing"
                                 ? "bg-muted border-border text-muted-foreground cursor-not-allowed opacity-50"
@@ -827,6 +853,13 @@ export function FinanceExpenses() {
                       viewingExpense.status !== "Pending"
                     }
                     onClick={() => {
+                      setExpenses((prev) =>
+                        prev.map((e) =>
+                          e.id === viewingExpense.id
+                            ? { ...e, status: "Approved" }
+                            : e
+                        )
+                      );
                       showToast(`Expense ${viewingExpense.id} Approved!`);
                       setViewingExpense(null);
                     }}
@@ -910,6 +943,13 @@ export function FinanceExpenses() {
                 </button>
                 <button
                   onClick={() => {
+                    setExpenses((prev) =>
+                      prev.map((e) =>
+                        e.id === rejectingExpense.id
+                          ? { ...e, status: "Rejected" }
+                          : e
+                      )
+                    );
                     showToast(`Expense ${rejectingExpense.id} rejected.`);
                     setRejectingExpense(null);
                     setViewingExpense(null);

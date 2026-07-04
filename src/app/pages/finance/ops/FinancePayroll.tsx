@@ -24,6 +24,7 @@ import { showToast } from "../../../components/workflow/ToastNotification";
 import { useAuth } from "../../../context/AuthContext";
 import { payrollService } from "../payroll/payroll.service";
 import type { Payslip as RealPayslip } from "../payroll/payroll.types";
+import { employees as mockEmployees } from "../../../data/mockData";
 
 interface PayrollRecord {
   id: string;
@@ -686,7 +687,7 @@ export function FinancePayroll() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm no-print"
               onClick={() => setSelectedEmployee(null)}
             ></motion.div>
             <motion.div
@@ -694,9 +695,9 @@ export function FinancePayroll() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="relative w-full max-w-[440px] h-full bg-card shadow-[-20px_0_40px_rgba(0,0,0,0.1)] flex flex-col"
+              className="relative w-full max-w-[440px] h-full bg-card shadow-[-20px_0_40px_rgba(0,0,0,0.1)] flex flex-col print-payslip-card"
             >
-              <div className="p-6 border-b border-border flex items-center justify-between">
+              <div className="p-6 border-b border-border flex items-center justify-between no-print">
                 <h2 className="text-lg font-black text-foreground tracking-tight">
                   Salary Slip — March 2026
                 </h2>
@@ -709,9 +710,10 @@ export function FinancePayroll() {
                   </button>
                   <button
                     onClick={() => {
-                      showToast("Downloading Salary Slip PDF...");
+                      showToast("Downloading Salary Slip PDF...", "success");
+                      window.print();
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest rounded-xl shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 bg-[#00B87C] text-white text-[12px] font-bold uppercase tracking-widest rounded-xl shadow-lg shadow-[#00B87C]/20 hover:opacity-90 transition-all border-none cursor-pointer"
                   >
                     <Download size={14} />
                     Download PDF
@@ -810,23 +812,30 @@ export function FinancePayroll() {
                 </div>
               </div>
 
-              <div className="p-6 border-t border-border grid grid-cols-2 gap-4 bg-muted/5">
+              <div className="p-6 border-t border-border grid grid-cols-2 gap-4 bg-muted/5 no-print">
                 <button
                   onClick={() => {
-                    showToast("Preparing slip for printing...");
+                    showToast("Preparing slip for printing...", "success");
+                    window.print();
                   }}
-                  className="flex items-center justify-center gap-2 py-4 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all active:scale-95"
+                  className="flex items-center justify-center gap-2 py-4 rounded-2xl border border-border text-foreground font-black text-[12px] uppercase tracking-widest hover:bg-muted transition-all active:scale-95 bg-card shrink-0 cursor-pointer"
                 >
                   <Printer size={18} />
                   Print Slip
                 </button>
                 <button
                   onClick={() => {
+                    const empRecord = mockEmployees.find(
+                      (e) => e.id === selectedEmployee.id || e.name === selectedEmployee.name
+                    );
+                    const emailAddress = empRecord?.email || `${selectedEmployee.name.toLowerCase().replace(" ", ".")}@nexushr.com`;
                     showToast(
-                      `Salary Slip emailed to ${selectedEmployee.name}.`,
+                      "Success",
+                      "success",
+                      `Salary Slip emailed to ${emailAddress}`
                     );
                   }}
-                  className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20 active:scale-95"
+                  className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20 active:scale-95 cursor-pointer border-none"
                 >
                   <Mail size={18} />
                   Email Slip

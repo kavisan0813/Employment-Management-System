@@ -125,6 +125,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           { label: "Asset Management", path: "/asset-management" },
           { label: "F&F Settlement", path: "/finance/settlements" },
           { label: "Increment & Appraisal", path: "/appraisal" },
+          { label: "Audit Logs", path: "/settings/audit-logs" },
         ],
       },
       {
@@ -212,6 +213,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           { label: "F&F Settlement", path: "/finance/settlements" },
           { label: "Expense Approvals", path: "/expenses" },
           { label: "Increment & Appraisal", path: "/appraisal" },
+          { label: "Audit Logs", path: "/settings/audit-logs" },
         ],
       },
       {
@@ -707,115 +709,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           paddingTop: "12px",
         }}
       >
-        {/* Settings Section — for Super Admin & Finance */}
-        {(!currentRole || ["Super Admin", "Finance"].includes(currentRole)) && (
-          <>
-            {!collapsed && (
-              <p
-                className="px-4 mb-2"
-                style={{
-                  color: "var(--sidebar-foreground)",
-                  opacity: 0.6,
-                  fontSize: "10px",
-                  fontWeight: 700,
-                  letterSpacing: "1px",
-                }}
-              >
-                SETTINGS
-              </p>
-            )}
-            {/* Audit Logs — only for Super Admin & Finance */}
-            {(!currentRole ||
-              ["Super Admin", "Finance"].includes(currentRole)) && (
-              <NavLink
-                to="/settings/audit-logs"
-                title={collapsed ? "Audit Logs" : undefined}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  padding: collapsed ? "10px 14px" : "9px 12px",
-                  borderRadius: "10px",
-                  textDecoration: "none",
-                  transition: "all 0.15s ease",
-                  backgroundColor: isActive("/settings/audit-logs")
-                    ? "var(--sidebar-primary)"
-                    : "transparent",
-                  color: isActive("/settings/audit-logs")
-                    ? "var(--sidebar-primary-foreground)"
-                    : "var(--sidebar-foreground)",
-                  justifyContent: collapsed ? "center" : "flex-start",
-                }}
-                className={`group ${!isActive("/settings/audit-logs") && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
-              >
-                <FileText
-                  size={18}
-                  style={{
-                    color: isActive("/settings/audit-logs")
-                      ? "var(--sidebar-primary-foreground)"
-                      : "inherit",
-                    flexShrink: 0,
-                  }}
-                />
-                {!collapsed && (
-                  <span
-                    style={{
-                      fontSize: "13px",
-                      fontWeight: isActive("/settings/audit-logs") ? 600 : 500,
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    Audit Logs
-                  </span>
-                )}
-              </NavLink>
-            )}
-            <NavLink
-              to="/settings"
-              title={collapsed ? "Settings" : undefined}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                padding: collapsed ? "10px 14px" : "9px 12px",
-                borderRadius: "10px",
-                textDecoration: "none",
-                transition: "all 0.15s ease",
-                backgroundColor: isActive("/settings")
-                  ? "var(--sidebar-primary)"
-                  : "transparent",
-                color: isActive("/settings")
-                  ? "var(--sidebar-primary-foreground)"
-                  : "var(--sidebar-foreground)",
-                justifyContent: collapsed ? "center" : "flex-start",
-                marginBottom: "6px",
-              }}
-              className={`group ${!isActive("/settings") && "hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"}`}
-            >
-              <Settings
-                size={18}
-                style={{
-                  color: isActive("/settings")
-                    ? "var(--sidebar-primary-foreground)"
-                    : "inherit",
-                  flexShrink: 0,
-                }}
-              />
-              {!collapsed && (
-                <span
-                  style={{
-                    fontSize: "13px",
-                    fontWeight: isActive("/settings") ? 600 : 500,
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  Settings
-                </span>
-              )}
-            </NavLink>
-          </>
-        )}
-
         {/* Logout button */}
         <button
           onClick={handleLogout}

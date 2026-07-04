@@ -350,127 +350,241 @@ export function FinanceDepartments() {
         </div>
       </div>
 
-      {/* ─── Department Cards Grid ─────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredAndSortedDepts.map((dept) => (
-          <div
-            key={dept.id}
-            className="bg-card rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
-          >
-            {/* Status / Actions */}
-            <div className="absolute top-4 right-4 flex items-center gap-2">
-              <span
-                className={`px-2 py-0.5 text-[9px] font-black rounded-full border uppercase tracking-wider ${dept.status === "green" ? "bg-[#E6F4EA] text-[#00B87C] border-[#00B87C]/20" : dept.status === "amber" ? "bg-amber-50 text-amber-600 border-amber-500/20" : "bg-rose-50 text-rose-600 border-rose-500/20"}`}
-              >
-                {dept.status === "green"
-                  ? "Healthy"
-                  : dept.status === "amber"
-                    ? "Warning"
-                    : "Critical"}
-              </span>
-
-              <div className="relative">
-                <button
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedDept(dept);
-                  }}
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            </div>
-
+      {/* ─── Department Cards Grid / List View ─────────────────────────────── */}
+      {viewMode === "grid" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredAndSortedDepts.map((dept) => (
             <div
-              onClick={() => setSelectedDept(dept)}
-              className="cursor-pointer"
+              key={dept.id}
+              className="bg-card rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
             >
-              {/* Dept Title */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-secondary">
-                  <Building2 size={20} color="var(--primary)" />
-                </div>
-                <div>
-                  <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
-                    {dept.name}
-                  </h3>
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                    {dept.id}
-                  </p>
-                </div>
-              </div>
+              {/* Status / Actions */}
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                <span
+                  className={`px-2 py-0.5 text-[9px] font-black rounded-full border uppercase tracking-wider ${dept.status === "green" ? "bg-[#E6F4EA] text-[#00B87C] border-[#00B87C]/20" : dept.status === "amber" ? "bg-amber-50 text-amber-600 border-amber-500/20" : "bg-rose-50 text-rose-600 border-rose-500/20"}`}
+                >
+                  {dept.status === "green"
+                    ? "Healthy"
+                    : dept.status === "amber"
+                      ? "Warning"
+                      : "Critical"}
+                </span>
 
-              {/* Quick Stats (Finance Specific) */}
-              <div className="grid grid-cols-3 gap-2 mb-4 text-center bg-neutral-50 dark:bg-zinc-800/40 p-2 rounded-xl border border-border">
-                <div>
-                  <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block">
-                    Employees
-                  </span>
-                  <span className="text-xs font-extrabold text-foreground">
-                    {dept.employees}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block">
-                    Used %
-                  </span>
-                  <span className="text-xs font-extrabold text-[#F59E0B]">
-                    {dept.budgetUsedPct}%
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block">
-                    Budget
-                  </span>
-                  <span className="text-xs font-extrabold text-[#8B5CF6]">
-                    {dept.budgetAmount}
-                  </span>
-                </div>
-              </div>
-
-              {/* Budget Progress */}
-              <div className="mb-5">
-                <div className="flex items-center justify-between text-[11px] font-bold text-muted-foreground mb-1.5">
-                  <div className="flex items-center gap-1">
-                    <span>Budget Used</span>
-                    {dept.nearLimit && (
-                      <span className="text-rose-500 flex items-center gap-1 bg-rose-500/10 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider">
-                        <AlertTriangle size={10} /> Near limit
-                      </span>
-                    )}
-                  </div>
-                  <span className="font-black text-foreground">
-                    {dept.budgetUsedAmount} / {dept.budgetAmount}
-                  </span>
-                </div>
-                <div className="h-1.5 w-full rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${dept.budgetUsedPct}%`,
-                      backgroundColor: getStatusColor(dept.status),
+                <div className="relative">
+                  <button
+                    className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedDept(dept);
                     }}
-                  />
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+
+              <div
+                onClick={() => setSelectedDept(dept)}
+                className="cursor-pointer"
+              >
+                {/* Dept Title */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-secondary">
+                    <Building2 size={20} color="var(--primary)" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                      {dept.name}
+                    </h3>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                      {dept.id}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Quick Stats (Finance Specific) */}
+                <div className="grid grid-cols-3 gap-2 mb-4 text-center bg-neutral-50 dark:bg-zinc-800/40 p-2 rounded-xl border border-border">
+                  <div>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider block">
+                      Employees
+                    </span>
+                    <span className="text-xs font-extrabold text-foreground">
+                      {dept.employees}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[8px] font-black text-slate-400 tracking-wider block">
+                      Used %
+                    </span>
+                    <span className="text-xs font-extrabold text-[#F59E0B]">
+                      {dept.budgetUsedPct}%
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[8px] font-black text-slate-400 tracking-wider block">
+                      Budget
+                    </span>
+                    <span className="text-xs font-extrabold text-[#8B5CF6]">
+                      {dept.budgetAmount}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Budget Progress */}
+                <div className="mb-5">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-muted-foreground mb-1.5">
+                    <div className="flex items-center gap-1">
+                      <span>Budget Used</span>
+                      {dept.nearLimit && (
+                        <span className="text-rose-500 flex items-center gap-1 bg-rose-500/10 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider">
+                          <AlertTriangle size={10} /> Near limit
+                        </span>
+                      )}
+                    </div>
+                    <span className="font-black text-foreground">
+                      {dept.budgetUsedAmount} / {dept.budgetAmount}
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${dept.budgetUsedPct}%`,
+                        backgroundColor: getStatusColor(dept.status),
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-between pt-3 border-t border-border">
+                <div className="flex items-center gap-1 text-xs font-bold text-slate-600 dark:text-slate-300">
+                  <User size={14} className="text-slate-400" />
+                  <span>{dept.head}</span>
+                </div>
+
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-[11px] font-bold">
+                  <TrendingUp size={12} color="var(--primary)" />
+                  <span style={{ color: "var(--primary)" }}>{dept.growth}%</span>
                 </div>
               </div>
             </div>
-
-            {/* Footer */}
-            <div className="flex items-center justify-between pt-3 border-t border-border">
-              <div className="flex items-center gap-1 text-xs font-bold text-slate-600 dark:text-slate-300">
-                <User size={14} className="text-slate-400" />
-                <span>{dept.head}</span>
-              </div>
-
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-[11px] font-bold">
-                <TrendingUp size={12} color="var(--primary)" />
-                <span style={{ color: "var(--primary)" }}>{dept.growth}%</span>
-              </div>
-            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-border bg-secondary/50 h-12">
+                  <th className="px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    ID
+                  </th>
+                  <th className="px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Department
+                  </th>
+                  <th className="px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Head of Department
+                  </th>
+                  <th className="px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Employees
+                  </th>
+                  <th className="px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Total Budget
+                  </th>
+                  <th className="px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Budget Used
+                  </th>
+                  <th className="px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Used %
+                  </th>
+                  <th className="px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Status
+                  </th>
+                  <th className="px-6 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-center">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filteredAndSortedDepts.map((dept) => (
+                  <tr
+                    key={dept.id}
+                    onClick={() => setSelectedDept(dept)}
+                    className="hover:bg-secondary/40 transition-colors cursor-pointer h-14"
+                  >
+                    <td className="px-6 text-xs font-bold text-muted-foreground">
+                      {dept.id}
+                    </td>
+                    <td className="px-6">
+                      <span className="text-sm font-extrabold text-foreground">
+                        {dept.name}
+                      </span>
+                    </td>
+                    <td className="px-6 text-sm font-bold text-foreground">
+                      {dept.head}
+                    </td>
+                    <td className="px-6 text-sm font-extrabold text-foreground">
+                      {dept.employees}
+                    </td>
+                    <td className="px-6 text-sm font-extrabold text-[#8B5CF6]">
+                      {dept.budgetAmount}
+                    </td>
+                    <td className="px-6 text-sm font-extrabold text-foreground">
+                      {dept.budgetUsedAmount}
+                    </td>
+                    <td className="px-6">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-black text-foreground min-w-[32px]">
+                          {dept.budgetUsedPct}%
+                        </span>
+                        <div className="w-16 h-1.5 rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden">
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${dept.budgetUsedPct}%`,
+                              backgroundColor: getStatusColor(dept.status),
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6">
+                      <span
+                        className={`px-2 py-0.5 text-[9px] font-black rounded-full border uppercase tracking-wider ${
+                          dept.status === "green"
+                            ? "bg-[#E6F4EA] text-[#00B87C] border-[#00B87C]/20"
+                            : dept.status === "amber"
+                              ? "bg-amber-50 text-amber-600 border-amber-500/20"
+                              : "bg-rose-50 text-rose-600 border-rose-500/20"
+                        }`}
+                      >
+                        {dept.status === "green"
+                          ? "Healthy"
+                          : dept.status === "amber"
+                            ? "Warning"
+                            : "Critical"}
+                      </span>
+                    </td>
+                    <td className="px-6 text-center">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedDept(dept);
+                        }}
+                        className="p-1.5 hover:bg-secondary rounded-lg text-muted-foreground hover:text-foreground transition-colors inline-flex items-center justify-center border-none cursor-pointer"
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
       {/* ─── Department Detail Side Panel ───────────────────────── */}
       {selectedDept && (

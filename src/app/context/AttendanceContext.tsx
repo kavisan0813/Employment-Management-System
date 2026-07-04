@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { useAuth } from "./AuthContext";
 import { showToast } from "../components/workflow/ToastNotification";
+import { employees as initialEmployees } from "../data/mockData";
 
 export type AttendanceLog = {
   time: string;
@@ -8,228 +9,437 @@ export type AttendanceLog = {
   type: "in" | "out" | "break_start" | "break_end";
 };
 
-type PunchState = {
+export interface AttendanceRecord {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  employeeAvatar?: string;
+  department: string;
+  date: string; // e.g. "Apr 01, 2026"
+  status: string; // "Present" | "Late" | "Absent" | "Leave" | "Weekend" | "Holiday"
+  checkIn: string; // e.g. "08:58 AM"
+  checkOut: string; // e.g. "06:02 PM"
+  hours: string; // e.g. "9h 04m"
+  notes?: string;
+  punchIn?: string; // ISO timestamp
+  punchOut?: string; // ISO timestamp
+  logs?: AttendanceLog[];
+}
+
+export type DerivedPunchState = "not-punched" | "punched-in" | "punched-out";
+
+export type CompatiblePunchState = {
   isPunchedIn: boolean;
   isOnBreak: boolean;
   punchInTime: string | null;
-  punchInTimestamp: number | null;
   punchOutTime: string | null;
   workedHours: string | null;
-  dateStr: string | null;
   logs: AttendanceLog[];
 };
 
 type AttendanceContextType = {
-  punchState: PunchState;
+  records: AttendanceRecord[];
+  todayRecord: AttendanceRecord | null;
+  derivedState: DerivedPunchState;
+  isOnBreak: boolean;
   handlePunchIn: () => void;
   handlePunchOut: () => void;
   handleStartBreak: () => void;
   handleEndBreak: () => void;
   handleResetPunch: () => void;
-  getPunchStateForEmail: (email: string) => PunchState | null;
+  getPunchStateForEmail: (email: string) => CompatiblePunchState | null;
 };
 
-const defaultPunchState: PunchState = {
-  isPunchedIn: false,
-  isOnBreak: false,
-  punchInTime: null,
-  punchInTimestamp: null,
-  punchOutTime: null,
-  workedHours: null,
-  dateStr: null,
-  logs: [],
-};
+const AttendanceContext = createContext<AttendanceContextType | undefined>(undefined);
 
-const AttendanceContext = createContext<AttendanceContextType | undefined>(
-  undefined,
-);
+// Constants for late derivation
+export const SHIFT_START = "09:30";
+export const GRACE_MINUTES = 15;
 
-export function AttendanceProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { user } = useAuth();
-  const [punchState, setPunchState] = useState<PunchState>(defaultPunchState);
-
-  useEffect(() => {
-    if (user?.email) {
-      const saved = localStorage.getItem(`nexus_punch_${user.email}`);
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          const todayStr = new Date().toLocaleDateString();
-          if (parsed.dateStr === todayStr || !parsed.dateStr) {
-            setPunchState(parsed);
-          } else {
-            localStorage.removeItem(`nexus_punch_${user.email}`);
-            setPunchState(defaultPunchState);
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      } else {
-        setPunchState(defaultPunchState);
-      }
-    }
-  }, [user?.email]);
-
-  const handlePunchIn = () => {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString([], {
+// Helper to format ISO strings to 12-hour (e.g. "09:32 AM")
+export const formatTime12Hour = (isoString: string | undefined): string => {
+  if (!isoString) return "-";
+  try {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     });
-    const timestamp = Date.now();
-    const newState: PunchState = {
-      isPunchedIn: true,
-      isOnBreak: false,
-      punchInTime: timeStr,
-      punchInTimestamp: timestamp,
-      punchOutTime: null,
-      workedHours: null,
-      dateStr: new Date().toLocaleDateString(),
-      logs: [{ time: timeStr, action: "Swipe In (Web Portal)", type: "in" }],
-    };
-    setPunchState(newState);
-    if (user?.email) {
-      localStorage.setItem(
-        `nexus_punch_${user.email}`,
-        JSON.stringify(newState),
-      );
+  } catch (e) {
+    return "-";
+  }
+};
+
+// Helper to format Date into HR format (e.g. "Apr 06, 2026")
+export const getTodayHRDateStr = (): string => {
+  const date = new Date();
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthStr = months[date.getMonth()];
+  const dayStr = String(date.getDate()).padStart(2, "0");
+  return `${monthStr} ${dayStr}, ${date.getFullYear()}`;
+};
+
+// Helper to convert HR date string ("Apr 06, 2026") to Employee date string ("06 Apr 2026")
+export const hrDateToEmployeeDate = (hrDate: string): string => {
+  const parts = hrDate.replace(",", "").split(" ");
+  if (parts.length < 3) return hrDate;
+  const month = parts[0];
+  const day = parts[1];
+  const year = parts[2];
+  return `${day} ${month} ${year}`;
+};
+
+// Helper to check if punch-in time is late
+export const isPunchInLate = (punchInISO: string): boolean => {
+  const punchDate = new Date(punchInISO);
+  const [shiftHours, shiftMins] = SHIFT_START.split(":").map(Number);
+  
+  const shiftTime = new Date(punchDate);
+  shiftTime.setHours(shiftHours, shiftMins, 0, 0);
+  
+  const diffMs = punchDate.getTime() - shiftTime.getTime();
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  
+  return diffMins > GRACE_MINUTES;
+};
+
+// Find employee record by email only (case-insensitive)
+export const findEmployeeByEmail = (email: string | undefined) => {
+  if (!email) return null;
+  const lowerEmail = email.toLowerCase();
+  
+  // 1. Check local storage first
+  const savedEmps = localStorage.getItem("nexus_employees");
+  if (savedEmps) {
+    try {
+      const emps = JSON.parse(savedEmps);
+      const match = emps.find((e: any) => e.email?.toLowerCase() === lowerEmail);
+      if (match) return match;
+    } catch (e) {
+      console.error("Failed to parse local employees", e);
     }
+  }
+  
+  // 2. Fallback to initial mock data
+  const match = initialEmployees.find((e: any) => e.email?.toLowerCase() === lowerEmail);
+  return match || null;
+};
+
+export function AttendanceProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  const [records, setRecords] = useState<AttendanceRecord[]>([]);
+
+  // Load records from the shared HR local storage key
+  useEffect(() => {
+    const saved = localStorage.getItem("nexus_attendance_records");
+    if (saved) {
+      try {
+        setRecords(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse HR attendance records", e);
+      }
+    }
+  }, []);
+
+  // Sync records helper
+  const saveRecords = (newRecords: AttendanceRecord[]) => {
+    setRecords(newRecords);
+    localStorage.setItem("nexus_attendance_records", JSON.stringify(newRecords));
+  };
+
+  // Resolve today's record for the logged-in user
+  const todayRecord = useMemo(() => {
+    if (!user) return null;
+    const emp = findEmployeeByEmail(user.email);
+    if (!emp) return null;
+    const todayStr = getTodayHRDateStr();
+    return records.find((r) => r.employeeId === emp.id && r.date === todayStr) || null;
+  }, [records, user]);
+
+  // Derived state from todayRecord
+  const derivedState = useMemo<DerivedPunchState>(() => {
+    if (!todayRecord) return "not-punched";
+    if (todayRecord.punchIn && !todayRecord.punchOut) return "punched-in";
+    if (todayRecord.punchIn && todayRecord.punchOut) return "punched-out";
+    return "not-punched";
+  }, [todayRecord]);
+
+  // Load break state
+  const [isOnBreak, setIsOnBreak] = useState<boolean>(() => {
+    if (user?.email) {
+      const savedBreak = localStorage.getItem(`nexus_on_break_${user.email}`);
+      return savedBreak === "true";
+    }
+    return false;
+  });
+
+  // Sync break state
+  useEffect(() => {
+    if (user?.email) {
+      localStorage.setItem(`nexus_on_break_${user.email}`, String(isOnBreak));
+    }
+  }, [isOnBreak, user]);
+
+
+  const handlePunchIn = () => {
+    if (!user) return;
+    
+    const emp = findEmployeeByEmail(user.email);
+    if (!emp) {
+      showToast("Error", "error", "No employee record linked to your account");
+      return;
+    }
+    
+    const todayStr = getTodayHRDateStr();
+    
+    // Guard: already punched in
+    if (todayRecord && todayRecord.punchIn) {
+      showToast("Already Punched In", "warning", "You have already punched in for today.");
+      return;
+    }
+    
+    const now = new Date();
+    const punchInISO = now.toISOString();
+    const timeStr = formatTime12Hour(punchInISO);
+    
+    const isLate = isPunchInLate(punchInISO);
+    const status = isLate ? "Late" : "Present";
+    
+    const newRecord: AttendanceRecord = {
+      id: `ATT-${Date.now()}`,
+      employeeId: emp.id,
+      employeeName: emp.name,
+      employeeAvatar: emp.avatar || "",
+      department: emp.department || "",
+      date: todayStr,
+      status: status,
+      checkIn: timeStr,
+      checkOut: "-",
+      hours: "-",
+      punchIn: punchInISO,
+      logs: [
+        {
+          time: timeStr,
+          action: "Swipe In (Web Portal)",
+          type: "in"
+        }
+      ]
+    };
+    
+    const updatedRecords = [...records, newRecord];
+    saveRecords(updatedRecords);
+    
     showToast(
       "Punched In",
       "success",
-      `Shift started successfully at ${timeStr}.`,
+      `Shift started successfully at ${timeStr}.`
     );
   };
 
   const handlePunchOut = () => {
-    const timeStr = new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    const elapsedMs = Date.now() - (punchState.punchInTimestamp || Date.now());
-    const elapsedSecs = Math.floor(elapsedMs / 1000);
-    const elapsedMins = Math.floor(elapsedSecs / 60);
-
-    let workedStr = "";
-    if (elapsedMins < 1) {
-      workedStr = `${elapsedSecs} seconds`;
-    } else if (elapsedMins < 60) {
-      workedStr = `${elapsedMins} mins`;
-    } else {
-      workedStr = `${(elapsedMs / (1000 * 60 * 60)).toFixed(2)} hours`;
+    if (!user) return;
+    
+    const emp = findEmployeeByEmail(user.email);
+    if (!emp) {
+      showToast("Error", "error", "No employee record linked to your account");
+      return;
     }
-
-    const newState: PunchState = {
-      ...punchState,
-      isPunchedIn: false,
-      isOnBreak: false,
-      punchOutTime: timeStr,
-      workedHours: workedStr,
+    
+    if (!todayRecord || !todayRecord.punchIn) {
+      showToast("Cannot Punch Out", "error", "No active punch-in record found for today.");
+      return;
+    }
+    
+    if (todayRecord.punchOut) {
+      showToast("Already Punched Out", "warning", "You have already punched out for today.");
+      return;
+    }
+    
+    const now = new Date();
+    const punchOutISO = now.toISOString();
+    const timeStr = formatTime12Hour(punchOutISO);
+    
+    // Calculate worked hours
+    const diffMs = now.getTime() - new Date(todayRecord.punchIn).getTime();
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const hrs = Math.floor(diffMins / 60);
+    const mins = diffMins % 60;
+    const hoursStr = `${hrs}h ${String(mins).padStart(2, "0")}m`;
+    
+    const updatedRecord: AttendanceRecord = {
+      ...todayRecord,
+      punchOut: punchOutISO,
+      checkOut: timeStr,
+      hours: hoursStr,
       logs: [
-        ...punchState.logs,
-        { time: timeStr, action: "Swipe Out (End of Shift)", type: "out" },
-      ],
+        ...(todayRecord.logs || []),
+        {
+          time: timeStr,
+          action: "Swipe Out (End of Shift)",
+          type: "out"
+        }
+      ]
     };
-    setPunchState(newState);
-    if (user?.email) {
-      localStorage.setItem(
-        `nexus_punch_${user.email}`,
-        JSON.stringify(newState),
-      );
-    }
+    
+    const updatedRecords = records.map((r) =>
+      r.employeeId === emp.id && r.date === todayRecord.date ? updatedRecord : r
+    );
+    
+    saveRecords(updatedRecords);
+    setIsOnBreak(false); // Clear break on punch out
+    
     showToast(
       "Punched Out",
       "success",
-      `Shift completed at ${timeStr}. Duration: ${workedStr}`,
+      `Shift completed at ${timeStr}. Duration: ${hoursStr}`
     );
   };
 
   const handleStartBreak = () => {
-    const timeStr = new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    const newState: PunchState = {
-      ...punchState,
-      isOnBreak: true,
+    if (!user) return;
+    
+    const emp = findEmployeeByEmail(user.email);
+    if (!emp) {
+      showToast("Error", "error", "No employee record linked to your account");
+      return;
+    }
+    
+    if (!todayRecord || !todayRecord.punchIn || todayRecord.punchOut) {
+      showToast("Error", "error", "Must be punched in to take a break.");
+      return;
+    }
+    
+    const now = new Date();
+    const timeStr = formatTime12Hour(now.toISOString());
+    
+    const updatedRecord: AttendanceRecord = {
+      ...todayRecord,
       logs: [
-        ...punchState.logs,
+        ...(todayRecord.logs || []),
         {
           time: timeStr,
           action: "Swipe Out (Lunch Break)",
-          type: "break_start",
-        },
-      ],
+          type: "break_start"
+        }
+      ]
     };
-    setPunchState(newState);
-    if (user?.email) {
-      localStorage.setItem(
-        `nexus_punch_${user.email}`,
-        JSON.stringify(newState),
-      );
-    }
+    
+    const updatedRecords = records.map((r) =>
+      r.employeeId === emp.id && r.date === todayRecord.date ? updatedRecord : r
+    );
+    
+    saveRecords(updatedRecords);
+    setIsOnBreak(true);
+    
     showToast(
       "Break Started",
       "success",
-      `Enjoy your break! Started at ${timeStr}.`,
+      `Enjoy your break! Started at ${timeStr}.`
     );
   };
 
   const handleEndBreak = () => {
-    const timeStr = new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    const newState: PunchState = {
-      ...punchState,
-      isOnBreak: false,
-      logs: [
-        ...punchState.logs,
-        { time: timeStr, action: "Swipe In (Back to Desk)", type: "break_end" },
-      ],
-    };
-    setPunchState(newState);
-    if (user?.email) {
-      localStorage.setItem(
-        `nexus_punch_${user.email}`,
-        JSON.stringify(newState),
-      );
+    if (!user) return;
+    
+    const emp = findEmployeeByEmail(user.email);
+    if (!emp) {
+      showToast("Error", "error", "No employee record linked to your account");
+      return;
     }
-    showToast("Break Ended", "success", `Welcome back! Resumed at ${timeStr}.`);
+    
+    if (!todayRecord || !todayRecord.punchIn || todayRecord.punchOut || !isOnBreak) {
+      showToast("Error", "error", "Must be on break to resume work.");
+      return;
+    }
+    
+    const now = new Date();
+    const timeStr = formatTime12Hour(now.toISOString());
+    
+    const updatedRecord: AttendanceRecord = {
+      ...todayRecord,
+      logs: [
+        ...(todayRecord.logs || []),
+        {
+          time: timeStr,
+          action: "Swipe In (Back to Desk)",
+          type: "break_end"
+        }
+      ]
+    };
+    
+    const updatedRecords = records.map((r) =>
+      r.employeeId === emp.id && r.date === todayRecord.date ? updatedRecord : r
+    );
+    
+    saveRecords(updatedRecords);
+    setIsOnBreak(false);
+    
+    showToast(
+      "Break Ended",
+      "success",
+      `Welcome back! Resumed at ${timeStr}.`
+    );
   };
 
   const handleResetPunch = () => {
-    setPunchState(defaultPunchState);
-    if (user?.email) {
-      localStorage.removeItem(`nexus_punch_${user.email}`);
+    if (!user) return;
+    
+    const emp = findEmployeeByEmail(user.email);
+    if (!emp) {
+      showToast("Error", "error", "No employee record linked to your account");
+      return;
     }
+    
+    if (!todayRecord) return;
+    
+    const updatedRecords = records.filter(
+      (r) => !(r.employeeId === emp.id && r.date === todayRecord.date)
+    );
+    
+    saveRecords(updatedRecords);
+    setIsOnBreak(false);
+    
     showToast("Shift Reset", "info", "You can now punch in for a new shift.");
   };
 
+  // Lookup for manager view compatibility
   const getPunchStateForEmail = (email: string) => {
-    const saved = localStorage.getItem(`nexus_punch_${email}`);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        const todayStr = new Date().toLocaleDateString();
-        if (parsed.dateStr === todayStr || !parsed.dateStr) {
-          return parsed;
-        }
-      } catch (e) {
-        console.error(e);
-      }
+    const emp = findEmployeeByEmail(email);
+    if (!emp) return null;
+    
+    const todayStr = getTodayHRDateStr();
+    const record = records.find((r) => r.employeeId === emp.id && r.date === todayStr);
+    if (!record) return null;
+    
+    const isPunchedIn = !!record.punchIn && !record.punchOut;
+    
+    let workedStr: string | null = null;
+    if (record.punchIn) {
+      const end = record.punchOut ? new Date(record.punchOut) : new Date();
+      const diffMs = end.getTime() - new Date(record.punchIn).getTime();
+      const diffMins = Math.floor(diffMs / (1000 * 60));
+      const hrs = Math.floor(diffMins / 60);
+      const mins = diffMins % 60;
+      workedStr = `${hrs}h ${String(mins).padStart(2, "0")}m`;
     }
-    return null;
+    
+    return {
+      isPunchedIn,
+      isOnBreak: isOnBreak && email.toLowerCase() === user?.email?.toLowerCase(),
+      punchInTime: formatTime12Hour(record.punchIn),
+      punchOutTime: formatTime12Hour(record.punchOut),
+      workedHours: workedStr,
+      logs: record.logs || []
+    };
   };
 
   return (
     <AttendanceContext.Provider
       value={{
-        punchState,
+        records,
+        todayRecord,
+        derivedState,
+        isOnBreak,
         handlePunchIn,
         handlePunchOut,
         handleStartBreak,

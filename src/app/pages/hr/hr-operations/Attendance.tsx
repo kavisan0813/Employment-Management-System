@@ -47,20 +47,7 @@ import {
   employees,
   departments,
 } from "../../../data/mockData";
-
-export interface AttendanceRecord {
-  id: string;
-  employeeId: string;
-  employeeName: string;
-  employeeAvatar?: string;
-  department: string;
-  date: string; // e.g. "Apr 01, 2026"
-  status: string;
-  checkIn: string; // e.g. "08:58 AM"
-  checkOut: string; // e.g. "06:02 PM"
-  hours: string; // e.g. "9h 04m"
-  notes?: string;
-}
+import { AttendanceRecord } from "../../../context/AttendanceContext";
 
 interface AttendanceRow {
   id: string;

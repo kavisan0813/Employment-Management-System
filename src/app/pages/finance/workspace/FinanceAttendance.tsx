@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
+import { PunchCard } from "../../../components/attendance/PunchCard";
+import { useAttendance, formatTime12Hour } from "../../../context/AttendanceContext";
 
 const ATTENDANCE_LOGS = [
   { date: "01 Apr 2026", in: "08:52 AM", out: "06:05 PM", status: "Present" },
@@ -46,20 +48,35 @@ interface RegularizationReq {
   status: "Pending" | "Approved";
 }
 
-const EMPLOYEES = [
-  { id: "EMP001", name: "Ananya Sharma", initials: "AS", color: "#10B981" },
-  { id: "EMP002", name: "Rohan Verma", initials: "RV", color: "#8B5CF6" },
-  { id: "EMP003", name: "Priya Patel", initials: "PP", color: "#F59E0B" },
-];
-
 export function FinanceAttendance() {
   const [selectedMonth, setSelectedMonth] = useState(3); // April
   const [selectedYear, setSelectedYear] = useState(2026);
   const [isRegModalOpen, setIsRegModalOpen] = useState(false);
   const [regRequests, setRegRequests] = useState<RegularizationReq[]>([]);
-  const [selectedEmployee, setSelectedEmployee] = useState(EMPLOYEES[0]);
-  const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
   const [selectedDay, setSelectedDay] = useState<number | null>(6); // Default to April 6 (Today)
+
+  const { todayRecord } = useAttendance();
+
+  const mergedLogs = useMemo(() => {
+    const todayStr = "06 Apr 2026";
+    const updated = [...ATTENDANCE_LOGS];
+    const todayIdx = updated.findIndex((l) => l.date === todayStr);
+
+    if (todayRecord?.punchIn) {
+      const todayLog = {
+        date: todayStr,
+        in: formatTime12Hour(todayRecord.punchIn),
+        out: todayRecord.punchOut ? formatTime12Hour(todayRecord.punchOut) : "-",
+        status: todayRecord.status || "Present",
+      };
+      if (todayIdx > -1) {
+        updated[todayIdx] = todayLog;
+      } else {
+        updated.push(todayLog);
+      }
+    }
+    return updated;
+  }, [todayRecord]);
 
   const getLogForDay = useMemo(() => {
     return (day: number) => {
@@ -67,7 +84,7 @@ export function FinanceAttendance() {
       const monthStr = MONTH_NAMES[selectedMonth].substring(0, 3);
       const dateStr = `${dayStr} ${monthStr} ${selectedYear}`;
 
-      const found = ATTENDANCE_LOGS.find((l) => l.date === dateStr);
+      const found = mergedLogs.find((l) => l.date === dateStr);
       if (found) return found;
 
       // Calculate weekend
@@ -191,55 +208,10 @@ export function FinanceAttendance() {
           >
             Apply Regularization
           </button>
-          {/* Employee selector */}
-          <div className="relative">
-            <button
-              onClick={() => setShowEmployeeDropdown(!showEmployeeDropdown)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-card hover:bg-secondary transition-all"
-            >
-              <div
-                className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold text-white"
-                style={{ backgroundColor: selectedEmployee.color }}
-              >
-                {selectedEmployee.initials}
-              </div>
-              <span className="text-[13px] font-black text-foreground">
-                {selectedEmployee.name}
-              </span>
-              <ChevronDown size={14} className="text-muted-foreground" />
-            </button>
-            {showEmployeeDropdown && (
-              <div className="absolute top-full right-0 mt-2 w-48 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden">
-                {EMPLOYEES.map((emp) => (
-                  <button
-                    key={emp.id}
-                    onClick={() => {
-                      setSelectedEmployee(emp);
-                      setShowEmployeeDropdown(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted transition-colors text-[13px] font-bold ${
-                      selectedEmployee.id === emp.id
-                        ? "text-[#00B87C]"
-                        : "text-foreground"
-                    }`}
-                  >
-                    <div
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
-                      style={{ backgroundColor: emp.color }}
-                    >
-                      {emp.initials}
-                    </div>
-                    {emp.name}
-                    {selectedEmployee.id === emp.id && (
-                      <span className="ml-auto text-[#00B87C]">✓</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
+
+      <PunchCard />
 
       {/* ─── Stat Cards ─────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -489,7 +461,7 @@ export function FinanceAttendance() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {ATTENDANCE_LOGS.map((log, i) => {
+                {mergedLogs.map((log, i) => {
                   const logDay = parseInt(log.date.split(" ")[0]);
                   const isSelectedRow = selectedDay === logDay;
                   return (
