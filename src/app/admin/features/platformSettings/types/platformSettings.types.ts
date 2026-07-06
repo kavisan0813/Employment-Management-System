@@ -50,10 +50,16 @@ export interface TimezoneSettings {
   useLocalTimeForPunches: boolean;
 }
 
+export interface StorageSettings {
+  maxUploadSizeMb: number;
+}
+
 export interface SystemConfig {
   general: GeneralSettings;
   branding: BrandingSettings;
   localization: LocalizationSettings;
   currency: CurrencySettings;
   timezone: TimezoneSettings;
+  storage: StorageSettings;
 }
+

@@ -53,6 +53,9 @@ export const DEFAULT_CONFIG: SystemConfig = {
     ],
     useLocalTimeForPunches: true,
   },
+  storage: {
+    maxUploadSizeMb: 50,
+  },
 };
 
 const STORAGE_KEY = "platform_system_configuration";
@@ -74,6 +77,7 @@ export const platformSettingsService = {
           },
           currency: { ...DEFAULT_CONFIG.currency, ...parsed.currency },
           timezone: { ...DEFAULT_CONFIG.timezone, ...parsed.timezone },
+          storage: { ...DEFAULT_CONFIG.storage, ...parsed.storage },
         };
       }
     } catch (e) {

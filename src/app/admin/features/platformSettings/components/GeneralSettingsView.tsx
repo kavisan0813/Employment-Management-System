@@ -120,6 +120,25 @@ export function GeneralSettingsView({ config, setConfig }: Props) {
           </div>
         </div>
       </div>
+
+      <hr className="border-gray-150" />
+
+      <div className="bg-indigo-50/20 p-4 border border-indigo-100 rounded-2xl space-y-4">
+        <h3 className="text-xs font-extrabold text-indigo-900 uppercase tracking-wide">System Storage Policies</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Max Upload Size (MB)</label>
+            <input
+              type="number"
+              value={config.storage?.maxUploadSizeMb ?? 50}
+              onChange={e => setConfig(p => ({ ...p, storage: { ...p.storage, maxUploadSizeMb: Number(e.target.value) || 0 } }))}
+              className="w-full text-xs font-semibold p-2.5 border border-gray-200 rounded-xl bg-white focus:bg-white focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
+              min={1}
+              max={500}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

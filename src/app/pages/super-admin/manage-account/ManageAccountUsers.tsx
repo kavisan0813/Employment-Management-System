@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { useEmployees } from "../../../context/AppContext";
 import {
@@ -16,8 +16,9 @@ import {
   UserMinus,
   X,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
-/* ────── type for a merged user record ────── */
+/* ────── Merged User Type ────── */
 interface MergedUser {
   id: string;
   name: string;
@@ -33,7 +34,7 @@ interface MergedUser {
   avatarUrl?: string;
 }
 
-/* ────── top navigation filter tabs ────── */
+/* ────── Top Navigation Tabs ────── */
 const TOP_NAV_TABS = [
   { id: "all", label: "All", icon: Users },
   { id: "login_enabled", label: "Login Enabled", icon: UserCheck },
@@ -43,26 +44,74 @@ const TOP_NAV_TABS = [
   { id: "profiles", label: "All Profiles", icon: Users },
 ];
 
-/* ────── status styling configs ────── */
-const STATUS_STYLES: Record<
-  string,
-  { bg: string; color: string; dot: string }
-> = {
+/* ────── Status Styles ────── */
+const STATUS_STYLES: Record<string, { bg: string; color: string; dot: string }> = {
   Active: { bg: "rgba(16,185,129,0.1)", color: "#10B981", dot: "#10B981" },
-  "Pending Invite": {
-    bg: "rgba(245,158,11,0.1)",
-    color: "#F59E0B",
-    dot: "#F59E0B",
-  },
+  "Pending Invite": { bg: "rgba(245,158,11,0.1)", color: "#F59E0B", dot: "#F59E0B" },
   Inactive: { bg: "rgba(107,114,128,0.1)", color: "#6B7280", dot: "#6B7280" },
   Pending: { bg: "rgba(245,158,11,0.1)", color: "#F59E0B", dot: "#F59E0B" },
   Suspended: { bg: "rgba(239,68,68,0.1)", color: "#EF4444", dot: "#EF4444" },
   Probation: { bg: "rgba(99,102,241,0.1)", color: "#6366F1", dot: "#6366F1" },
 };
 
+/* ────── User Service Layer (Business Logic) ────── */
+const UserService = {
+  updateUser: (updatedUser: Partial<MergedUser> & { id: string }) => {
+    try {
+      const raw = localStorage.getItem("nexus_registered_users");
+      let users = raw ? JSON.parse(raw) : [];
+      const index = users.findIndex((u: any) => u.id === updatedUser.id);
+      if (index !== -1) {
+        users[index] = { ...users[index], ...updatedUser };
+      } else {
+        users.push(updatedUser);
+      }
+      localStorage.setItem("nexus_registered_users", JSON.stringify(users));
+      return true;
+    } catch (e) {
+      console.error("Failed to update user:", e);
+      return false;
+    }
+  },
+
+  deleteUser: (id: string) => {
+    try {
+      const raw = localStorage.getItem("nexus_registered_users");
+      if (!raw) return true;
+      const users = JSON.parse(raw).filter((u: any) => u.id !== id);
+      localStorage.setItem("nexus_registered_users", JSON.stringify(users));
+      return true;
+    } catch (e) {
+      console.error("Failed to delete user:", e);
+      return false;
+    }
+  },
+
+  deactivateUser: (id: string) => {
+    return UserService.updateUser({ id, accountStatus: "Inactive", employeeStatus: "Inactive" });
+  },
+
+  resendInvite: (id: string, email: string) => {
+    console.log(`Invite resent to ${email}`);
+    toast.success(`Invite resent to ${email}`);
+    return UserService.updateUser({ id, accountStatus: "Pending Invite", employeeStatus: "Pending Invite" });
+  },
+
+  viewUser: (id: string, navigate: (path: string) => void) => {
+    navigate(`/admin/manage-account/users/${id}`);
+  },
+
+  editUser: (id: string, navigate: (path: string) => void) => {
+    navigate(`/admin/manage-account/users/${id}/edit`);
+  },
+};
+
 export function ManageAccountUsers() {
   const navigate = useNavigate();
-  const { employeesList } = useEmployees();
+  const { employeesList, updateEmployee, deleteEmployee } = useEmployees();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const refresh = useCallback(() => setRefreshTrigger((prev) => prev + 1), []);
+
   const [sidebarFilter, setSidebarFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("All");
@@ -80,60 +129,39 @@ export function ManageAccountUsers() {
     return () => window.removeEventListener("click", handler);
   }, []);
 
-  /* ────── Merge data sources ────── */
+  /* ────── Merge Data ────── */
   const allUsers: MergedUser[] = useMemo(() => {
-    // Start with employees from context
     const fromContext: MergedUser[] = employeesList.map((emp) => ({
       id: emp.id,
       name: emp.name,
       email: emp.email,
-      initials: emp.name
-        .split(" ")
-        .map((w) => w[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2),
+      initials: emp.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2),
       role: emp.role || "Employee",
       department: emp.department || "—",
       location: emp.location || "—",
       designation: emp.designation || "—",
       joinedAt: emp.joinDate || new Date().toISOString().split("T")[0],
       employeeStatus: emp.status || "Active",
-      accountStatus:
-        emp.status === "Pending Invite" ? "Pending Invite" : "Active",
+      accountStatus: emp.status === "Pending Invite" ? "Pending Invite" : "Active",
     }));
 
-    // Also read registered users from localStorage
     try {
       const raw = localStorage.getItem("nexus_registered_users");
       if (raw) {
         const parsed = JSON.parse(raw) as any[];
-        const contextEmails = new Set(
-          fromContext.map((u) => u.email.toLowerCase()),
-        );
+        const contextEmails = new Set(fromContext.map((u) => u.email.toLowerCase()));
         parsed.forEach((u) => {
           if (!contextEmails.has(u.email?.toLowerCase())) {
             fromContext.push({
               id: u.id || `reg-${Math.random().toString(36).slice(2)}`,
               name: u.name || "Unknown",
               email: u.email || "",
-              initials: (
-                u.initials ||
-                u.name
-                  ?.split(" ")
-                  .map((w: string) => w[0])
-                  .join("") ||
-                "U"
-              )
-                .toUpperCase()
-                .slice(0, 2),
+              initials: (u.initials || u.name?.split(" ").map((w: string) => w[0]).join("") || "U").toUpperCase().slice(0, 2),
               role: u.role || "Employee",
               department: "—",
               location: "—",
               designation: "—",
-              joinedAt: u.joinedAt
-                ? u.joinedAt.split("T")[0]
-                : new Date().toISOString().split("T")[0],
+              joinedAt: u.joinedAt ? u.joinedAt.split("T")[0] : new Date().toISOString().split("T")[0],
               employeeStatus: u.status || "Active",
               accountStatus: u.status || "Active",
             });
@@ -143,19 +171,13 @@ export function ManageAccountUsers() {
     } catch (e) {
       console.error("Error reading registered users:", e);
     }
-
     return fromContext;
-  }, [employeesList]);
+  }, [employeesList, refreshTrigger]);
 
-  /* ────── Unique filter options ────── */
+  /* ────── Filter Options ────── */
   const departments = useMemo(() => {
     const set = new Set(allUsers.map((u) => u.department));
-    return [
-      "All",
-      ...Array.from(set)
-        .filter((d) => d !== "—")
-        .sort(),
-    ];
+    return ["All", ...Array.from(set).filter((d) => d !== "—").sort()];
   }, [allUsers]);
 
   const roles = useMemo(() => {
@@ -163,44 +185,23 @@ export function ManageAccountUsers() {
     return ["All", ...Array.from(set).sort()];
   }, [allUsers]);
 
-  /* ────── Filter logic ────── */
+  /* ────── Main Filter Logic ────── */
   const filtered = useMemo(() => {
     let list = [...allUsers];
 
-    // Sidebar filter
-    if (sidebarFilter === "login_enabled") {
-      list = list.filter((u) => u.accountStatus === "Active");
-    } else if (sidebarFilter === "login_disabled") {
-      list = list.filter(
-        (u) =>
-          u.accountStatus === "Inactive" || u.accountStatus === "Suspended",
-      );
-    } else if (sidebarFilter === "invited") {
-      list = list.filter(
-        (u) =>
-          u.accountStatus === "Pending Invite" || u.accountStatus === "Pending",
-      );
-    } else if (sidebarFilter === "deactivated") {
-      list = list.filter((u) => u.accountStatus === "Inactive");
-    }
+    if (sidebarFilter === "login_enabled") list = list.filter((u) => u.accountStatus === "Active");
+    else if (sidebarFilter === "login_disabled") list = list.filter((u) => u.accountStatus === "Inactive" || u.accountStatus === "Suspended");
+    else if (sidebarFilter === "invited") list = list.filter((u) => u.accountStatus === "Pending Invite" || u.accountStatus === "Pending");
+    else if (sidebarFilter === "deactivated") list = list.filter((u) => u.accountStatus === "Inactive");
 
-    // Search
     if (search.trim()) {
       const q = search.toLowerCase();
-      list = list.filter(
-        (u) =>
-          u.name.toLowerCase().includes(q) ||
-          u.email.toLowerCase().includes(q) ||
-          u.id.toLowerCase().includes(q),
-      );
+      list = list.filter((u) => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.id.toLowerCase().includes(q));
     }
 
-    // Dropdown filters
-    if (deptFilter !== "All")
-      list = list.filter((u) => u.department === deptFilter);
+    if (deptFilter !== "All") list = list.filter((u) => u.department === deptFilter);
     if (roleFilter !== "All") list = list.filter((u) => u.role === roleFilter);
-    if (statusFilter !== "All")
-      list = list.filter((u) => u.accountStatus === statusFilter);
+    if (statusFilter !== "All") list = list.filter((u) => u.accountStatus === statusFilter);
 
     return list;
   }, [allUsers, sidebarFilter, search, deptFilter, roleFilter, statusFilter]);
@@ -208,48 +209,60 @@ export function ManageAccountUsers() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   const paged = filtered.slice((page - 1) * perPage, page * perPage);
 
+  /* ────── Action Handlers ────── */
+  const handleView = useCallback((id: string) => UserService.viewUser(id, navigate), [navigate]);
+  const handleEdit = useCallback((id: string) => UserService.editUser(id, navigate), [navigate]);
+
+  const handleDeactivate = useCallback((id: string, name: string) => {
+    if (!confirm(`Deactivate user "${name}"?`)) return;
+    const success = UserService.deactivateUser(id);
+    if (success) {
+      if (id.startsWith("EMP")) {
+        updateEmployee(id, { status: "Inactive" });
+      }
+      toast.success(`User ${name} has been deactivated`);
+      refresh();
+      setActionMenuId(null);
+    } else toast.error("Failed to deactivate user");
+  }, [updateEmployee, refresh]);
+
+  const handleResendInvite = useCallback((id: string, email: string) => {
+    UserService.resendInvite(id, email);
+    setActionMenuId(null);
+  }, []);
+
+  const handleDelete = useCallback((id: string, name: string) => {
+    if (!confirm(`Permanently delete "${name}"? This cannot be undone.`)) return;
+    const success = UserService.deleteUser(id);
+    if (success) {
+      if (id.startsWith("EMP")) {
+        deleteEmployee(id);
+      }
+      toast.success(`User ${name} has been deleted`);
+      refresh();
+      setActionMenuId(null);
+      setSelectedRows((prev) => prev.filter((r) => r !== id));
+    } else toast.error("Failed to delete user");
+  }, [deleteEmployee, refresh]);
+
   const toggleRow = (id: string) => {
-    setSelectedRows((prev) =>
-      prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id],
-    );
+    setSelectedRows((prev) => prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]);
   };
+
   const toggleAll = () => {
-    if (selectedRows.length === paged.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(paged.map((u) => u.id));
-    }
+    if (selectedRows.length === paged.length) setSelectedRows([]);
+    else setSelectedRows(paged.map((u) => u.id));
   };
 
   const getStatusPill = (status: string) => {
     const s = STATUS_STYLES[status] || STATUS_STYLES["Active"];
     return (
-      <span
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "5px",
-          padding: "4px 10px",
-          borderRadius: "20px",
-          fontSize: "11px",
-          fontWeight: 700,
-          backgroundColor: s.bg,
-          color: s.color,
-        }}
-      >
-        <span
-          style={{
-            width: "6px",
-            height: "6px",
-            borderRadius: "50%",
-            backgroundColor: s.dot,
-          }}
-        />
+      <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", padding: "4px 10px", borderRadius: "20px", fontSize: "11px", fontWeight: 700, backgroundColor: s.bg, color: s.color }}>
+        <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: s.dot }} />
         {status}
       </span>
     );
   };
-
   return (
     <div
       style={{

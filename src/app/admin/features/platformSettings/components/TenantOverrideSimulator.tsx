@@ -17,11 +17,11 @@ export function TenantOverrideSimulator({ config }: Props) {
   const getDemoTenantData = () => {
     switch (selectedDemoTenant) {
       case "Acme India":
-        return { tz: "Asia/Kolkata", cur: "INR (₹)", lang: "English", wl: "Disabled", size: `${config.storage.maxUploadSizeMb} MB` };
+        return { tz: "Asia/Kolkata", cur: "INR (₹)", lang: "English", wl: "Disabled", size: `${config.storage?.maxUploadSizeMb ?? 50} MB` };
       case "Nexus Dubai":
         return { tz: "Asia/Dubai", cur: "AED (د.إ)", lang: "Arabic", wl: "Enabled", size: "50 MB" };
       case "Viyan Singapore":
-        return { tz: "Europe/London", cur: "SGD (S$)", lang: "English", wl: "Disabled", size: `${config.storage.maxUploadSizeMb} MB` };
+        return { tz: "Europe/London", cur: "SGD (S$)", lang: "English", wl: "Disabled", size: `${config.storage?.maxUploadSizeMb ?? 50} MB` };
     }
   };
 
@@ -58,7 +58,7 @@ export function TenantOverrideSimulator({ config }: Props) {
             <div className="flex justify-between"><span className="text-gray-500">Timezone</span><span className="text-gray-800">{config.timezone.defaultTimezone}</span></div>
             <div className="flex justify-between"><span className="text-gray-500">Currency</span><span className="text-gray-800">{config.currency.defaultCode}</span></div>
             <div className="flex justify-between"><span className="text-gray-500">Language</span><span className="text-gray-800">{config.localization.defaultLanguage}</span></div>
-            <div className="flex justify-between"><span className="text-gray-500">Upload Cap</span><span className="text-gray-800">{config.storage.maxUploadSizeMb} MB</span></div>
+            <div className="flex justify-between"><span className="text-gray-500">Upload Cap</span><span className="text-gray-800">{(config.storage?.maxUploadSizeMb ?? 50)} MB</span></div>
           </div>
         </div>
 
