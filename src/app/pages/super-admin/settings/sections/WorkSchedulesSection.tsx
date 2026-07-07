@@ -1,5 +1,7 @@
-import React from "react";
-import { useSettingsContext } from "../SettingsContext";
+import {
+  useSettingsContext,
+  type WorkScheduleRecord,
+} from "../SettingsContext";
 import {
   ChevronRight,
   CheckCircle,
@@ -48,30 +50,35 @@ export function WorkSchedulesSection() {
   } = useSettingsContext();
 
   // Filter logic
-  const filteredScheds = schedulesList.filter((s) => {
-    const matchesSearch =
-      s.name.toLowerCase().includes(schedSearchQuery.toLowerCase()) ||
-      s.code.toLowerCase().includes(schedSearchQuery.toLowerCase());
+  const filteredScheds = schedulesList.filter(
+    (s: {
+      name: string;
+      code: string;
+      status: string;
+      type: string;
+      location: string;
+    }) => {
+      const matchesSearch =
+        s.name.toLowerCase().includes(schedSearchQuery.toLowerCase()) ||
+        s.code.toLowerCase().includes(schedSearchQuery.toLowerCase());
 
-    const matchesStatus =
-      schedStatusFilter === "All" || s.status === schedStatusFilter;
-    const matchesType =
-      schedTypeFilter === "All" || s.type === schedTypeFilter;
-    const matchesLoc =
-      schedLocFilter === "All" || s.location === schedLocFilter;
+      const matchesStatus =
+        schedStatusFilter === "All" || s.status === schedStatusFilter;
+      const matchesType =
+        schedTypeFilter === "All" || s.type === schedTypeFilter;
+      const matchesLoc =
+        schedLocFilter === "All" || s.location === schedLocFilter;
 
-    return matchesSearch && matchesStatus && matchesType && matchesLoc;
-  });
+      return matchesSearch && matchesStatus && matchesType && matchesLoc;
+    },
+  );
 
   return (
     <div>
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
-        <ChevronRight
-          size={12}
-          style={{ color: "var(--muted-foreground)" }}
-        />
+        <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "#00B87C" }}>Work Schedules</span>
       </div>
 
@@ -146,7 +153,9 @@ export function WorkSchedulesSection() {
           },
           {
             label: "Active Schedules",
-            value: schedulesList.filter((s) => s.status === "Active").length,
+            value: schedulesList.filter(
+              (s: { status: string }) => s.status === "Active",
+            ).length,
             icon: <CheckCircle size={20} />,
             color: "#0EA5E9",
             bg: "rgba(14, 165, 233, 0.1)",
@@ -154,7 +163,7 @@ export function WorkSchedulesSection() {
           {
             label: "Employees Assigned",
             value: schedulesList.reduce(
-              (acc, curr) => acc + curr.empCount,
+              (acc: number, curr: { empCount: number }) => acc + curr.empCount,
               0,
             ),
             icon: <Users size={20} />,
@@ -163,7 +172,9 @@ export function WorkSchedulesSection() {
           },
           {
             label: "Shift Based Schedules",
-            value: schedulesList.filter((s) => s.type === "Shift").length,
+            value: schedulesList.filter(
+              (s: { type: string }) => s.type === "Shift",
+            ).length,
             icon: <RotateCcw size={20} />,
             color: "#8B5CF6",
             bg: "rgba(139, 92, 246, 0.1)",
@@ -331,7 +342,7 @@ export function WorkSchedulesSection() {
             </tr>
           </thead>
           <tbody>
-            {filteredScheds.map((s, idx) => (
+            {filteredScheds.map((s: WorkScheduleRecord, idx: number) => (
               <tr
                 key={idx}
                 style={{
@@ -504,7 +515,7 @@ export function WorkSchedulesSection() {
                     <button
                       onClick={() => {
                         const cloneCode = `${s.code}-COPY`;
-                        const cloneSched: WorkScheduleRecord = {
+                        const cloneSched = {
                           ...s,
                           code: cloneCode,
                           name: `${s.name} (Copy)`,
@@ -697,9 +708,7 @@ export function WorkSchedulesSection() {
         style={{ borderTop: "1px solid var(--border)" }}
       >
         <button
-          onClick={() =>
-            showToast("Work schedule updates saved successfully")
-          }
+          onClick={() => showToast("Work schedule updates saved successfully")}
           style={{
             backgroundColor: "#00B87C",
             color: "white",

@@ -27,6 +27,7 @@ export function useNotifications() {
     | "channels"
     | "history"
     | "settings"
+    | "system"
   >("dashboard");
 
   const [showAlert, setShowAlert] = useState(false);

@@ -29,13 +29,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { useAuth } from "../../context/AuthContext";
 import { DocumentPreviewContent } from "./EmployeeDocuments";
 
-const TABS = [
-  "Personal Info",
-  "Onboarding",
-  "Documents",
-  "Assets",
-  "Expenses",
-];
+const TABS = ["Personal Info", "Onboarding", "Documents", "Assets", "Expenses"];
 
 export function EmployeeSelfProfile() {
   const { user, login } = useAuth();
@@ -115,8 +109,18 @@ export function EmployeeSelfProfile() {
         const registeredRaw = localStorage.getItem("nexus_registered_users");
         if (registeredRaw) {
           const users = JSON.parse(registeredRaw);
-          const updatedUsers = users.map((u: any) => {
-            if (u.email.toLowerCase() === user.email.toLowerCase()) {
+          interface RegisteredUser {
+            email: string;
+            name?: string;
+            initials?: string;
+            [key: string]: unknown;
+          }
+          const updatedUsers = users.map((u: RegisteredUser) => {
+            if (
+              u.email &&
+              user?.email &&
+              u.email.toLowerCase() === user.email.toLowerCase()
+            ) {
               return {
                 ...u,
                 name: updatedUser.name,
@@ -395,24 +399,45 @@ export function EmployeeSelfProfile() {
             )}
             {activeTab === "Onboarding" && (
               <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm flex flex-col gap-3">
-                <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">My Onboarding Journey</h3>
-                <p className="text-[13px] font-semibold text-muted-foreground">Onboarding tasks, stages, and checklist details will be displayed here.</p>
-                <div className="mt-4 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-[#00B87C] font-black text-xs uppercase tracking-widest rounded-lg w-fit">Coming Soon</div>
+                <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">
+                  My Onboarding Journey
+                </h3>
+                <p className="text-[13px] font-semibold text-muted-foreground">
+                  Onboarding tasks, stages, and checklist details will be
+                  displayed here.
+                </p>
+                <div className="mt-4 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-[#00B87C] font-black text-xs uppercase tracking-widest rounded-lg w-fit">
+                  Coming Soon
+                </div>
               </div>
             )}
             {activeTab === "Documents" && <DocumentsTab />}
             {activeTab === "Assets" && (
               <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm flex flex-col gap-3">
-                <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">My Assigned Assets</h3>
-                <p className="text-[13px] font-semibold text-muted-foreground">Details of assets, hardware, and inventory assigned to you will be shown here.</p>
-                <div className="mt-4 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-[#00B87C] font-black text-xs uppercase tracking-widest rounded-lg w-fit">Coming Soon</div>
+                <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">
+                  My Assigned Assets
+                </h3>
+                <p className="text-[13px] font-semibold text-muted-foreground">
+                  Details of assets, hardware, and inventory assigned to you
+                  will be shown here.
+                </p>
+                <div className="mt-4 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-[#00B87C] font-black text-xs uppercase tracking-widest rounded-lg w-fit">
+                  Coming Soon
+                </div>
               </div>
             )}
             {activeTab === "Expenses" && (
               <div className="bg-card rounded-[24px] p-8 border border-border shadow-sm flex flex-col gap-3">
-                <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">My Expenses</h3>
-                <p className="text-[13px] font-semibold text-muted-foreground">Reimbursement requests, expense claims, and status updates will be displayed here.</p>
-                <div className="mt-4 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-[#00B87C] font-black text-xs uppercase tracking-widest rounded-lg w-fit">Coming Soon</div>
+                <h3 className="text-[18px] font-black text-foreground uppercase tracking-tight">
+                  My Expenses
+                </h3>
+                <p className="text-[13px] font-semibold text-muted-foreground">
+                  Reimbursement requests, expense claims, and status updates
+                  will be displayed here.
+                </p>
+                <div className="mt-4 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-[#00B87C] font-black text-xs uppercase tracking-widest rounded-lg w-fit">
+                  Coming Soon
+                </div>
               </div>
             )}
           </motion.div>

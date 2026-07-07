@@ -1,4 +1,4 @@
-import React from "react";
+import type { LucideIcon } from "lucide-react";
 import { PageHeader } from "../common/PageHeader";
 
 /**
@@ -9,7 +9,7 @@ import { PageHeader } from "../common/PageHeader";
 interface ComingSoonPageProps {
   title: string;
   subtitle?: string;
-  icon?: React.ComponentType<any>;
+  icon?: LucideIcon;
 }
 
 export function ComingSoonPage({

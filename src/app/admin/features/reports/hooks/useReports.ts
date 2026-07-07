@@ -4,7 +4,7 @@
  */
 
 import { useState } from "react";
-import { ReportsState } from "../types/reports.types";
+import { ReportsState, CustomReportRecord } from "../types/reports.types";
 import { reportsService } from "../services/reports.service";
 import { pushAuditLog } from "../../../mockData";
 
@@ -22,6 +22,8 @@ export function useReports() {
     | "custom"
     | "exports"
     | "executive"
+    | "employees"
+    | "usage"
   >("dashboard");
 
   // Alert State
@@ -41,7 +43,9 @@ export function useReports() {
     plan: "all",
     industry: "all",
   });
-  const [customReportResult, setCustomReportResult] = useState<any[]>([]);
+  const [customReportResult, setCustomReportResult] = useState<
+    CustomReportRecord[]
+  >([]);
 
   // Scheduled Report Form State
   const [schedTemplateId, setSchedTemplateId] = useState("temp-5");
@@ -114,8 +118,6 @@ export function useReports() {
       "info",
     );
   };
-
-
 
   return {
     state,

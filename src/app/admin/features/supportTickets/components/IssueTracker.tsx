@@ -1,7 +1,7 @@
 import { Bug, Link2 } from "lucide-react";
 import type { Issue } from "../types/types";
 
-export function IssueTracker({ issues }: { issues: Issue[]; actions: any }) {
+export function IssueTracker({ issues }: { issues: Issue[] }) {
   const severityColor = (s: string) => {
     if (s === "Critical") return "bg-red-50 text-red-700 border-red-200";
     if (s === "Major") return "bg-orange-50 text-orange-700 border-orange-200";

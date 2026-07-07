@@ -395,7 +395,10 @@ export default function FeatureManagementView() {
                   <select
                     value={newFlag.status}
                     onChange={(e) =>
-                      setNewFlag({ ...newFlag, status: e.target.value as any })
+                      setNewFlag({
+                        ...newFlag,
+                        status: e.target.value as "Active" | "Inactive",
+                      })
                     }
                     className="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-gray-50 outline-none focus:bg-white focus:border-indigo-500 transition-colors cursor-pointer font-semibold"
                   >

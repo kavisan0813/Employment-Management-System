@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, ComponentType } from "react";
 import {
   LayoutDashboard,
   MessageSquare,
@@ -6,7 +6,6 @@ import {
   Lightbulb,
   Star,
   Shield,
-  BookOpen,
   Zap,
   Headphones,
 } from "lucide-react";
@@ -19,7 +18,6 @@ import { IssueTracker } from "./components/IssueTracker";
 import { FeatureRequests } from "./components/FeatureRequests";
 import { FeedbackManagement } from "./components/FeedbackManagement";
 import { SLAManagement } from "./components/SLAManagement";
-import { KnowledgeBase } from "./components/KnowledgeBase";
 import { EscalationRules } from "./components/EscalationRules";
 
 type Tab =
@@ -33,14 +31,17 @@ type Tab =
   | "escalation"
   | "reports";
 
-const tabs: { id: Tab; label: string; icon: any }[] = [
+const tabs: {
+  id: Tab;
+  label: string;
+  icon: ComponentType<{ size?: number | string; className?: string }>;
+}[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "tickets", label: "Support Tickets", icon: MessageSquare },
   { id: "issues", label: "Issue Tracking", icon: Bug },
   { id: "features", label: "Feature Requests", icon: Lightbulb },
   { id: "feedback", label: "Feedback", icon: Star },
   { id: "sla", label: "SLA Management", icon: Shield },
-  { id: "kb", label: "Knowledge Base", icon: BookOpen },
   { id: "escalation", label: "Escalation Rules", icon: Zap },
 ];
 
@@ -57,7 +58,7 @@ export default function SupportTicketsView() {
         return <TicketsTable hook={hook} />;
 
       case "issues":
-        return <IssueTracker issues={hook.issues} actions={hook.actions} />;
+        return <IssueTracker issues={hook.issues} />;
 
       case "features":
         return (
@@ -77,9 +78,6 @@ export default function SupportTicketsView() {
             actions={hook.actions}
           />
         );
-
-      case "kb":
-        return <KnowledgeBase kbArticles={hook.kbArticles} />;
 
       case "escalation":
         return (

@@ -83,7 +83,7 @@ export function usePlatformSettings() {
     const symbol = config.currency.symbol;
     const amount = (123456.789).toFixed(config.currency.decimalPlaces);
 
-    let formattedAmount = amount;
+    let formattedAmount: string;
     if (config.localization.numberFormat === "India") {
       const parts = amount.split(".");
       let lastThree = parts[0].substring(parts[0].length - 3);

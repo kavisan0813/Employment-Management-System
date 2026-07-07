@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import {
   Settings,
-  User,
   Bell,
   Globe,
   Key,
+  User,
   Palette,
   Eye,
   EyeOff,
@@ -14,7 +14,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth, User as user } from "../../../context/AuthContext";
 
 type SettingsTab =
   | "Profile Settings"
@@ -116,8 +116,8 @@ export function FinanceSettings() {
         try {
           const registeredRaw = localStorage.getItem("nexus_registered_users");
           if (registeredRaw) {
-            const users = JSON.parse(registeredRaw);
-            const updatedUsers = users.map((u: any) => {
+            const users: user[] = JSON.parse(registeredRaw);
+            const updatedUsers = users.map((u: user) => {
               if (u.email.toLowerCase() === user.email.toLowerCase()) {
                 return {
                   ...u,

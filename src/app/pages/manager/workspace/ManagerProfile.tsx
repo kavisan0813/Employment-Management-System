@@ -26,6 +26,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { useAuth } from "../../../context/AuthContext";
+import { PlatformUser } from "../../../admin/types";
 
 type ProfileTab =
   | "Personal Info"
@@ -242,7 +243,7 @@ export function ManagerProfile() {
         const registeredRaw = localStorage.getItem("nexus_registered_users");
         if (registeredRaw) {
           const users = JSON.parse(registeredRaw);
-          const updatedUsers = users.map((u: any) => {
+          const updatedUsers = users.map((u: PlatformUser) => {
             if (u.email.toLowerCase() === user.email.toLowerCase()) {
               return {
                 ...u,

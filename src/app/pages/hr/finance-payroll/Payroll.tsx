@@ -104,64 +104,6 @@ interface Toast {
   message: string;
 }
 
-/* ─── Helpers ────────────────────────────── */
-const generateMockPayrollForMonthYear = (
-  month: string,
-  year: string,
-): PayrollEmployee[] => {
-  const monthIdx = MONTHS.indexOf(month) + 1; // 1 to 12
-  const yearNum = parseInt(year);
-
-  // Deterministic seed formula based on month index and year number
-  const seed = (monthIdx * 7 + (yearNum - 2024) * 13) % 100;
-
-  return payrollEmployees.map((e, idx) => {
-    // Modify gross and deductions slightly based on seed and employee index
-    const variancePercent = ((seed + idx) % 15) - 7; // range: -7% to +7%
-    const newGross = Math.round(e.gross * (1 + variancePercent / 100));
-
-    // Deductions also vary slightly
-    const deductionVariance = ((seed * 3 + idx) % 10) - 5; // range: -5% to +5%
-    const newDeductions = Math.round(
-      e.deductions * (1 + deductionVariance / 100),
-    );
-
-    const newNet = newGross - newDeductions;
-
-    // Determine status deterministically based on whether period is past relative to "April 2026"
-    let status: "Paid" | "Pending" | "On Hold" = "Pending";
-    const currentYear = 2026;
-    const currentMonthIdx = 3; // April (0-indexed)
-
-    if (
-      yearNum < currentYear ||
-      (yearNum === currentYear && monthIdx - 1 < currentMonthIdx)
-    ) {
-      status = "Paid";
-    } else {
-      const statusSeed = (seed + idx) % 10;
-      if (statusSeed < 6) {
-        status = "Paid";
-      } else if (statusSeed < 9) {
-        status = "Pending";
-      } else {
-        status = "On Hold";
-      }
-    }
-
-    return {
-      ...e,
-      gross: newGross,
-      deductions: newDeductions,
-      net: newNet,
-      status,
-      bonus: 0,
-      bankAccount: `****${Math.floor(1000 + ((seed * 17 + idx * 31) % 9000))}`,
-      transferProgress: status === "Paid" ? 100 : 0,
-    };
-  });
-};
-
 /* ─── Toast System ───────────────────────── */
 function ToastContainer({
   toasts,

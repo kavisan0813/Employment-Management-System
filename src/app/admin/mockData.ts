@@ -31,8 +31,6 @@ import {
   DailySnapshot,
 } from "./types";
 
-
-
 import {
   UserSession,
   CustomRole,
@@ -1516,16 +1514,68 @@ const initialDashboardStatsCache: DashboardStatsCache = {
   at_risk_companies_count: 0,
   inactive_companies_count: 0,
   total_employees_platform_wide: 0,
-  calculated_at: new Date().toISOString()
+  calculated_at: new Date().toISOString(),
 };
 
 const initialDailySnapshots: DailySnapshot[] = [
-  { snapshot_date: new Date(new Date().setMonth(new Date().getMonth() - 5)).toISOString(), total_companies: 15, mrr_total: 105000, new_signups: 4, active_companies_count: 12, total_employees: 300 },
-  { snapshot_date: new Date(new Date().setMonth(new Date().getMonth() - 4)).toISOString(), total_companies: 19, mrr_total: 145000, new_signups: 5, active_companies_count: 15, total_employees: 450 },
-  { snapshot_date: new Date(new Date().setMonth(new Date().getMonth() - 3)).toISOString(), total_companies: 24, mrr_total: 195000, new_signups: 7, active_companies_count: 20, total_employees: 750 },
-  { snapshot_date: new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString(), total_companies: 28, mrr_total: 240000, new_signups: 5, active_companies_count: 23, total_employees: 900 },
-  { snapshot_date: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString(), total_companies: 32, mrr_total: 290000, new_signups: 6, active_companies_count: 27, total_employees: 1200 },
-  { snapshot_date: new Date().toISOString(), total_companies: 35, mrr_total: 310000, new_signups: 3, active_companies_count: 30, total_employees: 1450 }
+  {
+    snapshot_date: new Date(
+      new Date().setMonth(new Date().getMonth() - 5),
+    ).toISOString(),
+    total_companies: 15,
+    mrr_total: 105000,
+    new_signups: 4,
+    active_companies_count: 12,
+    total_employees: 300,
+  },
+  {
+    snapshot_date: new Date(
+      new Date().setMonth(new Date().getMonth() - 4),
+    ).toISOString(),
+    total_companies: 19,
+    mrr_total: 145000,
+    new_signups: 5,
+    active_companies_count: 15,
+    total_employees: 450,
+  },
+  {
+    snapshot_date: new Date(
+      new Date().setMonth(new Date().getMonth() - 3),
+    ).toISOString(),
+    total_companies: 24,
+    mrr_total: 195000,
+    new_signups: 7,
+    active_companies_count: 20,
+    total_employees: 750,
+  },
+  {
+    snapshot_date: new Date(
+      new Date().setMonth(new Date().getMonth() - 2),
+    ).toISOString(),
+    total_companies: 28,
+    mrr_total: 240000,
+    new_signups: 5,
+    active_companies_count: 23,
+    total_employees: 900,
+  },
+  {
+    snapshot_date: new Date(
+      new Date().setMonth(new Date().getMonth() - 1),
+    ).toISOString(),
+    total_companies: 32,
+    mrr_total: 290000,
+    new_signups: 6,
+    active_companies_count: 27,
+    total_employees: 1200,
+  },
+  {
+    snapshot_date: new Date().toISOString(),
+    total_companies: 35,
+    mrr_total: 310000,
+    new_signups: 3,
+    active_companies_count: 30,
+    total_employees: 1450,
+  },
 ];
 
 const initialAdminTeamMembers: AdminTeamMember[] = [
@@ -2138,7 +2188,7 @@ export const db = {
       getStore<AdminTeamMember[]>("admin_team", initialAdminTeamMembers),
     saveTeam: (data: AdminTeamMember[]) => saveStore("admin_team", data),
   },
-/*   loginLogs: {
+  /*   loginLogs: {
     get: () => getStore<LoginLog[]>("loginLogs", initialLoginLogs),
     save: (data: LoginLog[]) => saveStore("loginLogs", data),
   },
@@ -2179,11 +2229,16 @@ export const db = {
     save: (data: ApiLog[]) => saveStore("apiLogs", data),
   }, */
   dashboardStats: {
-    get: () => getStore<DashboardStatsCache>("dashboardStats", initialDashboardStatsCache),
+    get: () =>
+      getStore<DashboardStatsCache>(
+        "dashboardStats",
+        initialDashboardStatsCache,
+      ),
     save: (data: DashboardStatsCache) => saveStore("dashboardStats", data),
   },
   dailySnapshots: {
-    get: () => getStore<DailySnapshot[]>("dailySnapshots", initialDailySnapshots),
+    get: () =>
+      getStore<DailySnapshot[]>("dailySnapshots", initialDailySnapshots),
     save: (data: DailySnapshot[]) => saveStore("dailySnapshots", data),
   },
 };

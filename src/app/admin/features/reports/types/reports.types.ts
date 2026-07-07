@@ -10,7 +10,6 @@ export interface ReportTemplate {
   description: string;
 }
 
-
 export interface ReportExport {
   id: string;
   reportName: string;
@@ -29,4 +28,15 @@ export interface ChartDataPoint {
 export interface ReportsState {
   templates: ReportTemplate[];
   exports: ReportExport[];
+}
+
+export interface CustomReportRecord {
+  id: string;
+  org: string;
+  industry: string;
+  plan: string;
+  usersCount: number;
+  revenueContribution: number;
+  status: string;
+  healthIndex: string;
 }

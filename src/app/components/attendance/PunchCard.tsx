@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAttendance, formatTime12Hour } from "../../context/AttendanceContext";
-import { useAuth } from "../../context/AuthContext";
 
 export function PunchCard() {
-  const { user } = useAuth();
   const {
     todayRecord,
     derivedState,

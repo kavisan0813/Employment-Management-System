@@ -1021,7 +1021,6 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: "dashboard", element: lazyRoute(AdminDashboardPage) },
       { path: "organizations", element: lazyRoute(AdminOrganizationsPage) },
-
       { path: "subscriptions", element: lazyRoute(AdminSubscriptionsPage) },
       { path: "reports", element: lazyRoute(AdminReportsPage) },
       { path: "support-tickets", element: lazyRoute(AdminSupportTicketsPage) },

@@ -59,7 +59,7 @@ export interface PlatformUser {
   status: "Active" | "Inactive" | "Pending" | "Suspended" | "Pending Invite";
   role: string;
   organization: string;
-  organizationId: string;
+  organizationId: string | null;
   lastLoginAt: string;
   mfaEnabled: boolean;
   joinedAt: string;
@@ -176,7 +176,7 @@ export interface TrendSeries {
 }
 
 // --- Module 10: Audit Logs ---
-/* export interface AuditLogEntry {
+export interface AuditLogEntry {
   action?: string;
   id: string;
   event: string; // e.g. "user.login", "org.plan_upgrade"
@@ -189,7 +189,7 @@ export interface TrendSeries {
   result: "Active" | "Pending" | "Inactive"; // Active = success, Pending = in progress, Inactive = failed
   metadata: Record<string, string>;
   timestamp: string;
-} */
+}
 
 // --- Module 11: Support Tickets ---
 export interface SupportTicket {

@@ -1,6 +1,24 @@
 import { Search, Activity, Globe, Zap } from "lucide-react";
+import { Organization } from "../../../types";
 
-export function AllOrganizationsTable({ hook }: { hook: any }) {
+interface AllOrganizationsTableProps {
+  hook: {
+    filteredOrgs: Organization[];
+    filters: {
+      searchQuery: string;
+      setSearchQuery: (query: string) => void;
+      statusFilter: string;
+      setStatusFilter: (status: string) => void;
+      planFilter: string;
+      setPlanFilter: (plan: string) => void;
+      industryFilter: string;
+      setIndustryFilter: (industry: string) => void;
+    };
+    setActiveOrgId: (id: string | null) => void;
+  };
+}
+
+export function AllOrganizationsTable({ hook }: AllOrganizationsTableProps) {
   const { filteredOrgs, filters, setActiveOrgId } = hook;
 
   return (
@@ -87,7 +105,7 @@ export function AllOrganizationsTable({ hook }: { hook: any }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm">
-                {filteredOrgs.map((org: any) => (
+                {filteredOrgs.map((org: Organization) => (
                   <tr
                     key={org.id}
                     className="hover:bg-gray-50/50 transition-colors group"

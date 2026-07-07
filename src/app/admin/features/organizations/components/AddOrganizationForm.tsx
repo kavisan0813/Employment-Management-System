@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Organization } from "../../../types";
 import { OrganizationService } from "../services/organization.service";
 import {
   Building2,
@@ -44,7 +45,12 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
 
   const handleNextStep = () => {
     if (step === 3) {
-      if (!formData.ownerName || !formData.ownerEmail || !formData.phone || !formData.password) {
+      if (
+        !formData.ownerName ||
+        !formData.ownerEmail ||
+        !formData.phone ||
+        !formData.password
+      ) {
         alert("Please fill in all required fields.");
         return;
       }
@@ -56,7 +62,11 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
     setStep((s) => s + 1);
   };
 
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -87,7 +97,7 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
       state: formData.state,
       city: formData.city,
       pincode: formData.pincode,
-      plan: formData.plan as any,
+      plan: formData.plan as Organization["plan"],
       seatLimit: formData.seatLimit,
       password: formData.password,
       enabledModules: formData.enabledModules,
@@ -385,7 +395,11 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                       >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -406,19 +420,26 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                       >
-                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showConfirmPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
                       </button>
                     </div>
                   </div>
                   <div className="col-span-2">
-                    {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-                      <p className="text-xs font-bold text-red-500 mt-1">
-                        Passwords do not match
-                      </p>
-                    )}
+                    {formData.confirmPassword &&
+                      formData.password !== formData.confirmPassword && (
+                        <p className="text-xs font-bold text-red-500 mt-1">
+                          Passwords do not match
+                        </p>
+                      )}
                   </div>
                 </div>
               </div>

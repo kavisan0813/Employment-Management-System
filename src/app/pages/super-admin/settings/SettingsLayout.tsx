@@ -58,7 +58,7 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
 
   // Local state for Employee active section
   const [empActiveSection, setEmpActiveSection] = useState("emp_security");
-  const [setEmpModal] = useState<string | null>(null);
+  const [_empModal, setEmpModal] = useState<string | null>(null);
 
   // Read state from context (for Admin/HR) or local (for Employee)
   const activeSubTab = isEmployee ? empActiveSection : context.activeSubTab;
@@ -186,7 +186,7 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
 
       // Employee Sections
       case "emp_security":
-        return <EmployeeSecuritySection onModal={setEmpModal} />;
+        return <EmployeeSecuritySection />;
       case "emp_privacy":
         return <EmployeePrivacySection onModal={setEmpModal} />;
       case "emp_notifications":
@@ -363,8 +363,18 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
                   <div className="flex flex-col gap-1">
                     {category.items.map((item) => {
                       const active = activeSubTab === item.id;
+                      const IconComp =
+                        Icons[item.iconName as keyof typeof Icons];
                       const Icon =
-                        (Icons as any)[item.iconName] || Icons.HelpCircle;
+                        typeof IconComp === "function" ||
+                        (IconComp &&
+                          typeof IconComp === "object" &&
+                          "$$typeof" in IconComp)
+                          ? (IconComp as React.ComponentType<{
+                              size?: number;
+                              style?: React.CSSProperties;
+                            }>)
+                          : Icons.HelpCircle;
                       return (
                         <button
                           key={item.id}

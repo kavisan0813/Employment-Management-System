@@ -7,7 +7,6 @@ import { usePlatformSettings } from "./hooks/usePlatformSettings";
 import { GeneralSettingsView } from "./components/GeneralSettingsView";
 import { CurrencySettingsView } from "./components/CurrencySettingsView";
 import { TimezoneSettingsView } from "./components/TimezoneSettingsView";
-import { TenantOverrideSimulator } from "./components/TenantOverrideSimulator";
 
 // Import Icons
 import {
@@ -144,7 +143,7 @@ export function PlatformSettingsView() {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                   isActive
                     ? "bg-indigo-600 text-white shadow-sm"
@@ -183,9 +182,6 @@ export function PlatformSettingsView() {
           {/* Content Field Render block */}
           <div className="p-6">{renderActiveTabContent()}</div>
         </div>
-
-        {/* Tenant Override Sandbox Card */}
-        <TenantOverrideSimulator config={config} />
       </div>
     </div>
   );

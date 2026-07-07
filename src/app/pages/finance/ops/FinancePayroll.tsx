@@ -149,11 +149,14 @@ export function FinancePayroll() {
       return MOCK_RECORDS;
     }
     return activeRun.payslips.map((ps: RealPayslip) => {
-      let avatarColor = "#8B5CF6";
-      if (ps.department === "Engineering") avatarColor = "#8B5CF6";
-      else if (ps.department === "Product") avatarColor = "#10B981";
-      else if (ps.department === "Design") avatarColor = "#F59E0B";
-      else avatarColor = "#EF4444";
+      const avatarColor =
+        ps.department === "Engineering"
+          ? "#8B5CF6"
+          : ps.department === "Product"
+            ? "#10B981"
+            : ps.department === "Design"
+              ? "#F59E0B"
+              : "#EF4444";
 
       return {
         id: ps.employeeId,
@@ -826,13 +829,17 @@ export function FinancePayroll() {
                 <button
                   onClick={() => {
                     const empRecord = mockEmployees.find(
-                      (e) => e.id === selectedEmployee.id || e.name === selectedEmployee.name
+                      (e) =>
+                        e.id === selectedEmployee.id ||
+                        e.name === selectedEmployee.name,
                     );
-                    const emailAddress = empRecord?.email || `${selectedEmployee.name.toLowerCase().replace(" ", ".")}@nexushr.com`;
+                    const emailAddress =
+                      empRecord?.email ||
+                      `${selectedEmployee.name.toLowerCase().replace(" ", ".")}@nexushr.com`;
                     showToast(
                       "Success",
                       "success",
-                      `Salary Slip emailed to ${emailAddress}`
+                      `Salary Slip emailed to ${emailAddress}`,
                     );
                   }}
                   className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-[#00B87C] text-white font-black text-[12px] uppercase tracking-widest hover:opacity-90 transition-all shadow-lg shadow-[#00B87C]/20 active:scale-95 cursor-pointer border-none"

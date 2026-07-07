@@ -212,10 +212,11 @@ export const payrollService = {
       }
       this.saveData(state);
       return { success: true };
-    } catch (e: any) {
+    } catch (e) {
       return {
         success: false,
-        error: e.message || "Failed to save salary structure.",
+        error:
+          e instanceof Error ? e.message : "Failed to save salary structure.",
       };
     }
   },
@@ -257,10 +258,21 @@ export const payrollService = {
 
     // Generate deterministic ID from month
     const monthParts = month.split(" ");
-    const monthNum = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December",
-    ].indexOf(monthParts[0]) + 1;
+    const monthNum =
+      [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ].indexOf(monthParts[0]) + 1;
     const id = `PR-${monthParts[1] || "2026"}${String(monthNum).padStart(2, "0")}`;
 
     const payRun: PayRun = {
@@ -311,7 +323,8 @@ export const payrollService = {
     if (run.preparedBy === approvedBy) {
       return {
         success: false,
-        error: "Maker-checker violation: the preparer cannot approve their own pay run.",
+        error:
+          "Maker-checker violation: the preparer cannot approve their own pay run.",
       };
     }
 

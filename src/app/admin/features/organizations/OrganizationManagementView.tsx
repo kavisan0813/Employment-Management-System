@@ -126,16 +126,18 @@ export function OrganizationManagementView() {
           {!hook.activeOrgId ? (
             // Global Tabs
             <>
-              {[
-                { id: "all", label: "All Organizations", icon: Building2 },
-                { id: "add", label: "Add Organization", icon: Plus },
-              ].map((tab) => {
+              {(
+                [
+                  { id: "all", label: "All Organizations", icon: Building2 },
+                  { id: "add", label: "Add Organization", icon: Plus },
+                ] as const
+              ).map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeGlobalTab === tab.id;
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveGlobalTab(tab.id as any)}
+                    onClick={() => setActiveGlobalTab(tab.id)}
                     className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                       isActive
                         ? "bg-indigo-600 text-white shadow-sm"
@@ -151,18 +153,20 @@ export function OrganizationManagementView() {
           ) : (
             // Org Tabs
             <>
-              {[
-                { id: "profile", label: "Profile", icon: Building2 },
-                { id: "status", label: "Status", icon: ShieldAlert },
-                { id: "storage", label: "Storage", icon: Database },
-                { id: "users", label: "User Management", icon: Users },
-              ].map((tab) => {
+              {(
+                [
+                  { id: "profile", label: "Profile", icon: Building2 },
+                  { id: "status", label: "Status", icon: ShieldAlert },
+                  { id: "storage", label: "Storage", icon: Database },
+                  { id: "users", label: "User Management", icon: Users },
+                ] as const
+              ).map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeOrgTab === tab.id;
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveOrgTab(tab.id as any)}
+                    onClick={() => setActiveOrgTab(tab.id)}
                     className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                       isActive
                         ? "bg-indigo-600 text-white shadow-sm"

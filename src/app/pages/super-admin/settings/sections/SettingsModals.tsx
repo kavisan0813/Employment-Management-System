@@ -97,7 +97,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       if (activeModal === "add_schedule") {
-        const newSched: WorkScheduleRecord = {
+        const newSched = {
           name: scheduleForm.name,
           code: scheduleForm.code,
           type: scheduleForm.type,
@@ -118,7 +118,7 @@ export function SettingsModals() {
         showToast("Schedule created successfully", "success");
       } else {
         setSchedulesList(
-          schedulesList.map((s: { code: any; }) =>
+          schedulesList.map((s: { code: string }) =>
             s.code === selectedSchedule?.code
               ? {
                   ...s,
@@ -156,7 +156,9 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setSchedulesList(
-        schedulesList.filter((s: { code: any; }) => s.code !== selectedSchedule?.code),
+        schedulesList.filter(
+          (s: { code: string }) => s.code !== selectedSchedule?.code,
+        ),
       );
       setIsSubmitting(false);
       showToast("Schedule deleted successfully", "success");
@@ -177,7 +179,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       if (activeModal === "add_leave_type") {
-        const newLT: LeaveTypeRecord = {
+        const newLT = {
           name: leaveTypeForm.name,
           code: leaveTypeForm.code,
           days: leaveTypeForm.days,
@@ -198,7 +200,7 @@ export function SettingsModals() {
         showToast("Leave type created successfully", "success");
       } else {
         setLeaveTypesList(
-          leaveTypesList.map((l: { code: any; }) =>
+          leaveTypesList.map((l: { code: string }) =>
             l.code === selectedLeaveType?.code
               ? {
                   ...l,
@@ -232,7 +234,9 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setLeaveTypesList(
-        leaveTypesList.filter((l: { code: any; }) => l.code !== selectedLeaveType?.code),
+        leaveTypesList.filter(
+          (l: { code: string }) => l.code !== selectedLeaveType?.code,
+        ),
       );
       setIsSubmitting(false);
       showToast("Leave type removed successfully", "success");
@@ -281,7 +285,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       if (activeModal === "add_holiday") {
-        const newHol: HolidayRecord = {
+        const newHol = {
           name: holidayForm.name,
           date: holidayForm.date,
           day: dayName,
@@ -296,7 +300,7 @@ export function SettingsModals() {
         showToast("Holiday created successfully", "success");
       } else {
         setHolidaysList(
-          holidaysList.map((h: { date: any; name: any; }) =>
+          holidaysList.map((h: { date: string; name: string }) =>
             h.date === selectedHoliday?.date && h.name === selectedHoliday?.name
               ? {
                   ...h,
@@ -325,7 +329,7 @@ export function SettingsModals() {
     setTimeout(() => {
       setHolidaysList(
         holidaysList.filter(
-          (h: { date: any; name: any; }) =>
+          (h: { date: string; name: string }) =>
             !(
               h.date === selectedHoliday?.date &&
               h.name === selectedHoliday?.name
@@ -359,7 +363,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       if (activeModal === "add_location") {
-        const newLoc: LocationRecord = {
+        const newLoc = {
           name: locForm.name,
           code: locForm.code,
           type: locForm.type,
@@ -379,7 +383,7 @@ export function SettingsModals() {
         showToast("Location created successfully", "success");
       } else {
         setLocationsList(
-          locationsList.map((l: { code: any; }) =>
+          locationsList.map((l: { code: string }) =>
             l.code === selectedLoc?.code
               ? {
                   ...l,
@@ -416,7 +420,9 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setLocationsList(
-        locationsList.filter((l: { code: any; }) => l.code !== selectedLoc?.code),
+        locationsList.filter(
+          (l: { code: string }) => l.code !== selectedLoc?.code,
+        ),
       );
       setIsSubmitting(false);
       showToast("Location deleted successfully", "success");
@@ -437,7 +443,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       if (activeModal === "add_department") {
-        const newDept: DepartmentRecord = {
+        const newDept = {
           name: deptForm.name,
           code: deptForm.code,
           head: deptForm.head,
@@ -451,7 +457,7 @@ export function SettingsModals() {
         showToast("Department created successfully", "success");
       } else {
         setDeptsList(
-          deptsList.map((d: { code: any; }) =>
+          deptsList.map((d: { code: string }) =>
             d.code === selectedDept?.code
               ? {
                   ...d,
@@ -480,7 +486,11 @@ export function SettingsModals() {
     }
     setIsSubmitting(true);
     setTimeout(() => {
-      setDeptsList(deptsList.filter((d: { code: any; }) => d.code !== selectedDept?.code));
+      setDeptsList(
+        deptsList.filter(
+          (d: { code: string }) => d.code !== selectedDept?.code,
+        ),
+      );
       setIsSubmitting(false);
       showToast("Department deleted successfully", "success");
       closeModal();
@@ -509,7 +519,7 @@ export function SettingsModals() {
     setTimeout(() => {
       const initials = inviteForm.name
         .split(" ")
-        .map((n: any[]) => n[0])
+        .map((n: string) => n[0])
         .join("")
         .toUpperCase()
         .slice(0, 2);
@@ -556,7 +566,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
-        usersList.map((u: { email: any; }) =>
+        usersList.map((u: { email: string }) =>
           u.email === selectedUser?.email
             ? {
                 ...u,
@@ -580,7 +590,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
-        usersList.map((u: { email: any; }) =>
+        usersList.map((u: { email: string }) =>
           u.email === selectedUser?.email ? { ...u, status: "Active" } : u,
         ),
       );
@@ -594,7 +604,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
-        usersList.map((u: { email: any; }) =>
+        usersList.map((u: { email: string }) =>
           u.email === selectedUser?.email ? { ...u, status: "Inactive" } : u,
         ),
       );
@@ -2472,7 +2482,9 @@ export function SettingsModals() {
                         type="button"
                         onClick={() => {
                           const next = isSelected
-                            ? scheduleForm.workingDays.filter((d: string) => d !== day)
+                            ? scheduleForm.workingDays.filter(
+                                (d: string) => d !== day,
+                              )
                             : [...scheduleForm.workingDays, day];
                           setScheduleForm({
                             ...scheduleForm,
@@ -5879,124 +5891,146 @@ export function SettingsModals() {
                   </tr>
                 </thead>
                 <tbody>
-                  {permissionGroups.map((group: { id: React.Key | null | undefined; name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; modules: any[]; }) => (
-                    <React.Fragment key={group.id}>
-                      <tr>
-                        <td
-                          colSpan={6}
-                          className="px-4 py-2 text-[12px] font-bold"
-                          style={{
-                            backgroundColor: "var(--card)",
-                            color: "var(--foreground)",
-                            borderTop: "1px solid var(--border)",
-                            borderBottom: "1px solid var(--border)",
-                          }}
-                        >
-                          {group.name}
-                        </td>
-                      </tr>
-                      {group.modules.map((mod: { id: React.Key | null | undefined; name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; }) => {
-                        const p = roleForm.permissions[mod.id] || "no";
-                        const isView = p === "view" || p === "full";
-                        const isFull = p === "full";
-
-                        const handleCheck = (
-                          type: string,
-                          checked: boolean,
-                        ) => {
-                          let next = p;
-                          if (type === "view") {
-                            next = checked ? "view" : "no";
-                          } else if (type === "full") {
-                            next = checked ? "full" : "view";
-                          }
-                          setRoleForm((prev: { permissions: any; }) => ({
-                            ...prev,
-                            permissions: {
-                              ...prev.permissions,
-                              [mod.id]: next,
-                            },
-                          }));
-                        };
-
-                        return (
-                          <tr
-                            key={mod.id}
-                            className="hover:bg-[var(--muted)] transition-colors"
+                  {permissionGroups.map(
+                    (group: {
+                      id: React.Key | null | undefined;
+                      name:
+                        | string
+                        | number
+                        | boolean
+                        | React.ReactElement<
+                            string,
+                            string | React.JSXElementConstructor<string>
+                          >
+                        | Iterable<React.ReactNode>
+                        | React.ReactPortal
+                        | Iterable<React.ReactNode>
+                        | null
+                        | undefined;
+                      modules: { id: string; name: string }[];
+                    }) => (
+                      <React.Fragment key={group.id}>
+                        <tr>
+                          <td
+                            colSpan={6}
+                            className="px-4 py-2 text-[12px] font-bold"
                             style={{
+                              backgroundColor: "var(--card)",
+                              color: "var(--foreground)",
+                              borderTop: "1px solid var(--border)",
                               borderBottom: "1px solid var(--border)",
                             }}
                           >
-                            <td
-                              className="px-4 py-3 text-[13px] font-medium"
-                              style={{ color: "var(--foreground)" }}
+                            {group.name}
+                          </td>
+                        </tr>
+                        {group.modules.map((mod) => {
+                          const p = roleForm.permissions[mod.id] || "no";
+                          const isView = p === "view" || p === "full";
+                          const isFull = p === "full";
+
+                          const handleCheck = (
+                            type: string,
+                            checked: boolean,
+                          ) => {
+                            let next = p;
+                            if (type === "view") {
+                              next = checked ? "view" : "no";
+                            } else if (type === "full") {
+                              next = checked ? "full" : "view";
+                            }
+                            setRoleForm(
+                              (prev: {
+                                permissions: Record<string, string>;
+                              }) => ({
+                                ...prev,
+                                permissions: {
+                                  ...prev.permissions,
+                                  [mod.id]: next,
+                                },
+                              }),
+                            );
+                          };
+
+                          return (
+                            <tr
+                              key={mod.id}
+                              className="hover:bg-[var(--muted)] transition-colors"
+                              style={{
+                                borderBottom: "1px solid var(--border)",
+                              }}
                             >
-                              {mod.name}
-                            </td>
-                            <td className="text-center">
-                              <input
-                                type="checkbox"
-                                checked={isView}
-                                onChange={(e) =>
-                                  handleCheck("view", e.target.checked)
-                                }
-                                className="w-4 h-4 rounded border-gray-300 text-[var(--primary)] focus:ring-[var(--primary)] cursor-pointer"
-                              />
-                            </td>
-                            <td className="text-center">
-                              <input
-                                type="checkbox"
-                                checked={isFull}
-                                onChange={(e) =>
-                                  handleCheck("full", e.target.checked)
-                                }
-                                disabled={!isView}
-                                className="w-4 h-4 rounded border-gray-300 text-[var(--primary)] focus:ring-[var(--primary)] disabled:opacity-50 cursor-pointer"
-                              />
-                            </td>
-                            <td className="text-center">
-                              <input
-                                type="checkbox"
-                                checked={isFull}
-                                onChange={(e) =>
-                                  handleCheck("full", e.target.checked)
-                                }
-                                disabled={!isView}
-                                className="w-4 h-4 rounded border-gray-300 text-[var(--primary)] focus:ring-[var(--primary)] disabled:opacity-50 cursor-pointer"
-                              />
-                            </td>
-                            <td className="text-center">
-                              <input
-                                type="checkbox"
-                                checked={isFull}
-                                onChange={(e) =>
-                                  handleCheck("full", e.target.checked)
-                                }
-                                disabled={!isView}
-                                className="w-4 h-4 rounded border-gray-300 text-[var(--primary)] focus:ring-[var(--primary)] disabled:opacity-50 cursor-pointer"
-                              />
-                            </td>
-                            <td className="text-right px-4">
-                              <button
-                                onClick={() => handleCheck("full", !isFull)}
-                                className="text-[11px] font-semibold transition-colors"
-                                style={{
-                                  color: isFull
-                                    ? "#00B87C"
-                                    : "var(--muted-foreground)",
-                                  background: "none",
-                                  border: "none",
-                                  cursor: "pointer",
-                                }}
+                              <td
+                                className="px-4 py-3 text-[13px] font-medium"
+                                style={{ color: "var(--foreground)" }}
                               >
-                                {isFull ? "Selected" : "Select All"}
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </React.Fragment>
-                  ))}
+                                {mod.name}
+                              </td>
+                              <td className="text-center">
+                                <input
+                                  type="checkbox"
+                                  checked={isView}
+                                  onChange={(e) =>
+                                    handleCheck("view", e.target.checked)
+                                  }
+                                  className="w-4 h-4 rounded border-gray-300 text-[var(--primary)] focus:ring-[var(--primary)] cursor-pointer"
+                                />
+                              </td>
+                              <td className="text-center">
+                                <input
+                                  type="checkbox"
+                                  checked={isFull}
+                                  onChange={(e) =>
+                                    handleCheck("full", e.target.checked)
+                                  }
+                                  disabled={!isView}
+                                  className="w-4 h-4 rounded border-gray-300 text-[var(--primary)] focus:ring-[var(--primary)] disabled:opacity-50 cursor-pointer"
+                                />
+                              </td>
+                              <td className="text-center">
+                                <input
+                                  type="checkbox"
+                                  checked={isFull}
+                                  onChange={(e) =>
+                                    handleCheck("full", e.target.checked)
+                                  }
+                                  disabled={!isView}
+                                  className="w-4 h-4 rounded border-gray-300 text-[var(--primary)] focus:ring-[var(--primary)] disabled:opacity-50 cursor-pointer"
+                                />
+                              </td>
+                              <td className="text-center">
+                                <input
+                                  type="checkbox"
+                                  checked={isFull}
+                                  onChange={(e) =>
+                                    handleCheck("full", e.target.checked)
+                                  }
+                                  disabled={!isView}
+                                  className="w-4 h-4 rounded border-gray-300 text-[var(--primary)] focus:ring-[var(--primary)] disabled:opacity-50 cursor-pointer"
+                                />
+                              </td>
+                              <td className="text-right px-4">
+                                <button
+                                  onClick={() => handleCheck("full", !isFull)}
+                                  className="text-[11px] font-semibold transition-colors"
+                                  style={{
+                                    color: isFull
+                                      ? "#00B87C"
+                                      : "var(--muted-foreground)",
+                                    background: "none",
+                                    border: "none",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  {isFull ? "Selected" : "Select All"}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </React.Fragment>
+                    ),
+                  )}
                 </tbody>
               </table>
             </div>

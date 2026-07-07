@@ -1,4 +1,3 @@
-import React from "react";
 import { Settings } from "../../super-admin/settings/Settings";
 
 export function HRSettings() {

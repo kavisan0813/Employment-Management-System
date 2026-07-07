@@ -1523,7 +1523,7 @@ function AISupportAssistantTab() {
     }, 50);
 
     setTimeout(() => {
-      let reply = "";
+      let reply: string;
       const lower = textToSend.toLowerCase();
 
       if (

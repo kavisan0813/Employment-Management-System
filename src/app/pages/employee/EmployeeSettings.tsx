@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { motion, AnimatePresence } from "motion/react";
 import {
   Settings,
   User,
@@ -15,7 +14,6 @@ import {
   HelpCircle,
   Headphones,
   ChevronRight,
-  X,
   Eye,
   EyeOff,
   AlertTriangle,
@@ -118,13 +116,6 @@ function Breadcrumb({ active }: { active: string }) {
   );
 }
 
-interface ModalProps {
-  open: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
-
 function Toggle({
   on,
   onChange,
@@ -151,7 +142,7 @@ function Toggle({
 export default function EmployeeSettings() {
   const [activeSection, setActiveSection] = useState<SectionKey>("security");
 
-  const [setActiveModal] = useState<string | null>(null);
+  const [, setActiveModal] = useState<string | null>(null);
   const navigate = useNavigate();
 
   return (
@@ -245,7 +236,11 @@ export default function EmployeeSettings() {
   );
 }
 
-function AccountSecurity() {
+function AccountSecurity({
+  onModal: _onModal,
+}: {
+  onModal: (m: string | null) => void;
+}) {
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");

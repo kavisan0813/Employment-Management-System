@@ -6,7 +6,11 @@ export function OrganizationStatus({
   hook,
 }: {
   org: Organization;
-  hook: any;
+  hook: {
+    actions: {
+      updateStatus: (id: string, status: Organization["status"]) => void;
+    };
+  };
 }) {
   const handleSuspend = () => {
     if (

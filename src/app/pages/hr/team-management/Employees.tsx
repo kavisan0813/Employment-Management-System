@@ -29,7 +29,11 @@ import {
   ChevronUp,
   Ban,
 } from "lucide-react";
-import { useEmployees, Employee } from "../../../context/AppContext";
+import {
+  useEmployees,
+  Employee,
+  EmployeeInput,
+} from "../../../context/AppContext";
 
 const ROWS_PER_PAGE = 12;
 
@@ -970,10 +974,10 @@ function BulkImportModal({
   onImport,
 }: {
   onClose: () => void;
-  onImport: (emps: any[]) => void;
+  onImport: (emps: EmployeeInput[]) => void;
 }) {
   const [csvText, setCsvText] = useState("");
-  const [parsedEmployees, setParsedEmployees] = useState<any[]>([]);
+  const [parsedEmployees, setParsedEmployees] = useState<EmployeeInput[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const handleParse = () => {
@@ -1003,7 +1007,7 @@ function BulkImportModal({
       return;
     }
 
-    const emps: any[] = [];
+    const emps: EmployeeInput[] = [];
     for (let i = 1; i < lines.length; i++) {
       if (!lines[i].trim()) continue;
       const values = lines[i].split(",").map((v) => v.trim());
@@ -1011,7 +1015,7 @@ function BulkImportModal({
         setError(`Row ${i + 1} has a mismatch in column count.`);
         return;
       }
-      const emp: any = {};
+      const emp: Partial<EmployeeInput> = {};
       header.forEach((col, idx) => {
         if (col === "name") emp.name = values[idx];
         else if (col === "email") emp.email = values[idx];
@@ -1020,7 +1024,7 @@ function BulkImportModal({
         else if (col === "salary") emp.salary = Number(values[idx]) || 50000;
         else if (col === "joindate") emp.joinDate = values[idx];
       });
-      emps.push(emp);
+      emps.push(emp as EmployeeInput);
     }
     setParsedEmployees(emps);
     setError(null);
@@ -1270,12 +1274,29 @@ export function Employees() {
   // Sort
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
-      let valA = (a as any)[sortCol];
-      let valB = (b as any)[sortCol];
-      if (typeof valA === "string") valA = valA.toLowerCase();
-      if (typeof valB === "string") valB = valB.toLowerCase();
-      if (valA < valB) return sortDesc ? 1 : -1;
-      if (valA > valB) return sortDesc ? -1 : 1;
+      const valA = a[sortCol as keyof Employee];
+      const valB = b[sortCol as keyof Employee];
+      const normA =
+        valA === undefined || valA === null
+          ? ""
+          : typeof valA === "string"
+            ? valA.toLowerCase()
+            : valA;
+      const normB =
+        valB === undefined || valB === null
+          ? ""
+          : typeof valB === "string"
+            ? valB.toLowerCase()
+            : valB;
+      if (typeof normA === "number" && typeof normB === "number") {
+        if (normA < normB) return sortDesc ? 1 : -1;
+        if (normA > normB) return sortDesc ? -1 : 1;
+      } else {
+        const strA = String(normA);
+        const strB = String(normB);
+        if (strA < strB) return sortDesc ? 1 : -1;
+        if (strA > strB) return sortDesc ? -1 : 1;
+      }
       return 0;
     });
   }, [filtered, sortCol, sortDesc]);
@@ -2701,7 +2722,10 @@ export function Employees() {
         <AddEmployeeModal
           onClose={() => setShowAddModal(false)}
           onAdd={(emp) => {
-            addEmployee({ ...emp, salary: Number(emp.salary) } as any);
+            addEmployee({
+              ...emp,
+              salary: Number(emp.salary),
+            } as EmployeeInput);
             setShowAddModal(false);
           }}
         />
@@ -2723,7 +2747,7 @@ export function Employees() {
             updateEmployee(id, {
               ...updated,
               salary: updated.salary ? Number(updated.salary) : undefined,
-            } as any);
+            } as Partial<Employee>);
             setEditEmployee(null);
           }}
         />

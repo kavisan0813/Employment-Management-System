@@ -7,6 +7,7 @@ import {
   ReportsState,
   ReportTemplate,
   ReportExport,
+  CustomReportRecord,
 } from "../types/reports.types";
 
 const INITIAL_TEMPLATES: ReportTemplate[] = [
@@ -99,7 +100,6 @@ export const reportsService = {
     }
   },
 
-
   createExport(
     state: ReportsState,
     reportName: string,
@@ -144,9 +144,9 @@ export const reportsService = {
     dateRange: string;
     plan: string;
     industry: string;
-  }) {
+  }): CustomReportRecord[] {
     // Generate deterministic rows based on filters so it looks like a real database compile
-    const records = [];
+    const records: CustomReportRecord[] = [];
     const industries = [
       "Technology",
       "Healthcare",

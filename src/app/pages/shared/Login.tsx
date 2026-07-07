@@ -12,6 +12,7 @@ import {
   Briefcase,
   User,
 } from "lucide-react";
+import type { LucideProps } from "lucide-react";
 import {
   useAuth,
   UserRole,
@@ -57,7 +58,15 @@ const DEMO_ACCOUNTS: Record<
   },
 };
 
-const ROLE_ICONS: Record<UserRole, React.ComponentType<any>> = {
+interface RegisteredUser {
+  email: string;
+  name: string;
+  initials: string;
+  role?: string;
+  id?: string;
+}
+
+const ROLE_ICONS: Record<UserRole, React.ComponentType<LucideProps>> = {
   "Platform Admin": ShieldCheck,
   "Super Admin": ShieldAlert,
   "HR Manager": Users,
@@ -110,7 +119,8 @@ export function Login() {
       if (registered) {
         const users = JSON.parse(registered);
         const match = users.find(
-          (u: any) => u.email.toLowerCase() === emailVal.toLowerCase(),
+          (u: RegisteredUser) =>
+            u.email.toLowerCase() === emailVal.toLowerCase(),
         );
         if (match && match.role) {
           if (match.role === "Org Admin") return "Super Admin";
@@ -160,7 +170,8 @@ export function Login() {
           if (registered) {
             const users = JSON.parse(registered);
             const match = users.find(
-              (u: any) => u.email.toLowerCase() === email.toLowerCase(),
+              (u: RegisteredUser) =>
+                u.email.toLowerCase() === email.toLowerCase(),
             );
             if (match) {
               accountName = match.name;

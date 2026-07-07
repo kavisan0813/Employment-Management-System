@@ -262,6 +262,103 @@ const permissionGroups = [
   },
 ];
 
+export interface DepartmentRecord {
+  code: string;
+  name: string;
+  head: string;
+  empCount: number;
+  status: string;
+  budget?: string;
+  createdDate: string;
+  description?: string;
+}
+
+export interface LocationRecord {
+  name: string;
+  code: string;
+  type: "Head Office" | "Branch" | "Warehouse" | "Remote";
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  pincode: string;
+  manager: string;
+  empCount: number;
+  timezone: string;
+  status: "Active" | "Inactive" | "Partial";
+  notes?: string;
+  createdDate: string;
+  lastUpdated?: string;
+}
+
+export interface WorkScheduleRecord {
+  name: string;
+  code: string;
+  type: "General" | "Shift" | "Flexible" | "Rotational" | "Part Time";
+  startTime: string;
+  endTime: string;
+  breakDuration: number;
+  workingDays: string[];
+  weekends: string[];
+  graceTime: number;
+  halfDayRule: string;
+  otEligible: boolean;
+  dept: string;
+  location: string;
+  empCount: number;
+  status: "Active" | "Inactive";
+}
+
+export interface HolidayRecord {
+  name: string;
+  date: string;
+  day: string;
+  type: "National" | "Company" | "Optional" | "Regional" | "Festival";
+  location: string;
+  dept: string;
+  recurring: boolean;
+  status: "Active" | "Inactive";
+  description: string;
+}
+
+export interface LeaveTypeRecord {
+  name: string;
+  code: string;
+  days: number;
+  type: "Paid" | "Unpaid";
+  carryForward: boolean;
+  maxCarryForward: number;
+  encashment: boolean;
+  approvalRequired: boolean;
+  attachmentRequired: boolean;
+  minNoticePeriod: number;
+  maxConsecutiveLeave: number;
+  dept: string;
+  location: string;
+  status: "Active" | "Inactive";
+  description: string;
+}
+
+export interface UserManagementRecord {
+  name: string;
+  email: string;
+  initials: string;
+  avatarBg: string;
+  role: string;
+  dept: string;
+  location?: string;
+  lastLogin: string;
+  status: string;
+}
+
+export interface SalaryComponent {
+  name: string;
+  type: "Earning" | "Deduction";
+  amountType: "Percentage" | "Fixed";
+  value: string;
+  taxable: boolean;
+}
+
 const SettingsContext = createContext<any>(null);
 
 export function useSettingsContext() {
@@ -601,16 +698,7 @@ export function SettingsProvider({
     type: "success" | "error";
   } | null>(null);
 
-  interface DepartmentRecord {
-    code: string;
-    name: string;
-    head: string;
-    empCount: number;
-    status: string;
-    budget?: string;
-    createdDate: string;
-    description?: string;
-  }
+  // DepartmentRecord is exported at module scope
 
   const [deptsList, setDeptsList] = useState<DepartmentRecord[]>([
     {
@@ -702,23 +790,7 @@ export function SettingsProvider({
   const [deptStatusFilter, setDeptStatusFilter] = useState("All Status");
   const [deptSortBy, setDeptSortBy] = useState("Name");
 
-  interface LocationRecord {
-    name: string;
-    code: string;
-    type: "Head Office" | "Branch" | "Warehouse" | "Remote";
-    address: string;
-    city: string;
-    state: string;
-    country: string;
-    pincode: string;
-    manager: string;
-    empCount: number;
-    timezone: string;
-    status: "Active" | "Inactive" | "Partial";
-    notes?: string;
-    createdDate: string;
-    lastUpdated?: string;
-  }
+  // LocationRecord is exported at module scope
 
   const [locationsList, setLocationsList] = useState<LocationRecord[]>([
     {
@@ -820,23 +892,7 @@ export function SettingsProvider({
   const [locTypeFilter, setLocTypeFilter] = useState("All");
   const [locSortBy, setLocSortBy] = useState("Name");
 
-  interface WorkScheduleRecord {
-    name: string;
-    code: string;
-    type: "General" | "Shift" | "Flexible" | "Rotational" | "Part Time";
-    startTime: string;
-    endTime: string;
-    breakDuration: number;
-    workingDays: string[];
-    weekends: string[];
-    graceTime: number;
-    halfDayRule: string;
-    otEligible: boolean;
-    dept: string;
-    location: string;
-    empCount: number;
-    status: "Active" | "Inactive";
-  }
+  // WorkScheduleRecord is exported at module scope
 
   const [schedulesList, setSchedulesList] = useState<WorkScheduleRecord[]>([
     {
@@ -939,17 +995,7 @@ export function SettingsProvider({
   const [schedTypeFilter, setSchedTypeFilter] = useState("All");
   const [schedLocFilter, setSchedLocFilter] = useState("All");
 
-  interface HolidayRecord {
-    name: string;
-    date: string;
-    day: string;
-    type: "National" | "Company" | "Optional" | "Regional" | "Festival";
-    location: string;
-    dept: string;
-    recurring: boolean;
-    status: "Active" | "Inactive";
-    description: string;
-  }
+  // HolidayRecord is exported at module scope
 
   const [holidaysList, setHolidaysList] = useState<HolidayRecord[]>([
     {
@@ -1050,23 +1096,7 @@ export function SettingsProvider({
     "List",
   );
 
-  interface LeaveTypeRecord {
-    name: string;
-    code: string;
-    days: number;
-    type: "Paid" | "Unpaid";
-    carryForward: boolean;
-    maxCarryForward: number;
-    encashment: boolean;
-    approvalRequired: boolean;
-    attachmentRequired: boolean;
-    minNoticePeriod: number;
-    maxConsecutiveLeave: number;
-    dept: string;
-    location: string;
-    status: "Active" | "Inactive";
-    description: string;
-  }
+  // LeaveTypeRecord is exported at module scope
 
   const [leaveTypesList, setLeaveTypesList] = useState<LeaveTypeRecord[]>([
     {
@@ -1153,17 +1183,7 @@ export function SettingsProvider({
   );
   const [lpPolicyVersion, setLpPolicyVersion] = useState("v2.4");
 
-  interface UserManagementRecord {
-    name: string;
-    email: string;
-    initials: string;
-    avatarBg: string;
-    role: string;
-    dept: string;
-    location?: string;
-    lastLogin: string;
-    status: string;
-  }
+  // UserManagementRecord is exported at module scope
 
   const [usersList, setUsersList] = useState<UserManagementRecord[]>([
     {
@@ -1387,13 +1407,7 @@ export function SettingsProvider({
   const [prEsiRate, setPrEsiRate] = useState("0.75%");
   const [prTaxMode, setPrTaxMode] = useState("New Regime (Default)");
 
-  interface SalaryComponent {
-    name: string;
-    type: "Earning" | "Deduction";
-    amountType: "Percentage" | "Fixed";
-    value: string;
-    taxable: boolean;
-  }
+  // SalaryComponent is exported at module scope
 
   const [salaryComponentsList] = useState<SalaryComponent[]>([
     {

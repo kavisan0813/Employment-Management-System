@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Download, Trash2, Search, FileText } from "lucide-react";
 import { ReportsState } from "../types/reports.types";
 

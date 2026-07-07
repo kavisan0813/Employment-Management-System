@@ -1,4 +1,5 @@
 import React from "react";
+import type { LucideIcon, LucideProps } from "lucide-react";
 import {
   LayoutDashboard,
   Building2,
@@ -18,7 +19,7 @@ import {
   Palette,
   Lock,
   BrainCircuit,
-  Settings
+  Settings,
 } from "lucide-react";
 
 const ICON_MAP = {
@@ -40,10 +41,10 @@ const ICON_MAP = {
   branding: Palette,
   security: Lock,
   ai: BrainCircuit,
-  settings: Settings
+  settings: Settings,
 };
 
-export function NavIcon({ name, ...props }: { name: string; [key: string]: any }) {
-  const Icon = (ICON_MAP as Record<string, any>)[name] || Settings;
+export function NavIcon({ name, ...props }: { name: string } & LucideProps) {
+  const Icon = (ICON_MAP as Record<string, LucideIcon>)[name] || Settings;
   return <Icon size={15} {...props} />;
 }

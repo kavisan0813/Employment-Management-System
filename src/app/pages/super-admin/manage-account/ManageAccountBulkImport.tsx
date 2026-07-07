@@ -8,7 +8,9 @@ export function ManageAccountBulkImport() {
   const navigate = useNavigate();
   const { bulkImportEmployees } = useEmployees();
   const [csvText, setCsvText] = useState("");
-  const [parsedEmployees, setParsedEmployees] = useState<any[]>([]);
+  const [parsedEmployees, setParsedEmployees] = useState<
+    Partial<EmployeeInput>[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
 
   const handleParse = () => {
@@ -38,7 +40,7 @@ export function ManageAccountBulkImport() {
       return;
     }
 
-    const emps: any[] = [];
+    const emps: Partial<EmployeeInput>[] = [];
     for (let i = 1; i < lines.length; i++) {
       if (!lines[i].trim()) continue;
       const values = lines[i].split(",").map((v) => v.trim());
@@ -46,7 +48,7 @@ export function ManageAccountBulkImport() {
         setError(`Row ${i + 1} has a mismatch in column count.`);
         return;
       }
-      const emp: any = {};
+      const emp: Partial<EmployeeInput> = {};
       header.forEach((col, idx) => {
         if (col === "name") emp.name = values[idx];
         else if (col === "email") emp.email = values[idx];
@@ -70,23 +72,30 @@ export function ManageAccountBulkImport() {
       const savedUsers = localStorage.getItem("nexus_registered_users") || "[]";
       const usersList = JSON.parse(savedUsers);
 
-      const newPlatformUsers = parsedEmployees.map((emp) => ({
-        id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: emp.name.trim(),
-        email: emp.email.trim(),
-        initials: emp.name
-          .split(" ")
-          .map((w: string) => w[0])
-          .join("")
-          .toUpperCase(),
-        role: "Employee",
-        status: "Pending Invite",
-        joinedAt: new Date().toISOString(),
-        mfaEnabled: false,
-        lastLoginAt: "",
-        organization: "NexusHR Org",
-        organizationId: "org-1",
-      }));
+      const newPlatformUsers = parsedEmployees.map((emp) => {
+        const name = (emp.name || "").trim();
+        const email = (emp.email || "").trim();
+        const initials = name
+          ? name
+              .split(" ")
+              .map((w: string) => w[0] || "")
+              .join("")
+              .toUpperCase()
+          : "";
+        return {
+          id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          name,
+          email,
+          initials,
+          role: "Employee",
+          status: "Pending Invite",
+          joinedAt: new Date().toISOString(),
+          mfaEnabled: false,
+          lastLoginAt: "",
+          organization: "NexusHR Org",
+          organizationId: "org-1",
+        };
+      });
 
       localStorage.setItem(
         "nexus_registered_users",

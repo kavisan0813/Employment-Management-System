@@ -324,17 +324,19 @@ export function UserProfile() {
         const registeredRaw = localStorage.getItem("nexus_registered_users");
         if (registeredRaw) {
           const users = JSON.parse(registeredRaw);
-          const updatedUsers = users.map((u: any) => {
-            if (u.email.toLowerCase() === user.email.toLowerCase()) {
-              return {
-                ...u,
-                name: updatedUser.name,
-                email: updatedUser.email,
-                initials: updatedUser.initials,
-              };
-            }
-            return u;
-          });
+          const updatedUsers = users.map(
+            (u: { email: string; name?: string; initials?: string }) => {
+              if (u.email.toLowerCase() === user.email.toLowerCase()) {
+                return {
+                  ...u,
+                  name: updatedUser.name,
+                  email: updatedUser.email,
+                  initials: updatedUser.initials,
+                };
+              }
+              return u;
+            },
+          );
           localStorage.setItem(
             "nexus_registered_users",
             JSON.stringify(updatedUsers),

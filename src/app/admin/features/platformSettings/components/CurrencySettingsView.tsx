@@ -18,12 +18,15 @@ export function CurrencySettingsView({
   setConfig,
   getFormattedCurrencyPreview,
 }: Props) {
-  const updateCurrency = (key: keyof SystemConfig["currency"], value: any) => {
+  function updateCurrency<K extends keyof SystemConfig["currency"]>(
+    key: K,
+    value: SystemConfig["currency"][K],
+  ) {
     setConfig((prev) => ({
       ...prev,
       currency: { ...prev.currency, [key]: value },
     }));
-  };
+  }
 
   const inputClass =
     "w-full text-sm p-2.5 border border-gray-200 rounded-lg outline-none focus:border-indigo-400 transition-colors";
@@ -97,7 +100,10 @@ export function CurrencySettingsView({
               <select
                 value={config.currency.symbolPosition}
                 onChange={(e) =>
-                  updateCurrency("symbolPosition", e.target.value)
+                  updateCurrency(
+                    "symbolPosition",
+                    e.target.value as "before" | "after",
+                  )
                 }
                 className={inputClass}
               >

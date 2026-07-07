@@ -106,20 +106,12 @@ export function ManagerAttendance() {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] =
     useState<AttendanceRow | null>(null);
-
-  // For Regularization Form
   const [correctedTime, setCorrectedTime] = useState("09:00 AM");
   const [reason, setReason] = useState("Technical issue");
   const [notes, setNotes] = useState("");
-
-  const { getPunchStateForEmail, punchState: globalPunchState } =
-    useAttendance();
-
-  // For testing our context, we'll assume "today" is the 23rd of June 2026
+  const { getPunchStateForEmail } = useAttendance();
   const todayMockDay = new Date().getDate();
   const todayMockMonth = new Date().getMonth();
-
-  // Month navigation state - dynamically default to current month
   const [currentMonthIndex, setCurrentMonthIndex] = useState(() => {
     const today = new Date();
     const mNames = [
@@ -177,7 +169,7 @@ export function ManagerAttendance() {
         return row;
       }),
     );
-  }, [globalPunchState]); // re-run if global punch state changes
+  }, [getPunchStateForEmail]);
 
   const handlePrevMonth = () => {
     if (currentMonthIndex > 0) {
@@ -760,9 +752,7 @@ export function ManagerAttendance() {
                   date === today.getDate();
                 const isFuture = date > endDay;
 
-                let bg = "",
-                  textCol = "",
-                  border = "";
+                let bg: string, textCol: string, border: string;
                 let presentCount = 0,
                   lateCount = 0,
                   absentCount = 0;
@@ -1381,21 +1371,29 @@ export function ManagerAttendance() {
                 </h4>
                 <div className="space-y-2">
                   {selectedEmployee.name === "Priya Sharma" &&
-                  globalPunchState.logs &&
-                  globalPunchState.logs.length > 0 ? (
-                    globalPunchState.logs.map((log, idx) => (
-                      <div
-                        key={idx}
-                        className="flex justify-between items-center text-xs py-1"
-                      >
-                        <span className="text-muted-foreground">
-                          {log.time}
-                        </span>
-                        <span className="font-semibold text-foreground">
-                          {log.action}
-                        </span>
-                      </div>
-                    ))
+                  getPunchStateForEmail("emp@nexushr.com")?.logs &&
+                  getPunchStateForEmail("emp@nexushr.com")!.logs!.length > 0 ? (
+                    getPunchStateForEmail("emp@nexushr.com")!.logs!.map(
+                      (
+                        log: {
+                          time: React.ReactNode;
+                          action: React.ReactNode;
+                        },
+                        idx: number,
+                      ) => (
+                        <div
+                          key={idx}
+                          className="flex justify-between items-center text-xs py-1"
+                        >
+                          <span className="text-muted-foreground">
+                            {log.time}
+                          </span>
+                          <span className="font-semibold text-foreground">
+                            {log.action}
+                          </span>
+                        </div>
+                      ),
+                    )
                   ) : (
                     <>
                       <div className="flex justify-between items-center text-xs py-1">

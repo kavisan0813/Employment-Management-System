@@ -95,6 +95,32 @@ const STATES_BY_COUNTRY: Record<string, string[]> = {
     "Other",
   ],
 };
+interface SignupFormData {
+  fullName: string;
+  email: string;
+  countryCode: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+  orgName: string;
+  orgCode: string;
+  industry: string;
+  regNumber: string;
+  gstNumber: string;
+  country: string;
+  state: string;
+  city: string;
+  address: string;
+  companySize: string;
+  departmentsCount: string;
+  orgEmail: string;
+  supportPhone: string;
+  timezone: string;
+  logoFile: File | null;
+  logoName: string;
+  plan: "Starter" | "Growth" | "Enterprise";
+  billingCycle: "Monthly" | "Yearly";
+}
 
 export function Signup() {
   const navigate = useNavigate();
@@ -110,10 +136,10 @@ export function Signup() {
   });
 
   // Form State
-  const [formData, setFormData] = useState(() => {
+  const [formData, setFormData] = useState<SignupFormData>(() => {
     const savedData = sessionStorage.getItem("nexus_onboarding_data");
     return savedData
-      ? JSON.parse(savedData)
+      ? (JSON.parse(savedData) as SignupFormData)
       : {
           // Screen 1: Personal info
           fullName: "",
@@ -199,19 +225,22 @@ export function Signup() {
     if (formData.orgName && !formData.orgCode) {
       const clean = formData.orgName.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
       const code = clean.slice(0, 3) + "001";
-      setFormData((prev: any) => ({ ...prev, orgCode: code }));
+      setFormData((prev) => ({ ...prev, orgCode: code }));
     }
   }, [formData.orgName]);
 
   // Pre-fill Organization email with Personal email
   useEffect(() => {
     if (formData.email && !formData.orgEmail) {
-      setFormData((prev: any) => ({ ...prev, orgEmail: prev.email }));
+      setFormData((prev) => ({ ...prev, orgEmail: prev.email }));
     }
   }, [formData.email]);
 
-  const handleInputChange = (field: keyof typeof formData, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: keyof SignupFormData,
+    value: string | boolean | File | null,
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   // Screen 1: Submit account details
@@ -250,9 +279,9 @@ export function Signup() {
         name: formData.fullName,
         email: formData.email,
         status: "Active",
-        role: "Org Admin" as any, // Will link to Org later
+        role: "Org Admin", // Will link to Org later
         organization: "",
-        organizationId: null as any,
+        organizationId: null,
         lastLoginAt: new Date().toISOString(),
         mfaEnabled: false,
         joinedAt: new Date().toISOString(),
@@ -349,7 +378,7 @@ export function Signup() {
       return;
     }
 
-    setFormData((prev: any) => ({ ...prev, plan: planName }));
+    setFormData((prev) => ({ ...prev, plan: planName }));
 
     if (planName === "Starter") {
       savePlanDetails("Starter");
@@ -384,7 +413,9 @@ export function Signup() {
             ? {
                 ...s,
                 plan: planName,
-                billingCycle: formData.billingCycle,
+                billingCycle: (formData.billingCycle === "Yearly"
+                  ? "Annual"
+                  : "Monthly") as "Annual" | "Monthly",
                 amount:
                   planName === "Growth"
                     ? formData.billingCycle === "Yearly"
@@ -400,7 +431,6 @@ export function Signup() {
       setIsLoading(false);
       toast.success(`Activated the ${planName} Plan! Welcome aboard.`);
 
-      // Clear session storage onboarding state
       sessionStorage.removeItem("nexus_onboarding_step");
       sessionStorage.removeItem("nexus_onboarding_data");
       sessionStorage.removeItem("nexus_current_org_id");
@@ -1021,7 +1051,7 @@ export function Signup() {
                     required
                     value={formData.country}
                     onChange={(e) => {
-                      setFormData((prev: any) => ({
+                      setFormData((prev) => ({
                         ...prev,
                         country: e.target.value,
                         state: "",
@@ -1290,7 +1320,7 @@ export function Signup() {
                           toast.error("File size exceeds 2MB limit");
                           return;
                         }
-                        setFormData((prev: any) => ({
+                        setFormData((prev) => ({
                           ...prev,
                           logoFile: file,
                           logoName: file.name,

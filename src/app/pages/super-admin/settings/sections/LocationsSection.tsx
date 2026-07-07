@@ -8,6 +8,24 @@ import {
   Users,
 } from "lucide-react";
 
+interface OfficeLocation {
+  name: string;
+  code: string;
+  type: "Head Office" | "Branch" | "Warehouse" | "Remote";
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  pincode: string;
+  manager: string;
+  empCount: number;
+  timezone: string;
+  status: "Active" | "Inactive" | "Partial";
+  notes?: string;
+  createdDate: string;
+  lastUpdated?: string;
+}
+
 export function LocationsSection() {
   const {
     SectionTitle,
@@ -37,7 +55,7 @@ export function LocationsSection() {
     showToast,
   } = useSettingsContext();
 
-  const [locationsList] = useState<Location[]>([]);
+  const [locationsList] = useState<OfficeLocation[]>([]);
 
   // Filter and Sort Logic
   const filteredLocs = locationsList.filter((l) => {

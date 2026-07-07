@@ -1,5 +1,4 @@
-import React from "react";
-import { useSettingsContext } from "../SettingsContext";
+import { useSettingsContext, type SalaryComponent } from "../SettingsContext";
 import {
   FolderTree,
   ChevronRight,
@@ -38,10 +37,7 @@ export function PayrollSettingsSection() {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
-        <ChevronRight
-          size={12}
-          style={{ color: "var(--muted-foreground)" }}
-        />
+        <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "#00B87C" }}>Payroll Settings</span>
       </div>
 
@@ -184,10 +180,7 @@ export function PayrollSettingsSection() {
       {/* SECTION 1: SALARY COMPONENTS */}
       <SectionTitle title="1. Salary Components" />
       <div className="overflow-x-auto rounded-2xl border border-[var(--border)] shadow-sm mb-6">
-        <table
-          className="w-full border-collapse"
-          style={{ minWidth: "800px" }}
-        >
+        <table className="w-full border-collapse" style={{ minWidth: "800px" }}>
           <thead>
             <tr
               style={{
@@ -219,7 +212,7 @@ export function PayrollSettingsSection() {
             </tr>
           </thead>
           <tbody>
-            {salaryComponentsList.map((c, idx) => (
+            {salaryComponentsList.map((c: SalaryComponent, idx: number) => (
               <tr
                 key={idx}
                 style={{
@@ -382,9 +375,7 @@ export function PayrollSettingsSection() {
             </div>
             <div className="flex justify-between">
               <span>Company Logo on Slip</span>
-              <span className="font-bold">
-                {prPayslipLogo ? "Yes" : "No"}
-              </span>
+              <span className="font-bold">{prPayslipLogo ? "Yes" : "No"}</span>
             </div>
           </div>
         </div>

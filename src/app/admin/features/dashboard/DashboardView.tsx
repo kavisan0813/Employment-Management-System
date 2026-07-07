@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import {
   Building2,
@@ -38,7 +38,6 @@ export default function DashboardView() {
     signupTrend,
     activeInactiveBreakdown,
     recentSignups,
-    atRiskCompanies,
     isLoading,
     isError,
     refreshAll,
@@ -71,7 +70,7 @@ export default function DashboardView() {
     await exportReport(format);
   };
 
-  const handleNavigateToOrgs = (p0: string) => {
+  const handleNavigateToOrgs = () => {
     navigate("/platform-admin/organizations");
   };
 
@@ -532,7 +531,7 @@ export default function DashboardView() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {recentSignups?.map((org: any) => (
+                {recentSignups?.map((org) => (
                   <tr
                     key={org.org_id}
                     className="hover:bg-gray-50/50 transition-colors cursor-pointer"
@@ -575,7 +574,7 @@ export default function DashboardView() {
         </div>
 
         {/* Companies At Risk */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-xs overflow-hidden flex flex-col font-semibold">
+        {/*  <div className="bg-white border border-gray-200 rounded-xl shadow-xs overflow-hidden flex flex-col font-semibold">
           <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-white">
             <div>
               <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
@@ -645,8 +644,7 @@ export default function DashboardView() {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
+          </div> */}
       </div>
     </div>
   );

@@ -341,7 +341,7 @@ export const ShiftSchedule: React.FC = () => {
               shifts: {
                 ...e.shifts,
                 [modalDate]: {
-                  type: modalShiftType as any,
+                  type: modalShiftType as Shift["type"],
                   time: times[modalShiftType] || "09:00 – 18:00",
                   isOT: false,
                 },

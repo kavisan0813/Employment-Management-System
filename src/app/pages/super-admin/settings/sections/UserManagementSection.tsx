@@ -226,7 +226,7 @@ export function UserManagementSection() {
                     | string
                     | number
                     | boolean
-                    | ReactElement<any, string | JSXElementConstructor<any>>
+                    | ReactElement<string, string | JSXElementConstructor<string>>
                     | Iterable<ReactNode>
                     | ReactPortal
                     | Iterable<ReactNode>
@@ -236,16 +236,16 @@ export function UserManagementSection() {
                     | string
                     | number
                     | boolean
-                    | ReactElement<any, string | JSXElementConstructor<any>>
+                    | ReactElement<string, string | JSXElementConstructor<string>>
                     | Iterable<ReactNode>
                     | null
                     | undefined;
-                  avatarBg: any;
+                  avatarBg: string;
                   initials:
                     | string
                     | number
                     | boolean
-                    | ReactElement<any, string | JSXElementConstructor<any>>
+                    | ReactElement<string, string | JSXElementConstructor<string>>
                     | Iterable<ReactNode>
                     | ReactPortal
                     | Iterable<ReactNode>
@@ -255,7 +255,7 @@ export function UserManagementSection() {
                     | string
                     | number
                     | boolean
-                    | ReactElement<any, string | JSXElementConstructor<any>>
+                    | ReactElement<string, string | JSXElementConstructor<string>>
                     | Iterable<ReactNode>
                     | ReactPortal
                     | Iterable<ReactNode>
@@ -265,7 +265,7 @@ export function UserManagementSection() {
                     | string
                     | number
                     | boolean
-                    | ReactElement<any, string | JSXElementConstructor<any>>
+                    | ReactElement<string, string | JSXElementConstructor<string>>
                     | Iterable<ReactNode>
                     | ReactPortal
                     | Iterable<ReactNode>
@@ -275,7 +275,7 @@ export function UserManagementSection() {
                     | string
                     | number
                     | boolean
-                    | ReactElement<any, string | JSXElementConstructor<any>>
+                    | ReactElement<string, string | JSXElementConstructor<string>>
                     | Iterable<ReactNode>
                     | ReactPortal
                     | Iterable<ReactNode>
@@ -285,13 +285,13 @@ export function UserManagementSection() {
                     | string
                     | number
                     | boolean
-                    | ReactElement<any, string | JSXElementConstructor<any>>
+                    | ReactElement<string, string | JSXElementConstructor<string>>
                     | Iterable<ReactNode>
                     | ReactPortal
                     | Iterable<ReactNode>
                     | null
                     | undefined;
-                  location: any;
+                  location: string;
                 },
                 idx: Key | null | undefined,
               ) => {
@@ -408,7 +408,7 @@ export function UserManagementSection() {
                               onClick={() => {
                                 setUsersList(
                                   usersList.filter(
-                                    (user: { email: any }) =>
+                                    (user: { email: string }) =>
                                       user.email !== u.email,
                                   ),
                                 );

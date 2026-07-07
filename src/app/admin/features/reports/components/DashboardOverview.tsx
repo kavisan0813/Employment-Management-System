@@ -15,7 +15,18 @@ import {
 } from "lucide-react";
 
 interface DashboardOverviewProps {
-  setActiveTab: (tab: any) => void;
+  setActiveTab: (
+    tab:
+      | "dashboard"
+      | "organizations"
+      | "subscriptions"
+      | "revenue"
+      | "custom"
+      | "exports"
+      | "executive"
+      | "employees"
+      | "usage",
+  ) => void;
 }
 
 export function DashboardOverview({ setActiveTab }: DashboardOverviewProps) {

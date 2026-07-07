@@ -4,16 +4,12 @@
  */
 
 import { useReports } from "./hooks/useReports";
-
-// Import Modular Sub-components
 import { DashboardOverview } from "./components/DashboardOverview";
 import { OrganizationReportsView } from "./components/OrganizationReportsView";
 import { SubscriptionReportsView } from "./components/SubscriptionReportsView";
 import { RevenueReportsView } from "./components/RevenueReportsView";
 import { CustomReportsView } from "./components/CustomReportsView";
 import { ExportCenterView } from "./components/ExportCenterView";
-
-// Import Lucide Icons
 import {
   AreaChart,
   LayoutDashboard,
@@ -88,7 +84,7 @@ export function ReportsView() {
       case "organizations":
         return <OrganizationReportsView />;
       case "subscriptions":
-        return <SubscriptionReportsView triggerAlert={triggerAlert} />;
+        return <SubscriptionReportsView />;
       case "revenue":
         return <RevenueReportsView />;
       case "custom":
@@ -173,7 +169,7 @@ export function ReportsView() {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap border ${
                   isActive
                     ? "bg-indigo-600 text-white border-indigo-600 shadow-md"

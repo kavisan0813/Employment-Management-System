@@ -153,163 +153,240 @@ export function LeavePolicySection() {
             </tr>
           </thead>
           <tbody>
-            {leaveTypesList.map((l: { name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; code: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; days: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; type: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; carryForward: any; maxCarryForward: any; approvalRequired: any; attachmentRequired: any; status: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined; encashment: any; minNoticePeriod: any; maxConsecutiveLeave: any; dept: any; location: any; description: any; }, idx: React.Key | null | undefined) => (
-              <tr
-                key={idx}
-                style={{
-                  borderBottom: "1px solid #F3F4F6",
-                  height: "56px",
-                }}
-                className="hover:bg-[#00B87C]/[0.08] transition-all"
-              >
-                <td
+            {leaveTypesList.map(
+              (
+                l: {
+                  name:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        string,
+                        string | React.JSXElementConstructor<string>
+                      >
+                    | Iterable<React.ReactNode>
+                    | React.ReactPortal
+                    | Iterable<React.ReactNode>
+                    | null
+                    | undefined;
+                  code:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        string,
+                        string | React.JSXElementConstructor<string>
+                      >
+                    | Iterable<React.ReactNode>
+                    | React.ReactPortal
+                    | Iterable<React.ReactNode>
+                    | null
+                    | undefined;
+                  days:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        string,
+                        string | React.JSXElementConstructor<string>
+                      >
+                    | Iterable<React.ReactNode>
+                    | React.ReactPortal
+                    | Iterable<React.ReactNode>
+                    | null
+                    | undefined;
+                  type:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        string,
+                        string | React.JSXElementConstructor<string>
+                      >
+                    | Iterable<React.ReactNode>
+                    | null
+                    | undefined;
+                  carryForward: string;
+                  maxCarryForward: string;
+                  approvalRequired: string;
+                  attachmentRequired: string;
+                  status:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        string,
+                        string | React.JSXElementConstructor<string>
+                      >
+                    | Iterable<React.ReactNode>
+                    | null
+                    | undefined;
+                  encashment: string;
+                  minNoticePeriod: string;
+                  maxConsecutiveLeave: string;
+                  dept: string;
+                  location: string;
+                  description: string;
+                },
+                idx: React.Key | null | undefined,
+              ) => (
+                <tr
+                  key={idx}
                   style={{
-                    padding: "12px 16px",
-                    fontSize: "14px",
-                    fontWeight: 700,
-                    color: "var(--foreground)",
+                    borderBottom: "1px solid #F3F4F6",
+                    height: "56px",
                   }}
+                  className="hover:bg-[#00B87C]/[0.08] transition-all"
                 >
-                  {l.name}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 16px",
-                    fontSize: "13px",
-                    color: "var(--foreground)",
-                  }}
-                >
-                  {l.code}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 16px",
-                    fontSize: "13px",
-                    color: "var(--foreground)",
-                  }}
-                >
-                  {l.days} Days
-                </td>
-                <td style={{ padding: "12px 16px" }}>
-                  <span
+                  <td
                     style={{
-                      backgroundColor:
-                        l.type === "Paid"
-                          ? "rgba(0, 184, 124, 0.1)"
-                          : "rgba(239, 68, 68, 0.1)",
-                      color: l.type === "Paid" ? "#00B87C" : "#EF4444",
-                      padding: "4px 10px",
-                      borderRadius: "9999px",
-                      fontSize: "11px",
-                      fontWeight: 600,
+                      padding: "12px 16px",
+                      fontSize: "14px",
+                      fontWeight: 700,
+                      color: "var(--foreground)",
                     }}
                   >
-                    {l.type}
-                  </span>
-                </td>
-                <td
-                  style={{
-                    padding: "12px 16px",
-                    fontSize: "13px",
-                    color: "var(--foreground)",
-                  }}
-                >
-                  {l.carryForward ? `Yes (Max ${l.maxCarryForward}d)` : "No"}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 16px",
-                    fontSize: "13px",
-                    color: "var(--foreground)",
-                  }}
-                >
-                  {l.approvalRequired ? "Required" : "Auto"}
-                </td>
-                <td
-                  style={{
-                    padding: "12px 16px",
-                    fontSize: "13px",
-                    color: "var(--foreground)",
-                  }}
-                >
-                  {l.attachmentRequired ? "Mandatory" : "Optional"}
-                </td>
-                <td style={{ padding: "12px 16px" }}>
-                  <span
+                    {l.name}
+                  </td>
+                  <td
                     style={{
-                      backgroundColor:
-                        l.status === "Active"
-                          ? "rgba(0, 184, 124, 0.1)"
-                          : "rgba(107, 114, 128, 0.1)",
-                      color: l.status === "Active" ? "#00B87C" : "#6B7280",
-                      padding: "4px 10px",
-                      borderRadius: "9999px",
-                      fontSize: "11px",
-                      fontWeight: 600,
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--foreground)",
                     }}
                   >
-                    {l.status}
-                  </span>
-                </td>
-                <td style={{ padding: "12px 16px" }}>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => {
-                        setSelectedLeaveType(l);
-                        setLeaveTypeForm({
-                          name: l.name,
-                          code: l.code,
-                          days: l.days,
-                          type: l.type,
-                          carryForward: l.carryForward,
-                          maxCarryForward: l.maxCarryForward,
-                          encashment: l.encashment,
-                          approvalRequired: l.approvalRequired,
-                          attachmentRequired: l.attachmentRequired,
-                          minNoticePeriod: l.minNoticePeriod,
-                          maxConsecutiveLeave: l.maxConsecutiveLeave,
-                          dept: l.dept,
-                          location: l.location,
-                          status: l.status,
-                          description: l.description,
-                        });
-                        setActiveModal("edit_leave_type");
-                      }}
+                    {l.code}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    {l.days} Days
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span
                       style={{
-                        backgroundColor: "transparent",
-                        border: "1px solid #00B87C",
-                        borderRadius: "8px",
+                        backgroundColor:
+                          l.type === "Paid"
+                            ? "rgba(0, 184, 124, 0.1)"
+                            : "rgba(239, 68, 68, 0.1)",
+                        color: l.type === "Paid" ? "#00B87C" : "#EF4444",
                         padding: "4px 10px",
-                        fontSize: "12px",
+                        borderRadius: "9999px",
+                        fontSize: "11px",
                         fontWeight: 600,
-                        color: "#00B87C",
-                        cursor: "pointer",
                       }}
                     >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedLeaveType(l);
-                        setActiveModal("delete_leave_type");
-                      }}
+                      {l.type}
+                    </span>
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    {l.carryForward ? `Yes (Max ${l.maxCarryForward}d)` : "No"}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    {l.approvalRequired ? "Required" : "Auto"}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    {l.attachmentRequired ? "Mandatory" : "Optional"}
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span
                       style={{
-                        backgroundColor: "transparent",
-                        border: "1px solid #EF4444",
-                        borderRadius: "8px",
+                        backgroundColor:
+                          l.status === "Active"
+                            ? "rgba(0, 184, 124, 0.1)"
+                            : "rgba(107, 114, 128, 0.1)",
+                        color: l.status === "Active" ? "#00B87C" : "#6B7280",
                         padding: "4px 10px",
-                        fontSize: "12px",
+                        borderRadius: "9999px",
+                        fontSize: "11px",
                         fontWeight: 600,
-                        color: "#EF4444",
-                        cursor: "pointer",
                       }}
                     >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      {l.status}
+                    </span>
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setSelectedLeaveType(l);
+                          setLeaveTypeForm({
+                            name: l.name,
+                            code: l.code,
+                            days: l.days,
+                            type: l.type,
+                            carryForward: l.carryForward,
+                            maxCarryForward: l.maxCarryForward,
+                            encashment: l.encashment,
+                            approvalRequired: l.approvalRequired,
+                            attachmentRequired: l.attachmentRequired,
+                            minNoticePeriod: l.minNoticePeriod,
+                            maxConsecutiveLeave: l.maxConsecutiveLeave,
+                            dept: l.dept,
+                            location: l.location,
+                            status: l.status,
+                            description: l.description,
+                          });
+                          setActiveModal("edit_leave_type");
+                        }}
+                        style={{
+                          backgroundColor: "transparent",
+                          border: "1px solid #00B87C",
+                          borderRadius: "8px",
+                          padding: "4px 10px",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#00B87C",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedLeaveType(l);
+                          setActiveModal("delete_leave_type");
+                        }}
+                        style={{
+                          backgroundColor: "transparent",
+                          border: "1px solid #EF4444",
+                          borderRadius: "8px",
+                          padding: "4px 10px",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#EF4444",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ),
+            )}
           </tbody>
         </table>
       </div>
@@ -603,13 +680,20 @@ export function LeavePolicySection() {
           className="text-xs space-y-1"
           style={{ color: "var(--foreground)" }}
         >
-          {leaveTypesList.map((l: { code: boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.Key | null | undefined; name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; days: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Iterable<React.ReactNode> | null | undefined; carryForward: any; }) => (
-            <div key={l.code}>
-              • {l.name} ({l.code}):{" "}
-              <span className="font-bold">{l.days} Days</span> per year |
-              Carryforward: {l.carryForward ? "Yes" : "No"}
-            </div>
-          ))}
+          {leaveTypesList.map(
+            (l: {
+              code: string;
+              name: string;
+              days: number;
+              carryForward: string;
+            }) => (
+              <div key={l.code}>
+                • {l.name} ({l.code}):{" "}
+                <span className="font-bold">{l.days} Days</span> per year |
+                Carryforward: {l.carryForward ? "Yes" : "No"}
+              </div>
+            ),
+          )}
         </div>
       </div>
 

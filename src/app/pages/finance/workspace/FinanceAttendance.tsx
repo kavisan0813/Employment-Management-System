@@ -1,16 +1,12 @@
 import { useState, useMemo } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  Calendar,
-  ChevronDown,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Calendar, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { PunchCard } from "../../../components/attendance/PunchCard";
-import { useAttendance, formatTime12Hour } from "../../../context/AttendanceContext";
+import {
+  useAttendance,
+  formatTime12Hour,
+} from "../../../context/AttendanceContext";
 
 const ATTENDANCE_LOGS = [
   { date: "01 Apr 2026", in: "08:52 AM", out: "06:05 PM", status: "Present" },
@@ -66,7 +62,9 @@ export function FinanceAttendance() {
       const todayLog = {
         date: todayStr,
         in: formatTime12Hour(todayRecord.punchIn),
-        out: todayRecord.punchOut ? formatTime12Hour(todayRecord.punchOut) : "-",
+        out: todayRecord.punchOut
+          ? formatTime12Hour(todayRecord.punchOut)
+          : "-",
         status: todayRecord.status || "Present",
       };
       if (todayIdx > -1) {

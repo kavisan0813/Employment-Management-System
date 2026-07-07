@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { Search, X, CheckCircle2, Send, MessageSquare } from "lucide-react";
 import type { Ticket, TicketMessage } from "../types/types";
+import { useSupportTickets } from "../hooks/useSupportTickets";
 
 const AGENTS = ["Sophia Vance", "Marcus Brody", "Emily Watson", "Alex Reed"];
 
-export function TicketsTable({ hook }: { hook: any }) {
+export function TicketsTable({
+  hook,
+}: {
+  hook: ReturnType<typeof useSupportTickets>;
+}) {
   const { filteredTickets, filters, actions } = hook;
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [replyText, setReplyText] = useState("");

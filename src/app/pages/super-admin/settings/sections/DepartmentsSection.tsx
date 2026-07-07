@@ -1,5 +1,5 @@
 import React from "react";
-import { useSettingsContext } from "../SettingsContext";
+import { useSettingsContext, type DepartmentRecord } from "../SettingsContext";
 import {
   Building2,
   ChevronRight,
@@ -33,7 +33,7 @@ export function DepartmentsSection() {
   } = useSettingsContext();
 
   // Filter and sort logic
-  const filteredDepts = deptsList.filter((d) => {
+  const filteredDepts = deptsList.filter((d: DepartmentRecord) => {
     const matchesSearch =
       d.name.toLowerCase().includes(deptSearchQuery.toLowerCase()) ||
       d.code.toLowerCase().includes(deptSearchQuery.toLowerCase());
@@ -45,12 +45,20 @@ export function DepartmentsSection() {
   });
 
   if (deptSortBy === "Name") {
-    filteredDepts.sort((a, b) => a.name.localeCompare(b.name));
+    filteredDepts.sort((a: DepartmentRecord, b: DepartmentRecord) =>
+      a.name.localeCompare(b.name),
+    );
   } else if (deptSortBy === "Employees") {
-    filteredDepts.sort((a, b) => b.empCount - a.empCount);
+    filteredDepts.sort(
+      (a: { empCount: number }, b: { empCount: number }) =>
+        b.empCount - a.empCount,
+    );
   } else if (deptSortBy === "Created Date") {
     filteredDepts.sort(
-      (a, b) =>
+      (
+        a: { createdDate: string | number | Date },
+        b: { createdDate: string | number | Date },
+      ) =>
         new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime(),
     );
   }
@@ -60,10 +68,7 @@ export function DepartmentsSection() {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
-        <ChevronRight
-          size={12}
-          style={{ color: "var(--muted-foreground)" }}
-        />
+        <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "#00B87C" }}>Departments</span>
       </div>
 
@@ -130,21 +135,26 @@ export function DepartmentsSection() {
           },
           {
             label: "Active Departments",
-            value: deptsList.filter((d) => d.status === "Active").length,
+            value: deptsList.filter(
+              (d: { status: string }) => d.status === "Active",
+            ).length,
             icon: <CheckCircle size={20} />,
             color: "#0EA5E9",
             bg: "rgba(14, 165, 233, 0.1)",
           },
           {
             label: "Employees Assigned",
-            value: deptsList.reduce((acc, curr) => acc + curr.empCount, 0),
+            value: deptsList.reduce(
+              (acc: number, curr: DepartmentRecord) => acc + curr.empCount,
+              0,
+            ),
             icon: <Users size={20} />,
             color: "#F59E0B",
             bg: "rgba(245, 158, 11, 0.1)",
           },
           {
             label: "Without Head",
-            value: deptsList.filter((d) => !d.head).length,
+            value: deptsList.filter((d: DepartmentRecord) => !d.head).length,
             icon: <UserMinus size={20} />,
             color: "#EF4444",
             bg: "rgba(239, 68, 68, 0.1)",
@@ -254,10 +264,7 @@ export function DepartmentsSection() {
 
       {/* Section: DEPARTMENTS TABLE */}
       <div className="overflow-x-auto mb-6 rounded-2xl border border-[var(--border)] shadow-sm">
-        <table
-          className="w-full border-collapse"
-          style={{ minWidth: "800px" }}
-        >
+        <table className="w-full border-collapse" style={{ minWidth: "800px" }}>
           <thead>
             <tr
               style={{
@@ -292,7 +299,7 @@ export function DepartmentsSection() {
             </tr>
           </thead>
           <tbody>
-            {filteredDepts.map((d, idx) => (
+            {filteredDepts.map((d: DepartmentRecord, idx: number) => (
               <tr
                 key={idx}
                 style={{

@@ -1,4 +1,4 @@
-function Toggle({
+export function Toggle({
   on,
   onChange,
   disabled,

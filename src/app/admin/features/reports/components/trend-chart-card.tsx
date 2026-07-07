@@ -1,9 +1,8 @@
-import React from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
 interface TrendChartCardProps {
   title: string;
-  data: any[];
+  data: { x: string | number; y: number }[];
   colorVar: string;
 }
 
@@ -17,7 +16,10 @@ export function TrendChartCard({ title, data, colorVar }: TrendChartCardProps) {
       </div>
       <div className="h-36">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+          <AreaChart
+            data={data}
+            margin={{ top: 4, right: 4, left: 4, bottom: 0 }}
+          >
             <defs>
               <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={colorVar} stopOpacity={0.28} />

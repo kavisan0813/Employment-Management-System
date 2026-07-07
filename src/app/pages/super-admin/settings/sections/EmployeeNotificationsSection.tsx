@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { Label } from "../components/Label";
 import { Breadcrumb } from "../components/Breadcrumb";
-import { ToggleRow } from "../components/ToggleRow";
+import { ToggleRow, Toggle } from "../components/ToggleRow";
 
-export function EmployeeNotificationsSection() {
+export function EmployeeNotificationsSection({
+  onModal,
+}: {
+  onModal: (m: string | null) => void;
+}) {
   const [channels, setChannels] = useState({
     leave: { email: true, push: true, sms: false },
     payroll: { email: true, push: true, sms: true },
@@ -73,10 +77,6 @@ export function EmployeeNotificationsSection() {
       desc: "Goal deadlines, training due dates",
     },
   ];
-
-  function onModal(): void {
-    throw new Error("Function not implemented.");
-  }
 
   return (
     <div>
@@ -225,7 +225,3 @@ export function EmployeeNotificationsSection() {
     </div>
   );
 }
-
-/* ═══════════════════════════════════════════
-   SECTION: APPEARANCE
-   ═══════════════════════════════════════════ */

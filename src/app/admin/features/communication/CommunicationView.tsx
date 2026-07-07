@@ -106,7 +106,11 @@ export function CommunicationView() {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id as any)}
+                onClick={() =>
+                  setActiveTab(
+                    item.id as "broadcast" | "templates" | "settings",
+                  )
+                }
                 className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
                   isActive
                     ? "bg-indigo-600 text-white shadow-sm"

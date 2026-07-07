@@ -1,5 +1,10 @@
 import { db, pushAuditLog } from "../../../mockData";
-import { Organization, Subscription, PlatformUser } from "../../../types";
+import {
+  Organization,
+  Subscription,
+  PlatformUser,
+  AuditLogEntry,
+} from "../../../types";
 import { PLAN_PRICING } from "../types/organization.types";
 
 const CURRENT_ADMIN_EMAIL = "admin@ems.io";
@@ -17,7 +22,7 @@ export const OrganizationService = {
     return db.subscriptions.get();
   },
 
-  getAuditLogs(): any[] {
+  getAuditLogs(): AuditLogEntry[] {
     return db.auditLogs.get();
   },
 
@@ -60,7 +65,7 @@ export const OrganizationService = {
       id: `sub-${Date.now()}`,
       organization: newOrg.name,
       organizationId: newOrg.id,
-      plan: newOrg.plan as any,
+      plan: newOrg.plan as Subscription["plan"],
       status: "Active",
       billingCycle: "Monthly",
       amount: newOrg.mrr,
@@ -146,7 +151,11 @@ export const OrganizationService = {
     const subs = db.subscriptions.get();
     const updatedSubs = subs.map((s) =>
       s.organizationId === orgId
-        ? { ...s, plan: plan as any, amount: PLAN_PRICING[plan] || s.amount }
+        ? {
+            ...s,
+            plan: plan as Subscription["plan"],
+            amount: PLAN_PRICING[plan] || s.amount,
+          }
         : s,
     );
     db.subscriptions.save(updatedSubs);

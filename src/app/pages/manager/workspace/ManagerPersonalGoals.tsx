@@ -117,7 +117,7 @@ export function ManagerPersonalGoals() {
     (goal) => activeTab === "All" || goal.status === activeTab,
   );
 
-  const handleAddGoal = (newGoalData: any) => {
+  const handleAddGoal = (newGoalData: Partial<Goal>) => {
     if (editingGoal) {
       // update
       setGoals((prev) =>
@@ -665,7 +665,7 @@ function AddGoalModal({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (goal: any) => void;
+  onSubmit: (goal: Partial<Goal>) => void;
   editingGoal: Goal | null;
 }) {
   const [title, setTitle] = useState("");
@@ -789,7 +789,7 @@ function AddGoalModal({
               <div className="flex gap-2">
                 {(["High", "Medium", "Low"] as Priority[]).map((p) => {
                   const isActive = priority === p;
-                  let colorClasses = "";
+                  let colorClasses: string;
                   if (isActive) {
                     if (p === "High")
                       colorClasses = "bg-rose-600 text-white border-rose-600";

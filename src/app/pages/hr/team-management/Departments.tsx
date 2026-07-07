@@ -687,7 +687,7 @@ export function Departments() {
   const [reportFormat, setReportFormat] = useState("CSV");
 
   const handleExportReport = () => {
-    let content = "";
+    let content: string;
     if (reportType === "Employee List") {
       content =
         `Employee ID,Name,Department,Role,Status,Location\n` +

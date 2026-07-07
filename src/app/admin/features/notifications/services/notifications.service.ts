@@ -364,7 +364,7 @@ export const notificationsService = {
 
         const updatedExpiry = state.expiryAlerts.map((a) => {
           if (a.id === id) {
-            return { ...a, status: "notified" as any };
+            return { ...a, status: "notified" as const };
           }
           return a;
         });

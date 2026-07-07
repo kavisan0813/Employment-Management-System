@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth, User as AuthUser } from "../../../context/AuthContext";
 
 type ProfileTab =
   | "Personal Info"
@@ -122,8 +122,8 @@ export function FinanceProfile() {
       try {
         const registeredRaw = localStorage.getItem("nexus_registered_users");
         if (registeredRaw) {
-          const users = JSON.parse(registeredRaw);
-          const updatedUsers = users.map((u: any) => {
+          const users: AuthUser[] = JSON.parse(registeredRaw);
+          const updatedUsers = users.map((u: AuthUser) => {
             if (u.email.toLowerCase() === user.email.toLowerCase()) {
               return {
                 ...u,

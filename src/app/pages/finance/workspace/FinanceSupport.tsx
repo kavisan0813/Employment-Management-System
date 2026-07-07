@@ -825,7 +825,7 @@ function TicketDetailsModal({
             <div className="relative border-l border-border pl-4 ml-2 space-y-6">
               {ticket.timeline.map((entry) => {
                 let bulletBg = "bg-border";
-                let descriptionNode = null;
+                let descriptionNode: React.ReactNode;
 
                 switch (entry.type) {
                   case "created":

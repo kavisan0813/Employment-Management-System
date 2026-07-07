@@ -747,7 +747,7 @@ function GoalDetailsModal({
   onClose,
   onUpdateProgress,
 }: {
-  goal: any;
+  goal: Goal;
   onClose: () => void;
   onUpdateProgress: (id: string, newProgress: number) => void;
 }) {
