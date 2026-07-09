@@ -58,7 +58,7 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
 
   // Local state for Employee active section
   const [empActiveSection, setEmpActiveSection] = useState("emp_security");
-  const [_empModal, setEmpModal] = useState<string | null>(null);
+  const [, setEmpModal] = useState<string | null>(null);
 
   // Read state from context (for Admin/HR) or local (for Employee)
   const activeSubTab = isEmployee ? empActiveSection : context.activeSubTab;

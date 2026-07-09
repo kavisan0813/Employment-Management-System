@@ -206,9 +206,7 @@ export default function EmployeeSettings() {
         {/* Right: Content Panel */}
         <div className="flex-1 min-w-0 space-y-6">
           <div className="bg-card rounded-2xl border border-border shadow-sm p-8">
-            {activeSection === "security" && (
-              <AccountSecurity onModal={setActiveModal} />
-            )}
+            {activeSection === "security" && <AccountSecurity />}
             {activeSection === "privacy" && (
               <PrivacySettings onModal={setActiveModal} />
             )}
@@ -236,11 +234,7 @@ export default function EmployeeSettings() {
   );
 }
 
-function AccountSecurity({
-  onModal: _onModal,
-}: {
-  onModal: (m: string | null) => void;
-}) {
+function AccountSecurity() {
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
