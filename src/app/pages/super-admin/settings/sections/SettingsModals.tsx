@@ -118,7 +118,7 @@ export function SettingsModals() {
         showToast("Schedule created successfully", "success");
       } else {
         setSchedulesList(
-          schedulesList.map((s: { code: string }) =>
+          schedulesList.map((s) =>
             s.code === selectedSchedule?.code
               ? {
                   ...s,
@@ -200,7 +200,7 @@ export function SettingsModals() {
         showToast("Leave type created successfully", "success");
       } else {
         setLeaveTypesList(
-          leaveTypesList.map((l: { code: string }) =>
+          leaveTypesList.map((l) =>
             l.code === selectedLeaveType?.code
               ? {
                   ...l,
@@ -300,7 +300,7 @@ export function SettingsModals() {
         showToast("Holiday created successfully", "success");
       } else {
         setHolidaysList(
-          holidaysList.map((h: { date: string; name: string }) =>
+          holidaysList.map((h) =>
             h.date === selectedHoliday?.date && h.name === selectedHoliday?.name
               ? {
                   ...h,
@@ -383,7 +383,7 @@ export function SettingsModals() {
         showToast("Location created successfully", "success");
       } else {
         setLocationsList(
-          locationsList.map((l: { code: string }) =>
+          locationsList.map((l) =>
             l.code === selectedLoc?.code
               ? {
                   ...l,
@@ -457,7 +457,7 @@ export function SettingsModals() {
         showToast("Department created successfully", "success");
       } else {
         setDeptsList(
-          deptsList.map((d: { code: string }) =>
+          deptsList.map((d) =>
             d.code === selectedDept?.code
               ? {
                   ...d,
@@ -566,7 +566,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
-        usersList.map((u: { email: string }) =>
+        usersList.map((u) =>
           u.email === selectedUser?.email
             ? {
                 ...u,
@@ -590,7 +590,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
-        usersList.map((u: { email: string }) =>
+        usersList.map((u) =>
           u.email === selectedUser?.email ? { ...u, status: "Active" } : u,
         ),
       );
@@ -604,7 +604,7 @@ export function SettingsModals() {
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
-        usersList.map((u: { email: string }) =>
+        usersList.map((u) =>
           u.email === selectedUser?.email ? { ...u, status: "Inactive" } : u,
         ),
       );
@@ -5939,17 +5939,13 @@ export function SettingsModals() {
                             } else if (type === "full") {
                               next = checked ? "full" : "view";
                             }
-                            setRoleForm(
-                              (prev: {
-                                permissions: Record<string, string>;
-                              }) => ({
-                                ...prev,
-                                permissions: {
-                                  ...prev.permissions,
-                                  [mod.id]: next,
-                                },
-                              }),
-                            );
+                            setRoleForm((prev) => ({
+                              ...prev,
+                              permissions: {
+                                ...prev.permissions,
+                                [mod.id]: next,
+                              },
+                            }));
                           };
 
                           return (

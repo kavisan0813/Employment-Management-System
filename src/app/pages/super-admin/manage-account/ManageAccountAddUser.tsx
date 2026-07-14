@@ -322,7 +322,7 @@ export function ManageAccountAddUser() {
   /* ─── Shared styles ─── */
   const labelCls = "block text-xs font-bold text-slate-700 uppercase mb-2";
   const inputCls =
-    "w-full px-4 py-3.5 bg-[#F5F6F8] rounded-xl text-sm border-0 focus:ring-2 focus:ring-indigo-500/20 outline-none text-slate-800 font-medium";
+    "w-full px-4 py-3.5 bg-[#F5F6F8] rounded-xl text-sm border-0 focus:ring-2 focus:ring-emerald-500/20 outline-none text-slate-800 font-medium";
   const selectCls = inputCls;
 
   return (
@@ -350,7 +350,7 @@ export function ManageAccountAddUser() {
         <div className="flex items-center justify-between relative">
           <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[2px] bg-slate-200 -z-10" />
           <div
-            className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-[#5B4FE9] -z-10 transition-all duration-300"
+            className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-[var(--primary)] -z-10 transition-all duration-300"
             style={{ width: `${((step - 1) / 3) * 100}%` }}
           />
           {[
@@ -366,16 +366,16 @@ export function ManageAccountAddUser() {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
                     done
-                      ? "bg-[#5B4FE9] border-[#5B4FE9] text-white"
+                      ? "bg-[var(--primary)] border-[var(--primary)] text-white"
                       : active
-                        ? "bg-white border-[#5B4FE9] text-[#5B4FE9] shadow-md shadow-indigo-200"
+                        ? "bg-white border-[var(--primary)] text-[var(--primary)] shadow-md shadow-emerald-200"
                         : "bg-white border-slate-200 text-slate-400"
                   }`}
                 >
                   {done ? <Check size={16} strokeWidth={3} /> : item.s}
                 </div>
                 <span
-                  className={`text-xs font-bold transition-colors ${active ? "text-[#5B4FE9]" : "text-slate-500"}`}
+                  className={`text-xs font-bold transition-colors ${active ? "text-[var(--primary)]" : "text-slate-500"}`}
                 >
                   {item.label}
                 </span>
@@ -403,14 +403,14 @@ export function ManageAccountAddUser() {
                 onClick={() => setForm((f) => ({ ...f, entryType: "single" }))}
                 className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 flex flex-col items-start ${
                   form.entryType === "single"
-                    ? "border-[#5B4FE9] bg-indigo-50/20"
+                    ? "border-[var(--primary)] bg-emerald-50/20"
                     : "border-slate-200 hover:border-slate-300"
                 }`}
               >
                 <div
                   className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
                     form.entryType === "single"
-                      ? "bg-indigo-100 text-[#5B4FE9]"
+                      ? "bg-emerald-100 text-[var(--primary)]"
                       : "bg-slate-100 text-slate-500"
                   }`}
                 >
@@ -448,7 +448,7 @@ export function ManageAccountAddUser() {
               <button
                 disabled={!canContinue()}
                 onClick={() => setStep(2)}
-                className="px-6 py-3.5 bg-[#5B4FE9] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Continue <ArrowRight size={16} />
               </button>
@@ -563,9 +563,9 @@ export function ManageAccountAddUser() {
               </div>
             </div>
 
-            <div className="p-4 bg-indigo-50/30 rounded-2xl flex items-start gap-3 mb-10">
-              <Info className="text-[#5B4FE9] shrink-0 mt-0.5" size={16} />
-              <p className="text-xs text-indigo-900/60 leading-relaxed font-semibold">
+            <div className="p-4 bg-emerald-50/30 rounded-2xl flex items-start gap-3 mb-10">
+              <Info className="text-[var(--primary)] shrink-0 mt-0.5" size={16} />
+              <p className="text-xs text-emerald-900/60 leading-relaxed font-semibold">
                 The user will receive an email invitation to create their own
                 password.
               </p>
@@ -581,7 +581,7 @@ export function ManageAccountAddUser() {
               <button
                 disabled={!canContinue()}
                 onClick={() => setStep(3)}
-                className="px-6 py-3.5 bg-[#5B4FE9] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Continue <ArrowRight size={16} />
               </button>
@@ -610,7 +610,7 @@ export function ManageAccountAddUser() {
                     onClick={() => setActiveTab(tabItem.id)}
                     className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between shrink-0 md:shrink ${
                       isActive
-                        ? "bg-white text-[#5B4FE9] shadow-md shadow-slate-100 border border-slate-100"
+                        ? "bg-white text-[var(--primary)] shadow-md shadow-slate-100 border border-slate-100"
                         : "text-slate-500 hover:bg-slate-100/50"
                     }`}
                   >
@@ -712,7 +712,7 @@ export function ManageAccountAddUser() {
                                 value: "",
                               })
                             }
-                            className="text-[#5B4FE9] hover:underline text-[11px] font-bold flex items-center"
+                            className="text-[var(--primary)] hover:underline text-[11px] font-bold flex items-center"
                           >
                             <Plus size={10} /> New
                           </button>
@@ -767,7 +767,7 @@ export function ManageAccountAddUser() {
                                 value: "",
                               })
                             }
-                            className="text-[#5B4FE9] hover:underline text-[11px] font-bold flex items-center"
+                            className="text-[var(--primary)] hover:underline text-[11px] font-bold flex items-center"
                           >
                             <Plus size={10} /> New
                           </button>
@@ -800,7 +800,7 @@ export function ManageAccountAddUser() {
                                 value: "",
                               })
                             }
-                            className="text-[#5B4FE9] hover:underline text-[11px] font-bold flex items-center"
+                            className="text-[var(--primary)] hover:underline text-[11px] font-bold flex items-center"
                           >
                             <Plus size={10} /> New
                           </button>
@@ -836,7 +836,7 @@ export function ManageAccountAddUser() {
                                 value: "",
                               })
                             }
-                            className="text-[#5B4FE9] hover:underline text-[11px] font-bold flex items-center"
+                            className="text-[var(--primary)] hover:underline text-[11px] font-bold flex items-center"
                           >
                             <Plus size={10} /> New
                           </button>
@@ -890,7 +890,7 @@ export function ManageAccountAddUser() {
                                 value: "",
                               })
                             }
-                            className="text-[#5B4FE9] hover:underline text-[11px] font-bold flex items-center"
+                            className="text-[var(--primary)] hover:underline text-[11px] font-bold flex items-center"
                           >
                             <Plus size={10} /> New
                           </button>
@@ -1172,10 +1172,10 @@ export function ManageAccountAddUser() {
                         <label className="text-xs font-bold text-slate-700 uppercase">
                           Permanent Address
                         </label>
-                        <label className="flex items-center gap-1 text-[11px] text-[#5B4FE9] font-bold cursor-pointer select-none">
+                        <label className="flex items-center gap-1 text-[11px] text-[var(--primary)] font-bold cursor-pointer select-none">
                           <input
                             type="checkbox"
-                            className="rounded text-[#5B4FE9] focus:ring-0 cursor-pointer"
+                            className="rounded text-[var(--primary)] focus:ring-0 cursor-pointer"
                             checked={form.sameAddress}
                             onChange={(e) => {
                               const c = e.target.checked;
@@ -1286,7 +1286,7 @@ export function ManageAccountAddUser() {
                 <button
                   disabled={!canContinue()}
                   onClick={() => setStep(4)}
-                  className="px-6 py-3.5 bg-[#5B4FE9] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Continue <ArrowRight size={16} />
                 </button>
@@ -1348,7 +1348,7 @@ export function ManageAccountAddUser() {
                         [alertItem.id]: !f[alertItem.id as keyof typeof f],
                       }))
                     }
-                    className={`w-12 h-6 rounded-full p-1 transition-all duration-300 ${form[alertItem.id as keyof typeof form] ? "bg-[#5B4FE9]" : "bg-slate-200"}`}
+                    className={`w-12 h-6 rounded-full p-1 transition-all duration-300 ${form[alertItem.id as keyof typeof form] ? "bg-[var(--primary)]" : "bg-slate-200"}`}
                   >
                     <div
                       className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 ${form[alertItem.id as keyof typeof form] ? "translate-x-6" : "translate-x-0"}`}
@@ -1367,7 +1367,7 @@ export function ManageAccountAddUser() {
               </button>
               <button
                 onClick={handleFinalSubmit}
-                className="px-6 py-3.5 bg-[#5B4FE9] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 shadow-md shadow-indigo-100"
+                className="px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 shadow-md shadow-emerald-100"
               >
                 Create User ✓
               </button>
@@ -1419,7 +1419,7 @@ export function ManageAccountAddUser() {
               </button>
               <button
                 onClick={handleAddNewValSubmit}
-                className="flex-1 py-3 rounded-xl text-xs font-bold text-white bg-[#5B4FE9] hover:opacity-90 transition-all"
+                className="flex-1 py-3 rounded-xl text-xs font-bold text-white bg-[var(--primary)] hover:opacity-90 transition-all"
               >
                 Add Option
               </button>

@@ -21,7 +21,6 @@ export { SettingsToast } from "./SettingsToast";
 export { CompanyProfileSection } from "./CompanyProfileSection";
 export { DepartmentsSection } from "./DepartmentsSection";
 export { LocationsSection } from "./LocationsSection";
-export { RolesPermissionsSection } from "./RolesPermissionsSection";
 export { UserManagementSection } from "./UserManagementSection";
 export { SecuritySettingsSection } from "./SecuritySettingsSection";
 export { AuditLogsSection } from "./AuditLogsSection";

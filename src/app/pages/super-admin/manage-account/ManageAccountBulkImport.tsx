@@ -138,7 +138,7 @@ export function ManageAccountBulkImport() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-xl font-black text-slate-800 mb-2 flex items-center gap-2">
-                  <FileSpreadsheet className="text-[#5B4FE9]" size={22} /> Paste
+                  <FileSpreadsheet className="text-[var(--primary)]" size={22} /> Paste
                   CSV Data
                 </h2>
                 <p className="text-xs text-slate-400 mb-6 font-semibold">
@@ -146,7 +146,7 @@ export function ManageAccountBulkImport() {
                 </p>
                 <textarea
                   rows={8}
-                  className="w-full rounded-2xl p-4 text-xs font-mono border border-slate-200 bg-[#F5F6F8] text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  className="w-full rounded-2xl p-4 text-xs font-mono border border-slate-200 bg-[#F5F6F8] text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500/20"
                   placeholder={
                     "name,email,department,designation,salary,joindate\nArun Kumar,arun@nexushr.com,Engineering,Developer,90000,2024-03-01\nPriya Sharma,priya@nexushr.com,Product,Manager,120000,2023-05-15"
                   }
@@ -155,33 +155,33 @@ export function ManageAccountBulkImport() {
                 />
               </div>
 
-              <div className="p-4 bg-indigo-50/30 rounded-2xl flex items-start gap-3">
-                <Info className="text-[#5B4FE9] shrink-0 mt-0.5" size={16} />
-                <div className="text-xs text-indigo-900/60 leading-relaxed font-semibold">
+              <div className="p-4 bg-emerald-50/30 rounded-2xl flex items-start gap-3">
+                <Info className="text-[var(--primary)] shrink-0 mt-0.5" size={16} />
+                <div className="text-xs text-emerald-900/60 leading-relaxed font-semibold">
                   <p className="font-extrabold">CSV Header Format:</p>
                   <p className="mt-1">
                     Headers must match:{" "}
-                    <code className="bg-indigo-100/50 px-1 py-0.5 rounded text-indigo-900">
+                    <code className="bg-emerald-100/50 px-1 py-0.5 rounded text-emerald-900">
                       name
                     </code>
                     ,{" "}
-                    <code className="bg-indigo-100/50 px-1 py-0.5 rounded text-indigo-900">
+                    <code className="bg-emerald-100/50 px-1 py-0.5 rounded text-emerald-900">
                       email
                     </code>
                     ,{" "}
-                    <code className="bg-indigo-100/50 px-1 py-0.5 rounded text-indigo-900">
+                    <code className="bg-emerald-100/50 px-1 py-0.5 rounded text-emerald-900">
                       department
                     </code>
                     ,{" "}
-                    <code className="bg-indigo-100/50 px-1 py-0.5 rounded text-indigo-900">
+                    <code className="bg-emerald-100/50 px-1 py-0.5 rounded text-emerald-900">
                       designation
                     </code>
                     ,{" "}
-                    <code className="bg-indigo-100/50 px-1 py-0.5 rounded text-indigo-900">
+                    <code className="bg-emerald-100/50 px-1 py-0.5 rounded text-emerald-900">
                       salary
                     </code>
                     ,{" "}
-                    <code className="bg-indigo-100/50 px-1 py-0.5 rounded text-indigo-900">
+                    <code className="bg-emerald-100/50 px-1 py-0.5 rounded text-emerald-900">
                       joindate
                     </code>
                   </p>
@@ -197,7 +197,7 @@ export function ManageAccountBulkImport() {
               <div className="flex justify-end pt-6 border-t border-slate-100">
                 <button
                   onClick={handleParse}
-                  className="px-6 py-3.5 bg-[#5B4FE9] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 shadow-md shadow-indigo-100"
+                  className="px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 shadow-md shadow-emerald-100"
                 >
                   Parse Employees
                 </button>
@@ -256,7 +256,7 @@ export function ManageAccountBulkImport() {
                 </button>
                 <button
                   onClick={handleImport}
-                  className="px-6 py-3.5 bg-[#5B4FE9] text-white rounded-xl text-sm font-bold transition-all hover:opacity-90 active:scale-95 shadow-md shadow-indigo-100"
+                  className="px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl text-sm font-bold transition-all hover:opacity-90 active:scale-95 shadow-md shadow-emerald-100"
                 >
                   Import Employees
                 </button>

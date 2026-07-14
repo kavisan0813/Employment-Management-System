@@ -1,8 +1,8 @@
 import React from "react";
-import { useSettingsContext } from "../SettingsContext";
+import { useRolesPermissions } from "./useRolesPermissions";
 import { ChevronRight, Plus, ChevronDown, Lock } from "lucide-react";
 
-export function RolesPermissionsSection() {
+export function RolesPermissionsPage() {
   const {
     expandedGroups,
     openCreateRoleModal,
@@ -13,14 +13,21 @@ export function RolesPermissionsSection() {
     setActiveModal,
     setExpandedGroups,
     toggleCell,
-  } = useSettingsContext();
+    activeModal,
+    isSubmitting,
+    roleForm,
+    setRoleForm,
+    handleRoleSubmit,
+    confirmEditRole,
+    selectedRoleForEdit,
+  } = useRolesPermissions();
 
   return (
     <div>
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--primary)", cursor: "pointer" }}>
-          Settings
+          Common Pages
         </span>
         <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "var(--muted-foreground)" }}>
@@ -350,9 +357,9 @@ export function RolesPermissionsSection() {
                       }}
                       className="cursor-pointer select-none"
                       onClick={() =>
-                        setExpandedGroups((prev: Record<string, boolean>) => ({
+                        setExpandedGroups((prev) => ({
                           ...prev,
-                          [group.id]: !prev[group.id],
+                          [group.id]: !prev[group.id as keyof typeof prev],
                         }))
                       }
                     >
@@ -431,6 +438,85 @@ export function RolesPermissionsSection() {
           </table>
         </div>
       </div>
+
+      {/* MODALS */}
+      {activeModal === "create_role" || activeModal === "edit_role" ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-[var(--border)] relative bg-[var(--background)]">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold">
+                {activeModal === "create_role" ? "Create Role" : "Edit Role"}
+              </h2>
+              <button onClick={() => setActiveModal(null)} className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+                ✕
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Role Name <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border rounded-md bg-transparent text-[var(--foreground)]"
+                  value={roleForm.name}
+                  onChange={(e) => setRoleForm({ ...roleForm, name: e.target.value })}
+                  placeholder="e.g. IT Administrator"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <textarea
+                  className="w-full px-3 py-2 border rounded-md bg-transparent text-[var(--foreground)]"
+                  value={roleForm.description}
+                  onChange={(e) => setRoleForm({ ...roleForm, description: e.target.value })}
+                  placeholder="Brief description of this role's responsibilities"
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-8">
+              <button
+                className="px-4 py-2 border rounded-md text-[var(--foreground)] hover:bg-[var(--muted)]"
+                onClick={() => setActiveModal(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-[var(--primary)] text-white rounded-md hover:opacity-90 disabled:opacity-50"
+                onClick={handleRoleSubmit}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Saving..." : (activeModal === "create_role" ? "Create Role" : "Update Role")}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : activeModal === "confirm_edit_role" ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)] relative bg-[var(--background)]">
+            <h2 className="text-xl font-bold mb-4 text-center">Confirm Changes</h2>
+            <p className="text-[var(--muted-foreground)] text-center mb-6">
+              Are you sure you want to update the permissions for {selectedRoleForEdit?.name}? This may affect users currently assigned to this role.
+            </p>
+            <div className="flex justify-center gap-3">
+              <button
+                className="px-4 py-2 border rounded-md text-[var(--foreground)] hover:bg-[var(--muted)]"
+                onClick={() => setActiveModal("edit_role")}
+              >
+                Go Back
+              </button>
+              <button
+                className="px-4 py-2 bg-[var(--primary)] text-white rounded-md hover:opacity-90 disabled:opacity-50"
+                onClick={confirmEditRole}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Updating..." : "Confirm Update"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

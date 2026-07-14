@@ -1,10 +1,5 @@
 import { lazy, Suspense } from "react";
-import {
-  createBrowserRouter,
-  Navigate,
-  useLocation,
-  useNavigate,
-} from "react-router";
+import { createBrowserRouter, Navigate, useNavigate } from "react-router";
 import { Layout } from "./components/Layout";
 import { Login } from "./pages/shared/Login";
 import { Signup } from "./pages/shared/Signup";
@@ -19,7 +14,6 @@ import {
   BrainCircuit,
 } from "lucide-react";
 
-// Lazy-loaded Admin Panel Components
 const AdminLayout = lazy(() =>
   import("./admin/layout/AdminLayout").then((m) => ({
     default: m.AdminLayout,
@@ -30,11 +24,7 @@ const AdminDashboardPage = lazy(() =>
     default: m.default,
   })),
 );
-const SuperAdminDashboardPage = lazy(() =>
-  import("./pages/super-admin/home/SuperAdminDashboard").then((m) => ({
-    default: m.SuperAdminDashboard,
-  })),
-);
+
 const AdminOrganizationsPage = lazy(() =>
   import("./admin/features/organizations/OrganizationManagementView").then(
     (m) => ({
@@ -42,7 +32,6 @@ const AdminOrganizationsPage = lazy(() =>
     }),
   ),
 );
-
 const AdminSubscriptionsPage = lazy(() =>
   import("./admin/features/subscription-billing/SubscriptionBillingView").then(
     (m) => ({
@@ -52,24 +41,21 @@ const AdminSubscriptionsPage = lazy(() =>
 );
 const AdminReportsPage = lazy(() =>
   import("./admin/features/reports/ReportsView").then((m) => ({
-    default: m.default,
+    default: m.ReportsView,
   })),
 );
-/* const AdminAuditLogsPage = lazy(() =>
-  import("./admin/features/auditLogs/AuditLogsView").then((m) => ({
-    default: m.default,
+
+// ── Lazy-loaded Common Pages ─────────────────────
+const RolesPermissionsPage = lazy(() =>
+  import("./pages/common/roles-permissions/RolesPermissionsPage").then((m) => ({
+    default: m.RolesPermissionsPage,
   })),
-); */
+);
 const AdminSupportTicketsPage = lazy(() =>
   import("./admin/features/supportTickets/SupportTicketsView").then((m) => ({
     default: m.default,
   })),
 );
-// const AdminAnnouncementsPage = lazy(() =>
-//   import("./admin/features/announcements/announcements.page").then((m) => ({
-//     default: m.default,
-//   })),
-// );
 const AdminFeatureManagementPage = lazy(
   () => import("./admin/features/featureManagement/FeatureManagementView"),
 );
@@ -99,7 +85,7 @@ const AdminComingSoonPage = lazy(() =>
   })),
 );
 
-// Manage Account (Super Admin) lazy imports
+// ── Manage Account (Super Admin) ──────────────────────────────
 const ManageAccountUsersPage = lazy(() =>
   import("./pages/super-admin/manage-account/ManageAccountUsers").then((m) => ({
     default: m.ManageAccountUsers,
@@ -120,9 +106,14 @@ const ManageAccountBulkImportPage = lazy(() =>
   ),
 );
 
-// Lazy-loaded page components for code splitting
-const Dashboard = lazy(() =>
-  import("./pages/shared/Dashboard").then((m) => ({ default: m.Dashboard })),
+// ── Shared / Multi-Role Pages ─────────────────────────────────
+const DashboardWrapper = lazy(
+  () => import("./pages/dashboard/DashboardWrapper"),
+);
+const AddEmployee = lazy(() =>
+  import("./pages/hr/team-management/AddEmployee").then((m) => ({
+    default: m.default,
+  })),
 );
 const Employees = lazy(() =>
   import("./pages/hr/team-management/Employees").then((m) => ({
@@ -187,7 +178,6 @@ const UserProfile = lazy(() =>
     default: m.UserProfile,
   })),
 );
-const SmartSearch = lazy(() => import("./pages/shared/SmartSearch"));
 const ShiftSchedule = lazy(() =>
   import("./pages/hr/hr-operations/ShiftSchedule").then((m) => ({
     default: m.ShiftSchedule,
@@ -316,7 +306,7 @@ const EmployeeSelfProfile = lazy(() =>
   })),
 );
 
-// Finance Components
+// ── Finance Components ────────────────────────────────────────
 const FinanceExpenses = lazy(() =>
   import("./pages/finance/ops/FinanceExpenses").then((m) => ({
     default: m.FinanceExpenses,
@@ -407,13 +397,24 @@ const FinanceDepartments = lazy(() =>
     default: m.FinanceDepartments,
   })),
 );
-const FinancePersonalDashboard = lazy(() =>
-  import("./pages/finance/home/FinancePersonalDashboard").then((m) => ({
-    default: m.FinancePersonalDashboard,
+// Finance dashboard moved to DashboardWrapper
+const FinanceLeaves = lazy(() =>
+  import("./pages/finance/workspace/FinanceLeaves").then((m) => ({
+    default: m.FinanceLeaves,
+  })),
+);
+const FinanceSchedule = lazy(() =>
+  import("./pages/finance/workspace/FinanceSchedule").then((m) => ({
+    default: m.FinanceSchedule,
+  })),
+);
+const FinanceAuditLogs = lazy(() =>
+  import("./pages/finance/workspace/FinanceAuditLogs").then((m) => ({
+    default: m.FinanceAuditLogs,
   })),
 );
 
-// Manager Team & Personal Components
+// ── Manager Components ────────────────────────────────────────
 const ManagerAttendance = lazy(() =>
   import("./pages/manager/team/ManagerAttendance").then((m) => ({
     default: m.ManagerAttendance,
@@ -454,11 +455,7 @@ const ManagerTeamAppraisal = lazy(() =>
     default: m.ManagerTeamAppraisal,
   })),
 );
-const ManagerPersonalDashboard = lazy(() =>
-  import("./pages/manager/workspace/ManagerPersonalDashboard").then((m) => ({
-    default: m.ManagerPersonalDashboard,
-  })),
-);
+// Manager dashboard moved to DashboardWrapper
 const ManagerPersonalAttendance = lazy(() =>
   import("./pages/manager/workspace/ManagerPersonalAttendance").then((m) => ({
     default: m.ManagerPersonalAttendance,
@@ -467,16 +464,6 @@ const ManagerPersonalAttendance = lazy(() =>
 const ManagerPersonalLeaves = lazy(() =>
   import("./pages/manager/workspace/ManagerPersonalLeaves").then((m) => ({
     default: m.ManagerPersonalLeaves,
-  })),
-);
-const FinanceLeaves = lazy(() =>
-  import("./pages/finance/workspace/FinanceLeaves").then((m) => ({
-    default: m.FinanceLeaves,
-  })),
-);
-const FinanceSchedule = lazy(() =>
-  import("./pages/finance/workspace/FinanceSchedule").then((m) => ({
-    default: m.FinanceSchedule,
   })),
 );
 const ManagerPersonalExpenses = lazy(() =>
@@ -509,11 +496,10 @@ const ManagerPersonalDocuments = lazy(() =>
     default: m.ManagerPersonalDocuments,
   })),
 );
-const ManagerProfile = lazy(
-  () =>
-    import("./pages/manager/workspace/ManagerProfile").then((m) => ({
-      default: m.ManagerProfile,
-    })), // Force reload
+const ManagerProfile = lazy(() =>
+  import("./pages/manager/workspace/ManagerProfile").then((m) => ({
+    default: m.ManagerProfile,
+  })),
 );
 const ManagerNotifications = lazy(() =>
   import("./pages/manager/workspace/ManagerNotifications").then((m) => ({
@@ -555,6 +541,8 @@ const ManagerTeamOnboarding = lazy(() =>
     default: m.ManagerTeamOnboarding,
   })),
 );
+
+// ── Settings / Audit ──────────────────────────────────────────
 const AuditLogs = lazy(() =>
   import("./pages/super-admin/settings/AuditLogs").then((m) => ({
     default: m.AuditLogs,
@@ -565,18 +553,16 @@ const HRAuditLogs = lazy(() =>
     default: m.HRAuditLogs,
   })),
 );
-const FinanceAuditLogs = lazy(() =>
-  import("./pages/finance/workspace/FinanceAuditLogs").then((m) => ({
-    default: m.FinanceAuditLogs,
-  })),
-);
 const AssetManagement = lazy(() =>
   import("./pages/hr/finance-payroll/AssetManagement").then((m) => ({
     default: m.AssetManagement,
   })),
 );
 
-// Loading spinner
+// ── Permission Engine ─────────────────────────────────────────
+import { usePermissions, P } from "./shared/permission-engine";
+
+// ── Loading spinner ───────────────────────────────────────────
 function PageLoader() {
   return (
     <div
@@ -604,16 +590,6 @@ function PageLoader() {
   );
 }
 
-function ProfileWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Finance") {
-    return lazyRoute(FinanceProfile);
-  } else if (user?.role === "Manager") {
-    return lazyRoute(ManagerProfile);
-  }
-  return lazyRoute(UserProfile);
-}
-
 function lazyRoute(Component: React.LazyExoticComponent<React.ComponentType>) {
   return (
     <Suspense fallback={<PageLoader />}>
@@ -622,24 +598,25 @@ function lazyRoute(Component: React.LazyExoticComponent<React.ComponentType>) {
   );
 }
 
-// ── AuthGuard: redirect to login if not authenticated ────────
-const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+// ── AuthGuard: redirect to login if not authenticated ─────────
+const AuthGuard = ({
+  children,
+  requiredPermission,
+}: {
+  children: React.ReactNode;
+  requiredPermission?: string;
+}) => {
   const { isLoggedIn } = useAuth();
-  return isLoggedIn ? <>{children}</> : <Navigate to="/login" replace />;
-};
+  const { hasPermissionKey } = usePermissions();
 
-// ── RoleGuard: redirect to /403 if user lacks access ─────────
-const RoleGuard = ({ children }: { children: React.ReactNode }) => {
-  const { hasAccess } = useAuth();
-  const location = useLocation();
-
-  if (!hasAccess(location.pathname)) {
+  if (!isLoggedIn) return <Navigate to="/login" replace />;
+  if (requiredPermission && !hasPermissionKey(requiredPermission))
     return <Navigate to="/403" replace />;
-  }
+
   return <>{children}</>;
 };
 
-// ── 403 Access Denied page ───────────────────────────────────
+// ── 403 Access Denied page ────────────────────────────────────
 function AccessDenied() {
   const { user } = useAuth();
   return (
@@ -761,233 +738,312 @@ function NotFound() {
   );
 }
 
-// ── Wrap with both guards ────────────────────────────────────
-function Protected({ children }: { children: React.ReactNode }) {
+// ── Wrap with auth guard only ─────────────────────────────────
+function Protected({
+  children,
+  requiredPermission,
+}: {
+  children: React.ReactNode;
+  requiredPermission?: string;
+}) {
   return (
-    <AuthGuard>
-      <RoleGuard>{children}</RoleGuard>
-    </AuthGuard>
+    <AuthGuard requiredPermission={requiredPermission}>{children}</AuthGuard>
   );
 }
 
-// ── Helper for protected lazy routes ─────────────────────────
 function protectedRoute(
   Component: React.LazyExoticComponent<React.ComponentType>,
 ) {
   return <Protected>{lazyRoute(Component)}</Protected>;
 }
 
-// ── Performance Wrapper: role-based view ──────────────────────
+// ─────────────────────────────────────────────────────────────────
+// PERMISSION-BASED WRAPPERS
+// These replace the old role-string-based XxxWrapper() functions.
+// Each wrapper uses the permission engine to decide which
+// component variant to render, instead of checking user.role.
+//
+// Phase 2 will consolidate these into single components that
+// render different UIs based on permissions internally.
+// ─────────────────────────────────────────────────────────────────
+
 function PerformanceWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Manager") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.PERFORMANCE_REVIEW_TEAM) &&
+    !hasPermissionKey(P.PERFORMANCE_REVIEW)
+  ) {
     return lazyRoute(ManagerTeamPerformance);
   }
-  if (user?.role === "Finance") {
+  if (
+    hasPermissionKey(P.PAYROLL_FULL) &&
+    !hasPermissionKey(P.PERFORMANCE_REVIEW)
+  ) {
     return lazyRoute(FinancePerformance);
   }
-  if (user?.role === "Employee") {
+  if (
+    !hasPermissionKey(P.PERFORMANCE_REVIEW) &&
+    hasPermissionKey(P.PERFORMANCE_SELF)
+  ) {
     return lazyRoute(EmployeePerformance);
   }
   return lazyRoute(Performance);
 }
 
-// ── Schedule Wrapper: role-based view ─────────────────────────
 function ScheduleWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Manager") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.SCHEDULE_VIEW_TEAM) &&
+    !hasPermissionKey(P.SCHEDULE_MANAGE)
+  ) {
     return lazyRoute(ManagerTeamSchedule);
   }
-  if (user?.role === "Finance") {
+  if (
+    hasPermissionKey(P.PAYROLL_FULL) &&
+    !hasPermissionKey(P.SCHEDULE_MANAGE)
+  ) {
     return lazyRoute(FinanceSchedule);
   }
-  if (user?.role === "Employee") {
+  if (
+    !hasPermissionKey(P.SCHEDULE_MANAGE) &&
+    hasPermissionKey(P.SCHEDULE_SELF)
+  ) {
     return lazyRoute(EmployeeSchedule);
   }
   return lazyRoute(ShiftSchedule);
 }
 
-// ── Goals Wrapper: role-based view ────────────────────────────
 function GoalsWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Finance") {
+  const { hasPermissionKey } = usePermissions();
+  if (hasPermissionKey(P.PAYROLL_FULL) && !hasPermissionKey(P.GOALS_MANAGE)) {
     return lazyRoute(FinanceGoals);
   }
   return <PerformanceWrapper />;
 }
 
-// ── Training Wrapper: role-based view ─────────────────────────
 function TrainingWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Manager") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.TRAINING_ASSIGN) &&
+    !hasPermissionKey(P.TRAINING_MANAGE)
+  ) {
     return lazyRoute(ManagerTeamTraining);
   }
-  if (user?.role === "Employee") {
+  if (
+    hasPermissionKey(P.TRAINING_LEARN) &&
+    !hasPermissionKey(P.TRAINING_MANAGE)
+  ) {
     return lazyRoute(EmployeeTraining);
   }
   return lazyRoute(Training);
 }
 
 function DepartmentsWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Finance") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.PAYROLL_FULL) &&
+    !hasPermissionKey(P.DEPARTMENTS_MANAGE)
+  ) {
     return lazyRoute(FinanceDepartments);
   }
   return lazyRoute(Departments);
 }
 
 function SupportWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Finance") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.PAYROLL_FULL) &&
+    !hasPermissionKey(P.EMPLOYEES_MANAGE)
+  ) {
     return lazyRoute(FinanceSupport);
   }
   return lazyRoute(EmployeeSupport);
 }
 
 function DocumentsWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Finance") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.PAYROLL_FULL) &&
+    !hasPermissionKey(P.DOCUMENTS_MANAGE)
+  ) {
     return lazyRoute(FinanceDocuments);
   }
   return lazyRoute(EmployeeDocuments);
 }
 
 function AttendanceWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Manager") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.ATTENDANCE_APPROVE_TEAM) &&
+    !hasPermissionKey(P.ATTENDANCE_MANAGE)
+  ) {
     return lazyRoute(ManagerAttendance);
   }
-  if (user?.role === "Finance") {
+  if (
+    hasPermissionKey(P.PAYROLL_FULL) &&
+    !hasPermissionKey(P.ATTENDANCE_MANAGE)
+  ) {
     return lazyRoute(FinanceAttendance);
   }
   return lazyRoute(Attendance);
 }
 
-// ── Leave Wrapper: role-based view ────────────────────────────
 function LeaveWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Manager") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.LEAVE_APPROVE_TEAM) &&
+    !hasPermissionKey(P.LEAVE_MANAGE)
+  ) {
     return lazyRoute(ManagerLeaveApprovals);
   }
-  if (user?.role === "Finance") {
+  if (hasPermissionKey(P.PAYROLL_FULL) && !hasPermissionKey(P.LEAVE_MANAGE)) {
     return lazyRoute(FinanceLeaves);
   }
   return lazyRoute(LeaveManagement);
 }
 
-// ── Notifications Wrapper: role-based view ────────────────────
 function NotificationsWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Employee") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    !hasPermissionKey(P.EMPLOYEES_MANAGE) &&
+    !hasPermissionKey(P.EMPLOYEES_VIEW_TEAM)
+  ) {
     return lazyRoute(EmployeeAnnouncements);
   }
-  if (user?.role === "Manager") {
+  if (
+    hasPermissionKey(P.ATTENDANCE_APPROVE_TEAM) &&
+    !hasPermissionKey(P.ATTENDANCE_MANAGE)
+  ) {
     return lazyRoute(ManagerNotifications);
   }
   return lazyRoute(Notifications);
 }
 
 function PayslipsWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Finance") {
+  const { hasPermissionKey } = usePermissions();
+  if (hasPermissionKey(P.PAYROLL_FULL)) {
     return lazyRoute(FinancePayslips);
   }
   return lazyRoute(EmployeePayslips);
 }
 
-// ── Payroll Wrapper: role-based view ──────────────────────────
 function PayrollWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Employee") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    !hasPermissionKey(P.PAYROLL_VIEW) &&
+    hasPermissionKey(P.PAYROLL_PAYSLIPS)
+  ) {
     return lazyRoute(EmployeePayslips);
   }
-  if (user?.role === "Finance") {
+  if (hasPermissionKey(P.PAYROLL_FULL)) {
     return lazyRoute(FinancePayroll);
   }
   return lazyRoute(Payroll);
 }
 
-// ── Expenses Wrapper: role-based view ─────────────────────────
 function ExpensesWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Manager") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.EXPENSES_APPROVE_TEAM) &&
+    !hasPermissionKey(P.EXPENSES_LEVEL_1)
+  ) {
     return lazyRoute(ManagerExpenseApprovals);
   }
-  if (user?.role === "Finance") {
+  if (hasPermissionKey(P.EXPENSES_FINAL_APPROVAL)) {
     return lazyRoute(FinanceExpenses);
   }
   return lazyRoute(Expenses);
 }
 
-// ── Directory Wrapper: role-based view ────────────────────────
 function DirectoryWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Employee") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    !hasPermissionKey(P.EMPLOYEES_MANAGE) &&
+    !hasPermissionKey(P.EMPLOYEES_VIEW_TEAM)
+  ) {
     return lazyRoute(EmployeeDirectory);
   }
-  if (user?.role === "Finance") {
+  if (
+    hasPermissionKey(P.PAYROLL_FULL) &&
+    !hasPermissionKey(P.EMPLOYEES_MANAGE)
+  ) {
     return lazyRoute(FinanceEmployees);
   }
-  if (user?.role === "Manager") {
+  if (
+    hasPermissionKey(P.EMPLOYEES_VIEW_TEAM) &&
+    !hasPermissionKey(P.EMPLOYEES_MANAGE)
+  ) {
     return lazyRoute(ManagerTeam);
   }
   return lazyRoute(Employees);
 }
 
-// ── Reports Wrapper: role-based view ─────────────────────────
 function ReportsWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Manager") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.REPORTS_TEAM) &&
+    !hasPermissionKey(P.REPORTS_HR) &&
+    !hasPermissionKey(P.REPORTS_FINANCE)
+  ) {
     return lazyRoute(ManagerReports);
   }
-  if (user?.role === "Finance") {
+  if (hasPermissionKey(P.REPORTS_FINANCE) && !hasPermissionKey(P.REPORTS_HR)) {
     return lazyRoute(FinanceReports);
   }
   return lazyRoute(Reports);
 }
 
-// ── Appraisal Wrapper: role-based view ────────────────────────
 function AppraisalWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Finance") {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.APPRAISAL_APPROVE) &&
+    hasPermissionKey(P.PAYROLL_FULL)
+  ) {
     return lazyRoute(FinanceIncrement);
   }
-  if (user?.role === "Manager") {
+  if (
+    hasPermissionKey(P.APPRAISAL_MANAGE) &&
+    !hasPermissionKey(P.APPRAISAL_FULL)
+  ) {
     return lazyRoute(ManagerTeamAppraisal);
   }
   return lazyRoute(IncrementAppraisal);
 }
 
-// ── Employee Dashboard Wrapper: role-based view ───────────────
-function EmployeeDashboardWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Finance") {
-    return lazyRoute(FinancePersonalDashboard);
+function ProfileWrapper() {
+  const { hasPermissionKey } = usePermissions();
+  if (
+    hasPermissionKey(P.PAYROLL_FULL) &&
+    !hasPermissionKey(P.EMPLOYEES_MANAGE)
+  ) {
+    return lazyRoute(FinanceProfile);
   }
-  return lazyRoute(EmployeeSelfService);
-}
-
-// ── Settings Wrapper: role-based view ─────────────────────────
-function SettingsWrapper() {
-  return lazyRoute(Settings);
+  if (
+    hasPermissionKey(P.EXPENSES_APPROVE_TEAM) &&
+    !hasPermissionKey(P.EMPLOYEES_MANAGE)
+  ) {
+    return lazyRoute(ManagerProfile);
+  }
+  return lazyRoute(UserProfile);
 }
 
 function AuditLogsWrapper() {
-  const { user } = useAuth();
-  if (user?.role === "Super Admin") {
+  const { hasPermissionKey } = usePermissions();
+  if (hasPermissionKey(P.AUDIT_LOGS_FULL)) {
     return lazyRoute(AuditLogs);
   }
-  if (user?.role === "Finance") {
+  if (hasPermissionKey(P.PAYROLL_FULL)) {
     return lazyRoute(FinanceAuditLogs);
   }
   return lazyRoute(HRAuditLogs);
 }
 
-// ── Root Redirect ────────────────────────────────────────────
+// ── Root Redirect ─────────────────────────────────────────────
 function RootRedirect() {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
 
+  // Use the role home route for backward compatibility
   const roleRoutes: Record<string, string> = {
     "Platform Admin": "/platform-admin/dashboard",
     "Super Admin": "/admin/dashboard",
@@ -1004,6 +1060,7 @@ function RootRedirect() {
   );
 }
 
+// ── Router Definition ─────────────────────────────────────────
 export const router = createBrowserRouter([
   { path: "/login", Component: Login },
   { path: "/signup", Component: Signup },
@@ -1024,7 +1081,6 @@ export const router = createBrowserRouter([
       { path: "subscriptions", element: lazyRoute(AdminSubscriptionsPage) },
       { path: "reports", element: lazyRoute(AdminReportsPage) },
       { path: "support-tickets", element: lazyRoute(AdminSupportTicketsPage) },
-      //       { path: "announcements", element: lazyRoute(AdminAnnouncementsPage) },
       { path: "features", element: lazyRoute(AdminFeatureManagementPage) },
       { path: "roles", element: lazyRoute(AdminRolesPermissionsPage) },
       { path: "settings", element: lazyRoute(AdminPlatformSettingsPage) },
@@ -1093,10 +1149,8 @@ export const router = createBrowserRouter([
     children: [
       { path: "403", element: <AccessDenied /> },
       { index: true, element: <RootRedirect /> },
-      {
-        path: "admin/dashboard",
-        element: protectedRoute(SuperAdminDashboardPage),
-      },
+      // ── Admin / Dashboard routes ───────────────────────────
+      { path: "dashboard", element: protectedRoute(DashboardWrapper) },
       {
         path: "admin/manage-account",
         element: protectedRoute(ManageAccountUsersPage),
@@ -1109,13 +1163,7 @@ export const router = createBrowserRouter([
         path: "admin/manage-account/import",
         element: protectedRoute(ManageAccountBulkImportPage),
       },
-      { path: "hr/dashboard", element: protectedRoute(Dashboard) },
-      { path: "finance/dashboard", element: protectedRoute(Dashboard) },
-      { path: "manager/dashboard", element: protectedRoute(Dashboard) },
-      {
-        path: "manager/my-dashboard",
-        element: protectedRoute(ManagerPersonalDashboard),
-      },
+      // ── Manager workspace routes ───────────────────────────
       {
         path: "manager/my-attendance",
         element: protectedRoute(ManagerPersonalAttendance),
@@ -1174,30 +1222,14 @@ export const router = createBrowserRouter([
         path: "manager/team-onboarding",
         element: protectedRoute(ManagerTeamOnboarding),
       },
-      {
-        path: "employee/dashboard",
-        element: (
-          <Protected>
-            <EmployeeDashboardWrapper />
-          </Protected>
-        ),
-      },
+      // ── Employee workspace routes ──────────────────────────
       {
         path: "employee/attendance",
         element: protectedRoute(EmployeeAttendance),
       },
-      {
-        path: "employee/leave",
-        element: protectedRoute(EmployeeLeaves),
-      },
-      {
-        path: "employee/payslip",
-        element: protectedRoute(EmployeePayslips),
-      },
-      {
-        path: "employee/schedule",
-        element: protectedRoute(EmployeeSchedule),
-      },
+      { path: "employee/leave", element: protectedRoute(EmployeeLeaves) },
+      { path: "employee/payslip", element: protectedRoute(EmployeePayslips) },
+      { path: "employee/schedule", element: protectedRoute(EmployeeSchedule) },
       {
         path: "employee/performance",
         element: protectedRoute(EmployeePerformance),
@@ -1210,6 +1242,7 @@ export const router = createBrowserRouter([
         path: "employee/profile",
         element: protectedRoute(EmployeeSelfProfile),
       },
+      // ── Shared permission-gated routes ─────────────────────
       {
         path: "employees",
         element: (
@@ -1218,6 +1251,7 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
+      { path: "employees/add", element: protectedRoute(AddEmployee) },
       { path: "employees/:id", element: protectedRoute(EmployeeProfile) },
       {
         path: "profile",
@@ -1295,9 +1329,13 @@ export const router = createBrowserRouter([
       },
       {
         path: "settings",
+        element: <Protected>{lazyRoute(Settings)}</Protected>,
+      },
+      {
+        path: "roles-permissions",
         element: (
-          <Protected>
-            <SettingsWrapper />
+          <Protected requiredPermission={P.ROLES_VIEW}>
+            {lazyRoute(RolesPermissionsPage)}
           </Protected>
         ),
       },
@@ -1329,7 +1367,6 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
-      { path: "smart-search", element: protectedRoute(SmartSearch) },
       {
         path: "schedule",
         element: (
@@ -1411,5 +1448,4 @@ export const router = createBrowserRouter([
       { path: "*", element: <NotFound /> },
     ],
   },
-  { path: "*", element: <NotFound /> },
 ]);

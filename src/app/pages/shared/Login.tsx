@@ -89,7 +89,7 @@ export function Login() {
   // Redirect to dashboard if user is already logged in
   useEffect(() => {
     if (user) {
-      const homeRoute = ROLE_HOME_ROUTE[user.role] || "/employee/dashboard";
+      const homeRoute = ROLE_HOME_ROUTE[user.role] || "/dashboard";
       navigate(homeRoute, { replace: true });
     }
   }, [user, navigate]);

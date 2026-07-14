@@ -1,28 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSettingsContext } from "../SettingsContext";
 import { ChevronRight } from "lucide-react";
+import type { LeaveTypeRecord } from "../SettingsContext";
 
 export function LeavePolicySection() {
   const {
     SectionTitle,
     leaveTypesList,
-    lpApprovalLevels,
-    lpAutoApprove,
-    lpCarryForwardLimit,
-    lpEligibilityMonths,
-    lpEncashmentLimit,
-    lpLastUpdatedBy,
-    lpLastUpdatedTime,
-    lpPolicyVersion,
     setActiveModal,
     setLeaveTypeForm,
-    setLpApprovalLevels,
-    setLpAutoApprove,
-    setLpCarryForwardLimit,
-    setLpEligibilityMonths,
-    setLpEncashmentLimit,
     setSelectedLeaveType,
   } = useSettingsContext();
+
+  const [lpApprovalLevels, setLpApprovalLevels] = useState("1");
+  const [lpAutoApprove, setLpAutoApprove] = useState(false);
+  const [lpCarryForwardLimit, setLpCarryForwardLimit] = useState("10");
+  const [lpEligibilityMonths, setLpEligibilityMonths] = useState("3");
+  const [lpEncashmentLimit, setLpEncashmentLimit] = useState("15");
+  const lpLastUpdatedBy = "Ryan Park";
+  const lpLastUpdatedTime = "Apr 18, 2026";
+  const lpPolicyVersion = "v2.4";
 
   return (
     <div>
@@ -154,82 +151,7 @@ export function LeavePolicySection() {
           </thead>
           <tbody>
             {leaveTypesList.map(
-              (
-                l: {
-                  name:
-                    | string
-                    | number
-                    | boolean
-                    | React.ReactElement<
-                        string,
-                        string | React.JSXElementConstructor<string>
-                      >
-                    | Iterable<React.ReactNode>
-                    | React.ReactPortal
-                    | Iterable<React.ReactNode>
-                    | null
-                    | undefined;
-                  code:
-                    | string
-                    | number
-                    | boolean
-                    | React.ReactElement<
-                        string,
-                        string | React.JSXElementConstructor<string>
-                      >
-                    | Iterable<React.ReactNode>
-                    | React.ReactPortal
-                    | Iterable<React.ReactNode>
-                    | null
-                    | undefined;
-                  days:
-                    | string
-                    | number
-                    | boolean
-                    | React.ReactElement<
-                        string,
-                        string | React.JSXElementConstructor<string>
-                      >
-                    | Iterable<React.ReactNode>
-                    | React.ReactPortal
-                    | Iterable<React.ReactNode>
-                    | null
-                    | undefined;
-                  type:
-                    | string
-                    | number
-                    | boolean
-                    | React.ReactElement<
-                        string,
-                        string | React.JSXElementConstructor<string>
-                      >
-                    | Iterable<React.ReactNode>
-                    | null
-                    | undefined;
-                  carryForward: string;
-                  maxCarryForward: string;
-                  approvalRequired: string;
-                  attachmentRequired: string;
-                  status:
-                    | string
-                    | number
-                    | boolean
-                    | React.ReactElement<
-                        string,
-                        string | React.JSXElementConstructor<string>
-                      >
-                    | Iterable<React.ReactNode>
-                    | null
-                    | undefined;
-                  encashment: string;
-                  minNoticePeriod: string;
-                  maxConsecutiveLeave: string;
-                  dept: string;
-                  location: string;
-                  description: string;
-                },
-                idx: React.Key | null | undefined,
-              ) => (
+              (l: LeaveTypeRecord, idx: React.Key | null | undefined) => (
                 <tr
                   key={idx}
                   style={{
@@ -423,7 +345,7 @@ export function LeavePolicySection() {
           </div>
           <select
             value={lpApprovalLevels}
-            onChange={(e) => setLpApprovalLevels(parseInt(e.target.value))}
+            onChange={(e) => setLpApprovalLevels(e.target.value)}
             className="rounded-xl px-3 py-2 text-sm outline-none border"
             style={{
               backgroundColor: "var(--input-background)",
@@ -562,9 +484,7 @@ export function LeavePolicySection() {
               <input
                 type="number"
                 value={lpCarryForwardLimit}
-                onChange={(e) =>
-                  setLpCarryForwardLimit(parseInt(e.target.value))
-                }
+                onChange={(e) => setLpCarryForwardLimit(e.target.value)}
                 className="w-full rounded-xl px-3 py-2.5 text-sm border"
                 style={{
                   backgroundColor: "var(--input-background)",
@@ -601,7 +521,7 @@ export function LeavePolicySection() {
               <input
                 type="number"
                 value={lpEncashmentLimit}
-                onChange={(e) => setLpEncashmentLimit(parseInt(e.target.value))}
+                onChange={(e) => setLpEncashmentLimit(e.target.value)}
                 className="w-full rounded-xl px-3 py-2.5 text-sm border"
                 style={{
                   backgroundColor: "var(--input-background)",
@@ -646,7 +566,7 @@ export function LeavePolicySection() {
           </div>
           <select
             value={lpEligibilityMonths}
-            onChange={(e) => setLpEligibilityMonths(parseInt(e.target.value))}
+            onChange={(e) => setLpEligibilityMonths(e.target.value)}
             className="rounded-xl px-3 py-2 text-sm outline-none border"
             style={{
               backgroundColor: "var(--input-background)",
@@ -681,12 +601,7 @@ export function LeavePolicySection() {
           style={{ color: "var(--foreground)" }}
         >
           {leaveTypesList.map(
-            (l: {
-              code: string;
-              name: string;
-              days: number;
-              carryForward: string;
-            }) => (
+            (l: LeaveTypeRecord) => (
               <div key={l.code}>
                 • {l.name} ({l.code}):{" "}
                 <span className="font-bold">{l.days} Days</span> per year |

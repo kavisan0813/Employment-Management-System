@@ -343,7 +343,7 @@ export function ManageAccountUsers() {
                 fontSize: "12px",
                 fontWeight: 700,
                 backgroundColor: "#eef2ff",
-                color: "#4f46e5",
+                color: "var(--primary)",
               }}
             >
               {allUsers.length} users
@@ -359,8 +359,8 @@ export function ManageAccountUsers() {
                 padding: "9px 18px",
                 borderRadius: "10px",
                 backgroundColor: "transparent",
-                color: "#4f46e5",
-                border: "1.5px solid #4f46e5",
+                color: "var(--primary)",
+                border: "1.5px solid var(--primary)",
                 fontSize: "13px",
                 fontWeight: 700,
                 cursor: "pointer",
@@ -377,7 +377,7 @@ export function ManageAccountUsers() {
                 gap: "6px",
                 padding: "9px 18px",
                 borderRadius: "10px",
-                backgroundColor: "#4f46e5",
+                backgroundColor: "var(--primary)",
                 color: "#ffffff",
                 border: "none",
                 fontSize: "13px",
@@ -739,7 +739,7 @@ export function ManageAccountUsers() {
                       selectedRows.length === paged.length && paged.length > 0
                     }
                     onChange={toggleAll}
-                    style={{ accentColor: "#4f46e5", cursor: "pointer" }}
+                    style={{ accentColor: "var(--primary)", cursor: "pointer" }}
                   />
                 </th>
                 <th
@@ -893,7 +893,7 @@ export function ManageAccountUsers() {
                         type="checkbox"
                         checked={selectedRows.includes(u.id)}
                         onChange={() => toggleRow(u.id)}
-                        style={{ accentColor: "#4f46e5", cursor: "pointer" }}
+                        style={{ accentColor: "var(--primary)", cursor: "pointer" }}
                       />
                     </td>
                     {/* Avatar + Name + Email */}
@@ -911,7 +911,7 @@ export function ManageAccountUsers() {
                             height: "34px",
                             borderRadius: "50%",
                             backgroundColor: "#eef2ff",
-                            color: "#4f46e5",
+                            color: "var(--primary)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -1049,7 +1049,7 @@ export function ManageAccountUsers() {
                             {
                               icon: Mail,
                               label: "Resend Invite",
-                              color: "#4f46e5",
+                              color: "var(--primary)",
                             },
                             { icon: Trash2, label: "Delete", color: "#ef4444" },
                           ].map((action) => (
@@ -1159,7 +1159,7 @@ export function ManageAccountUsers() {
               gap: "16px",
               padding: "12px 24px",
               backgroundColor: "#ffffff",
-              border: "1.5px solid #4f46e5",
+              border: "1.5px solid var(--primary)",
               borderRadius: "14px",
               boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
               zIndex: 40,

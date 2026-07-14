@@ -1,4 +1,13 @@
-import { useState, useMemo } from "react";
+import {
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useMemo,
+  useState,
+} from "react";
+import { useSearchParams } from "react-router";
 import {
   Users,
   Search,
@@ -22,6 +31,7 @@ interface Colleague {
   role: string;
   designation: string;
   department: string;
+  team: string;
   status: "Active" | "On Leave" | "Remote" | "Offline";
   availability: "Available" | "Busy" | "In Meeting" | "Away";
   email: string;
@@ -46,6 +56,7 @@ const TEAM_COLLEAGUES: Colleague[] = [
     role: "Manager",
     designation: "Frontend Manager",
     department: "Engineering",
+    team: "DevOps",
     status: "Active",
     availability: "Available",
     email: "rajan.k@nexushr.com",
@@ -64,6 +75,7 @@ const TEAM_COLLEAGUES: Colleague[] = [
     role: "Senior Developer",
     designation: "Senior Frontend Developer",
     department: "Engineering",
+    team: "QA",
     status: "Active",
     availability: "In Meeting",
     email: "arjun.m@nexushr.com",
@@ -82,6 +94,7 @@ const TEAM_COLLEAGUES: Colleague[] = [
     role: "Developer",
     designation: "Frontend Developer",
     department: "Engineering",
+    team: "UI/UX",
     status: "Active",
     availability: "Available",
     email: "sneha.r@nexushr.com",
@@ -100,6 +113,7 @@ const TEAM_COLLEAGUES: Colleague[] = [
     role: "Junior Developer",
     designation: "Junior Developer",
     department: "Engineering",
+    team: "Frontend",
     status: "Remote",
     availability: "Away",
     email: "dev.p@nexushr.com",
@@ -121,6 +135,7 @@ const ALL_OTHER_COLLEAGUES: Colleague[] = [
     role: "Manager",
     designation: "HR Manager",
     department: "Human Resources",
+    team: "Core",
     status: "Active",
     availability: "Available",
     email: "sarah.j@nexushr.com",
@@ -139,6 +154,7 @@ const ALL_OTHER_COLLEAGUES: Colleague[] = [
     role: "Head",
     designation: "Product Head",
     department: "Product",
+    team: "Roadmap",
     status: "On Leave",
     availability: "Away",
     email: "robert.c@nexushr.com",
@@ -153,13 +169,6 @@ const ALL_OTHER_COLLEAGUES: Colleague[] = [
   },
 ];
 
-/* ─────────────────────────────────────────────────────────────── */
-/* Components                                                      */
-/* ─────────────────────────────────────────────────────────────── */
-
-/* ─────────────────────────────────────────────────────────────── */
-/* UI Components                                                  */
-/* ─────────────────────────────────────────────────────────────── */
 const Modal = ({
   isOpen,
   onClose,
@@ -366,9 +375,6 @@ function ColleagueCard({
   );
 }
 
-/* ─────────────────────────────────────────────────────────────── */
-/* Main Page Component                                             */
-/* ─────────────────────────────────────────────────────────────── */
 function ColleagueTableRow({
   colleague,
   onClick,
@@ -468,18 +474,19 @@ function ColleagueTableRow({
   );
 }
 
-/* ─────────────────────────────────────────────────────────────── */
-/* Main Page Component                                             */
-/* ─────────────────────────────────────────────────────────────── */
 export function EmployeeDirectory() {
+  const [searchParams] = useSearchParams();
+  const initialDepartment = searchParams.get("department") || "All Departments";
+
   const [view, setView] = useState<"grid" | "list">("grid");
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState({
-    department: "All Departments",
+    department: initialDepartment,
     role: "All Roles",
     location: "All Locations",
     status: "All Status",
     availability: "All Availability",
+    team: "All Teams",
   });
 
   const [selectedColleague, setSelectedColleague] = useState<Colleague | null>(
@@ -515,6 +522,7 @@ export function EmployeeDirectory() {
   const clearFilters = () => {
     setFilters({
       department: "All Departments",
+      team: "Core",
       role: "All Roles",
       location: "All Locations",
       status: "All Status",
@@ -761,7 +769,7 @@ export function EmployeeDirectory() {
 
               {view === "grid" ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredTeam.map((colleague) => (
+                  {filteredTeam.map((colleague: Colleague) => (
                     <ColleagueCard
                       key={colleague.id}
                       colleague={colleague}
@@ -798,7 +806,7 @@ export function EmployeeDirectory() {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredTeam.map((colleague) => (
+                        {filteredTeam.map((colleague: Colleague) => (
                           <ColleagueTableRow
                             key={colleague.id}
                             colleague={colleague}
@@ -832,7 +840,7 @@ export function EmployeeDirectory() {
 
               {view === "grid" ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredAll.map((colleague) => (
+                  {filteredAll.map((colleague: Colleague) => (
                     <ColleagueCard
                       key={colleague.id}
                       colleague={colleague}
@@ -869,7 +877,7 @@ export function EmployeeDirectory() {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredAll.map((colleague) => (
+                        {filteredAll.map((colleague: Colleague) => (
                           <ColleagueTableRow
                             key={colleague.id}
                             colleague={colleague}
@@ -1246,26 +1254,60 @@ export function EmployeeDirectory() {
             {/* Direct Reports / Team */}
             <div className="grid grid-cols-2 gap-4">
               {filteredTeam
-                .filter((c) => c.id !== selectedColleague.id)
+                .filter((c: { id: string }) => c.id !== selectedColleague.id)
                 .slice(0, 2)
-                .map((peer) => (
-                  <div
-                    key={peer.id}
-                    className="p-3 bg-secondary border border-border rounded-xl flex items-center gap-3"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-card flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
-                      {peer.initials}
+                .map(
+                  (peer: {
+                    id: Key | null | undefined;
+                    initials:
+                      | string
+                      | number
+                      | boolean
+                      | ReactElement<any, string | JSXElementConstructor<any>>
+                      | Iterable<ReactNode>
+                      | ReactPortal
+                      | Iterable<ReactNode>
+                      | null
+                      | undefined;
+                    name:
+                      | string
+                      | number
+                      | boolean
+                      | ReactElement<any, string | JSXElementConstructor<any>>
+                      | Iterable<ReactNode>
+                      | ReactPortal
+                      | Iterable<ReactNode>
+                      | null
+                      | undefined;
+                    designation:
+                      | string
+                      | number
+                      | boolean
+                      | ReactElement<any, string | JSXElementConstructor<any>>
+                      | Iterable<ReactNode>
+                      | ReactPortal
+                      | Iterable<ReactNode>
+                      | null
+                      | undefined;
+                  }) => (
+                    <div
+                      key={peer.id}
+                      className="p-3 bg-secondary border border-border rounded-xl flex items-center gap-3"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-card flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
+                        {peer.initials}
+                      </div>
+                      <div>
+                        <p className="text-[12px] font-black text-foreground">
+                          {peer.name}
+                        </p>
+                        <p className="text-[11px] font-bold text-muted-foreground">
+                          {peer.designation}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[12px] font-black text-foreground">
-                        {peer.name}
-                      </p>
-                      <p className="text-[11px] font-bold text-muted-foreground">
-                        {peer.designation}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  ),
+                )}
               <div className="p-3 bg-secondary border border-border rounded-xl flex items-center justify-center">
                 <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   + {filteredTeam.length - 1} Team Members

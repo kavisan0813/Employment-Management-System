@@ -1,5 +1,4 @@
-import React from "react";
-import { useAuth } from "../../../context/AuthContext";
+import { usePermissions, P } from "../../../shared/permission-engine";
 import { SettingsProvider } from "./SettingsContext";
 import { SettingsLayout } from "./SettingsLayout";
 
@@ -8,22 +7,37 @@ import { FinanceSettings } from "../../finance/workspace/FinanceSettings";
 import { ManagerSettings } from "../../manager/workspace/ManagerSettings";
 
 export function Settings() {
-  const { user } = useAuth();
-  const role = user?.role || "Super Admin";
+  const { hasPermissionKey } = usePermissions();
 
-  if (role === "Finance") {
+  // Finance users with full payroll access get the finance-specific settings
+  if (
+    hasPermissionKey(P.PAYROLL_FULL) &&
+    !hasPermissionKey(P.SETTINGS_MANAGE)
+  ) {
     return <FinanceSettings />;
   }
 
-  if (role === "Manager") {
+  // Manager-level users who can manage teams but not org settings
+  if (
+    hasPermissionKey(P.EXPENSES_APPROVE_TEAM) &&
+    !hasPermissionKey(P.SETTINGS_MANAGE)
+  ) {
     return <ManagerSettings />;
   }
 
-  if (role === "Employee") {
+  // Employee-only (self settings)
+  if (
+    hasPermissionKey(P.SETTINGS_SELF) &&
+    !hasPermissionKey(P.SETTINGS_MANAGE)
+  ) {
     return <SettingsLayout role="Employee" />;
   }
 
-  if (role === "HR Manager") {
+  // HR Manager — has manage but not full
+  if (
+    hasPermissionKey(P.SETTINGS_SELF) &&
+    !hasPermissionKey(P.SETTINGS_FULL)
+  ) {
     return (
       <SettingsProvider defaultTab="schedules">
         <SettingsLayout role="HR Manager" />
@@ -31,7 +45,7 @@ export function Settings() {
     );
   }
 
-  // Default to Super Admin
+  // Default to Super Admin / full settings
   return (
     <SettingsProvider defaultTab="company">
       <SettingsLayout role="Super Admin" />

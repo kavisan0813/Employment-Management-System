@@ -31,7 +31,10 @@ import {
   FileText,
 } from "lucide-react";
 import { recruitmentPipeline } from "../../../data/mockData";
-import type { JobPosting, ScheduledInterview } from "../../../context/AppContext";
+import type {
+  JobPosting,
+  ScheduledInterview,
+} from "../../../context/AppContext";
 
 /* ─── Types ──────────────────────────────────────────────── */
 type Stage =
@@ -5462,8 +5465,9 @@ export function Recruitment() {
     useState<ScheduledInterview | null>(null);
   const [rescheduleInterview, setRescheduleInterview] =
     useState<ScheduledInterview | null>(null);
-  const [resumeCandidate, setResumeCandidate] =
-    useState<Candidate | null>(null);
+  const [resumeCandidate, setResumeCandidate] = useState<Candidate | null>(
+    null,
+  );
 
   const dragRef = useRef<{ candidateId: string; fromStage: Stage } | null>(
     null,
@@ -5552,7 +5556,10 @@ export function Recruitment() {
 
   // CRUD - Job Posting
   const handlePostJob = (
-    jobForm: Omit<JobPosting, "id" | "postedAt" | "applicants" | "vacancies"> & {
+    jobForm: Omit<
+      JobPosting,
+      "id" | "postedAt" | "applicants" | "vacancies"
+    > & {
       id?: string;
       jobId?: string;
       vacancies?: string | number;

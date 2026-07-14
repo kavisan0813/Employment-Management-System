@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
+import type { RoleAssignment } from "../shared/permission-engine/roles";
 
 export type UserRole =
   | "Platform Admin"
@@ -15,6 +16,13 @@ export interface User {
   initials: string;
   organization?: string;
   organizationId?: string;
+  /**
+   * Multi-role assignments with scopes.
+   * In production these come from the `user_role_assignments` table.
+   * For backward compat, the permission engine falls back to
+   * creating a mock assignment from `role` if this is empty.
+   */
+  roleAssignments?: RoleAssignment[];
 }
 
 interface AuthContextType {
@@ -22,6 +30,11 @@ interface AuthContextType {
   isLoggedIn: boolean;
   login: (user: User) => void;
   logout: () => void;
+  /**
+   * @deprecated Use `usePermission()` or `usePermissions()` from the
+   * permission engine instead. This is kept temporarily for backward
+   * compatibility during migration — always returns true now.
+   */
   hasAccess: (path: string) => boolean;
 }
 
@@ -63,11 +76,11 @@ export const ROLE_CONFIG: Record<
 
 export const ROLE_HOME_ROUTE: Record<UserRole, string> = {
   "Platform Admin": "/platform-admin/dashboard",
-  "Super Admin": "/admin/dashboard",
-  "HR Manager": "/hr/dashboard",
-  Finance: "/finance/dashboard",
-  Manager: "/manager/dashboard",
-  Employee: "/employee/dashboard",
+  "Super Admin": "/dashboard",
+  "HR Manager": "/dashboard",
+  Finance: "/dashboard",
+  Manager: "/dashboard",
+  Employee: "/dashboard",
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -90,149 +103,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     sessionStorage.removeItem("isLoggedIn");
   };
 
-  const hasAccess = (path: string) => {
+  /**
+   * @deprecated — Route access is now controlled by the permission engine.
+   * This always returns true; the PermissionGuard in routes.tsx handles
+   * the actual permission check. Kept for backward compatibility with
+   * any code that still calls hasAccess().
+   */
+  const hasAccess = () => {
     if (!user) return false;
-
-    // Platform Admin has access to everything
-    if (user.role === "Platform Admin") return true;
-
-    // Normalize path (remove trailing slash)
-    const normalizedPath = path === "/" ? "/" : path.replace(/\/$/, "");
-
-    // Super Admin has access to everything EXCEPT /platform-admin
-    if (user.role === "Super Admin") {
-      return !normalizedPath.startsWith("/platform-admin");
-    }
-
-    if (user.role === "HR Manager") {
-      const restricted = [
-        "/platform-admin",
-        "/settings/security",
-        "/settings/integrations",
-        "/settings/roles",
-        "/settings/audit-logs",
-        "/settings/backup",
-        "/finance/asset-cost-report",
-      ];
-      return !restricted.some((r) => normalizedPath.startsWith(r));
-    }
-
-    if (user.role === "Finance") {
-      const allowed = [
-        "/",
-        "/finance/dashboard",
-        "/payroll",
-        "/appraisal", // Increment approvals
-        "/expenses",
-        "/finance/my-expenses",
-        "/reports",
-        "/attendance",
-        "/leave",
-        "/payslips",
-        "/my-exit",
-        "/my-documents",
-        "/my-assets",
-        "/finance/asset-cost-report",
-        "/finance/onboarding",
-        "/finance/settlements",
-        "/employee/dashboard",
-        "/employees", // View only handled in UI
-        "/profile",
-        "/settings",
-        "/performance",
-        "/goals",
-        "/support",
-        "/departments",
-        "/notifications",
-        "/smart-search",
-        "/schedule",
-        "/settings",
-      ];
-      return allowed.some(
-        (p) => normalizedPath === p || normalizedPath.startsWith(p + "/"),
-      );
-    }
-
-    if (user.role === "Manager") {
-      const allowed = [
-        "/",
-        "/manager/dashboard",
-        "/manager/my-dashboard",
-        "/manager/my-attendance",
-        "/manager/my-leaves",
-        "/manager/my-payslips",
-        "/manager/my-documents",
-        "/manager/my-expenses",
-        "/manager/my-goals",
-        "/manager/my-schedule",
-        "/manager/my-performance",
-        "/manager/notifications",
-        "/manager/announcements",
-        "/manager/directory",
-        "/manager/support",
-        "/manager/team-assets",
-        "/manager/team-onboarding",
-        "/manager/settings",
-        "/settings",
-        "/manager/exit-tasks",
-        "/employees", // My Team handled in UI
-        "/attendance", // Team attendance
-        "/schedule", // Team schedule
-        "/leave", // Leave approvals
-        "/performance", // Team performance
-        "/appraisal", // Team appraisal
-        "/training", // Assign training
-        "/expenses", // Team expenses
-        "/employee/dashboard",
-        "/payslips",
-        "/my-exit",
-        "/my-documents",
-        "/goals",
-        "/profile",
-        "/support",
-        "/reports",
-        "/notifications",
-      ];
-      return allowed.some(
-        (p) => normalizedPath === p || normalizedPath.startsWith(p + "/"),
-      );
-    }
-
-    if (user.role === "Employee") {
-      const allowed = [
-        "/",
-        "/employee/dashboard",
-        "/employee/attendance",
-        "/employee/leave",
-        "/employee/payslip",
-        "/employee/schedule",
-        "/employee/performance",
-        "/employee/notifications",
-        "/employee/profile",
-        "/profile",
-        "/attendance",
-        "/leave",
-        "/my-exit",
-        "/my-onboarding",
-        "/payslips",
-        "/my-documents",
-        "/expenses",
-        "/goals",
-        "/performance",
-        "/schedule",
-        "/training",
-        "/notifications",
-        "/employees", // Team Directory (view only)
-        "/my-assets",
-        "/support",
-        "/settings",
-      ];
-      return allowed.some(
-        (p) => normalizedPath === p || normalizedPath.startsWith(p + "/"),
-      );
-    }
-
-    return true; // Default allow for demo
+    // Permission checks are now handled by the permission engine.
+    // This function always returns true for authenticated users,
+    // because route-level permission gating is done by PermissionGuard.
+    return true;
   };
 
   return (

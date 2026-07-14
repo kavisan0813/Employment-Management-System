@@ -171,6 +171,12 @@ export interface Employee {
   phone: string;
   department: string;
   role: string;
+  roleAssignments?: Array<{
+    id: string;
+    role: string;
+    scope: string; // e.g. "organization" | "branch" | "department" | "team"
+    scopeId: string;
+  }>;
   designation: string;
   status: string;
   joinDate: string;

@@ -1,314 +1,35 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router";
 import {
-  Users,
-  CalendarCheck,
-  IndianRupee,
-  Briefcase,
-  BarChart3,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
   Zap,
   LogOut,
-  Home,
   Lock,
-  Sprout,
 } from "lucide-react";
-import { useAuth, type UserRole } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
+import {
+  usePermissions,
+  filterNavigation,
+  FULL_NAVIGATION,
+} from "../shared/permission-engine";
 
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
 }
 
-// Accordion-based navigation grouping is defined dynamically inside the Sidebar component.
-
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { permissions } = usePermissions();
 
-  const currentRole = user?.role as UserRole | undefined;
-  const isNewJoinee = false;
-
-  // Accordion groups configuration based on active user role
-  let groups: {
-    label: string;
-    icon: React.ElementType;
-    path?: string;
-    items?: { label: string; path: string; disabled?: boolean }[];
-  }[] = [];
-
-  if (isNewJoinee) {
-    groups = [
-      {
-        label: "Home",
-        icon: Home,
-        items: [
-          { label: "Smart Search", path: "/smart-search" },
-          { label: "My Dashboard", path: "/employee/dashboard" },
-          { label: "Notifications", path: "/notifications" },
-        ],
-      },
-      {
-        label: "My Journey",
-        icon: Sprout,
-        items: [
-          { label: "🌱 My Onboarding", path: "/my-onboarding" },
-          { label: "My Profile", path: "/profile" },
-          { label: "My Documents", path: "/my-documents" },
-          { label: "My Training", path: "/training" },
-        ],
-      },
-      {
-        label: "My Workspace",
-        icon: Briefcase,
-        items: [
-          { label: "My Attendance", path: "/attendance" },
-          { label: "My Leaves", path: "/leave" },
-          { label: "My Payslips", path: "/payslips" },
-          { label: "My Schedule", path: "/schedule" },
-          { label: "My Performance", path: "/performance" },
-          { label: "My Expenses", path: "/expenses" },
-          { label: "My Assets", path: "/my-assets" },
-        ],
-      },
-    ];
-  } else if (currentRole === "Super Admin") {
-    groups = [
-      {
-        label: "Home",
-        icon: Home,
-        items: [
-          { label: "Smart Search", path: "/smart-search" },
-          { label: "Dashboard", path: "/" },
-          { label: "Notifications", path: "/notifications" },
-        ],
-      },
-      {
-        label: "Reports",
-        icon: BarChart3,
-        items: [{ label: "Reports & Analytics", path: "/reports" }],
-      },
-      {
-        label: "Team Management",
-        icon: Users,
-        items: [
-          { label: "Employees", path: "/employees" },
-          { label: "Departments", path: "/departments" },
-          { label: "Recruitment", path: "/recruitment" },
-          { label: "Onboarding", path: "/onboarding" },
-          { label: "Offboarding", path: "/offboarding" },
-        ],
-      },
-      {
-        label: "HR Operations",
-        icon: CalendarCheck,
-        items: [
-          { label: "Attendance", path: "/attendance" },
-          { label: "Schedule", path: "/schedule" },
-          { label: "Leave Management", path: "/leave" },
-          { label: "Performance", path: "/performance" },
-          { label: "Training", path: "/training" },
-          { label: "Documents", path: "/documents" },
-        ],
-      },
-      {
-        label: "Finance & Payroll",
-        icon: IndianRupee,
-        items: [
-          { label: "Payroll", path: "/payroll" },
-          { label: "Expenses", path: "/expenses" },
-          { label: "Asset Management", path: "/asset-management" },
-          { label: "F&F Settlement", path: "/finance/settlements" },
-          { label: "Increment & Appraisal", path: "/appraisal" },
-          { label: "Audit Logs", path: "/settings/audit-logs" },
-        ],
-      },
-      {
-        label: "Account Management",
-        icon: Lock,
-        items: [{ label: "Manage Account", path: "/admin/manage-account" }],
-      },
-    ];
-  } else if (currentRole === "HR Manager") {
-    groups = [
-      {
-        label: "Home",
-        icon: Home,
-        items: [
-          { label: "Smart Search", path: "/smart-search" },
-          { label: "Dashboard", path: "/" },
-          { label: "Notifications", path: "/notifications" },
-        ],
-      },
-      {
-        label: "Reports",
-        icon: BarChart3,
-        items: [{ label: "Reports & Analytics", path: "/reports" }],
-      },
-      {
-        label: "Team Management",
-        icon: Users,
-        items: [
-          { label: "Employees", path: "/employees" },
-          { label: "Departments", path: "/departments" },
-          { label: "Recruitment", path: "/recruitment" },
-          { label: "Onboarding", path: "/onboarding" },
-          { label: "Offboarding", path: "/offboarding" },
-        ],
-      },
-      {
-        label: "HR Operations",
-        icon: CalendarCheck,
-        items: [
-          { label: "Attendance", path: "/attendance" },
-          { label: "Schedule", path: "/schedule" },
-          { label: "Leave Management", path: "/leave" },
-          { label: "Performance", path: "/performance" },
-          { label: "Training", path: "/training" },
-          { label: "Documents", path: "/documents" },
-        ],
-      },
-      {
-        label: "My Workspace",
-        icon: Briefcase,
-        items: [
-          { label: "My Dashboard", path: "/employee/dashboard" },
-          { label: "My Attendance", path: "/employee/attendance" },
-          { label: "My Leaves", path: "/employee/leave" },
-          { label: "My Schedule", path: "/employee/schedule" },
-          { label: "My Performance", path: "/employee/performance" },
-        ],
-      },
-    ];
-  } else if (currentRole === "Finance") {
-    groups = [
-      {
-        label: "Home",
-        icon: Home,
-        items: [
-          { label: "Smart Search", path: "/smart-search" },
-          { label: "Finance Dashboard", path: "/" },
-          { label: "Notifications", path: "/notifications" },
-        ],
-      },
-      {
-        label: "Reports",
-        icon: BarChart3,
-        items: [{ label: "Reports & Analytics", path: "/reports" }],
-      },
-      {
-        label: "Finance Ops",
-        icon: IndianRupee,
-        items: [
-          { label: "Employees (view)", path: "/employees" },
-          { label: "Departments", path: "/departments" },
-          { label: "Payroll", path: "/payroll" },
-          { label: "Financial Onboarding", path: "/finance/onboarding" },
-          { label: "Asset Cost Report", path: "/finance/asset-cost-report" },
-          { label: "F&F Settlement", path: "/finance/settlements" },
-          { label: "Expense Approvals", path: "/expenses" },
-          { label: "Increment & Appraisal", path: "/appraisal" },
-          { label: "Audit Logs", path: "/settings/audit-logs" },
-        ],
-      },
-      {
-        label: "My Workspace",
-        icon: Briefcase,
-        items: [
-          { label: "My Dashboard", path: "/employee/dashboard" },
-          { label: "My Attendance", path: "/attendance" },
-          { label: "My Leaves", path: "/leave" },
-          { label: "My Exit", path: "/my-exit" },
-          { label: "My Payslips", path: "/payslips" },
-          { label: "My Documents", path: "/my-documents" },
-          { label: "My Assets", path: "/my-assets" },
-          { label: "My Expenses", path: "/finance/my-expenses" },
-          { label: "My Performance", path: "/performance" },
-          { label: "My Schedule", path: "/schedule" },
-          { label: "My Goals", path: "/goals" },
-          { label: "My Profile", path: "/profile" },
-          { label: "Support Ticket", path: "/support" },
-        ],
-      },
-    ];
-  } else if (currentRole === "Manager") {
-    groups = [
-      {
-        label: "Home",
-        icon: Home,
-        items: [
-          { label: "Smart Search", path: "/smart-search" },
-          { label: "Team Dashboard", path: "/" },
-          { label: "Notifications", path: "/notifications" },
-        ],
-      },
-      {
-        label: "Reports",
-        icon: BarChart3,
-        items: [{ label: "Reports & Analytics", path: "/reports" }],
-      },
-      {
-        label: "My Team",
-        icon: Users,
-        items: [
-          { label: "Team Dashboard", path: "/" },
-          { label: "My Team", path: "/employees" },
-          { label: "Team Attendance", path: "/attendance" },
-          { label: "Team Schedule", path: "/schedule" },
-          { label: "Leave Approvals", path: "/leave" },
-          { label: "Team Performance", path: "/performance" },
-          { label: "Team Appraisal", path: "/appraisal" },
-          { label: "Team Training", path: "/training" },
-          { label: "Team Onboarding", path: "/manager/team-onboarding" },
-          { label: "Team Assets", path: "/manager/team-assets" },
-          { label: "Exit Tasks", path: "/manager/exit-tasks" },
-          { label: "Expense Approvals", path: "/expenses" },
-          { label: "Recruitment", path: "/recruitment" },
-        ],
-      },
-      {
-        label: "My Workspace",
-        icon: Briefcase,
-        items: [
-          { label: "My Dashboard", path: "/manager/my-dashboard" },
-          { label: "My Exit", path: "/my-exit" },
-          { label: "My Attendance", path: "/manager/my-attendance" },
-          { label: "My Leaves", path: "/manager/my-leaves" },
-          { label: "My Payslips", path: "/manager/my-payslips" },
-          { label: "My Schedule", path: "/manager/my-schedule" },
-          { label: "My Documents", path: "/manager/my-documents" },
-          { label: "My Expenses", path: "/manager/my-expenses" },
-          { label: "My Goals", path: "/manager/my-goals" },
-          { label: "My Performance", path: "/manager/my-performance" },
-          { label: "My Profile", path: "/profile" },
-          { label: "Team Directory", path: "/manager/directory" },
-          { label: "Support Ticket", path: "/manager/support" },
-          { label: "Announcements", path: "/manager/announcements" },
-        ],
-      },
-    ];
-  } else {
-    // Regular Employee role or fallback (nested under My Workspace)
-    groups = [
-      {
-        label: "My Workspace",
-        icon: Briefcase,
-        items: [
-          { label: "My Dashboard", path: "/employee/dashboard" },
-          { label: "My Attendance", path: "/employee/attendance" },
-          { label: "Leave", path: "/employee/leave" },
-          { label: "Pay Slip", path: "/employee/payslip" },
-          { label: "Schedule", path: "/employee/schedule" },
-          { label: "My Performance", path: "/employee/performance" },
-          { label: "Training", path: "/training" },
-          { label: "Notifications", path: "/employee/notifications" },
-        ],
-      },
-    ];
-  }
+  // ── Permission-driven navigation ──────────────────────────────
+  // Filter the full navigation tree to only items this user can see.
+  // This replaces the 5 hardcoded `if (currentRole === "X")` blocks.
+  const groups = filterNavigation(FULL_NAVIGATION, permissions);
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     {},
@@ -327,7 +48,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         };
       });
     }
-  }, [location.pathname, currentRole]);
+  }, [location.pathname, permissions]);
 
   const toggleGroup = (groupLabel: string) => {
     if (collapsed) {
@@ -370,10 +91,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     }
 
     if (path === "/payroll") {
-      const isFinanceDash =
-        currentPath === "/finance/dashboard" ||
-        (currentPath === "/" && currentRole === "Finance");
-      return currentPath === "/payroll" && !isFinanceDash;
+      return currentPath === "/payroll";
     }
 
     if (path === "/settings") {
@@ -446,46 +164,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 py-3 overflow-y-auto no-scrollbar">
-        {isNewJoinee && !collapsed && (
-          <div
-            className="mx-3 mb-4 p-3 rounded-xl border border-[#00B87C]/20"
-            style={{ backgroundColor: "rgba(0,184,124,0.08)" }}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00B87C] to-[#059669] flex items-center justify-center text-white text-[11px] font-black shrink-0">
-                PS
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[14px] font-bold text-foreground truncate">
-                  Priya Sharma
-                </p>
-                <p className="text-[11px] text-muted-foreground truncate">
-                  Frontend Developer · Engineering
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-1.5 mb-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C] animate-pulse" />
-              <span className="text-[10px] font-bold text-[#00B87C]">
-                Onboarding in Progress
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div
-                className="flex-1 h-1.5 rounded-full overflow-hidden"
-                style={{ backgroundColor: "var(--muted)" }}
-              >
-                <div
-                  className="h-full bg-[#00B87C] rounded-full"
-                  style={{ width: "45%" }}
-                />
-              </div>
-              <span className="text-[9px] font-bold text-[#00B87C] shrink-0">
-                45%
-              </span>
-            </div>
-          </div>
-        )}
         <div className="space-y-1.5">
           {groups.map((group) => {
             const GroupIcon = group.icon;

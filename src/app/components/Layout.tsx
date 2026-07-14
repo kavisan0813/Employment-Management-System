@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Outlet, useLocation, Navigate } from "react-router";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
-import { useAuth } from "../context/AuthContext";
 
 const pageTitles: Record<string, string> = {
   "/": "Dashboard",
@@ -21,15 +20,19 @@ const pageTitles: Record<string, string> = {
   "/my-onboarding": "My Onboarding",
   "/my-exit": "My Exit Checklist",
   "/notifications": "Notifications & Announcements",
-  "/finance/dashboard": "Finance Dashboard",
-  "/finance/asset-cost-report": "Asset Cost Report",
-  "/finance/onboarding": "Financial Onboarding",
-  "/manager/dashboard": "Team Dashboard",
-  "/expenses": "Expense Approvals",
-  "/appraisal": "Team Appraisal",
-  "/training": "Team Training",
-  "/manager/settings": "Settings",
-  "/manager/team-onboarding": "Team Onboarding",
+  "/finance": "Finance",
+  "/manager": "Team Management",
+  "/expenses": "Expenses",
+  "/appraisal": "Appraisal",
+  "/training": "Training",
+  "/employee": "My Workspace",
+  "/goals": "Goals",
+  "/support": "Support",
+  "/schedule": "Schedule",
+  "/payslips": "My Payslips",
+  "/documents": "Documents",
+  "/admin": "Admin",
+  "/asset-management": "Asset Management",
 };
 
 export function Layout() {
@@ -57,29 +60,17 @@ export function Layout() {
     }
   }, [isDark]);
 
-  const { user } = useAuth();
-  const basePath = "/" + location.pathname.split("/")[1];
+  // Determine page title from path, without role checks
+  const fullPath = location.pathname;
+  const basePath = "/" + fullPath.split("/")[1];
   const isEmployeeProfile =
-    location.pathname.startsWith("/employees/") &&
-    location.pathname !== "/employees";
-  let title = isEmployeeProfile
-    ? "Employee Profile"
-    : pageTitles[basePath] || "NexusHR";
-  if (basePath === "/notifications" && user?.role === "Finance") {
-    title = "Notifications";
-  }
-  if (location.pathname === "/employee/dashboard" && user?.role === "Finance") {
-    title = "My Dashboard";
-  }
-  if (basePath === "/leave" && user?.role === "Finance") {
-    title = "My Leaves";
-  }
-  if (basePath === "/schedule" && user?.role === "Finance") {
-    title = "My Schedule";
-  }
+    fullPath.startsWith("/employees/") && fullPath !== "/employees";
 
-  const defaultSidebarWidth = user?.role === "Manager" ? 235 : 240;
-  const sidebarWidth = collapsed ? 72 : defaultSidebarWidth;
+  const title = isEmployeeProfile
+    ? "Employee Profile"
+    : pageTitles[fullPath] || pageTitles[basePath] || "NexusHR";
+
+  const sidebarWidth = collapsed ? 72 : 240;
 
   return (
     <div

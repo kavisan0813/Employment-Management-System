@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { employees } from "../data/mockData";
 import { useAuth } from "../context/AuthContext";
+import { usePermissions, P } from "../shared/permission-engine";
 
 interface TopbarProps {
   title: string;
@@ -46,10 +47,13 @@ export function Topbar({
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { hasPermissionKey } = usePermissions();
+  const isFinanceUser = hasPermissionKey(P.PAYROLL_FULL);
+  const isEmployeeOnly = !hasPermissionKey(P.EMPLOYEES_MANAGE) && !hasPermissionKey(P.EMPLOYEES_VIEW_TEAM);
 
   useEffect(() => {
-    setNotifications(user?.role === "Finance" ? 5 : 3);
-  }, [user?.role]);
+    setNotifications(isFinanceUser ? 5 : 3);
+  }, [isFinanceUser]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -321,7 +325,7 @@ export function Topbar({
               className="fixed inset-0 z-[1000]"
               onClick={() => setShowNotifications(false)}
             />
-            {user?.role === "Employee" ? (
+            {isEmployeeOnly ? (
               <EmployeeNotificationPanel
                 onClose={() => setShowNotifications(false)}
                 navigate={navigate}
@@ -366,7 +370,7 @@ export function Topbar({
                   </button>
                 </div>
                 <div className="max-h-[300px] overflow-y-auto">
-                  {(user?.role === "Finance"
+                  {(isFinanceUser
                     ? [
                         {
                           text: "TDS Filing Deadline in 8 Days",
@@ -451,7 +455,7 @@ export function Topbar({
                   onClick={() => {
                     setShowNotifications(false);
                     navigate(
-                      user?.role === "Employee"
+                      isEmployeeOnly
                         ? "/my-notifications"
                         : "/notifications",
                     );
@@ -512,11 +516,9 @@ export function Topbar({
                 lineHeight: 1.2,
               }}
             >
-              {user?.role === "Finance"
-                ? `${user.name} / ${user.role}`
-                : user?.name || "Ryan Park"}
+              {user?.name || "Ryan Park"}
             </p>
-            {user?.role !== "Finance" && (
+            {(
               <p
                 style={{
                   color: "var(--muted-foreground)",
@@ -553,8 +555,8 @@ export function Topbar({
               }}
             >
               {[
-                { icon: User, label: "My Profile", path: user?.role === "Employee" ? "/employee/profile" : "/profile" },
-                ...(user?.role !== "Employee"
+                { icon: User, label: "My Profile", path: isEmployeeOnly ? "/employee/profile" : "/profile" },
+                ...(!isEmployeeOnly
                   ? [{ icon: Settings, label: "Settings", path: "/settings" }]
                   : []),
               ].map((item) => (

@@ -1,10 +1,3 @@
-import {
-  ReactElement,
-  JSXElementConstructor,
-  ReactNode,
-  ReactPortal,
-  Key,
-} from "react";
 import { useSettingsContext } from "../SettingsContext";
 import {
   MapPin,
@@ -443,270 +436,163 @@ export function HolidayCalendarSection() {
               </tr>
             </thead>
             <tbody>
-              {filteredHols.map(
-                (
-                  h: {
-                    name:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<
-                          string,
-                          string | JSXElementConstructor<string>
-                        >
-                      | Iterable<ReactNode>
-                      | ReactPortal
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined;
-                    date:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<
-                          string,
-                          string | JSXElementConstructor<string>
-                        >
-                      | Iterable<ReactNode>
-                      | ReactPortal
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined;
-                    day:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<
-                          string,
-                          string | JSXElementConstructor<string>
-                        >
-                      | Iterable<ReactNode>
-                      | ReactPortal
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined;
-                    type:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<
-                          string,
-                          string | JSXElementConstructor<string>
-                        >
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined;
-                    location:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<
-                          string,
-                          string | JSXElementConstructor<string>
-                        >
-                      | Iterable<ReactNode>
-                      | ReactPortal
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined;
-                    dept:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<
-                          string,
-                          string | JSXElementConstructor<string>
-                        >
-                      | Iterable<ReactNode>
-                      | ReactPortal
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined;
-                    recurring: string;
-                    status:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<
-                          string,
-                          string | JSXElementConstructor<string>
-                        >
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined;
-                    description:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<
-                          string,
-                          string | JSXElementConstructor<string>
-                        >
-                      | Iterable<ReactNode>
-                      | ReactPortal
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined;
-                  },
-                  idx: Key | null | undefined,
-                ) => (
-                  <tr
-                    key={idx}
+              {filteredHols.map((h: HolidayRecord, idx: number) => (
+                <tr
+                  key={idx}
+                  style={{
+                    borderBottom: "1px solid var(--border)",
+                    height: "56px",
+                  }}
+                  className="hover:bg-[var(--muted)] transition-all"
+                >
+                  <td
                     style={{
-                      borderBottom: "1px solid var(--border)",
-                      height: "56px",
+                      padding: "12px 16px",
+                      fontSize: "14px",
+                      fontWeight: 700,
+                      color: "var(--foreground)",
                     }}
-                    className="hover:bg-[var(--muted)] transition-all"
                   >
-                    <td
+                    {h.name}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    {h.date}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--muted-foreground)",
+                    }}
+                  >
+                    {h.day}
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span
                       style={{
-                        padding: "12px 16px",
-                        fontSize: "14px",
+                        backgroundColor:
+                          h.type === "National"
+                            ? "rgba(0, 184, 124, 0.1)"
+                            : h.type === "Optional"
+                              ? "rgba(245, 158, 11, 0.1)"
+                              : "rgba(14, 165, 233, 0.1)",
+                        color:
+                          h.type === "National"
+                            ? "#00B87C"
+                            : h.type === "Optional"
+                              ? "#F59E0B"
+                              : "#0EA5E9",
+                        padding: "4px 10px",
+                        borderRadius: "12px",
+                        fontSize: "11px",
                         fontWeight: 700,
-                        color: "var(--foreground)",
                       }}
                     >
-                      {h.name}
-                    </td>
-                    <td
+                      {h.type}
+                    </span>
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    {h.location}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    {h.dept}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    {h.recurring ? "Yearly" : "One-time"}
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span
                       style={{
-                        padding: "12px 16px",
-                        fontSize: "13px",
-                        color: "var(--foreground)",
+                        backgroundColor:
+                          h.status === "Active"
+                            ? "rgba(0, 184, 124, 0.1)"
+                            : "rgba(107, 114, 128, 0.1)",
+                        color: h.status === "Active" ? "#00B87C" : "#6B7280",
+                        padding: "4px 10px",
+                        borderRadius: "12px",
+                        fontSize: "11px",
+                        fontWeight: 700,
                       }}
                     >
-                      {h.date}
-                    </td>
-                    <td
-                      style={{
-                        padding: "12px 16px",
-                        fontSize: "13px",
-                        color: "var(--muted-foreground)",
-                      }}
-                    >
-                      {h.day}
-                    </td>
-                    <td style={{ padding: "12px 16px" }}>
-                      <span
+                      {h.status}
+                    </span>
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setSelectedHoliday(h);
+                          setHolidayForm({
+                            name: h.name,
+                            date: h.date,
+                            type: h.type,
+                            location: h.location,
+                            dept: h.dept,
+                            recurring: h.recurring,
+                            status: h.status,
+                            description: h.description,
+                          });
+                          setActiveModal("edit_holiday");
+                        }}
                         style={{
-                          backgroundColor:
-                            h.type === "National"
-                              ? "rgba(0, 184, 124, 0.1)"
-                              : h.type === "Optional"
-                                ? "rgba(245, 158, 11, 0.1)"
-                                : "rgba(14, 165, 233, 0.1)",
-                          color:
-                            h.type === "National"
-                              ? "#00B87C"
-                              : h.type === "Optional"
-                                ? "#F59E0B"
-                                : "#0EA5E9",
+                          backgroundColor: "transparent",
+                          border: "1px solid #00B87C",
+                          borderRadius: "8px",
                           padding: "4px 10px",
-                          borderRadius: "12px",
-                          fontSize: "11px",
-                          fontWeight: 700,
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#00B87C",
+                          cursor: "pointer",
                         }}
                       >
-                        {h.type}
-                      </span>
-                    </td>
-                    <td
-                      style={{
-                        padding: "12px 16px",
-                        fontSize: "13px",
-                        color: "var(--foreground)",
-                      }}
-                    >
-                      {h.location}
-                    </td>
-                    <td
-                      style={{
-                        padding: "12px 16px",
-                        fontSize: "13px",
-                        color: "var(--foreground)",
-                      }}
-                    >
-                      {h.dept}
-                    </td>
-                    <td
-                      style={{
-                        padding: "12px 16px",
-                        fontSize: "13px",
-                        color: "var(--foreground)",
-                      }}
-                    >
-                      {h.recurring ? "Yearly" : "One-time"}
-                    </td>
-                    <td style={{ padding: "12px 16px" }}>
-                      <span
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedHoliday(h);
+                          setActiveModal("delete_holiday");
+                        }}
                         style={{
-                          backgroundColor:
-                            h.status === "Active"
-                              ? "rgba(0, 184, 124, 0.1)"
-                              : "rgba(107, 114, 128, 0.1)",
-                          color: h.status === "Active" ? "#00B87C" : "#6B7280",
+                          backgroundColor: "transparent",
+                          border: "1px solid #EF4444",
+                          borderRadius: "8px",
                           padding: "4px 10px",
-                          borderRadius: "12px",
-                          fontSize: "11px",
-                          fontWeight: 700,
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#EF4444",
+                          cursor: "pointer",
                         }}
                       >
-                        {h.status}
-                      </span>
-                    </td>
-                    <td style={{ padding: "12px 16px" }}>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedHoliday(h);
-                            setHolidayForm({
-                              name: h.name,
-                              date: h.date,
-                              type: h.type,
-                              location: h.location,
-                              dept: h.dept,
-                              recurring: h.recurring,
-                              status: h.status,
-                              description: h.description,
-                            });
-                            setActiveModal("edit_holiday");
-                          }}
-                          style={{
-                            backgroundColor: "transparent",
-                            border: "1px solid #00B87C",
-                            borderRadius: "8px",
-                            padding: "4px 10px",
-                            fontSize: "12px",
-                            fontWeight: 600,
-                            color: "#00B87C",
-                            cursor: "pointer",
-                          }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedHoliday(h);
-                            setActiveModal("delete_holiday");
-                          }}
-                          style={{
-                            backgroundColor: "transparent",
-                            border: "1px solid #EF4444",
-                            borderRadius: "8px",
-                            padding: "4px 10px",
-                            fontSize: "12px",
-                            fontWeight: 600,
-                            color: "#EF4444",
-                            cursor: "pointer",
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ),
-              )}
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -734,57 +620,37 @@ export function HolidayCalendarSection() {
             className="grid grid-cols-7 gap-2"
             style={{ minHeight: "200px" }}
           >
-            {filteredHols.map(
-              (
-                h: {
-                  date: string;
-                  name:
-                    | string
-                    | number
-                    | boolean
-                    | ReactElement<
-                        string,
-                        string | JSXElementConstructor<string>
-                      >
-                    | Iterable<ReactNode>
-                    | ReactPortal
-                    | Iterable<ReactNode>
-                    | null
-                    | undefined;
-                },
-                i: Key | null | undefined,
-              ) => (
-                <div
-                  key={i}
-                  onClick={() => {
-                    setSelectedHoliday(h);
-                    setActiveModal("view_holiday");
-                  }}
-                  className="p-2 rounded-xl border flex flex-col justify-between hover:border-[#00B87C] cursor-pointer transition-all"
+            {filteredHols.map((h: HolidayRecord, i: number) => (
+              <div
+                key={i}
+                onClick={() => {
+                  setSelectedHoliday(h);
+                  setActiveModal("view_holiday");
+                }}
+                className="p-2 rounded-xl border flex flex-col justify-between hover:border-[#00B87C] cursor-pointer transition-all"
+                style={{
+                  backgroundColor: "var(--muted)",
+                  borderColor: "var(--border)",
+                  minHeight: "80px",
+                }}
+              >
+                <span
+                  className="font-bold text-xs"
+                  style={{ color: "var(--foreground)" }}
+                >
+                  {h.date.split("-")[2]}
+                </span>
+                <span
+                  className="text-[11px] font-semibold truncate mt-1 px-1 py-0.5 rounded"
                   style={{
-                    backgroundColor: "var(--muted)",
-                    borderColor: "var(--border)",
-                    minHeight: "80px",
+                    backgroundColor: "rgba(0, 184, 124, 0.1)",
+                    color: "#00B87C",
                   }}
                 >
-                  <span
-                    className="font-bold text-xs"
-                    style={{ color: "var(--foreground)" }}
-                  >
-                    {h.date.split("-")[2]}
-                  </span>
-                  <span
-                    className="text-[11px] font-semibold truncate mt-1 px-1 py-0.5 rounded"
-                    style={{
-                      backgroundColor: "rgba(0, 184, 124, 0.1)",
-                      color: "#00B87C",
-                    }}
-                  >
-                    {h.name}
-                  </span>
-                </div>
-              ),
-            )}
+                  {h.name}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       )}

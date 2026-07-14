@@ -51,337 +51,6 @@ const departments = [
 // const statuses = ["All Status", "Active", "Inactive", "On Leave"];
 
 /* ─── Add Employee Modal ─────────────────── */
-function AddEmployeeModal({
-  onClose,
-  onAdd,
-}: {
-  onClose: () => void;
-  onAdd: (form: {
-    name: string;
-    email: string;
-    department: string;
-    designation: string;
-    salary: string;
-    joinDate: string;
-  }) => void;
-}) {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    department: "Engineering",
-    designation: "",
-    salary: "",
-    joinDate: new Date().toISOString().split("T")[0],
-  });
-
-  return (
-    <div
-      className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
-        style={{
-          backgroundColor: "var(--card)",
-          border: "1px solid var(--border)",
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Modal Header */}
-        <div
-          className="flex items-center justify-between px-8 py-7"
-          style={{
-            borderBottom: "1px solid var(--border)",
-            background: "var(--card)",
-          }}
-        >
-          <div>
-            <h3
-              style={{
-                color: "var(--foreground)",
-                fontSize: "22px",
-                fontWeight: 800,
-                letterSpacing: "-0.5px",
-              }}
-            >
-              Add New Employee
-            </h3>
-            <p
-              style={{
-                color: "var(--muted-foreground)",
-                fontSize: "14px",
-                marginTop: "2px",
-              }}
-            >
-              Create a new employee profile in the system
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl transition-colors hover:bg-[rgba(0,0,0,0.05)]"
-            style={{ color: "var(--muted-foreground)" }}
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Modal Body */}
-        <div
-          className="px-8 py-8 overflow-y-auto"
-          style={{ maxHeight: "70vh" }}
-        >
-          <div className="grid grid-cols-2 gap-6">
-            {/* Name */}
-            <div className="col-span-2">
-              <label
-                style={{
-                  color: "var(--foreground)",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  display: "block",
-                  marginBottom: "8px",
-                  opacity: 0.9,
-                }}
-              >
-                Full Name
-              </label>
-              <div className="relative">
-                <User
-                  size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                />
-                <input
-                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
-                  style={{
-                    border: "1px solid var(--border)",
-                    backgroundColor: "var(--background)",
-                    color: "var(--foreground)",
-                  }}
-                  placeholder="e.g. John Doe"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                />
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="col-span-2">
-              <label
-                style={{
-                  color: "var(--foreground)",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  display: "block",
-                  marginBottom: "8px",
-                  opacity: 0.9,
-                }}
-              >
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail
-                  size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                />
-                <input
-                  type="email"
-                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
-                  style={{
-                    border: "1px solid var(--border)",
-                    backgroundColor: "var(--background)",
-                    color: "var(--foreground)",
-                  }}
-                  placeholder="john.doe@company.com"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                />
-              </div>
-            </div>
-
-            {/* Department */}
-            <div>
-              <label
-                style={{
-                  color: "var(--foreground)",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  display: "block",
-                  marginBottom: "8px",
-                  opacity: 0.9,
-                }}
-              >
-                Department
-              </label>
-              <div className="relative">
-                <Briefcase
-                  size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                />
-                <select
-                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none appearance-none focus:ring-2 focus:ring-emerald-500/20"
-                  style={{
-                    border: "1px solid var(--border)",
-                    backgroundColor: "var(--background)",
-                    color: "var(--foreground)",
-                  }}
-                  value={form.department}
-                  onChange={(e) =>
-                    setForm({ ...form, department: e.target.value })
-                  }
-                >
-                  {departments.slice(1).map((d) => (
-                    <option
-                      key={d}
-                      style={{
-                        backgroundColor: "var(--card)",
-                        color: "var(--foreground)",
-                      }}
-                    >
-                      {d}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  size={14}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                />
-              </div>
-            </div>
-
-            {/* Designation */}
-            <div>
-              <label
-                style={{
-                  color: "var(--foreground)",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  display: "block",
-                  marginBottom: "8px",
-                  opacity: 0.9,
-                }}
-              >
-                Designation
-              </label>
-              <input
-                className="w-full rounded-2xl px-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
-                style={{
-                  border: "1px solid var(--border)",
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
-                }}
-                placeholder="e.g. Senior Developer"
-                value={form.designation}
-                onChange={(e) =>
-                  setForm({ ...form, designation: e.target.value })
-                }
-              />
-            </div>
-
-            {/* Salary */}
-            <div>
-              <label
-                style={{
-                  color: "var(--foreground)",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  display: "block",
-                  marginBottom: "8px",
-                  opacity: 0.9,
-                }}
-              >
-                Annual Salary (₹)
-              </label>
-              <div className="relative">
-                <IndianRupee
-                  size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                />
-                <input
-                  type="number"
-                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
-                  style={{
-                    border: "1px solid var(--border)",
-                    backgroundColor: "var(--background)",
-                    color: "var(--foreground)",
-                  }}
-                  placeholder="75000"
-                  value={form.salary}
-                  onChange={(e) => setForm({ ...form, salary: e.target.value })}
-                />
-              </div>
-            </div>
-
-            {/* Join Date */}
-            <div>
-              <label
-                style={{
-                  color: "var(--foreground)",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  display: "block",
-                  marginBottom: "8px",
-                  opacity: 0.9,
-                }}
-              >
-                Joining Date
-              </label>
-              <div className="relative">
-                <CalendarIcon
-                  size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                />
-                <input
-                  type="date"
-                  className="w-full rounded-2xl pl-11 pr-4 py-3.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
-                  style={{
-                    border: "1px solid var(--border)",
-                    backgroundColor: "var(--background)",
-                    color: "var(--foreground)",
-                  }}
-                  value={form.joinDate}
-                  onChange={(e) =>
-                    setForm({ ...form, joinDate: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Modal Footer */}
-        <div
-          className="px-6 py-5 flex gap-3"
-          style={{ borderTop: "1px solid var(--border)" }}
-        >
-          <button
-            onClick={onClose}
-            className="flex-1 py-3.5 rounded-2xl text-sm font-bold transition-all hover:bg-emerald-500/10"
-            style={{
-              backgroundColor: "var(--secondary)",
-              color: "var(--primary)",
-              border: "none",
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => {
-              onAdd(form);
-            }}
-            className="flex-1 py-3.5 rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95"
-            style={{
-              background: "#10B981",
-              border: "none",
-            }}
-          >
-            Add Employee
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* ─── Edit Employee Modal ────────────────── */
 function EditEmployeeModal({
@@ -1152,7 +821,6 @@ export function Employees() {
   const { user } = useAuth();
   const {
     employeesList: employees,
-    addEmployee,
     updateEmployee,
     deleteEmployee: removeEmployee,
     bulkImportEmployees,
@@ -1189,17 +857,13 @@ export function Employees() {
   const [selectedLocation, setSelectedLocation] = useState("All Locations");
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
-
   const [view, setView] = useState<"table" | "grid" | "team">("table");
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [actionMenuRow, setActionMenuRow] = useState<string | null>(null);
   const [sortCol, setSortCol] = useState("name");
   const [sortDesc, setSortDesc] = useState(false);
-
   const [page, setPage] = useState(1);
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
-
-  const [showAddModal, setShowAddModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [editEmployee, setEditEmployee] = useState<
     (typeof employees)[0] | null
@@ -1544,7 +1208,7 @@ export function Employees() {
                 Import Employees
               </button>
               <button
-                onClick={() => setShowAddModal(true)}
+                onClick={() => navigate("/employees/add")}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -2718,18 +2382,6 @@ export function Employees() {
         </div>
       )}
 
-      {showAddModal && (
-        <AddEmployeeModal
-          onClose={() => setShowAddModal(false)}
-          onAdd={(emp) => {
-            addEmployee({
-              ...emp,
-              salary: Number(emp.salary),
-            } as EmployeeInput);
-            setShowAddModal(false);
-          }}
-        />
-      )}
       {showImportModal && (
         <BulkImportModal
           onClose={() => setShowImportModal(false)}

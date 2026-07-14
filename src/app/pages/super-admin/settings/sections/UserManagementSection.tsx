@@ -1,13 +1,8 @@
 import { useSettingsContext } from "../SettingsContext";
+import type { UserManagementRecord } from "../SettingsContext";
 import { useAuth } from "../../../../context/AuthContext";
 import { ChevronRight } from "lucide-react";
-import {
-  ReactElement,
-  JSXElementConstructor,
-  ReactNode,
-  ReactPortal,
-  Key,
-} from "react";
+
 
 export function UserManagementSection() {
   const { user } = useAuth();
@@ -219,82 +214,7 @@ export function UserManagementSection() {
             </tr>
           </thead>
           <tbody>
-            {usersList.map(
-              (
-                u: {
-                  role:
-                    | string
-                    | number
-                    | boolean
-                    | ReactElement<string, string | JSXElementConstructor<string>>
-                    | Iterable<ReactNode>
-                    | ReactPortal
-                    | Iterable<ReactNode>
-                    | null
-                    | undefined;
-                  status:
-                    | string
-                    | number
-                    | boolean
-                    | ReactElement<string, string | JSXElementConstructor<string>>
-                    | Iterable<ReactNode>
-                    | null
-                    | undefined;
-                  avatarBg: string;
-                  initials:
-                    | string
-                    | number
-                    | boolean
-                    | ReactElement<string, string | JSXElementConstructor<string>>
-                    | Iterable<ReactNode>
-                    | ReactPortal
-                    | Iterable<ReactNode>
-                    | null
-                    | undefined;
-                  name:
-                    | string
-                    | number
-                    | boolean
-                    | ReactElement<string, string | JSXElementConstructor<string>>
-                    | Iterable<ReactNode>
-                    | ReactPortal
-                    | Iterable<ReactNode>
-                    | null
-                    | undefined;
-                  email:
-                    | string
-                    | number
-                    | boolean
-                    | ReactElement<string, string | JSXElementConstructor<string>>
-                    | Iterable<ReactNode>
-                    | ReactPortal
-                    | Iterable<ReactNode>
-                    | null
-                    | undefined;
-                  dept:
-                    | string
-                    | number
-                    | boolean
-                    | ReactElement<string, string | JSXElementConstructor<string>>
-                    | Iterable<ReactNode>
-                    | ReactPortal
-                    | Iterable<ReactNode>
-                    | null
-                    | undefined;
-                  lastLogin:
-                    | string
-                    | number
-                    | boolean
-                    | ReactElement<string, string | JSXElementConstructor<string>>
-                    | Iterable<ReactNode>
-                    | ReactPortal
-                    | Iterable<ReactNode>
-                    | null
-                    | undefined;
-                  location: string;
-                },
-                idx: Key | null | undefined,
-              ) => {
+            {usersList.map((u: UserManagementRecord, idx: number) => {
                 const roleStyle = getRoleStyles(u.role);
                 const statusStyle = getStatusStyles(u.status);
                 return (

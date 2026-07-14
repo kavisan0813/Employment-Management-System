@@ -17,7 +17,6 @@ import {
   IndianRupee,
   Star,
   User,
-  Lock,
   Shield,
   FileText,
   Link2,
@@ -72,7 +71,6 @@ const sections = [
     title: "SECURITY & ACCESS",
     items: [
       { id: "user_management", label: "User Management", icon: User },
-      { id: "roles", label: "Roles & Permissions", icon: Lock },
       { id: "security", label: "Security Settings", icon: Shield },
       { id: "audit_logs", label: "Audit Logs", icon: FileText },
     ],
@@ -359,22 +357,7 @@ export interface SalaryComponent {
   taxable: boolean;
 }
 
-const SettingsContext = createContext<any>(null);
-
-export function useSettingsContext() {
-  const ctx = useContext(SettingsContext);
-  if (!ctx)
-    throw new Error("useSettingsContext must be used within SettingsProvider");
-  return ctx;
-}
-
-export function SettingsProvider({
-  children,
-  defaultTab = "company",
-}: {
-  children: ReactNode;
-  defaultTab?: string;
-}) {
+export function useSettingsProviderValue(defaultTab: string = "company") {
   const [searchParams] = useSearchParams();
   const [activeSubTab, setActiveSubTab] = useState(
     searchParams.get("tab") || defaultTab,
@@ -2161,6 +2144,29 @@ export function SettingsProvider({
     // UI helpers
     SectionTitle,
   };
+
+  return contextValue;
+}
+
+export type SettingsContextType = ReturnType<typeof useSettingsProviderValue>;
+
+export const SettingsContext = createContext<SettingsContextType | null>(null);
+
+export function useSettingsContext() {
+  const ctx = useContext(SettingsContext);
+  if (!ctx)
+    throw new Error("useSettingsContext must be used within SettingsProvider");
+  return ctx;
+}
+
+export function SettingsProvider({
+  children,
+  defaultTab = "company",
+}: {
+  children: ReactNode;
+  defaultTab?: string;
+}) {
+  const contextValue = useSettingsProviderValue(defaultTab);
 
   return (
     <SettingsContext.Provider value={contextValue}>

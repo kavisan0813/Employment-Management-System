@@ -17,7 +17,7 @@ import {
   Receipt,
 } from "lucide-react";
 import { useNavigate } from "react-router";
-import { showToast } from "../../../components/workflow/ToastNotification";
+import { showToast } from "../../components/workflow/ToastNotification";
 
 const PENDING_ACTIONS = [
   {

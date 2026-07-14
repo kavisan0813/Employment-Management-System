@@ -13,7 +13,6 @@ import {
   PayrollSettingsSection,
   PerformanceSettingsSection,
   UserManagementSection,
-  RolesPermissionsSection,
   SecuritySettingsSection,
   AuditLogsSection,
   ConnectedAppsSection,
@@ -61,30 +60,30 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
   const [, setEmpModal] = useState<string | null>(null);
 
   // Read state from context (for Admin/HR) or local (for Employee)
-  const activeSubTab = isEmployee ? empActiveSection : context.activeSubTab;
+  const activeSubTab = isEmployee ? empActiveSection : context!.activeSubTab;
   const setActiveSubTab = isEmployee
     ? setEmpActiveSection
-    : context.setActiveSubTab;
+    : context!.setActiveSubTab;
 
   const [localSearch, setLocalSearch] = useState("");
-  const sidebarSearch = isEmployee ? localSearch : context.sidebarSearch;
+  const sidebarSearch = isEmployee ? localSearch : context!.sidebarSearch;
   const setSidebarSearch = isEmployee
     ? setLocalSearch
-    : context.setSidebarSearch;
+    : context!.setSidebarSearch;
 
   const [localCollapsed, setLocalCollapsed] = useState<string[]>([]);
   const collapsedCategories = isEmployee
     ? localCollapsed
-    : context.collapsedCategories;
+    : context!.collapsedCategories;
   const setCollapsedCategories = isEmployee
     ? setLocalCollapsed
-    : context.setCollapsedCategories;
+    : context!.setCollapsedCategories;
 
   const [localSidebarOpen, setLocalSidebarOpen] = useState(false);
-  const isSidebarOpen = isEmployee ? localSidebarOpen : context.isSidebarOpen;
+  const isSidebarOpen = isEmployee ? localSidebarOpen : context!.isSidebarOpen;
   const setIsSidebarOpen = isEmployee
     ? setLocalSidebarOpen
-    : context.setIsSidebarOpen;
+    : context!.setIsSidebarOpen;
 
   const navigation = ROLE_NAVIGATION[role] || [];
 
@@ -145,8 +144,7 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
         return <PerformanceSettingsSection />;
       case "user_management":
         return <UserManagementSection />;
-      case "roles":
-        return <RolesPermissionsSection />;
+
       case "security":
         return <SecuritySettingsSection />;
       case "audit_logs":

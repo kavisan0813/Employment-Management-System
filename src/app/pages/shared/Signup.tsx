@@ -11,11 +11,9 @@ import {
   Eye,
   EyeOff,
   ShieldCheck,
-  CheckCircle2,
   ChevronDown,
   ArrowLeft,
   Check,
-  Upload,
   Globe,
   CreditCard,
 } from "lucide-react";
@@ -113,11 +111,6 @@ interface SignupFormData {
   address: string;
   companySize: string;
   departmentsCount: string;
-  orgEmail: string;
-  supportPhone: string;
-  timezone: string;
-  logoFile: File | null;
-  logoName: string;
   plan: "Starter" | "Growth" | "Enterprise";
   billingCycle: "Monthly" | "Yearly";
 }
@@ -129,7 +122,7 @@ export function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Stepper state: 1 (Account), 2.1 (Basic Org), 2.2 (Address/Size), 2.3 (Branding), 2.4 (Review), 3 (Plan), "payment", "contact-sales"
+  // Stepper state: 1 (Account), 2.1 (Basic Org), 2.2 (Address/Size), 2.4 (Review), 3 (Plan), "payment", "contact-sales"
   const [step, setStep] = useState<number | string>(() => {
     const savedStep = sessionStorage.getItem("nexus_onboarding_step");
     return savedStep ? JSON.parse(savedStep) : 1;
@@ -165,12 +158,6 @@ export function Signup() {
           departmentsCount: "",
 
           // Screen 2.3: Contact & Branding
-          orgEmail: "",
-          supportPhone: "",
-          timezone:
-            Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata",
-          logoFile: null as File | null,
-          logoName: "",
 
           // Screen 3: Billing Plan
           plan: "Starter" as "Starter" | "Growth" | "Enterprise",
@@ -228,13 +215,6 @@ export function Signup() {
       setFormData((prev) => ({ ...prev, orgCode: code }));
     }
   }, [formData.orgName]);
-
-  // Pre-fill Organization email with Personal email
-  useEffect(() => {
-    if (formData.email && !formData.orgEmail) {
-      setFormData((prev) => ({ ...prev, orgEmail: prev.email }));
-    }
-  }, [formData.email]);
 
   const handleInputChange = (
     field: keyof SignupFormData,
@@ -343,7 +323,6 @@ export function Signup() {
         state: formData.state,
         city: formData.city,
         address: formData.address,
-        phone: formData.supportPhone,
         ownerEmail: formData.email,
         ownerName: formData.fullName,
         password: formData.password,
@@ -476,15 +455,11 @@ export function Signup() {
     );
   };
 
-  const isStep2_3Valid = () => {
-    return formData.orgEmail && formData.timezone;
-  };
-
   const renderStepsIndicator = () => {
     const steps = [
       { num: 2.1, label: "Basic Info" },
       { num: 2.2, label: "Address & Size" },
-      { num: 2.3, label: "Contact & Logo" },
+
       { num: 2.4, label: "Confirm" },
     ];
 
@@ -940,21 +915,6 @@ export function Signup() {
               </div>
 
               {/* Org Code */}
-              <div className="space-y-1.5">
-                <label className="block text-[13px] font-bold text-gray-700 dark:text-gray-300">
-                  Organization Code <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. ACM001"
-                  value={formData.orgCode}
-                  onChange={(e) =>
-                    handleInputChange("orgCode", e.target.value.toUpperCase())
-                  }
-                  className="w-full bg-[#F5F6F8] dark:bg-gray-800 border-0 rounded-[12px] p-3 text-sm focus:ring-2 focus:ring-emerald-500/30 outline-none transition-all text-gray-900 dark:text-white font-mono uppercase"
-                />
-              </div>
 
               {/* Industry Type */}
               <div className="space-y-1.5">
@@ -1207,145 +1167,6 @@ export function Signup() {
               <button
                 type="button"
                 disabled={!isStep2_2Valid()}
-                onClick={() => setStep(2.3)}
-                className="flex items-center gap-1.5 px-6 py-3 rounded-full bg-emerald-500 text-white font-bold text-sm shadow-md hover:bg-emerald-600 transition-all active:scale-95 disabled:opacity-50"
-              >
-                Next Step
-                <ArrowRight size={16} />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 2.3: CONTACT & BRANDING */}
-        {step === 2.3 && (
-          <div className="space-y-6">
-            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">
-              Contact & Branding
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Org Email */}
-              <div className="space-y-1.5">
-                <label className="block text-[13px] font-bold text-gray-700 dark:text-gray-300">
-                  Organization Notifications Email{" "}
-                  <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="notifications@acme.com"
-                  value={formData.orgEmail}
-                  onChange={(e) =>
-                    handleInputChange("orgEmail", e.target.value)
-                  }
-                  className="w-full bg-[#F5F6F8] dark:bg-gray-800 border-0 rounded-[12px] p-3 text-sm focus:ring-2 focus:ring-emerald-500/30 outline-none transition-all text-gray-900 dark:text-white"
-                />
-              </div>
-
-              {/* Support Phone Number */}
-              <div className="space-y-1.5">
-                <label className="block text-[13px] font-bold text-gray-700 dark:text-gray-300">
-                  Support Phone Number
-                </label>
-                <input
-                  type="tel"
-                  placeholder="e.g. +91 99999 88888 (Optional)"
-                  value={formData.supportPhone}
-                  onChange={(e) =>
-                    handleInputChange("supportPhone", e.target.value)
-                  }
-                  className="w-full bg-[#F5F6F8] dark:bg-gray-800 border-0 rounded-[12px] p-3 text-sm focus:ring-2 focus:ring-emerald-500/30 outline-none transition-all text-gray-900 dark:text-white"
-                />
-              </div>
-
-              {/* Timezone */}
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="block text-[13px] font-bold text-gray-700 dark:text-gray-300">
-                  Default Timezone <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    required
-                    value={formData.timezone}
-                    onChange={(e) =>
-                      handleInputChange("timezone", e.target.value)
-                    }
-                    className="w-full bg-[#F5F6F8] dark:bg-gray-800 border-0 rounded-[12px] p-3 text-sm focus:ring-2 focus:ring-emerald-500/30 outline-none appearance-none cursor-pointer text-gray-900 dark:text-white"
-                  >
-                    <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
-                    <option value="America/New_York">
-                      America/New_York (EST/EDT)
-                    </option>
-                    <option value="America/Los_Angeles">
-                      America/Los_Angeles (PST/PDT)
-                    </option>
-                    <option value="Europe/London">
-                      Europe/London (GMT/BST)
-                    </option>
-                    <option value="Europe/Paris">
-                      Europe/Paris (CET/CEST)
-                    </option>
-                    <option value="Asia/Singapore">Asia/Singapore (SGT)</option>
-                    <option value="UTC">UTC</option>
-                  </select>
-                  <ChevronDown
-                    size={16}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                  />
-                </div>
-              </div>
-
-              {/* Company Logo File Selector */}
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="block text-[13px] font-bold text-gray-700 dark:text-gray-300">
-                  Company Logo
-                </label>
-                <div className="border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-2xl p-6 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900/50 hover:border-emerald-500/50 transition-colors cursor-pointer relative">
-                  <Upload size={32} className="text-emerald-500 mb-2" />
-                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 text-center">
-                    {formData.logoName
-                      ? `Selected: ${formData.logoName}`
-                      : "Click to select or drag logo file here"}
-                  </span>
-                  <span className="text-[10px] text-gray-400 mt-1">
-                    PNG, JPG up to 2MB
-                  </span>
-                  <input
-                    type="file"
-                    accept="image/png, image/jpeg"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0] || null;
-                      if (file) {
-                        if (file.size > 2 * 1024 * 1024) {
-                          toast.error("File size exceeds 2MB limit");
-                          return;
-                        }
-                        setFormData((prev) => ({
-                          ...prev,
-                          logoFile: file,
-                          logoName: file.name,
-                        }));
-                      }
-                    }}
-                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Stepper Controls */}
-            <div className="flex items-center justify-between mt-8 pt-4 border-t border-gray-100 dark:border-gray-800">
-              <button
-                type="button"
-                onClick={() => setStep(2.2)}
-                className="flex items-center gap-1 text-gray-500 hover:text-gray-700 font-bold text-sm"
-              >
-                <ArrowLeft size={16} />
-                Back
-              </button>
-              <button
-                type="button"
-                disabled={!isStep2_3Valid()}
                 onClick={() => setStep(2.4)}
                 className="flex items-center gap-1.5 px-6 py-3 rounded-full bg-emerald-500 text-white font-bold text-sm shadow-md hover:bg-emerald-600 transition-all active:scale-95 disabled:opacity-50"
               >
@@ -1384,14 +1205,7 @@ export function Signup() {
                       {formData.orgName}
                     </span>
                   </div>
-                  <div>
-                    <span className="text-xs text-gray-400 block">
-                      Organization Code
-                    </span>
-                    <span className="font-semibold font-mono text-gray-900 dark:text-white">
-                      {formData.orgCode}
-                    </span>
-                  </div>
+
                   <div>
                     <span className="text-xs text-gray-400 block">
                       Industry
@@ -1477,65 +1291,13 @@ export function Signup() {
                   )}
                 </div>
               </div>
-
-              {/* Section 2.3 Info */}
-              <div className="p-5 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 relative">
-                <span
-                  onClick={() => setStep(2.3)}
-                  className="absolute right-5 top-5 text-xs font-bold text-emerald-600 hover:underline cursor-pointer"
-                >
-                  Edit
-                </span>
-                <h3 className="font-extrabold text-sm text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider">
-                  Branding & Timezone
-                </h3>
-                <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm">
-                  <div>
-                    <span className="text-xs text-gray-400 block">
-                      Notification Email
-                    </span>
-                    <span className="font-semibold text-gray-900 dark:text-white">
-                      {formData.orgEmail}
-                    </span>
-                  </div>
-                  {formData.supportPhone && (
-                    <div>
-                      <span className="text-xs text-gray-400 block">
-                        Support Phone
-                      </span>
-                      <span className="font-semibold text-gray-900 dark:text-white">
-                        {formData.supportPhone}
-                      </span>
-                    </div>
-                  )}
-                  <div className={formData.supportPhone ? "col-span-2" : ""}>
-                    <span className="text-xs text-gray-400 block">
-                      Timezone
-                    </span>
-                    <span className="font-semibold text-gray-900 dark:text-white">
-                      {formData.timezone}
-                    </span>
-                  </div>
-                  {formData.logoName && (
-                    <div className="col-span-2">
-                      <span className="text-xs text-gray-400 block">
-                        Uploaded Logo
-                      </span>
-                      <span className="font-semibold text-emerald-600 flex items-center gap-1.5">
-                        <CheckCircle2 size={16} />
-                        {formData.logoName}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
 
             {/* Stepper Controls */}
             <div className="flex items-center justify-between mt-8 pt-4 border-t border-gray-100 dark:border-gray-800">
               <button
                 type="button"
-                onClick={() => setStep(2.3)}
+                onClick={() => setStep(2.2)}
                 className="flex items-center gap-1 text-gray-500 hover:text-gray-700 font-bold text-sm"
               >
                 <ArrowLeft size={16} />
