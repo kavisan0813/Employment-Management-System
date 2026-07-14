@@ -34,6 +34,20 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useEmployees } from "../../../context/AppContext";
 import { showToast } from "../../../components/workflow/ToastNotification";
+import { PermissionGate, usePermissionKey, P } from "../../../shared/permission-engine";
+import { useAuth } from "../../../context/AuthContext";
+
+export interface ChangeRecord {
+  id: string;
+  changedBy: {
+    name: string;
+    avatar?: string;
+    role?: string;
+  };
+  newValue: string;
+  date: string;
+  comment: string;
+}
 
 interface Department {
   id: string;
@@ -44,15 +58,13 @@ interface Department {
   employees: number;
   activeEmployees: number;
   onLeaveEmployees: number;
-  annualBudget: number;
-  budgetUsed: number;
   growth: number;
   description?: string;
   createdDate?: string;
   lastUpdated?: string;
   parentDepartment?: string;
-  location?: string;
-  teams?: string[];
+  teams?: { name: string; lead: string }[];
+  changeHistory?: ChangeRecord[];
 }
 
 /* ─── Enhanced Mock Data ─────────────────── */
@@ -66,14 +78,15 @@ const initialDeptsData: Department[] = [
     employees: 820,
     activeEmployees: 805,
     onLeaveEmployees: 15,
-    annualBudget: 12000000,
-    budgetUsed: 8500000,
     growth: 18,
     description: "Core technology development and infrastructure scaling.",
     createdDate: "Jan 15, 2023",
     lastUpdated: "Apr 20, 2026",
     parentDepartment: "None",
-    location: "New York, NY",
+    teams: [
+      { name: "Database Team", lead: "Arun Kumar" },
+      { name: "Backend Team", lead: "Priya Nair" },
+    ],
   },
   {
     id: "DEPT002",
@@ -84,14 +97,11 @@ const initialDeptsData: Department[] = [
     employees: 540,
     activeEmployees: 532,
     onLeaveEmployees: 8,
-    annualBudget: 8500000,
-    budgetUsed: 6200000,
     growth: 12,
     description: "Revenue acquisition and client relationship onboarding.",
     createdDate: "Mar 10, 2023",
     lastUpdated: "Apr 18, 2026",
     parentDepartment: "None",
-    location: "Chicago, IL",
   },
   {
     id: "DEPT003",
@@ -102,15 +112,12 @@ const initialDeptsData: Department[] = [
     employees: 310,
     activeEmployees: 300,
     onLeaveEmployees: 10,
-    annualBudget: 6000000,
-    budgetUsed: 4800000,
     growth: 8,
     description:
       "Product placement, digital campaigns, and branding initiatives.",
     createdDate: "Feb 20, 2023",
     lastUpdated: "Mar 15, 2026",
     parentDepartment: "None",
-    location: "San Francisco, CA",
   },
   {
     id: "DEPT004",
@@ -121,15 +128,12 @@ const initialDeptsData: Department[] = [
     employees: 180,
     activeEmployees: 176,
     onLeaveEmployees: 4,
-    annualBudget: 4000000,
-    budgetUsed: 3100000,
     growth: 5,
     description:
       "Talent scouting, organizational benefits, and policy rollout.",
     createdDate: "Jan 05, 2023",
     lastUpdated: "Feb 28, 2026",
     parentDepartment: "None",
-    location: "Boston, MA",
   },
   {
     id: "DEPT005",
@@ -140,15 +144,12 @@ const initialDeptsData: Department[] = [
     employees: 240,
     activeEmployees: 238,
     onLeaveEmployees: 2,
-    annualBudget: 5500000,
-    budgetUsed: 4100000,
     growth: 6,
     description:
       "Corporate audits, payroll compliance, and bookkeeping operations.",
     createdDate: "Jun 01, 2023",
     lastUpdated: "Apr 10, 2026",
     parentDepartment: "None",
-    location: "New York, NY",
   },
   {
     id: "DEPT006",
@@ -159,15 +160,12 @@ const initialDeptsData: Department[] = [
     employees: 757,
     activeEmployees: 740,
     onLeaveEmployees: 17,
-    annualBudget: 9500000,
-    budgetUsed: 8900000,
     growth: 14,
     description:
       "Logistics fulfillment, quality checks, and supply parameters.",
     createdDate: "May 12, 2023",
     lastUpdated: "Dec 15, 2025",
     parentDepartment: "None",
-    location: "Chicago, IL",
   },
 ];
 
@@ -181,20 +179,20 @@ function DepartmentFormModal({
   onClose: () => void;
   onSave: (d: Department) => void;
 }) {
+  const { user } = useAuth();
   const [form, setForm] = useState({
     name: dept?.name || "",
     code: dept?.code || "",
     head: dept?.head || "",
-    budget: dept ? String(dept.annualBudget) : "",
     status: dept?.status || "Active",
     description: dept?.description || "",
     parentDepartment: dept?.parentDepartment || "None",
-    location: dept?.location || "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [teams, setTeams] = useState<string[]>(dept?.teams || []);
+  const [teams, setTeams] = useState<{name: string, lead: string}[]>(dept?.teams || []);
   const [teamErrors, setTeamErrors] = useState<Record<number, string>>({});
+  const [reason, setReason] = useState("");
 
   const suggestedTeams = [
     "Frontend Team",
@@ -211,7 +209,9 @@ function DepartmentFormModal({
     "Support Team",
   ];
 
-  const addTeam = () => setTeams([...teams, ""]);
+  const { employeesList: employees } = useEmployees();
+
+  const addTeam = () => setTeams([...teams, { name: "", lead: "" }]);
 
   const removeTeam = (index: number) => {
     const newTeams = [...teams];
@@ -222,43 +222,87 @@ function DepartmentFormModal({
     setTeamErrors(newTeamErrors);
   };
 
-  const updateTeam = (index: number, value: string) => {
+  const updateTeamName = (index: number, value: string) => {
     const newTeams = [...teams];
-    newTeams[index] = value;
+    newTeams[index].name = value;
+    setTeams(newTeams);
+  };
+
+  const updateTeamLead = (index: number, value: string) => {
+    const newTeams = [...teams];
+    newTeams[index].lead = value;
     setTeams(newTeams);
   };
 
   const handleSave = () => {
     const newErrors: Record<string, string> = {};
-    if (!form.name.trim()) newErrors.name = "Department name is required.";
-    if (!form.code.trim()) newErrors.code = "Department code is required.";
-    if (!form.head.trim()) newErrors.head = "Department head is required.";
 
-    const newTeamErrors: Record<number, string> = {};
-    const trimmedTeams = teams.map((t) => t.trim());
-    const teamSet = new Set<string>();
+    if (dept && !reason.trim()) {
+      newErrors.reason = "A comment is required before allowing the update.";
+    } else if (!dept) {
+      if (!form.name.trim()) newErrors.name = "Department name is required.";
+      if (!form.code.trim()) newErrors.code = "Department code is required.";
+      if (!form.head.trim()) newErrors.head = "Department head is required.";
+    }
 
-    trimmedTeams.forEach((t, i) => {
-      if (!t) {
-        newTeamErrors[i] = "Team name is required.";
-      } else if (t.length > 50) {
-        newTeamErrors[i] = "Maximum 50 characters.";
-      } else if (teamSet.has(t.toLowerCase())) {
-        newTeamErrors[i] = "Team names must be unique within the department.";
-      }
-      teamSet.add(t.toLowerCase());
-    });
-
-    if (
-      Object.keys(newErrors).length > 0 ||
-      Object.keys(newTeamErrors).length > 0
-    ) {
+    if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      setTeamErrors(newTeamErrors);
       return;
     }
 
-    const budgetNum = 0; // Budget field removed
+    const newChangeRecords: ChangeRecord[] = [];
+    const now = new Date().toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    if (dept && reason.trim()) {
+      if (dept.head !== form.head) {
+        newChangeRecords.push({
+          id: Math.random().toString(),
+          changedBy: {
+            name: user?.name || "Admin",
+           role: user?.role || "Admin",
+          },
+          newValue: form.head,
+          date: now,
+          comment: reason,
+        });
+      }
+
+      teams.forEach((t) => {
+        const originalTeam = dept.teams?.find((dt) => dt.name === t.name);
+        if (originalTeam && originalTeam.lead !== t.lead) {
+          newChangeRecords.push({
+            id: Math.random().toString(),
+            changedBy: {
+              name: user?.name || "Admin",
+              role: user?.role || "Admin",
+            },
+            newValue: t.lead,
+            date: now,
+            comment: reason,
+          });
+        }
+      });
+
+      if (newChangeRecords.length === 0) {
+        newChangeRecords.push({
+          id: Math.random().toString(),
+          changedBy: {
+            name: user?.name || "Admin",
+        role: user?.role || "Admin",
+          },
+          newValue: "Department Details Updated",
+          date: now,
+          comment: reason,
+        });
+      }
+    }
+
 
     onSave({
       id: dept?.id || `DEPT00${Math.floor(Math.random() * 100)}`,
@@ -266,18 +310,16 @@ function DepartmentFormModal({
       code: form.code.toUpperCase(),
       head: form.head,
       status: form.status as "Active" | "Inactive",
-      annualBudget: budgetNum,
-      budgetUsed: dept?.budgetUsed || 0,
       employees: dept?.employees || 0,
       activeEmployees: dept?.activeEmployees || 0,
       onLeaveEmployees: dept?.onLeaveEmployees || 0,
       growth: dept?.growth || 0,
       description: form.description,
       createdDate: dept?.createdDate || "Apr 27, 2026",
-      lastUpdated: "Apr 27, 2026",
+      lastUpdated: now || "Apr 27, 2026",
       parentDepartment: form.parentDepartment,
-      location: form.location,
-      teams: trimmedTeams.filter((t) => t),
+      teams: teams.map(t => ({ name: t.name.trim(), lead: t.lead.trim() })).filter(t => t.name),
+      changeHistory: [...(dept?.changeHistory || []), ...newChangeRecords],
     });
     onClose();
   };
@@ -289,226 +331,332 @@ function DepartmentFormModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95"
+        className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 bg-white dark:bg-card"
         style={{
-          backgroundColor: "var(--card)",
           border: "1px solid var(--border)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div
-          className="flex items-center justify-between px-8 py-5 border-b border-border"
-          style={{ background: "var(--card)" }}
-        >
+        <div className="flex items-center justify-between px-8 py-5 border-b border-border bg-white dark:bg-card">
           <div>
-            <h3
-              style={{
-                color: "var(--foreground)",
-                fontSize: "18px",
-                fontWeight: 800,
-              }}
-            >
+            <h3 className="text-xl font-extrabold text-slate-900 dark:text-slate-100">
               {dept ? "Edit Department" : "Create Department"}
             </h3>
-            <p
-              style={{
-                color: "var(--muted-foreground)",
-                fontSize: "12px",
-                marginTop: "2px",
-              }}
-            >
+            <p className="text-sm font-medium text-slate-500 mt-1">
               Manage organizational boundaries
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl hover:bg-neutral-200 dark:hover:bg-zinc-700 text-muted-foreground"
+            className="p-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-zinc-800 text-muted-foreground transition-colors"
           >
-            <X size={18} />
+            <X size={20} />
           </button>
         </div>
 
         {/* Body */}
-        <div className="px-8 py-6 space-y-4 max-h-[65vh] overflow-y-auto">
-          {/* Dept Name */}
-          <div>
-            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
-              Department Name
-            </label>
-            <input
-              type="text"
-              className="w-full rounded-xl px-4 py-2.5 text-sm border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-bold"
-              placeholder="e.g. Engineering"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-            {errors.name && (
-              <span className="text-[11px] font-bold text-rose-600 mt-1 block">
-                {errors.name}
-              </span>
-            )}
-          </div>
-
-          {/* Dept Code */}
-          <div>
-            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
-              Department Code
-            </label>
-            <input
-              type="text"
-              className="w-full rounded-xl px-4 py-2.5 text-sm border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-bold uppercase"
-              placeholder="e.g. ENG"
-              value={form.code}
-              maxLength={4}
-              onChange={(e) => setForm({ ...form, code: e.target.value })}
-            />
-            {errors.code && (
-              <span className="text-[11px] font-bold text-rose-600 mt-1 block">
-                {errors.code}
-              </span>
-            )}
-          </div>
-
-          {/* Dept Head */}
-          <div>
-            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
-              Department Head
-            </label>
-            <input
-              type="text"
-              className="w-full rounded-xl px-4 py-2.5 text-sm border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-bold"
-              placeholder="Select manager..."
-              value={form.head}
-              onChange={(e) => setForm({ ...form, head: e.target.value })}
-            />
-            {errors.head && (
-              <span className="text-[11px] font-bold text-rose-600 mt-1 block">
-                {errors.head}
-              </span>
-            )}
-          </div>
-
-          {/* Parent Department */}
-          <div>
-            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
-              Parent Department
-            </label>
-            <input
-              type="text"
-              className="w-full rounded-xl px-4 py-2.5 text-sm border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-bold"
-              placeholder="e.g. Engineering (or None)"
-              value={form.parentDepartment}
-              onChange={(e) =>
-                setForm({ ...form, parentDepartment: e.target.value })
-              }
-            />
-          </div>
-
-          {/* Location */}
-          <div>
-            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
-              Location
-            </label>
-            <input
-              type="text"
-              className="w-full rounded-xl px-4 py-2.5 text-sm border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-bold"
-              placeholder="e.g. New York, NY"
-              value={form.location}
-              onChange={(e) => setForm({ ...form, location: e.target.value })}
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
-              Description
-            </label>
-            <textarea
-              rows={2}
-              className="w-full rounded-xl px-4 py-2.5 text-xs border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 resize-none font-medium leading-relaxed"
-              placeholder="Describe primary focus points..."
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
-            />
-          </div>
-
-          {/* Teams Section */}
-          <div className="pt-6 mt-6 border-t border-border">
-            <div className="mb-4">
-              <h4 className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-wide">
-                Teams
-              </h4>
-              <p className="text-[11px] font-bold text-slate-500 mt-1">
-                Create one or more teams that belong to this department.
-              </p>
+        <div className="px-8 py-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+          {/* Details Section */}
+          <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                DEPARTMENT NAME <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                className="w-full rounded-xl px-4 py-3 text-sm border border-emerald-100 bg-emerald-50/30 text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-semibold"
+                placeholder="Engineering"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+              {errors.name && (
+                <span className="text-[11px] font-bold text-rose-600 mt-1 block">
+                  {errors.name}
+                </span>
+              )}
             </div>
 
-            <div className="space-y-3">
-              {teams.map((team, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col gap-1 animate-in fade-in slide-in-from-top-2 duration-300"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 relative">
-                      <input
-                        type="text"
-                        list="suggested-teams"
-                        value={team}
-                        onChange={(e) => updateTeam(index, e.target.value)}
-                        placeholder="e.g. Frontend Team"
-                        maxLength={50}
-                        className={`w-full rounded-xl px-4 py-2.5 text-sm border ${teamErrors[index] ? "border-red-500" : "border-border"} bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-bold shadow-sm transition-all`}
-                      />
-                    </div>
-                    <button
-                      onClick={() => removeTeam(index)}
-                      className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 hover:scale-105 active:scale-95 transition-all flex-shrink-0"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                  {teamErrors[index] && (
-                    <span className="text-[10px] text-red-500 font-bold ml-1">
-                      {teamErrors[index]}
-                    </span>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                DEPARTMENT CODE <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                className="w-full rounded-xl px-4 py-3 text-sm border border-emerald-100 bg-emerald-50/30 text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-semibold uppercase"
+                placeholder="ENG"
+                value={form.code}
+                maxLength={4}
+                onChange={(e) => setForm({ ...form, code: e.target.value })}
+              />
+              {errors.code && (
+                <span className="text-[11px] font-bold text-rose-600 mt-1 block">
+                  {errors.code}
+                </span>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                DEPARTMENT HEAD <span className="text-red-500">*</span>
+              </label>
+              <select
+                className="w-full rounded-xl px-4 py-3 text-sm border border-emerald-100 bg-emerald-50/30 text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-semibold"
+                value={form.head}
+                onChange={(e) => setForm({ ...form, head: e.target.value })}
+              >
+                <option value="">Select Head...</option>
+                {employees?.map((emp: any) => (
+                  <option key={emp.id} value={emp.name}>
+                    {emp.name}
+                  </option>
+                ))}
+              </select>
+              {errors.head && (
+                <span className="text-[11px] font-bold text-rose-600 mt-1 block">
+                  {errors.head}
+                </span>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                PARENT DEPARTMENT
+              </label>
+              <select
+                className="w-full rounded-xl px-4 py-3 text-sm border border-emerald-100 bg-emerald-50/30 text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-semibold"
+                value={form.parentDepartment}
+                onChange={(e) =>
+                  setForm({ ...form, parentDepartment: e.target.value })
+                }
+              >
+                <option value="None">None</option>
+                <option value="HR">HR</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Finance">Finance</option>
+                <option value="Sales">Sales</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Operations">Operations</option>
+              </select>
+            </div>
+
+            <div className="col-span-2">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                DESCRIPTION
+              </label>
+              <textarea
+                rows={3}
+                className="w-full rounded-xl px-4 py-3 text-sm border border-emerald-100 bg-emerald-50/30 text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 resize-none font-medium leading-relaxed"
+                placeholder="Core technology development and infrastructure scaling."
+                value={form.description}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          <div className="border-t border-border pt-8">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h4 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 uppercase tracking-wider">
+                  TEAMS
+                </h4>
+                <p className="text-xs font-medium text-slate-500 mt-1">
+                  Create one or more teams that belong to this department.
+                </p>
+              </div>
+              <button
+                onClick={addTeam}
+                className="flex items-center gap-2 text-sm font-semibold text-[#00B87C] border border-[#00B87C] hover:bg-emerald-50 px-4 py-2 rounded-lg transition-all"
+              >
+                <Plus size={16} /> Add Team
+              </button>
+            </div>
+
+            <div className="border border-border rounded-xl overflow-hidden">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-neutral-50 dark:bg-zinc-800/40 border-b border-border">
+                    <th className="px-6 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wider w-1/2">
+                      TEAM NAME
+                    </th>
+                    <th className="px-6 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                      TEAM LEAD
+                    </th>
+                    <th className="px-6 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wider text-center w-24">
+                      ACTIONS
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {teams.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="px-6 py-8 text-center text-sm text-slate-500">
+                        No teams added yet. Click "Add Team" to get started.
+                      </td>
+                    </tr>
+                  ) : (
+                    teams.map((team, index) => (
+                      <tr key={index} className="bg-white dark:bg-card">
+                        <td className="px-6 py-3 relative">
+                          <input
+                            type="text"
+                            list="suggested-teams"
+                            value={team.name}
+                            onChange={(e) => updateTeamName(index, e.target.value)}
+                            placeholder="e.g. Frontend Team"
+                            maxLength={50}
+                            className={`w-full rounded-lg px-3 py-2 text-sm border ${teamErrors[index] ? "border-red-500" : "border-border"} bg-background text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-medium transition-all`}
+                          />
+                          {teamErrors[index] && (
+                            <span className="absolute bottom-1 left-6 text-[10px] text-red-500 font-bold">
+                              {teamErrors[index]}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-6 py-3">
+                          <div className="flex items-center gap-2 border border-border rounded-lg bg-background px-3 py-1.5 focus-within:ring-2 focus-within:ring-[#00B87C]/20">
+                            {team.lead && (
+                              <img
+                                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(team.lead)}&background=f0fdf4&color=16a34a`}
+                                alt={team.lead}
+                                className="w-6 h-6 rounded-full"
+                              />
+                            )}
+                            <select
+                              value={team.lead}
+                              onChange={(e) => updateTeamLead(index, e.target.value)}
+                              className="w-full text-sm bg-transparent outline-none text-foreground font-medium"
+                            >
+                              <option value="">Select Lead...</option>
+                              {employees?.map((emp: any) => (
+                                <option key={emp.id} value={emp.name}>
+                                  {emp.name}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </td>
+                        <td className="px-6 py-3 text-center">
+                          <button
+                            onClick={() => removeTeam(index)}
+                            className="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:scale-105 active:scale-95 transition-all"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
                   )}
-                </div>
-              ))}
+                </tbody>
+              </table>
+              <datalist id="suggested-teams">
+                {suggestedTeams.map((t) => (
+                  <option key={t} value={t} />
+                ))}
+              </datalist>
             </div>
 
-            <button
-              onClick={addTeam}
-              className="mt-4 flex items-center gap-2 text-[12px] font-extrabold text-[#00B87C] hover:text-[#00a36d] hover:bg-emerald-50 px-3 py-1.5 rounded-lg transition-all"
-            >
-              <Plus size={16} />
-              {teams.length === 0 ? "Add Team" : "Add Another Team"}
-            </button>
-
-            <datalist id="suggested-teams">
-              {suggestedTeams.map((t) => (
-                <option key={t} value={t} />
-              ))}
-            </datalist>
+            {dept && (
+              <div className="mt-6">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                  COMMENT <span className="text-rose-500">*</span>
+                </label>
+                <textarea
+                  rows={2}
+                  className="w-full rounded-xl px-4 py-3 text-sm border border-emerald-100 bg-emerald-50/30 text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 resize-none font-medium leading-relaxed"
+                  placeholder="e.g., Updated head as per new org structure"
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                />
+                {errors.reason && (
+                  <span className="text-[11px] font-bold text-rose-600 mt-1 block">
+                    {errors.reason}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
+
+          {dept && (
+            <div className="border-t border-border pt-8 mt-8">
+              <div className="mb-4">
+                <h4 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 uppercase tracking-wider">
+                  CHANGE HISTORY
+                </h4>
+                <p className="text-xs font-medium text-slate-500 mt-1">
+                  Track all changes made to this department.
+                </p>
+              </div>
+
+              <div className="border border-border rounded-xl max-h-[300px] overflow-y-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-neutral-50 dark:bg-zinc-800/40 border-b border-border">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                        CHANGED BY
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                        NEW VALUE
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                        CHANGED ON
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                        COMMENT
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {dept.changeHistory && dept.changeHistory.length > 0 ? (
+                      dept.changeHistory.map((record) => (
+                        <tr key={record.id} className="bg-white dark:bg-card">
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <img
+                                src={record.changedBy.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(record.changedBy.name)}&background=f0fdf4&color=16a34a`}
+                                alt={record.changedBy.name}
+                                className="w-8 h-8 rounded-full"
+                              />
+                              <div>
+                                <p className="text-xs font-bold text-slate-900 dark:text-slate-100">{record.changedBy.name}</p>
+                                <p className="text-[10px] text-slate-500">{record.changedBy.role}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-xs font-medium text-slate-700 dark:text-slate-300">{record.newValue}</td>
+                          <td className="px-4 py-3 text-xs font-medium text-slate-700 dark:text-slate-300 whitespace-pre-line">{record.date.replace(", ", "\n")}</td>
+                          <td className="px-4 py-3 text-xs font-medium text-slate-700 dark:text-slate-300">{record.comment}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr className="bg-white dark:bg-card">
+                        <td colSpan={4} className="px-4 py-8 text-center text-sm text-slate-500">
+                          No changes have been recorded yet.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-5 flex gap-3 border-t border-border bg-neutral-50 dark:bg-zinc-800/40">
+        <div className="px-8 py-5 flex items-center justify-center gap-4 border-t border-border bg-neutral-50 dark:bg-zinc-800/40">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 hover:bg-neutral-200 transition-colors"
+            className="w-48 py-3 rounded-lg text-sm font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="flex-1 py-2.5 rounded-xl text-xs font-extrabold text-white bg-[#00B87C] hover:bg-[#00a36d] shadow-sm transition-all active:scale-95"
+            className="w-48 py-3 rounded-lg text-sm font-bold text-white bg-[#00B87C] hover:bg-[#00a36d] shadow-sm transition-all active:scale-95"
           >
-            {dept ? "Update Unit" : "Confirm"}
+            {dept ? "Update Department" : "Confirm"}
           </button>
         </div>
       </div>
@@ -743,9 +891,9 @@ function DepartmentDetailModal({
 
   const teams =
     dept.teams && dept.teams.length > 0
-      ? dept.teams.map((t) => ({
-          name: t,
-          lead: "TBD",
+      ? dept.teams.map((t: any) => ({
+          name: typeof t === "string" ? t : (t?.name || "Unknown"),
+          lead: typeof t === "string" ? "TBD" : (t?.lead || "TBD"),
           count: 0,
           icon: Users,
           color: "text-[#00B87C]",
@@ -871,19 +1019,7 @@ function DepartmentDetailModal({
                   </p>
                 </div>
               </div>
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 flex-shrink-0">
-                  <MapPin size={20} />
-                </div>
-                <div>
-                  <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-1">
-                    Location
-                  </p>
-                  <p className="text-[16px] font-bold text-+gray-900">
-                    {dept.location || "New York, NY"}
-                  </p>
-                </div>
-              </div>
+
             </div>
 
             <div className="space-y-6">
@@ -1033,6 +1169,8 @@ export function Departments() {
   const [headInput, setHeadInput] = useState("");
   const [showMenu, setShowMenu] = useState<string | null>(null);
 
+  const canManage = usePermissionKey(P.DEPARTMENTS_MANAGE);
+
   // Move Dept states
   const [moveDept, setMoveDept] = useState<Department | null>(null);
   const [newParentInput, setNewParentInput] = useState("None");
@@ -1064,15 +1202,6 @@ export function Departments() {
               `${d.code},${d.name},${d.employees},${d.activeEmployees},${d.onLeaveEmployees},${d.growth}%`,
           )
           .join("\n");
-    } else {
-      content =
-        `Department Code,Department Name,Annual Budget,Budget Used,Budget Remaining\n` +
-        depts
-          .map(
-            (d) =>
-              `${d.code},${d.name},${d.annualBudget},${d.budgetUsed},${d.annualBudget - d.budgetUsed}`,
-          )
-          .join("\n");
     }
 
     const mimeType =
@@ -1082,7 +1211,7 @@ export function Departments() {
           ? "application/vnd.ms-excel"
           : "text/plain";
     const ext = reportFormat.toLowerCase();
-    const blob = new Blob([content], { type: mimeType });
+    const blob = new Blob([], { type: mimeType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -1115,12 +1244,17 @@ export function Departments() {
     })
     .sort((a, b) => {
       if (sortBy === "Employees") return b.employees - a.employees;
-      if (sortBy === "Budget") return b.annualBudget - a.annualBudget;
       return a.name.localeCompare(b.name);
     });
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">
+      {showMenu && (
+        <div 
+          className="fixed inset-0 z-20"
+          onClick={() => setShowMenu(null)}
+        />
+      )}
       {/* ── Page Header ── */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -1138,13 +1272,15 @@ export function Departments() {
           >
             Export Report
           </button>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-white transition-all bg-[#00B87C] hover:bg-[#00a36d] font-bold text-xs active:scale-95 shadow-sm"
-          >
-            <Plus size={18} />
-            Add Department
-          </button>
+          <PermissionGate permissionKey={P.DEPARTMENTS_MANAGE}>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-white transition-all bg-[#00B87C] hover:bg-[#00a36d] font-bold text-xs active:scale-95 shadow-sm"
+            >
+              <Plus size={18} />
+              Add Department
+            </button>
+          </PermissionGate>
         </div>
       </div>
 
@@ -1177,17 +1313,6 @@ export function Departments() {
             <option value="Inactive">Inactive</option>
           </select>
 
-          <select
-            className="px-4 py-2 text-xs rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold cursor-pointer appearance-none"
-            value={sortBy}
-            onChange={(e) =>
-              setSortBy(e.target.value as "Employees" | "Budget" | "Name")
-            }
-          >
-            <option value="Employees">Sort: Employees</option>
-            <option value="Budget">Sort: Budget</option>
-            <option value="Name">Sort: Name</option>
-          </select>
 
           <div className="flex items-center bg-background border border-border rounded-xl p-1 gap-1">
             <button
@@ -1257,11 +1382,8 @@ export function Departments() {
                       <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-lg z-30 py-1 animate-in fade-in slide-in-from-top-1">
                         {[
                           "View Department",
-                          "Edit Department",
-                          "Move Department",
-                          "Assign Head",
-                          "View Employees",
-                          "Delete Department",
+                          ...(canManage ? ["Edit Department"] : []),
+                          ...(canManage ? ["Delete Department"] : []),
                         ].map((action) => (
                           <button
                             key={action}
@@ -1273,18 +1395,6 @@ export function Departments() {
                                 setSelectedDept(dept);
                               if (action === "Edit Department")
                                 setEditDept(dept);
-                              if (action === "Move Department") {
-                                setMoveDept(dept);
-                                setNewParentInput(
-                                  dept.parentDepartment || "None",
-                                );
-                              }
-                              if (action === "Assign Head") {
-                                setAssignHeadDept(dept);
-                                setHeadInput(dept.head);
-                              }
-                              if (action === "View Employees")
-                                setViewEmployeesDept(dept);
                               if (action === "Delete Department")
                                 setDeleteConfirmDept(dept);
                             }}
@@ -1311,9 +1421,7 @@ export function Departments() {
                         {dept.name}
                       </h3>
                       <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                        {dept.code}{" "}
-                        <span className="w-1 h-1 rounded-full bg-border" /> 📍{" "}
-                        {dept.location || "Global"}
+                        {dept.code}
                       </p>
                     </div>
                   </div>
@@ -1371,18 +1479,20 @@ export function Departments() {
           })}
 
           {/* Create Department Option Card */}
-          <div
-            onClick={() => setShowAddModal(true)}
-            className="rounded-2xl p-6 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all border-2 border-dashed border-border hover:border-[#00B87C] hover:bg-emerald-50/10"
-            style={{ minHeight: "180px" }}
-          >
-            <div className="flex items-center justify-center rounded-full w-10 h-10 bg-secondary text-[#00B87C]">
-              <Plus size={20} />
+          {canManage && (
+            <div
+              onClick={() => setShowAddModal(true)}
+              className="rounded-2xl p-6 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all border-2 border-dashed border-border hover:border-[#00B87C] hover:bg-emerald-50/10"
+              style={{ minHeight: "180px" }}
+            >
+              <div className="flex items-center justify-center rounded-full w-10 h-10 bg-secondary text-[#00B87C]">
+                <Plus size={20} />
+              </div>
+              <p className="text-xs font-extrabold text-[#00B87C]">
+                Create Department
+              </p>
             </div>
-            <p className="text-xs font-extrabold text-[#00B87C]">
-              Create Department
-            </p>
-          </div>
+          )}
         </div>
       )}
 
@@ -1403,6 +1513,9 @@ export function Departments() {
                   </th>
                   <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-wider text-right">
                     Employees
+                  </th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-wider text-center">
+                    Teams
                   </th>
                   <th className="px-6 py-4 text-[10px] font-black text-slate-500 uppercase tracking-wider text-right">
                     Growth
@@ -1431,7 +1544,7 @@ export function Departments() {
                             {dept.name}
                           </p>
                           <p className="text-[10px] font-bold text-muted-foreground uppercase">
-                            {dept.code} • {dept.location || "Global"}
+                            {dept.code}
                           </p>
                         </div>
                       </div>
@@ -1457,6 +1570,11 @@ export function Departments() {
                         {dept.activeEmployees} Active
                       </div>
                     </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="text-xs font-extrabold text-foreground">
+                        {dept.teams?.length || 0}
+                      </div>
+                    </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1 text-[11px] font-bold text-primary">
                         <TrendingUp size={12} />+{dept.growth}%
@@ -1477,11 +1595,8 @@ export function Departments() {
                           <div className="absolute right-full top-0 mr-2 w-40 bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-lg z-30 py-1 animate-in fade-in slide-in-from-right-2">
                             {[
                               "View Department",
-                              "Edit Department",
-                              "Move Department",
-                              "Assign Head",
-                              "View Employees",
-                              "Delete Department",
+                              ...(canManage ? ["Edit Department"] : []),
+                              ...(canManage ? ["Delete Department"] : []),
                             ].map((action) => (
                               <button
                                 key={action}
@@ -1493,18 +1608,6 @@ export function Departments() {
                                     setSelectedDept(dept);
                                   if (action === "Edit Department")
                                     setEditDept(dept);
-                                  if (action === "Move Department") {
-                                    setMoveDept(dept);
-                                    setNewParentInput(
-                                      dept.parentDepartment || "None",
-                                    );
-                                  }
-                                  if (action === "Assign Head") {
-                                    setAssignHeadDept(dept);
-                                    setHeadInput(dept.head);
-                                  }
-                                  if (action === "View Employees")
-                                    setViewEmployeesDept(dept);
                                   if (action === "Delete Department")
                                     setDeleteConfirmDept(dept);
                                 }}
@@ -1816,6 +1919,46 @@ export function Departments() {
           dept={selectedDept}
           onClose={() => setSelectedDept(null)}
         />
+      )}
+      
+      {deleteConfirmDept && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setDeleteConfirmDept(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-card shadow-xl border border-border p-6 animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center mb-4 mx-auto">
+              <Trash2 size={24} className="text-rose-500" />
+            </div>
+            <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 mb-2 text-center">
+              Delete Department
+            </h3>
+            <p className="text-sm text-muted-foreground mb-6 text-center">
+              Are you sure you want to delete <strong>{deleteConfirmDept.name}</strong>? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                className="w-full py-2.5 rounded-xl text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 hover:bg-neutral-200 transition-colors"
+                onClick={() => setDeleteConfirmDept(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="w-full py-2.5 rounded-xl text-xs font-extrabold text-white bg-rose-500 hover:bg-rose-600 shadow-sm transition-all"
+                onClick={() => {
+                  setDepts((prev) => prev.filter((d) => d.id !== deleteConfirmDept.id));
+                  setDeleteConfirmDept(null);
+                  showToast("Department Deleted", "success", `${deleteConfirmDept.name} has been deleted.`);
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {moveDept && (

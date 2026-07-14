@@ -1,12 +1,4 @@
-import {
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-  useMemo,
-  useState,
-} from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   Users,
@@ -22,9 +14,6 @@ import {
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
 
-/* ─────────────────────────────────────────────────────────────── */
-/* Types                                                           */
-/* ─────────────────────────────────────────────────────────────── */
 interface Colleague {
   id: string;
   name: string;
@@ -1256,58 +1245,24 @@ export function EmployeeDirectory() {
               {filteredTeam
                 .filter((c: { id: string }) => c.id !== selectedColleague.id)
                 .slice(0, 2)
-                .map(
-                  (peer: {
-                    id: Key | null | undefined;
-                    initials:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<any, string | JSXElementConstructor<any>>
-                      | Iterable<ReactNode>
-                      | ReactPortal
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined;
-                    name:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<any, string | JSXElementConstructor<any>>
-                      | Iterable<ReactNode>
-                      | ReactPortal
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined;
-                    designation:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<any, string | JSXElementConstructor<any>>
-                      | Iterable<ReactNode>
-                      | ReactPortal
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined;
-                  }) => (
-                    <div
-                      key={peer.id}
-                      className="p-3 bg-secondary border border-border rounded-xl flex items-center gap-3"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-card flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
-                        {peer.initials}
-                      </div>
-                      <div>
-                        <p className="text-[12px] font-black text-foreground">
-                          {peer.name}
-                        </p>
-                        <p className="text-[11px] font-bold text-muted-foreground">
-                          {peer.designation}
-                        </p>
-                      </div>
+                .map((peer: Colleague) => (
+                  <div
+                    key={peer.id}
+                    className="p-3 bg-secondary border border-border rounded-xl flex items-center gap-3"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-card flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
+                      {peer.initials}
                     </div>
-                  ),
-                )}
+                    <div>
+                      <p className="text-[12px] font-black text-foreground">
+                        {peer.name}
+                      </p>
+                      <p className="text-[11px] font-bold text-muted-foreground">
+                        {peer.designation}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               <div className="p-3 bg-secondary border border-border rounded-xl flex items-center justify-center">
                 <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   + {filteredTeam.length - 1} Team Members

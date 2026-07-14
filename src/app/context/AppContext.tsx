@@ -170,6 +170,7 @@ export interface Employee {
   email: string;
   phone: string;
   department: string;
+  team?: string;
   role: string;
   roleAssignments?: Array<{
     id: string;

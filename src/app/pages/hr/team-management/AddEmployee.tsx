@@ -12,6 +12,8 @@ import {
   ArrowRight,
   Info,
 } from "lucide-react";
+import { useAssignableRoles } from "../../../hooks/useAssignableRoles";
+
 
 const AUTOSAVE_KEY = "nexus_add_employee_draft";
 
@@ -61,6 +63,8 @@ export default function AddEmployee() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { employeesList, addEmployee } = useEmployees();
+
+  const { data: assignableRoles, isLoading, error } = useAssignableRoles();
 
   const currentUserRole = user?.role || "Employee";
   const isSuperAdmin =
@@ -119,7 +123,7 @@ export default function AddEmployee() {
     firstName: "",
     lastName: "",
     email: "",
-
+    roleIds: ["Employee"],
     // ★ replaces the old single `role: string` field
     roleAssignments: [
       {
@@ -131,7 +135,6 @@ export default function AddEmployee() {
     ] as RoleAssignment[],
 
     reportingManager: "",
-    nickName: "",
     department: "Engineering",
     location: "Bangalore",
     designation: "Software Engineer",
@@ -190,7 +193,12 @@ export default function AddEmployee() {
     const draft = sessionStorage.getItem(AUTOSAVE_KEY);
     if (draft) {
       try {
-        setForm(JSON.parse(draft));
+        const parsed = JSON.parse(draft);
+        setForm((prev) => ({
+          ...prev,
+          ...parsed,
+          roleIds: parsed.roleIds || prev.roleIds || ["Employee"],
+        }));
         showToast("Restored incomplete draft", "info");
       } catch (e) {
         console.log(e);
@@ -223,34 +231,24 @@ export default function AddEmployee() {
 
   // ─── Role assignment helpers ───
 
-  const hasRole = (roleValue: string) =>
-    form.roleAssignments.some((a) => a.role === roleValue);
-
-  const toggleRole = (roleValue: string) => {
-    setForm((f) => {
-      const exists = f.roleAssignments.some((a) => a.role === roleValue);
-      if (exists) {
-        // Never allow removing the last remaining assignment —
-        // every account needs at least one role.
-        if (f.roleAssignments.length === 1) return f;
+  const handleRoleIdsChange = (ids: string[]) => {
+    // Keep at least one role assigned
+    if (ids.length === 0) return;
+    setForm((prev) => {
+      const newAssignments = ids.map((id) => {
+        const existing = prev.roleAssignments.find((a) => a.role === id);
+        if (existing) return existing;
         return {
-          ...f,
-          roleAssignments: f.roleAssignments.filter(
-            (a) => a.role !== roleValue,
-          ),
+          id: makeAssignmentId(),
+          role: id,
+          scope: "organization" as ScopeType,
+          scopeId: "",
         };
-      }
+      });
       return {
-        ...f,
-        roleAssignments: [
-          ...f.roleAssignments,
-          {
-            id: makeAssignmentId(),
-            role: roleValue,
-            scope: "organization" as ScopeType,
-            scopeId: "",
-          },
-        ],
+        ...prev,
+        roleIds: ids,
+        roleAssignments: newAssignments,
       };
     });
   };
@@ -365,8 +363,7 @@ export default function AddEmployee() {
     showToast("Added successfully", "success");
   };
 
-  // ─── Final submit ───
-  const handleFinalSubmit = () => {
+  const handleFinalSubmit = async () => {
     // Primary role kept for any legacy code that still reads a single
     // `role` field (e.g. list-view badges) — first non-Employee
     // assignment wins, otherwise falls back to Employee.
@@ -399,40 +396,64 @@ export default function AddEmployee() {
         : "N/A",
     };
 
-    addEmployee(newEmp);
-
     try {
-      const savedUsers = localStorage.getItem("nexus_registered_users") || "[]";
-      const usersList = JSON.parse(savedUsers);
-      const newPlatformUser = {
-        id: `user-${Date.now()}`,
-        name: fullName,
-        email: form.email.trim(),
-        initials: fullName
-          .split(" ")
-          .map((w) => w[0])
-          .join("")
-          .toUpperCase(),
-        role: primaryRole,
-        roleAssignments: form.roleAssignments, // ★ persisted alongside the user
-        status: "Pending Invite",
-        joinedAt: new Date().toISOString(),
-        mfaEnabled: false,
-        lastLoginAt: "",
-        organization: user?.organization || "NexusHR Org",
-        organizationId: "org-1",
-      };
-      localStorage.setItem(
-        "nexus_registered_users",
-        JSON.stringify([newPlatformUser, ...usersList]),
-      );
-    } catch (err) {
-      console.error("Failed to register platform login", err);
-    }
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newEmp),
+      });
 
-    sessionStorage.removeItem(AUTOSAVE_KEY);
-    showToast(`${fullName} has been added — invite sent.`, "success");
-    navigate("/employees");
+      if (!response.ok) {
+        if (response.status === 403) {
+          showToast(
+            "You're no longer permitted to assign one of the selected roles. Refresh and try again.",
+            "error",
+          );
+          return;
+        }
+        throw new Error("Server error during registration");
+      }
+
+      addEmployee(newEmp);
+
+      try {
+        const savedUsers = localStorage.getItem("nexus_registered_users") || "[]";
+        const usersList = JSON.parse(savedUsers);
+        const newPlatformUser = {
+          id: `user-${Date.now()}`,
+          name: fullName,
+          email: form.email.trim(),
+          initials: fullName
+            .split(" ")
+            .map((w) => w[0])
+            .join("")
+            .toUpperCase(),
+          role: primaryRole,
+          roleAssignments: form.roleAssignments, // ★ persisted alongside the user
+          status: "Pending Invite",
+          joinedAt: new Date().toISOString(),
+          mfaEnabled: false,
+          lastLoginAt: "",
+          organization: user?.organization || "NexusHR Org",
+          organizationId: "org-1",
+        };
+        localStorage.setItem(
+          "nexus_registered_users",
+          JSON.stringify([newPlatformUser, ...usersList]),
+        );
+      } catch (err) {
+        console.error("Failed to register platform login", err);
+      }
+
+      sessionStorage.removeItem(AUTOSAVE_KEY);
+      showToast(`${fullName} has been added — invite sent.`, "success");
+      navigate("/employees");
+    } catch (err) {
+      console.error("Failed to submit employee", err);
+      showToast("Failed to create employee. Please try again.", "error");
+    }
   };
 
   /* ─── Shared styles ─── */
@@ -496,8 +517,7 @@ export default function AddEmployee() {
             { s: 3, label: "Personal" },
             { s: 4, label: "Identity" },
             { s: 5, label: "Contact" },
-            { s: 6, label: "Other" },
-            { s: 7, label: "Alerts" },
+            { s: 6, label: "Alerts" },
           ].map((item) => {
             const done = step > item.s;
             const active = step === item.s;
@@ -538,23 +558,7 @@ export default function AddEmployee() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div>
-                <label className={labelCls}>Employee ID</label>
-                <input
-                  type="text"
-                  placeholder="e.g. EMP001"
-                  className={inputCls}
-                  value={form.employeeId}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, employeeId: e.target.value }))
-                  }
-                />
-                {!isIdUnique && (
-                  <p className="text-xs text-rose-500 font-bold mt-1.5 flex items-center gap-1">
-                    <Info size={12} /> Employee ID already registered!
-                  </p>
-                )}
-              </div>
+             
               <div>
                 <label className={labelCls}>First Name</label>
                 <input
@@ -579,7 +583,24 @@ export default function AddEmployee() {
                   }
                 />
               </div>
-              <div className="md:col-span-2">
+               <div>
+                <label className={labelCls}>Employee ID</label>
+                <input
+                  type="text"
+                  placeholder="e.g. EMP001"
+                  className={inputCls}
+                  value={form.employeeId}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, employeeId: e.target.value }))
+                  }
+                />
+                {!isIdUnique && (
+                  <p className="text-xs text-rose-500 font-bold mt-1.5 flex items-center gap-1">
+                    <Info size={12} /> Employee ID already registered!
+                  </p>
+                )}
+              </div>
+              <div className="md:col-span-1">
                 <label className={labelCls}>Email Address</label>
                 <div className="relative">
                   <Mail
@@ -604,101 +625,110 @@ export default function AddEmployee() {
               </div>
             </div>
 
-            {/* ★★★ MULTI-ROLE ASSIGNMENT BLOCK — replaces the old single "System Role" select ★★★ */}
+            {/* Roles Dropdown Select */}
             <div className="mb-8">
-              <div className="flex items-center justify-between mb-1">
-                <label className={labelCls}>Assign Role(s)</label>
-              </div>
-              <p className="text-xs text-slate-400 mb-4 font-medium leading-relaxed">
-                Tick every role this person actually does. A small team can give
-                one person HR, Finance and Team Manager together — a
-                multi-branch org can scope each role to just one branch.
+              <label className={labelCls}>System Role</label>
+              {error ? (
+                <div className="text-xs text-rose-500 font-bold mb-2 flex items-center gap-1">
+                  <Info size={12} /> Failed to load roles: {error.message}
+                </div>
+              ) : null}
+              <select
+                className={selectCls}
+                value={form.roleIds[0] || ""}
+                disabled={isLoading || !!error || (assignableRoles || []).length === 0}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val) {
+                    handleRoleIdsChange([val]);
+                  }
+                }}
+              >
+                {isLoading ? (
+                  <option value="">Loading roles...</option>
+                ) : (assignableRoles || []).length === 0 ? (
+                  <option value="">
+                    You don't have permission to assign additional roles. Contact your Admin if this employee needs elevated access.
+                  </option>
+                ) : (
+                  <>
+                    <option value="">Select a role...</option>
+                    {assignableRoles?.map((role) => (
+                      <option key={role.value} value={role.value}>
+                        {role.label}
+                      </option>
+                    ))}
+                  </>
+                )}
+              </select>
+              <p className="text-[11px] text-slate-400 mt-2 font-medium">
+                You can only assign roles at or below your own level of access.
               </p>
 
-              <div className="space-y-3">
-                {ROLE_CATALOG.filter(
-                  (r) =>
-                    !("superAdminOnly" in r && r.superAdminOnly) ||
-                    isSuperAdmin,
-                ).map((roleDef) => {
-                  const checked = hasRole(roleDef.value);
-                  const assignment = form.roleAssignments.find(
-                    (a) => a.role === roleDef.value,
-                  );
+              {/* Scope pickers — only shown once a role is checked */}
+              {(form.roleIds || []).length > 0 && (
+                <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100 mt-4">
+                  <h4 className="text-xs font-black text-slate-500 uppercase tracking-wider mb-2">
+                    Role Scope Assignments
+                  </h4>
+                  {(form.roleIds || []).map((roleId) => {
+                    const roleName = roleId;
+                    const assignment = form.roleAssignments.find(
+                      (a) => a.role === roleName,
+                    );
+                    if (!assignment) return null;
 
-                  return (
-                    <div
-                      key={roleDef.value}
-                      className={`rounded-2xl border-2 transition-all ${
-                        checked
-                          ? "border-[var(--primary)] bg-emerald-50/20"
-                          : "border-slate-200"
-                      }`}
-                    >
-                      <label className="flex items-center gap-3 px-4 py-3.5 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          className="w-4 h-4 rounded text-[var(--primary)] focus:ring-0 cursor-pointer"
-                          checked={checked}
-                          disabled={
-                            "alwaysOn" in roleDef &&
-                            roleDef.alwaysOn &&
-                            form.roleAssignments.length === 1
-                          }
-                          onChange={() => toggleRole(roleDef.value)}
-                        />
-                        <span className="text-sm font-bold text-slate-800 flex-1">
-                          {roleDef.label}
+                    return (
+                      <div
+                        key={roleId}
+                        className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-3 bg-white border border-slate-100 rounded-xl"
+                      >
+                        <span className="text-xs font-bold text-slate-700 shrink-0 sm:w-32">
+                          {roleName}
                         </span>
-                      </label>
+                        <select
+                          className={`${selectCls} sm:w-48 py-2 px-3 text-xs`}
+                          value={assignment.scope}
+                          onChange={(e) =>
+                            updateAssignmentScope(
+                              assignment.id,
+                              e.target.value as ScopeType,
+                              "",
+                            )
+                          }
+                        >
+                          {scopeOptionsFor(assignment).map((o) => (
+                            <option key={o.value} value={o.value}>
+                              {o.label}
+                            </option>
+                          ))}
+                        </select>
 
-                      {/* Scope picker — only shown once this role is checked */}
-                      {checked && assignment && (
-                        <div className="px-4 pb-4 pt-1 flex flex-col sm:flex-row gap-3">
+                        {assignment.scope !== "organization" && (
                           <select
-                            className={`${selectCls} sm:w-56`}
-                            value={assignment.scope}
+                            className={`${selectCls} sm:w-48 py-2 px-3 text-xs`}
+                            value={assignment.scopeId}
                             onChange={(e) =>
                               updateAssignmentScope(
                                 assignment.id,
-                                e.target.value as ScopeType,
-                                "",
+                                assignment.scope,
+                                e.target.value,
                               )
                             }
                           >
-                            {scopeOptionsFor(assignment).map((o) => (
-                              <option key={o.value} value={o.value}>
-                                {o.label}
+                            <option value="">Select…</option>
+                            {scopeValueListFor(assignment.scope).map((v) => (
+                              <option key={v} value={v}>
+                                {v}
                               </option>
                             ))}
                           </select>
-
-                          {assignment.scope !== "organization" && (
-                            <select
-                              className={`${selectCls} sm:w-56`}
-                              value={assignment.scopeId}
-                              onChange={(e) =>
-                                updateAssignmentScope(
-                                  assignment.id,
-                                  assignment.scope,
-                                  e.target.value,
-                                )
-                              }
-                            >
-                              <option value="">Select…</option>
-                              {scopeValueListFor(assignment.scope).map((v) => (
-                                <option key={v} value={v}>
-                                  {v}
-                                </option>
-                              ))}
-                            </select>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
 
               {!areAssignmentsValid && (
                 <p className="text-xs text-rose-500 font-bold mt-3 flex items-center gap-1">
@@ -1021,17 +1051,7 @@ export default function AddEmployee() {
                   Personal Information
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelCls}>Nick Name</label>
-                    <input
-                      type="text"
-                      className={inputCls}
-                      value={form.nickName}
-                      onChange={(e) =>
-                        setForm((f) => ({ ...f, nickName: e.target.value }))
-                      }
-                    />
-                  </div>
+                 
                   <div>
                     <label className={labelCls}>Date of Birth</label>
                     <input
@@ -1145,7 +1165,7 @@ export default function AddEmployee() {
                   </p>
                 </div>
                 <h3 className="font-extrabold text-slate-800 text-lg mb-4">
-                  Identity Information
+                  Identity Information (optional)
                 </h3>
                 <div>
                   <label className={labelCls}>Aadhaar Number</label>
@@ -1359,61 +1379,10 @@ export default function AddEmployee() {
         )}
 
         {/* ═══ STEP 6: Other Information ═══ */}
-        {step === 6 && (
-          <div className="p-8 md:p-12 flex flex-col justify-between min-h-[500px]">
-            <div>
-              <div className="space-y-5">
-                <h3 className="font-extrabold text-slate-800 text-lg mb-4">
-                  Other Information
-                </h3>
-                <div>
-                  <label className={labelCls}>Probation End Date</label>
-                  <input
-                    type="date"
-                    className={inputCls}
-                    value={form.probationEndDate}
-                    onChange={(e) =>
-                      setForm((f) => ({
-                        ...f,
-                        probationEndDate: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Internal Notes</label>
-                  <textarea
-                    rows={4}
-                    placeholder="Internal notes — never shown to the employee."
-                    className={`${inputCls} resize-none`}
-                    value={form.notes}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, notes: e.target.value }))
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-between pt-6 border-t border-slate-100 mt-10">
-              <button
-                onClick={() => setStep(5)}
-                className="px-6 py-3.5 border border-slate-200 text-slate-500 hover:bg-slate-50 rounded-xl text-sm font-bold transition-all"
-              >
-                Back
-              </button>
-              <button
-                disabled={!canContinue()}
-                onClick={() => setStep(7)}
-                className="px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Continue <ArrowRight size={16} />
-              </button>
-            </div>
-          </div>
-        )}
+       
 
         {/* ═══ STEP 7: Alerts ═══ */}
-        {step === 7 && (
+        {step === 6 && (
           <div className="p-8 md:p-12">
             <h2 className="text-xl font-black text-slate-800 mb-2">
               Configure Notification Alerts
@@ -1477,7 +1446,7 @@ export default function AddEmployee() {
 
             <div className="flex justify-between pt-6 border-t border-slate-100">
               <button
-                onClick={() => setStep(6)}
+                onClick={() => setStep(5)}
                 className="px-6 py-3.5 border border-slate-200 text-slate-500 hover:bg-slate-50 rounded-xl text-sm font-bold transition-all"
               >
                 ← Back

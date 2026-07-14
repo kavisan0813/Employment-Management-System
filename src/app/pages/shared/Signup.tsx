@@ -101,7 +101,6 @@ interface SignupFormData {
   password: string;
   confirmPassword: string;
   orgName: string;
-  orgCode: string;
   industry: string;
   regNumber: string;
   gstNumber: string;
@@ -144,7 +143,6 @@ export function Signup() {
 
           // Screen 2.1: Basic Org Info
           orgName: "",
-          orgCode: "",
           industry: "",
           regNumber: "",
           gstNumber: "",
@@ -206,15 +204,6 @@ export function Signup() {
   useEffect(() => {
     sessionStorage.setItem("nexus_onboarding_data", JSON.stringify(formData));
   }, [formData]);
-
-  // Helper to suggest Org Code
-  useEffect(() => {
-    if (formData.orgName && !formData.orgCode) {
-      const clean = formData.orgName.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
-      const code = clean.slice(0, 3) + "001";
-      setFormData((prev) => ({ ...prev, orgCode: code }));
-    }
-  }, [formData.orgName]);
 
   const handleInputChange = (
     field: keyof SignupFormData,
@@ -311,9 +300,10 @@ export function Signup() {
 
     setTimeout(() => {
       // Use OrgService to create the organization row in local DB
+      const generatedCode = formData.orgName.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 3) + "001";
       const newOrg = OrganizationService.createOrganization({
         name: formData.orgName,
-        code: formData.orgCode,
+        code: generatedCode,
         domain:
           formData.orgName.toLowerCase().replace(/[^a-z0-9]/g, "") + ".com",
         industry: formData.industry,
@@ -443,7 +433,7 @@ export function Signup() {
 
   // Helper validation for steps
   const isStep2_1Valid = () => {
-    return formData.orgName && formData.orgCode && formData.industry;
+    return formData.orgName && formData.industry;
   };
 
   const isStep2_2Valid = () => {
@@ -913,8 +903,6 @@ export function Signup() {
                   className="w-full bg-[#F5F6F8] dark:bg-gray-800 border-0 rounded-[12px] p-3 text-sm focus:ring-2 focus:ring-emerald-500/30 outline-none transition-all text-gray-900 dark:text-white"
                 />
               </div>
-
-              {/* Org Code */}
 
               {/* Industry Type */}
               <div className="space-y-1.5">

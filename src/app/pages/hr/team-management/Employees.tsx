@@ -851,6 +851,7 @@ export function Employees() {
   }, []);
 
   const [selectedDept, setSelectedDept] = useState("All Departments");
+  const [selectedTeam, setSelectedTeam] = useState("All Teams");
   const [selectedStatus, setSelectedStatus] = useState("All Status");
   const [selectedDesignation, setSelectedDesignation] =
     useState("All Designations");
@@ -876,6 +877,10 @@ export function Employees() {
   const canManage = user?.role === "Super Admin" || user?.role === "HR Manager";
   const isManager = user?.role === "Manager";
 
+  const uniqueTeams = [
+    "All Teams",
+    ...Array.from(new Set(employees.filter(e => e.team).map((e) => e.team as string))),
+  ];
   const uniqueDesignations = [
     "All Designations",
     ...Array.from(new Set(employees.map((e) => e.designation))),
@@ -902,6 +907,9 @@ export function Employees() {
       const matchDept =
         selectedDept === "All Departments" || emp.department === selectedDept;
 
+      const matchTeam =
+        selectedTeam === "All Teams" || emp.team === selectedTeam;
+
       const matchStatus =
         selectedStatus === "All Status" || emp.status === selectedStatus;
 
@@ -920,6 +928,7 @@ export function Employees() {
       return (
         matchSearch &&
         matchDept &&
+        matchTeam &&
         matchStatus &&
         matchDesig &&
         matchLoc &&
@@ -929,6 +938,7 @@ export function Employees() {
   }, [
     debouncedSearch,
     selectedDept,
+    selectedTeam,
     selectedStatus,
     selectedDesignation,
     selectedLocation,
@@ -996,6 +1006,7 @@ export function Employees() {
   const clearFilters = () => {
     setSearch("");
     setSelectedDept("All Departments");
+    setSelectedTeam("All Teams");
     setSelectedStatus("All Status");
     setSelectedDesignation("All Designations");
     setSelectedLocation("All Locations");
@@ -1017,6 +1028,13 @@ export function Employees() {
         id: "dept",
         label: selectedDept,
         onClear: () => setSelectedDept("All Departments"),
+      });
+    }
+    if (selectedTeam !== "All Teams") {
+      chips.push({
+        id: "team",
+        label: selectedTeam,
+        onClear: () => setSelectedTeam("All Teams"),
       });
     }
     if (selectedDesignation !== "All Designations") {
@@ -1052,6 +1070,7 @@ export function Employees() {
   }, [
     search,
     selectedDept,
+    selectedTeam,
     selectedDesignation,
     selectedLocation,
     selectedStatus,
@@ -1149,19 +1168,6 @@ export function Employees() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <div className="flex items-center gap-2 mb-1 text-[12px] font-medium">
-            <span
-              style={{ color: "var(--primary)", cursor: "pointer" }}
-              onClick={() => navigate("/")}
-            >
-              Dashboard
-            </span>
-            <ChevronRight
-              size={12}
-              style={{ color: "var(--muted-foreground)" }}
-            />
-            <span style={{ color: "var(--muted-foreground)" }}>Employees</span>
-          </div>
           <h2
             style={{
               fontSize: "24px",
@@ -1296,24 +1302,7 @@ export function Employees() {
                 paddingLeft: "16px",
               }}
             >
-              <span
-                style={{
-                  color: "var(--muted-foreground)",
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Showing{" "}
-                <span style={{ color: "var(--foreground)", fontWeight: 700 }}>
-                  {filtered.length}
-                </span>{" "}
-                of{" "}
-                <span style={{ color: "var(--foreground)", fontWeight: 700 }}>
-                  {employees.length}
-                </span>{" "}
-                employees
-              </span>
+             
               <div
                 className="flex items-center gap-1 ml-3"
                 style={{
@@ -1415,6 +1404,11 @@ export function Employees() {
                 value={selectedDept}
                 options={departments}
                 onChange={setSelectedDept}
+              />
+              <FilterChip
+                value={selectedTeam}
+                options={uniqueTeams}
+                onChange={setSelectedTeam}
               />
               <FilterChip
                 value={selectedDesignation}
