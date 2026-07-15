@@ -1042,7 +1042,7 @@ export function SuperAdminDashboard() {
                   <input
                     required
                     type="email"
-                    placeholder="e.g. rajan.k@nexushr.com"
+                    placeholder="e.g. rajan.k@viyanhr.com"
                     className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-[13px] font-bold outline-none focus:border-primary transition-all text-foreground"
                     value={employeeForm.email}
                     onChange={(e) =>

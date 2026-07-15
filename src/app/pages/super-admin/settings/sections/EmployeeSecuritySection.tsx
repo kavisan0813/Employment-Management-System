@@ -74,7 +74,7 @@ export function EmployeeSecuritySection() {
     },
     {
       id: 2,
-      device: "iPhone 14 Pro · NexusHR App",
+      device: "iPhone 14 Pro · viyanHR App",
       location: "Chennai, India",
       time: "Apr 5, 2026",
       icon: Smartphone,

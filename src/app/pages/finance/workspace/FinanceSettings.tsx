@@ -32,7 +32,7 @@ export function FinanceSettings() {
   // States: Profile Settings
   const [firstName, setFirstName] = useState("Ananya");
   const [lastName, setLastName] = useState("Sharma");
-  const [email, setEmail] = useState("ananya.sharma@nexushr.com");
+  const [email, setEmail] = useState("ananya.sharma@viyanhr.com");
   const [phone, setPhone] = useState("+91 98765 43210");
   const [bio, setBio] = useState(
     "Senior Finance Manager overseeing payroll and expense approvals.",
@@ -114,7 +114,7 @@ export function FinanceSettings() {
         login(updatedUser);
 
         try {
-          const registeredRaw = localStorage.getItem("nexus_registered_users");
+          const registeredRaw = localStorage.getItem("viyan_registered_users");
           if (registeredRaw) {
             const users: user[] = JSON.parse(registeredRaw);
             const updatedUsers = users.map((u: user) => {
@@ -129,7 +129,7 @@ export function FinanceSettings() {
               return u;
             });
             localStorage.setItem(
-              "nexus_registered_users",
+              "viyan_registered_users",
               JSON.stringify(updatedUsers),
             );
           }
@@ -184,7 +184,7 @@ export function FinanceSettings() {
     if (activeTab === "Profile Settings") {
       setFirstName("Ananya");
       setLastName("Sharma");
-      setEmail("ananya.sharma@nexushr.com");
+      setEmail("ananya.sharma@viyanhr.com");
       setPhone("+91 98765 43210");
       setBio(
         "Senior Finance Manager overseeing payroll and expense approvals.",

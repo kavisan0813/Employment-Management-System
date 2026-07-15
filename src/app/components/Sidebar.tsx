@@ -145,7 +145,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 letterSpacing: "-0.3px",
               }}
             >
-              NexusHR
+              viyanHR
             </span>
             <span
               className="block"

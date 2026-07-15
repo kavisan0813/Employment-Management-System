@@ -1,15 +1,9 @@
 import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function TrainingSettingsSection() {
-  const {
-    extraConfig,
-    showToast,
-    updateExtraConfig,
-  } = useSettingsContext();
+  const { extraConfig, showToast, updateExtraConfig } = useSettingsContext();
 
   return (
     <div>
@@ -140,7 +134,7 @@ export function TrainingSettingsSection() {
               className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
               style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
             >
-              <option>NexusHR</option>
+              <option>viyanHR</option>
               <option>External</option>
             </select>
           </div>
@@ -242,21 +236,20 @@ export function TrainingSettingsSection() {
                   />
                 </button>
               </div>
-              {item.key === "lmsSetDeadline" &&
-                extraConfig.lmsSetDeadline && (
-                  <input
-                    type="text"
-                    value={extraConfig.lmsDeadlineDays}
-                    onChange={(e) =>
-                      updateExtraConfig("lmsDeadlineDays", e.target.value)
-                    }
-                    className="mt-2 rounded-xl px-3 py-2 text-sm border w-full md:w-64 bg-white dark:bg-neutral-800"
-                    style={{
-                      borderColor: "#E5E7EB",
-                      color: "var(--foreground)",
-                    }}
-                  />
-                )}
+              {item.key === "lmsSetDeadline" && extraConfig.lmsSetDeadline && (
+                <input
+                  type="text"
+                  value={extraConfig.lmsDeadlineDays}
+                  onChange={(e) =>
+                    updateExtraConfig("lmsDeadlineDays", e.target.value)
+                  }
+                  className="mt-2 rounded-xl px-3 py-2 text-sm border w-full md:w-64 bg-white dark:bg-neutral-800"
+                  style={{
+                    borderColor: "#E5E7EB",
+                    color: "var(--foreground)",
+                  }}
+                />
+              )}
             </div>
           ))}
         </div>

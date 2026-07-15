@@ -17,7 +17,7 @@
 import { P } from "./permissions";
 
 // ── Scope types ─────────────────────────────────────────────────
-export type ScopeType = "organization" | "branch" | "department" | "team";
+export type ScopeType = "organization" | "branch" | "department" | "team" | "self";
 
 // ── Role assignment (mirrors user_role_assignments table) ───────
 export interface RoleAssignment {
@@ -174,8 +174,6 @@ export const ROLE_TEMPLATES: Record<SystemRoleId, RoleTemplate> = {
       P.PROFILE_VIEW,
       P.PROFILE_SELF,
       P.PROFILE_EDIT,
-      // My Workspace
-      P.MY_WORKSPACE_VIEW,
       // Manage Account
       P.MANAGE_ACCOUNT_VIEW,
       P.MANAGE_ACCOUNT_MANAGE,
@@ -504,6 +502,7 @@ export const LEGACY_ROLE_MAP: Record<string, SystemRoleId> = {
   "HR Manager": ROLE_IDS.HR_MANAGER,
   Finance: ROLE_IDS.FINANCE_MANAGER,
   Manager: ROLE_IDS.DEPT_MANAGER,
+  "Team Lead": ROLE_IDS.TEAM_LEAD,
   Employee: ROLE_IDS.EMPLOYEE,
 };
 

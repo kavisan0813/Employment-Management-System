@@ -142,7 +142,7 @@ export function ManagerAttendance() {
 
   // Sync Priya's real-time punch state to the table view
   useEffect(() => {
-    const priyaPunch = getPunchStateForEmail("emp@nexushr.com");
+    const priyaPunch = getPunchStateForEmail("emp@viyanhr.com");
     setAttendanceData((prev) =>
       prev.map((row) => {
         if (row.name === "Priya Sharma") {
@@ -566,7 +566,7 @@ export function ManagerAttendance() {
               date === todayMockDay &&
               currentMonthIndex === todayMockMonth
             ) {
-              const priyaPunch = getPunchStateForEmail("emp@nexushr.com");
+              const priyaPunch = getPunchStateForEmail("emp@viyanhr.com");
               if (priyaPunch?.isPunchedIn || priyaPunch?.punchOutTime) {
                 return 0; // Present
               } else {
@@ -1371,9 +1371,9 @@ export function ManagerAttendance() {
                 </h4>
                 <div className="space-y-2">
                   {selectedEmployee.name === "Priya Sharma" &&
-                  getPunchStateForEmail("emp@nexushr.com")?.logs &&
-                  getPunchStateForEmail("emp@nexushr.com")!.logs!.length > 0 ? (
-                    getPunchStateForEmail("emp@nexushr.com")!.logs!.map(
+                  getPunchStateForEmail("emp@viyanhr.com")?.logs &&
+                  getPunchStateForEmail("emp@viyanhr.com")!.logs!.length > 0 ? (
+                    getPunchStateForEmail("emp@viyanhr.com")!.logs!.map(
                       (
                         log: {
                           time: React.ReactNode;

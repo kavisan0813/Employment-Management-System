@@ -4368,7 +4368,7 @@ export function SettingsModals() {
                   borderColor: "var(--border)",
                   color: "var(--foreground)",
                 }}
-                placeholder="name@nexushr.com"
+                placeholder="name@viyanhr.com"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -6079,7 +6079,7 @@ export function SettingsModals() {
                 borderColor: "var(--border)",
                 color: "var(--foreground)",
               }}
-              placeholder="name@nexushr.com"
+              placeholder="name@viyanhr.com"
             />
           </div>
           <div>

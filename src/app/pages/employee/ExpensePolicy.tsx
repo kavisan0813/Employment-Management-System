@@ -88,7 +88,7 @@ export function ExpensePolicy() {
             <h2 className="text-2xl font-black">Policy Compliance</h2>
           </div>
           <p className="max-w-2xl text-emerald-50 font-medium leading-relaxed opacity-90">
-            NexusHR promotes a culture of trust and transparency. All expenses
+            viyanHR promotes a culture of trust and transparency. All expenses
             must be incurred for business purposes and supported by valid
             documentation where required.
           </p>

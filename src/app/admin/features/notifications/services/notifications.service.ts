@@ -78,7 +78,7 @@ const INITIAL_STATE: NotificationState = {
     },
     {
       id: "exp-003",
-      orgName: "Nexus Global Systems",
+      orgName: "viyan Global Systems",
       expiryDate: "2026-06-30",
       daysLeft: 7,
       status: "critical",
@@ -168,7 +168,7 @@ const INITIAL_STATE: NotificationState = {
     },
     {
       id: "sec-003",
-      userEmail: "devops@nexus.com",
+      userEmail: "devops@viyan.com",
       failedAttempts: 1200,
       location: "Germany / Frankfurt Proxy Node",
       reason: "API Abuse Rate Limit Exceeded (1200 requests/minute)",

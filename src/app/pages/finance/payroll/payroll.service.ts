@@ -30,7 +30,7 @@ const SEED_SALARY_STRUCTURES: SalaryStructure[] = [
     employeeName: "Sarah Johnson",
     designation: "Senior Software Engineer",
     department: "Engineering",
-    email: "sarah.johnson@nexushr.com",
+    email: "sarah.johnson@viyanhr.com",
     ctc: 1140000, // ₹11.4L
     basic: 47500,
     hra: 19000,
@@ -45,7 +45,7 @@ const SEED_SALARY_STRUCTURES: SalaryStructure[] = [
     employeeName: "Marcus Williams",
     designation: "Marketing Manager",
     department: "Marketing",
-    email: "marcus.williams@nexushr.com",
+    email: "marcus.williams@viyanhr.com",
     ctc: 1020000, // ₹10.2L
     basic: 42500,
     hra: 17000,
@@ -60,7 +60,7 @@ const SEED_SALARY_STRUCTURES: SalaryStructure[] = [
     employeeName: "Yuki Tanaka",
     designation: "Lead UX Designer",
     department: "Design",
-    email: "yuki.tanaka@nexushr.com",
+    email: "yuki.tanaka@viyanhr.com",
     ctc: 936000, // ₹9.36L
     basic: 39000,
     hra: 15600,
@@ -75,7 +75,7 @@ const SEED_SALARY_STRUCTURES: SalaryStructure[] = [
     employeeName: "James Carter",
     designation: "Senior Financial Analyst",
     department: "Finance",
-    email: "james.carter@nexushr.com",
+    email: "james.carter@viyanhr.com",
     ctc: 1056000, // ₹10.56L
     basic: 44000,
     hra: 17600,
@@ -90,7 +90,7 @@ const SEED_SALARY_STRUCTURES: SalaryStructure[] = [
     employeeName: "Emily Rodriguez",
     designation: "HR Business Partner",
     department: "HR",
-    email: "emily.rodriguez@nexushr.com",
+    email: "emily.rodriguez@viyanhr.com",
     ctc: 864000, // ₹8.64L
     basic: 36000,
     hra: 14400,
@@ -105,7 +105,7 @@ const SEED_SALARY_STRUCTURES: SalaryStructure[] = [
     employeeName: "Robert Chen",
     designation: "VP of Engineering",
     department: "Engineering",
-    email: "robert.chen@nexushr.com",
+    email: "robert.chen@viyanhr.com",
     ctc: 1740000, // ₹17.4L
     basic: 72500,
     hra: 29000,
@@ -120,7 +120,7 @@ const SEED_SALARY_STRUCTURES: SalaryStructure[] = [
     employeeName: "Priya Sharma",
     designation: "Senior Product Manager",
     department: "Product",
-    email: "priya.sharma@nexushr.com",
+    email: "priya.sharma@viyanhr.com",
     ctc: 1260000, // ₹12.6L
     basic: 52500,
     hra: 21000,
@@ -135,7 +135,7 @@ const SEED_SALARY_STRUCTURES: SalaryStructure[] = [
     employeeName: "Leo Martinez",
     designation: "Director of Sales",
     department: "Sales",
-    email: "leo.martinez@nexushr.com",
+    email: "leo.martinez@viyanhr.com",
     ctc: 1440000, // ₹14.4L
     basic: 60000,
     hra: 24000,
@@ -152,7 +152,7 @@ const INITIAL_STATE: PayrollState = {
   salaryStructures: SEED_SALARY_STRUCTURES,
 };
 
-const STORAGE_KEY = "nexus_payroll_engine";
+const STORAGE_KEY = "viyan_payroll_engine";
 
 /* ═══════════════════════════════════════════════════════════════════
  * SERVICE OBJECT

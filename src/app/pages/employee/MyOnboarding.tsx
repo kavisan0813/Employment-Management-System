@@ -362,7 +362,7 @@ const CONTACTS: Contact[] = [
   {
     name: "Ryan Park",
     role: "HR Owner",
-    email: "ryan@nexushr.com",
+    email: "ryan@viyanhr.com",
     avatar: "RP",
     color: "#00B87C",
     action: "Message",
@@ -371,7 +371,7 @@ const CONTACTS: Contact[] = [
   {
     name: "Suresh Iyer",
     role: "Your Manager",
-    email: "suresh@nexushr.com",
+    email: "suresh@viyanhr.com",
     avatar: "SI",
     color: "#8B5CF6",
     action: "Message",
@@ -380,7 +380,7 @@ const CONTACTS: Contact[] = [
   {
     name: "Arjun Mehta",
     role: "Your Buddy",
-    email: "arjun@nexushr.com",
+    email: "arjun@viyanhr.com",
     avatar: "AM",
     color: "#F59E0B",
     action: "Say Hi 👋",
@@ -389,7 +389,7 @@ const CONTACTS: Contact[] = [
   {
     name: "IT Team",
     role: "IT Support",
-    email: "it@nexushr.com",
+    email: "it@viyanhr.com",
     avatar: "IT",
     color: "#0EA5E9",
     action: "Raise Ticket",
@@ -600,7 +600,7 @@ export function MyOnboarding() {
               My Onboarding
             </h1>
             <p className="text-[13px] font-semibold text-muted-foreground">
-              Welcome to NexusHR! Your onboarding journey starts here.
+              Welcome to viyanHR! Your onboarding journey starts here.
             </p>
           </div>
         </div>
@@ -627,7 +627,7 @@ export function MyOnboarding() {
               <div className="flex items-center gap-2">
                 <span className="text-2xl animate-bounce inline-block">👋</span>
                 <h2 className="text-[22px] font-black text-foreground tracking-tight">
-                  Welcome to NexusHR, Priya! 🎉
+                  Welcome to viyanHR, Priya! 🎉
                 </h2>
               </div>
               <p className="text-[14px] text-muted-foreground mt-1">
@@ -1333,7 +1333,7 @@ export function MyOnboarding() {
                     NON-DISCLOSURE AGREEMENT
                   </p>
                   <p>
-                    This NDA is entered into between NexusHR Technologies and
+                    This NDA is entered into between viyanHR Technologies and
                     the undersigned employee... The employee agrees not to
                     disclose any confidential information including trade
                     secrets, customer data, financial information, business
@@ -1484,7 +1484,7 @@ export function MyOnboarding() {
               </div>
               <div className="px-6 py-4">
                 <h4 className="text-[14px] font-bold text-foreground">
-                  Welcome to NexusHR — Company Culture & Values
+                  Welcome to viyanHR — Company Culture & Values
                 </h4>
                 <div className="flex items-center gap-3 mt-1 text-[11px] text-muted-foreground">
                   <Clock size={12} /> 4:32 min

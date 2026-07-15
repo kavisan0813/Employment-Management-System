@@ -732,7 +732,7 @@ export function FinancePayroll() {
                   </div>
                   <div>
                     <h3 className="text-2xl font-black text-foreground tracking-tight">
-                      NexusHR
+                      viyanHR
                     </h3>
                     <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-widest">
                       Enterprise EMS Platform
@@ -835,7 +835,7 @@ export function FinancePayroll() {
                     );
                     const emailAddress =
                       empRecord?.email ||
-                      `${selectedEmployee.name.toLowerCase().replace(" ", ".")}@nexushr.com`;
+                      `${selectedEmployee.name.toLowerCase().replace(" ", ".")}@viyanhr.com`;
                     showToast(
                       "Success",
                       "success",
@@ -1092,7 +1092,7 @@ export function FinancePayroll() {
                         if (activeRun.status === "pending") {
                           const res = payrollService.approvePayRun(
                             activeRun.id,
-                            user?.email || "finance@nexushr.com",
+                            user?.email || "finance@viyanhr.com",
                           );
                           if (res.success) {
                             setRefreshKey((prev) => prev + 1);

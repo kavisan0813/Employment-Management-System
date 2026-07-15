@@ -406,7 +406,7 @@ function PayslipModal({
   const handleEmail = () => {
     const empEmail =
       employees.find((e) => e.id === employee.id)?.email ||
-      `${employee.name.toLowerCase().replace(/\s+/g, ".")}@nexushr.com`;
+      `${employee.name.toLowerCase().replace(/\s+/g, ".")}@viyanhr.com`;
     const subject = encodeURIComponent(
       `Salary Payslip - ${month} ${year} - ${employee.name} (${employee.id})`,
     );
@@ -423,10 +423,10 @@ function PayslipModal({
         `Gross Earnings: ₹${employee.gross.toLocaleString()}\n` +
         `Total Deductions: ₹${employee.deductions.toLocaleString()}\n` +
         `Net Pay Disbursed: ₹${employee.net.toLocaleString()}\n\n` +
-        `Your payslip is also available for download in the NexusHR portal.\n\n` +
+        `Your payslip is also available for download in the viyanHR portal.\n\n` +
         `Best regards,\n` +
         `Finance Department\n` +
-        `NexusHR Inc.`,
+        `viyanHR Inc.`,
     );
     window.location.href = `mailto:${empEmail}?subject=${subject}&body=${body}`;
   };
@@ -488,12 +488,12 @@ function PayslipModal({
                 <span className="bg-[#00B87C] text-white p-1.5 rounded-xl text-lg leading-none font-bold">
                   N
                 </span>
-                NexusHR Inc.
+                viyanHR Inc.
               </h1>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                 100 Marine Parkway, Redwood City, CA 94065
                 <br />
-                Phone: +1 (650) 555-0199 | Email: payroll@nexushr.com
+                Phone: +1 (650) 555-0199 | Email: payroll@viyanhr.com
               </p>
             </div>
             <div className="text-right">
@@ -673,7 +673,7 @@ function PayslipModal({
                 Authorized Signatory
                 <br />
                 <span className="text-[10px] lowercase font-normal">
-                  for NexusHR Inc.
+                  for viyanHR Inc.
                 </span>
               </p>
             </div>
@@ -753,7 +753,7 @@ function AIInsightsPanel({ employees }: { employees: PayrollEmployee[] }) {
             AI Payroll Insights
           </h3>
           <p className="text-[10px] text-muted-foreground">
-            Powered by NexusAI Engine
+            Powered by viyanAI Engine
           </p>
         </div>
         <div className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
@@ -2310,7 +2310,7 @@ export function Payroll() {
                                     const empEmail =
                                       employees.find((e) => e.id === emp.id)
                                         ?.email ||
-                                      `${emp.name.toLowerCase().replace(/\s+/g, ".")}@nexushr.com`;
+                                      `${emp.name.toLowerCase().replace(/\s+/g, ".")}@viyanhr.com`;
                                     const subject = encodeURIComponent(
                                       `Salary Payslip - ${selectedMonth} ${selectedYear} - ${emp.name} (${emp.id})`,
                                     );
@@ -2327,10 +2327,10 @@ export function Payroll() {
                                         `Gross Earnings: ₹${emp.gross.toLocaleString()}\n` +
                                         `Total Deductions: ₹${emp.deductions.toLocaleString()}\n` +
                                         `Net Pay Disbursed: ₹${emp.net.toLocaleString()}\n\n` +
-                                        `Your payslip is also available for download in the NexusHR portal.\n\n` +
+                                        `Your payslip is also available for download in the viyanHR portal.\n\n` +
                                         `Best regards,\n` +
                                         `Finance Department\n` +
-                                        `NexusHR Inc.`,
+                                        `viyanHR Inc.`,
                                     );
                                     window.location.href = `mailto:${empEmail}?subject=${subject}&body=${body}`;
                                     addToast({
@@ -2616,7 +2616,7 @@ export function Payroll() {
 
             const res = payrollService.createPayRun(
               `${selectedMonth} ${selectedYear}`,
-              user?.email || "hr@nexushr.com",
+              user?.email || "hr@viyanhr.com",
               payslips,
             );
 

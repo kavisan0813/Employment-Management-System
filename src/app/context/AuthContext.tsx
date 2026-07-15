@@ -7,6 +7,7 @@ export type UserRole =
   | "HR Manager"
   | "Finance"
   | "Manager"
+  | "Team Lead"
   | "Employee";
 
 export interface User {
@@ -67,6 +68,11 @@ export const ROLE_CONFIG: Record<
     color: "#F59E0B", // Amber accent
     bg: "rgba(245,158,11,0.1)",
   },
+  "Team Lead": {
+    label: "Team Lead",
+    color: "#3B82F6", // Blue accent
+    bg: "rgba(59,130,246,0.1)",
+  },
   Employee: {
     label: "Employee",
     color: "#00B87C", // Green accent
@@ -80,6 +86,7 @@ export const ROLE_HOME_ROUTE: Record<UserRole, string> = {
   "HR Manager": "/dashboard",
   Finance: "/dashboard",
   Manager: "/dashboard",
+  "Team Lead": "/dashboard",
   Employee: "/dashboard",
 };
 

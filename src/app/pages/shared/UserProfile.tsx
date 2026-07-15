@@ -223,7 +223,7 @@ export function UserProfile() {
   // Load avatar from localStorage by user email
   useEffect(() => {
     if (user?.email) {
-      const savedAvatar = localStorage.getItem(`nexus_avatar_${user.email}`);
+      const savedAvatar = localStorage.getItem(`viyan_avatar_${user.email}`);
       if (savedAvatar) {
         setAvatarPreview(savedAvatar);
       }
@@ -233,7 +233,7 @@ export function UserProfile() {
   // Form states matching details
   const [firstName, setFirstName] = useState("Ryan");
   const [lastName, setLastName] = useState("Park");
-  const [email, setEmail] = useState("ryan.park@nexushr.com");
+  const [email, setEmail] = useState("ryan.park@viyanhr.com");
   const [phone, setPhone] = useState("+1 (415) 823-9100");
   const [location, setLocation] = useState("San Francisco, CA");
   const [jobTitle, setJobTitle] = useState("HR Administrator");
@@ -273,7 +273,7 @@ export function UserProfile() {
           const base64 = uploadEvent.target.result as string;
           setAvatarPreview(base64);
           if (user?.email) {
-            localStorage.setItem(`nexus_avatar_${user.email}`, base64);
+            localStorage.setItem(`viyan_avatar_${user.email}`, base64);
           }
           showToast(
             "Avatar Updated",
@@ -321,7 +321,7 @@ export function UserProfile() {
       login(updatedUser);
 
       try {
-        const registeredRaw = localStorage.getItem("nexus_registered_users");
+        const registeredRaw = localStorage.getItem("viyan_registered_users");
         if (registeredRaw) {
           const users = JSON.parse(registeredRaw);
           const updatedUsers = users.map(
@@ -338,7 +338,7 @@ export function UserProfile() {
             },
           );
           localStorage.setItem(
-            "nexus_registered_users",
+            "viyan_registered_users",
             JSON.stringify(updatedUsers),
           );
         }
@@ -843,7 +843,7 @@ export function UserProfile() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <InputField
                           label="Company Name"
-                          value="NexusHR Technologies"
+                          value="viyanHR Technologies"
                         />
                         <InputField
                           label="Industry"
@@ -851,7 +851,7 @@ export function UserProfile() {
                         />
                         <InputField
                           label="Email"
-                          value="hr@nexushr.com"
+                          value="hr@viyanhr.com"
                           icon={<Mail size={14} />}
                         />
                         <InputField
@@ -868,7 +868,7 @@ export function UserProfile() {
                         </div>
                         <InputField
                           label="Website"
-                          value="www.nexushr.com"
+                          value="www.viyanhr.com"
                           icon={<Globe size={14} />}
                         />
                         <InputField label="Founded Year" value="2018" />
@@ -877,7 +877,7 @@ export function UserProfile() {
                             Company Description
                           </label>
                           <textarea
-                            defaultValue="NexusHR is a leading enterprise HR management platform empowering organizations to manage their most valuable assets — their people."
+                            defaultValue="viyanHR is a leading enterprise HR management platform empowering organizations to manage their most valuable assets — their people."
                             className="w-full bg-background border border-border rounded-xl px-4 py-3 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all min-h-[100px] resize-none"
                           />
                         </div>

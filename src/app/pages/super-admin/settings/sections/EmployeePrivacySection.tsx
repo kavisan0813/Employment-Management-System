@@ -152,7 +152,7 @@ export function EmployeePrivacySection({
             Request a copy of my data
           </p>
           <p className="text-[12px] font-bold text-muted-foreground mb-5">
-            Download all your personal data stored in NexusHR
+            Download all your personal data stored in viyanHR
           </p>
           <button
             className="px-5 py-2.5 rounded-xl border border-primary text-primary text-[12px] font-black hover:bg-primary/10 transition-all active:scale-95"

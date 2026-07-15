@@ -1,6 +1,6 @@
 const originalFetch = window.fetch;
 
-window.fetch = async function (input: RequestInfo | URL, init?: RequestInit) {
+window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   const url =
     typeof input === "string"
       ? input
@@ -17,20 +17,22 @@ window.fetch = async function (input: RequestInfo | URL, init?: RequestInit) {
     const user = savedUser ? JSON.parse(savedUser) : null;
     const userRole = user?.role || "Employee";
 
-    let roles: any[] = [];
+    let roles: Array<{ value: string; label: string; alwaysOn?: boolean }>;
     if (userRole === "Super Admin" || userRole === "Platform Admin") {
       roles = [
         { value: "Employee", label: "Employee", alwaysOn: true },
         { value: "HR Manager", label: "HR Manager" },
         { value: "Finance", label: "Finance Manager" },
-        { value: "Manager", label: "Team Manager" },
-        { value: "Super Admin", label: "Admin (Super Admin)" },
+        { value: "Manager", label: "Manager" },
+        { value: "Team Lead", label: "Team Lead" },
+        { value: "Admin", label: "Admin" },
       ];
     } else if (userRole === "HR Manager") {
       roles = [
         { value: "Employee", label: "Employee", alwaysOn: true },
         { value: "Finance", label: "Finance Manager" },
         { value: "Manager", label: "Team Manager" },
+        { value: "Team Lead", label: "Team Lead" },
       ];
     } else if (userRole === "Finance") {
       roles = [
@@ -38,9 +40,7 @@ window.fetch = async function (input: RequestInfo | URL, init?: RequestInit) {
         { value: "Manager", label: "Team Manager" },
       ];
     } else if (userRole === "Manager") {
-      roles = [
-        { value: "Employee", label: "Employee", alwaysOn: true },
-      ];
+      roles = [{ value: "Employee", label: "Employee", alwaysOn: true }];
     } else {
       // Regular employees or other roles have no roles they're allowed to assign
       roles = [];
@@ -66,7 +66,13 @@ window.fetch = async function (input: RequestInfo | URL, init?: RequestInit) {
 
     let allowedRoles: string[] = [];
     if (userRole === "Super Admin" || userRole === "Platform Admin") {
-      allowedRoles = ["Employee", "HR Manager", "Finance", "Manager", "Super Admin"];
+      allowedRoles = [
+        "Employee",
+        "HR Manager",
+        "Finance",
+        "Manager",
+        "Super Admin",
+      ];
     } else if (userRole === "HR Manager") {
       allowedRoles = ["Employee", "Finance", "Manager"];
     } else if (userRole === "Finance") {
@@ -76,13 +82,14 @@ window.fetch = async function (input: RequestInfo | URL, init?: RequestInit) {
     }
 
     const hasUnauthorizedRole = roleAssignments.some(
-      (a: any) => !allowedRoles.includes(a.role),
+      (a: { role: string }) => !allowedRoles.includes(a.role),
     );
 
     if (hasUnauthorizedRole) {
       return new Response(
         JSON.stringify({
-          message: "You're no longer permitted to assign one of the selected roles. Refresh and try again.",
+          message:
+            "You're no longer permitted to assign one of the selected roles. Refresh and try again.",
         }),
         {
           status: 403,

@@ -347,7 +347,7 @@ export function ManagerTeamPerformance() {
       return;
     }
     const lines = [
-      `NexusHR Scorecard Report`,
+      `viyanHR Scorecard Report`,
       `Employee Name: ${emp.name}`,
       `Designation: ${emp.designation}`,
       `Department: ${emp.dept}`,

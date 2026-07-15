@@ -111,12 +111,12 @@ const DashboardWrapper = lazy(
   () => import("./pages/dashboard/DashboardWrapper"),
 );
 const AddEmployee = lazy(() =>
-  import("./pages/hr/team-management/AddEmployee").then((m) => ({
+  import("./features/Employee/components/AddEmployee").then((m) => ({
     default: m.default,
   })),
 );
 const Employees = lazy(() =>
-  import("./pages/hr/team-management/Employees").then((m) => ({
+  import("./features/Employee/EmployeesPage").then((m) => ({
     default: m.Employees,
   })),
 );
@@ -169,8 +169,8 @@ const LeaveManagement = lazy(() =>
   })),
 );
 const Departments = lazy(() =>
-  import("./pages/hr/team-management/Departments").then((m) => ({
-    default: m.Departments,
+  import("./features/Department/DepartmentPage").then((m) => ({
+    default: m.DepartmentPage,
   })),
 );
 const UserProfile = lazy(() =>
@@ -280,11 +280,6 @@ const MyOnboarding = lazy(() =>
 const EmployeeNotifications = lazy(
   () => import("./pages/employee/EmployeeNotifications"),
 );
-const EmployeeDirectory = lazy(() =>
-  import("./pages/employee/EmployeeDirectory").then((m) => ({
-    default: m.EmployeeDirectory,
-  })),
-);
 const EmployeePayslips = lazy(() =>
   import("./pages/employee/EmployeePayslips").then((m) => ({
     default: m.EmployeePayslips,
@@ -382,21 +377,13 @@ const FinanceSupport = lazy(() =>
     default: m.FinanceSupport,
   })),
 );
-const FinanceEmployees = lazy(() =>
-  import("./pages/finance/ops/FinanceEmployees").then((m) => ({
-    default: m.FinanceEmployees,
-  })),
-);
+
 const FinanceIncrement = lazy(() =>
   import("./pages/finance/ops/FinanceIncrement").then((m) => ({
     default: m.FinanceIncrement,
   })),
 );
-const FinanceDepartments = lazy(() =>
-  import("./pages/finance/ops/FinanceDepartments").then((m) => ({
-    default: m.FinanceDepartments,
-  })),
-);
+// FinanceDepartments removed - using unified DepartmentPage
 // Finance dashboard moved to DashboardWrapper
 const FinanceLeaves = lazy(() =>
   import("./pages/finance/workspace/FinanceLeaves").then((m) => ({
@@ -445,11 +432,7 @@ const ManagerExpenseApprovals = lazy(() =>
     default: m.ManagerExpenseApprovals,
   })),
 );
-const ManagerTeam = lazy(() =>
-  import("./pages/manager/team/ManagerTeam").then((m) => ({
-    default: m.ManagerTeam,
-  })),
-);
+
 const ManagerTeamAppraisal = lazy(() =>
   import("./pages/manager/team/ManagerTeamAppraisal").then((m) => ({
     default: m.ManagerTeamAppraisal,
@@ -839,13 +822,6 @@ function TrainingWrapper() {
 }
 
 function DepartmentsWrapper() {
-  const { hasPermissionKey } = usePermissions();
-  if (
-    hasPermissionKey(P.PAYROLL_FULL) &&
-    !hasPermissionKey(P.DEPARTMENTS_MANAGE)
-  ) {
-    return lazyRoute(FinanceDepartments);
-  }
   return lazyRoute(Departments);
 }
 
@@ -956,25 +932,6 @@ function ExpensesWrapper() {
 }
 
 function DirectoryWrapper() {
-  const { hasPermissionKey } = usePermissions();
-  if (
-    !hasPermissionKey(P.EMPLOYEES_MANAGE) &&
-    !hasPermissionKey(P.EMPLOYEES_VIEW_TEAM)
-  ) {
-    return lazyRoute(EmployeeDirectory);
-  }
-  if (
-    hasPermissionKey(P.PAYROLL_FULL) &&
-    !hasPermissionKey(P.EMPLOYEES_MANAGE)
-  ) {
-    return lazyRoute(FinanceEmployees);
-  }
-  if (
-    hasPermissionKey(P.EMPLOYEES_VIEW_TEAM) &&
-    !hasPermissionKey(P.EMPLOYEES_MANAGE)
-  ) {
-    return lazyRoute(ManagerTeam);
-  }
   return lazyRoute(Employees);
 }
 

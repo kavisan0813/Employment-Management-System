@@ -15,7 +15,7 @@ import {
   Info,
 } from "lucide-react";
 
-const AUTOSAVE_KEY = "nexus_manage_account_add_user_draft";
+const AUTOSAVE_KEY = "viyan_manage_account_add_user_draft";
 
 export function ManageAccountAddUser() {
   const navigate = useNavigate();
@@ -193,7 +193,7 @@ export function ManageAccountAddUser() {
     ) &&
     !((): boolean => {
       try {
-        const saved = localStorage.getItem("nexus_registered_users");
+        const saved = localStorage.getItem("viyan_registered_users");
         if (saved)
           return JSON.parse(saved).some(
             (u: { email: string }) =>
@@ -287,7 +287,7 @@ export function ManageAccountAddUser() {
     addEmployee(newEmp);
 
     try {
-      const savedUsers = localStorage.getItem("nexus_registered_users") || "[]";
+      const savedUsers = localStorage.getItem("viyan_registered_users") || "[]";
       const usersList = JSON.parse(savedUsers);
       const newPlatformUser = {
         id: `user-${Date.now()}`,
@@ -303,11 +303,11 @@ export function ManageAccountAddUser() {
         joinedAt: new Date().toISOString(),
         mfaEnabled: false,
         lastLoginAt: "",
-        organization: user?.organization || "NexusHR Org",
+        organization: user?.organization || "viyanHR Org",
         organizationId: "org-1",
       };
       localStorage.setItem(
-        "nexus_registered_users",
+        "viyan_registered_users",
         JSON.stringify([newPlatformUser, ...usersList]),
       );
     } catch (err) {
@@ -564,7 +564,10 @@ export function ManageAccountAddUser() {
             </div>
 
             <div className="p-4 bg-emerald-50/30 rounded-2xl flex items-start gap-3 mb-10">
-              <Info className="text-[var(--primary)] shrink-0 mt-0.5" size={16} />
+              <Info
+                className="text-[var(--primary)] shrink-0 mt-0.5"
+                size={16}
+              />
               <p className="text-xs text-emerald-900/60 leading-relaxed font-semibold">
                 The user will receive an email invitation to create their own
                 password.

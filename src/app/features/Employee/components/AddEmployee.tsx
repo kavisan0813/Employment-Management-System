@@ -14,8 +14,7 @@ import {
 } from "lucide-react";
 import { useAssignableRoles } from "../../../hooks/useAssignableRoles";
 
-
-const AUTOSAVE_KEY = "nexus_add_employee_draft";
+const AUTOSAVE_KEY = "viyan_add_employee_draft";
 
 /* ─────────────────────────────────────────────────────────
    ROLE ASSIGNMENT MODEL
@@ -40,8 +39,9 @@ export const ROLE_CATALOG = [
   { value: "Employee", label: "Employee", alwaysOn: true },
   { value: "HR Manager", label: "HR Manager" },
   { value: "Finance", label: "Finance Manager" },
-  { value: "Manager", label: "Team Manager" },
-  { value: "Super Admin", label: "Admin (Super Admin)", superAdminOnly: true },
+  { value: "Manager", label: "Manager" },
+  { value: "Team Lead", label: "Team Lead" },
+  { value: "Super Admin", label: "Admin", superAdminOnly: true },
 ] as const;
 
 export const VALIDATION = {
@@ -63,12 +63,7 @@ export default function AddEmployee() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { employeesList, addEmployee } = useEmployees();
-
   const { data: assignableRoles, isLoading, error } = useAssignableRoles();
-
-  const currentUserRole = user?.role || "Employee";
-  const isSuperAdmin =
-    currentUserRole === "Super Admin" || currentUserRole === "Platform Admin";
 
   // ─── Step state ───
   const [step, setStep] = useState(1);
@@ -276,7 +271,7 @@ export default function AddEmployee() {
     ) &&
     !((): boolean => {
       try {
-        const saved = localStorage.getItem("nexus_registered_users");
+        const saved = localStorage.getItem("viyan_registered_users");
         if (saved)
           return JSON.parse(saved).some(
             (u: { email: string }) =>
@@ -419,7 +414,8 @@ export default function AddEmployee() {
       addEmployee(newEmp);
 
       try {
-        const savedUsers = localStorage.getItem("nexus_registered_users") || "[]";
+        const savedUsers =
+          localStorage.getItem("viyan_registered_users") || "[]";
         const usersList = JSON.parse(savedUsers);
         const newPlatformUser = {
           id: `user-${Date.now()}`,
@@ -436,11 +432,11 @@ export default function AddEmployee() {
           joinedAt: new Date().toISOString(),
           mfaEnabled: false,
           lastLoginAt: "",
-          organization: user?.organization || "NexusHR Org",
+          organization: user?.organization || "viyanHR Org",
           organizationId: "org-1",
         };
         localStorage.setItem(
-          "nexus_registered_users",
+          "viyan_registered_users",
           JSON.stringify([newPlatformUser, ...usersList]),
         );
       } catch (err) {
@@ -558,7 +554,6 @@ export default function AddEmployee() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-             
               <div>
                 <label className={labelCls}>First Name</label>
                 <input
@@ -583,7 +578,7 @@ export default function AddEmployee() {
                   }
                 />
               </div>
-               <div>
+              <div>
                 <label className={labelCls}>Employee ID</label>
                 <input
                   type="text"
@@ -636,7 +631,9 @@ export default function AddEmployee() {
               <select
                 className={selectCls}
                 value={form.roleIds[0] || ""}
-                disabled={isLoading || !!error || (assignableRoles || []).length === 0}
+                disabled={
+                  isLoading || !!error || (assignableRoles || []).length === 0
+                }
                 onChange={(e) => {
                   const val = e.target.value;
                   if (val) {
@@ -648,7 +645,8 @@ export default function AddEmployee() {
                   <option value="">Loading roles...</option>
                 ) : (assignableRoles || []).length === 0 ? (
                   <option value="">
-                    You don't have permission to assign additional roles. Contact your Admin if this employee needs elevated access.
+                    You don't have permission to assign additional roles.
+                    Contact your Admin if this employee needs elevated access.
                   </option>
                 ) : (
                   <>
@@ -1051,7 +1049,6 @@ export default function AddEmployee() {
                   Personal Information
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
-                 
                   <div>
                     <label className={labelCls}>Date of Birth</label>
                     <input
@@ -1379,7 +1376,6 @@ export default function AddEmployee() {
         )}
 
         {/* ═══ STEP 6: Other Information ═══ */}
-       
 
         {/* ═══ STEP 7: Alerts ═══ */}
         {step === 6 && (

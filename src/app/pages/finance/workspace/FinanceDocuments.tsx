@@ -380,7 +380,7 @@ export function FinanceDocuments() {
                   <div className="w-full h-1 bg-muted rounded-full" />
                   <div className="w-full h-1 bg-muted rounded-full" />
                   <div className="w-full h-4 bg-[#00B87C]/20 border border-[#00B87C]/30 text-[#00B87C] text-[6px] rounded flex items-center justify-center font-bold">
-                    NEXUSHR SECURE
+                    viyanHR SECURE
                   </div>
                 </div>
                 <p className="text-[13px] font-bold text-foreground mt-6">

@@ -542,7 +542,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     includeDocsInBackup: true,
     compressBackup: true,
     sendBackupReport: true,
-    backupReportEmail: "admin@nexushr.com",
+    backupReportEmail: "admin@viyanhr.com",
     importSkipDuplicates: true,
     importUpdateExisting: false,
     importSendWelcome: true,
@@ -612,10 +612,10 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     docBlockCriticalExpired: false,
     docAutoNotifyRejection: true,
     lmsMode: "Internal (Built-in)",
-    lmsExternalUrl: "https://lms.nexushr.com",
+    lmsExternalUrl: "https://lms.viyanhr.com",
     lmsDefaultLanguage: "English",
     lmsVideoHosting: "Internal Storage",
-    lmsCertificateProvider: "NexusHR",
+    lmsCertificateProvider: "viyanHR",
     lmsMaxVideoSize: "500",
     lmsMandatoryEnabled: true,
     lmsBlockAccess: false,
@@ -667,14 +667,14 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
 
   // Company Profile states
   const [companyName, setCompanyName] = useState(
-    "NexusHR Technologies Pvt. Ltd.",
+    "viyanHR Technologies Pvt. Ltd.",
   );
   const [legalName, setLegalName] = useState(
-    "NexusHR Technologies Private Limited",
+    "viyanHR Technologies Private Limited",
   );
   const [industry, setIndustry] = useState("Technology");
   const [foundedYear, setFoundedYear] = useState("2018");
-  const [companyEmail, setCompanyEmail] = useState("hr@nexushr.com");
+  const [companyEmail, setCompanyEmail] = useState("hr@viyanhr.com");
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [toast, setToast] = useState<{
     message: string;
@@ -1171,7 +1171,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
   const [usersList, setUsersList] = useState<UserManagementRecord[]>([
     {
       name: "Ryan Park",
-      email: "ryan@nexushr.com",
+      email: "ryan@viyanhr.com",
       initials: "RP",
       avatarBg: "#10B981",
       role: "Super Admin",
@@ -1182,7 +1182,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     },
     {
       name: "Meera Thomas",
-      email: "meera@nexushr.com",
+      email: "meera@viyanhr.com",
       initials: "MT",
       avatarBg: "#0EA5E9",
       role: "HR Manager",
@@ -1193,7 +1193,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     },
     {
       name: "Suresh Iyer",
-      email: "suresh@nexushr.com",
+      email: "suresh@viyanhr.com",
       initials: "SI",
       avatarBg: "#F59E0B",
       role: "Manager",
@@ -1204,7 +1204,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     },
     {
       name: "Ananya Das",
-      email: "ananya@nexushr.com",
+      email: "ananya@viyanhr.com",
       initials: "AD",
       avatarBg: "#EF4444",
       role: "Finance",
@@ -1215,7 +1215,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     },
     {
       name: "John Doe",
-      email: "john@nexushr.com",
+      email: "john@viyanhr.com",
       initials: "JD",
       avatarBg: "#6B7280",
       role: "Manager",
@@ -1226,7 +1226,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     },
     {
       name: "Priya Sharma",
-      email: "priya.new@nexushr.com",
+      email: "priya.new@viyanhr.com",
       initials: "PS",
       avatarBg: "#10B981",
       role: "HR Manager",
@@ -1237,7 +1237,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     },
     {
       name: "Leo Martinez",
-      email: "leo.m@nexushr.com",
+      email: "leo.m@viyanhr.com",
       initials: "LM",
       avatarBg: "#F59E0B",
       role: "Manager",
@@ -1568,11 +1568,11 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
   const [webhookLogs, setWebhookLogs] = useState(true);
 
   // Email Template state triggers
-  const [emailFromName, setEmailFromName] = useState("NexusHR EMS");
+  const [emailFromName, setEmailFromName] = useState("viyanHR EMS");
   const [emailFromAddress, setEmailFromAddress] = useState(
-    "no-reply@nexushr.com",
+    "no-reply@viyanhr.com",
   );
-  const [emailReplyTo, setEmailReplyTo] = useState("hr@nexushr.com");
+  const [emailReplyTo, setEmailReplyTo] = useState("hr@viyanhr.com");
   const [emailProvider, setEmailProvider] = useState("SendGrid");
   const [emailAddLogo, setEmailAddLogo] = useState(true);
   const [emailAddUnsub, setEmailAddUnsub] = useState(true);

@@ -79,7 +79,7 @@ const MOCK_EXPENSES: Expense[] = [
     receiptStatus: "Attached",
     status: "Pending",
     description: "Quarterly team bonding and retrospective session.",
-    project: "NexusHR Internal",
+    project: "viyanHR Internal",
     paymentMode: "Cash",
   },
   {
@@ -132,7 +132,7 @@ const MOCK_EXPENSES: Expense[] = [
     status: "Draft",
     description:
       "Professional development course for frontend engineering team.",
-    project: "NexusHR Internal",
+    project: "viyanHR Internal",
     paymentMode: "Online Transfer",
   },
   {

@@ -40,7 +40,7 @@ export function FinanceProfile() {
 
   const [fullName, setFullName] = useState(() => user?.name || "Ananya Sharma");
   const [email, setEmail] = useState(
-    () => user?.email || "ananya.sharma@nexushr.com",
+    () => user?.email || "ananya.sharma@viyanhr.com",
   );
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export function FinanceProfile() {
 
   useEffect(() => {
     if (user?.email) {
-      const saved = localStorage.getItem(`nexus_avatar_${user.email}`);
+      const saved = localStorage.getItem(`viyan_avatar_${user.email}`);
       if (saved) {
         setAvatarPreview(saved);
       }
@@ -77,7 +77,7 @@ export function FinanceProfile() {
           const base64 = uploadEvent.target.result as string;
           setAvatarPreview(base64);
           if (user?.email) {
-            localStorage.setItem(`nexus_avatar_${user.email}`, base64);
+            localStorage.setItem(`viyan_avatar_${user.email}`, base64);
           }
           showToast(
             "Avatar Updated",
@@ -120,7 +120,7 @@ export function FinanceProfile() {
       login(updatedUser);
 
       try {
-        const registeredRaw = localStorage.getItem("nexus_registered_users");
+        const registeredRaw = localStorage.getItem("viyan_registered_users");
         if (registeredRaw) {
           const users: AuthUser[] = JSON.parse(registeredRaw);
           const updatedUsers = users.map((u: AuthUser) => {
@@ -135,7 +135,7 @@ export function FinanceProfile() {
             return u;
           });
           localStorage.setItem(
-            "nexus_registered_users",
+            "viyan_registered_users",
             JSON.stringify(updatedUsers),
           );
         }
@@ -770,7 +770,7 @@ function EmploymentTab() {
         <ReadOnlyField label="Probation Status" value="Completed" />
         <ReadOnlyField
           label="Official Email"
-          value="ananya.sharma@nexushr.com"
+          value="ananya.sharma@viyanhr.com"
         />
       </div>
     </div>
@@ -1096,7 +1096,7 @@ function DocCard({
   date: string;
 }) {
   const handleDownload = () => {
-    const content = `Mock document download content for: ${name}\nNexusHR Secure Document Repository.`;
+    const content = `Mock document download content for: ${name}\nviyanHR Secure Document Repository.`;
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");

@@ -69,7 +69,7 @@ const initialClaims = [
       name: "Sarah Chen",
       dept: "Engineering",
       avatar: "SC",
-      email: "sarah.c@nexus.com",
+      email: "sarah.c@viyan.com",
     },
     category: "Travel",
     catIcon: "🚗",
@@ -86,7 +86,7 @@ const initialClaims = [
       name: "James Wilson",
       dept: "Sales",
       avatar: "JW",
-      email: "james.w@nexus.com",
+      email: "james.w@viyan.com",
     },
     category: "Food",
     catIcon: "🍽️",
@@ -103,7 +103,7 @@ const initialClaims = [
       name: "Michael Ross",
       dept: "HR",
       avatar: "MR",
-      email: "michael.r@nexus.com",
+      email: "michael.r@viyan.com",
     },
     category: "Fuel",
     catIcon: "⛽",
@@ -120,7 +120,7 @@ const initialClaims = [
       name: "Emily Blunt",
       dept: "Marketing",
       avatar: "EB",
-      email: "emily.b@nexus.com",
+      email: "emily.b@viyan.com",
     },
     category: "Accommodation",
     catIcon: "🏨",
@@ -137,7 +137,7 @@ const initialClaims = [
       name: "David Miller",
       dept: "Design",
       avatar: "DM",
-      email: "david.m@nexus.com",
+      email: "david.m@viyan.com",
     },
     category: "Office Supplies",
     catIcon: "🛒",
@@ -2319,7 +2319,7 @@ export function Expenses() {
               <div className="p-8 border-t border-border bg-muted/20 flex justify-center">
                 <p className="text-[11px] font-bold text-muted-foreground italic flex items-center gap-2">
                   <ShieldCheck size={14} className="text-emerald-500" />
-                  NexusHR Security: This document is encrypted and stored
+                  viyanHR Security: This document is encrypted and stored
                   securely.
                 </p>
               </div>

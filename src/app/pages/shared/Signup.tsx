@@ -123,13 +123,13 @@ export function Signup() {
 
   // Stepper state: 1 (Account), 2.1 (Basic Org), 2.2 (Address/Size), 2.4 (Review), 3 (Plan), "payment", "contact-sales"
   const [step, setStep] = useState<number | string>(() => {
-    const savedStep = sessionStorage.getItem("nexus_onboarding_step");
+    const savedStep = sessionStorage.getItem("viyan_onboarding_step");
     return savedStep ? JSON.parse(savedStep) : 1;
   });
 
   // Form State
   const [formData, setFormData] = useState<SignupFormData>(() => {
-    const savedData = sessionStorage.getItem("nexus_onboarding_data");
+    const savedData = sessionStorage.getItem("viyan_onboarding_data");
     return savedData
       ? (JSON.parse(savedData) as SignupFormData)
       : {
@@ -198,11 +198,11 @@ export function Signup() {
 
   // Sync to session storage
   useEffect(() => {
-    sessionStorage.setItem("nexus_onboarding_step", JSON.stringify(step));
+    sessionStorage.setItem("viyan_onboarding_step", JSON.stringify(step));
   }, [step]);
 
   useEffect(() => {
-    sessionStorage.setItem("nexus_onboarding_data", JSON.stringify(formData));
+    sessionStorage.setItem("viyan_onboarding_data", JSON.stringify(formData));
   }, [formData]);
 
   const handleInputChange = (
@@ -273,10 +273,10 @@ export function Signup() {
             .slice(0, 2) || "JD",
       };
 
-      const regListRaw = localStorage.getItem("nexus_registered_users");
+      const regListRaw = localStorage.getItem("viyan_registered_users");
       const regList = regListRaw ? JSON.parse(regListRaw) : [];
       regList.push(registeredUser);
-      localStorage.setItem("nexus_registered_users", JSON.stringify(regList));
+      localStorage.setItem("viyan_registered_users", JSON.stringify(regList));
 
       // Auto-login the user into current context
       login({
@@ -300,7 +300,11 @@ export function Signup() {
 
     setTimeout(() => {
       // Use OrgService to create the organization row in local DB
-      const generatedCode = formData.orgName.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 3) + "001";
+      const generatedCode =
+        formData.orgName
+          .toUpperCase()
+          .replace(/[^A-Z0-9]/g, "")
+          .slice(0, 3) + "001";
       const newOrg = OrganizationService.createOrganization({
         name: formData.orgName,
         code: generatedCode,
@@ -332,7 +336,7 @@ export function Signup() {
             .slice(0, 2) || "JD",
       });
 
-      sessionStorage.setItem("nexus_current_org_id", newOrg.id);
+      sessionStorage.setItem("viyan_current_org_id", newOrg.id);
 
       setIsLoading(false);
       toast.success("Organization setup completed successfully!");
@@ -360,7 +364,7 @@ export function Signup() {
     setIsLoading(true);
 
     setTimeout(() => {
-      const orgId = sessionStorage.getItem("nexus_current_org_id");
+      const orgId = sessionStorage.getItem("viyan_current_org_id");
       if (orgId) {
         // Update mock organizations plan
         const orgs = db.organizations.get();
@@ -400,9 +404,9 @@ export function Signup() {
       setIsLoading(false);
       toast.success(`Activated the ${planName} Plan! Welcome aboard.`);
 
-      sessionStorage.removeItem("nexus_onboarding_step");
-      sessionStorage.removeItem("nexus_onboarding_data");
-      sessionStorage.removeItem("nexus_current_org_id");
+      sessionStorage.removeItem("viyan_onboarding_step");
+      sessionStorage.removeItem("viyan_onboarding_data");
+      sessionStorage.removeItem("viyan_current_org_id");
 
       navigate("/admin/dashboard");
     }, 1500);
@@ -658,7 +662,7 @@ export function Signup() {
                   <input
                     type="email"
                     required
-                    placeholder="name@nexushr.com"
+                    placeholder="name@viyanhr.com"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     className="w-full rounded-2xl pl-12 pr-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"

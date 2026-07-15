@@ -548,7 +548,7 @@ function DocumentPreviewContent({ docName }: { docName: string }) {
         {/* Header */}
         <div className="border-b-2 border-[#00B87C] pb-3 text-center font-sans">
           <h4 className="text-[14px] font-black text-[#00B87C] uppercase tracking-widest">
-            NexusHR Technologies
+            viyanHR Technologies
           </h4>
           <p className="text-[7px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">
             Innovating Human Resources
@@ -572,7 +572,7 @@ function DocumentPreviewContent({ docName }: { docName: string }) {
 
           <p className="text-[8px] leading-relaxed text-slate-600">
             {nameLower.includes("offer") &&
-              "We are pleased to offer you the position of Engineering Manager at NexusHR Technologies. Your leadership experience and architecture expertise will drive our technical excellence."}
+              "We are pleased to offer you the position of Engineering Manager at viyanHR Technologies. Your leadership experience and architecture expertise will drive our technical excellence."}
             {nameLower.includes("appointment") &&
               "This letter serves to confirm your formal appointment as Engineering Manager. You report to Sarah Mitchell, VP HR, and will oversee our engineering organization based in Chennai."}
             {nameLower.includes("nda") &&

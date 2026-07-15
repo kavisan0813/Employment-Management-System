@@ -11,12 +11,7 @@
  * ─────────────────────────────────────────────────────────────────
  */
 
-import {
-  createContext,
-  useContext,
-  useMemo,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { useAuth } from "../../context/AuthContext";
 import {
   resolvePermissions,
@@ -26,6 +21,7 @@ import {
   ROLE_TEMPLATES,
   type RoleAssignment,
   type SystemRoleId,
+  type ScopeType,
 } from "./roles";
 import { permissionKey } from "./permissions";
 
@@ -76,10 +72,16 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
       // Legacy migration: translate the old `user.role` string
       const roleId = LEGACY_ROLE_MAP[user.role];
       if (roleId) {
-        assignments = [createMockAssignment(user.email, roleId)];
+        let defaultScope: ScopeType = "organization";
+        if (roleId === ROLE_IDS.TEAM_LEAD) {
+          defaultScope = "team";
+        } else if (roleId === ROLE_IDS.EMPLOYEE) {
+          defaultScope = "self";
+        }
+        assignments = [createMockAssignment(user.email, roleId, defaultScope)];
       } else {
         // Fallback to employee
-        assignments = [createMockAssignment(user.email, ROLE_IDS.EMPLOYEE)];
+        assignments = [createMockAssignment(user.email, ROLE_IDS.EMPLOYEE, "self")];
       }
     }
 
@@ -129,9 +131,7 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
 export function usePermissions(): PermissionContextValue {
   const context = useContext(PermissionContext);
   if (context === undefined) {
-    throw new Error(
-      "usePermissions must be used within a PermissionProvider",
-    );
+    throw new Error("usePermissions must be used within a PermissionProvider");
   }
   return context;
 }

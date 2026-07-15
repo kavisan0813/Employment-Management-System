@@ -80,7 +80,7 @@ const MOCK_EXPENSES: ExpenseClaim[] = [
     status: "Pending",
     vendor: "The Great Indian Kitchen",
     paymentMode: "Personal",
-    project: "Nexus V2.0",
+    project: "viyan V2.0",
   },
   {
     id: "EXP-1283",
@@ -232,10 +232,17 @@ export function FinanceExpenses() {
     }
   };
 
-  const pendingCount = 34 + expenses.filter((e) => e.status === "Pending").length;
-  const approvedCount = 83 + expenses.filter((e) => e.status === "Approved").length;
-  const rejectedCount = 11 + expenses.filter((e) => e.status === "Rejected").length;
-  const approvedAmount = 127000 + expenses.filter((e) => e.status === "Approved").reduce((sum, e) => sum + e.amount, 0);
+  const pendingCount =
+    34 + expenses.filter((e) => e.status === "Pending").length;
+  const approvedCount =
+    83 + expenses.filter((e) => e.status === "Approved").length;
+  const rejectedCount =
+    11 + expenses.filter((e) => e.status === "Rejected").length;
+  const approvedAmount =
+    127000 +
+    expenses
+      .filter((e) => e.status === "Approved")
+      .reduce((sum, e) => sum + e.amount, 0);
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
@@ -265,7 +272,12 @@ export function FinanceExpenses() {
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard title="TOTAL PENDING" value={String(pendingCount)} color="amber" icon={Clock} />
+        <KPICard
+          title="TOTAL PENDING"
+          value={String(pendingCount)}
+          color="amber"
+          icon={Clock}
+        />
         <KPICard
           title="APPROVED THIS MONTH"
           value={String(approvedCount)}
@@ -273,7 +285,12 @@ export function FinanceExpenses() {
           color="green"
           icon={CheckCircle2}
         />
-        <KPICard title="REJECTED" value={String(rejectedCount)} color="red" icon={XCircle} />
+        <KPICard
+          title="REJECTED"
+          value={String(rejectedCount)}
+          color="red"
+          icon={XCircle}
+        />
         <KPICard
           title="AVG APPROVAL TIME"
           value="1.8d"
@@ -403,8 +420,8 @@ export function FinanceExpenses() {
                       prev.map((exp) =>
                         selectedRows.includes(exp.id)
                           ? { ...exp, status: "Approved" }
-                          : exp
-                      )
+                          : exp,
+                      ),
                     );
                     showToast(
                       `${selectedRows.length} claims approved successfully!`,
@@ -421,8 +438,8 @@ export function FinanceExpenses() {
                       prev.map((exp) =>
                         selectedRows.includes(exp.id)
                           ? { ...exp, status: "Rejected" }
-                          : exp
-                      )
+                          : exp,
+                      ),
                     );
                     showToast(`Rejected ${selectedRows.length} claims.`);
                     setSelectedRows([]);
@@ -567,8 +584,10 @@ export function FinanceExpenses() {
                             onClick={() => {
                               setExpenses((prev) =>
                                 prev.map((e) =>
-                                  e.id === exp.id ? { ...e, status: "Approved" } : e
-                                )
+                                  e.id === exp.id
+                                    ? { ...e, status: "Approved" }
+                                    : e,
+                                ),
                               );
                               showToast(`Expense ${exp.id} Approved!`);
                             }}
@@ -857,8 +876,8 @@ export function FinanceExpenses() {
                         prev.map((e) =>
                           e.id === viewingExpense.id
                             ? { ...e, status: "Approved" }
-                            : e
-                        )
+                            : e,
+                        ),
                       );
                       showToast(`Expense ${viewingExpense.id} Approved!`);
                       setViewingExpense(null);
@@ -947,8 +966,8 @@ export function FinanceExpenses() {
                       prev.map((e) =>
                         e.id === rejectingExpense.id
                           ? { ...e, status: "Rejected" }
-                          : e
-                      )
+                          : e,
+                      ),
                     );
                     showToast(`Expense ${rejectingExpense.id} rejected.`);
                     setRejectingExpense(null);

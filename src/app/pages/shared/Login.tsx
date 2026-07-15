@@ -27,34 +27,39 @@ const DEMO_ACCOUNTS: Record<
   { email: string; name: string; initials: string }
 > = {
   "Platform Admin": {
-    email: "platform@nexushr.com",
+    email: "platform@viyanhr.com",
     name: "System Root",
     initials: "SR",
   },
   "Super Admin": {
-    email: "admin@nexushr.com",
+    email: "admin@viyanhr.com",
     name: "Ryan Park",
     initials: "RP",
   },
   "HR Manager": {
-    email: "hr@nexushr.com",
+    email: "hr@viyanhr.com",
     name: "Alex Johnson",
     initials: "AJ",
   },
   Finance: {
-    email: "finance@nexushr.com",
+    email: "finance@viyanhr.com",
     name: "Priya Sharma",
     initials: "PS",
   },
   Manager: {
-    email: "manager@nexushr.com",
+    email: "manager@viyanhr.com",
     name: "Sarah Chen",
     initials: "SC",
   },
+  "Team Lead": {
+    email: "marcus.williams@viyanhr.com",
+    name: "Marcus Williams",
+    initials: "MW",
+  },
   Employee: {
-    email: "emp@nexushr.com",
-    name: "Priya Sharma",
-    initials: "PS",
+    email: "sarah.johnson@viyanhr.com",
+    name: "Sarah Johnson",
+    initials: "SJ",
   },
 };
 
@@ -72,6 +77,7 @@ const ROLE_ICONS: Record<UserRole, React.ComponentType<LucideProps>> = {
   "HR Manager": Users,
   Finance: Coins,
   Manager: Briefcase,
+  "Team Lead": Users,
   Employee: User,
 };
 
@@ -115,7 +121,7 @@ export function Login() {
 
     // 2. Check registered users list in localStorage
     try {
-      const registered = localStorage.getItem("nexus_registered_users");
+      const registered = localStorage.getItem("viyan_registered_users");
       if (registered) {
         const users = JSON.parse(registered);
         const match = users.find(
@@ -166,7 +172,7 @@ export function Login() {
       // Check registered users list for name/initials if not found in db
       if (!accountName) {
         try {
-          const registered = localStorage.getItem("nexus_registered_users");
+          const registered = localStorage.getItem("viyan_registered_users");
           if (registered) {
             const users = JSON.parse(registered);
             const match = users.find(
@@ -247,7 +253,7 @@ export function Login() {
     setTimeout(() => {
       login({
         name: "System Root",
-        email: "platform@nexushr.com",
+        email: "platform@viyanhr.com",
         role: "Platform Admin",
         initials: "SR",
       });
@@ -291,7 +297,7 @@ export function Login() {
               letterSpacing: "-0.5px",
             }}
           >
-            NexusHR
+            viyanHR
           </h1>
           <p
             style={{
@@ -340,7 +346,7 @@ export function Login() {
                 <input
                   type="email"
                   required
-                  placeholder="admin@nexushr.com"
+                  placeholder="admin@viyanhr.com"
                   value={resetEmail}
                   onChange={(e) => setResetEmail(e.target.value)}
                   className="w-full rounded-2xl pl-12 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"
@@ -411,7 +417,7 @@ export function Login() {
                 />
                 <input
                   type="email"
-                  placeholder="admin@nexushr.com"
+                  placeholder="admin@viyanhr.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full rounded-2xl pl-12 pr-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-emerald-500/30"
@@ -546,7 +552,7 @@ export function Login() {
                 const role = roleKey as UserRole;
                 const demo = DEMO_ACCOUNTS[role];
                 const config = ROLE_CONFIG[role];
-                const isLast = idx === arr.length - 1;
+                const isLast = idx === arr.length - 1 && arr.length % 2 !== 0;
                 const Icon = ROLE_ICONS[role];
                 return (
                   <button
@@ -628,7 +634,7 @@ export function Login() {
               color: "var(--foreground)",
             }}
           >
-            New to NexusHR?{" "}
+            New to viyanHR?{" "}
             <a
               href="#"
               onClick={(e) => {

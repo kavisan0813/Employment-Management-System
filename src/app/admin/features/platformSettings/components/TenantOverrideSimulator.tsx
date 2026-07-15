@@ -13,7 +13,7 @@ interface Props {
 
 export function TenantOverrideSimulator({ config }: Props) {
   const [selectedDemoTenant, setSelectedDemoTenant] = useState<
-    "Acme India" | "Nexus Dubai" | "Viyan Singapore"
+    "Acme India" | "viyan Dubai" | "Viyan Singapore"
   >("Acme India");
 
   const getDemoTenantData = () => {
@@ -26,7 +26,7 @@ export function TenantOverrideSimulator({ config }: Props) {
           wl: "Disabled",
           size: `${config.storage?.maxUploadSizeMb ?? 50} MB`,
         };
-      case "Nexus Dubai":
+      case "viyan Dubai":
         return {
           tz: "Asia/Dubai",
           cur: "AED (د.إ)",
@@ -68,14 +68,14 @@ export function TenantOverrideSimulator({ config }: Props) {
             setSelectedDemoTenant(
               e.target.value as
                 | "Acme India"
-                | "Nexus Dubai"
+                | "viyan Dubai"
                 | "Viyan Singapore",
             )
           }
           className="text-xs font-semibold bg-gray-50 border border-gray-200 rounded-lg p-2 outline-none focus:border-indigo-400"
         >
           <option value="Acme India">Acme India</option>
-          <option value="Nexus Dubai">Nexus Dubai</option>
+          <option value="viyan Dubai">viyan Dubai</option>
           <option value="Viyan Singapore">Viyan Singapore</option>
         </select>
       </div>

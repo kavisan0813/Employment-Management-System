@@ -103,7 +103,7 @@ export function DataDownloadsSection({
           <Info size={20} className="text-blue-500" />
         </div>
         <p className="text-[14px] font-bold text-muted-foreground leading-relaxed">
-          Your data is securely stored by NexusHR. You can download or request
+          Your data is securely stored by viyanHR. You can download or request
           deletion of your personal data at any time.
         </p>
       </div>
@@ -163,7 +163,7 @@ export function DataDownloadsSection({
               Download All My Data
             </p>
             <p className="text-[13px] font-bold text-muted-foreground">
-              Complete export of all your NexusHR data in one ZIP file
+              Complete export of all your viyanHR data in one ZIP file
             </p>
           </div>
         </div>

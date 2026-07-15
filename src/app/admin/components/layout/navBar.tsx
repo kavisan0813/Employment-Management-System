@@ -10,7 +10,10 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
         setIsProfileOpen(false);
       }
     };
@@ -57,7 +60,7 @@ export default function Navbar() {
 
         {/* Profile */}
         <div className="relative" ref={profileRef}>
-          <div 
+          <div
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             className="flex items-center gap-3 pl-3 border-l cursor-pointer hover:opacity-80 transition-opacity"
           >
@@ -66,7 +69,9 @@ export default function Navbar() {
             </div>
 
             <div className="hidden md:block">
-              <h4 className="text-sm font-semibold">{user?.email || "Platform Admin"}</h4>
+              <h4 className="text-sm font-semibold">
+                {user?.email || "Platform Admin"}
+              </h4>
               <p className="text-xs text-gray-500">Super Admin</p>
             </div>
 
@@ -83,9 +88,9 @@ export default function Navbar() {
                   <div className="overflow-hidden">
                     <span
                       className="block text-[11px] font-bold text-gray-900 truncate"
-                      title={user?.email || "platform@nexushr.com"}
+                      title={user?.email || "platform@viyanhr.com"}
                     >
-                      {user?.email || "platform@nexushr.com"}
+                      {user?.email || "platform@viyanhr.com"}
                     </span>
                     <span className="text-[10px] text-emerald-600 font-bold block uppercase tracking-wide">
                       Platform System Admin
@@ -102,12 +107,10 @@ export default function Navbar() {
                   My Profile
                 </button>
                 <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-md transition-colors flex items-center gap-2 border-0 bg-transparent cursor-pointer">
-                 
                   Account Settings
                 </button>
                 <div className="h-[1px] bg-gray-100 my-1"></div>
                 <button className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors flex items-center gap-2 border-0 bg-transparent cursor-pointer">
-                  
                   Sign Out
                 </button>
               </div>

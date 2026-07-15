@@ -34,7 +34,7 @@ export function ContactSupportSection({
             color: "var(--primary)",
             title: "Contact HR Team",
             desc: "For policy questions, personal matters, HR issues",
-            email: "hr@nexushr.com",
+            email: "hr@viyanhr.com",
             phone: "+91 80 1234 5678",
           },
           {
@@ -43,7 +43,7 @@ export function ContactSupportSection({
             color: "#8B5CF6",
             title: "IT Helpdesk",
             desc: "For laptop, software, VPN, access issues",
-            email: "it@nexushr.com",
+            email: "it@viyanhr.com",
             onClick: () => navigate("/support"),
           },
           {
@@ -134,28 +134,28 @@ export function ContactSupportSection({
             gradient: "linear-gradient(135deg, #00B87C, #059669)",
             name: "Ryan Park",
             role: "HR Administrator",
-            email: "ryan@nexushr.com",
+            email: "ryan@viyanhr.com",
           },
           {
             initials: "SI",
             gradient: "linear-gradient(135deg, #F59E0B, #D97706)",
             name: "Suresh Iyer",
             role: "Engineering Manager",
-            email: "suresh@nexushr.com",
+            email: "suresh@viyanhr.com",
           },
           {
             initials: "IT",
             gradient: "linear-gradient(135deg, #0EA5E9, #0284C7)",
             name: "IT Support Team",
             role: "Information Technology",
-            email: "it@nexushr.com",
+            email: "it@viyanhr.com",
           },
           {
             initials: "AD",
             gradient: "linear-gradient(135deg, #00B87C, #059669)",
             name: "Ananya Das",
             role: "Finance Officer",
-            email: "ananya@nexushr.com",
+            email: "ananya@viyanhr.com",
           },
         ].map((contact, i) => (
           <div

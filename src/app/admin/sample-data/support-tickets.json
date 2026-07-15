@@ -13,19 +13,15 @@
     "updatedAt": "Jun 13, 22:02",
     "firstResponseAt": "Jun 07, 21:51",
     "resolvedAt": "Jun 13, 14:31",
-    "tags": [
-      "billing",
-      "urgent",
-      "integration"
-    ]
+    "tags": ["billing", "urgent", "integration"]
   },
   {
     "id": "#T-2001",
     "subject": "Slack notifications duplicated",
     "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
-    "organization": "Nexus Solutions",
+    "organization": "viyan Solutions",
     "organizationId": "org_3",
-    "submittedBy": "felix.haddad@nexussolutions.com",
+    "submittedBy": "felix.haddad@viyansolutions.com",
     "status": "Inactive",
     "priority": "High",
     "assignedTo": "Omar Walsh",
@@ -33,10 +29,7 @@
     "updatedAt": "Jun 15, 16:14",
     "firstResponseAt": "May 12, 14:07",
     "resolvedAt": "Jun 13, 16:56",
-    "tags": [
-      "billing",
-      "integration"
-    ]
+    "tags": ["billing", "integration"]
   },
   {
     "id": "#T-2002",
@@ -52,9 +45,7 @@
     "updatedAt": "Jun 09, 01:06",
     "firstResponseAt": "May 21, 18:12",
     "resolvedAt": "Jun 14, 21:17",
-    "tags": [
-      "bug"
-    ]
+    "tags": ["bug"]
   },
   {
     "id": "#T-2003",
@@ -70,10 +61,7 @@
     "updatedAt": "Jun 15, 11:36",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "urgent",
-      "feature-request"
-    ]
+    "tags": ["urgent", "feature-request"]
   },
   {
     "id": "#T-2004",
@@ -89,9 +77,7 @@
     "updatedAt": "Jun 15, 19:21",
     "firstResponseAt": "May 10, 20:37",
     "resolvedAt": "Jun 18, 06:14",
-    "tags": [
-      "integration"
-    ]
+    "tags": ["integration"]
   },
   {
     "id": "#T-2005",
@@ -107,9 +93,7 @@
     "updatedAt": "Jun 14, 08:00",
     "firstResponseAt": "May 30, 02:45",
     "resolvedAt": "Jun 14, 16:08",
-    "tags": [
-      "integration"
-    ]
+    "tags": ["integration"]
   },
   {
     "id": "#T-2006",
@@ -125,9 +109,7 @@
     "updatedAt": "Jun 15, 15:07",
     "firstResponseAt": "May 27, 09:11",
     "resolvedAt": "Jun 14, 11:35",
-    "tags": [
-      "data"
-    ]
+    "tags": ["data"]
   },
   {
     "id": "#T-2007",
@@ -143,9 +125,7 @@
     "updatedAt": "Jun 12, 13:44",
     "firstResponseAt": "May 29, 07:22",
     "resolvedAt": "Jun 13, 20:09",
-    "tags": [
-      "bug"
-    ]
+    "tags": ["bug"]
   },
   {
     "id": "#T-2008",
@@ -161,9 +141,7 @@
     "updatedAt": "Jun 08, 20:32",
     "firstResponseAt": "Jun 17, 05:47",
     "resolvedAt": null,
-    "tags": [
-      "billing"
-    ]
+    "tags": ["billing"]
   },
   {
     "id": "#T-2009",
@@ -179,11 +157,7 @@
     "updatedAt": "Jun 09, 05:15",
     "firstResponseAt": "May 27, 10:50",
     "resolvedAt": "Jun 19, 04:31",
-    "tags": [
-      "feature-request",
-      "bug",
-      "data"
-    ]
+    "tags": ["feature-request", "bug", "data"]
   },
   {
     "id": "#T-2010",
@@ -199,9 +173,7 @@
     "updatedAt": "Jun 10, 22:53",
     "firstResponseAt": "May 15, 13:46",
     "resolvedAt": null,
-    "tags": [
-      "bug"
-    ]
+    "tags": ["bug"]
   },
   {
     "id": "#T-2011",
@@ -217,11 +189,7 @@
     "updatedAt": "Jun 15, 06:27",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "integration",
-      "billing",
-      "data"
-    ]
+    "tags": ["integration", "billing", "data"]
   },
   {
     "id": "#T-2012",
@@ -237,11 +205,7 @@
     "updatedAt": "Jun 09, 09:49",
     "firstResponseAt": "Jun 14, 01:28",
     "resolvedAt": "Jun 14, 15:22",
-    "tags": [
-      "data",
-      "bug",
-      "feature-request"
-    ]
+    "tags": ["data", "bug", "feature-request"]
   },
   {
     "id": "#T-2013",
@@ -257,11 +221,7 @@
     "updatedAt": "Jun 09, 09:47",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "urgent",
-      "bug",
-      "data"
-    ]
+    "tags": ["urgent", "bug", "data"]
   },
   {
     "id": "#T-2014",
@@ -277,9 +237,7 @@
     "updatedAt": "Jun 14, 12:12",
     "firstResponseAt": "May 14, 20:19",
     "resolvedAt": "Jun 14, 10:28",
-    "tags": [
-      "integration"
-    ]
+    "tags": ["integration"]
   },
   {
     "id": "#T-2015",
@@ -295,10 +253,7 @@
     "updatedAt": "Jun 18, 10:01",
     "firstResponseAt": "Jun 08, 13:37",
     "resolvedAt": "Jun 14, 17:27",
-    "tags": [
-      "urgent",
-      "data"
-    ]
+    "tags": ["urgent", "data"]
   },
   {
     "id": "#T-2016",
@@ -314,10 +269,7 @@
     "updatedAt": "Jun 09, 22:30",
     "firstResponseAt": "May 27, 08:14",
     "resolvedAt": null,
-    "tags": [
-      "feature-request",
-      "data"
-    ]
+    "tags": ["feature-request", "data"]
   },
   {
     "id": "#T-2017",
@@ -333,11 +285,7 @@
     "updatedAt": "Jun 16, 12:15",
     "firstResponseAt": "Jun 07, 23:31",
     "resolvedAt": null,
-    "tags": [
-      "feature-request",
-      "integration",
-      "data"
-    ]
+    "tags": ["feature-request", "integration", "data"]
   },
   {
     "id": "#T-2018",
@@ -353,19 +301,15 @@
     "updatedAt": "Jun 09, 20:12",
     "firstResponseAt": "May 16, 16:37",
     "resolvedAt": "Jun 14, 13:12",
-    "tags": [
-      "billing",
-      "feature-request",
-      "urgent"
-    ]
+    "tags": ["billing", "feature-request", "urgent"]
   },
   {
     "id": "#T-2019",
     "subject": "SSO integration not working",
     "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
-    "organization": "Nexus Solutions",
+    "organization": "viyan Solutions",
     "organizationId": "org_3",
-    "submittedBy": "noah.kowalski@nexussolutions.com",
+    "submittedBy": "noah.kowalski@viyansolutions.com",
     "status": "Active",
     "priority": "High",
     "assignedTo": "Mei Okafor",
@@ -373,10 +317,7 @@
     "updatedAt": "Jun 16, 04:34",
     "firstResponseAt": "May 22, 00:55",
     "resolvedAt": null,
-    "tags": [
-      "integration",
-      "feature-request"
-    ]
+    "tags": ["integration", "feature-request"]
   },
   {
     "id": "#T-2020",
@@ -392,11 +333,7 @@
     "updatedAt": "Jun 17, 21:25",
     "firstResponseAt": "Jun 12, 08:22",
     "resolvedAt": "Jun 14, 14:45",
-    "tags": [
-      "bug",
-      "feature-request",
-      "urgent"
-    ]
+    "tags": ["bug", "feature-request", "urgent"]
   },
   {
     "id": "#T-2021",
@@ -412,11 +349,7 @@
     "updatedAt": "Jun 18, 11:24",
     "firstResponseAt": "Jun 11, 23:10",
     "resolvedAt": null,
-    "tags": [
-      "integration",
-      "billing",
-      "feature-request"
-    ]
+    "tags": ["integration", "billing", "feature-request"]
   },
   {
     "id": "#T-2022",
@@ -432,11 +365,7 @@
     "updatedAt": "Jun 13, 19:12",
     "firstResponseAt": "Jun 10, 08:58",
     "resolvedAt": "Jun 18, 08:24",
-    "tags": [
-      "billing",
-      "feature-request",
-      "integration"
-    ]
+    "tags": ["billing", "feature-request", "integration"]
   },
   {
     "id": "#T-2023",
@@ -452,11 +381,7 @@
     "updatedAt": "Jun 10, 05:52",
     "firstResponseAt": "Jun 18, 22:51",
     "resolvedAt": "Jun 15, 21:29",
-    "tags": [
-      "billing",
-      "urgent",
-      "feature-request"
-    ]
+    "tags": ["billing", "urgent", "feature-request"]
   },
   {
     "id": "#T-2024",
@@ -472,9 +397,7 @@
     "updatedAt": "Jun 15, 19:50",
     "firstResponseAt": "Jun 01, 17:21",
     "resolvedAt": "Jun 13, 19:29",
-    "tags": [
-      "billing"
-    ]
+    "tags": ["billing"]
   },
   {
     "id": "#T-2025",
@@ -490,9 +413,7 @@
     "updatedAt": "Jun 15, 03:12",
     "firstResponseAt": "Jun 14, 12:50",
     "resolvedAt": "Jun 19, 00:17",
-    "tags": [
-      "bug"
-    ]
+    "tags": ["bug"]
   },
   {
     "id": "#T-2026",
@@ -508,10 +429,7 @@
     "updatedAt": "Jun 10, 02:13",
     "firstResponseAt": "Jun 17, 11:20",
     "resolvedAt": "Jun 17, 03:29",
-    "tags": [
-      "feature-request",
-      "billing"
-    ]
+    "tags": ["feature-request", "billing"]
   },
   {
     "id": "#T-2027",
@@ -527,9 +445,7 @@
     "updatedAt": "Jun 12, 20:36",
     "firstResponseAt": "Jun 05, 14:45",
     "resolvedAt": "Jun 17, 17:37",
-    "tags": [
-      "billing"
-    ]
+    "tags": ["billing"]
   },
   {
     "id": "#T-2028",
@@ -545,9 +461,7 @@
     "updatedAt": "Jun 14, 05:39",
     "firstResponseAt": "May 16, 18:53",
     "resolvedAt": "Jun 15, 02:26",
-    "tags": [
-      "urgent"
-    ]
+    "tags": ["urgent"]
   },
   {
     "id": "#T-2029",
@@ -563,9 +477,7 @@
     "updatedAt": "Jun 16, 14:27",
     "firstResponseAt": "Jun 12, 13:41",
     "resolvedAt": "Jun 15, 17:10",
-    "tags": [
-      "data"
-    ]
+    "tags": ["data"]
   },
   {
     "id": "#T-2030",
@@ -581,9 +493,7 @@
     "updatedAt": "Jun 18, 16:39",
     "firstResponseAt": "Jun 06, 14:57",
     "resolvedAt": "Jun 17, 05:49",
-    "tags": [
-      "integration"
-    ]
+    "tags": ["integration"]
   },
   {
     "id": "#T-2031",
@@ -599,10 +509,7 @@
     "updatedAt": "Jun 17, 07:53",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "integration",
-      "feature-request"
-    ]
+    "tags": ["integration", "feature-request"]
   },
   {
     "id": "#T-2032",
@@ -618,11 +525,7 @@
     "updatedAt": "Jun 12, 00:23",
     "firstResponseAt": "Jun 15, 20:43",
     "resolvedAt": "Jun 16, 19:13",
-    "tags": [
-      "data",
-      "integration",
-      "billing"
-    ]
+    "tags": ["data", "integration", "billing"]
   },
   {
     "id": "#T-2033",
@@ -638,11 +541,7 @@
     "updatedAt": "Jun 12, 17:07",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "bug",
-      "urgent",
-      "feature-request"
-    ]
+    "tags": ["bug", "urgent", "feature-request"]
   },
   {
     "id": "#T-2034",
@@ -658,10 +557,7 @@
     "updatedAt": "Jun 16, 01:49",
     "firstResponseAt": "May 22, 04:11",
     "resolvedAt": "Jun 17, 20:35",
-    "tags": [
-      "bug",
-      "billing"
-    ]
+    "tags": ["bug", "billing"]
   },
   {
     "id": "#T-2035",
@@ -677,10 +573,7 @@
     "updatedAt": "Jun 17, 08:01",
     "firstResponseAt": "May 28, 22:00",
     "resolvedAt": "Jun 13, 20:38",
-    "tags": [
-      "integration",
-      "bug"
-    ]
+    "tags": ["integration", "bug"]
   },
   {
     "id": "#T-2036",
@@ -696,19 +589,15 @@
     "updatedAt": "Jun 11, 10:33",
     "firstResponseAt": "Jun 19, 03:54",
     "resolvedAt": "Jun 18, 15:03",
-    "tags": [
-      "billing",
-      "integration",
-      "feature-request"
-    ]
+    "tags": ["billing", "integration", "feature-request"]
   },
   {
     "id": "#T-2037",
     "subject": "Cannot add custom holiday",
     "description": "Customer reported the issue via the in-app support widget. Steps to reproduce attached in thread.",
-    "organization": "Nexus Solutions",
+    "organization": "viyan Solutions",
     "organizationId": "org_3",
-    "submittedBy": "victor.rivera@nexussolutions.com",
+    "submittedBy": "victor.rivera@viyansolutions.com",
     "status": "Inactive",
     "priority": "Low",
     "assignedTo": "Sofia Khan",
@@ -716,10 +605,7 @@
     "updatedAt": "Jun 14, 07:40",
     "firstResponseAt": "Jun 07, 04:44",
     "resolvedAt": "Jun 16, 20:20",
-    "tags": [
-      "feature-request",
-      "billing"
-    ]
+    "tags": ["feature-request", "billing"]
   },
   {
     "id": "#T-2038",
@@ -735,9 +621,7 @@
     "updatedAt": "Jun 13, 19:45",
     "firstResponseAt": "May 30, 05:15",
     "resolvedAt": null,
-    "tags": [
-      "data"
-    ]
+    "tags": ["data"]
   },
   {
     "id": "#T-2039",
@@ -753,10 +637,7 @@
     "updatedAt": "Jun 18, 22:26",
     "firstResponseAt": "Jun 16, 10:54",
     "resolvedAt": null,
-    "tags": [
-      "billing",
-      "data"
-    ]
+    "tags": ["billing", "data"]
   },
   {
     "id": "#T-2040",
@@ -772,9 +653,7 @@
     "updatedAt": "Jun 15, 15:37",
     "firstResponseAt": "May 16, 11:50",
     "resolvedAt": "Jun 15, 19:08",
-    "tags": [
-      "billing"
-    ]
+    "tags": ["billing"]
   },
   {
     "id": "#T-2041",
@@ -790,10 +669,7 @@
     "updatedAt": "Jun 15, 02:06",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "bug",
-      "integration"
-    ]
+    "tags": ["bug", "integration"]
   },
   {
     "id": "#T-2042",
@@ -809,9 +685,7 @@
     "updatedAt": "Jun 15, 02:37",
     "firstResponseAt": "May 11, 18:54",
     "resolvedAt": null,
-    "tags": [
-      "urgent"
-    ]
+    "tags": ["urgent"]
   },
   {
     "id": "#T-2043",
@@ -827,11 +701,7 @@
     "updatedAt": "Jun 10, 22:46",
     "firstResponseAt": "May 24, 18:21",
     "resolvedAt": "Jun 16, 06:22",
-    "tags": [
-      "bug",
-      "urgent",
-      "data"
-    ]
+    "tags": ["bug", "urgent", "data"]
   },
   {
     "id": "#T-2044",
@@ -847,11 +717,7 @@
     "updatedAt": "Jun 16, 08:36",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "data",
-      "billing",
-      "feature-request"
-    ]
+    "tags": ["data", "billing", "feature-request"]
   },
   {
     "id": "#T-2045",
@@ -867,11 +733,7 @@
     "updatedAt": "Jun 17, 15:07",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "feature-request",
-      "integration",
-      "data"
-    ]
+    "tags": ["feature-request", "integration", "data"]
   },
   {
     "id": "#T-2046",
@@ -887,11 +749,7 @@
     "updatedAt": "Jun 11, 20:22",
     "firstResponseAt": "Jun 01, 01:12",
     "resolvedAt": null,
-    "tags": [
-      "urgent",
-      "feature-request",
-      "bug"
-    ]
+    "tags": ["urgent", "feature-request", "bug"]
   },
   {
     "id": "#T-2047",
@@ -907,9 +765,7 @@
     "updatedAt": "Jun 17, 18:37",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "urgent"
-    ]
+    "tags": ["urgent"]
   },
   {
     "id": "#T-2048",
@@ -925,9 +781,7 @@
     "updatedAt": "Jun 11, 02:15",
     "firstResponseAt": "Jun 12, 04:53",
     "resolvedAt": null,
-    "tags": [
-      "bug"
-    ]
+    "tags": ["bug"]
   },
   {
     "id": "#T-2049",
@@ -943,9 +797,7 @@
     "updatedAt": "Jun 12, 09:46",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "urgent"
-    ]
+    "tags": ["urgent"]
   },
   {
     "id": "#T-2050",
@@ -961,9 +813,7 @@
     "updatedAt": "Jun 17, 16:23",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "bug"
-    ]
+    "tags": ["bug"]
   },
   {
     "id": "#T-2051",
@@ -979,10 +829,7 @@
     "updatedAt": "Jun 09, 23:59",
     "firstResponseAt": "May 11, 08:22",
     "resolvedAt": "Jun 15, 21:07",
-    "tags": [
-      "urgent",
-      "feature-request"
-    ]
+    "tags": ["urgent", "feature-request"]
   },
   {
     "id": "#T-2052",
@@ -998,10 +845,7 @@
     "updatedAt": "Jun 15, 00:29",
     "firstResponseAt": "May 15, 18:50",
     "resolvedAt": null,
-    "tags": [
-      "billing",
-      "data"
-    ]
+    "tags": ["billing", "data"]
   },
   {
     "id": "#T-2053",
@@ -1017,9 +861,7 @@
     "updatedAt": "Jun 11, 20:52",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "urgent"
-    ]
+    "tags": ["urgent"]
   },
   {
     "id": "#T-2054",
@@ -1035,11 +877,7 @@
     "updatedAt": "Jun 19, 02:47",
     "firstResponseAt": null,
     "resolvedAt": null,
-    "tags": [
-      "billing",
-      "feature-request",
-      "urgent"
-    ]
+    "tags": ["billing", "feature-request", "urgent"]
   },
   {
     "id": "#T-2055",
@@ -1055,10 +893,7 @@
     "updatedAt": "Jun 18, 14:47",
     "firstResponseAt": "May 12, 04:08",
     "resolvedAt": "Jun 13, 19:16",
-    "tags": [
-      "billing",
-      "feature-request"
-    ]
+    "tags": ["billing", "feature-request"]
   },
   {
     "id": "#T-2056",
@@ -1074,9 +909,7 @@
     "updatedAt": "Jun 11, 11:53",
     "firstResponseAt": "Jun 02, 05:54",
     "resolvedAt": null,
-    "tags": [
-      "urgent"
-    ]
+    "tags": ["urgent"]
   },
   {
     "id": "#T-2057",
@@ -1092,9 +925,6 @@
     "updatedAt": "Jun 08, 23:16",
     "firstResponseAt": "May 27, 08:31",
     "resolvedAt": null,
-    "tags": [
-      "data",
-      "bug"
-    ]
+    "tags": ["data", "bug"]
   }
 ]

@@ -130,7 +130,7 @@ const LOGS: AuditLogEntry[] = [
     userRole: "—",
     action: "LOGIN FAILED",
     module: "Auth",
-    record: "5 consecutive failed login attempts — admin@nexushr.com",
+    record: "5 consecutive failed login attempts — admin@viyanhr.com",
     ip: "45.123.67.89",
     device: "Bot/Unknown",
     severity: "critical",

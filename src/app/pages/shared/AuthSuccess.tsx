@@ -21,7 +21,7 @@ export function AuthSuccess() {
   // Destructure state with fallbacks for manual page access
   const {
     name = "User",
-    email = "your-email@nexushr.com",
+    email = "your-email@viyanhr.com",
     role = "Employee",
   } = location.state || {};
 
@@ -141,7 +141,7 @@ export function AuthSuccess() {
             Account Created! 🎉
           </h1>
           <p className="text-muted-foreground font-medium text-sm leading-relaxed mb-6">
-            Welcome to NexusHR EMS,{" "}
+            Welcome to viyanHR EMS,{" "}
             <span className="text-foreground font-bold">{name}</span>.<br />
             Your workspace has been set up successfully.
           </p>

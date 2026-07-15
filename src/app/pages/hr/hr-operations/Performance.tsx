@@ -125,7 +125,7 @@ const reviewHistory: ReviewHistory[] = [
 ];
 
 const loadPerformanceReviews = (): ReviewHistory[] => {
-  const local = localStorage.getItem("nexus_performance_reviews");
+  const local = localStorage.getItem("viyan_performance_reviews");
   if (local) {
     try {
       return JSON.parse(local);
@@ -134,7 +134,7 @@ const loadPerformanceReviews = (): ReviewHistory[] => {
     }
   }
   localStorage.setItem(
-    "nexus_performance_reviews",
+    "viyan_performance_reviews",
     JSON.stringify(reviewHistory),
   );
   return reviewHistory;
@@ -604,7 +604,7 @@ export function Performance() {
       const updated = history.filter((r) => r.id !== deleteTarget.id);
       setHistory(updated);
       localStorage.setItem(
-        "nexus_performance_reviews",
+        "viyan_performance_reviews",
         JSON.stringify(updated),
       );
       toast.success("Review deleted successfully");
@@ -636,8 +636,13 @@ export function Performance() {
     if (!formStrengths.trim()) errors.strengths = "Strengths field is required";
     if (!formImprovement.trim())
       errors.improvement = "Improvement Areas field is required";
-    if (user?.role === "HR Manager" && formRecommendation === "Promotion" && formStatus === "Approved") {
-      errors.status = "HR Managers are not authorized to approve promotion recommendations.";
+    if (
+      user?.role === "HR Manager" &&
+      formRecommendation === "Promotion" &&
+      formStatus === "Approved"
+    ) {
+      errors.status =
+        "HR Managers are not authorized to approve promotion recommendations.";
     }
 
     if (Object.keys(errors).length > 0) {
@@ -662,7 +667,7 @@ export function Performance() {
       });
       setHistory(updated);
       localStorage.setItem(
-        "nexus_performance_reviews",
+        "viyan_performance_reviews",
         JSON.stringify(updated),
       );
       toast.success("Review updated successfully");
@@ -683,7 +688,7 @@ export function Performance() {
       const updated = [newReview, ...history];
       setHistory(updated);
       localStorage.setItem(
-        "nexus_performance_reviews",
+        "viyan_performance_reviews",
         JSON.stringify(updated),
       );
       toast.success("New review submitted successfully");
@@ -1697,7 +1702,15 @@ export function Performance() {
                           <option value="Pending">Pending</option>
                           <option value="In Review">In Review</option>
                           <option value="Completed">Completed</option>
-                          <option value="Approved" disabled={user?.role === "HR Manager" && formRecommendation === "Promotion"}>Approved</option>
+                          <option
+                            value="Approved"
+                            disabled={
+                              user?.role === "HR Manager" &&
+                              formRecommendation === "Promotion"
+                            }
+                          >
+                            Approved
+                          </option>
                         </select>
                         {modalMode !== "view" && (
                           <ChevronDown
@@ -1707,7 +1720,9 @@ export function Performance() {
                         )}
                       </div>
                       {formErrors.status && (
-                        <p className="text-xs text-red-500 mt-1">{formErrors.status}</p>
+                        <p className="text-xs text-red-500 mt-1">
+                          {formErrors.status}
+                        </p>
                       )}
                     </div>
                   </div>

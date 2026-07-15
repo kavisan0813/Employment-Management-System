@@ -191,7 +191,7 @@ export function EmployeeAppearanceSection() {
           <div className="w-16 h-16 rounded-full bg-primary shadow-lg" />
           <div>
             <p className="text-[15px] font-black text-foreground">
-              NexusHR Green
+              viyanHR Green
             </p>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-[11px] font-black mt-1 border border-amber-500/20">
               <AlertTriangle size={12} /> Accent color is set by your

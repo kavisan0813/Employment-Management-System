@@ -169,7 +169,7 @@ const calculateHours = (
 
 // Initialize records from localStorage or initial mock data mapping
 const initialRecords: AttendanceRecord[] = (() => {
-  const local = localStorage.getItem("nexus_attendance_records");
+  const local = localStorage.getItem("viyan_attendance_records");
   if (local) {
     try {
       return JSON.parse(local);
@@ -197,7 +197,7 @@ const initialRecords: AttendanceRecord[] = (() => {
     });
   });
 
-  localStorage.setItem("nexus_attendance_records", JSON.stringify(generated));
+  localStorage.setItem("viyan_attendance_records", JSON.stringify(generated));
   return generated;
 })();
 
@@ -464,7 +464,7 @@ export function Attendance() {
 
     const updated = [newRecord, ...records];
     setRecords(updated);
-    localStorage.setItem("nexus_attendance_records", JSON.stringify(updated));
+    localStorage.setItem("viyan_attendance_records", JSON.stringify(updated));
 
     setShowAddModal(false);
     setToastMessage("Attendance record added successfully");
@@ -521,7 +521,7 @@ export function Attendance() {
 
     setRecords(updatedRecords);
     localStorage.setItem(
-      "nexus_attendance_records",
+      "viyan_attendance_records",
       JSON.stringify(updatedRecords),
     );
 
@@ -535,7 +535,7 @@ export function Attendance() {
     if (!deleteConfirm) return;
     const updated = records.filter((rec) => rec.id !== deleteConfirm);
     setRecords(updated);
-    localStorage.setItem("nexus_attendance_records", JSON.stringify(updated));
+    localStorage.setItem("viyan_attendance_records", JSON.stringify(updated));
     setDeleteConfirm(null);
     setToastMessage("Attendance record deleted successfully");
     setShowSuccessToast(true);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   ArrowLeft,
@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import { performanceData } from "../../data/mockData";
 import { useEmployees } from "../../context/AppContext";
+import { useAuth } from "../../context/AuthContext";
+import { P, usePermissions, ROLE_IDS } from "../../shared/permission-engine";
 import {
   LineChart,
   Line,
@@ -115,6 +117,100 @@ export function EmployeeProfile() {
   } = useEmployees();
 
   const employee = employeesList.find((e) => e.id === id) || employeesList[0];
+
+  const { user } = useAuth();
+  const { hasPermissionKey, roleAssignments } = usePermissions();
+
+  const currentEmp = useMemo(() => {
+    if (!employeesList || !user) return null;
+    return employeesList.find(
+      (e) => e.email.toLowerCase() === user.email.toLowerCase()
+    );
+  }, [employeesList, user]);
+
+  const isSelf = useMemo(() => {
+    if (!employee || !user) return false;
+    return employee.email.toLowerCase() === user.email.toLowerCase();
+  }, [employee, user]);
+
+  // Determine highest scope for tab filtering
+  const scope = useMemo(() => {
+    const active = roleAssignments.filter((a) => a.isActive);
+    const scopes = active.map((a) => a.scopeType);
+    if (scopes.includes("organization")) return "organization";
+    if (scopes.includes("department")) return "department";
+    if (scopes.includes("team")) return "team";
+    return "self";
+  }, [roleAssignments]);
+
+  const visibleTabs = useMemo(() => {
+    if (isSelf) return tabs;
+
+    const hasManagerRole = roleAssignments.some(
+      (a) => a.roleId === ROLE_IDS.DEPT_MANAGER && a.isActive
+    );
+
+    // Manager role doesn't get Payroll/Documents
+    if (hasManagerRole) {
+      return tabs.filter((t) => t !== "Payroll" && t !== "Documents");
+    }
+
+    // Org-wide managers/viewers see all tabs
+    const hasOrgAccess =
+      hasPermissionKey(P.EMPLOYEES_MANAGE) ||
+      hasPermissionKey(P.EMPLOYEES_FULL) ||
+      hasPermissionKey(P.PAYROLL_FULL) ||
+      scope === "organization";
+      
+    if (hasOrgAccess) return tabs;
+
+    // Department/Team managers see limited tabs (no Payroll or Documents)
+    if (scope === "department" || scope === "team") {
+      return tabs.filter((t) => t !== "Payroll" && t !== "Documents");
+    }
+
+    // Standard employee viewing a teammate -> Employment only (basic directory info)
+    return ["Employment"];
+  }, [isSelf, scope, hasPermissionKey, roleAssignments]);
+
+  const canViewSalary = useMemo(() => {
+    const hasManagerRole = roleAssignments.some(
+      (a) => a.roleId === ROLE_IDS.DEPT_MANAGER && a.isActive
+    );
+    if (hasManagerRole) return false;
+
+    return (
+      isSelf ||
+      hasPermissionKey(P.PAYROLL_VIEW) ||
+      hasPermissionKey(P.PAYROLL_FULL) ||
+      hasPermissionKey(P.EMPLOYEES_MANAGE)
+    );
+  }, [isSelf, hasPermissionKey, roleAssignments]);
+
+  const canEdit = useMemo(() => {
+    if (isSelf) return true;
+    if (hasPermissionKey(P.EMPLOYEES_MANAGE) || hasPermissionKey(P.EMPLOYEES_FULL)) return true;
+
+    // Check if the current user is a Manager
+    const hasManagerRole = roleAssignments.some(
+      (a) => a.roleId === ROLE_IDS.DEPT_MANAGER && a.isActive
+    );
+    if (hasManagerRole) return true;
+
+    if (scope === "department") {
+      const dept = currentEmp?.department || "";
+      return !!(dept && employee.department.toLowerCase() === dept.toLowerCase());
+    }
+    if (scope === "team") {
+      const team = currentEmp?.team || "";
+      return !!(team && employee.team && employee.team.toLowerCase() === team.toLowerCase());
+    }
+    return false;
+  }, [isSelf, scope, currentEmp, employee, hasPermissionKey, roleAssignments]);
+
+  const canManageActions = useMemo(() => {
+    return hasPermissionKey(P.EMPLOYEES_MANAGE) || hasPermissionKey(P.EMPLOYEES_FULL);
+  }, [hasPermissionKey]);
 
   const [activeTab, setActiveTab] = useState("employment");
   const [isSalaryVisible, setIsSalaryVisible] = useState(false);
@@ -481,81 +577,93 @@ NexHR Management
                   >
                     <Download size={18} />
                   </button>
-                  <button
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all hover:opacity-90 active:scale-95 text-white shadow-md shadow-primary/20 whitespace-nowrap bg-primary"
-                    onClick={() => setIsEditModalOpen(true)}
-                  >
-                    <Pencil size={16} /> Edit Profile
-                  </button>
-                  <button
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold transition-all hover:opacity-90 active:scale-95 whitespace-nowrap bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20"
-                    onClick={() => setIsPromoteModalOpen(true)}
-                  >
-                    <ArrowUpCircle size={16} /> Promote
-                  </button>
-                  <button
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold transition-all hover:opacity-90 active:scale-95 whitespace-nowrap bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 hover:bg-blue-500/20"
-                    onClick={() => setIsTransferModalOpen(true)}
-                  >
-                    <Repeat size={16} /> Transfer
-                  </button>
-                  <div className="relative">
+                  {canEdit && (
                     <button
-                      className="p-2.5 rounded-xl transition-colors hover:scale-105 bg-background text-muted-foreground border border-border"
-                      title="More"
-                      onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
-                      onBlur={() =>
-                        setTimeout(() => setIsMoreMenuOpen(false), 200)
-                      }
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all hover:opacity-90 active:scale-95 text-white shadow-md shadow-primary/20 whitespace-nowrap bg-primary"
+                      onClick={() => setIsEditModalOpen(true)}
                     >
-                      <MoreVertical size={18} />
+                      <Pencil size={16} /> Edit Profile
                     </button>
-                    {isMoreMenuOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-48 rounded-xl shadow-lg z-[2000] py-1 animate-in zoom-in-95 duration-100 bg-card border border-border">
-                        <button
-                          className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-primary/10 text-foreground"
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            setIsMoreMenuOpen(false);
-                            setActiveTab("performance");
-                          }}
-                        >
-                          View Analytics
-                        </button>
-                        <button
-                          className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-primary/10 text-foreground"
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            setIsMoreMenuOpen(false);
-                            setIsPromoteModalOpen(true);
-                          }}
-                        >
-                          Promote Employee
-                        </button>
-                        <button
-                          className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-primary/10 text-foreground"
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            setIsMoreMenuOpen(false);
-                            setIsTransferModalOpen(true);
-                          }}
-                        >
-                          Initiate Transfer
-                        </button>
-                        <div className="h-px w-full my-1 bg-border"></div>
-                        <button
-                          className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-rose-500/10 text-rose-500"
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            setIsMoreMenuOpen(false);
-                            updateEmployee(employee.id, { status: "Inactive" });
-                          }}
-                        >
-                          Deactivate Account
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  )}
+                  {canManageActions && (
+                    <>
+                      <button
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold transition-all hover:opacity-90 active:scale-95 whitespace-nowrap bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20"
+                        onClick={() => setIsPromoteModalOpen(true)}
+                      >
+                        <ArrowUpCircle size={16} /> Promote
+                      </button>
+                      <button
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold transition-all hover:opacity-90 active:scale-95 whitespace-nowrap bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 hover:bg-blue-500/20"
+                        onClick={() => setIsTransferModalOpen(true)}
+                      >
+                        <Repeat size={16} /> Transfer
+                      </button>
+                    </>
+                  )}
+                  {(canManageActions || scope === "department" || scope === "team") && (
+                    <div className="relative">
+                      <button
+                        className="p-2.5 rounded-xl transition-colors hover:scale-105 bg-background text-muted-foreground border border-border"
+                        title="More"
+                        onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                        onBlur={() =>
+                          setTimeout(() => setIsMoreMenuOpen(false), 200)
+                        }
+                      >
+                        <MoreVertical size={18} />
+                      </button>
+                      {isMoreMenuOpen && (
+                        <div className="absolute right-0 top-full mt-2 w-48 rounded-xl shadow-lg z-[2000] py-1 animate-in zoom-in-95 duration-100 bg-card border border-border">
+                          <button
+                            className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-primary/10 text-foreground"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              setIsMoreMenuOpen(false);
+                              setActiveTab("performance");
+                            }}
+                          >
+                            View Analytics
+                          </button>
+                          {canManageActions && (
+                            <>
+                              <button
+                                className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-primary/10 text-foreground"
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  setIsMoreMenuOpen(false);
+                                  setIsPromoteModalOpen(true);
+                                }}
+                              >
+                                Promote Employee
+                              </button>
+                              <button
+                                className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-primary/10 text-foreground"
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  setIsMoreMenuOpen(false);
+                                  setIsTransferModalOpen(true);
+                                }}
+                              >
+                                Initiate Transfer
+                              </button>
+                              <div className="h-px w-full my-1 bg-border"></div>
+                              <button
+                                className="w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-rose-500/10 text-rose-500"
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  setIsMoreMenuOpen(false);
+                                  updateEmployee(employee.id, { status: "Inactive" });
+                                }}
+                              >
+                                Deactivate Account
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -566,31 +674,39 @@ NexHR Management
                   </p>
                   <p className="text-xl font-black text-foreground">4.2 yrs</p>
                 </div>
-                <div className="w-px h-10 bg-border"></div>
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider mb-1 text-muted-foreground">
-                    Attendance
-                  </p>
-                  <p className="text-xl font-black text-foreground">92%</p>
-                </div>
-                <div className="w-px h-10 bg-border"></div>
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider mb-1 text-muted-foreground">
-                    Rating
-                  </p>
-                  <p className="text-xl font-black text-foreground">
-                    {employee.performance
-                      ? (employee.performance / 20).toFixed(1)
-                      : "4.5"}
-                    /5
-                  </p>
-                </div>
+                {(isSelf || hasPermissionKey(P.ATTENDANCE_VIEW) || hasPermissionKey(P.ATTENDANCE_MANAGE) || scope === "department" || scope === "team") && (
+                  <>
+                    <div className="w-px h-10 bg-border"></div>
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-wider mb-1 text-muted-foreground">
+                        Attendance
+                      </p>
+                      <p className="text-xl font-black text-foreground">92%</p>
+                    </div>
+                  </>
+                )}
+                {(isSelf || hasPermissionKey(P.PERFORMANCE_VIEW) || scope === "department" || scope === "team") && (
+                  <>
+                    <div className="w-px h-10 bg-border"></div>
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-wider mb-1 text-muted-foreground">
+                        Rating
+                      </p>
+                      <p className="text-xl font-black text-foreground">
+                        {employee.performance
+                          ? (employee.performance / 20).toFixed(1)
+                          : "4.5"}
+                        /5
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
 
           <div className="flex overflow-x-auto pb-1 -mb-1 scrollbar-hide border-b border-border">
-            {tabs.map((tab) => (
+            {visibleTabs.map((tab: string) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab.toLowerCase())}
@@ -684,69 +800,71 @@ NexHR Management
                   </div>
                 </div>
 
-                <div className="rounded-2xl p-7 shadow-sm transition-all bg-card border border-border">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-black text-foreground">
-                      Compensation Summary
-                    </h3>
-                    <button
-                      onClick={() => setIsSalaryVisible(!isSalaryVisible)}
-                      className="flex items-center gap-2 text-sm font-bold hover:opacity-80 transition-all bg-secondary text-primary px-3 py-1.5 rounded-lg"
-                    >
-                      {isSalaryVisible ? (
-                        <EyeOff size={16} />
-                      ) : (
-                        <Eye size={16} />
-                      )}{" "}
-                      {isSalaryVisible ? "Hide Details" : "Reveal Details"}
-                    </button>
-                  </div>
-                  <div className="flex flex-col md:flex-row items-center gap-8">
-                    <div className="rounded-2xl p-6 flex-1 w-full relative overflow-hidden bg-secondary border border-border">
-                      <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
-                      <p className="text-sm font-bold text-muted-foreground">
-                        Current CTC
-                      </p>
-                      <div className="mt-2 h-[40px] flex items-center">
+                {canViewSalary && (
+                  <div className="rounded-2xl p-7 shadow-sm transition-all bg-card border border-border">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-lg font-black text-foreground">
+                        Compensation Summary
+                      </h3>
+                      <button
+                        onClick={() => setIsSalaryVisible(!isSalaryVisible)}
+                        className="flex items-center gap-2 text-sm font-bold hover:opacity-80 transition-all bg-secondary text-primary px-3 py-1.5 rounded-lg"
+                      >
                         {isSalaryVisible ? (
-                          <p className="text-[28px] font-bold animate-in fade-in duration-300">
-                            ₹
-                            {employee.salary
-                              ? employee.salary.toLocaleString()
-                              : "18,00,000"}{" "}
-                            <span className="text-base font-bold ml-1 text-muted-foreground">
-                              / year
-                            </span>
-                          </p>
+                          <EyeOff size={16} />
                         ) : (
-                          <div className="flex items-center gap-2">
-                            <span className="text-[28px] font-bold tracking-widest text-foreground blur-md select-none">
-                              ₹18,00,000 / year
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                          <Eye size={16} />
+                        )}{" "}
+                        {isSalaryVisible ? "Hide Details" : "Reveal Details"}
+                      </button>
                     </div>
-                    <div className="flex-1 w-full flex gap-8">
-                      <div>
-                        <p className="text-[12px] font-bold uppercase tracking-wider mb-1 text-muted-foreground">
-                          Last Revised
+                    <div className="flex flex-col md:flex-row items-center gap-8">
+                      <div className="rounded-2xl p-6 flex-1 w-full relative overflow-hidden bg-secondary border border-border">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+                        <p className="text-sm font-bold text-muted-foreground">
+                          Current CTC
                         </p>
-                        <p className="text-base font-bold text-foreground">
-                          01 April 2025
-                        </p>
+                        <div className="mt-2 h-[40px] flex items-center">
+                          {isSalaryVisible ? (
+                            <p className="text-[28px] font-bold animate-in fade-in duration-300">
+                              ₹
+                              {employee.salary
+                                ? employee.salary.toLocaleString()
+                                : "18,00,000"}{" "}
+                              <span className="text-base font-bold ml-1 text-muted-foreground">
+                                / year
+                              </span>
+                            </p>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span className="text-[28px] font-bold tracking-widest text-foreground blur-md select-none">
+                                ₹18,00,000 / year
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-[12px] font-bold uppercase tracking-wider mb-1 text-muted-foreground">
-                          Next Review
-                        </p>
-                        <p className="text-base font-bold text-foreground">
-                          01 April 2026
-                        </p>
+                      <div className="flex-1 w-full flex gap-8">
+                        <div>
+                          <p className="text-[12px] font-bold uppercase tracking-wider mb-1 text-muted-foreground">
+                            Last Revised
+                          </p>
+                          <p className="text-base font-bold text-foreground">
+                            01 April 2025
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[12px] font-bold uppercase tracking-wider mb-1 text-muted-foreground">
+                            Next Review
+                          </p>
+                          <p className="text-base font-bold text-foreground">
+                            01 April 2026
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 <div className="rounded-2xl p-7 shadow-sm transition-all bg-card border border-border">
                   <h3 className="text-lg font-black mb-6 text-foreground">

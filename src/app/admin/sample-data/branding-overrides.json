@@ -17,14 +17,14 @@
     "id": "brand_2",
     "scope": "Organization Override",
     "organizationId": "org_3",
-    "organization": "Nexus Solutions",
+    "organization": "viyan Solutions",
     "logoUrl": "https://assets.ems.io/logos/org_3.png",
     "faviconUrl": "https://assets.ems.io/favicons/org_3.ico",
     "primaryColor": "#D85A30",
     "accentColor": "#E6F1FB",
-    "customDomain": "hr.nexussolutions.com",
+    "customDomain": "hr.viyansolutions.com",
     "domainVerified": true,
-    "emailFromName": "Nexus Solutions HR Team",
+    "emailFromName": "viyan Solutions HR Team",
     "updatedAt": "Apr 29, 2024"
   },
   {

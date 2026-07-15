@@ -89,7 +89,7 @@ const MOCK_CATALOG = [
   {
     id: "c3",
     title: "Secure Coding Practices",
-    provider: "NexusHR Infosec",
+    provider: "viyanHR Infosec",
     duration: "3 hours",
     rating: 4.5,
     category: "Security",

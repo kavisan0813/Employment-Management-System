@@ -61,7 +61,7 @@ export function EmployeeSelfProfile() {
 
   useEffect(() => {
     if (user?.email) {
-      const saved = localStorage.getItem(`nexus_avatar_${user.email}`);
+      const saved = localStorage.getItem(`viyan_avatar_${user.email}`);
       if (saved) {
         setAvatarPreview(saved);
       }
@@ -76,7 +76,7 @@ export function EmployeeSelfProfile() {
           const base64 = uploadEvent.target.result as string;
           setAvatarPreview(base64);
           if (user?.email) {
-            localStorage.setItem(`nexus_avatar_${user.email}`, base64);
+            localStorage.setItem(`viyan_avatar_${user.email}`, base64);
           }
           showToast(
             "Avatar Updated",
@@ -106,7 +106,7 @@ export function EmployeeSelfProfile() {
       login(updatedUser);
 
       try {
-        const registeredRaw = localStorage.getItem("nexus_registered_users");
+        const registeredRaw = localStorage.getItem("viyan_registered_users");
         if (registeredRaw) {
           const users = JSON.parse(registeredRaw);
           interface RegisteredUser {
@@ -131,7 +131,7 @@ export function EmployeeSelfProfile() {
             return u;
           });
           localStorage.setItem(
-            "nexus_registered_users",
+            "viyan_registered_users",
             JSON.stringify(updatedUsers),
           );
         }

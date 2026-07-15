@@ -30,7 +30,13 @@ const MOCK_USERS: PlatformUser[] = Array.from({ length: 150 }).map((_, i) => {
   const isSuspended = i % 15 === 0;
   const isTrial = i % 8 === 0;
   const status = isSuspended ? "Suspended" : isTrial ? "Trial" : "Active";
-  const orgs = ["Acme Corp", "TechFlow", "Nexus HR", "Global Industries", "Stark Resilient"];
+  const orgs = [
+    "Acme Corp",
+    "TechFlow",
+    "viyan HR",
+    "Global Industries",
+    "Stark Resilient",
+  ];
   const roles = ["Company Admin", "Company Admin"]; // Only admins in this view
 
   return {
@@ -41,34 +47,43 @@ const MOCK_USERS: PlatformUser[] = Array.from({ length: 150 }).map((_, i) => {
     organization: orgs[i % orgs.length],
     totalEmployees: Math.floor(Math.random() * 500) + 10,
     status,
-    lastActive: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
+    lastActive: new Date(
+      Date.now() - Math.random() * 10000000000,
+    ).toISOString(),
     role: roles[0],
   };
 });
 
 // Simulate backend filtering out regular employees
-export const fetchPlatformUsers = async (params: FetchUsersParams): Promise<FetchUsersResponse> => {
+export const fetchPlatformUsers = async (
+  params: FetchUsersParams,
+): Promise<FetchUsersResponse> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       let filtered = [...MOCK_USERS];
-      
+
       // Ensure only Company Admins are returned at API level (privacy rule)
-      filtered = filtered.filter(u => u.role === "Company Admin");
+      filtered = filtered.filter((u) => u.role === "Company Admin");
 
       if (params.search) {
         const query = params.search.toLowerCase();
-        filtered = filtered.filter(u => 
-          u.name.toLowerCase().includes(query) || 
-          u.email.toLowerCase().includes(query)
+        filtered = filtered.filter(
+          (u) =>
+            u.name.toLowerCase().includes(query) ||
+            u.email.toLowerCase().includes(query),
         );
       }
 
       if (params.role && params.role !== "all") {
-        filtered = filtered.filter(u => u.role.toLowerCase() === params.role?.toLowerCase());
+        filtered = filtered.filter(
+          (u) => u.role.toLowerCase() === params.role?.toLowerCase(),
+        );
       }
 
       if (params.organization && params.organization !== "all") {
-        filtered = filtered.filter(u => u.organization === params.organization);
+        filtered = filtered.filter(
+          (u) => u.organization === params.organization,
+        );
       }
 
       const start = (params.page - 1) * params.limit;
@@ -79,18 +94,18 @@ export const fetchPlatformUsers = async (params: FetchUsersParams): Promise<Fetc
         data: paginatedData,
         total: filtered.length,
         page: params.page,
-        limit: params.limit
+        limit: params.limit,
       });
     }, 600); // simulate network delay
   });
 };
 
 export const suspendOrganization = async (orgName: string): Promise<void> => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(() => {
-      MOCK_USERS.forEach(u => {
+      MOCK_USERS.forEach((u) => {
         if (u.organization === orgName) {
-          u.status = u.status === 'Suspended' ? 'Active' : 'Suspended';
+          u.status = u.status === "Suspended" ? "Active" : "Suspended";
         }
       });
       resolve();
@@ -100,12 +115,12 @@ export const suspendOrganization = async (orgName: string): Promise<void> => {
 
 export const resetUserPassword = async (userId: string): Promise<void> => {
   console.log(`Resetting password for ${userId}`);
-  return new Promise(resolve => setTimeout(resolve, 800));
+  return new Promise((resolve) => setTimeout(resolve, 800));
 };
 
 export const loginAsCompany = async (orgName: string): Promise<void> => {
   console.log(`Logging in as ${orgName}`);
-  return new Promise(resolve => setTimeout(resolve, 1000));
+  return new Promise((resolve) => setTimeout(resolve, 1000));
 };
 
 // Roles & Permissions Mock API
@@ -133,7 +148,7 @@ const defaultPermissions: RolePermissions = {
   payroll: { view: false, edit: false, generate_payslip: false },
   reports: { view: false },
   settings: { edit: false },
-  billing: { view: false, edit: false }
+  billing: { view: false, edit: false },
 };
 
 let MOCK_ROLES: Role[] = [
@@ -148,8 +163,8 @@ let MOCK_ROLES: Role[] = [
       payroll: { view: true, edit: true, generate_payslip: true },
       reports: { view: true },
       settings: { edit: true },
-      billing: { view: true, edit: true }
-    }
+      billing: { view: true, edit: true },
+    },
   },
   {
     id: "role_2",
@@ -162,8 +177,8 @@ let MOCK_ROLES: Role[] = [
       payroll: { view: true, edit: true, generate_payslip: true },
       reports: { view: true },
       settings: { edit: true },
-      billing: { view: true, edit: false }
-    }
+      billing: { view: true, edit: false },
+    },
   },
   {
     id: "role_3",
@@ -173,8 +188,8 @@ let MOCK_ROLES: Role[] = [
     permissions: {
       ...defaultPermissions,
       employee: { view: true, create: true, edit: true, delete: false },
-      leave: { view: true, approve: true, reject: true }
-    }
+      leave: { view: true, approve: true, reject: true },
+    },
   },
   {
     id: "role_4",
@@ -184,8 +199,8 @@ let MOCK_ROLES: Role[] = [
     permissions: {
       ...defaultPermissions,
       employee: { view: true, create: false, edit: false, delete: false },
-      leave: { view: true, approve: true, reject: true }
-    }
+      leave: { view: true, approve: true, reject: true },
+    },
   },
   {
     id: "role_5",
@@ -195,13 +210,13 @@ let MOCK_ROLES: Role[] = [
     permissions: {
       ...defaultPermissions,
       employee: { view: true, create: false, edit: false, delete: false },
-      leave: { view: true, approve: false, reject: false }
-    }
-  }
+      leave: { view: true, approve: false, reject: false },
+    },
+  },
 ];
 
 export const fetchRoles = async (): Promise<Role[]> => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve([...MOCK_ROLES]);
     }, 400);
@@ -211,7 +226,11 @@ export const fetchRoles = async (): Promise<Role[]> => {
 export const createRole = async (role: Partial<Role>): Promise<Role> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (MOCK_ROLES.some(r => r.name.toLowerCase() === role.name?.toLowerCase())) {
+      if (
+        MOCK_ROLES.some(
+          (r) => r.name.toLowerCase() === role.name?.toLowerCase(),
+        )
+      ) {
         reject(new Error("Role name must be unique"));
         return;
       }
@@ -220,7 +239,7 @@ export const createRole = async (role: Partial<Role>): Promise<Role> => {
         name: role.name || "New Role",
         isSystemRole: false,
         userCount: 0,
-        permissions: role.permissions || defaultPermissions
+        permissions: role.permissions || defaultPermissions,
       };
       MOCK_ROLES.push(newRole);
       resolve(newRole);
@@ -231,7 +250,7 @@ export const createRole = async (role: Partial<Role>): Promise<Role> => {
 export const deleteRole = async (roleId: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const role = MOCK_ROLES.find(r => r.id === roleId);
+      const role = MOCK_ROLES.find((r) => r.id === roleId);
       if (!role) {
         reject(new Error("Role not found"));
         return;
@@ -240,20 +259,30 @@ export const deleteRole = async (roleId: string): Promise<void> => {
         reject(new Error("Cannot delete system roles"));
         return;
       }
-      MOCK_ROLES = MOCK_ROLES.filter(r => r.id !== roleId);
+      MOCK_ROLES = MOCK_ROLES.filter((r) => r.id !== roleId);
       resolve();
     }, 600);
   });
 };
 
-export const updateRole = async (roleId: string, roleData: Partial<Role>): Promise<Role> => {
+export const updateRole = async (
+  roleId: string,
+  roleData: Partial<Role>,
+): Promise<Role> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (roleData.name && MOCK_ROLES.some(r => r.name.toLowerCase() === roleData.name?.toLowerCase() && r.id !== roleId)) {
+      if (
+        roleData.name &&
+        MOCK_ROLES.some(
+          (r) =>
+            r.name.toLowerCase() === roleData.name?.toLowerCase() &&
+            r.id !== roleId,
+        )
+      ) {
         reject(new Error("Role name must be unique"));
         return;
       }
-      const roleIndex = MOCK_ROLES.findIndex(r => r.id === roleId);
+      const roleIndex = MOCK_ROLES.findIndex((r) => r.id === roleId);
       if (roleIndex === -1) {
         reject(new Error("Role not found"));
         return;

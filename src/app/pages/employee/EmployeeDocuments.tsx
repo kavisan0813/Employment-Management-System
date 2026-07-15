@@ -558,7 +558,7 @@ export function DocumentPreviewContent({ docName }: { docName: string }) {
         {/* Header */}
         <div className="border-b-2 border-[#00B87C] pb-3 text-center font-sans">
           <h4 className="text-[14px] font-black text-[#00B87C] uppercase tracking-widest">
-            NexusHR Technologies
+            viyanHR Technologies
           </h4>
           <p className="text-[7px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">
             Innovating Human Resources
@@ -582,7 +582,7 @@ export function DocumentPreviewContent({ docName }: { docName: string }) {
 
           <p className="text-[8px] leading-relaxed text-slate-600">
             {nameLower.includes("offer") &&
-              "We are pleased to offer you the position of Senior Frontend Developer at NexusHR Technologies. Your expertise and passion will be a tremendous asset to our engineering division."}
+              "We are pleased to offer you the position of Senior Frontend Developer at viyanHR Technologies. Your expertise and passion will be a tremendous asset to our engineering division."}
             {nameLower.includes("appointment") &&
               "This letter serves to confirm your formal appointment as Senior Frontend Developer. You will report to Arjun Reddy and will be based out of our Chennai operations."}
             {nameLower.includes("nda") &&

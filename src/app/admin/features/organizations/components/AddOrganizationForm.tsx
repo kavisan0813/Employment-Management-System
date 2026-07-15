@@ -355,7 +355,7 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
                         value={formData.ownerEmail}
                         onChange={handleChange}
                         className="w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:border-indigo-500 focus:bg-white transition-colors"
-                        placeholder="name@nexushr.com"
+                        placeholder="name@viyanhr.com"
                       />
                     </div>
                   </div>

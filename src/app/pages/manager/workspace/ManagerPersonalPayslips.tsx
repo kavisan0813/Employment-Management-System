@@ -340,12 +340,12 @@ function PayslipModal({
                 <span className="bg-[#00B87C] text-white p-1.5 rounded-xl text-lg leading-none font-bold">
                   N
                 </span>
-                NexusHR Inc.
+                viyanHR Inc.
               </h1>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                 100 Marine Parkway, Redwood City, CA 94065
                 <br />
-                Phone: +1 (650) 555-0199 | Email: payroll@nexushr.com
+                Phone: +1 (650) 555-0199 | Email: payroll@viyanhr.com
               </p>
             </div>
             <div className="text-right">
@@ -519,7 +519,7 @@ function PayslipModal({
                 Authorized Signatory
                 <br />
                 <span className="text-[10px] lowercase font-normal">
-                  for NexusHR Inc.
+                  for viyanHR Inc.
                 </span>
               </p>
             </div>

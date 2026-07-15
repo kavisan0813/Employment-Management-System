@@ -398,8 +398,8 @@
   {
     "id": "sec_45",
     "type": "Impossible Travel",
-    "organization": "Nexus Solutions",
-    "actor": "ines.schmidt@nexussolutions.com",
+    "organization": "viyan Solutions",
+    "actor": "ines.schmidt@viyansolutions.com",
     "severity": "Medium",
     "status": "Inactive",
     "detectedAt": "May 20, 21:36"

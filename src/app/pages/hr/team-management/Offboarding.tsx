@@ -2358,10 +2358,10 @@ function ExitInterviewModal({
   }
 
   const questions = [
-    { id: "overall", label: "Overall experience at NexusHR?", type: "rating" },
+    { id: "overall", label: "Overall experience at viyanHR?", type: "rating" },
     {
       id: "recommend",
-      label: "Would you recommend NexusHR to others?",
+      label: "Would you recommend viyanHR to others?",
       type: "choice",
       options: ["Yes", "Maybe", "No"],
     },

@@ -1482,7 +1482,7 @@ function AISupportAssistantTab() {
     {
       id: "1",
       sender: "ai",
-      text: "Hi there! I am your NexusHR AI Assistant. How can I help you today? You can ask me about hardware upgrades, password resets, leave applications, or expense claims.",
+      text: "Hi there! I am your viyanHR AI Assistant. How can I help you today? You can ask me about hardware upgrades, password resets, leave applications, or expense claims.",
       timestamp: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
@@ -1598,7 +1598,7 @@ function AISupportAssistantTab() {
         </div>
         <div>
           <h3 className="text-sm font-black text-foreground">
-            NexusHR AI Helpdesk
+            viyanHR AI Helpdesk
           </h3>
           <p className="text-[11px] text-[#00B87C] font-bold flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-[#00B87C] animate-pulse" />{" "}

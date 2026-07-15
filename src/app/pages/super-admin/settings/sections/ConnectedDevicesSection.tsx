@@ -59,7 +59,7 @@ export function ConnectedDevicesSection({
           bg: "#E0F2FE",
           color: "#0EA5E9",
           name: "iPhone 14 Pro",
-          meta: "NexusHR App · iOS 17",
+          meta: "viyanHR App · iOS 17",
           location: "Chennai, India · Apr 5, 2026, 8:45 PM",
         },
         {
@@ -152,7 +152,7 @@ export function ConnectedDevicesSection({
           </div>
           <div>
             <p className="text-[15px] font-black text-foreground">
-              NexusHR Mobile App
+              viyanHR Mobile App
             </p>
             <p className="text-[13px] font-black text-primary">
               Connected — Last sync: Today 9:05 AM

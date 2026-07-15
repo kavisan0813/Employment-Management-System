@@ -205,9 +205,9 @@ export function Sidebar() {
           <div className="overflow-hidden flex-1">
             <span
               className="block text-[11px] font-bold text-gray-900 truncate"
-              title={user?.email || "platform@nexushr.com"}
+              title={user?.email || "platform@viyanhr.com"}
             >
-              {user?.email || "platform@nexushr.com"}
+              {user?.email || "platform@viyanhr.com"}
             </span>
             <span className="text-[10px] text-emerald-600 font-bold block uppercase tracking-wide">
               Platform System Admin

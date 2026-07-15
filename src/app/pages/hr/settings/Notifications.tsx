@@ -207,7 +207,7 @@ const initialAnnouncementsList: AnnouncementItem[] = [
     type: "INFO",
     title: "Eco-Friendly Workplace Initiative",
     content:
-      "NexusHR is moving paperless. Check out our new sustainability guidelines today.",
+      "viyanHR is moving paperless. Check out our new sustainability guidelines today.",
     author: "Green Committee",
     authorRole: "Internal",
     authorAvatar: "GC",
@@ -220,7 +220,7 @@ const initialAnnouncementsList: AnnouncementItem[] = [
 ];
 
 const loadNotifications = (): NotificationItem[] => {
-  const local = localStorage.getItem("nexus_notifications");
+  const local = localStorage.getItem("viyan_notifications");
   if (local) {
     try {
       return JSON.parse(local);
@@ -229,14 +229,14 @@ const loadNotifications = (): NotificationItem[] => {
     }
   }
   localStorage.setItem(
-    "nexus_notifications",
+    "viyan_notifications",
     JSON.stringify(initialNotificationsList),
   );
   return initialNotificationsList;
 };
 
 const loadAnnouncements = (): AnnouncementItem[] => {
-  const local = localStorage.getItem("nexus_announcements");
+  const local = localStorage.getItem("viyan_announcements");
   if (local) {
     try {
       return JSON.parse(local);
@@ -245,7 +245,7 @@ const loadAnnouncements = (): AnnouncementItem[] => {
     }
   }
   localStorage.setItem(
-    "nexus_announcements",
+    "viyan_announcements",
     JSON.stringify(initialAnnouncementsList),
   );
   return initialAnnouncementsList;
@@ -377,7 +377,7 @@ export function Notifications() {
 
     const updated = [newAnn, ...announcements];
     setAnnouncements(updated);
-    localStorage.setItem("nexus_announcements", JSON.stringify(updated));
+    localStorage.setItem("viyan_announcements", JSON.stringify(updated));
 
     setActiveModal(null);
     setToastMessage("Announcement posted successfully");
@@ -411,7 +411,7 @@ export function Notifications() {
     });
 
     setAnnouncements(updated);
-    localStorage.setItem("nexus_announcements", JSON.stringify(updated));
+    localStorage.setItem("viyan_announcements", JSON.stringify(updated));
 
     setEditAnnouncement(null);
     setActiveModal(null);
@@ -423,7 +423,7 @@ export function Notifications() {
   const handleDeleteAnnouncement = (id: number) => {
     const updated = announcements.filter((ann) => ann.id !== id);
     setAnnouncements(updated);
-    localStorage.setItem("nexus_announcements", JSON.stringify(updated));
+    localStorage.setItem("viyan_announcements", JSON.stringify(updated));
     setDeleteAnnouncementConfirm(null);
 
     setToastMessage("Announcement deleted successfully");
@@ -439,7 +439,7 @@ export function Notifications() {
       return a;
     });
     setAnnouncements(updated);
-    localStorage.setItem("nexus_announcements", JSON.stringify(updated));
+    localStorage.setItem("viyan_announcements", JSON.stringify(updated));
 
     setToastMessage(
       ann.pinned ? "Announcement unpinned" : "Announcement pinned",
@@ -452,7 +452,7 @@ export function Notifications() {
     e.stopPropagation();
     const updated = notifications.filter((n) => n.id !== id);
     setNotifications(updated);
-    localStorage.setItem("nexus_notifications", JSON.stringify(updated));
+    localStorage.setItem("viyan_notifications", JSON.stringify(updated));
 
     setToastMessage("Notification dismissed");
     setShowSuccessToast(true);
@@ -1800,7 +1800,7 @@ const initialFinanceNotificationsList: FinanceNotificationItem[] = [
 ];
 
 const loadFinanceNotifications = (): FinanceNotificationItem[] => {
-  const local = localStorage.getItem("nexus_finance_notifications");
+  const local = localStorage.getItem("viyan_finance_notifications");
   if (local) {
     try {
       return JSON.parse(local);
@@ -1809,7 +1809,7 @@ const loadFinanceNotifications = (): FinanceNotificationItem[] => {
     }
   }
   localStorage.setItem(
-    "nexus_finance_notifications",
+    "viyan_finance_notifications",
     JSON.stringify(initialFinanceNotificationsList),
   );
   return initialFinanceNotificationsList;
@@ -1865,7 +1865,7 @@ function FinanceNotificationsView() {
     }));
     setFinanceNotifications(updated);
     localStorage.setItem(
-      "nexus_finance_notifications",
+      "viyan_finance_notifications",
       JSON.stringify(updated),
     );
     setToastMessage("All notifications marked as read");
@@ -1880,7 +1880,7 @@ function FinanceNotificationsView() {
     );
     setFinanceNotifications(updated);
     localStorage.setItem(
-      "nexus_finance_notifications",
+      "viyan_finance_notifications",
       JSON.stringify(updated),
     );
     // Navigate with deep-linking state if present
@@ -1901,7 +1901,7 @@ function FinanceNotificationsView() {
     );
     setFinanceNotifications(updated);
     localStorage.setItem(
-      "nexus_finance_notifications",
+      "viyan_finance_notifications",
       JSON.stringify(updated),
     );
 

@@ -68,7 +68,7 @@ export function Layout() {
 
   const title = isEmployeeProfile
     ? "Employee Profile"
-    : pageTitles[fullPath] || pageTitles[basePath] || "NexusHR";
+    : pageTitles[fullPath] || pageTitles[basePath] || "viyanHR";
 
   const sidebarWidth = collapsed ? 72 : 240;
 

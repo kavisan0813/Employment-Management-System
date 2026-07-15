@@ -132,7 +132,7 @@ export const findEmployeeByEmail = (email: string | undefined) => {
   const lowerEmail = email.toLowerCase();
 
   // 1. Check local storage first
-  const savedEmps = localStorage.getItem("nexus_employees");
+  const savedEmps = localStorage.getItem("viyan_employees");
   if (savedEmps) {
     try {
       const emps = JSON.parse(savedEmps);
@@ -162,7 +162,7 @@ export function AttendanceProvider({
 
   // Load records from the shared HR local storage key
   useEffect(() => {
-    const saved = localStorage.getItem("nexus_attendance_records");
+    const saved = localStorage.getItem("viyan_attendance_records");
     if (saved) {
       try {
         setRecords(JSON.parse(saved));
@@ -176,7 +176,7 @@ export function AttendanceProvider({
   const saveRecords = (newRecords: AttendanceRecord[]) => {
     setRecords(newRecords);
     localStorage.setItem(
-      "nexus_attendance_records",
+      "viyan_attendance_records",
       JSON.stringify(newRecords),
     );
   };
@@ -204,7 +204,7 @@ export function AttendanceProvider({
   // Load break state
   const [isOnBreak, setIsOnBreak] = useState<boolean>(() => {
     if (user?.email) {
-      const savedBreak = localStorage.getItem(`nexus_on_break_${user.email}`);
+      const savedBreak = localStorage.getItem(`viyan_on_break_${user.email}`);
       return savedBreak === "true";
     }
     return false;
@@ -213,7 +213,7 @@ export function AttendanceProvider({
   // Sync break state
   useEffect(() => {
     if (user?.email) {
-      localStorage.setItem(`nexus_on_break_${user.email}`, String(isOnBreak));
+      localStorage.setItem(`viyan_on_break_${user.email}`, String(isOnBreak));
     }
   }, [isOnBreak, user]);
 

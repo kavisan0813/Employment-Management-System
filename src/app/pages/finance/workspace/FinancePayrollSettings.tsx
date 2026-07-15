@@ -3096,7 +3096,7 @@ function PayslipConfigurator({
               style={{ backgroundColor: template.headerColor }}
             >
               <div>
-                <h4 className="text-xl font-bold">NexusHR Solutions Pvt Ltd</h4>
+                <h4 className="text-xl font-bold">viyanHR Solutions Pvt Ltd</h4>
                 <p className="text-xs opacity-90 mt-1">
                   100, Tech Park Road, Bangalore - 560001
                 </p>

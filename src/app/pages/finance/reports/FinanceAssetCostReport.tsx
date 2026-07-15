@@ -563,7 +563,7 @@ export function FinanceAssetCostReport() {
     setExportLoading("pdf");
     showToast("Preparing PDF", "info", "Generating Asset Cost Report...");
     await new Promise((r) => setTimeout(r, 800));
-    const reportTitle = "Asset Cost Report - NexusHR EMS";
+    const reportTitle = "Asset Cost Report - viyanHR EMS";
     const content = [
       reportTitle,
       "Asset Valuation and Depreciation Overview",

@@ -29,7 +29,7 @@ const NEW_JOINER = {
   department: "Engineering",
   joiningDate: "April 8, 2026",
   reportsTo: "You (Suresh Iyer)",
-  email: "priya.sharma@nexushr.com",
+  email: "priya.sharma@viyanhr.com",
   phone: "+91 98765 43210",
   location: "Bangalore, India",
 };
@@ -200,7 +200,7 @@ export function ManagerTeamOnboarding() {
 
   const handleExport = () => {
     const lines = [
-      `NexusHR Onboarding Report`,
+      `viyanHR Onboarding Report`,
       `Employee ID: ${NEW_JOINER.id}`,
       `Employee Name: ${NEW_JOINER.name}`,
       `Role: ${NEW_JOINER.role}`,

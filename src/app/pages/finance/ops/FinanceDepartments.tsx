@@ -466,7 +466,9 @@ export function FinanceDepartments() {
 
                 <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-[11px] font-bold">
                   <TrendingUp size={12} color="var(--primary)" />
-                  <span style={{ color: "var(--primary)" }}>{dept.growth}%</span>
+                  <span style={{ color: "var(--primary)" }}>
+                    {dept.growth}%
+                  </span>
                 </div>
               </div>
             </div>
@@ -788,7 +790,7 @@ export function FinanceDepartments() {
             {/* Bottom Note */}
             <div
               className="p-4 border-t border-border bg-amber-500/5 cursor-pointer hover:bg-amber-500/10 transition-colors"
-              onClick={() => (window.location.href = "mailto:hr@nexushr.com")}
+              onClick={() => (window.location.href = "mailto:hr@viyanhr.com")}
             >
               <p className="text-center text-[12px] font-bold text-amber-600 dark:text-amber-500">
                 ⚠ No edit permissions — contact HR Manager to modify

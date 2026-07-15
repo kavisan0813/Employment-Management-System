@@ -722,7 +722,7 @@ function MessageModal({
       timestamp: string;
     }>
   >(() => {
-    const saved = localStorage.getItem("nexus_recruitment_messages");
+    const saved = localStorage.getItem("viyan_recruitment_messages");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -755,7 +755,7 @@ function MessageModal({
     };
 
     // Save message
-    const saved = localStorage.getItem("nexus_recruitment_messages");
+    const saved = localStorage.getItem("viyan_recruitment_messages");
     let messagesMap: Record<
       string,
       Array<{
@@ -774,7 +774,7 @@ function MessageModal({
     const currentList = [...messages, newMsg];
     messagesMap[candidate.id] = currentList;
     localStorage.setItem(
-      "nexus_recruitment_messages",
+      "viyan_recruitment_messages",
       JSON.stringify(messagesMap),
     );
     setMessages(currentList);
@@ -820,7 +820,7 @@ function MessageModal({
       const updatedList = [...currentList, reply];
       messagesMap[candidate.id] = updatedList;
       localStorage.setItem(
-        "nexus_recruitment_messages",
+        "viyan_recruitment_messages",
         JSON.stringify(messagesMap),
       );
       setMessages(updatedList);
@@ -5351,7 +5351,7 @@ export function Recruitment() {
 
   // Local persistent states
   const [pipeline, setPipeline] = useState<Record<Stage, Candidate[]>>(() => {
-    const saved = localStorage.getItem("nexus_recruitment_pipeline");
+    const saved = localStorage.getItem("viyan_recruitment_pipeline");
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -5367,7 +5367,7 @@ export function Recruitment() {
   });
 
   const [jobs, setJobs] = useState<JobPosting[]>(() => {
-    const saved = localStorage.getItem("nexus_recruitment_jobs");
+    const saved = localStorage.getItem("viyan_recruitment_jobs");
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -5379,7 +5379,7 @@ export function Recruitment() {
   });
 
   const [interviews, setInterviews] = useState<ScheduledInterview[]>(() => {
-    const saved = localStorage.getItem("nexus_recruitment_interviews");
+    const saved = localStorage.getItem("viyan_recruitment_interviews");
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -5394,20 +5394,20 @@ export function Recruitment() {
   const updatePipeline = (newPipeline: Record<Stage, Candidate[]>) => {
     setPipeline(newPipeline);
     localStorage.setItem(
-      "nexus_recruitment_pipeline",
+      "viyan_recruitment_pipeline",
       JSON.stringify(newPipeline),
     );
   };
 
   const updateJobs = (newJobs: JobPosting[]) => {
     setJobs(newJobs);
-    localStorage.setItem("nexus_recruitment_jobs", JSON.stringify(newJobs));
+    localStorage.setItem("viyan_recruitment_jobs", JSON.stringify(newJobs));
   };
 
   const updateInterviews = (newInterviews: ScheduledInterview[]) => {
     setInterviews(newInterviews);
     localStorage.setItem(
-      "nexus_recruitment_interviews",
+      "viyan_recruitment_interviews",
       JSON.stringify(newInterviews),
     );
   };

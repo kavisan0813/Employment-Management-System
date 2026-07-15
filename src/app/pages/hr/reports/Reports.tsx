@@ -5205,7 +5205,7 @@ export function Reports() {
         "Attendance %": "94%",
         "Leave Balance": "12",
         Manager: "Ryan Park",
-        Email: "arun@nexus.hr",
+        Email: "arun@viyan.hr",
         Phone: "+91 98765 43210",
         Status: "Active",
       },
@@ -5222,7 +5222,7 @@ export function Reports() {
         "Attendance %": "91%",
         "Leave Balance": "15",
         Manager: "Ryan Park",
-        Email: "sarah@nexus.hr",
+        Email: "sarah@viyan.hr",
         Phone: "+91 98765 43211",
         Status: "Active",
       },
@@ -5239,7 +5239,7 @@ export function Reports() {
         "Attendance %": "89%",
         "Leave Balance": "8",
         Manager: "Ryan Park",
-        Email: "ravi@nexus.hr",
+        Email: "ravi@viyan.hr",
         Phone: "+91 98765 43212",
         Status: "Active",
       },
@@ -5256,7 +5256,7 @@ export function Reports() {
         "Attendance %": "87%",
         "Leave Balance": "14",
         Manager: "Ryan Park",
-        Email: "anita@nexus.hr",
+        Email: "anita@viyan.hr",
         Phone: "+91 98765 43213",
         Status: "Active",
       },
@@ -5273,7 +5273,7 @@ export function Reports() {
         "Attendance %": "95%",
         "Leave Balance": "10",
         Manager: "Ryan Park",
-        Email: "rahul@nexus.hr",
+        Email: "rahul@viyan.hr",
         Phone: "+91 98765 43214",
         Status: "Active",
       },
@@ -5290,7 +5290,7 @@ export function Reports() {
         "Attendance %": "92%",
         "Leave Balance": "11",
         Manager: "Ryan Park",
-        Email: "priya@nexus.hr",
+        Email: "priya@viyan.hr",
         Phone: "+91 98765 43215",
         Status: "Active",
       },
@@ -5307,7 +5307,7 @@ export function Reports() {
         "Attendance %": "90%",
         "Leave Balance": "9",
         Manager: "Ryan Park",
-        Email: "vikram@nexus.hr",
+        Email: "vikram@viyan.hr",
         Phone: "+91 98765 43216",
         Status: "Active",
       },
@@ -5324,7 +5324,7 @@ export function Reports() {
         "Attendance %": "88%",
         "Leave Balance": "16",
         Manager: "Ryan Park",
-        Email: "neha@nexus.hr",
+        Email: "neha@viyan.hr",
         Phone: "+91 98765 43217",
         Status: "Active",
       },
@@ -5526,8 +5526,7 @@ export function Reports() {
     const list = rawKpis();
     return user?.role === "HR Manager"
       ? list.filter(
-          (k) =>
-            k.label !== "Payroll Cost" && k.label !== "Budget Utilization"
+          (k) => k.label !== "Payroll Cost" && k.label !== "Budget Utilization",
         )
       : list;
   };
@@ -5539,8 +5538,15 @@ export function Reports() {
     if (user?.role === "HR Manager") {
       return (
         <div className="p-8 text-center bg-card border border-border rounded-2xl">
-          <p className="text-red-500 font-bold">Access Denied: You do not have permissions to view Finance reports.</p>
-          <button onClick={() => setActiveReport(null)} className="mt-4 px-4 py-2 bg-[#00B87C] text-white rounded-lg">Back to Reports</button>
+          <p className="text-red-500 font-bold">
+            Access Denied: You do not have permissions to view Finance reports.
+          </p>
+          <button
+            onClick={() => setActiveReport(null)}
+            className="mt-4 px-4 py-2 bg-[#00B87C] text-white rounded-lg"
+          >
+            Back to Reports
+          </button>
         </div>
       );
     }
@@ -7244,28 +7250,31 @@ export function Reports() {
           >
             <div style={{ display: "flex", gap: "12px" }}>
               {["All", "Workforce", "Finance", "Operations"]
-                .filter((cat) => !(user?.role === "HR Manager" && cat === "Finance"))
+                .filter(
+                  (cat) => !(user?.role === "HR Manager" && cat === "Finance"),
+                )
                 .map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setReportCategory(cat)}
-                  style={{
-                    padding: "6px 16px",
-                    borderRadius: "9999px",
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    border: "1px solid",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    backgroundColor:
-                      reportCategory === cat ? "#00B87C" : "#F3F4F6",
-                    color: reportCategory === cat ? "white" : "#374151",
-                    borderColor: reportCategory === cat ? "#00B87C" : "#E5E7EB",
-                  }}
-                >
-                  {cat}
-                </button>
-              ))}
+                    style={{
+                      padding: "6px 16px",
+                      borderRadius: "9999px",
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      border: "1px solid",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      backgroundColor:
+                        reportCategory === cat ? "#00B87C" : "#F3F4F6",
+                      color: reportCategory === cat ? "white" : "#374151",
+                      borderColor:
+                        reportCategory === cat ? "#00B87C" : "#E5E7EB",
+                    }}
+                  >
+                    {cat}
+                  </button>
+                ))}
             </div>
             <input
               type="text"
@@ -8306,7 +8315,7 @@ export function Reports() {
                 </label>
                 <input
                   type="email"
-                  placeholder="e.g. admin@nexus.hr"
+                  placeholder="e.g. admin@viyan.hr"
                   style={{
                     width: "100%",
                     padding: "10px",

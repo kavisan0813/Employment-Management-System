@@ -400,7 +400,7 @@ const DEFAULT_PHASES_DATA: Record<string, OnboardingPhase[]> = {
         },
         {
           id: "t8",
-          task: "Email account setup: priya@nexushr.com",
+          task: "Email account setup: priya@viyanhr.com",
           owner: "IT",
           dueDate: "Apr 7",
           status: "done",

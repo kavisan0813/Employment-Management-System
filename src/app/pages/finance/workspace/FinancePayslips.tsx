@@ -92,7 +92,7 @@ export function FinancePayslips() {
   const downloadPayslipFile = (payslip: Payslip) => {
     const content = `
 ==================================================
-           NEXUSHR SOLUTIONS PVT LTD
+           viyanHR SOLUTIONS PVT LTD
 ==================================================
 Salary Statement: ${payslip.month} ${payslip.year}
 Employee Name: Ananya Sharma
@@ -124,7 +124,7 @@ Thank you for your valuable contribution.
 
   const downloadAllPayslips = () => {
     let merged = `==================================================\n`;
-    merged += `           NEXUSHR SYSTEM - SALARY HISTORY\n`;
+    merged += `           viyanHR SYSTEM - SALARY HISTORY\n`;
     merged += `==================================================\n`;
     merged += `Employee: Ananya Sharma (EMP-0088)\n\n`;
 
@@ -151,7 +151,7 @@ Thank you for your valuable contribution.
     showToast(
       "Email Sent",
       "success",
-      `Payslip for ${payslip.month} ${payslip.year} sent to ananya.sharma@nexushr.com`,
+      `Payslip for ${payslip.month} ${payslip.year} sent to ananya.sharma@viyanhr.com`,
     );
   };
 
@@ -368,7 +368,7 @@ Thank you for your valuable contribution.
                     N
                   </div>
                   <h4 className="text-[16px] font-black text-foreground uppercase tracking-tight">
-                    NexusHR Solutions Pvt Ltd
+                    viyanHR Solutions Pvt Ltd
                   </h4>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
                     123, Business District, Whitefield, Bangalore - 560066

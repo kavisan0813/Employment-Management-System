@@ -179,7 +179,7 @@ export interface Employee {
     scopeId: string;
   }>;
   designation: string;
-  status: string;
+  status: "Active" | "Inactive" | "On Leave" | "Pending Invite";
   joinDate: string;
   salary: number;
   grossSalary: number;
@@ -250,53 +250,92 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [employeesList, setEmployeesList] = useState<Employee[]>(() => {
     // Look up in localStorage or load initialEmployees
-    const saved = localStorage.getItem("nexus_employees");
+    const saved = localStorage.getItem("viyan_employees");
+    let list: Employee[] = [];
     if (saved) {
       try {
-        return JSON.parse(saved);
+        list = JSON.parse(saved);
       } catch (e) {
         console.error(e);
       }
     }
-    return initialEmployees.map((emp) => ({
-      ...emp,
-      notes: [
-        {
-          id: "N1",
-          text: "Arjun has been performing exceptionally well in the recent Q3 sprint. Needs to focus slightly more on peer code reviews going forward.",
-          author: emp.manager || "David Chen",
-          time: "2 weeks ago",
-        },
-      ],
-      assets: [
-        {
-          id: "AST-2022-041",
-          name: 'MacBook Pro 16"',
-          category: "Laptop",
-          date: "01 Mar 2022",
-          status: "Assigned",
-        },
-        {
-          id: "AST-2022-089",
-          name: 'Dell UltraSharp 27"',
-          category: "Monitor",
-          date: "15 Mar 2022",
-          status: "Assigned",
-        },
-        {
-          id: "AST-2024-102",
-          name: "Magic Keyboard",
-          category: "Accessory",
-          date: "10 Jan 2024",
-          status: "Assigned",
-        },
-      ],
-    }));
+
+    if (!list || list.length === 0) {
+      list = initialEmployees.map((emp) => ({
+        ...emp,
+        status: emp.status as Employee["status"],
+        notes: [
+          {
+            id: "N1",
+            text: "Arjun has been performing exceptionally well in the recent Q3 sprint. Needs to focus slightly more on peer code reviews going forward.",
+            author: emp.manager || "David Chen",
+            time: "2 weeks ago",
+          },
+        ],
+        assets: [
+          {
+            id: "AST-2022-041",
+            name: 'MacBook Pro 16"',
+            category: "Laptop",
+            date: "01 Mar 2022",
+            status: "Assigned",
+          },
+          {
+            id: "AST-2022-089",
+            name: 'Dell UltraSharp 27"',
+            category: "Monitor",
+            date: "15 Mar 2022",
+            status: "Assigned",
+          },
+          {
+            id: "AST-2024-102",
+            name: "Magic Keyboard",
+            category: "Accessory",
+            date: "10 Jan 2024",
+            status: "Assigned",
+          },
+        ],
+      }));
+    }
+
+    // Ensure manager (Sarah Chen) exists in the list
+    const hasManager = list.some((e) => e.email.toLowerCase() === "manager@viyanhr.com");
+    if (!hasManager) {
+      list.push({
+        id: "EMP012",
+        name: "Sarah Chen",
+        email: "manager@viyanhr.com",
+        phone: "+1 (555) 901-2345",
+        department: "Engineering",
+        team: "Frontend",
+        role: "Engineering Manager",
+        designation: "Engineering Manager",
+        status: "Active" as const,
+        joinDate: "2020-04-10",
+        salary: 120000,
+        grossSalary: 12000,
+        deductions: 1440,
+        netPay: 10560,
+        avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+        location: "San Francisco, CA",
+        manager: "Robert Chen",
+        employmentType: "Full-time",
+        gender: "Female",
+        dob: "1989-08-15",
+        address: "789 Market St, San Francisco, CA 94103",
+        emergencyContact: "Kenji Chen — +1 (555) 567-8901",
+        performance: 96,
+        notes: [],
+        assets: []
+      });
+    }
+
+    return list;
   });
 
   const saveEmployees = (list: Employee[]) => {
     setEmployeesList(list);
-    localStorage.setItem("nexus_employees", JSON.stringify(list));
+    localStorage.setItem("viyan_employees", JSON.stringify(list));
   };
 
   const addEmployee = (emp: EmployeeInput) => {

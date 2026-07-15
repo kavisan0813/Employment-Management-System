@@ -1,8 +1,6 @@
 import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function EmailTemplatesSection() {
   const {
@@ -29,7 +27,7 @@ export function EmailTemplatesSection() {
       event: "employee.joined",
       color: "#10B981",
       bg: "rgba(16, 185, 129, 0.1)",
-      subject: "Welcome to NexusHR, {{name}}!",
+      subject: "Welcome to viyanHR, {{name}}!",
       edited: "Apr 1, 2026",
       status: "Active",
       statusColor: "#10B981",
@@ -73,7 +71,7 @@ export function EmailTemplatesSection() {
       event: "auth.reset",
       color: "#F59E0B",
       bg: "rgba(245, 158, 11, 0.1)",
-      subject: "Reset your NexusHR password",
+      subject: "Reset your viyanHR password",
       edited: "Jan 10, 2026",
       status: "Active",
       statusColor: "#10B981",
@@ -95,7 +93,7 @@ export function EmailTemplatesSection() {
       event: "onboarding.start",
       color: "#0EA5E9",
       bg: "rgba(14, 165, 233, 0.1)",
-      subject: "Your first day at NexusHR is on {{date}}",
+      subject: "Your first day at viyanHR is on {{date}}",
       edited: "Nov 20, 2025",
       status: "Active",
       statusColor: "#10B981",
@@ -119,10 +117,7 @@ export function EmailTemplatesSection() {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
-        <ChevronRight
-          size={12}
-          style={{ color: "var(--muted-foreground)" }}
-        />
+        <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "#00B87C" }}>Email Templates</span>
       </div>
 

@@ -13,7 +13,10 @@ export function Topbar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
         setIsProfileOpen(false);
       }
     };
@@ -84,7 +87,7 @@ export function Topbar() {
         </button>
         <div className="h-8 w-[1px] bg-outline-variant/50 mx-1"></div>
         <div className="relative" ref={profileRef}>
-          <button 
+          <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-surface-container-highest transition-all group border-0 bg-transparent cursor-pointer"
           >
@@ -95,7 +98,7 @@ export function Topbar() {
               expand_more
             </span>
           </button>
-          
+
           {isProfileOpen && (
             <div className="absolute right-0 mt-2 w-80 bg-surface-bright border border-outline-variant rounded-2xl shadow-xl z-50 overflow-hidden text-left">
               {/* Enhanced Profile Header */}
@@ -110,8 +113,11 @@ export function Topbar() {
                         {user?.name || "System Administrator"}
                       </h3>
                     </div>
-                    <p className="text-on-surface-variant text-sm truncate" title={user?.email}>
-                      {user?.email || "platform@nexushr.com"}
+                    <p
+                      className="text-on-surface-variant text-sm truncate"
+                      title={user?.email}
+                    >
+                      {user?.email || "platform@viyanhr.com"}
                     </p>
                     <div className="mt-2 flex items-center gap-2">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
@@ -124,11 +130,17 @@ export function Topbar() {
                 {/* Additional Info */}
                 <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-on-surface-variant text-xs">Department</p>
-                    <p className="font-medium text-on-surface">Platform Engineering</p>
+                    <p className="text-on-surface-variant text-xs">
+                      Department
+                    </p>
+                    <p className="font-medium text-on-surface">
+                      Platform Engineering
+                    </p>
                   </div>
                   <div>
-                    <p className="text-on-surface-variant text-xs">Member Since</p>
+                    <p className="text-on-surface-variant text-xs">
+                      Member Since
+                    </p>
                     <p className="font-medium text-on-surface">March 2024</p>
                   </div>
                 </div>
@@ -149,7 +161,9 @@ export function Topbar() {
                   <User className="w-5 h-5" />
                   <div>
                     <div className="font-medium">View Full Profile</div>
-                    <div className="text-xs text-on-surface-variant">Manage personal details &amp; preferences</div>
+                    <div className="text-xs text-on-surface-variant">
+                      Manage personal details &amp; preferences
+                    </div>
                   </div>
                 </Link>
 
@@ -161,13 +175,15 @@ export function Topbar() {
                   <Settings className="w-5 h-5" />
                   <div>
                     <div className="font-medium">Account Settings</div>
-                    <div className="text-xs text-on-surface-variant">Security, notifications &amp; integrations</div>
+                    <div className="text-xs text-on-surface-variant">
+                      Security, notifications &amp; integrations
+                    </div>
                   </div>
                 </Link>
 
                 <div className="h-px bg-outline-variant my-1 mx-2"></div>
 
-                <button 
+                <button
                   className="w-full text-left px-4 py-3 text-sm text-error hover:bg-error/5 rounded-xl transition-colors flex items-center gap-3 border-0 bg-transparent cursor-pointer"
                   onClick={() => setIsProfileOpen(false)}
                 >

@@ -349,12 +349,12 @@ function PayslipModal({
                 <span className="bg-[#00B87C] text-white p-1.5 rounded-xl text-lg leading-none font-bold">
                   N
                 </span>
-                NexusHR Inc.
+                viyanHR Inc.
               </h1>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                 100 Marine Parkway, Redwood City, CA 94065
                 <br />
-                Phone: +1 (650) 555-0199 | Email: payroll@nexushr.com
+                Phone: +1 (650) 555-0199 | Email: payroll@viyanhr.com
               </p>
             </div>
             <div className="text-right">
@@ -530,7 +530,7 @@ function PayslipModal({
                 Authorized Signatory
                 <br />
                 <span className="text-[10px] lowercase font-normal">
-                  for NexusHR Inc.
+                  for viyanHR Inc.
                 </span>
               </p>
             </div>
@@ -575,51 +575,58 @@ export function EmployeePayslips() {
   const [shouldAutoPrint, setShouldAutoPrint] = useState(false);
 
   const employeeEmail = useMemo(() => {
-    if (!user) return "sarah.johnson@nexushr.com";
+    if (!user) return "sarah.johnson@viyanhr.com";
     const structures = payrollService.getSalaryStructures();
-    const match = structures.find((s) => s.email.toLowerCase() === user.email.toLowerCase());
-    return match ? user.email : "sarah.johnson@nexushr.com";
+    const match = structures.find(
+      (s) => s.email.toLowerCase() === user.email.toLowerCase(),
+    );
+    return match ? user.email : "sarah.johnson@viyanhr.com";
   }, [user]);
 
   const employeePayslips = useMemo(() => {
     const runs = payrollService.getAllPayRuns();
     const disbursedRuns = runs.filter((r) => r.status === "disbursed");
-    
-    const realPayslips = disbursedRuns.map((run) => {
-      const ps = run.payslips.find((p: RealPayslip) => p.email.toLowerCase() === employeeEmail.toLowerCase());
-      if (!ps) return null;
 
-      const parts = run.month.split(" ");
-      const monthStr = parts[0];
-      const yearNum = parseInt(parts[1]) || 2026;
+    const realPayslips = disbursedRuns
+      .map((run) => {
+        const ps = run.payslips.find(
+          (p: RealPayslip) =>
+            p.email.toLowerCase() === employeeEmail.toLowerCase(),
+        );
+        if (!ps) return null;
 
-      return {
-        id: `PAY-${run.id}`,
-        month: monthStr,
-        year: yearNum,
-        grossPay: ps.earnings.gross,
-        deductions: ps.deductions.total,
-        netPay: ps.netPay,
-        paidDate: run.disbursedAt
-          ? new Date(run.disbursedAt).toLocaleDateString([], {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })
-          : "May 1, 2026",
-        status: "Paid" as const,
-        breakdown: {
-          basicSalary: ps.earnings.basic,
-          hra: ps.earnings.hra,
-          conveyance: 0,
-          medicalAllowance: 0,
-          specialAllowance: ps.earnings.allowances + (ps.bonus || 0),
-          providentFund: ps.deductions.pf,
-          professionalTax: ps.deductions.pt,
-          incomeTax: ps.deductions.tds,
-        },
-      };
-    }).filter((p) => p !== null) as Payslip[];
+        const parts = run.month.split(" ");
+        const monthStr = parts[0];
+        const yearNum = parseInt(parts[1]) || 2026;
+
+        return {
+          id: `PAY-${run.id}`,
+          month: monthStr,
+          year: yearNum,
+          grossPay: ps.earnings.gross,
+          deductions: ps.deductions.total,
+          netPay: ps.netPay,
+          paidDate: run.disbursedAt
+            ? new Date(run.disbursedAt).toLocaleDateString([], {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "May 1, 2026",
+          status: "Paid" as const,
+          breakdown: {
+            basicSalary: ps.earnings.basic,
+            hra: ps.earnings.hra,
+            conveyance: 0,
+            medicalAllowance: 0,
+            specialAllowance: ps.earnings.allowances + (ps.bonus || 0),
+            providentFund: ps.deductions.pf,
+            professionalTax: ps.deductions.pt,
+            incomeTax: ps.deductions.tds,
+          },
+        };
+      })
+      .filter((p) => p !== null) as Payslip[];
 
     return realPayslips.length > 0 ? realPayslips : MOCK_PAYSLIPS;
   }, [employeeEmail]);
@@ -636,15 +643,25 @@ export function EmployeePayslips() {
 
   const structure = useMemo(() => {
     const structures = payrollService.getSalaryStructures();
-    return structures.find((s) => s.email.toLowerCase() === employeeEmail.toLowerCase());
+    return structures.find(
+      (s) => s.email.toLowerCase() === employeeEmail.toLowerCase(),
+    );
   }, [employeeEmail]);
 
-  const ctcDisplay = structure ? `₹${(structure.ctc / 100000).toFixed(1)}L` : "₹18L";
+  const ctcDisplay = structure
+    ? `₹${(structure.ctc / 100000).toFixed(1)}L`
+    : "₹18L";
 
   const latestPayslip = employeePayslips[0];
-  const netPayDisplay = latestPayslip ? `₹${latestPayslip.netPay.toLocaleString()}` : "₹75,150";
-  const deductionsDisplay = latestPayslip ? `₹${latestPayslip.deductions.toLocaleString()}` : "₹19,850";
-  const netSubText = latestPayslip ? `After all deductions · ${latestPayslip.month} ${latestPayslip.year}` : "After all deductions · April 2026";
+  const netPayDisplay = latestPayslip
+    ? `₹${latestPayslip.netPay.toLocaleString()}`
+    : "₹75,150";
+  const deductionsDisplay = latestPayslip
+    ? `₹${latestPayslip.deductions.toLocaleString()}`
+    : "₹19,850";
+  const netSubText = latestPayslip
+    ? `After all deductions · ${latestPayslip.month} ${latestPayslip.year}`
+    : "After all deductions · April 2026";
 
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
@@ -712,7 +729,9 @@ export function EmployeePayslips() {
               Monthly Deductions
             </p>
           </div>
-          <p className="text-[28px] font-black text-rose-500">{deductionsDisplay}</p>
+          <p className="text-[28px] font-black text-rose-500">
+            {deductionsDisplay}
+          </p>
           <p className="text-[12px] font-bold text-muted-foreground mt-1">
             PF + Tax + Professional Tax
           </p>

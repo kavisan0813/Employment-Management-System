@@ -961,7 +961,7 @@ export function LeaveManagement() {
             <body>
               <div class="header">
                 <div>
-                  <div class="logo">NexusHR</div>
+                  <div class="logo">viyanHR</div>
                   <div class="title">Enterprise Leave Report</div>
                 </div>
                 <div class="meta">
@@ -985,7 +985,7 @@ export function LeaveManagement() {
                 </tbody>
               </table>
               <div class="footer">
-                © 2026 NexusHR Inc. · Confidential System Generated Report
+                © 2026 viyanHR Inc. · Confidential System Generated Report
               </div>
               <script>
                 window.onload = function() {

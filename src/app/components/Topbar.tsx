@@ -49,7 +49,9 @@ export function Topbar({
   const { user, logout } = useAuth();
   const { hasPermissionKey } = usePermissions();
   const isFinanceUser = hasPermissionKey(P.PAYROLL_FULL);
-  const isEmployeeOnly = !hasPermissionKey(P.EMPLOYEES_MANAGE) && !hasPermissionKey(P.EMPLOYEES_VIEW_TEAM);
+  const isEmployeeOnly =
+    !hasPermissionKey(P.EMPLOYEES_MANAGE) &&
+    !hasPermissionKey(P.EMPLOYEES_VIEW_TEAM);
 
   useEffect(() => {
     setNotifications(isFinanceUser ? 5 : 3);
@@ -94,7 +96,7 @@ export function Topbar({
     >
       {/* Page title */}
       <div className="flex-1 min-w-0">
-        {title && title !== "NexusHR" && (
+        {title && title !== "viyanHR" && (
           <h1
             style={{
               color: "var(--foreground)",
@@ -455,9 +457,7 @@ export function Topbar({
                   onClick={() => {
                     setShowNotifications(false);
                     navigate(
-                      isEmployeeOnly
-                        ? "/my-notifications"
-                        : "/notifications",
+                      isEmployeeOnly ? "/my-notifications" : "/notifications",
                     );
                   }}
                 >
@@ -518,7 +518,7 @@ export function Topbar({
             >
               {user?.name || "Ryan Park"}
             </p>
-            {(
+            {
               <p
                 style={{
                   color: "var(--muted-foreground)",
@@ -528,7 +528,7 @@ export function Topbar({
               >
                 {user?.role || "Admin"}
               </p>
-            )}
+            }
           </div>
           <ChevronDown
             size={14}
@@ -555,7 +555,11 @@ export function Topbar({
               }}
             >
               {[
-                { icon: User, label: "My Profile", path: isEmployeeOnly ? "/employee/profile" : "/profile" },
+                {
+                  icon: User,
+                  label: "My Profile",
+                  path: isEmployeeOnly ? "/employee/profile" : "/profile",
+                },
                 ...(!isEmployeeOnly
                   ? [{ icon: Settings, label: "Settings", path: "/settings" }]
                   : []),

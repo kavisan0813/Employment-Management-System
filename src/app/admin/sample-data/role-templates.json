@@ -8,48 +8,27 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "view",
-          "edit",
-          "approve",
-          "create"
-        ]
+        "actions": ["view", "edit", "approve", "create"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "view",
-          "approve",
-          "create",
-          "delete"
-        ]
+        "actions": ["view", "approve", "create", "delete"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "create",
-          "edit"
-        ]
+        "actions": ["create", "edit"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "create",
-          "delete",
-          "view"
-        ]
+        "actions": ["create", "delete", "view"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "approve"
-        ]
+        "actions": ["approve"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "approve"
-        ]
+        "actions": ["approve"]
       }
     ],
     "assignedOrgCount": 32,
@@ -65,45 +44,27 @@
     "permissions": [
       {
         "module": "Attendance",
-        "actions": [
-          "delete"
-        ]
+        "actions": ["delete"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "view",
-          "edit",
-          "approve"
-        ]
+        "actions": ["view", "edit", "approve"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "approve"
-        ]
+        "actions": ["approve"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "create",
-          "view",
-          "approve"
-        ]
+        "actions": ["create", "view", "approve"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "delete",
-          "approve"
-        ]
+        "actions": ["delete", "approve"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "view",
-          "delete"
-        ]
+        "actions": ["view", "delete"]
       }
     ],
     "assignedOrgCount": 12,
@@ -119,50 +80,27 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "approve",
-          "delete",
-          "edit"
-        ]
+        "actions": ["approve", "delete", "edit"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "create"
-        ]
+        "actions": ["create"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "edit"
-        ]
+        "actions": ["edit"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "delete",
-          "approve",
-          "create",
-          "edit"
-        ]
+        "actions": ["delete", "approve", "create", "edit"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "delete",
-          "edit",
-          "approve",
-          "create"
-        ]
+        "actions": ["delete", "edit", "approve", "create"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "view",
-          "delete",
-          "edit",
-          "approve"
-        ]
+        "actions": ["view", "delete", "edit", "approve"]
       }
     ],
     "assignedOrgCount": 20,
@@ -178,59 +116,31 @@
     "permissions": [
       {
         "module": "Attendance",
-        "actions": [
-          "delete",
-          "approve",
-          "view"
-        ]
+        "actions": ["delete", "approve", "view"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "delete",
-          "view",
-          "edit"
-        ]
+        "actions": ["delete", "view", "edit"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "approve",
-          "delete",
-          "create"
-        ]
+        "actions": ["approve", "delete", "create"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "view"
-        ]
+        "actions": ["view"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "edit",
-          "create",
-          "view",
-          "approve"
-        ]
+        "actions": ["edit", "create", "view", "approve"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "view",
-          "create",
-          "approve",
-          "edit"
-        ]
+        "actions": ["view", "create", "approve", "edit"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "edit",
-          "delete",
-          "approve"
-        ]
+        "actions": ["edit", "delete", "approve"]
       }
     ],
     "assignedOrgCount": 9,
@@ -246,34 +156,19 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "delete",
-          "view",
-          "edit"
-        ]
+        "actions": ["delete", "view", "edit"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "edit",
-          "create",
-          "view"
-        ]
+        "actions": ["edit", "create", "view"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "edit"
-        ]
+        "actions": ["edit"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "create",
-          "edit",
-          "delete",
-          "approve"
-        ]
+        "actions": ["create", "edit", "delete", "approve"]
       }
     ],
     "assignedOrgCount": 4,
@@ -289,50 +184,31 @@
     "permissions": [
       {
         "module": "Attendance",
-        "actions": [
-          "edit"
-        ]
+        "actions": ["edit"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "approve"
-        ]
+        "actions": ["approve"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "create",
-          "approve",
-          "delete"
-        ]
+        "actions": ["create", "approve", "delete"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "create"
-        ]
+        "actions": ["create"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "delete",
-          "view"
-        ]
+        "actions": ["delete", "view"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "delete",
-          "create",
-          "edit"
-        ]
+        "actions": ["delete", "create", "edit"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "edit"
-        ]
+        "actions": ["edit"]
       }
     ],
     "assignedOrgCount": 30,
@@ -348,56 +224,31 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "approve",
-          "view",
-          "delete",
-          "create"
-        ]
+        "actions": ["approve", "view", "delete", "create"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "delete",
-          "edit",
-          "view",
-          "approve"
-        ]
+        "actions": ["delete", "edit", "view", "approve"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "delete",
-          "view"
-        ]
+        "actions": ["delete", "view"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "edit",
-          "create"
-        ]
+        "actions": ["edit", "create"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "edit",
-          "approve"
-        ]
+        "actions": ["edit", "approve"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "create",
-          "edit",
-          "view"
-        ]
+        "actions": ["create", "edit", "view"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "approve"
-        ]
+        "actions": ["approve"]
       }
     ],
     "assignedOrgCount": 37,
@@ -413,46 +264,23 @@
     "permissions": [
       {
         "module": "Attendance",
-        "actions": [
-          "approve",
-          "view",
-          "delete"
-        ]
+        "actions": ["approve", "view", "delete"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "create",
-          "delete",
-          "edit"
-        ]
+        "actions": ["create", "delete", "edit"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "approve",
-          "edit",
-          "delete",
-          "create"
-        ]
+        "actions": ["approve", "edit", "delete", "create"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "edit",
-          "delete",
-          "view",
-          "approve"
-        ]
+        "actions": ["edit", "delete", "view", "approve"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "create",
-          "edit",
-          "delete",
-          "view"
-        ]
+        "actions": ["create", "edit", "delete", "view"]
       }
     ],
     "assignedOrgCount": 20,
@@ -468,37 +296,19 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "edit",
-          "view"
-        ]
+        "actions": ["edit", "view"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "view",
-          "edit",
-          "create",
-          "approve"
-        ]
+        "actions": ["view", "edit", "create", "approve"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "create",
-          "approve",
-          "delete",
-          "edit"
-        ]
+        "actions": ["create", "approve", "delete", "edit"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "delete",
-          "edit",
-          "create",
-          "view"
-        ]
+        "actions": ["delete", "edit", "create", "view"]
       }
     ],
     "assignedOrgCount": 25,
@@ -514,35 +324,19 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "create",
-          "edit"
-        ]
+        "actions": ["create", "edit"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "edit",
-          "view",
-          "delete",
-          "create"
-        ]
+        "actions": ["edit", "view", "delete", "create"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "edit",
-          "view",
-          "create",
-          "delete"
-        ]
+        "actions": ["edit", "view", "create", "delete"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "edit",
-          "approve"
-        ]
+        "actions": ["edit", "approve"]
       }
     ],
     "assignedOrgCount": 32,
@@ -558,58 +352,31 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "approve",
-          "view",
-          "delete"
-        ]
+        "actions": ["approve", "view", "delete"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "edit",
-          "approve",
-          "delete",
-          "create"
-        ]
+        "actions": ["edit", "approve", "delete", "create"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "approve",
-          "delete"
-        ]
+        "actions": ["approve", "delete"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "view"
-        ]
+        "actions": ["view"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "approve",
-          "delete",
-          "view",
-          "edit"
-        ]
+        "actions": ["approve", "delete", "view", "edit"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "create",
-          "delete",
-          "edit"
-        ]
+        "actions": ["create", "delete", "edit"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "approve",
-          "edit",
-          "delete"
-        ]
+        "actions": ["approve", "edit", "delete"]
       }
     ],
     "assignedOrgCount": 34,
@@ -625,48 +392,27 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "delete",
-          "view",
-          "create"
-        ]
+        "actions": ["delete", "view", "create"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "delete"
-        ]
+        "actions": ["delete"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "approve"
-        ]
+        "actions": ["approve"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "view",
-          "delete"
-        ]
+        "actions": ["view", "delete"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "create",
-          "approve",
-          "view",
-          "edit"
-        ]
+        "actions": ["create", "approve", "view", "edit"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "create",
-          "delete",
-          "edit",
-          "view"
-        ]
+        "actions": ["create", "delete", "edit", "view"]
       }
     ],
     "assignedOrgCount": 39,
@@ -682,66 +428,35 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "create"
-        ]
+        "actions": ["create"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "delete",
-          "approve",
-          "create"
-        ]
+        "actions": ["delete", "approve", "create"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "approve",
-          "edit",
-          "delete",
-          "create"
-        ]
+        "actions": ["approve", "edit", "delete", "create"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "approve",
-          "delete",
-          "view"
-        ]
+        "actions": ["approve", "delete", "view"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "approve",
-          "edit",
-          "view"
-        ]
+        "actions": ["approve", "edit", "view"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "edit",
-          "create",
-          "approve"
-        ]
+        "actions": ["edit", "create", "approve"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "delete",
-          "edit",
-          "approve"
-        ]
+        "actions": ["delete", "edit", "approve"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "edit",
-          "view",
-          "approve"
-        ]
+        "actions": ["edit", "view", "approve"]
       }
     ],
     "assignedOrgCount": 24,
@@ -757,47 +472,27 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "edit",
-          "view"
-        ]
+        "actions": ["edit", "view"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "delete",
-          "edit",
-          "approve"
-        ]
+        "actions": ["delete", "edit", "approve"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "approve",
-          "edit"
-        ]
+        "actions": ["approve", "edit"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "create",
-          "view",
-          "edit"
-        ]
+        "actions": ["create", "view", "edit"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "create",
-          "view"
-        ]
+        "actions": ["create", "view"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "create",
-          "view"
-        ]
+        "actions": ["create", "view"]
       }
     ],
     "assignedOrgCount": 30,
@@ -813,46 +508,27 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "view",
-          "create"
-        ]
+        "actions": ["view", "create"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "delete",
-          "create",
-          "approve",
-          "edit"
-        ]
+        "actions": ["delete", "create", "approve", "edit"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "approve",
-          "view"
-        ]
+        "actions": ["approve", "view"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "delete",
-          "create"
-        ]
+        "actions": ["delete", "create"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "delete"
-        ]
+        "actions": ["delete"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "edit",
-          "view"
-        ]
+        "actions": ["edit", "view"]
       }
     ],
     "assignedOrgCount": 6,
@@ -868,44 +544,23 @@
     "permissions": [
       {
         "module": "Attendance",
-        "actions": [
-          "create",
-          "delete",
-          "approve",
-          "view"
-        ]
+        "actions": ["create", "delete", "approve", "view"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "create",
-          "delete",
-          "edit"
-        ]
+        "actions": ["create", "delete", "edit"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "approve",
-          "create",
-          "view"
-        ]
+        "actions": ["approve", "create", "view"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "delete",
-          "edit",
-          "view",
-          "create"
-        ]
+        "actions": ["delete", "edit", "view", "create"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "create",
-          "delete"
-        ]
+        "actions": ["create", "delete"]
       }
     ],
     "assignedOrgCount": 16,
@@ -921,59 +576,31 @@
     "permissions": [
       {
         "module": "Attendance",
-        "actions": [
-          "edit",
-          "view",
-          "create"
-        ]
+        "actions": ["edit", "view", "create"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "view",
-          "approve"
-        ]
+        "actions": ["view", "approve"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "delete",
-          "edit"
-        ]
+        "actions": ["delete", "edit"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "edit",
-          "create",
-          "view"
-        ]
+        "actions": ["edit", "create", "view"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "create",
-          "delete",
-          "edit",
-          "approve"
-        ]
+        "actions": ["create", "delete", "edit", "approve"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "approve",
-          "create",
-          "view",
-          "edit"
-        ]
+        "actions": ["approve", "create", "view", "edit"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "view",
-          "approve",
-          "delete"
-        ]
+        "actions": ["view", "approve", "delete"]
       }
     ],
     "assignedOrgCount": 0,
@@ -989,46 +616,27 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "create",
-          "edit"
-        ]
+        "actions": ["create", "edit"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "view",
-          "create",
-          "edit",
-          "delete"
-        ]
+        "actions": ["view", "create", "edit", "delete"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "delete"
-        ]
+        "actions": ["delete"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "approve"
-        ]
+        "actions": ["approve"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "view",
-          "delete",
-          "create"
-        ]
+        "actions": ["view", "delete", "create"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "approve",
-          "view"
-        ]
+        "actions": ["approve", "view"]
       }
     ],
     "assignedOrgCount": 4,
@@ -1044,47 +652,27 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "delete"
-        ]
+        "actions": ["delete"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "delete",
-          "edit"
-        ]
+        "actions": ["delete", "edit"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "delete",
-          "approve",
-          "create",
-          "view"
-        ]
+        "actions": ["delete", "approve", "create", "view"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "edit",
-          "view"
-        ]
+        "actions": ["edit", "view"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "create",
-          "view"
-        ]
+        "actions": ["create", "view"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "delete",
-          "approve",
-          "edit"
-        ]
+        "actions": ["delete", "approve", "edit"]
       }
     ],
     "assignedOrgCount": 29,
@@ -1100,40 +688,23 @@
     "permissions": [
       {
         "module": "Leave",
-        "actions": [
-          "view"
-        ]
+        "actions": ["view"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "approve",
-          "view",
-          "delete",
-          "edit"
-        ]
+        "actions": ["approve", "view", "delete", "edit"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "approve",
-          "view",
-          "delete",
-          "edit"
-        ]
+        "actions": ["approve", "view", "delete", "edit"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "approve",
-          "create"
-        ]
+        "actions": ["approve", "create"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "create"
-        ]
+        "actions": ["create"]
       }
     ],
     "assignedOrgCount": 36,
@@ -1149,49 +720,27 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "create",
-          "edit",
-          "view"
-        ]
+        "actions": ["create", "edit", "view"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "delete",
-          "edit"
-        ]
+        "actions": ["delete", "edit"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "delete",
-          "approve"
-        ]
+        "actions": ["delete", "approve"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "approve",
-          "edit",
-          "delete",
-          "create"
-        ]
+        "actions": ["approve", "edit", "delete", "create"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "delete",
-          "create",
-          "edit"
-        ]
+        "actions": ["delete", "create", "edit"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "edit",
-          "create"
-        ]
+        "actions": ["edit", "create"]
       }
     ],
     "assignedOrgCount": 0,
@@ -1207,44 +756,27 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "approve",
-          "create",
-          "delete",
-          "view"
-        ]
+        "actions": ["approve", "create", "delete", "view"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "delete"
-        ]
+        "actions": ["delete"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "approve"
-        ]
+        "actions": ["approve"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "view",
-          "edit"
-        ]
+        "actions": ["view", "edit"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "view"
-        ]
+        "actions": ["view"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "delete",
-          "create"
-        ]
+        "actions": ["delete", "create"]
       }
     ],
     "assignedOrgCount": 0,
@@ -1260,59 +792,31 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "delete"
-        ]
+        "actions": ["delete"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "delete",
-          "create"
-        ]
+        "actions": ["delete", "create"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "delete",
-          "approve",
-          "edit"
-        ]
+        "actions": ["delete", "approve", "edit"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "edit",
-          "approve",
-          "delete"
-        ]
+        "actions": ["edit", "approve", "delete"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "view",
-          "delete",
-          "create",
-          "approve"
-        ]
+        "actions": ["view", "delete", "create", "approve"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "view",
-          "create",
-          "edit",
-          "approve"
-        ]
+        "actions": ["view", "create", "edit", "approve"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "edit",
-          "create",
-          "view",
-          "delete"
-        ]
+        "actions": ["edit", "create", "view", "delete"]
       }
     ],
     "assignedOrgCount": 15,
@@ -1328,52 +832,27 @@
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "edit",
-          "delete",
-          "approve"
-        ]
+        "actions": ["edit", "delete", "approve"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "delete",
-          "create",
-          "edit",
-          "approve"
-        ]
+        "actions": ["delete", "create", "edit", "approve"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "create",
-          "view",
-          "edit",
-          "delete"
-        ]
+        "actions": ["create", "view", "edit", "delete"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "view"
-        ]
+        "actions": ["view"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "create",
-          "approve",
-          "view",
-          "edit"
-        ]
+        "actions": ["create", "approve", "view", "edit"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "view",
-          "delete",
-          "edit"
-        ]
+        "actions": ["view", "delete", "edit"]
       }
     ],
     "assignedOrgCount": 35,
@@ -1389,37 +868,19 @@
     "permissions": [
       {
         "module": "Attendance",
-        "actions": [
-          "approve",
-          "edit",
-          "view"
-        ]
+        "actions": ["approve", "edit", "view"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "create",
-          "view",
-          "delete",
-          "edit"
-        ]
+        "actions": ["create", "view", "delete", "edit"]
       },
       {
         "module": "Recruitment",
-        "actions": [
-          "edit",
-          "approve",
-          "create"
-        ]
+        "actions": ["edit", "approve", "create"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "approve",
-          "create",
-          "edit",
-          "view"
-        ]
+        "actions": ["approve", "create", "edit", "view"]
       }
     ],
     "assignedOrgCount": 2,
@@ -1428,56 +889,34 @@
   },
   {
     "id": "role_26",
-    "name": "Custom: Nexus Finance View",
-    "description": "Permission template for custom: nexus finance view responsibilities.",
+    "name": "Custom: viyan Finance View",
+    "description": "Permission template for custom: viyan finance view responsibilities.",
     "scope": "Organization",
     "status": "Active",
     "permissions": [
       {
         "module": "Employees",
-        "actions": [
-          "approve",
-          "delete",
-          "view",
-          "edit"
-        ]
+        "actions": ["approve", "delete", "view", "edit"]
       },
       {
         "module": "Attendance",
-        "actions": [
-          "delete"
-        ]
+        "actions": ["delete"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "approve",
-          "view",
-          "edit"
-        ]
+        "actions": ["approve", "view", "edit"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "create",
-          "delete"
-        ]
+        "actions": ["create", "delete"]
       },
       {
         "module": "Performance",
-        "actions": [
-          "approve",
-          "view",
-          "delete"
-        ]
+        "actions": ["approve", "view", "delete"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "view",
-          "create",
-          "edit"
-        ]
+        "actions": ["view", "create", "edit"]
       }
     ],
     "assignedOrgCount": 0,
@@ -1493,44 +932,23 @@
     "permissions": [
       {
         "module": "Attendance",
-        "actions": [
-          "approve",
-          "edit",
-          "create",
-          "view"
-        ]
+        "actions": ["approve", "edit", "create", "view"]
       },
       {
         "module": "Leave",
-        "actions": [
-          "approve"
-        ]
+        "actions": ["approve"]
       },
       {
         "module": "Payroll",
-        "actions": [
-          "view",
-          "approve",
-          "create"
-        ]
+        "actions": ["view", "approve", "create"]
       },
       {
         "module": "Reports",
-        "actions": [
-          "edit",
-          "view",
-          "approve",
-          "create"
-        ]
+        "actions": ["edit", "view", "approve", "create"]
       },
       {
         "module": "Settings",
-        "actions": [
-          "delete",
-          "create",
-          "approve",
-          "edit"
-        ]
+        "actions": ["delete", "create", "approve", "edit"]
       }
     ],
     "assignedOrgCount": 24,

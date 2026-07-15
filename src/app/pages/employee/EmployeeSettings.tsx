@@ -259,7 +259,7 @@ function AccountSecurity() {
     },
     {
       id: 2,
-      device: "iPhone 14 Pro · NexusHR App",
+      device: "iPhone 14 Pro · viyanHR App",
       location: "Chennai, India",
       time: "Apr 5, 2026",
       icon: Smartphone,
@@ -657,7 +657,7 @@ function PrivacySettings({ onModal }: { onModal: (m: string | null) => void }) {
             Request a copy of my data
           </p>
           <p className="text-[12px] font-bold text-muted-foreground mb-5">
-            Download all your personal data stored in NexusHR
+            Download all your personal data stored in viyanHR
           </p>
           <button
             className="px-5 py-2.5 rounded-xl border border-primary text-primary text-[12px] font-black hover:bg-primary/10 transition-all active:scale-95"
@@ -1107,7 +1107,7 @@ function AppearanceSettings() {
           <div className="w-16 h-16 rounded-full bg-primary shadow-lg" />
           <div>
             <p className="text-[15px] font-black text-foreground">
-              NexusHR Green
+              viyanHR Green
             </p>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-[11px] font-black mt-1 border border-amber-500/20">
               <AlertTriangle size={12} /> Accent color is set by your
@@ -1405,7 +1405,7 @@ function ConnectedDevices({
           bg: "#E0F2FE",
           color: "#0EA5E9",
           name: "iPhone 14 Pro",
-          meta: "NexusHR App · iOS 17",
+          meta: "viyanHR App · iOS 17",
           location: "Chennai, India · Apr 5, 2026, 8:45 PM",
         },
         {
@@ -1498,7 +1498,7 @@ function ConnectedDevices({
           </div>
           <div>
             <p className="text-[15px] font-black text-foreground">
-              NexusHR Mobile App
+              viyanHR Mobile App
             </p>
             <p className="text-[13px] font-black text-primary">
               Connected — Last sync: Today 9:05 AM
@@ -1605,7 +1605,7 @@ function DataDownloads({ onModal }: { onModal: (m: string | null) => void }) {
           <Info size={20} className="text-blue-500" />
         </div>
         <p className="text-[14px] font-bold text-muted-foreground leading-relaxed">
-          Your data is securely stored by NexusHR. You can download or request
+          Your data is securely stored by viyanHR. You can download or request
           deletion of your personal data at any time.
         </p>
       </div>
@@ -1665,7 +1665,7 @@ function DataDownloads({ onModal }: { onModal: (m: string | null) => void }) {
               Download All My Data
             </p>
             <p className="text-[13px] font-bold text-muted-foreground">
-              Complete export of all your NexusHR data in one ZIP file
+              Complete export of all your viyanHR data in one ZIP file
             </p>
           </div>
         </div>
@@ -1994,7 +1994,7 @@ function ContactSupport({
             color: "var(--primary)",
             title: "Contact HR Team",
             desc: "For policy questions, personal matters, HR issues",
-            email: "hr@nexushr.com",
+            email: "hr@viyanhr.com",
             phone: "+91 80 1234 5678",
           },
           {
@@ -2003,7 +2003,7 @@ function ContactSupport({
             color: "#8B5CF6",
             title: "IT Helpdesk",
             desc: "For laptop, software, VPN, access issues",
-            email: "it@nexushr.com",
+            email: "it@viyanhr.com",
             onClick: () => navigate("/support"),
           },
           {
@@ -2094,28 +2094,28 @@ function ContactSupport({
             gradient: "linear-gradient(135deg, #00B87C, #059669)",
             name: "Ryan Park",
             role: "HR Administrator",
-            email: "ryan@nexushr.com",
+            email: "ryan@viyanhr.com",
           },
           {
             initials: "SI",
             gradient: "linear-gradient(135deg, #F59E0B, #D97706)",
             name: "Suresh Iyer",
             role: "Engineering Manager",
-            email: "suresh@nexushr.com",
+            email: "suresh@viyanhr.com",
           },
           {
             initials: "IT",
             gradient: "linear-gradient(135deg, #0EA5E9, #0284C7)",
             name: "IT Support Team",
             role: "Information Technology",
-            email: "it@nexushr.com",
+            email: "it@viyanhr.com",
           },
           {
             initials: "AD",
             gradient: "linear-gradient(135deg, #00B87C, #059669)",
             name: "Ananya Das",
             role: "Finance Officer",
-            email: "ananya@nexushr.com",
+            email: "ananya@viyanhr.com",
           },
         ].map((contact, i) => (
           <div

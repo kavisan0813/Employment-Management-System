@@ -3,7 +3,6 @@ import type { UserManagementRecord } from "../SettingsContext";
 import { useAuth } from "../../../../context/AuthContext";
 import { ChevronRight } from "lucide-react";
 
-
 export function UserManagementSection() {
   const { user } = useAuth();
   const isHR = user?.role === "HR Manager";
@@ -24,21 +23,21 @@ export function UserManagementSection() {
 
   const pendingInvites = [
     {
-      email: "priya.new@nexushr.com",
+      email: "priya.new@viyanhr.com",
       role: "HR Manager",
       roleColor: "#10B981",
       roleBg: "rgba(16, 185, 129, 0.1)",
       sent: "Sent Apr 1",
     },
     {
-      email: "leo.m@nexushr.com",
+      email: "leo.m@viyanhr.com",
       role: "Manager",
       roleColor: "#F59E0B",
       roleBg: "rgba(245, 158, 11, 0.1)",
       sent: "Sent Mar 28",
     },
     {
-      email: "sarah.k@nexushr.com",
+      email: "sarah.k@viyanhr.com",
       role: "Finance",
       roleColor: "#0EA5E9",
       roleBg: "rgba(14, 165, 233, 0.1)",
@@ -215,124 +214,195 @@ export function UserManagementSection() {
           </thead>
           <tbody>
             {usersList.map((u: UserManagementRecord, idx: number) => {
-                const roleStyle = getRoleStyles(u.role);
-                const statusStyle = getStatusStyles(u.status);
-                return (
-                  <tr
-                    key={idx}
-                    style={{
-                      borderBottom: "1px solid var(--border)",
-                      height: "56px",
-                    }}
-                    className="hover:bg-[var(--muted)] transition-all"
-                  >
-                    <td style={{ padding: "12px 16px" }}>
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
-                          style={{ backgroundColor: u.avatarBg }}
-                        >
-                          {u.initials}
-                        </div>
-                        <div>
-                          <span
-                            style={{
-                              display: "block",
-                              fontSize: "14px",
-                              fontWeight: 700,
-                              color: "var(--foreground)",
-                            }}
-                          >
-                            {u.name}
-                          </span>
-                          <span
-                            style={{
-                              display: "block",
-                              fontSize: "11px",
-                              color: "var(--muted-foreground)",
-                            }}
-                          >
-                            {u.email}
-                          </span>
-                        </div>
+              const roleStyle = getRoleStyles(u.role);
+              const statusStyle = getStatusStyles(u.status);
+              return (
+                <tr
+                  key={idx}
+                  style={{
+                    borderBottom: "1px solid var(--border)",
+                    height: "56px",
+                  }}
+                  className="hover:bg-[var(--muted)] transition-all"
+                >
+                  <td style={{ padding: "12px 16px" }}>
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+                        style={{ backgroundColor: u.avatarBg }}
+                      >
+                        {u.initials}
                       </div>
-                    </td>
-                    <td style={{ padding: "12px 16px" }}>
-                      <span
-                        style={{
-                          backgroundColor: roleStyle.bg,
-                          color: roleStyle.color,
-                          padding: "4px 10px",
-                          borderRadius: "12px",
-                          fontSize: "11px",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {u.role}
-                      </span>
-                    </td>
-                    <td
+                      <div>
+                        <span
+                          style={{
+                            display: "block",
+                            fontSize: "14px",
+                            fontWeight: 700,
+                            color: "var(--foreground)",
+                          }}
+                        >
+                          {u.name}
+                        </span>
+                        <span
+                          style={{
+                            display: "block",
+                            fontSize: "11px",
+                            color: "var(--muted-foreground)",
+                          }}
+                        >
+                          {u.email}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span
                       style={{
-                        padding: "12px 16px",
-                        fontSize: "13px",
-                        color: "var(--foreground)",
+                        backgroundColor: roleStyle.bg,
+                        color: roleStyle.color,
+                        padding: "4px 10px",
+                        borderRadius: "12px",
+                        fontSize: "11px",
+                        fontWeight: 700,
                       }}
                     >
-                      {u.dept}
-                    </td>
-                    <td
+                      {u.role}
+                    </span>
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    {u.dept}
+                  </td>
+                  <td
+                    style={{
+                      padding: "12px 16px",
+                      fontSize: "13px",
+                      color: "var(--muted-foreground)",
+                    }}
+                  >
+                    {u.lastLogin}
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span
                       style={{
-                        padding: "12px 16px",
-                        fontSize: "13px",
-                        color: "var(--muted-foreground)",
+                        backgroundColor: statusStyle.bg,
+                        color: statusStyle.color,
+                        padding: "4px 10px",
+                        borderRadius: "12px",
+                        fontSize: "11px",
+                        fontWeight: 700,
                       }}
                     >
-                      {u.lastLogin}
-                    </td>
-                    <td style={{ padding: "12px 16px" }}>
-                      <span
-                        style={{
-                          backgroundColor: statusStyle.bg,
-                          color: statusStyle.color,
-                          padding: "4px 10px",
-                          borderRadius: "12px",
-                          fontSize: "11px",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {u.status}
-                      </span>
-                    </td>
-                    <td style={{ padding: "12px 16px" }}>
-                      <div className="flex items-center gap-2">
-                        {u.status === "Pending Invite" && (
-                          <>
+                      {u.status}
+                    </span>
+                  </td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <div className="flex items-center gap-2">
+                      {u.status === "Pending Invite" && (
+                        <>
+                          <button
+                            onClick={() =>
+                              showToast("Invitation sent successfully")
+                            }
+                            style={{
+                              backgroundColor: "transparent",
+                              border: "1px solid #00B87C",
+                              borderRadius: "8px",
+                              padding: "4px 10px",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                              color: "#00B87C",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Resend
+                          </button>
+                          <button
+                            onClick={() => {
+                              setUsersList(
+                                usersList.filter(
+                                  (user: { email: string }) =>
+                                    user.email !== u.email,
+                                ),
+                              );
+                              showToast("Invitation cancelled successfully");
+                            }}
+                            style={{
+                              backgroundColor: "transparent",
+                              border: "1px solid #EF4444",
+                              borderRadius: "8px",
+                              padding: "4px 10px",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                              color: "#EF4444",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      )}
+                      {u.status === "Active" && (
+                        <>
+                          <button
+                            onClick={() => {
+                              setSelectedUser(u);
+                              setEditForm({
+                                name: u.name,
+                                email: u.email,
+                                role: u.role,
+                                dept: u.dept,
+                                location: u.location || "",
+                                status: u.status,
+                                permissions: "",
+                              });
+                              setActiveModal("edit_user");
+                            }}
+                            style={{
+                              backgroundColor: "transparent",
+                              border: "1px solid var(--border)",
+                              borderRadius: "8px",
+                              padding: "4px 10px",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                              color: "var(--foreground)",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Edit
+                          </button>
+                          {isHR ? (
                             <button
                               onClick={() =>
-                                showToast("Invitation sent successfully")
+                                showToast(
+                                  "Password reset link sent to user's email.",
+                                  "success",
+                                )
                               }
                               style={{
                                 backgroundColor: "transparent",
-                                border: "1px solid #00B87C",
+                                border: "1px solid #3B82F6",
                                 borderRadius: "8px",
                                 padding: "4px 10px",
                                 fontSize: "12px",
                                 fontWeight: 600,
-                                color: "#00B87C",
+                                color: "#3B82F6",
                                 cursor: "pointer",
                               }}
                             >
-                              Resend
+                              Reset Password
                             </button>
+                          ) : (
                             <button
                               onClick={() => {
-                                setUsersList(
-                                  usersList.filter(
-                                    (user: { email: string }) =>
-                                      user.email !== u.email,
-                                  ),
-                                );
-                                showToast("Invitation cancelled successfully");
+                                setSelectedUser(u);
+                                setActiveModal("deactivate_user");
                               }}
                               style={{
                                 backgroundColor: "transparent",
@@ -345,165 +415,93 @@ export function UserManagementSection() {
                                 cursor: "pointer",
                               }}
                             >
-                              Cancel
+                              Deactivate
                             </button>
-                          </>
-                        )}
-                        {u.status === "Active" && (
-                          <>
+                          )}
+                        </>
+                      )}
+                      {(u.status === "Inactive" ||
+                        u.status === "Suspended") && (
+                        <>
+                          <button
+                            onClick={() => {
+                              setSelectedUser(u);
+                              setEditForm({
+                                name: u.name,
+                                email: u.email,
+                                role: u.role,
+                                dept: u.dept,
+                                location: u.location || "",
+                                status: u.status,
+                                permissions: "",
+                              });
+                              setActiveModal("edit_user");
+                            }}
+                            style={{
+                              backgroundColor: "transparent",
+                              border: "1px solid var(--border)",
+                              borderRadius: "8px",
+                              padding: "4px 10px",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                              color: "var(--foreground)",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Edit
+                          </button>
+                          {isHR ? (
                             <button
-                              onClick={() => {
-                                setSelectedUser(u);
-                                setEditForm({
-                                  name: u.name,
-                                  email: u.email,
-                                  role: u.role,
-                                  dept: u.dept,
-                                  location: u.location || "",
-                                  status: u.status,
-                                  permissions: "",
-                                });
-                                setActiveModal("edit_user");
-                              }}
+                              onClick={() =>
+                                showToast(
+                                  "Password reset link sent to user's email.",
+                                  "success",
+                                )
+                              }
                               style={{
                                 backgroundColor: "transparent",
-                                border: "1px solid var(--border)",
+                                border: "1px solid #3B82F6",
                                 borderRadius: "8px",
                                 padding: "4px 10px",
                                 fontSize: "12px",
                                 fontWeight: 600,
-                                color: "var(--foreground)",
+                                color: "#3B82F6",
                                 cursor: "pointer",
                               }}
                             >
-                              Edit
+                              Reset Password
                             </button>
-                            {isHR ? (
-                              <button
-                                onClick={() =>
-                                  showToast(
-                                    "Password reset link sent to user's email.",
-                                    "success",
-                                  )
-                                }
-                                style={{
-                                  backgroundColor: "transparent",
-                                  border: "1px solid #3B82F6",
-                                  borderRadius: "8px",
-                                  padding: "4px 10px",
-                                  fontSize: "12px",
-                                  fontWeight: 600,
-                                  color: "#3B82F6",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                Reset Password
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => {
-                                  setSelectedUser(u);
-                                  setActiveModal("deactivate_user");
-                                }}
-                                style={{
-                                  backgroundColor: "transparent",
-                                  border: "1px solid #EF4444",
-                                  borderRadius: "8px",
-                                  padding: "4px 10px",
-                                  fontSize: "12px",
-                                  fontWeight: 600,
-                                  color: "#EF4444",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                Deactivate
-                              </button>
-                            )}
-                          </>
-                        )}
-                        {(u.status === "Inactive" ||
-                          u.status === "Suspended") && (
-                          <>
+                          ) : (
                             <button
                               onClick={() => {
                                 setSelectedUser(u);
-                                setEditForm({
-                                  name: u.name,
-                                  email: u.email,
-                                  role: u.role,
-                                  dept: u.dept,
-                                  location: u.location || "",
-                                  status: u.status,
-                                  permissions: "",
+                                setReactivateConfirm({
+                                  sendEmail: true,
+                                  confirmDetails: false,
                                 });
-                                setActiveModal("edit_user");
+                                setActiveModal("reactivate_user");
                               }}
                               style={{
                                 backgroundColor: "transparent",
-                                border: "1px solid var(--border)",
+                                border: "1px solid #00B87C",
                                 borderRadius: "8px",
                                 padding: "4px 10px",
                                 fontSize: "12px",
                                 fontWeight: 600,
-                                color: "var(--foreground)",
+                                color: "#00B87C",
                                 cursor: "pointer",
                               }}
                             >
-                              Edit
+                              Reactivate
                             </button>
-                            {isHR ? (
-                              <button
-                                onClick={() =>
-                                  showToast(
-                                    "Password reset link sent to user's email.",
-                                    "success",
-                                  )
-                                }
-                                style={{
-                                  backgroundColor: "transparent",
-                                  border: "1px solid #3B82F6",
-                                  borderRadius: "8px",
-                                  padding: "4px 10px",
-                                  fontSize: "12px",
-                                  fontWeight: 600,
-                                  color: "#3B82F6",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                Reset Password
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => {
-                                  setSelectedUser(u);
-                                  setReactivateConfirm({
-                                    sendEmail: true,
-                                    confirmDetails: false,
-                                  });
-                                  setActiveModal("reactivate_user");
-                                }}
-                                style={{
-                                  backgroundColor: "transparent",
-                                  border: "1px solid #00B87C",
-                                  borderRadius: "8px",
-                                  padding: "4px 10px",
-                                  fontSize: "12px",
-                                  fontWeight: 600,
-                                  color: "#00B87C",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                Reactivate
-                              </button>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              },
-            )}
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

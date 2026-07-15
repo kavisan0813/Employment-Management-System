@@ -65,7 +65,7 @@ const STATUS_STYLES: Record<
 const UserService = {
   updateUser: (updatedUser: Partial<MergedUser> & { id: string }) => {
     try {
-      const raw = localStorage.getItem("nexus_registered_users");
+      const raw = localStorage.getItem("viyan_registered_users");
       const users = raw ? JSON.parse(raw) : [];
       const index = users.findIndex(
         (u: { id: string }) => u.id === updatedUser.id,
@@ -75,7 +75,7 @@ const UserService = {
       } else {
         users.push(updatedUser);
       }
-      localStorage.setItem("nexus_registered_users", JSON.stringify(users));
+      localStorage.setItem("viyan_registered_users", JSON.stringify(users));
       return true;
     } catch (e) {
       console.error("Failed to update user:", e);
@@ -85,10 +85,10 @@ const UserService = {
 
   deleteUser: (id: string) => {
     try {
-      const raw = localStorage.getItem("nexus_registered_users");
+      const raw = localStorage.getItem("viyan_registered_users");
       if (!raw) return true;
       const users = JSON.parse(raw).filter((u: { id: string }) => u.id !== id);
-      localStorage.setItem("nexus_registered_users", JSON.stringify(users));
+      localStorage.setItem("viyan_registered_users", JSON.stringify(users));
       return true;
     } catch (e) {
       console.error("Failed to delete user:", e);
@@ -167,7 +167,7 @@ export function ManageAccountUsers() {
     }));
 
     try {
-      const raw = localStorage.getItem("nexus_registered_users");
+      const raw = localStorage.getItem("viyan_registered_users");
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<
           MergedUser & { status: string }
@@ -893,7 +893,10 @@ export function ManageAccountUsers() {
                         type="checkbox"
                         checked={selectedRows.includes(u.id)}
                         onChange={() => toggleRow(u.id)}
-                        style={{ accentColor: "var(--primary)", cursor: "pointer" }}
+                        style={{
+                          accentColor: "var(--primary)",
+                          cursor: "pointer",
+                        }}
                       />
                     </td>
                     {/* Avatar + Name + Email */}

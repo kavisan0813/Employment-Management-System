@@ -1850,7 +1850,7 @@ function ScheduleReportModal({
               />
               <input
                 type="text"
-                placeholder="finance@nexus.hr, execs@nexus.hr"
+                placeholder="finance@viyan.hr, execs@viyan.hr"
                 className="w-full bg-card border border-border rounded-xl pl-11 pr-4 py-3 text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-colors placeholder:font-normal placeholder:text-muted-foreground/50"
               />
             </div>

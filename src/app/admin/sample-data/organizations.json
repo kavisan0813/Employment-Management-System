@@ -33,8 +33,8 @@
   },
   {
     "id": "org_3",
-    "name": "Nexus Solutions",
-    "domain": "nexussolutions.com",
+    "name": "viyan Solutions",
+    "domain": "viyansolutions.com",
     "status": "Active",
     "plan": "Enterprise",
     "userCount": 456,
@@ -42,7 +42,7 @@
     "mrr": 6200,
     "industry": "Technology",
     "region": "US-West",
-    "ownerEmail": "tariq.haddad@nexussolutions.com",
+    "ownerEmail": "tariq.haddad@viyansolutions.com",
     "joinedAt": "Aug 10, 2023",
     "lastActiveAt": "Jun 14, 05:01",
     "trialEndsAt": null

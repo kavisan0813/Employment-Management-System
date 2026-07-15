@@ -2,7 +2,7 @@ export const employees = [
   {
     id: "EMP001",
     name: "Sarah Johnson",
-    email: "sarah.johnson@nexushr.com",
+    email: "sarah.johnson@viyanhr.com",
     phone: "+1 (555) 234-5678",
     department: "Engineering",
     team: "Frontend",
@@ -28,7 +28,7 @@ export const employees = [
   {
     id: "EMP002",
     name: "Marcus Williams",
-    email: "marcus.williams@nexushr.com",
+    email: "marcus.williams@viyanhr.com",
     phone: "+1 (555) 345-6789",
     department: "Marketing",
     team: "SEO",
@@ -54,7 +54,7 @@ export const employees = [
   {
     id: "EMP003",
     name: "Yuki Tanaka",
-    email: "yuki.tanaka@nexushr.com",
+    email: "yuki.tanaka@viyanhr.com",
     phone: "+1 (555) 456-7890",
     department: "Design",
     team: "Brand",
@@ -80,7 +80,7 @@ export const employees = [
   {
     id: "EMP004",
     name: "James Carter",
-    email: "james.carter@nexushr.com",
+    email: "james.carter@viyanhr.com",
     phone: "+1 (555) 567-8901",
     department: "Finance",
     team: "Audit",
@@ -106,7 +106,7 @@ export const employees = [
   {
     id: "EMP005",
     name: "Emily Rodriguez",
-    email: "emily.rodriguez@nexushr.com",
+    email: "emily.rodriguez@viyanhr.com",
     phone: "+1 (555) 678-9012",
     department: "HR",
     team: "Recruitment",
@@ -132,7 +132,7 @@ export const employees = [
   {
     id: "EMP006",
     name: "Robert Chen",
-    email: "robert.chen@nexushr.com",
+    email: "robert.chen@viyanhr.com",
     phone: "+1 (555) 789-0123",
     department: "Engineering",
     team: "QA",
@@ -158,7 +158,7 @@ export const employees = [
   {
     id: "EMP007",
     name: "Priya Sharma",
-    email: "emp@nexushr.com",
+    email: "emp@viyanhr.com",
     phone: "+1 (555) 890-1234",
     department: "Product",
     team: "Analytics",
@@ -184,7 +184,7 @@ export const employees = [
   {
     id: "EMP008",
     name: "Daniel Kim",
-    email: "daniel.kim@nexushr.com",
+    email: "daniel.kim@viyanhr.com",
     phone: "+1 (555) 901-2345",
     department: "Sales",
     team: "Outbound",
@@ -210,7 +210,7 @@ export const employees = [
   {
     id: "EMP009",
     name: "Aisha Patel",
-    email: "aisha.patel@nexushr.com",
+    email: "aisha.patel@viyanhr.com",
     phone: "+1 (555) 112-2334",
     department: "Operations",
     team: "Core",
@@ -236,7 +236,7 @@ export const employees = [
   {
     id: "EMP010",
     name: "Leo Martinez",
-    email: "leo.martinez@nexushr.com",
+    email: "leo.martinez@viyanhr.com",
     phone: "+1 (555) 334-4556",
     department: "Sales",
     team: "Outbound",
@@ -262,7 +262,7 @@ export const employees = [
   {
     id: "EMP011",
     name: "Priya Sharma",
-    email: "finance@nexushr.com",
+    email: "finance@viyanhr.com",
     phone: "+1 (555) 890-5678",
     department: "Finance",
     team: "Audit",
@@ -274,7 +274,8 @@ export const employees = [
     grossSalary: 10500,
     deductions: 1260,
     netPay: 9240,
-    avatar: "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    avatar:
+      "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
     location: "New York, NY",
     manager: "Robert Chen",
     employmentType: "Full-time",
@@ -283,6 +284,32 @@ export const employees = [
     address: "234 5th Ave, New York, NY 10001",
     emergencyContact: "Raj Sharma — +1 (555) 901-2345",
     performance: 93,
+  },
+  {
+    id: "EMP012",
+    name: "Sarah Chen",
+    email: "manager@viyanhr.com",
+    phone: "+1 (555) 901-2345",
+    department: "Engineering",
+    team: "Frontend",
+    role: "Engineering Manager",
+    designation: "Engineering Manager",
+    status: "Active",
+    joinDate: "2020-04-10",
+    salary: 120000,
+    grossSalary: 12000,
+    deductions: 1440,
+    netPay: 10560,
+    avatar:
+      "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+    location: "San Francisco, CA",
+    manager: "Robert Chen",
+    employmentType: "Full-time",
+    gender: "Female",
+    dob: "1989-08-15",
+    address: "789 Market St, San Francisco, CA 94103",
+    emergencyContact: "Kenji Chen — +1 (555) 567-8901",
+    performance: 96,
   },
 ];
 
@@ -354,22 +381,14 @@ export const departments = [
 ];
 
 export const departmentHeadcount = [
-  { department: "Engineering",
-    team: "Backend", count: 68 },
-  { department: "Sales",
-    team: "Enterprise", count: 55 },
-  { department: "Marketing",
-    team: "Content", count: 42 },
-  { department: "Product",
-    team: "Analytics", count: 36 },
-  { department: "Finance",
-    team: "Payroll", count: 31 },
-  { department: "Operations",
-    team: "Core", count: 29 },
-  { department: "Design",
-    team: "Research", count: 28 },
-  { department: "HR",
-    team: "Recruitment", count: 23 },
+  { department: "Engineering", team: "Backend", count: 68 },
+  { department: "Sales", team: "Enterprise", count: 55 },
+  { department: "Marketing", team: "Content", count: 42 },
+  { department: "Product", team: "Analytics", count: 36 },
+  { department: "Finance", team: "Payroll", count: 31 },
+  { department: "Operations", team: "Core", count: 29 },
+  { department: "Design", team: "Research", count: 28 },
+  { department: "HR", team: "Recruitment", count: 23 },
 ];
 
 export const attendanceOverview = [

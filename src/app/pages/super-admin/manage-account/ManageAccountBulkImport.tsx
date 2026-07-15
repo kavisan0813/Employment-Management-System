@@ -69,7 +69,7 @@ export function ManageAccountBulkImport() {
     bulkImportEmployees(parsedEmployees as EmployeeInput[]);
 
     try {
-      const savedUsers = localStorage.getItem("nexus_registered_users") || "[]";
+      const savedUsers = localStorage.getItem("viyan_registered_users") || "[]";
       const usersList = JSON.parse(savedUsers);
 
       const newPlatformUsers = parsedEmployees.map((emp) => {
@@ -92,13 +92,13 @@ export function ManageAccountBulkImport() {
           joinedAt: new Date().toISOString(),
           mfaEnabled: false,
           lastLoginAt: "",
-          organization: "NexusHR Org",
+          organization: "viyanHR Org",
           organizationId: "org-1",
         };
       });
 
       localStorage.setItem(
-        "nexus_registered_users",
+        "viyan_registered_users",
         JSON.stringify([...newPlatformUsers, ...usersList]),
       );
     } catch (err) {
@@ -138,8 +138,11 @@ export function ManageAccountBulkImport() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-xl font-black text-slate-800 mb-2 flex items-center gap-2">
-                  <FileSpreadsheet className="text-[var(--primary)]" size={22} /> Paste
-                  CSV Data
+                  <FileSpreadsheet
+                    className="text-[var(--primary)]"
+                    size={22}
+                  />{" "}
+                  Paste CSV Data
                 </h2>
                 <p className="text-xs text-slate-400 mb-6 font-semibold">
                   Copy your spreadsheet data with headers and paste below.
@@ -148,7 +151,7 @@ export function ManageAccountBulkImport() {
                   rows={8}
                   className="w-full rounded-2xl p-4 text-xs font-mono border border-slate-200 bg-[#F5F6F8] text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500/20"
                   placeholder={
-                    "name,email,department,designation,salary,joindate\nArun Kumar,arun@nexushr.com,Engineering,Developer,90000,2024-03-01\nPriya Sharma,priya@nexushr.com,Product,Manager,120000,2023-05-15"
+                    "name,email,department,designation,salary,joindate\nArun Kumar,arun@viyanhr.com,Engineering,Developer,90000,2024-03-01\nPriya Sharma,priya@viyanhr.com,Product,Manager,120000,2023-05-15"
                   }
                   value={csvText}
                   onChange={(e) => setCsvText(e.target.value)}
@@ -156,7 +159,10 @@ export function ManageAccountBulkImport() {
               </div>
 
               <div className="p-4 bg-emerald-50/30 rounded-2xl flex items-start gap-3">
-                <Info className="text-[var(--primary)] shrink-0 mt-0.5" size={16} />
+                <Info
+                  className="text-[var(--primary)] shrink-0 mt-0.5"
+                  size={16}
+                />
                 <div className="text-xs text-emerald-900/60 leading-relaxed font-semibold">
                   <p className="font-extrabold">CSV Header Format:</p>
                   <p className="mt-1">
