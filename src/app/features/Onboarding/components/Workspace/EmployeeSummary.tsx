@@ -1,13 +1,14 @@
-import { Calendar, User } from "lucide-react";
+import { Calendar, User, X } from "lucide-react";
 import { motion } from "motion/react";
 import type { NewHire } from "../../types/onboarding.types";
 import { formatDate } from "../../utils/helpers";
 
 interface EmployeeSummaryProps {
   selected: NewHire;
+  onClose?: () => void;
 }
 
-export function EmployeeSummary({ selected }: EmployeeSummaryProps) {
+export function EmployeeSummary({ selected, onClose }: EmployeeSummaryProps) {
   return (
     <>
       {/* Employee Header */}
@@ -36,6 +37,15 @@ export function EmployeeSummary({ selected }: EmployeeSummaryProps) {
           <div className="px-3 py-1.5 rounded-full bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20 text-[11px] font-semibold uppercase tracking-wider flex items-center gap-1.5">
             <Calendar size={12} /> Day {selected.daysInOnboarding} of Onboarding
           </div>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-1.5 hover:bg-muted text-muted-foreground hover:text-foreground rounded-xl transition-all"
+              title="Close details"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
       </div>
 

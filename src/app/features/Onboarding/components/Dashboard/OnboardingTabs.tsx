@@ -11,8 +11,8 @@ interface OnboardingTabsProps {
 
 export function OnboardingTabs({ activeTab, setActiveTab, activeCount, preJoiningCount, completedCount }: OnboardingTabsProps) {
   const tabs = [
-    { key: "active" as const, label: "Active", count: activeCount },
-    { key: "pre-joining" as const, label: "Pre-Joining", count: preJoiningCount },
+    { key: "pre-joining" as const, label: "Pending", count: preJoiningCount },
+    { key: "active" as const, label: "In Progress", count: activeCount },
     { key: "completed" as const, label: "Completed", count: completedCount },
     { key: "templates" as const, label: "Templates", count: TEMPLATES.length },
   ];

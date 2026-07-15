@@ -150,6 +150,11 @@ const Offboarding = lazy(() =>
     default: m.Offboarding,
   })),
 );
+const ResignationApproval = lazy(() =>
+  import("./features/ResignationApproval/ResignationApprovalPage").then((m) => ({
+    default: m.ResignationApprovalPage,
+  })),
+);
 const Performance = lazy(() =>
   import("./pages/hr/hr-operations/Performance").then((m) => ({
     default: m.Performance,
@@ -273,8 +278,8 @@ const EmployeeExit = lazy(() =>
   })),
 );
 const MyOnboarding = lazy(() =>
-  import("./pages/employee/MyOnboarding").then((m) => ({
-    default: m.MyOnboarding,
+  import("./features/Onboarding/OnboardingPage").then((m) => ({
+    default: m.Onboarding,
   })),
 );
 const EmployeeNotifications = lazy(
@@ -1256,6 +1261,7 @@ export const router = createBrowserRouter([
       },
       { path: "recruitment", element: protectedRoute(Recruitment) },
       { path: "offboarding", element: protectedRoute(Offboarding) },
+      { path: "resignation-approvals", element: protectedRoute(ResignationApproval) },
       {
         path: "performance",
         element: (

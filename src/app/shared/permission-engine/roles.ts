@@ -488,6 +488,7 @@ export const ROLE_TEMPLATES: Record<SystemRoleId, RoleTemplate> = {
       P.REPORTS_SELF,
       P.RECRUITMENT_APPLY,
       P.ONBOARDING_COMPLETE_TASKS,
+      P.ONBOARDING_SELF,
       P.ANNOUNCEMENTS_VIEW,
     ],
   },

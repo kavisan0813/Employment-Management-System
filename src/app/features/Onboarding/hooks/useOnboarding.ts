@@ -11,8 +11,9 @@ import { TEMPLATES } from "../constants/templates";
 
 export function useOnboarding() {
   /* ─── Core selection ─── */
-  const [selectedId, setSelectedId] = useState("nh1");
-  const [activeTab, setActiveTab] = useState<"active" | "pre-joining" | "completed" | "templates">("active");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"active" | "pre-joining" | "completed" | "templates">("pre-joining");
+  const [workspaceTab, setWorkspaceTab] = useState<"company" | "candidate" | "documents">("company");
 
   /* ─── Search & Filter ─── */
   const [searchQuery, setSearchQuery] = useState("");
@@ -106,6 +107,7 @@ export function useOnboarding() {
   };
 
   const handleAddInlineTask = () => {
+    if (!selectedId) return;
     if (!inlineTaskText.trim()) {
       showToast("Error", "error", "Task description cannot be empty.");
       return;
@@ -138,17 +140,29 @@ export function useOnboarding() {
   };
 
   const handleMarkDone = (phaseId: string, taskId: string) => {
+    if (!selectedId) return;
     const updated = { ...phasesData };
-    const hirePhases = safeGet<OnboardingPhase[]>(updated, selected.id);
+    const hirePhases = safeGet<OnboardingPhase[]>(updated, selectedId);
     if (hirePhases) {
       const phase = hirePhases.find((p) => p.id === phaseId);
       if (phase) {
-        phase.tasks = phase.tasks.map((t) => (t.id === taskId ? { ...t, status: "done" as const } : t));
+        phase.tasks = phase.tasks.map((t) => {
+          if (t.id === taskId) {
+            const isDone = t.status === "done";
+            const newStatus = isDone ? ("pending" as const) : ("done" as const);
+            showToast(
+              isDone ? "Task Reopened" : "Task Completed",
+              "success",
+              isDone ? "Task marked as pending." : "Task marked as done."
+            );
+            return { ...t, status: newStatus };
+          }
+          return t;
+        });
       }
-      recalcProgress(selected.id, hirePhases);
+      recalcProgress(selectedId, hirePhases);
     }
     setPhasesData(updated);
-    showToast("Task Completed", "success", "Task marked as done.");
   };
 
   const handleSendReminder = () => {
@@ -285,6 +299,7 @@ export function useOnboarding() {
   return {
     // Selection
     selectedId, setSelectedId, activeTab, setActiveTab,
+    workspaceTab, setWorkspaceTab,
     // Search & filter
     searchQuery, setSearchQuery, filterPill, setFilterPill,
     // Modal visibility

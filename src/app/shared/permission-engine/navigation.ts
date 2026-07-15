@@ -184,6 +184,14 @@ export const FULL_NAVIGATION: NavGroup[] = [
         ],
       },
       {
+        label: "Resignation Approvals",
+        path: "/resignation-approvals",
+        requiredPermission: [
+          P.OFFBOARDING_FULL,
+          P.OFFBOARDING_MANAGE,
+        ],
+      },
+      {
         label: "Offboarding",
         path: "/offboarding",
         requiredPermission: [
