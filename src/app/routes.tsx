@@ -189,7 +189,7 @@ const IncrementAppraisal = lazy(() =>
   })),
 );
 const Onboarding = lazy(() =>
-  import("./pages/hr/team-management/Onboarding").then((m) => ({
+  import("./features/Onboarding/OnboardingPage").then((m) => ({
     default: m.Onboarding,
   })),
 );

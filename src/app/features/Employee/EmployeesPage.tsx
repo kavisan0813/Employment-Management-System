@@ -2,11 +2,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 import { useDebounce } from "../../hooks/useDebounce";
-import {
-  useEmployees,
-  Employee,
-  EmployeeInput,
-} from "../../context/AppContext";
+import { useEmployees, Employee } from "../../context/AppContext";
 import { departments } from "./utils/employee.utils";
 import {
   P,

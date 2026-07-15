@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
-import {
-  Department,
-  ChangeRecord,
-  DepartmentInput,
-} from "../types/department.types";
+import { Department, ChangeRecord } from "../types/department.types";
 import { useAuth } from "../../../context/AuthContext";
 import { Employee } from "../../Employee/types/employee.types";
 
