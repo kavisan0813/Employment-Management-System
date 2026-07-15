@@ -3,24 +3,45 @@ import { useAuth } from "../../../context/AuthContext";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { ExitEmployee, ExitType } from "../types/offboarding.types";
 import { EXITS } from "../data/mockExits";
+import { getExitDocuments, OFFBOARDING_EXITS_KEY, OFFBOARDING_UPDATED_EVENT, verifyExitDocument } from "../services/offboardingWorkflow";
+
+const withSharedDocuments = (exit: ExitEmployee): ExitEmployee => {
+  const employeeDocuments = getExitDocuments(exit.name);
+  const generatedDocuments = exit.documents.filter((document) => document.source !== "employee_exit");
+  return { ...exit, documents: [...employeeDocuments, ...generatedDocuments] };
+};
 
 export function useOffboarding() {
   const { user } = useAuth();
   const [exits, setExits] = useState<ExitEmployee[]>(() => {
-    const saved = localStorage.getItem("viyan_offboarding_exits");
+    const saved = localStorage.getItem(OFFBOARDING_EXITS_KEY);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        return JSON.parse(saved).map(withSharedDocuments);
       } catch (e) {
         console.error(e);
       }
     }
-    return EXITS;
+    return EXITS.map(withSharedDocuments);
   });
 
   useEffect(() => {
-    localStorage.setItem("viyan_offboarding_exits", JSON.stringify(exits));
+    localStorage.setItem(OFFBOARDING_EXITS_KEY, JSON.stringify(exits));
   }, [exits]);
+
+  useEffect(() => {
+    const refresh = () => {
+      const saved = localStorage.getItem(OFFBOARDING_EXITS_KEY);
+      if (!saved) return;
+      try { setExits(JSON.parse(saved).map(withSharedDocuments)); } catch { /* keep last valid state */ }
+    };
+    window.addEventListener(OFFBOARDING_UPDATED_EVENT, refresh);
+    window.addEventListener("storage", refresh);
+    return () => {
+      window.removeEventListener(OFFBOARDING_UPDATED_EVENT, refresh);
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
 
   const activeExits = exits.filter((e) => e.progress < 100);
   const completedExits = exits.filter((e) => e.progress === 100);
@@ -97,6 +118,11 @@ export function useOffboarding() {
       }),
     );
     showToast("Clearance Sign-Off", "success", `${dept} clearance signed off.`);
+  };
+
+  const handleVerifyDocument = (documentId: string, approved: boolean) => {
+    verifyExitDocument(documentId, approved);
+    showToast("Document Verification", "success", approved ? "Document verified." : "Document rejected.");
   };
 
   const handleGenerateDoc = (exitId: string, docName: string) => {
@@ -401,6 +427,7 @@ export function useOffboarding() {
     scheduledExits,
     handleExportCSV,
     handleSignOff,
+    handleVerifyDocument,
     handleGenerateDoc,
     handleSendToFinance,
     handleConfirmComplete,

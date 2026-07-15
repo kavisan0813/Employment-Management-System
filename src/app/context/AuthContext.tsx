@@ -6,6 +6,7 @@ export type UserRole =
   | "Super Admin"
   | "HR Manager"
   | "Finance"
+  | "IT"
   | "Manager"
   | "Team Lead"
   | "Employee";
@@ -63,6 +64,11 @@ export const ROLE_CONFIG: Record<
     color: "#0EA5E9", // Teal/Purple accent
     bg: "rgba(14,165,233,0.1)",
   },
+  IT: {
+    label: "IT",
+    color: "#0EA5E9",
+    bg: "rgba(14,165,233,0.1)",
+  },
   Manager: {
     label: "Manager",
     color: "#F59E0B", // Amber accent
@@ -85,6 +91,7 @@ export const ROLE_HOME_ROUTE: Record<UserRole, string> = {
   "Super Admin": "/dashboard",
   "HR Manager": "/dashboard",
   Finance: "/dashboard",
+  IT: "/dashboard",
   Manager: "/dashboard",
   "Team Lead": "/dashboard",
   Employee: "/dashboard",

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
+import { publishClearance } from "../../../features/Offboarding/services/offboardingWorkflow";
 
 /* ─── Types ─── */
 interface SettlementComponent {
@@ -213,6 +214,7 @@ export function FinanceSettlements() {
           s.id === processingSettlement.id ? { ...s, status: "Approved" } : s,
         ),
       );
+      publishClearance(processingSettlement.employeeName, "Finance");
       showToast(
         "Settlement Processed",
         "success",

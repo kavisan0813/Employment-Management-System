@@ -48,6 +48,7 @@ export const ROLE_IDS = {
   SUPER_ADMIN: "role_super_admin",
   HR_MANAGER: "role_hr_manager",
   FINANCE_MANAGER: "role_finance_manager",
+  IT_ADMIN: "role_it_admin",
   DEPT_MANAGER: "role_dept_manager",
   TEAM_LEAD: "role_team_lead",
   EMPLOYEE: "role_employee",
@@ -103,6 +104,15 @@ export const ROLE_TEMPLATES: Record<SystemRoleId, RoleTemplate> = {
       // Offboarding — full
       P.OFFBOARDING_FULL,
       P.OFFBOARDING_MANAGE,
+      P.OFFBOARDING_VIEW,
+      P.OFFBOARDING_CLEARANCE_MANAGER,
+      P.OFFBOARDING_CLEARANCE_IT,
+      P.OFFBOARDING_CLEARANCE_FINANCE,
+      P.OFFBOARDING_CLEARANCE_HR,
+      P.OFFBOARDING_CLEARANCE_ADMIN,
+      P.OFFBOARDING_DOCUMENTS_VERIFY,
+      P.OFFBOARDING_FINANCE_MANAGE,
+      P.OFFBOARDING_COMPLETE,
       // Attendance — full
       P.ATTENDANCE_FULL,
       P.ATTENDANCE_VIEW,
@@ -152,6 +162,8 @@ export const ROLE_TEMPLATES: Record<SystemRoleId, RoleTemplate> = {
       P.SETTLEMENTS_FULL,
       P.SETTLEMENTS_VIEW,
       P.SETTLEMENTS_MANAGE,
+      P.OFFBOARDING_CLEARANCE_FINANCE,
+      P.OFFBOARDING_FINANCE_MANAGE,
       // Audit
       P.AUDIT_LOGS_FULL,
       P.AUDIT_LOGS_VIEW,
@@ -202,6 +214,10 @@ export const ROLE_TEMPLATES: Record<SystemRoleId, RoleTemplate> = {
       P.ONBOARDING_MANAGE,
       // Offboarding
       P.OFFBOARDING_MANAGE,
+      P.OFFBOARDING_VIEW,
+      P.OFFBOARDING_CLEARANCE_HR,
+      P.OFFBOARDING_DOCUMENTS_VERIFY,
+      P.OFFBOARDING_COMPLETE,
       // Attendance
       P.ATTENDANCE_VIEW,
       P.ATTENDANCE_MANAGE,
@@ -312,6 +328,8 @@ export const ROLE_TEMPLATES: Record<SystemRoleId, RoleTemplate> = {
       P.SETTLEMENTS_VIEW,
       P.SETTLEMENTS_MANAGE,
       // Audit
+      P.OFFBOARDING_CLEARANCE_FINANCE,
+      P.OFFBOARDING_FINANCE_MANAGE,
       P.AUDIT_LOGS_VIEW,
       // Notifications
       P.NOTIFICATIONS_VIEW,
@@ -407,11 +425,32 @@ export const ROLE_TEMPLATES: Record<SystemRoleId, RoleTemplate> = {
       // Offboarding — exit tasks
       P.OFFBOARDING_MANAGE,
       // Payslips
+      P.OFFBOARDING_CLEARANCE_MANAGER,
       P.PAYROLL_PAYSLIPS,
     ],
   },
 
   /* ─── Team Lead (alias — uses same as dept_manager for now) ─── */
+  [ROLE_IDS.IT_ADMIN]: {
+    id: ROLE_IDS.IT_ADMIN,
+    name: "IT",
+    isSystemRole: true,
+    hierarchyLevel: 3,
+    permissions: [
+      P.DASHBOARD_VIEW,
+      P.ASSETS_VIEW,
+      P.ASSETS_MANAGE,
+      P.DOCUMENTS_VIEW,
+      P.NOTIFICATIONS_VIEW,
+      P.SUPPORT_SELF,
+      P.PROFILE_VIEW,
+      P.PROFILE_SELF,
+      P.MY_WORKSPACE_VIEW,
+      P.OFFBOARDING_VIEW,
+      P.OFFBOARDING_CLEARANCE_IT,
+    ],
+  },
+
   [ROLE_IDS.TEAM_LEAD]: {
     id: ROLE_IDS.TEAM_LEAD,
     name: "Team Lead",
@@ -502,6 +541,7 @@ export const LEGACY_ROLE_MAP: Record<string, SystemRoleId> = {
   "Super Admin": ROLE_IDS.SUPER_ADMIN,
   "HR Manager": ROLE_IDS.HR_MANAGER,
   Finance: ROLE_IDS.FINANCE_MANAGER,
+  IT: ROLE_IDS.IT_ADMIN,
   Manager: ROLE_IDS.DEPT_MANAGER,
   "Team Lead": ROLE_IDS.TEAM_LEAD,
   Employee: ROLE_IDS.EMPLOYEE,
@@ -513,6 +553,7 @@ export const ROLE_HIERARCHY: SystemRoleId[] = [
   ROLE_IDS.SUPER_ADMIN,
   ROLE_IDS.HR_MANAGER,
   ROLE_IDS.FINANCE_MANAGER,
+  ROLE_IDS.IT_ADMIN,
   ROLE_IDS.DEPT_MANAGER,
   ROLE_IDS.TEAM_LEAD,
   ROLE_IDS.EMPLOYEE,

@@ -12,9 +12,11 @@ import { InitiateExitModal } from "./modals/InitiateExitModal";
 import { ReminderModal } from "./modals/ReminderModal";
 import { CompleteExitModal } from "./modals/CompleteExitModal";
 import { ExitInterviewModal } from "./modals/ExitInterviewModal";
+import { RequestsTab } from "./components/RequestsTab";
 
 export function OffboardingPage() {
   const [activeTab, setActiveTab] = useState<TabType>("Active");
+  const [requestsCount, setRequestsCount] = useState(0);
   const [showInitiateModal, setShowInitiateModal] = useState(false);
   const [showDetail, setShowDetail] = useState<string | null>(null);
   const [showReminder, setShowReminder] = useState<string | null>(null);
@@ -31,7 +33,7 @@ export function OffboardingPage() {
     completedExits,
     scheduledExits,
     handleExportCSV,
-    handleSignOff,
+    handleVerifyDocument,
     handleGenerateDoc,
     handleSendToFinance,
     handleConfirmComplete,
@@ -65,6 +67,7 @@ export function OffboardingPage() {
         setActiveTab={setActiveTab}
         stats={stats}
         scheduledCount={scheduledExits.length}
+        requestsCount={requestsCount}
       />
 
       {/* TAB CONTENT */}
@@ -76,6 +79,8 @@ export function OffboardingPage() {
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
         >
+          {activeTab === "Requests" && <RequestsTab onCountChange={setRequestsCount} />}
+
           {activeTab === "Active" && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               {activeExits.map((exit) => (
@@ -158,7 +163,7 @@ export function OffboardingPage() {
         <OffboardingDetail
           exit={currentExit}
           onClose={() => setShowDetail(null)}
-          onSignOff={(dept) => handleSignOff(currentExit.id, dept)}
+          onVerifyDocument={handleVerifyDocument}
           onGenerateDoc={(doc) => handleGenerateDoc(currentExit.id, doc)}
           onSendReminder={() => {
             setShowDetail(null);

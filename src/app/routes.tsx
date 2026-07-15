@@ -150,11 +150,6 @@ const Offboarding = lazy(() =>
     default: m.Offboarding,
   })),
 );
-const ResignationApproval = lazy(() =>
-  import("./features/ResignationApproval/ResignationApprovalPage").then((m) => ({
-    default: m.ResignationApprovalPage,
-  })),
-);
 const Performance = lazy(() =>
   import("./pages/hr/hr-operations/Performance").then((m) => ({
     default: m.Performance,
@@ -518,6 +513,12 @@ const ManagerExitTasks = lazy(() =>
   import("./pages/manager/workspace/ManagerExitTasks").then((m) => ({
     default: m.ManagerExitTasks,
   })),
+);
+const ITClearance = lazy(() =>
+  import("./pages/it/ITClearance").then((m) => ({ default: m.ITClearance })),
+);
+const HRClearance = lazy(() =>
+  import("./pages/hr/HRClearance").then((m) => ({ default: m.HRClearance })),
 );
 const ManagerReports = lazy(() =>
   import("./pages/manager/reports/ManagerReports").then((m) => ({
@@ -1179,6 +1180,8 @@ export const router = createBrowserRouter([
         element: protectedRoute(ManagerTeamAssets),
       },
       { path: "manager/exit-tasks", element: protectedRoute(ManagerExitTasks) },
+      { path: "it/clearance", element: protectedRoute(ITClearance) },
+      { path: "hr/clearance", element: protectedRoute(HRClearance) },
       { path: "manager/settings", element: protectedRoute(Settings) },
       {
         path: "manager/team-onboarding",
@@ -1261,7 +1264,6 @@ export const router = createBrowserRouter([
       },
       { path: "recruitment", element: protectedRoute(Recruitment) },
       { path: "offboarding", element: protectedRoute(Offboarding) },
-      { path: "resignation-approvals", element: protectedRoute(ResignationApproval) },
       {
         path: "performance",
         element: (

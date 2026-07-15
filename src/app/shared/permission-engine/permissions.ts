@@ -135,8 +135,17 @@ export const P = {
   ONBOARDING_SELF: permissionKey(MODULES.ONBOARDING, ACTIONS.SELF),
 
   // Offboarding
+  OFFBOARDING_VIEW: permissionKey(MODULES.OFFBOARDING, ACTIONS.VIEW),
   OFFBOARDING_MANAGE: permissionKey(MODULES.OFFBOARDING, ACTIONS.MANAGE),
   OFFBOARDING_FULL: permissionKey(MODULES.OFFBOARDING, ACTIONS.FULL),
+  OFFBOARDING_CLEARANCE_MANAGER: "offboarding.clearance.manager",
+  OFFBOARDING_CLEARANCE_IT: "offboarding.clearance.it",
+  OFFBOARDING_CLEARANCE_FINANCE: "offboarding.clearance.finance",
+  OFFBOARDING_CLEARANCE_HR: "offboarding.clearance.hr",
+  OFFBOARDING_CLEARANCE_ADMIN: "offboarding.clearance.admin",
+  OFFBOARDING_DOCUMENTS_VERIFY: "offboarding.documents.verify",
+  OFFBOARDING_FINANCE_MANAGE: "offboarding.finance.manage",
+  OFFBOARDING_COMPLETE: "offboarding.complete",
 
   // Attendance
   ATTENDANCE_VIEW: permissionKey(MODULES.ATTENDANCE, ACTIONS.VIEW),

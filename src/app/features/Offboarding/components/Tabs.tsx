@@ -10,6 +10,7 @@ interface TabsProps {
     completedThisMonth: number;
   };
   scheduledCount: number;
+  requestsCount?: number;
 }
 
 export const Tabs: React.FC<TabsProps> = ({
@@ -17,15 +18,24 @@ export const Tabs: React.FC<TabsProps> = ({
   setActiveTab,
   stats,
   scheduledCount,
+  requestsCount = 0,
 }) => {
-  const tabsList: TabType[] = ["Active", "Completed", "Scheduled", "Exit Analytics"];
+  const tabsList: TabType[] = [
+    "Active",
+    "Completed",
+    "Scheduled",
+    "Exit Analytics",
+    "Requests",
+  ];
 
   return (
     <div className="flex items-center border-b border-border overflow-x-auto scrollbar-hide">
       {tabsList.map((tab) => {
         const isActive = activeTab === tab;
         const count =
-          tab === "Active"
+          tab === "Requests"
+            ? requestsCount
+            : tab === "Active"
             ? stats.activeExits
             : tab === "Completed"
               ? stats.completedThisMonth

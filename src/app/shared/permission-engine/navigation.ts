@@ -184,20 +184,27 @@ export const FULL_NAVIGATION: NavGroup[] = [
         ],
       },
       {
-        label: "Resignation Approvals",
-        path: "/resignation-approvals",
-        requiredPermission: [
-          P.OFFBOARDING_FULL,
-          P.OFFBOARDING_MANAGE,
-        ],
-      },
-      {
         label: "Offboarding",
         path: "/offboarding",
         requiredPermission: [
           P.OFFBOARDING_FULL,
           P.OFFBOARDING_MANAGE,
         ],
+      },
+      {
+        label: "Manager Clearance",
+        path: "/manager/exit-tasks",
+        requiredPermission: P.OFFBOARDING_CLEARANCE_MANAGER,
+      },
+      {
+        label: "IT Clearance",
+        path: "/it/clearance",
+        requiredPermission: P.OFFBOARDING_CLEARANCE_IT,
+      },
+      {
+        label: "HR Clearance",
+        path: "/hr/clearance",
+        requiredPermission: P.OFFBOARDING_CLEARANCE_HR,
       },
     ],
   },
@@ -305,7 +312,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
         ],
       },
       {
-        label: "F&F Settlement",
+        label: "Finance Clearance & F&F",
         path: "/finance/settlements",
         requiredPermission: [
           P.SETTLEMENTS_FULL,

@@ -7,7 +7,7 @@ export type ExitType =
 
 export type ClearanceStatus = "cleared" | "pending" | "not_started";
 
-export type TabType = "Active" | "Completed" | "Scheduled" | "Exit Analytics";
+export type TabType = "Requests" | "Active" | "Completed" | "Scheduled" | "Exit Analytics";
 
 export interface ExitTimelineItem {
   label: string;
@@ -31,8 +31,19 @@ export interface AssetRecoveryItem {
 }
 
 export interface DocumentItem {
+  id?: string;
   name: string;
   status: "uploaded" | "pending" | "not_generated";
+  source?: "employee_exit";
+  verificationStatus?: "pending" | "verified" | "rejected";
+  verificationComment?: string;
+}
+
+export interface EmployeeExitTaskItem {
+  id: string;
+  label: string;
+  status: "done" | "pending" | "in_progress";
+  completedAt?: string;
 }
 
 export interface ExitEmployee {
@@ -50,6 +61,7 @@ export interface ExitEmployee {
   timeline: ExitTimelineItem[];
   assets: AssetRecoveryItem[];
   documents: DocumentItem[];
+  employeeTasks?: EmployeeExitTaskItem[];
   salary: number;
   gratuity: number;
   leaveEncashment: number;

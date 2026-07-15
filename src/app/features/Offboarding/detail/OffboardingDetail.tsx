@@ -1,7 +1,8 @@
 import React from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, Check, Clock, Laptop, FileText, Send, MessageSquare, CheckCircle2 } from "lucide-react";
-import { useAuth } from "../../../context/AuthContext";
+import { usePermissionKey } from "../../../shared/permission-engine/usePermission";
+import { P } from "../../../shared/permission-engine/permissions";
 import { ExitEmployee } from "../types/offboarding.types";
 import { progressColor } from "../utils/progress";
 import { formatCurrency } from "../utils/currency";
@@ -10,7 +11,7 @@ import { exitTypeChip, clearanceChip, getClearanceIcon } from "../utils/chips";
 interface OffboardingDetailProps {
   exit: ExitEmployee;
   onClose: () => void;
-  onSignOff: (dept: string) => void;
+  onVerifyDocument: (documentId: string, approved: boolean) => void;
   onGenerateDoc: (doc: string) => void;
   onSendReminder: () => void;
   onScheduleInterview: () => void;
@@ -20,14 +21,16 @@ interface OffboardingDetailProps {
 export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
   exit,
   onClose,
-  onSignOff,
+  onVerifyDocument,
   onGenerateDoc,
   onSendReminder,
   onScheduleInterview,
   onSendToFinance,
 }) => {
-  const { user } = useAuth();
   const colors = progressColor(exit.progress);
+  const canVerifyDocuments = usePermissionKey(P.OFFBOARDING_DOCUMENTS_VERIFY);
+  const canManageFinance = usePermissionKey(P.OFFBOARDING_FINANCE_MANAGE);
+  const canManageOffboarding = usePermissionKey(P.OFFBOARDING_MANAGE);
 
   return (
     <div
@@ -189,15 +192,10 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                       </div>
                       <div className="flex items-center gap-3">
                         {clearanceChip(c.status)}
-                        {c.status !== "cleared" ? (
-                          <button
-                            onClick={() => onSignOff(c.dept)}
-                            className="px-3 py-1.5 rounded-lg bg-[#00B87C] text-white text-[9px] font-black uppercase tracking-wider hover:opacity-90 transition-all"
-                          >
-                            Sign Off
-                          </button>
-                        ) : (
+                        {c.status === "cleared" ? (
                           <CheckCircle2 size={16} className="text-[#00B87C]" />
+                        ) : (
+                          <span className="text-[10px] font-bold text-muted-foreground">Updated by {c.dept}</span>
                         )}
                       </div>
                     </div>
@@ -205,6 +203,21 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                 })}
               </div>
             </div>
+
+            {/* Assets */}
+            {exit.employeeTasks && exit.employeeTasks.length > 0 && (
+              <div>
+                <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">EMPLOYEE EXIT ACTIONS</h3>
+                <div className="space-y-2">
+                  {exit.employeeTasks.map((task) => (
+                    <div key={task.id} className="flex items-center justify-between p-3 rounded-xl border border-border/50">
+                      <span className="text-[12px] font-bold text-foreground">{task.label}</span>
+                      <span className="text-[11px] font-black text-[#00B87C]">Completed {task.completedAt}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Assets */}
             <div>
@@ -277,6 +290,9 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                       <span className="text-[11px] font-black text-amber-500">
                         Pending
                       </span>
+                    )}
+                    {d.id && d.source === "employee_exit" && d.verificationStatus === "pending" && canVerifyDocuments && (
+                      <button onClick={() => onVerifyDocument(d.id!, true)} className="ml-2 text-[10px] font-black text-[#00B87C] hover:underline">Verify</button>
                     )}
                   </div>
                 ))}
@@ -363,7 +379,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                   <Clock size={12} /> {exit.ffStatus}
                 </span>
               </div>
-              {user?.role === "HR Manager" ? (
+              {canManageOffboarding ? (
                 <button
                   disabled={exit.ffStatus !== "Pending"}
                   onClick={onSendToFinance}
@@ -371,7 +387,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                 >
                   <Send size={14} className="inline mr-1.5" /> Initiate F&F
                 </button>
-              ) : (
+              ) : canManageFinance ? (
                 <button
                   disabled={exit.ffStatus === "Approved & Processed"}
                   onClick={onSendToFinance}
@@ -379,7 +395,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                 >
                   <Send size={14} className="inline mr-1.5" /> Approve & Process
                 </button>
-              )}
+              ) : null}
             </div>
 
             {/* Exit Interview */}
@@ -396,7 +412,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                     {exit.interviewDone ? "HR Team" : "Not Done yet"}
                   </span>
                 </div>
-                {!exit.interviewDone ? (
+                {!exit.interviewDone && canManageOffboarding ? (
                   <button
                     onClick={onScheduleInterview}
                     className="w-full px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all"

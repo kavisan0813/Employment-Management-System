@@ -18,6 +18,7 @@ import {
   CheckSquare,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { publishEmployeeExitAction, uploadExitDocuments } from "../../features/Offboarding/services/offboardingWorkflow";
 
 /* ─── Types ─── */
 export type WorkflowStatus =
@@ -556,12 +557,16 @@ export function EmployeeExit() {
     useState<ResignationDetails | null>(null);
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
 
-  const [tasks] = useState<ExitTask[]>(EXIT_TASKS);
+  const [tasks, setTasks] = useState<ExitTask[]>(() => {
+    try { return JSON.parse(localStorage.getItem("viyan_employee_exit_tasks") || "") as ExitTask[]; } catch { return EXIT_TASKS; }
+  });
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [signatureComplete, setSignatureComplete] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+
+  useEffect(() => { localStorage.setItem("viyan_employee_exit_tasks", JSON.stringify(tasks)); }, [tasks]);
 
   useEffect(() => {
     const checkRequest = () => {
@@ -602,12 +607,24 @@ export function EmployeeExit() {
 
   const handleUpload = (files: string[]) => {
     setUploadedFiles((prev) => [...prev, ...files]);
+    uploadExitDocuments("Priya Sharma", files);
+    completeTask("t3");
     setShowUploadModal(false);
+  };
+
+  const completeTask = (taskId: string) => {
+    const task = tasks.find((item) => item.id === taskId);
+    if (!task || task.status === "done") return;
+    const completedDate = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    setTasks((previous) => previous.map((item) => item.id === taskId ? { ...item, status: "done", completedDate } : item));
+    publishEmployeeExitAction("Priya Sharma", { id: task.id, label: task.label, status: "done", completedAt: completedDate });
   };
 
   const openModalFor = (task: ExitTask) => {
     if (task.actionType === "btn" && task.label.includes("Upload")) {
       setShowUploadModal(true);
+    } else if (task.actionType === "btn") {
+      completeTask(task.id);
     } else if (task.actionType === "sign") {
       setShowSignatureModal(true);
     } else if (task.actionType === "schedule") {
@@ -1130,6 +1147,7 @@ export function EmployeeExit() {
                 <button
                   onClick={() => {
                     setSignatureComplete(true);
+                    completeTask("t8");
                     setShowSignatureModal(false);
                   }}
                   className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-sm flex items-center gap-1.5"
@@ -1171,7 +1189,10 @@ export function EmployeeExit() {
                   </h3>
                 </div>
                 <button
-                  onClick={() => setShowScheduleModal(false)}
+                  onClick={() => {
+                    completeTask("t6");
+                    setShowScheduleModal(false);
+                  }}
                   className="w-8 h-8 rounded-lg hover:bg-muted flex items-center justify-center transition-all"
                 >
                   <X size={16} className="text-muted-foreground" />

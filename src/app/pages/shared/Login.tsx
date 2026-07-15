@@ -46,6 +46,11 @@ const DEMO_ACCOUNTS: Record<
     name: "Priya Sharma",
     initials: "PS",
   },
+  IT: {
+    email: "it@viyanhr.com",
+    name: "IT Support",
+    initials: "IT",
+  },
   Manager: {
     email: "manager@viyanhr.com",
     name: "Sarah Chen",
@@ -76,6 +81,7 @@ const ROLE_ICONS: Record<UserRole, React.ComponentType<LucideProps>> = {
   "Super Admin": ShieldAlert,
   "HR Manager": Users,
   Finance: Coins,
+  IT: Briefcase,
   Manager: Briefcase,
   "Team Lead": Users,
   Employee: User,
@@ -143,6 +149,7 @@ export function Login() {
     if (lower.includes("admin")) return "Super Admin";
     if (lower.includes("hr")) return "HR Manager";
     if (lower.includes("finance")) return "Finance";
+    if (lower.includes("it")) return "IT";
     if (lower.includes("manager")) return "Manager";
     return "Employee";
   };

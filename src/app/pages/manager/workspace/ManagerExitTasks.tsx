@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { publishClearance } from "../../../features/Offboarding/services/offboardingWorkflow";
+import { usePermissionKey } from "../../../shared/permission-engine/usePermission";
+import { P } from "../../../shared/permission-engine/permissions";
 import {
   LogOut,
   CheckCircle2,
@@ -177,6 +180,7 @@ const exitTypeChip = (type: ExitType) => {
 
 /* ─── Main Component ─── */
 export function ManagerExitTasks() {
+  const canSignManagerClearance = usePermissionKey(P.OFFBOARDING_CLEARANCE_MANAGER);
   const [showKTModal, setShowKTModal] = useState<string | null>(null);
   const [showSignOff, setShowSignOff] = useState<string | null>(null);
   const [showWriteModal, setShowWriteModal] = useState<string | null>(null);
@@ -394,7 +398,7 @@ export function ManagerExitTasks() {
                               </button>
                             )}
 
-                          {task.status !== "done" &&
+                          {task.status !== "done" && canSignManagerClearance &&
                             task.actionType === "signoff" && (
                               <button
                                 onClick={() => setShowSignOff(member.id)}
@@ -487,6 +491,8 @@ export function ManagerExitTasks() {
                 .find((m) => m.id === mid)
                 ?.tasks.find((t) => t.actionType === "signoff")?.id;
               if (tid) handleMarkDone(mid, tid);
+              const member = members.find((m) => m.id === mid);
+              if (member) publishClearance(member.name, "Manager");
               setShowSignOff(null);
             }}
           />
