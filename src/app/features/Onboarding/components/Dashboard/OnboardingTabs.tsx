@@ -1,5 +1,4 @@
 import { motion } from "motion/react";
-import { TEMPLATES } from "../../constants/templates";
 
 interface OnboardingTabsProps {
   activeTab: "active" | "pre-joining" | "completed" | "templates";
@@ -7,14 +6,15 @@ interface OnboardingTabsProps {
   activeCount: number;
   preJoiningCount: number;
   completedCount: number;
+  templateCount: number;
 }
 
-export function OnboardingTabs({ activeTab, setActiveTab, activeCount, preJoiningCount, completedCount }: OnboardingTabsProps) {
+export function OnboardingTabs({ activeTab, setActiveTab, activeCount, preJoiningCount, completedCount, templateCount }: OnboardingTabsProps) {
   const tabs = [
     { key: "pre-joining" as const, label: "Pending", count: preJoiningCount },
     { key: "active" as const, label: "In Progress", count: activeCount },
     { key: "completed" as const, label: "Completed", count: completedCount },
-    { key: "templates" as const, label: "Templates", count: TEMPLATES.length },
+    { key: "templates" as const, label: "Templates", count: templateCount },
   ];
 
   return (

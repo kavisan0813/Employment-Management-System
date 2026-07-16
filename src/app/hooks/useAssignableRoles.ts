@@ -2,9 +2,11 @@ import useSWR from "swr";
 import { useAuth } from "../context/AuthContext";
 
 export interface AssignableRole {
+  id: string;
   value: string;
   label: string;
   alwaysOn?: boolean;
+  permissions: string[];
 }
 
 export function useAssignableRoles() {

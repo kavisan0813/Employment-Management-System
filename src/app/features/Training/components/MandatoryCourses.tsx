@@ -1,0 +1,1 @@
+export function MandatoryCourses() { return <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5"><h3 className="font-bold text-amber-900">Mandatory learning</h3><p className="mt-1 text-sm text-amber-800">Compliance requirements and completion deadlines are managed within each training detail.</p></div>; }

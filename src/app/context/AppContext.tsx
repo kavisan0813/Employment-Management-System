@@ -338,6 +338,75 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
     localStorage.setItem("viyan_employees", JSON.stringify(list));
   };
 
+  const addOnboardingEntries = (
+    entries: Array<{
+      name: string;
+      role: string;
+      department: string;
+      manager: string;
+      joiningDate?: string;
+      email?: string;
+    }>
+  ) => {
+    try {
+      const onboardingQueue = JSON.parse(localStorage.getItem("viyan_onboarding_queue") || "[]");
+      const onboardingPhases = JSON.parse(localStorage.getItem("viyan_onboarding_phases") || "{}");
+      const nowStr = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      const nowIso = new Date().toISOString().split("T")[0];
+
+      const newEntries = entries.map((entry, idx) => {
+        const initials = entry.name
+          .split(" ")
+          .map((w) => w[0] || "")
+          .join("")
+          .toUpperCase()
+          .slice(0, 2);
+        const onboardingId = `onb-${Date.now()}-${idx}-${Math.floor(Math.random() * 1000)}`;
+
+        const defaultPhases = [
+          {
+            id: "p1",
+            name: "Pre-Joining",
+            status: "in-progress" as const,
+            date: nowStr,
+            tasks: [
+              { id: "t1", task: "Welcome email sent", owner: "HR", dueDate: "Day 1", status: "pending" as const, assignee: "HR Team" },
+              { id: "t2", task: "Offer letter signed", owner: "Employee", dueDate: "Day 2", status: "pending" as const, assignee: entry.name },
+              { id: "t3", task: "Background verification completed", owner: "HR", dueDate: "Day 3", status: "pending" as const, assignee: "HR Team" },
+            ],
+          },
+        ];
+        onboardingPhases[onboardingId] = defaultPhases;
+
+        return {
+          id: onboardingId,
+          initials,
+          avatarColor: "#8B5CF6",
+          name: entry.name,
+          role: entry.role || "Software Engineer",
+          dept: entry.department || "Engineering",
+          deptColor: "#00B87C",
+          joiningDate: entry.joiningDate || nowIso,
+          progress: 0,
+          progressColor: "#00B87C",
+          status: "pre-joining" as const,
+          daysInOnboarding: 0,
+          expectedCompletion: "To be scheduled",
+          manager: entry.manager || "Arun Nair",
+          email: entry.email || `${entry.name.toLowerCase().replace(/\s+/g, ".")}@viyanhr.com`,
+        };
+      });
+
+      localStorage.setItem("viyan_onboarding_queue", JSON.stringify([...newEntries, ...onboardingQueue]));
+      localStorage.setItem("viyan_onboarding_phases", JSON.stringify(onboardingPhases));
+
+      window.dispatchEvent(new Event("storage"));
+      window.dispatchEvent(new Event("viyan:onboarding-updated"));
+    } catch (e) {
+      console.error("Failed to append onboarding entries", e);
+    }
+  };
+
   const addEmployee = (emp: EmployeeInput) => {
     const salaryVal = Number(emp.salary) || 0;
     const gross = Math.round(salaryVal / 12);
@@ -366,6 +435,16 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
       notes: [],
     };
     saveEmployees([...employeesList, newEmp]);
+    addOnboardingEntries([
+      {
+        name: newEmp.name,
+        role: newEmp.designation || newEmp.role || "Staff",
+        department: newEmp.department || "Engineering",
+        manager: newEmp.manager || "Unassigned",
+        joiningDate: newEmp.joinDate || new Date().toISOString().split("T")[0],
+        email: newEmp.email,
+      },
+    ]);
   };
 
   const updateEmployee = (id: string, updatedFields: Partial<Employee>) => {

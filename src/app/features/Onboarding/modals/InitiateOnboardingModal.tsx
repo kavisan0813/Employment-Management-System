@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import type { EmployeeOption } from "../types/onboarding.types";
 import { initials } from "../utils/helpers";
-import { TEMPLATES } from "../constants/templates";
+import type { Template } from "../types/onboarding.types";
 import { EMPLOYEE_OPTIONS } from "../constants/employees";
 import { DepartmentBadge } from "../components/shared/DepartmentBadge";
 
@@ -29,6 +29,8 @@ interface InitiateOnboardingModalProps {
   formEmpType: string;
   setFormEmpType: (v: string) => void;
   handleLaunchOnboarding: () => void;
+  templates: Template[];
+  departments: string[];
 }
 
 export function InitiateOnboardingModal({
@@ -41,7 +43,7 @@ export function InitiateOnboardingModal({
   formDesig, setFormDesig,
   formManager, setFormManager,
   formEmpType, setFormEmpType,
-  handleLaunchOnboarding,
+  handleLaunchOnboarding, templates, departments,
 }: InitiateOnboardingModalProps) {
   return (
     <AnimatePresence>
@@ -114,7 +116,7 @@ export function InitiateOnboardingModal({
                   <div>
                     <label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Department</label>
                     <select value={formDept} onChange={(e) => setFormDept(e.target.value)} className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-[12px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all">
-                      <option>Engineering</option><option>Sales</option><option>Finance</option><option>Marketing</option><option>Design</option>
+                      <option value="">Select department</option>{departments.map((department) => <option key={department} value={department}>{department}</option>)}
                     </select>
                   </div>
                 </div>
@@ -147,7 +149,7 @@ export function InitiateOnboardingModal({
               <div className="px-8 py-6 space-y-5 overflow-y-auto max-h-[50vh]">
                 <h3 className="text-[13px] font-black text-foreground uppercase tracking-wider">Select Onboarding Template</h3>
                 <div className="space-y-3 max-h-72 overflow-y-auto">
-                  {TEMPLATES.map((tpl: any) => (
+                  {templates.filter((tpl) => tpl.status === "active" && tpl.dept === formDept).map((tpl) => (
                     <div key={tpl.id} onClick={() => setSelectedTemplate(tpl.id)} className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${selectedTemplate === tpl.id ? "border-[#00B87C]" : "border-border hover:border-[#00B87C]/40"}`}>
                       <div className="flex items-start justify-between">
                         <div>
@@ -166,6 +168,7 @@ export function InitiateOnboardingModal({
                       </div>
                     </div>
                   ))}
+                  {templates.filter((tpl) => tpl.status === "active" && tpl.dept === formDept).length === 0 && <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">No active template matches this department.</p>}
                 </div>
               </div>
             )}

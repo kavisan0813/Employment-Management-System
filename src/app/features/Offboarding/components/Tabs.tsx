@@ -11,6 +11,7 @@ interface TabsProps {
   };
   scheduledCount: number;
   requestsCount?: number;
+  templatesCount?: number;
 }
 
 export const Tabs: React.FC<TabsProps> = ({
@@ -19,12 +20,14 @@ export const Tabs: React.FC<TabsProps> = ({
   stats,
   scheduledCount,
   requestsCount = 0,
+  templatesCount = 0,
 }) => {
   const tabsList: TabType[] = [
     "Active",
     "Completed",
     "Scheduled",
     "Exit Analytics",
+    "Templates",
     "Requests",
   ];
 
@@ -41,7 +44,9 @@ export const Tabs: React.FC<TabsProps> = ({
               ? stats.completedThisMonth
               : tab === "Scheduled"
                 ? scheduledCount
-                : null;
+                : tab === "Templates"
+                  ? templatesCount
+                  : null;
         return (
           <button
             key={tab}

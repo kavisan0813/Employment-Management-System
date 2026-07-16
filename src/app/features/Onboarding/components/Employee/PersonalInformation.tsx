@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { CheckCircle2, Circle } from "lucide-react";
 
 interface InfoItem {
@@ -9,26 +8,22 @@ interface InfoItem {
 
 interface PersonalInformationProps {
   onToggle: (id: string, completed: boolean) => void;
+  taskState?: Record<string, boolean>;
 }
 
-export function PersonalInformation({ onToggle }: PersonalInformationProps) {
-  const [items, setItems] = useState<InfoItem[]>([
-    { id: "addr", label: "Address Details", completed: true },
-    { id: "emg", label: "Emergency Contact", completed: true },
-    { id: "bank", label: "Bank Account Details", completed: false },
-    { id: "nominee", label: "Nominee Information", completed: false },
-  ]);
+export function PersonalInformation({ onToggle, taskState }: PersonalInformationProps) {
+  const items: InfoItem[] = [
+    { id: "addr", label: "Address Details", completed: !!taskState?.addr },
+    { id: "emg", label: "Emergency Contact", completed: !!taskState?.emg },
+    { id: "bank", label: "Bank Account Details", completed: !!taskState?.bank },
+    { id: "nominee", label: "Nominee Information", completed: !!taskState?.nominee },
+  ];
 
   const handleToggle = (id: string) => {
-    const updated = items.map((item) => {
-      if (item.id === id) {
-        const nextState = !item.completed;
-        onToggle(id, nextState);
-        return { ...item, completed: nextState };
-      }
-      return item;
-    });
-    setItems(updated);
+    const item = items.find((i) => i.id === id);
+    if (item) {
+      onToggle(id, !item.completed);
+    }
   };
 
   return (

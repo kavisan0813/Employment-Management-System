@@ -22,9 +22,9 @@ import {
 import { db } from "../../admin/mockData";
 
 // ─── Demo account map (role → credentials) ──────────────────
-const DEMO_ACCOUNTS: Record<
-  UserRole,
-  { email: string; name: string; initials: string }
+const DEMO_ACCOUNTS: Omit<
+  Record<UserRole, { email: string; name: string; initials: string }>,
+  "IT"
 > = {
   "Platform Admin": {
     email: "platform@viyanhr.com",
@@ -45,11 +45,6 @@ const DEMO_ACCOUNTS: Record<
     email: "finance@viyanhr.com",
     name: "Priya Sharma",
     initials: "PS",
-  },
-  IT: {
-    email: "it@viyanhr.com",
-    name: "IT Support",
-    initials: "IT",
   },
   Manager: {
     email: "manager@viyanhr.com",
@@ -74,14 +69,15 @@ interface RegisteredUser {
   initials: string;
   role?: string;
   id?: string;
+  password?: string;
+  candidateStatus?: "Pending" | "Completed";
 }
 
-const ROLE_ICONS: Record<UserRole, React.ComponentType<LucideProps>> = {
+const ROLE_ICONS: Omit<Record<UserRole, React.ComponentType<LucideProps>>, "IT"> = {
   "Platform Admin": ShieldCheck,
   "Super Admin": ShieldAlert,
   "HR Manager": Users,
   Finance: Coins,
-  IT: Briefcase,
   Manager: Briefcase,
   "Team Lead": Users,
   Employee: User,
@@ -160,6 +156,16 @@ export function Login() {
 
     setTimeout(() => {
       const role: UserRole = detectRole(email);
+      let registeredAccount: RegisteredUser | undefined;
+      try {
+        registeredAccount = (JSON.parse(localStorage.getItem("viyan_registered_users") || "[]") as RegisteredUser[])
+          .find((account) => account.email.toLowerCase() === email.toLowerCase());
+        if (registeredAccount?.password && registeredAccount.password !== password) {
+          setIsLoading(false);
+          alert("Invalid email or password.");
+          return;
+        }
+      } catch { /* system/demo accounts retain their existing login path */ }
 
       // Check system db for name/initials
       let accountName = "";
@@ -198,7 +204,7 @@ export function Login() {
 
       // Fallback to demo account details if not found in either list
       if (!accountName || !accountInitials) {
-        const demo = DEMO_ACCOUNTS[role];
+        const demo = DEMO_ACCOUNTS[role as Exclude<UserRole, "IT">];
         if (demo) {
           if (!accountName) accountName = demo.name;
           if (!accountInitials) accountInitials = demo.initials;
@@ -210,22 +216,25 @@ export function Login() {
       if (!accountInitials) {
         accountInitials =
           accountName
-            .split(" ")
-            .map((n: string) => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2) || "JD";
+              .split(" ")
+              .map((n: string) => n[0])
+              .join("")
+              .toUpperCase()
+              .slice(0, 2) || "JD";
       }
 
       login({
         name: accountName,
         email:
-          email || (DEMO_ACCOUNTS[role] ? DEMO_ACCOUNTS[role].email : email),
+          email || (DEMO_ACCOUNTS[role as Exclude<UserRole, "IT">] ? DEMO_ACCOUNTS[role as Exclude<UserRole, "IT">].email : email),
         role,
         initials: accountInitials,
       });
 
       const route =
+        role === "Employee" && registeredAccount?.candidateStatus !== "Completed"
+          ? "/onboarding"
+          :
         role === "Platform Admin"
           ? "/platform-admin/dashboard"
           : ROLE_HOME_ROUTE[role] || "/employee/dashboard";
@@ -243,7 +252,7 @@ export function Login() {
   const handleDemoLogin = (role: UserRole) => {
     setIsLoading(true);
     setTimeout(() => {
-      const demo = DEMO_ACCOUNTS[role];
+      const demo = DEMO_ACCOUNTS[role as Exclude<UserRole, "IT">];
       login({
         name: demo.name,
         email: demo.email,
@@ -435,14 +444,6 @@ export function Login() {
                   }}
                 />
               </div>
-              {/*   {email && (
-                <div
-                  className="mt-2.5 flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all"
-                  style={{ backgroundColor: ROLE_CONFIG[detectedRole].bg }}
-                >
-                
-                </div>
-              )} */}
             </div>
 
             {/* Password */}
@@ -556,7 +557,7 @@ export function Login() {
             {Object.keys(DEMO_ACCOUNTS)
               .filter((k) => k !== "Platform Admin")
               .map((roleKey, idx, arr) => {
-                const role = roleKey as UserRole;
+                const role = roleKey as Exclude<UserRole, "IT">;
                 const demo = DEMO_ACCOUNTS[role];
                 const config = ROLE_CONFIG[role];
                 const isLast = idx === arr.length - 1 && arr.length % 2 !== 0;

@@ -1,0 +1,1 @@
+export function SkillMatrix() { return <div className="rounded-2xl border border-border bg-card p-5"><h3 className="font-bold">Skill coverage</h3><p className="mt-1 text-sm text-muted-foreground">Skill analysis is available in reports.</p></div>; }

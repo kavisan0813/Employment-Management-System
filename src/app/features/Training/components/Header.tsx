@@ -1,0 +1,10 @@
+import { Bell, Plus, Search } from "lucide-react";
+import type { TrainingView } from "../types/training.types";
+
+const links: Array<{ id: TrainingView; label: string }> = [
+  { id: "dashboard", label: "Dashboard" }, { id: "trainings", label: "Trainings" }, { id: "calendar", label: "Calendar" }, { id: "my-training", label: "My Trainings" }, { id: "library", label: "My Library" }, { id: "reports", label: "Reports" }, { id: "settings", label: "Settings" },
+];
+
+export function Header({ view, onView, canManage, onCreate }: { view: TrainingView; onView: (view: TrainingView) => void; canManage: boolean; onCreate: () => void }) {
+  return <><div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Learning & development</p><h1 className="mt-1 text-2xl font-black text-foreground">Training Management</h1></div><div className="flex items-center gap-3"><label className="hidden sm:flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm text-muted-foreground"><Search size={16}/><input aria-label="Search training" className="w-44 bg-transparent outline-none" placeholder="Search training" /></label><button className="relative rounded-xl border border-border p-2.5"><Bell size={18}/><span className="absolute -right-1 -top-1 rounded-full bg-rose-500 px-1.5 text-[10px] font-bold text-white">4</span></button>{canManage && <button onClick={onCreate} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-sm"><Plus size={16}/>Create training</button>}</div></div><nav className="flex gap-1 overflow-x-auto border-b border-border pt-2">{links.map((link) => <button key={link.id} onClick={() => onView(link.id)} className={`whitespace-nowrap border-b-2 px-4 py-3 text-sm font-semibold transition-colors ${view === link.id ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}>{link.label}</button>)}</nav></>;
+}

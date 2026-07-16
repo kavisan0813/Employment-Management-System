@@ -1,8 +1,10 @@
-import type { ClearanceStatus, DocumentItem, EmployeeExitTaskItem, ExitEmployee } from "../types/offboarding.types";
+import type { ClearanceStatus, DocumentItem, EmployeeExitTaskItem, ExitEmployee, OffboardingTemplate } from "../types/offboarding.types";
+import { DEFAULT_OFFBOARDING_TEMPLATES } from "../constants/defaultOffboardingTemplate";
 
 export const EXIT_DOCUMENTS_KEY = "viyan_exit_documents";
 export const OFFBOARDING_EXITS_KEY = "viyan_offboarding_exits";
 export const OFFBOARDING_UPDATED_EVENT = "viyan:offboarding-updated";
+export const OFFBOARDING_TEMPLATES_KEY = "viyan_offboarding_templates";
 
 export type ExitDocument = DocumentItem & {
   id: string;
@@ -18,6 +20,70 @@ const read = <T,>(key: string, fallback: T): T => {
 };
 
 const notify = () => window.dispatchEvent(new Event(OFFBOARDING_UPDATED_EVENT));
+
+const clearanceStyle: Record<string, { icon: string; color: string; bgColor: string }> = {
+  Manager: { icon: "User", color: "#00B87C", bgColor: "#DCFCE7" },
+  IT: { icon: "Laptop", color: "#0EA5E9", bgColor: "#E0F2FE" },
+  Finance: { icon: "Briefcase", color: "#F59E0B", bgColor: "#FEF3C7" },
+  HR: { icon: "User", color: "#8B5CF6", bgColor: "#EDE9FE" },
+  Admin: { icon: "ShieldCheck", color: "#14B8A6", bgColor: "#CCFBF1" },
+};
+
+/** Empty by default: companies own their template library and assignments. */
+export const getOffboardingTemplates = () => {
+  const saved = read<OffboardingTemplate[]>(OFFBOARDING_TEMPLATES_KEY, []);
+  return saved.length ? saved : DEFAULT_OFFBOARDING_TEMPLATES;
+};
+export const saveOffboardingTemplate = (template: OffboardingTemplate) => {
+  const templates = getOffboardingTemplates();
+  const existing = templates.find((item) => item.id === template.id);
+  const next = existing
+    ? templates.map((item) => item.id === template.id ? { ...template, version: item.version + 1 } : item)
+    : [...templates, { ...template, id: template.id || `exit-template-${Date.now()}`, version: 1 }];
+  localStorage.setItem(OFFBOARDING_TEMPLATES_KEY, JSON.stringify(next));
+  notify();
+};
+export const deleteOffboardingTemplate = (id: string) => {
+  localStorage.setItem(OFFBOARDING_TEMPLATES_KEY, JSON.stringify(getOffboardingTemplates().filter((template) => template.id !== id)));
+  notify();
+};
+
+export function createOffboardingRecord(input: {
+  name: string; designation: string; department: string; type: ExitEmployee["type"];
+  lwd: string; noticePeriodDays: number; reason?: string; createdBy: string;
+  manager?: string; resignationDate?: string; documents?: DocumentItem[];
+  template?: OffboardingTemplate;
+}): ExitEmployee {
+  const now = new Date();
+  const createdDate = now.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
+  const date = now.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return {
+    id: `exit-${Date.now()}`, name: input.name, designation: input.designation, department: input.department,
+    type: input.type, lwd: input.lwd, progress: 0, resumptionDate: input.resignationDate || date,
+    acceptedDate: date, noticePeriodDays: input.noticePeriodDays, reason: input.reason,
+    createdBy: input.createdBy, createdDate, workflowStatus: "Offboarding in progress",
+    timeline: [{ label: "Offboarding Record Created", date, status: "done" }, { label: "Clearances In Progress", date: "Pending", status: "active" }, { label: "Exit Complete", date: "Pending", status: "pending" }],
+    clearance: (input.template?.clearances || []).map((c) => ({
+      dept: c.dept,
+      person: c.person || "Assigned on template",
+      status: "pending" as const,
+      icon: clearanceStyle[c.dept]?.icon || "CheckCircle",
+      color: clearanceStyle[c.dept]?.color || "#64748B",
+      bgColor: clearanceStyle[c.dept]?.bgColor || "#F1F5F9",
+    })),
+    assets: [],
+    documents: input.documents || [], salary: 0, gratuity: 0, leaveEncashment: 0, reimbursements: 0, deductions: 0, netAmount: 0, ffStatus: "Pending", interviewDone: false,
+    assignedTemplateId: input.template?.id, assignedTemplateVersion: input.template?.version,
+  };
+}
+
+export function persistOffboardingRecord(record: ExitEmployee) {
+  const exits = read<ExitEmployee[]>(OFFBOARDING_EXITS_KEY, []);
+  if (!exits.some((exit) => exit.name === record.name)) {
+    localStorage.setItem(OFFBOARDING_EXITS_KEY, JSON.stringify([record, ...exits]));
+    notify();
+  }
+}
 
 export const getExitDocuments = (employeeName: string) =>
   read<ExitDocument[]>(EXIT_DOCUMENTS_KEY, []).filter((document) => document.employeeName === employeeName);

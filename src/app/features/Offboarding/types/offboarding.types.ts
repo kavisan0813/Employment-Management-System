@@ -7,7 +7,43 @@ export type ExitType =
 
 export type ClearanceStatus = "cleared" | "pending" | "not_started";
 
-export type TabType = "Requests" | "Active" | "Completed" | "Scheduled" | "Exit Analytics";
+export type TabType = "Requests" | "Active" | "Completed" | "Scheduled" | "Exit Analytics" | "Templates";
+
+/** Configurable, versioned exit workflow template */
+export interface OffboardingTemplate {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  department: string;
+  status: "draft" | "active" | "inactive" | "archived";
+  version: number;
+  isDefault?: boolean;
+  clearances?: Array<{
+    id: string;
+    dept: string;
+    person: string;
+    tasks: Array<{
+      id: string;
+      name: string;
+      owner: string;
+      isMandatory?: boolean;
+      description?: string;
+      dueBeforeLWD?: number;
+      priority?: "High" | "Medium" | "Low";
+      requiresApproval?: boolean;
+      completionEvidence?: string;
+      notes?: string;
+    }>;
+  }>;
+  assets?: Array<{ id: string; name: string; category: string; mandatory: boolean }>;
+  documents?: Array<{ id: string; name: string; mandatory: boolean }>;
+  exitInterviewRequired?: boolean;
+  exitInterviewQuestionnaire?: string[];
+  knowledgeTransferChecklist?: string[];
+  settlementChecklist?: string[];
+  customTasks?: Array<{ id: string; name: string; owner: string; dueDays: number; priority: string; mandatory: boolean }>;
+}
 
 export interface ExitTimelineItem {
   label: string;
@@ -19,15 +55,26 @@ export interface ClearanceItem {
   dept: string;
   person: string;
   status: ClearanceStatus;
-  icon: string; // Keep as string (icon identifier) so it can be serialized easily, or handle dynamically
+  icon: string;
   color: string;
   bgColor: string;
+  approvedBy?: string;
+  approvedDate?: string;
+  approvedTime?: string;
+  comments?: string;
+  checklist?: string[];
 }
 
 export interface AssetRecoveryItem {
   name: string;
   status: "returned" | "pending";
   detail: string;
+  assetId?: string;
+  assignedDate?: string;
+  condition?: "Good" | "Damaged" | "Not applicable";
+  verifiedBy?: string;
+  verifiedDate?: string;
+  owner?: "IT" | "Admin";
 }
 
 export interface DocumentItem {
@@ -70,4 +117,25 @@ export interface ExitEmployee {
   netAmount: number;
   ffStatus: string;
   interviewDone: boolean;
+  
+  // F&F Settlement Detailed Fields
+  bonus?: number;
+  incentives?: number;
+  otherEarnings?: number;
+  noticePeriodRecovery?: number;
+  loanRecovery?: number;
+  assetRecovery?: number;
+  taxDeduction?: number;
+  pfEsiAdjustment?: number;
+  otherDeductions?: number;
+  totalEarnings?: number;
+  totalDeductions?: number;
+  ffApprovedBy?: string;
+  ffApprovedDate?: string;
+  reason?: string;
+  createdBy?: string;
+  createdDate?: string;
+  workflowStatus?: string;
+  assignedTemplateId?: string;
+  assignedTemplateVersion?: number;
 }

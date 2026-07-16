@@ -13,6 +13,8 @@ import { ReminderModal } from "./modals/ReminderModal";
 import { CompleteExitModal } from "./modals/CompleteExitModal";
 import { ExitInterviewModal } from "./modals/ExitInterviewModal";
 import { RequestsTab } from "./components/RequestsTab";
+import { OffboardingTemplates } from "./components/Dashboard/OffboardingTemplates";
+import { OffboardingTemplateEditorModal } from "./modals/OffboardingTemplateEditorModal";
 
 export function OffboardingPage() {
   const [activeTab, setActiveTab] = useState<TabType>("Active");
@@ -39,6 +41,18 @@ export function OffboardingPage() {
     handleConfirmComplete,
     handleCompleteInterview,
     handleInitiateExit,
+    handleSignOff,
+    templates,
+    showTemplateEditor,
+    setShowTemplateEditor,
+    editingTemplate,
+    setEditingTemplate,
+    showTemplateMenu,
+    setShowTemplateMenu,
+    saveTemplate,
+    deleteTemplate,
+    handleDuplicateTemplate,
+    handleAssignTemplate,
   } = useOffboarding();
 
   const currentExit = showDetail ? exits.find((e) => e.id === showDetail) : null;
@@ -68,6 +82,7 @@ export function OffboardingPage() {
         stats={stats}
         scheduledCount={scheduledExits.length}
         requestsCount={requestsCount}
+        templatesCount={templates.length}
       />
 
       {/* TAB CONTENT */}
@@ -79,6 +94,18 @@ export function OffboardingPage() {
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
         >
+          {activeTab === "Templates" && (
+            <OffboardingTemplates
+              templates={templates}
+              showTemplateMenu={showTemplateMenu}
+              setShowTemplateMenu={setShowTemplateMenu}
+              setEditingTemplate={setEditingTemplate}
+              setShowTemplateEditor={setShowTemplateEditor}
+              handleDuplicateTemplate={handleDuplicateTemplate}
+              handleDeleteTemplate={deleteTemplate}
+            />
+          )}
+
           {activeTab === "Requests" && <RequestsTab onCountChange={setRequestsCount} />}
 
           {activeTab === "Active" && (
@@ -162,6 +189,8 @@ export function OffboardingPage() {
       {showDetail && currentExit && (
         <OffboardingDetail
           exit={currentExit}
+          templates={templates}
+          onAssignTemplate={(tplId) => handleAssignTemplate(currentExit.id, tplId)}
           onClose={() => setShowDetail(null)}
           onVerifyDocument={handleVerifyDocument}
           onGenerateDoc={(doc) => handleGenerateDoc(currentExit.id, doc)}
@@ -174,6 +203,9 @@ export function OffboardingPage() {
             setShowSchedule({ id: currentExit.id, type: "interview" });
           }}
           onSendToFinance={() => handleSendToFinance(currentExit.id)}
+          onApproveClearance={(dept, approvedBy, comments) =>
+            handleSignOff(currentExit.id, dept, approvedBy, comments)
+          }
         />
       )}
 
@@ -216,6 +248,19 @@ export function OffboardingPage() {
         }
         return null;
       })()}
+
+      {/* OFFBOARDING TEMPLATE EDITOR MODAL */}
+      <OffboardingTemplateEditorModal
+        showTemplateEditor={showTemplateEditor}
+        setShowTemplateEditor={setShowTemplateEditor}
+        editingTemplate={editingTemplate}
+        templates={templates}
+        departments={(() => {
+          const depts = JSON.parse(localStorage.getItem("viyan_departments") || "[]").map((d: any) => d.name || "").filter(Boolean);
+          return depts.length > 0 ? depts : ["Engineering", "HR", "Finance", "Sales", "Marketing", "Support"];
+        })()}
+        saveTemplate={saveTemplate}
+      />
     </div>
   );
 }

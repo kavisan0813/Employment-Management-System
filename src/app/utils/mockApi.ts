@@ -1,3 +1,5 @@
+import { ROLE_TEMPLATES } from "../shared/permission-engine/roles";
+
 const originalFetch = window.fetch;
 
 window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -12,39 +14,18 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 200));
 
-    // Get the current logged-in user from session storage
-    const savedUser = sessionStorage.getItem("user");
-    const user = savedUser ? JSON.parse(savedUser) : null;
-    const userRole = user?.role || "Employee";
-
-    let roles: Array<{ value: string; label: string; alwaysOn?: boolean }>;
-    if (userRole === "Super Admin" || userRole === "Platform Admin") {
-      roles = [
-        { value: "Employee", label: "Employee", alwaysOn: true },
-        { value: "HR Manager", label: "HR Manager" },
-        { value: "Finance", label: "Finance Manager" },
-        { value: "Manager", label: "Manager" },
-        { value: "Team Lead", label: "Team Lead" },
-        { value: "Admin", label: "Admin" },
-      ];
-    } else if (userRole === "HR Manager") {
-      roles = [
-        { value: "Employee", label: "Employee", alwaysOn: true },
-        { value: "Finance", label: "Finance Manager" },
-        { value: "Manager", label: "Team Manager" },
-        { value: "Team Lead", label: "Team Lead" },
-      ];
-    } else if (userRole === "Finance") {
-      roles = [
-        { value: "Employee", label: "Employee", alwaysOn: true },
-        { value: "Manager", label: "Team Manager" },
-      ];
-    } else if (userRole === "Manager") {
-      roles = [{ value: "Employee", label: "Employee", alwaysOn: true }];
-    } else {
-      // Regular employees or other roles have no roles they're allowed to assign
-      roles = [];
-    }
+    // The permission engine is the role catalogue.  Keeping this mapping
+    // data-driven means newly configured roles and permissions require no
+    // employee-form changes.
+    const roles = Object.values(ROLE_TEMPLATES)
+      .filter((role) => role.isSystemRole)
+      .sort((a, b) => a.hierarchyLevel - b.hierarchyLevel)
+      .map((role) => ({
+        id: role.id,
+        value: role.name,
+        label: role.name,
+        permissions: [...role.permissions],
+      }));
 
     return new Response(JSON.stringify(roles), {
       status: 200,
@@ -59,30 +40,11 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     const body = JSON.parse(init.body as string);
     const roleAssignments = body.roleAssignments || [];
 
-    // Get current user's role from session storage to authorize
-    const savedUser = sessionStorage.getItem("user");
-    const user = savedUser ? JSON.parse(savedUser) : null;
-    const userRole = user?.role || "Employee";
-
-    let allowedRoles: string[] = [];
-    if (userRole === "Super Admin" || userRole === "Platform Admin") {
-      allowedRoles = [
-        "Employee",
-        "HR Manager",
-        "Finance",
-        "Manager",
-        "Super Admin",
-      ];
-    } else if (userRole === "HR Manager") {
-      allowedRoles = ["Employee", "Finance", "Manager"];
-    } else if (userRole === "Finance") {
-      allowedRoles = ["Employee", "Manager"];
-    } else if (userRole === "Manager") {
-      allowedRoles = ["Employee"];
-    }
-
+    const configuredRoleNames = new Set(
+      Object.values(ROLE_TEMPLATES).map((role) => role.name),
+    );
     const hasUnauthorizedRole = roleAssignments.some(
-      (a: { role: string }) => !allowedRoles.includes(a.role),
+      (a: { role: string }) => !configuredRoleNames.has(a.role),
     );
 
     if (hasUnauthorizedRole) {

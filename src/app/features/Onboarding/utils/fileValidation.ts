@@ -1,7 +1,7 @@
 /* ─── File Validation Utilities ─── */
 // Placeholder for future file validation logic (max size, allowed types, etc.)
 
-export const MAX_FILE_SIZE_MB = 10;
+export const MAX_FILE_SIZE_MB = 2;
 export const ALLOWED_FILE_TYPES = ["application/pdf", "image/jpeg", "image/png"];
 
 export function validateFile(file: File): { valid: boolean; error?: string } {

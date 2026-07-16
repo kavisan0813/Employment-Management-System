@@ -30,19 +30,10 @@ type ScopeType = "organization" | "branch" | "department" | "team";
 
 export type RoleAssignment = {
   id: string;
-  role: string; // catalog role name, e.g. "HR Manager"
+  role: string; // role name from the configured role catalogue
   scope: ScopeType;
   scopeId: string; // empty string when scope === "organization"
 };
-
-export const ROLE_CATALOG = [
-  { value: "Employee", label: "Employee", alwaysOn: true },
-  { value: "HR Manager", label: "HR Manager" },
-  { value: "Finance", label: "Finance Manager" },
-  { value: "Manager", label: "Manager" },
-  { value: "Team Lead", label: "Team Lead" },
-  { value: "Super Admin", label: "Admin", superAdminOnly: true },
-] as const;
 
 export const VALIDATION = {
   employeeId: /^EMP\d{3,}$/,
@@ -58,6 +49,25 @@ export const VALIDATION = {
 function makeAssignmentId() {
   return `ra-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
+
+const humanizePermissionPart = (value: string) =>
+  value
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/[_-]/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+const groupPermissionsByModule = (permissions: string[]) =>
+  permissions.reduce<Record<string, string[]>>((groups, permission) => {
+    const [module, action] = permission.includes(":")
+      ? permission.split(":", 2)
+      : permission.includes(".")
+        ? permission.split(".", 2)
+        : ["other", permission];
+    const moduleName = humanizePermissionPart(module);
+    const actionName = humanizePermissionPart(action || permission);
+    groups[moduleName] = [...(groups[moduleName] || []), actionName];
+    return groups;
+  }, {});
 
 export default function AddEmployee() {
   const navigate = useNavigate();
@@ -118,16 +128,11 @@ export default function AddEmployee() {
     firstName: "",
     lastName: "",
     email: "",
-    roleIds: ["Employee"],
+    password: "",
+    confirmPassword: "",
+    roleIds: [] as string[],
     // ★ replaces the old single `role: string` field
-    roleAssignments: [
-      {
-        id: makeAssignmentId(),
-        role: "Employee",
-        scope: "organization" as ScopeType,
-        scopeId: "",
-      },
-    ] as RoleAssignment[],
+    roleAssignments: [] as RoleAssignment[],
 
     reportingManager: "",
     department: "Engineering",
@@ -167,6 +172,13 @@ export default function AddEmployee() {
     reminderUnopened: true,
   });
 
+  const selectedRole = assignableRoles?.find(
+    (role) => role.value === form.roleIds[0],
+  );
+  const permissionGroups = selectedRole
+    ? groupPermissionsByModule(selectedRole.permissions)
+    : {};
+
   // Inline new-value prompt
   const [newValPrompt, setNewValPrompt] = useState<{
     field: "dept" | "location" | "designation" | "type" | "source";
@@ -192,7 +204,7 @@ export default function AddEmployee() {
         setForm((prev) => ({
           ...prev,
           ...parsed,
-          roleIds: parsed.roleIds || prev.roleIds || ["Employee"],
+          roleIds: parsed.roleIds || prev.roleIds,
         }));
         showToast("Restored incomplete draft", "info");
       } catch (e) {
@@ -293,6 +305,8 @@ export default function AddEmployee() {
     VALIDATION.name.test(form.firstName.trim()) &&
     VALIDATION.name.test(form.lastName.trim()) &&
     VALIDATION.email.test(form.email.trim()) &&
+    form.password.length >= 8 &&
+    form.password === form.confirmPassword &&
     form.roleAssignments.length > 0 &&
     areAssignmentsValid &&
     isIdUnique &&
@@ -362,9 +376,7 @@ export default function AddEmployee() {
     // Primary role kept for any legacy code that still reads a single
     // `role` field (e.g. list-view badges) — first non-Employee
     // assignment wins, otherwise falls back to Employee.
-    const primaryRole =
-      form.roleAssignments.find((a) => a.role !== "Employee")?.role ||
-      "Employee";
+    const primaryRole = form.roleAssignments[0]?.role || "";
 
     const fullName = `${form.firstName.trim()} ${form.lastName.trim()}`;
 
@@ -427,6 +439,12 @@ export default function AddEmployee() {
             .join("")
             .toUpperCase(),
           role: primaryRole,
+          password: form.password,
+          candidateStatus: "Pending",
+          department: form.department,
+          designation: form.designation,
+          joiningDate: form.dateOfJoining,
+          manager: form.reportingManager,
           roleAssignments: form.roleAssignments, // ★ persisted alongside the user
           status: "Pending Invite",
           joinedAt: new Date().toISOString(),
@@ -466,9 +484,7 @@ export default function AddEmployee() {
       { value: "branch", label: "Specific branch" },
       { value: "department", label: "Specific department" },
     ];
-    if (assignment.role === "Manager") {
-      opts.push({ value: "team", label: "Specific team" });
-    }
+    opts.push({ value: "team", label: "Specific team" });
     return opts;
   };
 
@@ -618,6 +634,15 @@ export default function AddEmployee() {
                   </p>
                 )}
               </div>
+              <div>
+                <label className={labelCls}>Password</label>
+                <input type="password" className={inputCls} value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} placeholder="Minimum 8 characters" />
+              </div>
+              <div>
+                <label className={labelCls}>Confirm Password</label>
+                <input type="password" className={inputCls} value={form.confirmPassword} onChange={(e) => setForm((f) => ({ ...f, confirmPassword: e.target.value }))} placeholder="Re-enter password" />
+                {form.confirmPassword && form.password !== form.confirmPassword && <p className="text-xs text-rose-500 font-bold mt-1.5">Passwords do not match.</p>}
+              </div>
             </div>
 
             {/* Roles Dropdown Select */}
@@ -645,8 +670,7 @@ export default function AddEmployee() {
                   <option value="">Loading roles...</option>
                 ) : (assignableRoles || []).length === 0 ? (
                   <option value="">
-                    You don't have permission to assign additional roles.
-                    Contact your Admin if this employee needs elevated access.
+                    No active roles are currently available.
                   </option>
                 ) : (
                   <>
@@ -660,8 +684,37 @@ export default function AddEmployee() {
                 )}
               </select>
               <p className="text-[11px] text-slate-400 mt-2 font-medium">
-                You can only assign roles at or below your own level of access.
+                Roles and permissions are loaded from Roles &amp; Permissions.
               </p>
+
+              {selectedRole && (
+                <section
+                  aria-live="polite"
+                  className="mt-4 rounded-2xl border border-slate-100 bg-slate-50/70 p-4"
+                >
+                  <h3 className="text-xs font-black uppercase tracking-wider text-slate-600">
+                    Assigned Permissions
+                  </h3>
+                  <p className="mt-1 text-[11px] font-medium text-slate-400">
+                    Read-only permissions configured for {selectedRole.label}.
+                  </p>
+                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {Object.entries(permissionGroups).map(([module, actions]) => (
+                      <div key={module} className="rounded-xl bg-white p-3 border border-slate-100">
+                        <h4 className="text-xs font-bold text-slate-700">{module}</h4>
+                        <ul className="mt-2 space-y-1">
+                          {actions.map((action) => (
+                            <li key={`${module}-${action}`} className="flex items-center gap-2 text-xs text-slate-500">
+                              <Check size={13} className="shrink-0 text-emerald-500" />
+                              {action}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
 
               {/* Scope pickers — only shown once a role is checked */}
               {(form.roleIds || []).length > 0 && (
@@ -747,12 +800,7 @@ export default function AddEmployee() {
               >
                 <option value="">Unassigned / Direct Report</option>
                 {employeesList
-                  .filter(
-                    (e) =>
-                      e.role === "Manager" ||
-                      e.role === "Super Admin" ||
-                      e.role === "HR Manager",
-                  )
+                  .filter((e) => e.status !== "Inactive")
                   .map((mgr) => (
                     <option key={mgr.id} value={mgr.name}>
                       {mgr.name} ({mgr.designation})
@@ -1157,7 +1205,7 @@ export default function AddEmployee() {
                 <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-xl mb-4 border border-amber-100">
                   <Lock className="text-amber-600" size={14} />
                   <p className="text-[11px] text-amber-800/80 font-bold">
-                    Sensitive Information: Only Admin and HR Managers can edit.
+                    Sensitive information can only be edited by authorized users.
                     All updates are logged in the Audit Log.
                   </p>
                 </div>

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { showToast } from "../../../components/workflow/ToastNotification";
-import { ExitEmployee, ExitType } from "../types/offboarding.types";
-import { EXITS } from "../data/mockExits";
-import { getExitDocuments, OFFBOARDING_EXITS_KEY, OFFBOARDING_UPDATED_EVENT, verifyExitDocument } from "../services/offboardingWorkflow";
+import { ExitEmployee, ExitType, OffboardingTemplate } from "../types/offboarding.types";
+import { createOffboardingRecord, getExitDocuments, OFFBOARDING_EXITS_KEY, OFFBOARDING_UPDATED_EVENT, persistOffboardingRecord, verifyExitDocument } from "../services/offboardingWorkflow";
+import { OFFBOARDING_MOCK_TEMPLATES } from "../constants/mockTemplates";
 
 const withSharedDocuments = (exit: ExitEmployee): ExitEmployee => {
   const employeeDocuments = getExitDocuments(exit.name);
@@ -22,8 +22,21 @@ export function useOffboarding() {
         console.error(e);
       }
     }
-    return EXITS.map(withSharedDocuments);
+    return [];
   });
+
+  const [templates, setTemplates] = useState<OffboardingTemplate[]>(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("viyan_offboarding_templates") || "[]") as OffboardingTemplate[];
+      return saved.length ? saved : OFFBOARDING_MOCK_TEMPLATES;
+    } catch {
+      return [];
+    }
+  });
+
+  const [showTemplateEditor, setShowTemplateEditor] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<string | null>(null);
+  const [showTemplateMenu, setShowTemplateMenu] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem(OFFBOARDING_EXITS_KEY, JSON.stringify(exits));
@@ -32,8 +45,15 @@ export function useOffboarding() {
   useEffect(() => {
     const refresh = () => {
       const saved = localStorage.getItem(OFFBOARDING_EXITS_KEY);
-      if (!saved) return;
-      try { setExits(JSON.parse(saved).map(withSharedDocuments)); } catch { /* keep last valid state */ }
+      if (saved) {
+        try { setExits(JSON.parse(saved).map(withSharedDocuments)); } catch { /* keep last valid state */ }
+      }
+      try {
+        const savedTemplates = JSON.parse(localStorage.getItem("viyan_offboarding_templates") || "[]") as OffboardingTemplate[];
+        setTemplates(savedTemplates.length ? savedTemplates : OFFBOARDING_MOCK_TEMPLATES);
+      } catch {
+        // ignore
+      }
     };
     window.addEventListener(OFFBOARDING_UPDATED_EVENT, refresh);
     window.addEventListener("storage", refresh);
@@ -84,12 +104,18 @@ export function useOffboarding() {
     );
   };
 
-  const handleSignOff = (exitId: string, dept: string) => {
-    setExits((prev) =>
-      prev.map((e) => {
+  const handleSignOff = (exitId: string, dept: string, approvedBy: string, comments: string) => {
+    const now = new Date();
+    const approvedDate = now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const approvedTime = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    const timelineDate = now.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+    const updatedExits = exits.map((e) => {
         if (e.id !== exitId) return e;
         const clearance = e.clearance.map((c) =>
-          c.dept === dept ? { ...c, status: "cleared" as const } : c,
+          c.dept === dept
+            ? { ...c, status: "cleared" as const, approvedBy, approvedDate, approvedTime, comments }
+            : c,
         );
 
         const clearedCount = clearance.filter(
@@ -114,9 +140,23 @@ export function useOffboarding() {
         const progress = Math.round(
           clearanceWeight + assetsWeight + docsWeight,
         );
-        return { ...e, clearance, progress };
-      }),
-    );
+
+        const timeline = [
+          ...e.timeline,
+          {
+            label: `${dept} Clearance Signed Off`,
+            date: timelineDate,
+            status: "done" as const,
+          },
+        ];
+
+        return { ...e, clearance, progress, timeline };
+      });
+    // Persist before notifying other workspaces so their refresh reads the
+    // approved clearance, not the previous localStorage snapshot.
+    localStorage.setItem(OFFBOARDING_EXITS_KEY, JSON.stringify(updatedExits));
+    setExits(updatedExits);
+    window.dispatchEvent(new Event(OFFBOARDING_UPDATED_EVENT));
     showToast("Clearance Sign-Off", "success", `${dept} clearance signed off.`);
   };
 
@@ -419,6 +459,127 @@ export function useOffboarding() {
     setExits((prev) => [newExit, ...prev]);
   };
 
+  const handleAssignTemplate = (exitId: string, templateId: string) => {
+    const tpl = templates.find((t) => t.id === templateId);
+    if (!tpl) {
+      showToast("Template not found", "error", "The selected offboarding template could not be loaded.");
+      return;
+    }
+    const emp = exits.find((e) => e.id === exitId);
+    if (!emp) return;
+
+    const clearanceStyle: Record<string, { icon: string; color: string; bgColor: string }> = {
+      Manager: { icon: "User", color: "#00B87C", bgColor: "#DCFCE7" },
+      IT: { icon: "Laptop", color: "#0EA5E9", bgColor: "#E0F2FE" },
+      Finance: { icon: "Briefcase", color: "#F59E0B", bgColor: "#FEF3C7" },
+      HR: { icon: "User", color: "#8B5CF6", bgColor: "#EDE9FE" },
+      Admin: { icon: "ShieldCheck", color: "#14B8A6", bgColor: "#CCFBF1" },
+    };
+
+    const generatedClearances = (tpl.clearances || []).map((c) => ({
+      dept: c.dept,
+      person: c.person || "Department Lead",
+      status: "pending" as const,
+      icon: clearanceStyle[c.dept]?.icon || "CheckCircle",
+      color: clearanceStyle[c.dept]?.color || "#64748B",
+      bgColor: clearanceStyle[c.dept]?.bgColor || "#F1F5F9",
+      checklist: c.tasks.map((task) => task.name),
+    }));
+
+    const generatedAssets = (tpl.assets || []).map((a) => ({
+      name: a.name,
+      status: "pending" as const,
+      detail: `Pending return (${a.category})`,
+      owner: a.category === "Accounts" ? "IT" as const : "Admin" as const,
+    }));
+
+    const generatedDocs = (tpl.documents || []).map((d) => ({
+      id: `template-doc-${exitId}-${d.id}`,
+      name: d.name,
+      status: "pending" as const,
+    }));
+
+    const generatedEmployeeTasks = [
+      ...(tpl.knowledgeTransferChecklist || []).map((kt, idx) => ({
+      id: `kt-${idx}`,
+      label: kt,
+      status: "pending" as const,
+      })),
+      ...(tpl.customTasks || [])
+        .filter((task) => task.owner.toLowerCase() === "employee")
+        .map((task) => ({ id: `custom-${task.id}`, label: task.name, status: "pending" as const })),
+      ...(tpl.documents || []).map((document) => ({
+        id: `document-${document.id}`,
+        label: `Upload ${document.name}`,
+        status: "pending" as const,
+      })),
+    ];
+
+    const updatedExits = exits.map((item) =>
+        item.id === exitId
+          ? {
+              ...item,
+              assignedTemplateId: templateId,
+              assignedTemplateVersion: tpl.version,
+              clearance: generatedClearances,
+              assets: generatedAssets,
+              documents: generatedDocs,
+              employeeTasks: generatedEmployeeTasks,
+            }
+          : item
+      );
+    // Persist before notifying. Otherwise consumers refresh against the old
+    // snapshot and only see the confirmation toast, not the assignment.
+    localStorage.setItem(OFFBOARDING_EXITS_KEY, JSON.stringify(updatedExits));
+    setExits(updatedExits);
+
+    showToast("Template Assigned", "success", `Successfully assigned ${tpl.name} exit template.`);
+    window.dispatchEvent(new Event(OFFBOARDING_UPDATED_EVENT));
+  };
+
+  const saveTemplate = (tpl: OffboardingTemplate) => {
+    setTemplates((prev) => {
+      const existing = prev.find((t) => t.id === tpl.id);
+      const next = existing
+        ? prev.map((t) => t.id === tpl.id ? { ...tpl, version: t.version + 1 } : t)
+        : [...prev, { ...tpl, id: tpl.id || `exit-template-${Date.now()}`, version: 1 }];
+      localStorage.setItem("viyan_offboarding_templates", JSON.stringify(next));
+      return next;
+    });
+    window.dispatchEvent(new Event("viyan:offboarding-updated"));
+    showToast("Template Saved", "success", "The offboarding template is ready for assignment.");
+  };
+
+  const deleteTemplate = (id: string) => {
+    setTemplates((prev) => {
+      const next = prev.filter((t) => t.id !== id);
+      localStorage.setItem("viyan_offboarding_templates", JSON.stringify(next));
+      return next;
+    });
+    window.dispatchEvent(new Event("viyan:offboarding-updated"));
+    showToast("Template Deleted", "success", "The offboarding template has been deleted.");
+  };
+
+  const handleDuplicateTemplate = (id: string) => {
+    const source = templates.find((t) => t.id === id);
+    if (source) {
+      const duplicated: OffboardingTemplate = {
+        ...source,
+        id: `exit-template-${Date.now()}`,
+        name: `${source.name} (Copy)`,
+        status: "draft",
+        version: 1
+      };
+      setTemplates((prev) => {
+        const next = [...prev, duplicated];
+        localStorage.setItem("viyan_offboarding_templates", JSON.stringify(next));
+        return next;
+      });
+      window.dispatchEvent(new Event("viyan:offboarding-updated"));
+      showToast("Template Duplicated", "success", "Template duplicated as a draft.");
+    }
+  };
+
   return {
     exits,
     stats,
@@ -434,5 +595,11 @@ export function useOffboarding() {
     handleCompleteInterview,
     handleInitiateExit,
     addApprovedExit,
+    templates,
+    showTemplateEditor, setShowTemplateEditor,
+    editingTemplate, setEditingTemplate,
+    showTemplateMenu, setShowTemplateMenu,
+    saveTemplate, deleteTemplate, handleDuplicateTemplate,
+    handleAssignTemplate,
   };
 }

@@ -91,6 +91,7 @@ export const ROLE_TEMPLATES: Record<SystemRoleId, RoleTemplate> = {
       P.EMPLOYEES_VIEW,
       P.EMPLOYEES_MANAGE,
       P.EMPLOYEES_CREATE,
+      P.EMPLOYEES_DELETE,
       // Departments — full
       P.DEPARTMENTS_FULL,
       P.DEPARTMENTS_VIEW,

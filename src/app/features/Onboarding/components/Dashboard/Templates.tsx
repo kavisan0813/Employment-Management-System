@@ -1,10 +1,10 @@
 import { MoreVertical, Edit3, Copy, Trash2 } from "lucide-react";
 import { motion } from "motion/react";
 import type { Template } from "../../types/onboarding.types";
-import { TEMPLATES } from "../../constants/templates";
 import { DepartmentBadge } from "../shared/DepartmentBadge";
 
 interface TemplatesProps {
+  templates: Template[];
   showTemplateMenu: string | null;
   setShowTemplateMenu: (id: string | null) => void;
   setEditingTemplate: (id: string | null) => void;
@@ -16,7 +16,7 @@ interface TemplatesProps {
 export function Templates({
   showTemplateMenu, setShowTemplateMenu,
   setEditingTemplate, setShowTemplateEditor,
-  handleDuplicateTemplate, handleDeleteTemplate,
+  handleDuplicateTemplate, handleDeleteTemplate, templates,
 }: TemplatesProps) {
   return (
     <motion.div
@@ -37,8 +37,19 @@ export function Templates({
           + Create Template
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {TEMPLATES.map((tpl) => (
+      {templates.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-border px-6 py-14 text-center">
+          <h4 className="font-bold text-foreground mb-1">No Onboarding Templates Found</h4>
+          <p className="text-sm text-muted-foreground mb-5">Create your first onboarding template to begin assigning onboarding workflows to employees.</p>
+          <button
+            onClick={() => { setShowTemplateEditor(true); setEditingTemplate(null); }}
+            className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-md mx-auto"
+          >
+            Create Template
+          </button>
+        </div>
+      ) : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {templates.map((tpl) => (
           <div
             key={tpl.id}
             className="relative p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
@@ -93,7 +104,7 @@ export function Templates({
             </button>
           </div>
         ))}
-      </div>
+      </div>}
     </motion.div>
   );
 }

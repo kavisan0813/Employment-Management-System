@@ -1,13 +1,16 @@
-import { useState } from "react";
-import type { NewHire, OnboardingPhase, DocumentItem, PhaseTask } from "../types/onboarding.types";
+import { useEffect, useState } from "react";
+import type { NewHire, OnboardingPhase, DocumentItem, PhaseTask, Template } from "../types/onboarding.types";
 import { safeGet, safeSet, initials, formatDate } from "../utils/helpers";
 import { showToast } from "../../../components/workflow/ToastNotification";
 
-// Mock data
-import { NEW_HIRES } from "../constants/employees";
-import { DEFAULT_PHASES_DATA } from "../constants/phases";
-import { DOCUMENTS_DATA } from "../constants/documents";
-import { TEMPLATES } from "../constants/templates";
+import { ROLE_TEMPLATES } from "../../../shared/permission-engine/roles";
+import { INITIAL_DEPARTMENTS } from "../../Department/constants/department.constants";
+import { DEFAULT_ONBOARDING_TEMPLATES } from "../constants/defaultOnboardingTemplate";
+import { ONBOARDING_MOCK_TEMPLATES } from "../constants/mockTemplates";
+
+const readStore = <T,>(key: string, fallback: T): T => {
+  try { return JSON.parse(localStorage.getItem(key) || "") as T; } catch { return fallback; }
+};
 
 export function useOnboarding() {
   /* ─── Core selection ─── */
@@ -36,7 +39,7 @@ export function useOnboarding() {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [formEmployee, setFormEmployee] = useState("");
   const [formJoinDate, setFormJoinDate] = useState("");
-  const [formDept, setFormDept] = useState("Engineering");
+  const [formDept, setFormDept] = useState("");
   const [formDesig, setFormDesig] = useState("");
   const [formManager, setFormManager] = useState("");
   const [formEmpType, setFormEmpType] = useState("Full-time");
@@ -50,14 +53,45 @@ export function useOnboarding() {
   const [inlineTaskOwner, setInlineTaskOwner] = useState("HR");
   const [inlineTaskDueDate, setInlineTaskDueDate] = useState("");
 
+  /* Templates are intentionally unseeded. This storage shape is backend-ready
+     and is the single source for the dashboard, assignment flow and portals. */
+  const [templates, setTemplates] = useState<Template[]>(() => readStore<Template[]>("viyan_onboarding_templates", DEFAULT_ONBOARDING_TEMPLATES));
+  const [departments, setDepartments] = useState(() => {
+    const list = readStore<Array<{ name?: string }>>("viyan_departments", []);
+    const source = list.length > 0 ? list : INITIAL_DEPARTMENTS;
+    return source.map((department) => department.name || "").filter(Boolean);
+  });
+  const taskOwners = Object.values(ROLE_TEMPLATES).filter((role) => role.isSystemRole).map((role) => role.name);
+
   /* ─── Data ─── */
-  const [phasesData, setPhasesData] = useState(DEFAULT_PHASES_DATA);
-  const [newHires, setNewHires] = useState(NEW_HIRES);
-  const [documents, setDocuments] = useState(DOCUMENTS_DATA);
+  const [phasesData, setPhasesData] = useState(() => readStore<Record<string, OnboardingPhase[]>>("viyan_onboarding_phases", {}));
+  // The queue has no seed data: an employee account + joining date must create it.
+  const [newHires, setNewHires] = useState<NewHire[]>(() => readStore<NewHire[]>("viyan_onboarding_queue", []));
+  const [documents, setDocuments] = useState<DocumentItem[]>(() => readStore<DocumentItem[]>("viyan_onboarding_documents", []));
+
+  useEffect(() => { localStorage.setItem("viyan_onboarding_queue", JSON.stringify(newHires)); }, [newHires]);
+  useEffect(() => { localStorage.setItem("viyan_onboarding_phases", JSON.stringify(phasesData)); }, [phasesData]);
+  useEffect(() => { localStorage.setItem("viyan_onboarding_documents", JSON.stringify(documents)); }, [documents]);
+  useEffect(() => { localStorage.setItem("viyan_onboarding_templates", JSON.stringify(templates)); }, [templates]);
+  useEffect(() => {
+    const syncWorkflow = (event: StorageEvent | Event) => {
+      if (event instanceof StorageEvent && event.key && !["viyan_onboarding_queue", "viyan_onboarding_phases", "viyan_onboarding_documents", "viyan_onboarding_templates", "viyan_departments"].includes(event.key)) return;
+      setNewHires(readStore<NewHire[]>("viyan_onboarding_queue", []));
+      setPhasesData(readStore<Record<string, OnboardingPhase[]>>("viyan_onboarding_phases", {}));
+      setDocuments(readStore<DocumentItem[]>("viyan_onboarding_documents", []));
+      setTemplates(readStore<Template[]>("viyan_onboarding_templates", DEFAULT_ONBOARDING_TEMPLATES));
+      const savedDepts = readStore<Array<{ name?: string }>>("viyan_departments", []);
+      const source = savedDepts.length > 0 ? savedDepts : INITIAL_DEPARTMENTS;
+      setDepartments(source.map((department) => department.name || "").filter(Boolean));
+    };
+    window.addEventListener("storage", syncWorkflow);
+    window.addEventListener("viyan:onboarding-updated", syncWorkflow);
+    return () => { window.removeEventListener("storage", syncWorkflow); window.removeEventListener("viyan:onboarding-updated", syncWorkflow); };
+  }, []);
 
   /* ─── Computed ─── */
-  const selected = newHires.find((n) => n.id === selectedId) || newHires[0] || NEW_HIRES[0];
-  const phases = safeGet<OnboardingPhase[]>(phasesData, selected.id) || phasesData.nh1;
+  const selected = newHires.find((n) => n.id === selectedId) || newHires[0];
+  const phases = selected ? safeGet<OnboardingPhase[]>(phasesData, selected.id) || [] : [];
 
   const filteredList = newHires
     .filter((n) => {
@@ -90,13 +124,13 @@ export function useOnboarding() {
     const completed = hirePhases.flatMap((p) => p.tasks).filter((t) => t.status === "done").length;
     const total = hirePhases.flatMap((p) => p.tasks).length;
     const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-    setNewHires((prev) =>
-      prev.map((nh) =>
+    const next = newHires.map((nh) =>
         nh.id === hireId
           ? { ...nh, progress, status: progress === 100 ? "complete" : nh.status }
           : nh,
-      ),
-    );
+      );
+    setNewHires(next);
+    localStorage.setItem("viyan_onboarding_queue", JSON.stringify(next));
   };
 
   /* ─── Handlers ─── */
@@ -163,6 +197,8 @@ export function useOnboarding() {
       recalcProgress(selectedId, hirePhases);
     }
     setPhasesData(updated);
+    localStorage.setItem("viyan_onboarding_phases", JSON.stringify(updated));
+    window.dispatchEvent(new Event("viyan:onboarding-updated"));
   };
 
   const handleSendReminder = () => {
@@ -204,7 +240,18 @@ export function useOnboarding() {
       showToast("Error", "error", "Please select or enter an employee name.");
       return;
     }
+    const assignedTemplate = templates.find((template) => template.id === selectedTemplate && template.status === "active" && template.dept === formDept);
+    if (!assignedTemplate) {
+      showToast("Template required", "error", "Select an active template that matches the employee's department.");
+      return;
+    }
     const newId = `nh${Date.now()}`;
+    const resolvedEmail = (() => {
+      const users = JSON.parse(localStorage.getItem("viyan_registered_users") || "[]");
+      const match = users.find((u: any) => u.name.toLowerCase() === formEmployee.toLowerCase());
+      return match?.email || `${formEmployee.toLowerCase().replace(/\s+/g, ".")}@viyanhr.com`;
+    })();
+
     const newHire: NewHire = {
       id: newId,
       initials: initials(formEmployee),
@@ -220,24 +267,46 @@ export function useOnboarding() {
       daysInOnboarding: 0,
       expectedCompletion: "Apr 29, 2026",
       manager: formManager || "Arun Nair",
+      assignedTemplateId: selectedTemplate || undefined,
+      email: resolvedEmail,
     };
 
-    const newPhases: OnboardingPhase[] = [
-      {
-        id: "p1",
-        name: "Pre-Joining",
-        status: "in-progress",
-        date: "Apr 5, 2026",
-        tasks: [
-          { id: "t1", task: "Welcome email sent", owner: "HR", dueDate: "Apr 1", status: "pending", assignee: "HR Team" },
-          { id: "t2", task: "Offer letter signed", owner: "Employee", dueDate: "Apr 2", status: "pending", assignee: formEmployee },
-          { id: "t3", task: "Background verification completed", owner: "HR", dueDate: "Apr 3", status: "pending", assignee: "HR Team" },
-        ],
-      },
-    ];
+    const newPhases: OnboardingPhase[] = (assignedTemplate.sections || []).map((section, index) => ({
+      id: `phase-${newId}-${section.id}`,
+      name: section.name,
+      status: index === 0 ? "in-progress" : "upcoming",
+      date: formJoinDate || new Date().toISOString().split("T")[0],
+      tasks: section.tasks.map((task) => ({ id: `task-${newId}-${task.id}`, task: task.name, owner: task.owner, dueDate: "To be scheduled", status: "pending", assignee: task.owner === "Employee" ? formEmployee : task.owner })),
+    }));
 
-    setPhasesData((prev) => safeSet(prev, newId, newPhases) as Record<string, OnboardingPhase[]>);
-    setNewHires((prev) => [newHire, ...prev]);
+    // Generate required documents from the template
+    const generatedDocs: DocumentItem[] = (assignedTemplate.documents || []).map((doc) => ({
+      id: `doc-${newId}-${doc.id}`,
+      employeeId: newId,
+      name: doc.name,
+      status: "pending",
+      mandatory: doc.mandatory,
+      maxSize: doc.maxSize,
+      allowedTypes: doc.allowedTypes,
+      needVerification: doc.needVerification,
+      visibleToEmployee: doc.visibleToEmployee,
+    }));
+
+    // Save phases and documents to state and localStorage
+    const updatedPhasesData = safeSet(phasesData, newId, newPhases) as Record<string, OnboardingPhase[]>;
+    setPhasesData(updatedPhasesData);
+    localStorage.setItem("viyan_onboarding_phases", JSON.stringify(updatedPhasesData));
+    
+    const allDocs = readStore<DocumentItem[]>("viyan_onboarding_documents", []);
+    const mergedDocs = [...allDocs, ...generatedDocs];
+    setDocuments(mergedDocs);
+    localStorage.setItem("viyan_onboarding_documents", JSON.stringify(mergedDocs));
+
+    const updatedQueue = [newHire, ...newHires];
+    setNewHires(updatedQueue);
+    localStorage.setItem("viyan_onboarding_queue", JSON.stringify(updatedQueue));
+
+    window.dispatchEvent(new Event("viyan:onboarding-updated"));
     setSelectedId(newId);
 
     showToast("Onboarding Launched", "success", `Onboarding launched for ${formEmployee}!`);
@@ -287,16 +356,106 @@ export function useOnboarding() {
   };
 
   const handleDuplicateTemplate = (id: string) => {
-    if (id) showToast("Template Duplicated", "success", "Template duplicated successfully.");
+    const source = templates.find((template) => template.id === id);
+    if (source) {
+      setTemplates((current) => [...current, { ...source, id: `tpl-${Date.now()}`, name: `${source.name} (Copy)`, status: "draft", usageCount: 0, version: 1 }]);
+      showToast("Template Duplicated", "success", "Template duplicated as a draft.");
+    }
     setShowTemplateMenu(null);
   };
 
   const handleDeleteTemplate = (id: string) => {
-    if (id) showToast("Template Deleted", "success", "Template deleted.");
+    setTemplates((current) => current.filter((template) => template.id !== id));
+    showToast("Template Deleted", "success", "Template deleted.");
     setShowTemplateMenu(null);
   };
 
+  const handleAssignTemplate = (employeeId: string, templateId: string) => {
+    const tpl = templates.find((t) => t.id === templateId);
+    if (!tpl) {
+      showToast("Template not found", "error", "The selected template could not be loaded.");
+      return;
+    }
+    const emp = newHires.find((h) => h.id === employeeId);
+    if (!emp) return;
+
+    // Generate phases from sections
+    const generatedPhases: OnboardingPhase[] = (tpl.sections || []).map((sec, idx) => ({
+      id: `phase-${employeeId}-${sec.id}`,
+      name: sec.name,
+      status: idx === 0 ? "in-progress" : "upcoming",
+      date: emp.joiningDate,
+      tasks: sec.tasks.map((task) => ({
+        id: `task-${employeeId}-${task.id}`,
+        task: task.name,
+        owner: task.owner,
+        dueDate: `Within ${task.dueDays || 3} days`,
+        status: "pending",
+        assignee: task.owner === "Employee" ? emp.name : `${task.owner} Team`,
+        priority: task.priority as any || "Medium",
+        mandatory: task.mandatory,
+        description: task.description,
+      })),
+    }));
+
+    // Generate documents list
+    const generatedDocs: DocumentItem[] = (tpl.documents || []).map((doc) => ({
+      id: `doc-${employeeId}-${doc.id}`,
+      employeeId,
+      name: doc.name,
+      status: "pending",
+      mandatory: doc.mandatory,
+      maxSize: doc.maxSize,
+      allowedTypes: doc.allowedTypes,
+      needVerification: doc.needVerification,
+      visibleToEmployee: doc.visibleToEmployee,
+    }));
+
+    // Save back to localStorage
+    const updatedPhases = { ...phasesData, [employeeId]: generatedPhases };
+    setPhasesData(updatedPhases);
+    localStorage.setItem("viyan_onboarding_phases", JSON.stringify(updatedPhases));
+
+    // Append to viyan_onboarding_documents list
+    const allDocs = readStore<DocumentItem[]>("viyan_onboarding_documents", []);
+    const mergedDocs = [...allDocs, ...generatedDocs];
+    setDocuments(mergedDocs);
+    localStorage.setItem("viyan_onboarding_documents", JSON.stringify(mergedDocs));
+
+    // Update employee template link and email
+    const updatedQueue = newHires.map((nh) =>
+      nh.id === employeeId
+        ? {
+            ...nh,
+            assignedTemplateId: templateId,
+            status: "on-track" as const,
+            email: nh.email || (() => {
+              const users = JSON.parse(localStorage.getItem("viyan_registered_users") || "[]");
+              const match = users.find((u: any) => u.name.toLowerCase() === nh.name.toLowerCase());
+              return match?.email || `${nh.name.toLowerCase().replace(/\s+/g, ".")}@viyanhr.com`;
+            })()
+          }
+        : nh
+    );
+    setNewHires(updatedQueue);
+    localStorage.setItem("viyan_onboarding_queue", JSON.stringify(updatedQueue));
+
+    showToast("Template Assigned", "success", `Successfully assigned ${tpl.name} to ${emp.name}!`);
+    window.dispatchEvent(new Event("viyan:onboarding-updated"));
+  };
+
+  const saveTemplate = (template: Template) => {
+    setTemplates((current) => {
+      const existing = current.find((item) => item.id === template.id);
+      return existing
+        ? current.map((item) => item.id === template.id ? { ...template, version: (item.version || 1) + 1 } : item)
+        : [...current, { ...template, id: `tpl-${Date.now()}`, version: 1, usageCount: 0 }];
+    });
+    showToast("Template Saved", "success", "The template is ready for assignment.");
+  };
+
   return {
+    handleAssignTemplate,
     // Selection
     selectedId, setSelectedId, activeTab, setActiveTab,
     workspaceTab, setWorkspaceTab,
@@ -329,7 +488,7 @@ export function useOnboarding() {
     inlineTaskOwner, setInlineTaskOwner,
     inlineTaskDueDate, setInlineTaskDueDate,
     // Data
-    newHires, documents,
+    newHires, documents, templates, departments, taskOwners,
     // Computed
     selected, phases, filteredList,
     activeCount, preJoiningCount, completedCount,
@@ -340,6 +499,6 @@ export function useOnboarding() {
     handleUploadClick, handleConfirmUpload, handleViewDoc,
     handleLaunchOnboarding, handleDownloadReport,
     handleMarkPhaseComplete, confirmPhaseComplete, confirmEscalate,
-    handleDuplicateTemplate, handleDeleteTemplate,
+    handleDuplicateTemplate, handleDeleteTemplate, saveTemplate,
   };
 }

@@ -203,12 +203,6 @@ export function Employees() {
     // Employee can edit self
     if (emp.email.toLowerCase() === user?.email?.toLowerCase()) return true;
 
-    // Check if the current user has a Manager role assignment
-    const hasManagerRole = roleAssignments.some(
-      (a) => a.roleId === ROLE_IDS.DEPT_MANAGER && a.isActive,
-    );
-    if (hasManagerRole) return true;
-
     // Manager can edit department members (department scope fallback)
     if (scope === "department") {
       const dept = currentEmp?.department || "";
@@ -227,15 +221,15 @@ export function Employees() {
   };
 
   const canDeactivate = () => {
-    // Super Admin / HR Manager can deactivate
     return (
       hasPermissionKey(P.EMPLOYEES_MANAGE) || hasPermissionKey(P.EMPLOYEES_FULL)
     );
   };
 
   const canDelete = () => {
-    // Super Admin only (Legacy delete constraint)
-    return user?.role === "Super Admin";
+    return (
+      hasPermissionKey(P.EMPLOYEES_DELETE) || hasPermissionKey(P.EMPLOYEES_FULL)
+    );
   };
 
   const uniqueDesignations = useMemo(() => {

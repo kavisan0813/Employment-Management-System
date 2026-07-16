@@ -18,7 +18,9 @@ import {
   CheckSquare,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { publishEmployeeExitAction, uploadExitDocuments } from "../../features/Offboarding/services/offboardingWorkflow";
+import { useAuth } from "../../context/AuthContext";
+import { OFFBOARDING_EXITS_KEY, OFFBOARDING_UPDATED_EVENT, publishEmployeeExitAction, uploadExitDocuments } from "../../features/Offboarding/services/offboardingWorkflow";
+import type { ExitEmployee } from "../../features/Offboarding/types/offboarding.types";
 
 /* ─── Types ─── */
 export type WorkflowStatus =
@@ -34,6 +36,7 @@ export interface ResignationDetails {
   noticePeriod: string;
   reason: string;
   comments: string;
+  manager?: string;
 }
 
 export interface TimelineEvent {
@@ -484,7 +487,7 @@ function StatusTracker({
                 <div className="flex items-center gap-2">
                   <User size={14} className="text-muted-foreground" />
                   <p className="text-[14px] font-bold text-foreground">
-                    Suresh Iyer
+                    {details?.manager || "Sarah Chen"}
                   </p>
                 </div>
               </div>
@@ -552,6 +555,8 @@ function StatusTracker({
 
 /* ─── Main Component ─── */
 export function EmployeeExit() {
+  const { user } = useAuth();
+  const employeeName = user?.name || "Priya Sharma";
   const [workflowStatus, setWorkflowStatus] = useState<WorkflowStatus>("draft");
   const [resignationDetails, setResignationDetails] =
     useState<ResignationDetails | null>(null);
@@ -565,8 +570,43 @@ export function EmployeeExit() {
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [signatureComplete, setSignatureComplete] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [assignedExit, setAssignedExit] = useState<ExitEmployee | null>(null);
+  const [uploadTaskId, setUploadTaskId] = useState<string | null>(null);
+  const [uploadDocumentName, setUploadDocumentName] = useState("Clearance_Doc_1.pdf");
 
   useEffect(() => { localStorage.setItem("viyan_employee_exit_tasks", JSON.stringify(tasks)); }, [tasks]);
+
+  useEffect(() => {
+    const syncAssignedExit = () => {
+      try {
+        const exits = JSON.parse(localStorage.getItem(OFFBOARDING_EXITS_KEY) || "[]") as ExitEmployee[];
+        const exit = exits.find((item) => item.name === employeeName);
+        if (!exit?.assignedTemplateId) return;
+        setAssignedExit(exit);
+        setTasks((exit.employeeTasks || []).map((task) => ({
+          id: task.id,
+          label: task.label,
+          description: "Assigned as part of your exit template",
+          responsible: "You",
+          responsibleChip: "You",
+          status: task.status,
+          actionLabel: task.id.startsWith("document-") ? "Upload" : "Complete",
+          actionType: "btn" as const,
+          completedDate: task.completedAt,
+        })));
+        setUploadedFiles(exit.documents.filter((document) => document.status === "uploaded").map((document) => document.name));
+      } catch {
+        // Keep the existing exit page state when storage is unavailable.
+      }
+    };
+    syncAssignedExit();
+    window.addEventListener(OFFBOARDING_UPDATED_EVENT, syncAssignedExit);
+    window.addEventListener("storage", syncAssignedExit);
+    return () => {
+      window.removeEventListener(OFFBOARDING_UPDATED_EVENT, syncAssignedExit);
+      window.removeEventListener("storage", syncAssignedExit);
+    };
+  }, [employeeName]);
 
   useEffect(() => {
     const checkRequest = () => {
@@ -574,7 +614,7 @@ export function EmployeeExit() {
       if (saved) {
         try {
           const requests = JSON.parse(saved);
-          const priyaReq = requests.find((r: any) => r.employeeName === "Priya Sharma");
+          const priyaReq = requests.find((r: any) => r.employeeName === employeeName);
           if (priyaReq) {
             setWorkflowStatus(priyaReq.status);
             setResignationDetails({
@@ -599,7 +639,7 @@ export function EmployeeExit() {
       window.removeEventListener("storage", checkRequest);
       clearInterval(interval);
     };
-  }, []);
+  }, [employeeName]);
 
   const doneCount = tasks.filter((t) => t.status === "done").length;
   const totalCount = tasks.length;
@@ -607,8 +647,9 @@ export function EmployeeExit() {
 
   const handleUpload = (files: string[]) => {
     setUploadedFiles((prev) => [...prev, ...files]);
-    uploadExitDocuments("Priya Sharma", files);
-    completeTask("t3");
+    uploadExitDocuments(employeeName, files);
+    completeTask(uploadTaskId || "t3");
+    setUploadTaskId(null);
     setShowUploadModal(false);
   };
 
@@ -617,11 +658,13 @@ export function EmployeeExit() {
     if (!task || task.status === "done") return;
     const completedDate = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" });
     setTasks((previous) => previous.map((item) => item.id === taskId ? { ...item, status: "done", completedDate } : item));
-    publishEmployeeExitAction("Priya Sharma", { id: task.id, label: task.label, status: "done", completedAt: completedDate });
+    publishEmployeeExitAction(employeeName, { id: task.id, label: task.label, status: "done", completedAt: completedDate });
   };
 
   const openModalFor = (task: ExitTask) => {
-    if (task.actionType === "btn" && task.label.includes("Upload")) {
+    if (task.actionType === "btn" && (task.label.includes("Upload") || task.id.startsWith("document-"))) {
+      setUploadTaskId(task.id);
+      setUploadDocumentName(task.label.replace(/^Upload\s+/, "") || "Clearance_Doc_1.pdf");
       setShowUploadModal(true);
     } else if (task.actionType === "btn") {
       completeTask(task.id);
@@ -641,13 +684,16 @@ export function EmployeeExit() {
       {
         id: "ev1",
         action: "Resignation Submitted",
-        performedBy: "Priya Sharma",
+        performedBy: employeeName,
         role: "Employee",
         date: dateStr,
       },
     ];
 
-    setResignationDetails(data);
+    setResignationDetails({
+      ...data,
+      manager: "Sarah Chen",
+    });
     setWorkflowStatus("pending_manager");
     setTimelineEvents(timeline);
 
@@ -661,14 +707,14 @@ export function EmployeeExit() {
       }
     }
 
-    const priyaIndex = requests.findIndex((r: any) => r.employeeName === "Priya Sharma");
+    const priyaIndex = requests.findIndex((r: any) => r.employeeName === employeeName);
     const newRequest = {
       id: `req-${Date.now()}`,
-      employeeName: "Priya Sharma",
+      employeeName: employeeName,
       employeeId: "EMP101",
       department: "Engineering",
       designation: "Software Engineer",
-      manager: "Suresh Iyer",
+      manager: "Sarah Chen",
       joiningDate: "2023-06-15",
       status: "pending_manager" as const,
       resignationDate: data.resignationDate || new Date().toISOString().split("T")[0],
@@ -714,7 +760,25 @@ export function EmployeeExit() {
     );
   }
 
-  // workflowStatus === "approved"
+  if (!assignedExit?.assignedTemplateId) {
+    return (
+      <div className="w-full px-4 md:px-8 py-6 pb-20 space-y-6 animate-in fade-in duration-500">
+        <StatusTracker
+          details={resignationDetails}
+          timeline={timelineEvents}
+          status={workflowStatus}
+        />
+        <div className="p-8 text-center bg-card border border-border rounded-3xl shadow-sm space-y-3">
+          <h3 className="text-sm font-black uppercase text-[#00B87C] tracking-wider animate-pulse">Resignation Approved</h3>
+          <p className="text-xs text-muted-foreground max-w-md mx-auto font-medium">
+            Your resignation request has been approved. The HR department is currently preparing your offboarding checklist and assigning the offboarding template. Please check back shortly.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // workflowStatus === "approved" and template assigned
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
       {/* PAGE HEADER */}
@@ -729,7 +793,7 @@ export function EmployeeExit() {
                 My Exit Checklist
               </h1>
               <span className="px-2.5 py-0.5 rounded-full bg-[#FEE2E2] text-[#EF4444] border border-[#FECACA] text-[11px] font-semibold uppercase tracking-wider">
-                LWD: Apr 10, 2026
+                LWD: {assignedExit?.lwd || "Apr 10, 2026"}
               </span>
             </div>
             <p className="text-[13px] font-semibold text-muted-foreground">

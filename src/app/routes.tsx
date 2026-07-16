@@ -509,17 +509,7 @@ const ManagerTeamAssets = lazy(() =>
     default: m.ManagerTeamAssets,
   })),
 );
-const ManagerExitTasks = lazy(() =>
-  import("./pages/manager/workspace/ManagerExitTasks").then((m) => ({
-    default: m.ManagerExitTasks,
-  })),
-);
-const ITClearance = lazy(() =>
-  import("./pages/it/ITClearance").then((m) => ({ default: m.ITClearance })),
-);
-const HRClearance = lazy(() =>
-  import("./pages/hr/HRClearance").then((m) => ({ default: m.HRClearance })),
-);
+
 const ManagerReports = lazy(() =>
   import("./pages/manager/reports/ManagerReports").then((m) => ({
     default: m.ManagerReports,
@@ -1179,9 +1169,7 @@ export const router = createBrowserRouter([
         path: "manager/team-assets",
         element: protectedRoute(ManagerTeamAssets),
       },
-      { path: "manager/exit-tasks", element: protectedRoute(ManagerExitTasks) },
-      { path: "it/clearance", element: protectedRoute(ITClearance) },
-      { path: "hr/clearance", element: protectedRoute(HRClearance) },
+
       { path: "manager/settings", element: protectedRoute(Settings) },
       {
         path: "manager/team-onboarding",

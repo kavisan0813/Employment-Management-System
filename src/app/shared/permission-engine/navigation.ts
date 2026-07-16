@@ -191,21 +191,6 @@ export const FULL_NAVIGATION: NavGroup[] = [
           P.OFFBOARDING_MANAGE,
         ],
       },
-      {
-        label: "Manager Clearance",
-        path: "/manager/exit-tasks",
-        requiredPermission: P.OFFBOARDING_CLEARANCE_MANAGER,
-      },
-      {
-        label: "IT Clearance",
-        path: "/it/clearance",
-        requiredPermission: P.OFFBOARDING_CLEARANCE_IT,
-      },
-      {
-        label: "HR Clearance",
-        path: "/hr/clearance",
-        requiredPermission: P.OFFBOARDING_CLEARANCE_HR,
-      },
     ],
   },
 
@@ -315,6 +300,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
         label: "Finance Clearance & F&F",
         path: "/finance/settlements",
         requiredPermission: [
+          P.OFFBOARDING_FINANCE_MANAGE,
           P.SETTLEMENTS_FULL,
           P.SETTLEMENTS_MANAGE,
           P.SETTLEMENTS_VIEW,
