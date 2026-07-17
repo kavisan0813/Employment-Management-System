@@ -32,34 +32,16 @@ export function DepartmentGrid({
   onAssignHeadClick,
   onAddClick,
 }: DepartmentGridProps) {
-  const [showMenu, setShowMenu] = useState<string | null>(null);
-
-  const getStatusColor = (status: Department["budgetStatus"]) => {
-    switch (status) {
-      case "green":
-        return "#00B87C";
-      case "amber":
-        return "#F59E0B";
-      case "red":
-        return "#EF4444";
-      default:
-        return "#00B87C";
-    }
-  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {/* Search menu backdrop helper */}
-      {showMenu && (
-        <div className="fixed inset-0 z-20" onClick={() => setShowMenu(null)} />
-      )}
 
       {departments.map((dept) => (
         <div
           key={dept.id}
           className="bg-card rounded-2xl border border-border p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all relative flex flex-col justify-between group"
         >
-          {/* Status / Actions */}
+          {/* Status */}
           <div className="absolute top-4 right-4 flex items-center gap-2">
             <span
               className={`px-2 py-0.5 text-[9px] font-black rounded-full border uppercase tracking-wider ${
@@ -70,57 +52,6 @@ export function DepartmentGrid({
             >
               {dept.status}
             </span>
-
-            <div className="relative">
-              <button
-                className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowMenu(showMenu === dept.id ? null : dept.id);
-                }}
-              >
-                <MoreIcon size={16} />
-              </button>
-
-              {showMenu === dept.id && (
-                <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-lg z-30 py-1 animate-in fade-in slide-in-from-top-1">
-                  <button
-                    className="w-full text-left px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/40"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowMenu(null);
-                      onViewClick(dept);
-                    }}
-                  >
-                    View Department
-                  </button>
-                  {canManage && (
-                    <button
-                      className="w-full text-left px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/40"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowMenu(null);
-                        onEditClick(dept);
-                      }}
-                    >
-                      Edit Department
-                    </button>
-                  )}
-                  {canDelete && (
-                    <button
-                      className="w-full text-left px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowMenu(null);
-                        onDeleteClick(dept);
-                      }}
-                    >
-                      Delete Department
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
           </div>
 
           <div onClick={() => onViewClick(dept)} className="cursor-pointer">
@@ -169,29 +100,11 @@ export function DepartmentGrid({
 
             {/* Finance Details if authorized */}
             {showFinance && (
-              <div className="mb-4 pt-1">
-                <div className="flex items-center justify-between text-[11px] font-bold text-muted-foreground mb-1.5">
-                  <div className="flex items-center gap-1">
-                    <span>Budget Used ({dept.budgetUsedPct}%)</span>
-                    {dept.nearLimit && (
-                      <span className="text-rose-500 flex items-center gap-0.5 bg-rose-500/10 px-1 rounded text-[8px] font-black uppercase tracking-wider">
-                        <AlertTriangle size={9} /> Near limit
-                      </span>
-                    )}
-                  </div>
-                  <span className="font-black text-foreground">
-                    {dept.budgetUsedAmount} / {dept.budgetAmount}
-                  </span>
-                </div>
-                <div className="h-1.5 w-full rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${dept.budgetUsedPct}%`,
-                      backgroundColor: getStatusColor(dept.budgetStatus),
-                    }}
-                  />
-                </div>
+              <div className="mb-4 pt-1 flex items-center justify-between text-[11px] font-bold">
+                <span className="text-muted-foreground">Budget Used</span>
+                <span className="font-black text-foreground">
+                  {dept.budgetUsedAmount}
+                </span>
               </div>
             )}
           </div>

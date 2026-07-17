@@ -21,12 +21,22 @@ interface DepartmentDetailModalProps {
   dept: Department;
   onClose: () => void;
   showFinance: boolean;
+  onEdit: (d: Department) => void;
+  onDelete: (d: Department) => void;
+  onToggleStatus: (d: Department) => void;
+  canEdit: boolean;
+  canDelete: boolean;
 }
 
 export function DepartmentDetailModal({
   dept,
   onClose,
   showFinance,
+  onEdit,
+  onDelete,
+  onToggleStatus,
+  canEdit,
+  canDelete,
 }: DepartmentDetailModalProps) {
   const navigate = useNavigate();
 
@@ -331,28 +341,15 @@ export function DepartmentDetailModal({
               <hr className="border-gray-100 dark:border-zinc-800" />
               <div>
                 <h4 className="text-[18px] font-bold text-gray-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
-                  Budget Utilization
-                  <span className="bg-emerald-500/10 text-emerald-600 px-2.5 py-0.5 rounded-full text-xs font-black">
-                    {dept.budgetUsedPct}% used
-                  </span>
+                  Budget Used
                 </h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-slate-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl p-4 flex flex-col justify-center items-center text-center">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                      Annual Budget
-                    </p>
-                    <p className="text-[20px] font-black text-slate-900 dark:text-zinc-100">
-                      {dept.budgetAmount}
-                    </p>
-                  </div>
-                  <div className="bg-slate-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl p-4 flex flex-col justify-center items-center text-center">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                      Amount Utilized
-                    </p>
-                    <p className="text-[20px] font-black text-slate-900 dark:text-zinc-100">
-                      {dept.budgetUsedAmount}
-                    </p>
-                  </div>
+                <div className="bg-slate-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl p-5 flex flex-col justify-center items-center text-center">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                    Amount Utilized
+                  </p>
+                  <p className="text-[24px] font-black text-slate-900 dark:text-zinc-100">
+                    {dept.budgetUsedAmount}
+                  </p>
                 </div>
               </div>
             </>
@@ -422,13 +419,45 @@ export function DepartmentDetailModal({
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-4 border-t border-gray-100 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900 flex justify-end flex-shrink-0">
-          <button
-            onClick={onClose}
-            className="px-6 py-2.5 rounded-[12px] text-[14px] font-bold text-gray-600 dark:text-zinc-300 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm"
-          >
-            Close Panel
-          </button>
+        <div className="px-8 py-4 border-t border-gray-100 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900 flex justify-end flex-shrink-0 gap-3">
+          {canEdit && (
+            <>
+              <button
+                onClick={() => {
+                  onClose();
+                  onToggleStatus(dept);
+                }}
+                className={`px-4 py-2.5 rounded-[12px] text-[14px] font-bold transition-colors shadow-sm ${
+                  dept.status === "Active"
+                    ? "text-amber-700 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/20 dark:text-amber-400 dark:hover:bg-amber-950/30"
+                    : "text-emerald-700 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:hover:bg-emerald-950/30"
+                }`}
+              >
+                {dept.status === "Active" ? "Deactivate" : "Activate"}
+              </button>
+              <button
+                onClick={() => {
+                  onClose();
+                  onEdit(dept);
+                }}
+                className="px-4 py-2.5 rounded-[12px] text-[14px] font-bold text-white bg-[#00B87C] hover:bg-[#00a36d] transition-colors shadow-sm"
+              >
+                Edit Department
+              </button>
+            </>
+          )}
+
+          {canDelete && (
+            <button
+              onClick={() => {
+                onClose();
+                onDelete(dept);
+              }}
+              className="px-4 py-2.5 rounded-[12px] text-[14px] font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 dark:text-rose-400 dark:hover:bg-rose-950/30 transition-colors shadow-sm"
+            >
+              Delete
+            </button>
+          )}
         </div>
       </div>
     </div>

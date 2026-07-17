@@ -27,6 +27,12 @@ export interface Department {
   changeHistory?: ChangeRecord[];
 
   // Finance fields
+  status: "Active" | "Inactive";
+  budgetAmount?: string;
+  budgetUsedPct?: number;
+  budgetUsedAmount?: string;
+  budgetStatus?: "green" | "amber" | "red";
+  nearLimit?: boolean;
 }
 
 export interface DepartmentInput extends Omit<Department, "id" | "employees" | "activeEmployees" | "onLeaveEmployees" | "growth"> {}

@@ -1,6 +1,11 @@
 /* ─── Onboarding Types ─── */
 
-export type NewHireStatus = "on-track" | "delayed" | "at-risk" | "pre-joining" | "complete";
+export type NewHireStatus =
+  | "on-track"
+  | "delayed"
+  | "at-risk"
+  | "pre-joining"
+  | "complete";
 
 export interface NewHire {
   id: string;

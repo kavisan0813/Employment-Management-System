@@ -13,8 +13,8 @@ export function DepartmentStats({ departments, showFinance }: DepartmentStatsPro
   const onLeaveEmployees = departments.reduce((acc, d) => acc + d.onLeaveEmployees, 0);
 
   // Compute finance stats
-  const overBudgetCount = departments.filter((d) => d.budgetUsedPct > 90 || d.budgetStatus === "red").length;
-  const avgUtilization = totalDepts > 0 ? Math.round(departments.reduce((acc, d) => acc + d.budgetUsedPct, 0) / totalDepts) : 0;
+  const overBudgetCount = departments.filter((d) => (d.budgetUsedPct ?? 0) > 90 || d.budgetStatus === "red").length;
+  const avgUtilization = totalDepts > 0 ? Math.round(departments.reduce((acc, d) => acc + (d.budgetUsedPct ?? 0), 0) / totalDepts) : 0;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">

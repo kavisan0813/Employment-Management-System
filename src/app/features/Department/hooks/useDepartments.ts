@@ -27,7 +27,7 @@ export function useDepartments() {
       name: deptInput.name,
       code: deptInput.code.toUpperCase(),
       head: deptInput.head,
-      status: deptInput.status,
+      status: deptInput.status || "Active",
       employees: 0,
       activeEmployees: 0,
       onLeaveEmployees: 0,

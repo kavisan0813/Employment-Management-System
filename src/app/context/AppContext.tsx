@@ -299,7 +299,9 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
     }
 
     // Ensure manager (Sarah Chen) exists in the list
-    const hasManager = list.some((e) => e.email.toLowerCase() === "manager@viyanhr.com");
+    const hasManager = list.some(
+      (e) => e.email.toLowerCase() === "manager@viyanhr.com",
+    );
     if (!hasManager) {
       list.push({
         id: "EMP012",
@@ -316,7 +318,8 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
         grossSalary: 12000,
         deductions: 1440,
         netPay: 10560,
-        avatar: "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+        avatar:
+          "https://images.unsplash.com/photo-1762522921456-cdfe882d36c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
         location: "San Francisco, CA",
         manager: "Robert Chen",
         employmentType: "Full-time",
@@ -326,7 +329,7 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
         emergencyContact: "Kenji Chen — +1 (555) 567-8901",
         performance: 96,
         notes: [],
-        assets: []
+        assets: [],
       });
     }
 
@@ -346,12 +349,20 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
       manager: string;
       joiningDate?: string;
       email?: string;
-    }>
+    }>,
   ) => {
     try {
-      const onboardingQueue = JSON.parse(localStorage.getItem("viyan_onboarding_queue") || "[]");
-      const onboardingPhases = JSON.parse(localStorage.getItem("viyan_onboarding_phases") || "{}");
-      const nowStr = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      const onboardingQueue = JSON.parse(
+        localStorage.getItem("viyan_onboarding_queue") || "[]",
+      );
+      const onboardingPhases = JSON.parse(
+        localStorage.getItem("viyan_onboarding_phases") || "{}",
+      );
+      const nowStr = new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
       const nowIso = new Date().toISOString().split("T")[0];
 
       const newEntries = entries.map((entry, idx) => {
@@ -370,9 +381,30 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
             status: "in-progress" as const,
             date: nowStr,
             tasks: [
-              { id: "t1", task: "Welcome email sent", owner: "HR", dueDate: "Day 1", status: "pending" as const, assignee: "HR Team" },
-              { id: "t2", task: "Offer letter signed", owner: "Employee", dueDate: "Day 2", status: "pending" as const, assignee: entry.name },
-              { id: "t3", task: "Background verification completed", owner: "HR", dueDate: "Day 3", status: "pending" as const, assignee: "HR Team" },
+              {
+                id: "t1",
+                task: "Welcome email sent",
+                owner: "HR",
+                dueDate: "Day 1",
+                status: "pending" as const,
+                assignee: "HR Team",
+              },
+              {
+                id: "t2",
+                task: "Offer letter signed",
+                owner: "Employee",
+                dueDate: "Day 2",
+                status: "pending" as const,
+                assignee: entry.name,
+              },
+              {
+                id: "t3",
+                task: "Background verification completed",
+                owner: "HR",
+                dueDate: "Day 3",
+                status: "pending" as const,
+                assignee: "HR Team",
+              },
             ],
           },
         ];
@@ -393,12 +425,20 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
           daysInOnboarding: 0,
           expectedCompletion: "To be scheduled",
           manager: entry.manager || "Arun Nair",
-          email: entry.email || `${entry.name.toLowerCase().replace(/\s+/g, ".")}@viyanhr.com`,
+          email:
+            entry.email ||
+            `${entry.name.toLowerCase().replace(/\s+/g, ".")}@viyanhr.com`,
         };
       });
 
-      localStorage.setItem("viyan_onboarding_queue", JSON.stringify([...newEntries, ...onboardingQueue]));
-      localStorage.setItem("viyan_onboarding_phases", JSON.stringify(onboardingPhases));
+      localStorage.setItem(
+        "viyan_onboarding_queue",
+        JSON.stringify([...newEntries, ...onboardingQueue]),
+      );
+      localStorage.setItem(
+        "viyan_onboarding_phases",
+        JSON.stringify(onboardingPhases),
+      );
 
       window.dispatchEvent(new Event("storage"));
       window.dispatchEvent(new Event("viyan:onboarding-updated"));

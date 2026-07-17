@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useEmployees } from "../../context/AppContext";
 import { useDepartments } from "./hooks/useDepartments";
+import { Department } from "./types/department.types";
 import { useDepartmentPermissions } from "./hooks/useDepartmentPermissions";
 import { useDepartmentModals } from "./hooks/useDepartmentModals";
 import { DepartmentHeader } from "./components/DepartmentHeader";
@@ -24,6 +25,11 @@ export function DepartmentPage() {
     deleteDepartment,
     assignHead,
   } = useDepartments();
+
+  const handleToggleStatus = (dept: Department) => {
+    const newStatus = dept.status === "Active" ? "Inactive" : "Active";
+    updateDepartment(dept.id, { status: newStatus });
+  };
 
   const { canCreate, canEdit, canDelete, shouldShowFinance, isDeptVisible } =
     useDepartmentPermissions();
@@ -167,6 +173,11 @@ export function DepartmentPage() {
           dept={selectedDept}
           showFinance={shouldShowFinance}
           onClose={() => setSelectedDept(null)}
+          onEdit={setEditDept}
+          onDelete={setDeleteConfirmDept}
+          onToggleStatus={handleToggleStatus}
+          canEdit={canEdit}
+          canDelete={canDelete}
         />
       )}
 

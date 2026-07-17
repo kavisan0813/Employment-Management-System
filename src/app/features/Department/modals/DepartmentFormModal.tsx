@@ -116,6 +116,7 @@ export function DepartmentFormModal({
       name: form.name,
       code: form.code.toUpperCase(),
       head: form.head,
+      status: dept?.status || "Active",
       employees: dept?.employees || 0,
       activeEmployees: dept?.activeEmployees || 0,
       onLeaveEmployees: dept?.onLeaveEmployees || 0,
