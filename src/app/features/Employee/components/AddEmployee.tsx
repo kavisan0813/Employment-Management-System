@@ -457,6 +457,39 @@ export default function AddEmployee() {
           "viyan_registered_users",
           JSON.stringify([newPlatformUser, ...usersList]),
         );
+
+        // ─── Auto-enroll the new hire into the Onboarding queue ───
+        // The employee automatically appears in the onboarding module and,
+        // if an active default template exists for their department, it is
+        // assigned automatically.
+        (async () => {
+          try {
+            const { enrollEmployeeInOnboarding, ONB_TEMPLATES_KEY } =
+              await import(
+                "../../Onboarding/hooks/useOnboarding"
+              );
+            const existingTemplates = JSON.parse(
+              localStorage.getItem(ONB_TEMPLATES_KEY) || "[]",
+            );
+            enrollEmployeeInOnboarding(
+              {
+                id: `onb-${Date.now()}`,
+                name: fullName,
+                email: form.email.trim(),
+                dept: form.department,
+                role: primaryRole || "Employee",
+                joiningDate: form.dateOfJoining,
+                manager: form.reportingManager || "Unassigned",
+              },
+              existingTemplates,
+            );
+            window.dispatchEvent(
+              new Event("viyan:onboarding-updated"),
+            );
+          } catch (e) {
+            console.error("Failed to auto-enroll in onboarding", e);
+          }
+        })();
       } catch (err) {
         console.error("Failed to register platform login", err);
       }

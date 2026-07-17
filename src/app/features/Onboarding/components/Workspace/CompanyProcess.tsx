@@ -10,18 +10,26 @@ interface CompanyProcessProps {
   handleEscalate: () => void;
 }
 
-const DEPARTMENTS = ["HR", "IT", "Finance", "Admin", "Manager"] as const;
-type Department = (typeof DEPARTMENTS)[number];
+/**
+ * Map a task owner/verifier name to the platform roles allowed to act on it.
+ * The structure is fully dynamic — tasks are grouped by the role configured
+ * on the template, never by a hardcoded HR/IT/Finance/Admin list.
+ */
+const OWNER_TO_ROLES: Record<string, string[]> = {
+  hr: ["HR Manager", "HR"],
+  finance: ["Finance", "Finance Manager"],
+  it: ["IT", "IT Admin", "IT Manager"],
+  admin: ["Admin"],
+  manager: ["Manager", "Team Lead", "Engineering Manager"],
+};
 
-const getDepartment = (owner: string): Department | null => {
+const rolesForOwner = (owner: string): string[] => {
   const normalized = owner.toLowerCase();
-  if (normalized.includes("hr")) return "HR";
-  if (normalized.includes("finance")) return "Finance";
-  if (normalized.includes("it")) return "IT";
-  if (normalized.includes("admin")) return "Admin";
-  if (normalized.includes("manager") || normalized.includes("lead"))
-    return "Manager";
-  return null;
+  for (const key of Object.keys(OWNER_TO_ROLES)) {
+    if (normalized.includes(key)) return OWNER_TO_ROLES[key];
+  }
+  // Default: any matching system role plus super admins.
+  return [owner];
 };
 
 export function CompanyProcess({
@@ -32,38 +40,36 @@ export function CompanyProcess({
   handleEscalate,
 }: CompanyProcessProps) {
   const { user } = useAuth();
-  const canCompleteDepartment = (department: Department) => {
+
+  const canActOnOwner = (owner: string): boolean => {
     const role = user?.role;
     if (role === "Platform Admin" || role === "Super Admin") return true;
-    return (
-      (department === "HR" && role === "HR Manager") ||
-      (department === "Finance" && role === "Finance") ||
-      (department === "IT" && role === "IT") ||
-      (department === "Manager" && (role === "Manager" || role === "Team Lead"))
-    );
+    return rolesForOwner(owner).includes(role || "");
   };
 
   const allTasks = phases.flatMap((phase) =>
     phase.tasks.map((task) => ({ ...task, phaseId: phase.id })),
   );
-  const internalTasks = allTasks.filter((task) => getDepartment(task.owner));
+
   const canReview = employee.candidateProcessSubmitted === true;
   const reviewMessage =
     "Waiting for the employee to submit their onboarding information.";
 
-  if (internalTasks.length === 0) {
+  if (allTasks.length === 0) {
     return (
       <div className="p-10 text-center">
         <h4 className="text-sm font-black text-foreground">
-          No company checklist items assigned
+          No company process tasks assigned
         </h4>
         <p className="mt-2 text-xs text-muted-foreground">
-          The assigned template has no HR, IT, Finance, Admin, or Manager tasks
-          yet.
+          The assigned template has no internal tasks configured yet.
         </p>
       </div>
     );
   }
+
+  // Group tasks dynamically by their assigned owner (role/user).
+  const owners = Array.from(new Set(allTasks.map((t) => t.owner)));
 
   return (
     <div className="px-6 py-6 space-y-6">
@@ -79,31 +85,34 @@ export function CompanyProcess({
           )}
         </div>
         <span className="text-[11px] font-bold text-muted-foreground">
-          {internalTasks.filter((task) => task.status === "done").length} /{" "}
-          {internalTasks.length} tasks completed
+          {allTasks.filter((task) => task.status === "done").length} /{" "}
+          {allTasks.length} tasks completed
         </span>
       </div>
 
       <div className="space-y-6">
-        {DEPARTMENTS.map((department) => {
-          const tasks = internalTasks.filter(
-            (task) => getDepartment(task.owner) === department,
-          );
+        {owners.map((owner) => {
+          const tasks = allTasks.filter((task) => task.owner === owner);
           if (!tasks.length) return null;
           const completed = tasks.filter(
             (task) => task.status === "done",
           ).length;
-          const editable = canCompleteDepartment(department) && canReview;
+          const editable = canActOnOwner(owner) && canReview;
           const percent = Math.round((completed / tasks.length) * 100);
           return (
             <section
-              key={department}
+              key={owner}
               className="p-5 bg-card border border-border rounded-2xl shadow-sm"
             >
               <div className="flex items-center justify-between mb-4 pb-2 border-b border-border/60">
-                <h5 className="text-[14px] font-black text-foreground uppercase tracking-wider">
-                  {department}
-                </h5>
+                <div>
+                  <h5 className="text-[14px] font-black text-foreground uppercase tracking-wider">
+                    {owner}
+                  </h5>
+                  <p className="text-[10px] font-semibold text-muted-foreground mt-0.5">
+                    Responsible for completing / verifying these tasks
+                  </p>
+                </div>
                 <span className="text-[11px] font-black text-[#00B87C]">
                   {percent}% Done
                 </span>
@@ -123,8 +132,8 @@ export function CompanyProcess({
                         }
                         disabled={!editable}
                         title={
-                          !canCompleteDepartment(department)
-                            ? "Only the assigned department can complete this task"
+                          !canActOnOwner(owner)
+                            ? `Only ${owner} can complete this task`
                             : !canReview
                               ? reviewMessage
                               : task.status === "done"
@@ -139,8 +148,19 @@ export function CompanyProcess({
                         >
                           {task.task}
                         </span>
-                        <span className="block text-[10px] font-semibold text-muted-foreground">
+                        {task.description && (
+                          <span className="block text-[10px] font-semibold text-muted-foreground">
+                            {task.description}
+                          </span>
+                        )}
+                        <span className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                          Verified By:{" "}
+                          <span className="text-foreground">
+                            {task.verifiedBy || owner}
+                          </span>
+                          {" · "}
                           Due {task.dueDate}
+                          {task.mandatory && " · Mandatory"}
                         </span>
                       </div>
                     </div>

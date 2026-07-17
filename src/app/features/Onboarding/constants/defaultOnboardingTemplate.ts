@@ -20,36 +20,37 @@ export const DEFAULT_ONBOARDING_TEMPLATES: Template[] = [
         id: "sec-pre-joining",
         name: "Pre-Joining Preparation",
         tasks: [
-          { id: "t1", name: "Send Welcome Email & Offer Letter", owner: "HR Manager", mandatory: true, dueDays: 7, priority: "High", description: "HR initiates communication with the candidate." },
-          { id: "t2", name: "Create Company Email & Slack Account", owner: "IT Admin", mandatory: true, dueDays: 3, priority: "High", description: "IT sets up digital credentials." },
-          { id: "t3", name: "Procure Laptop and Accessories", owner: "IT Admin", mandatory: true, dueDays: 5, priority: "Medium", description: "Asset allocation preparation." },
-          { id: "t4", name: "Manager Approval for Asset Allocation", owner: "Engineering Manager", mandatory: true, dueDays: 4, priority: "High", description: "Manager approves IT hardware requests." }
+          { id: "t1", name: "Send Welcome Email & Offer Letter", owner: "HR Manager", verifiedBy: "HR Manager", mandatory: true, dueDays: 7, priority: "High", description: "HR initiates communication with the candidate." },
+          { id: "t2", name: "Create Company Email & Slack Account", owner: "IT Admin", verifiedBy: "IT Admin", mandatory: true, dueDays: 3, priority: "High", description: "IT sets up digital credentials." },
+          { id: "t3", name: "Procure Laptop and Accessories", owner: "IT Admin", verifiedBy: "IT Admin", mandatory: true, dueDays: 5, priority: "Medium", description: "Asset allocation preparation." },
+          { id: "t4", name: "Manager Approval for Asset Allocation", owner: "Engineering Manager", verifiedBy: "Engineering Manager", mandatory: true, dueDays: 4, priority: "High", description: "Manager approves IT hardware requests." }
         ]
       },
       {
         id: "sec-day-one",
         name: "Day 1 Orientation",
         tasks: [
-          { id: "t5", name: "Submit ID Proofs and Tax Forms", owner: "Employee", mandatory: true, dueDays: 1, priority: "High", description: "Employee checklist item for day one." },
-          { id: "t6", name: "Office Tour and Team Introduction", owner: "Engineering Manager", mandatory: false, dueDays: 1, priority: "Medium", description: "Manager welcomes the new hire." },
-          { id: "t7", name: "Set up Payroll and Bank Account Details", owner: "Finance Manager", mandatory: true, dueDays: 2, priority: "High", description: "Finance processes payroll info." },
-          { id: "t8", name: "IT Security Briefing Checklist", owner: "IT Admin", mandatory: true, dueDays: 1, priority: "High", description: "Checklist for physical and digital security briefing." }
+          { id: "t5", name: "Submit ID Proofs and Tax Forms", owner: "Employee", verifiedBy: "HR Manager", mandatory: true, dueDays: 1, priority: "High", description: "Employee checklist item for day one." },
+          { id: "t6", name: "Office Tour and Team Introduction", owner: "Engineering Manager", verifiedBy: "Engineering Manager", mandatory: false, dueDays: 1, priority: "Medium", description: "Manager welcomes the new hire." },
+          { id: "t7", name: "Set up Payroll and Bank Account Details", owner: "Finance Manager", verifiedBy: "Finance Manager", mandatory: true, dueDays: 2, priority: "High", description: "Finance processes payroll info." },
+          { id: "t8", name: "IT Security Briefing Checklist", owner: "IT Admin", verifiedBy: "IT Admin", mandatory: true, dueDays: 1, priority: "High", description: "Checklist for physical and digital security briefing." }
         ]
       },
       {
         id: "sec-week-one",
         name: "Week 1 Ramp-up",
         tasks: [
-          { id: "t9", name: "Complete Security Awareness Training", owner: "Employee", mandatory: true, dueDays: 7, priority: "High", description: "Mandatory training completion." },
-          { id: "t10", name: "Codebase Walkthrough and Local Setup", owner: "Team Lead", mandatory: true, dueDays: 5, priority: "High", description: "Engineering onboarding." },
-          { id: "t11", name: "First Code Commit & PR Review", owner: "Employee", mandatory: false, dueDays: 7, priority: "Medium", description: "Employee pushes first commit." },
-          { id: "t12", name: "Check-in Meeting with HR", owner: "HR Manager", mandatory: true, dueDays: 7, priority: "Medium", description: "End of week feedback session." }
+          { id: "t9", name: "Complete Security Awareness Training", owner: "Employee", verifiedBy: "HR Manager", mandatory: true, dueDays: 7, priority: "High", description: "Mandatory training completion." },
+          { id: "t10", name: "Codebase Walkthrough and Local Setup", owner: "Team Lead", verifiedBy: "Team Lead", mandatory: true, dueDays: 5, priority: "High", description: "Engineering onboarding." },
+          { id: "t11", name: "First Code Commit & PR Review", owner: "Employee", verifiedBy: "Engineering Manager", mandatory: false, dueDays: 7, priority: "Medium", description: "Employee pushes first commit." },
+          { id: "t12", name: "Check-in Meeting with HR", owner: "HR Manager", verifiedBy: "HR Manager", mandatory: true, dueDays: 7, priority: "Medium", description: "End of week feedback session." }
         ]
       }
     ],
     documents: [
-      { id: "d1", name: "Signed Offer Letter", mandatory: true, maxSize: 5, allowedTypes: ["pdf"], needVerification: true, visibleToEmployee: true },
-      { id: "d2", name: "Government ID Proof", mandatory: true, maxSize: 5, allowedTypes: ["pdf", "jpg", "png"], needVerification: true, visibleToEmployee: true },
+      { id: "d0", name: "Offer Letter", mandatory: true, maxSize: 5, allowedTypes: ["pdf"], needVerification: false, visibleToEmployee: true, issuedByOrg: true, autoVisibleToEmployee: true },
+      { id: "d0b", name: "Employment Agreement", mandatory: true, maxSize: 5, allowedTypes: ["pdf"], needVerification: false, visibleToEmployee: true, issuedByOrg: true, autoVisibleToEmployee: true },
+      { id: "d1", name: "Government ID Proof", mandatory: true, maxSize: 5, allowedTypes: ["pdf", "jpg", "png"], needVerification: true, visibleToEmployee: true },
       { id: "d3", name: "Bank Account Details (Void Cheque)", mandatory: true, maxSize: 2, allowedTypes: ["pdf", "jpg"], needVerification: true, visibleToEmployee: true },
       { id: "d4", name: "Non-Disclosure Agreement (NDA)", mandatory: true, maxSize: 2, allowedTypes: ["pdf"], needVerification: true, visibleToEmployee: true }
     ],

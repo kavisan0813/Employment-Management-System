@@ -9,6 +9,7 @@ import {
   Trash2,
   Check,
   Info,
+  ChevronRight,
   Settings,
   FileCheck,
   Layers,
@@ -46,8 +47,6 @@ const emptyTemplate = (): Template => ({
   designation: "",
   employmentType: "Full-time",
   experienceLevel: "Mid",
-  branch: "Headquarters",
-  company: "viyanHR Corp",
   effectiveFrom: new Date().toISOString().split("T")[0],
   effectiveTo: "",
   isDefault: false,
@@ -60,6 +59,7 @@ const emptyTemplate = (): Template => ({
           id: "hr-verify",
           name: "Verify joining documents",
           owner: "HR Manager",
+          verifiedBy: "HR Manager",
           dueDays: 1,
           priority: "High",
           mandatory: true,
@@ -69,6 +69,7 @@ const emptyTemplate = (): Template => ({
           id: "it-access",
           name: "Create email and system access",
           owner: "IT Manager",
+          verifiedBy: "IT Manager",
           dueDays: 2,
           priority: "High",
           mandatory: true,
@@ -78,6 +79,7 @@ const emptyTemplate = (): Template => ({
           id: "finance-bank",
           name: "Verify bank details",
           owner: "Finance Manager",
+          verifiedBy: "Finance Manager",
           dueDays: 2,
           priority: "High",
           mandatory: true,
@@ -87,6 +89,7 @@ const emptyTemplate = (): Template => ({
           id: "admin-workspace",
           name: "Prepare workstation",
           owner: "Admin",
+          verifiedBy: "Admin",
           dueDays: 2,
           priority: "Medium",
           mandatory: true,
@@ -96,6 +99,7 @@ const emptyTemplate = (): Template => ({
           id: "manager-plan",
           name: "Schedule first-week plan",
           owner: "Manager",
+          verifiedBy: "Manager",
           dueDays: 3,
           priority: "Medium",
           mandatory: true,
@@ -162,9 +166,11 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
   const [customDocName, setCustomDocName] = useState("");
   const [customDocMandatory, setCustomDocMandatory] = useState(true);
   const [customDocSize, setCustomDocSize] = useState(5);
+  const [customDocIssuedByOrg, setCustomDocIssuedByOrg] = useState(false);
 
   const [customTaskName, setCustomTaskName] = useState("");
   const [customTaskOwner, setCustomTaskOwner] = useState("HR Manager");
+  const [customTaskVerifier, setCustomTaskVerifier] = useState("HR Manager");
   const [customTaskDue, setCustomTaskDue] = useState(3);
   const [customTaskPriority, setCustomTaskPriority] = useState("Medium");
   const [customTaskMandatory, setCustomTaskMandatory] = useState(true);
@@ -223,8 +229,12 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                   id: `task-${Date.now()}`,
                   name: customTaskName.trim(),
                   owner: customTaskOwner,
+                  verifiedBy: customTaskVerifier,
                   dueDays: customTaskDue,
-                  priority: customTaskPriority,
+                  priority: customTaskPriority as
+                    | "Low"
+                    | "Medium"
+                    | "High",
                   mandatory: customTaskMandatory,
                   description: customTaskDesc.trim(),
                 },
@@ -259,12 +269,15 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
       allowedTypes: [".pdf", ".jpg", ".png"],
       needVerification: true,
       visibleToEmployee: true,
+      issuedByOrg: customDocIssuedByOrg,
+      autoVisibleToEmployee: customDocIssuedByOrg,
     };
     setDraft((current) => ({
       ...current,
       documents: [...(current.documents || []), newDoc],
     }));
     setCustomDocName("");
+    setCustomDocIssuedByOrg(false);
   };
 
   const removeDocumentRule = (id: string) => {
@@ -584,31 +597,18 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                 {/* ─── TAB 1: INFO & SCOPE ─── */}
                 {activeTab === "info" && (
                   <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      <div>
-                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1.5">
-                          Template Name *
-                        </label>
-                        <input
-                          value={draft.name}
-                          onChange={(e) =>
-                            setDraft({ ...draft, name: e.target.value })
-                          }
-                          placeholder="e.g. Engineering Onboarding Default"
-                          className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] transition-all"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1.5">
-                          Template Code
-                        </label>
-                        <input
-                          value={draft.code}
-                          disabled
-                          placeholder="Auto-generated code"
-                          className="w-full rounded-xl border border-border bg-muted/20 px-4 py-3 text-xs font-bold outline-none text-muted-foreground cursor-not-allowed"
-                        />
-                      </div>
+                    <div>
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1.5">
+                        Template Name *
+                      </label>
+                      <input
+                        value={draft.name}
+                        onChange={(e) =>
+                          setDraft({ ...draft, name: e.target.value })
+                        }
+                        placeholder="e.g. Engineering Onboarding Default"
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] transition-all"
+                      />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -666,48 +666,33 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      <div>
-                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1.5">
-                          Branch / Location
-                        </label>
+                    <div>
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1.5">
+                        Effective Dates (From - To)
+                      </label>
+                      <div className="flex gap-2">
                         <input
-                          value={draft.branch || ""}
+                          type="date"
+                          value={draft.effectiveFrom || ""}
                           onChange={(e) =>
-                            setDraft({ ...draft, branch: e.target.value })
+                            setDraft({
+                              ...draft,
+                              effectiveFrom: e.target.value,
+                            })
                           }
-                          placeholder="e.g. Headquarters"
-                          className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] transition-all"
+                          className="w-1/2 rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none focus:border-[#00B87C]"
                         />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1.5">
-                          Effective Dates (From - To)
-                        </label>
-                        <div className="flex gap-2">
-                          <input
-                            type="date"
-                            value={draft.effectiveFrom || ""}
-                            onChange={(e) =>
-                              setDraft({
-                                ...draft,
-                                effectiveFrom: e.target.value,
-                              })
-                            }
-                            className="w-1/2 rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none focus:border-[#00B87C]"
-                          />
-                          <input
-                            type="date"
-                            value={draft.effectiveTo || ""}
-                            onChange={(e) =>
-                              setDraft({
-                                ...draft,
-                                effectiveTo: e.target.value,
-                              })
-                            }
-                            className="w-1/2 rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none focus:border-[#00B87C]"
-                          />
-                        </div>
+                        <input
+                          type="date"
+                          value={draft.effectiveTo || ""}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              effectiveTo: e.target.value,
+                            })
+                          }
+                          className="w-1/2 rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none focus:border-[#00B87C]"
+                        />
                       </div>
                     </div>
 
@@ -741,9 +726,9 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                             Set as Default Template
                           </span>
                           <p className="text-[10px] text-muted-foreground font-semibold">
-                            If enabled, new employees in this department who
-                            don't match any custom filters will automatically
-                            receive this template.
+                            Only one default template may be active per
+                            department. New employees in this department are
+                            automatically assigned this template.
                           </p>
                         </div>
                       </label>
@@ -760,28 +745,35 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                         Required Documents Checklist
                       </h4>
                       <div className="space-y-2 mb-4">
-                        {(draft.documents || []).map((doc, idx) => (
-                          <div
-                            key={doc.id || idx}
-                            className="flex items-center justify-between p-3.5 bg-muted/20 border rounded-2xl"
-                          >
-                            <div>
-                              <strong className="text-xs text-foreground">
-                                {doc.name}
-                              </strong>
-                              <p className="text-[10px] text-muted-foreground font-semibold">
-                                {doc.mandatory ? "Mandatory" : "Optional"} · Max
-                                Size: {doc.maxSize}MB · Verification: Required
-                              </p>
-                            </div>
-                            <button
-                              onClick={() => removeDocumentRule(doc.id)}
-                              className="p-1.5 hover:bg-red-500/10 text-red-500 rounded-lg transition-all"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        ))}
+                          {(draft.documents || []).map((doc, idx) => (
+                           <div
+                             key={doc.id || idx}
+                             className="flex items-center justify-between p-3.5 bg-muted/20 border rounded-2xl"
+                           >
+                             <div>
+                               <div className="flex items-center gap-2">
+                                 <strong className="text-xs text-foreground">
+                                   {doc.name}
+                                 </strong>
+                                 {doc.issuedByOrg && (
+                                   <span className="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider bg-[#8B5CF6]/10 text-[#8B5CF6] border border-[#8B5CF6]/20">
+                                     Org-Issued
+                                   </span>
+                                 )}
+                               </div>
+                               <p className="text-[10px] text-muted-foreground font-semibold">
+                                 {doc.mandatory ? "Mandatory" : "Optional"} · Max
+                                 Size: {doc.maxSize}MB · Verification: Required
+                               </p>
+                             </div>
+                             <button
+                               onClick={() => removeDocumentRule(doc.id)}
+                               className="p-1.5 hover:bg-red-500/10 text-red-500 rounded-lg transition-all"
+                             >
+                               <Trash2 size={14} />
+                             </button>
+                           </div>
+                         ))}
                       </div>
 
                       {/* Add custom doc inline form */}
@@ -807,13 +799,28 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                             <option value={10}>Max 10MB</option>
                           </select>
                         </div>
-                        <button
-                          type="button"
-                          onClick={addDocumentRule}
-                          className="w-full bg-[#00B87C] text-white py-2 text-xs font-black uppercase rounded-xl"
-                        >
-                          Add Doc
-                        </button>
+                        <div className="col-span-1 md:col-span-2 flex items-center justify-between gap-3 mt-1">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={customDocIssuedByOrg}
+                              onChange={(e) =>
+                                setCustomDocIssuedByOrg(e.target.checked)
+                              }
+                              className="h-4 w-4 rounded border-border text-[#00B87C] focus:ring-[#00B87C]"
+                            />
+                            <span className="text-[10px] font-black text-foreground uppercase tracking-wider">
+                              Issued by Organization
+                            </span>
+                          </label>
+                          <button
+                            type="button"
+                            onClick={addDocumentRule}
+                            className="bg-[#00B87C] text-white px-4 py-2 text-xs font-black uppercase rounded-xl"
+                          >
+                            Add Doc
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -1081,6 +1088,24 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                               ))}
                             </select>
                           </div>
+                          <div>
+                            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1.5">
+                              Verified By *
+                            </label>
+                            <select
+                              value={customTaskVerifier}
+                              onChange={(e) =>
+                                setCustomTaskVerifier(e.target.value)
+                              }
+                              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-xs font-bold outline-none focus:border-[#00B87C]"
+                            >
+                              {taskOwners.map((owner) => (
+                                <option key={owner} value={owner}>
+                                  {owner}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
 
                         <div>
@@ -1175,12 +1200,26 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                   >
                     Save Draft
                   </button>
-                  <button
-                    onClick={() => submitTemplate("active")}
-                    className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-md"
-                  >
-                    Activate Template
-                  </button>
+                  {activeTab === "company" ? (
+                    <button
+                      onClick={() => submitTemplate("active")}
+                      className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-md"
+                    >
+                      Activate Template
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        setActiveTab(
+                          activeTab === "info" ? "candidate" : "company",
+                        )
+                      }
+                      className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-md flex items-center gap-1.5"
+                    >
+                      Next
+                      <ChevronRight size={14} />
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>

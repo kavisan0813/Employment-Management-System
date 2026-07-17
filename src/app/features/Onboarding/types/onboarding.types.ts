@@ -26,6 +26,12 @@ export interface NewHire {
   assignedTemplateId?: string;
   /** Set when the employee explicitly sends their onboarding information for review. */
   candidateProcessSubmitted?: boolean;
+  /** IDs of policies the employee has acknowledged. */
+  completedPolicies?: string[];
+  /** IDs of training courses the employee has completed. */
+  completedTraining?: string[];
+  /** IDs of forms/agreements the employee has signed. */
+  completedForms?: string[];
 }
 
 export type TaskStatus = "done" | "pending" | "overdue" | "in-progress";
@@ -37,9 +43,11 @@ export interface PhaseTask {
   dueDate: string;
   status: TaskStatus;
   assignee: string;
-  priority?: "Low" | "Medium" | "High";
+  priority?: TaskPriority;
   mandatory?: boolean;
   description?: string;
+  /** Role/user responsible for verifying completion. */
+  verifiedBy?: string;
 }
 
 export type PhaseStatus = "completed" | "in-progress" | "upcoming";
@@ -69,6 +77,20 @@ export interface DocumentItem {
   employeeId?: string;
 }
 
+export type TaskPriority = "Low" | "Medium" | "High";
+
+export interface CompanyTask {
+  id: string;
+  name: string;
+  owner: string;
+  priority: TaskPriority;
+  mandatory: boolean;
+  description: string;
+  dueDays: number;
+  /** Role/user responsible for verifying completion. */
+  verifiedBy: string;
+}
+
 export interface Template {
   id: string;
   name: string;
@@ -85,23 +107,14 @@ export interface Template {
   designation?: string;
   employmentType?: string;
   experienceLevel?: string;
-  branch?: string;
-  company?: string;
   effectiveFrom?: string;
   effectiveTo?: string;
   isDefault?: boolean;
+  /** Dynamic, task-based internal process (no hardcoded departments). */
   sections?: Array<{
     id: string;
     name: string;
-    tasks: Array<{
-      id: string;
-      name: string;
-      owner: string;
-      priority?: string;
-      mandatory?: boolean;
-      description?: string;
-      dueDays?: number;
-    }>;
+    tasks: CompanyTask[];
   }>;
   documents?: Array<{
     id: string;
@@ -111,6 +124,10 @@ export interface Template {
     allowedTypes: string[];
     needVerification: boolean;
     visibleToEmployee: boolean;
+    /** Uploaded by the organization (HR/Admin) rather than the employee. */
+    issuedByOrg?: boolean;
+    /** Marks the document as visible to the assigned employee once issued. */
+    autoVisibleToEmployee?: boolean;
   }>;
   forms?: Array<{ id: string; name: string; required: boolean }>;
   training?: Array<{ id: string; name: string; required: boolean }>;

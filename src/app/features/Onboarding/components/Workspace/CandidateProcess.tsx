@@ -129,6 +129,30 @@ export function CandidateProcess({
     window.dispatchEvent(new Event("viyan:onboarding-updated"));
   };
 
+  // HR/Admin requests the employee to re-upload a document (re-opens it).
+  const handleRequestReupload = (docId: string) => {
+    const updatedDocs = docs.map((d) =>
+      d.id === docId
+        ? {
+            ...d,
+            status: "pending" as const,
+            verificationStatus: undefined,
+          }
+        : d,
+    );
+    setDocs(updatedDocs);
+    localStorage.setItem(
+      "viyan_onboarding_documents",
+      JSON.stringify(updatedDocs),
+    );
+    showToast(
+      "Re-upload Requested",
+      "warning",
+      "Employee has been asked to re-upload this document.",
+    );
+    window.dispatchEvent(new Event("viyan:onboarding-updated"));
+  };
+
   // Calculate overall candidate completion progress
   const allPersonalDone = personalItems.filter((i) => i.completed).length;
   const allFormsDone = templateForms.filter((f: any) =>
@@ -379,6 +403,15 @@ export function CandidateProcess({
                           <ThumbsDown size={13} />
                         </button>
                       </div>
+                    )}
+                    {isRejected && (
+                      <button
+                        onClick={() => handleRequestReupload(doc.id)}
+                        title="Request Re-upload"
+                        className="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[9px] font-black uppercase tracking-wider cursor-pointer"
+                      >
+                        Request Re-upload
+                      </button>
                     )}
                   </div>
                 </div>

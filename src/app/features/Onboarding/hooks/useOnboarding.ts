@@ -5,6 +5,7 @@ import type {
   DocumentItem,
   PhaseTask,
   Template,
+  CompanyTask,
 } from "../types/onboarding.types";
 import { safeGet, safeSet, initials, formatDate } from "../utils/helpers";
 import { showToast } from "../../../components/workflow/ToastNotification";
@@ -13,6 +14,156 @@ import { ROLE_TEMPLATES } from "../../../shared/permission-engine/roles";
 import { INITIAL_DEPARTMENTS } from "../../Department/constants/department.constants";
 import { DEFAULT_ONBOARDING_TEMPLATES } from "../constants/defaultOnboardingTemplate";
 import { ONBOARDING_MOCK_TEMPLATES } from "../constants/mockTemplates";
+
+/* ─── Storage keys (shared with the employee-creation flow) ─── */
+export const ONB_QUEUE_KEY = "viyan_onboarding_queue";
+export const ONB_PHASES_KEY = "viyan_onboarding_phases";
+export const ONB_DOCS_KEY = "viyan_onboarding_documents";
+export const ONB_TEMPLATES_KEY = "viyan_onboarding_templates";
+export const ONB_UPDATED_EVENT = "viyan:onboarding-updated";
+
+/**
+ * Build the checklist phases for an employee from a template's section/task
+ * definitions. This is the single source of truth used both when an
+ * authorized user launches onboarding and when auto-assigning a default
+ * template.
+ */
+export const buildPhasesFromTemplate = (
+  employeeId: string,
+  employeeName: string,
+  template: Template,
+): OnboardingPhase[] =>
+  (template.sections || []).map((section, index) => ({
+    id: `phase-${employeeId}-${section.id}`,
+    name: section.name,
+    status: index === 0 ? "in-progress" : "upcoming",
+    date: new Date().toISOString().split("T")[0],
+    tasks: section.tasks.map((task: CompanyTask) => ({
+      id: `task-${employeeId}-${task.id}`,
+      task: task.name,
+      owner: task.owner,
+      dueDate: `Within ${task.dueDays || 3} days`,
+      status: "pending",
+      assignee: task.owner === "Employee" ? employeeName : `${task.owner} Team`,
+      priority: task.priority || "Medium",
+      mandatory: task.mandatory,
+      description: task.description,
+    })),
+  }));
+
+/** Build the document list for an employee from a template definition. */
+export const buildDocsFromTemplate = (
+  employeeId: string,
+  template: Template,
+): DocumentItem[] =>
+  (template.documents || []).map((doc) => ({
+    id: `doc-${employeeId}-${doc.id}`,
+    employeeId,
+    name: doc.name,
+    status: doc.issuedByOrg ? "uploaded" : "pending",
+    uploadedBy: doc.issuedByOrg ? "HR Team" : undefined,
+    date: doc.issuedByOrg ? "Today" : undefined,
+    mandatory: doc.mandatory,
+    maxSize: doc.maxSize,
+    allowedTypes: doc.allowedTypes,
+    needVerification: doc.needVerification,
+    visibleToEmployee: doc.visibleToEmployee,
+    issuedByOrg: doc.issuedByOrg,
+  }));
+
+/**
+ * Find the active template that should drive a department's onboarding.
+ * Prefers an explicit default template, then any active template matching
+ * the department.
+ */
+export const resolveDefaultTemplate = (
+  templates: Template[],
+  dept: string,
+): Template | undefined => {
+  const activeForDept = templates.filter(
+    (t) => t.status === "active" && t.dept === dept,
+  );
+  if (activeForDept.length === 0) return undefined;
+  return (
+    activeForDept.find((t) => t.isDefault) || activeForDept[activeForDept.length - 1]
+  );
+};
+
+export interface EnrollResult {
+  hired: NewHire;
+  phases: OnboardingPhase[];
+  docs: DocumentItem[];
+}
+
+/**
+ * Create an onboarding queue entry for a freshly created employee account and
+ * automatically assign the active default template for their department (if
+ * one exists). Used by the Add Employee flow so new hires appear in the
+ * onboarding queue without manual initiation.
+ */
+export const enrollEmployeeInOnboarding = (
+  profile: {
+    id: string;
+    name: string;
+    email: string;
+    dept: string;
+    role: string;
+    joiningDate: string;
+    manager: string;
+  },
+  templates: Template[],
+): EnrollResult | null => {
+  const queue: NewHire[] = JSON.parse(
+    localStorage.getItem(ONB_QUEUE_KEY) || "[]",
+  );
+  if (queue.some((n) => n.email?.toLowerCase() === profile.email.toLowerCase())) {
+    return null;
+  }
+
+  const assignedTemplate = resolveDefaultTemplate(templates, profile.dept);
+  const hired: NewHire = {
+    id: profile.id,
+    initials: initials(profile.name),
+    avatarColor: "#8B5CF6",
+    name: profile.name,
+    role: profile.role,
+    dept: profile.dept,
+    deptColor: "#00B87C",
+    joiningDate: profile.joiningDate,
+    progress: 0,
+    progressColor: "#00B87C",
+    status: assignedTemplate ? "on-track" : "pre-joining",
+    daysInOnboarding: 0,
+    expectedCompletion: "To be scheduled",
+    manager: profile.manager,
+    assignedTemplateId: assignedTemplate?.id,
+    email: profile.email,
+    completedPolicies: [],
+    completedTraining: [],
+    completedForms: [],
+  };
+
+  const phases = assignedTemplate
+    ? buildPhasesFromTemplate(profile.id, profile.name, assignedTemplate)
+    : [];
+  const docs = assignedTemplate
+    ? buildDocsFromTemplate(profile.id, assignedTemplate)
+    : [];
+
+  const nextQueue = [hired, ...queue];
+  const allPhases = JSON.parse(localStorage.getItem(ONB_PHASES_KEY) || "{}");
+  const nextPhases = { ...allPhases, [profile.id]: phases };
+  const allDocs: DocumentItem[] = JSON.parse(
+    localStorage.getItem(ONB_DOCS_KEY) || "[]",
+  );
+  const nextDocs = [...allDocs, ...docs];
+
+  localStorage.setItem(ONB_QUEUE_KEY, JSON.stringify(nextQueue));
+  localStorage.setItem(ONB_PHASES_KEY, JSON.stringify(nextPhases));
+  localStorage.setItem(ONB_DOCS_KEY, JSON.stringify(nextDocs));
+
+  return { hired, phases, docs };
+};
 
 const readStore = <T>(key: string, fallback: T): T => {
   try {
@@ -344,20 +495,25 @@ export function useOnboarding() {
       showToast("Error", "error", "Please select or enter an employee name.");
       return;
     }
-    const assignedTemplate = templates.find(
-      (template) =>
-        template.id === selectedTemplate &&
-        template.status === "active" &&
-        template.dept === formDept,
-    );
-    if (!assignedTemplate) {
+    // Prefer the explicitly chosen template, otherwise fall back to the
+    // active default template for the department so the workflow stays
+    // connected end-to-end.
+    const chosen =
+      templates.find(
+        (template) =>
+          template.id === selectedTemplate &&
+          template.status === "active" &&
+          template.dept === formDept,
+      ) || resolveDefaultTemplate(templates, formDept);
+    if (!chosen) {
       showToast(
         "Template required",
         "error",
-        "Select an active template that matches the employee's department.",
+        "Select an active template that matches the employee's department (or configure a default).",
       );
       return;
     }
+    const assignedTemplate = chosen;
     const newId = `nh${Date.now()}`;
     const resolvedEmail = (() => {
       const users = JSON.parse(
@@ -383,45 +539,29 @@ export function useOnboarding() {
       joiningDate: formJoinDate || new Date().toISOString().split("T")[0],
       progress: 0,
       progressColor: "#00B87C",
-      status: "pre-joining",
+      status: "on-track",
       daysInOnboarding: 0,
-      expectedCompletion: "Apr 29, 2026",
+      expectedCompletion: "To be scheduled",
       manager: formManager || "Arun Nair",
-      assignedTemplateId: selectedTemplate || undefined,
+      assignedTemplateId: assignedTemplate.id,
       email: resolvedEmail,
+      completedPolicies: [],
+      completedTraining: [],
+      completedForms: [],
     };
 
-    const newPhases: OnboardingPhase[] = (assignedTemplate.sections || []).map(
-      (section, index) => ({
-        id: `phase-${newId}-${section.id}`,
-        name: section.name,
-        status: index === 0 ? "in-progress" : "upcoming",
-        date: formJoinDate || new Date().toISOString().split("T")[0],
-        tasks: section.tasks.map((task) => ({
-          id: `task-${newId}-${task.id}`,
-          task: task.name,
-          owner: task.owner,
-          dueDate: "To be scheduled",
-          status: "pending",
-          assignee: task.owner === "Employee" ? formEmployee : task.owner,
-        })),
-      }),
+    const newPhases: OnboardingPhase[] = buildPhasesFromTemplate(
+      newId,
+      formEmployee,
+      assignedTemplate,
     );
 
-    // Generate required documents from the template
-    const generatedDocs: DocumentItem[] = (
-      assignedTemplate.documents || []
-    ).map((doc) => ({
-      id: `doc-${newId}-${doc.id}`,
-      employeeId: newId,
-      name: doc.name,
-      status: "pending",
-      mandatory: doc.mandatory,
-      maxSize: doc.maxSize,
-      allowedTypes: doc.allowedTypes,
-      needVerification: doc.needVerification,
-      visibleToEmployee: doc.visibleToEmployee,
-    }));
+    // Generate required documents from the template (org-issued docs are
+    // pre-marked as uploaded and visible to the employee).
+    const generatedDocs: DocumentItem[] = buildDocsFromTemplate(
+      newId,
+      assignedTemplate,
+    );
 
     // Save phases and documents to state and localStorage
     const updatedPhasesData = safeSet(phasesData, newId, newPhases) as Record<
@@ -555,38 +695,17 @@ export function useOnboarding() {
     if (!emp) return;
 
     // Generate phases from sections
-    const generatedPhases: OnboardingPhase[] = (tpl.sections || []).map(
-      (sec, idx) => ({
-        id: `phase-${employeeId}-${sec.id}`,
-        name: sec.name,
-        status: idx === 0 ? "in-progress" : "upcoming",
-        date: emp.joiningDate,
-        tasks: sec.tasks.map((task) => ({
-          id: `task-${employeeId}-${task.id}`,
-          task: task.name,
-          owner: task.owner,
-          dueDate: `Within ${task.dueDays || 3} days`,
-          status: "pending",
-          assignee: task.owner === "Employee" ? emp.name : `${task.owner} Team`,
-          priority: (task.priority as any) || "Medium",
-          mandatory: task.mandatory,
-          description: task.description,
-        })),
-      }),
+    const generatedPhases: OnboardingPhase[] = buildPhasesFromTemplate(
+      employeeId,
+      emp.name,
+      tpl,
     );
 
     // Generate documents list
-    const generatedDocs: DocumentItem[] = (tpl.documents || []).map((doc) => ({
-      id: `doc-${employeeId}-${doc.id}`,
+    const generatedDocs: DocumentItem[] = buildDocsFromTemplate(
       employeeId,
-      name: doc.name,
-      status: "pending",
-      mandatory: doc.mandatory,
-      maxSize: doc.maxSize,
-      allowedTypes: doc.allowedTypes,
-      needVerification: doc.needVerification,
-      visibleToEmployee: doc.visibleToEmployee,
-    }));
+      tpl,
+    );
 
     // Save back to localStorage
     const updatedPhases = { ...phasesData, [employeeId]: generatedPhases };
@@ -612,6 +731,9 @@ export function useOnboarding() {
             ...nh,
             assignedTemplateId: templateId,
             status: "on-track" as const,
+            completedPolicies: nh.completedPolicies || [],
+            completedTraining: nh.completedTraining || [],
+            completedForms: nh.completedForms || [],
             email:
               nh.email ||
               (() => {
@@ -645,15 +767,24 @@ export function useOnboarding() {
 
   const saveTemplate = (template: Template) => {
     setTemplates((current) => {
+      let next = current;
       const existing = current.find((item) => item.id === template.id);
+      // Enforce a single active default template per department.
+      if (template.isDefault && template.status === "active") {
+        next = next.map((item) =>
+          item.dept === template.dept && item.id !== template.id
+            ? { ...item, isDefault: false }
+            : item,
+        );
+      }
       return existing
-        ? current.map((item) =>
+        ? next.map((item) =>
             item.id === template.id
               ? { ...template, version: (item.version || 1) + 1 }
               : item,
           )
         : [
-            ...current,
+            ...next,
             { ...template, id: `tpl-${Date.now()}`, version: 1, usageCount: 0 },
           ];
     });
