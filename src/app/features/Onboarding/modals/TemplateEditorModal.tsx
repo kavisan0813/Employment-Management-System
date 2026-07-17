@@ -29,6 +29,8 @@ interface TemplateEditorModalProps {
   departments: string[];
   taskOwners: string[];
   saveTemplate: (template: Template) => void;
+  handleDuplicateTemplate: (id: string) => void;
+  handleDeleteTemplate: (id: string) => void;
 }
 
 const emptyTemplate = (): Template => ({
@@ -50,111 +52,15 @@ const emptyTemplate = (): Template => ({
   effectiveFrom: new Date().toISOString().split("T")[0],
   effectiveTo: "",
   isDefault: false,
-  sections: [
-    {
-      id: "company-process",
-      name: "Company Process",
-      tasks: [
-        {
-          id: "hr-verify",
-          name: "Verify joining documents",
-          owner: "HR Manager",
-          verifiedBy: "HR Manager",
-          dueDays: 1,
-          priority: "High",
-          mandatory: true,
-          description: "Validate submitted identity documents.",
-        },
-        {
-          id: "it-access",
-          name: "Create email and system access",
-          owner: "IT Manager",
-          verifiedBy: "IT Manager",
-          dueDays: 2,
-          priority: "High",
-          mandatory: true,
-          description: "Provision standard employee access.",
-        },
-        {
-          id: "finance-bank",
-          name: "Verify bank details",
-          owner: "Finance Manager",
-          verifiedBy: "Finance Manager",
-          dueDays: 2,
-          priority: "High",
-          mandatory: true,
-          description: "Confirm payroll bank information.",
-        },
-        {
-          id: "admin-workspace",
-          name: "Prepare workstation",
-          owner: "Admin",
-          verifiedBy: "Admin",
-          dueDays: 2,
-          priority: "Medium",
-          mandatory: true,
-          description: "Arrange access card and workspace.",
-        },
-        {
-          id: "manager-plan",
-          name: "Schedule first-week plan",
-          owner: "Manager",
-          verifiedBy: "Manager",
-          dueDays: 3,
-          priority: "Medium",
-          mandatory: true,
-          description: "Share team orientation plan.",
-        },
-      ],
-    },
-  ],
-  documents: [
-    {
-      id: "aadhaar",
-      name: "Aadhaar Card",
-      mandatory: true,
-      maxSize: 5,
-      allowedTypes: [".pdf", ".jpg", ".png"],
-      needVerification: true,
-      visibleToEmployee: true,
-    },
-    {
-      id: "pan",
-      name: "PAN Card",
-      mandatory: true,
-      maxSize: 5,
-      allowedTypes: [".pdf", ".jpg", ".png"],
-      needVerification: true,
-      visibleToEmployee: true,
-    },
-    {
-      id: "photo",
-      name: "Passport Photo",
-      mandatory: true,
-      maxSize: 2,
-      allowedTypes: [".jpg", ".png"],
-      needVerification: true,
-      visibleToEmployee: true,
-    },
-  ],
-  forms: [
-    { id: "nda", name: "NDA Agreement", required: true },
-    { id: "policy", name: "Company Policy Handbook", required: true },
-    { id: "tax", name: "Form-12BB Tax Declaration", required: false },
-  ],
-  training: [
-    { id: "welcome", name: "Welcome Video", required: false },
-    { id: "posh", name: "POSH Compliance Course", required: true },
-    { id: "it_sec", name: "Information Security Training", required: true },
-  ],
-  policies: [
-    { id: "leave_p", name: "Annual Leave Policy", required: true },
-    { id: "it_p", name: "IT Asset Protection Policy", required: true },
-  ],
+  sections: [],
+  documents: [],
+  forms: [],
+  training: [],
+  policies: [],
 });
 
 export function TemplateEditorModal(props: TemplateEditorModalProps) {
-  const { templates, departments, taskOwners, editingTemplate, saveTemplate } =
+  const { templates, departments, taskOwners, editingTemplate, saveTemplate, handleDuplicateTemplate, handleDeleteTemplate } =
     props;
 
   const [draft, setDraft] = useState<Template>(emptyTemplate);
@@ -231,10 +137,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                   owner: customTaskOwner,
                   verifiedBy: customTaskVerifier,
                   dueDays: customTaskDue,
-                  priority: customTaskPriority as
-                    | "Low"
-                    | "Medium"
-                    | "High",
+                  priority: customTaskPriority as "Low" | "Medium" | "High",
                   mandatory: customTaskMandatory,
                   description: customTaskDesc.trim(),
                 },
@@ -504,10 +407,20 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                         <button
                           className="text-[11px] font-black uppercase tracking-wider text-muted-foreground hover:underline"
                           onClick={() => {
-                            // Call duplicates
+                            handleDuplicateTemplate(template.id);
                           }}
                         >
                           Duplicate
+                        </button>
+                        <button
+                          className="text-[11px] font-black uppercase tracking-wider text-red-500 hover:underline"
+                          onClick={() => {
+                            if (window.confirm("Are you sure you want to delete this template?")) {
+                              handleDeleteTemplate(template.id);
+                            }
+                          }}
+                        >
+                          Delete
                         </button>
                       </div>
                     </div>
@@ -745,35 +658,35 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                         Required Documents Checklist
                       </h4>
                       <div className="space-y-2 mb-4">
-                          {(draft.documents || []).map((doc, idx) => (
-                           <div
-                             key={doc.id || idx}
-                             className="flex items-center justify-between p-3.5 bg-muted/20 border rounded-2xl"
-                           >
-                             <div>
-                               <div className="flex items-center gap-2">
-                                 <strong className="text-xs text-foreground">
-                                   {doc.name}
-                                 </strong>
-                                 {doc.issuedByOrg && (
-                                   <span className="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider bg-[#8B5CF6]/10 text-[#8B5CF6] border border-[#8B5CF6]/20">
-                                     Org-Issued
-                                   </span>
-                                 )}
-                               </div>
-                               <p className="text-[10px] text-muted-foreground font-semibold">
-                                 {doc.mandatory ? "Mandatory" : "Optional"} · Max
-                                 Size: {doc.maxSize}MB · Verification: Required
-                               </p>
-                             </div>
-                             <button
-                               onClick={() => removeDocumentRule(doc.id)}
-                               className="p-1.5 hover:bg-red-500/10 text-red-500 rounded-lg transition-all"
-                             >
-                               <Trash2 size={14} />
-                             </button>
-                           </div>
-                         ))}
+                        {(draft.documents || []).map((doc, idx) => (
+                          <div
+                            key={doc.id || idx}
+                            className="flex items-center justify-between p-3.5 bg-muted/20 border rounded-2xl"
+                          >
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <strong className="text-xs text-foreground">
+                                  {doc.name}
+                                </strong>
+                                {doc.issuedByOrg && (
+                                  <span className="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider bg-[#8B5CF6]/10 text-[#8B5CF6] border border-[#8B5CF6]/20">
+                                    Org-Issued
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground font-semibold">
+                                {doc.mandatory ? "Mandatory" : "Optional"} · Max
+                                Size: {doc.maxSize}MB · Verification: Required
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => removeDocumentRule(doc.id)}
+                              className="p-1.5 hover:bg-red-500/10 text-red-500 rounded-lg transition-all"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        ))}
                       </div>
 
                       {/* Add custom doc inline form */}
@@ -825,7 +738,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                     </div>
 
                     {/* Forms Selection */}
-                    <div>
+                   {/*  <div>
                       <h4 className="text-[11px] font-black text-[#00B87C] uppercase tracking-wider mb-3 pb-1.5 border-b border-[#00B87C]/20">
                         Required Forms / Agreements
                       </h4>
@@ -873,10 +786,10 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                           Add Form
                         </button>
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Training & Policies */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/*   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <h4 className="text-[11px] font-black text-[#00B87C] uppercase tracking-wider mb-3 pb-1.5 border-b border-[#00B87C]/20">
                           Mandatory Training Courses
@@ -956,7 +869,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                           </button>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 )}
 

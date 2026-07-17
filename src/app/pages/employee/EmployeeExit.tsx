@@ -19,7 +19,12 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useAuth } from "../../context/AuthContext";
-import { OFFBOARDING_EXITS_KEY, OFFBOARDING_UPDATED_EVENT, publishEmployeeExitAction, uploadExitDocuments } from "../../features/Offboarding/services/offboardingWorkflow";
+import {
+  OFFBOARDING_EXITS_KEY,
+  OFFBOARDING_UPDATED_EVENT,
+  publishEmployeeExitAction,
+  uploadExitDocuments,
+} from "../../features/Offboarding/services/offboardingWorkflow";
 import type { ExitEmployee } from "../../features/Offboarding/types/offboarding.types";
 
 /* ─── Types ─── */
@@ -563,7 +568,13 @@ export function EmployeeExit() {
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
 
   const [tasks, setTasks] = useState<ExitTask[]>(() => {
-    try { return JSON.parse(localStorage.getItem("viyan_employee_exit_tasks") || "") as ExitTask[]; } catch { return EXIT_TASKS; }
+    try {
+      return JSON.parse(
+        localStorage.getItem("viyan_employee_exit_tasks") || "",
+      ) as ExitTask[];
+    } catch {
+      return EXIT_TASKS;
+    }
   });
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
@@ -572,29 +583,43 @@ export function EmployeeExit() {
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [assignedExit, setAssignedExit] = useState<ExitEmployee | null>(null);
   const [uploadTaskId, setUploadTaskId] = useState<string | null>(null);
-  const [uploadDocumentName, setUploadDocumentName] = useState("Clearance_Doc_1.pdf");
+  const [uploadDocumentName, setUploadDocumentName] = useState(
+    "Clearance_Doc_1.pdf",
+  );
 
-  useEffect(() => { localStorage.setItem("viyan_employee_exit_tasks", JSON.stringify(tasks)); }, [tasks]);
+  useEffect(() => {
+    localStorage.setItem("viyan_employee_exit_tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   useEffect(() => {
     const syncAssignedExit = () => {
       try {
-        const exits = JSON.parse(localStorage.getItem(OFFBOARDING_EXITS_KEY) || "[]") as ExitEmployee[];
+        const exits = JSON.parse(
+          localStorage.getItem(OFFBOARDING_EXITS_KEY) || "[]",
+        ) as ExitEmployee[];
         const exit = exits.find((item) => item.name === employeeName);
         if (!exit?.assignedTemplateId) return;
         setAssignedExit(exit);
-        setTasks((exit.employeeTasks || []).map((task) => ({
-          id: task.id,
-          label: task.label,
-          description: "Assigned as part of your exit template",
-          responsible: "You",
-          responsibleChip: "You",
-          status: task.status,
-          actionLabel: task.id.startsWith("document-") ? "Upload" : "Complete",
-          actionType: "btn" as const,
-          completedDate: task.completedAt,
-        })));
-        setUploadedFiles(exit.documents.filter((document) => document.status === "uploaded").map((document) => document.name));
+        setTasks(
+          (exit.employeeTasks || []).map((task) => ({
+            id: task.id,
+            label: task.label,
+            description: "Assigned as part of your exit template",
+            responsible: "You",
+            responsibleChip: "You",
+            status: task.status,
+            actionLabel: task.id.startsWith("document-")
+              ? "Upload"
+              : "Complete",
+            actionType: "btn" as const,
+            completedDate: task.completedAt,
+          })),
+        );
+        setUploadedFiles(
+          exit.documents
+            .filter((document) => document.status === "uploaded")
+            .map((document) => document.name),
+        );
       } catch {
         // Keep the existing exit page state when storage is unavailable.
       }
@@ -614,7 +639,9 @@ export function EmployeeExit() {
       if (saved) {
         try {
           const requests = JSON.parse(saved);
-          const priyaReq = requests.find((r: any) => r.employeeName === employeeName);
+          const priyaReq = requests.find(
+            (r: any) => r.employeeName === employeeName,
+          );
           if (priyaReq) {
             setWorkflowStatus(priyaReq.status);
             setResignationDetails({
@@ -656,15 +683,32 @@ export function EmployeeExit() {
   const completeTask = (taskId: string) => {
     const task = tasks.find((item) => item.id === taskId);
     if (!task || task.status === "done") return;
-    const completedDate = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" });
-    setTasks((previous) => previous.map((item) => item.id === taskId ? { ...item, status: "done", completedDate } : item));
-    publishEmployeeExitAction(employeeName, { id: task.id, label: task.label, status: "done", completedAt: completedDate });
+    const completedDate = new Date().toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+    setTasks((previous) =>
+      previous.map((item) =>
+        item.id === taskId ? { ...item, status: "done", completedDate } : item,
+      ),
+    );
+    publishEmployeeExitAction(employeeName, {
+      id: task.id,
+      label: task.label,
+      status: "done",
+      completedAt: completedDate,
+    });
   };
 
   const openModalFor = (task: ExitTask) => {
-    if (task.actionType === "btn" && (task.label.includes("Upload") || task.id.startsWith("document-"))) {
+    if (
+      task.actionType === "btn" &&
+      (task.label.includes("Upload") || task.id.startsWith("document-"))
+    ) {
       setUploadTaskId(task.id);
-      setUploadDocumentName(task.label.replace(/^Upload\s+/, "") || "Clearance_Doc_1.pdf");
+      setUploadDocumentName(
+        task.label.replace(/^Upload\s+/, "") || "Clearance_Doc_1.pdf",
+      );
       setShowUploadModal(true);
     } else if (task.actionType === "btn") {
       completeTask(task.id);
@@ -707,7 +751,9 @@ export function EmployeeExit() {
       }
     }
 
-    const priyaIndex = requests.findIndex((r: any) => r.employeeName === employeeName);
+    const priyaIndex = requests.findIndex(
+      (r: any) => r.employeeName === employeeName,
+    );
     const newRequest = {
       id: `req-${Date.now()}`,
       employeeName: employeeName,
@@ -717,7 +763,8 @@ export function EmployeeExit() {
       manager: "Sarah Chen",
       joiningDate: "2023-06-15",
       status: "pending_manager" as const,
-      resignationDate: data.resignationDate || new Date().toISOString().split("T")[0],
+      resignationDate:
+        data.resignationDate || new Date().toISOString().split("T")[0],
       lwd: data.lwd,
       noticePeriod: data.noticePeriod,
       reason: data.reason,
@@ -730,7 +777,10 @@ export function EmployeeExit() {
     } else {
       requests.push(newRequest);
     }
-    localStorage.setItem("viyan_resignation_requests", JSON.stringify(requests));
+    localStorage.setItem(
+      "viyan_resignation_requests",
+      JSON.stringify(requests),
+    );
   };
 
   if (workflowStatus === "draft") {
@@ -769,9 +819,13 @@ export function EmployeeExit() {
           status={workflowStatus}
         />
         <div className="p-8 text-center bg-card border border-border rounded-3xl shadow-sm space-y-3">
-          <h3 className="text-sm font-black uppercase text-[#00B87C] tracking-wider animate-pulse">Resignation Approved</h3>
+          <h3 className="text-sm font-black uppercase text-[#00B87C] tracking-wider animate-pulse">
+            Resignation Approved
+          </h3>
           <p className="text-xs text-muted-foreground max-w-md mx-auto font-medium">
-            Your resignation request has been approved. The HR department is currently preparing your offboarding checklist and assigning the offboarding template. Please check back shortly.
+            Your resignation request has been approved. The HR department is
+            currently preparing your offboarding checklist and assigning the
+            offboarding template. Please check back shortly.
           </p>
         </div>
       </div>

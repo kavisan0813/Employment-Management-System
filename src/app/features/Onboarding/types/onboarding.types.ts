@@ -32,6 +32,8 @@ export interface NewHire {
   completedTraining?: string[];
   /** IDs of forms/agreements the employee has signed. */
   completedForms?: string[];
+  /** IDs of company documents the employee has acknowledged/signed. */
+  acknowledgedDocs?: string[];
 }
 
 export type TaskStatus = "done" | "pending" | "overdue" | "in-progress";

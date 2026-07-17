@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Building2, MoreVertical as MoreIcon, User, TrendingUp } from "lucide-react";
+import {
+  Building2,
+  MoreVertical as MoreIcon,
+  User,
+  TrendingUp,
+} from "lucide-react";
 import { Department } from "../types/department.types";
 
 interface DepartmentTableProps {
@@ -20,10 +25,8 @@ export function DepartmentTable({
   onViewClick,
   onAssignHeadClick,
 }: DepartmentTableProps) {
-
   return (
     <div className="bg-card rounded-2xl border border-border shadow-sm">
-
       <div className="w-full overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[800px]">
           <thead>
@@ -62,9 +65,7 @@ export function DepartmentTable({
               >
                 {/* Dept details */}
                 <td className="px-6 py-4">
-                  <div
-                    className="flex items-center gap-3"
-                  >
+                  <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-secondary flex-shrink-0">
                       <Building2 size={16} color="var(--primary)" />
                     </div>
@@ -132,12 +133,12 @@ export function DepartmentTable({
                   </div>
                 </td>
 
-                 {/* Finance columns */}
-                 {showFinance && (
-                   <td className="px-6 py-4 text-right text-xs font-extrabold text-foreground">
-                     {dept.budgetUsedAmount}
-                   </td>
-                 )}
+                {/* Finance columns */}
+                {showFinance && (
+                  <td className="px-6 py-4 text-right text-xs font-extrabold text-foreground">
+                    {dept.budgetUsedAmount}
+                  </td>
+                )}
 
                 {/* Growth */}
                 <td className="px-6 py-4 text-right">

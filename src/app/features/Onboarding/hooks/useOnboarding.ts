@@ -85,7 +85,8 @@ export const resolveDefaultTemplate = (
   );
   if (activeForDept.length === 0) return undefined;
   return (
-    activeForDept.find((t) => t.isDefault) || activeForDept[activeForDept.length - 1]
+    activeForDept.find((t) => t.isDefault) ||
+    activeForDept[activeForDept.length - 1]
   );
 };
 
@@ -116,7 +117,9 @@ export const enrollEmployeeInOnboarding = (
   const queue: NewHire[] = JSON.parse(
     localStorage.getItem(ONB_QUEUE_KEY) || "[]",
   );
-  if (queue.some((n) => n.email?.toLowerCase() === profile.email.toLowerCase())) {
+  if (
+    queue.some((n) => n.email?.toLowerCase() === profile.email.toLowerCase())
+  ) {
     return null;
   }
 
@@ -757,6 +760,7 @@ export function useOnboarding() {
       JSON.stringify(updatedQueue),
     );
 
+    setSelectedTemplate(null);
     showToast(
       "Template Assigned",
       "success",

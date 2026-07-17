@@ -1,4 +1,10 @@
-import { Building2, Users, IndianRupee, PieChart, AlertTriangle } from "lucide-react";
+import {
+  Building2,
+  Users,
+  IndianRupee,
+  PieChart,
+  AlertTriangle,
+} from "lucide-react";
 import { Department } from "../types/department.types";
 
 interface DepartmentStatsProps {
@@ -6,15 +12,32 @@ interface DepartmentStatsProps {
   showFinance: boolean;
 }
 
-export function DepartmentStats({ departments, showFinance }: DepartmentStatsProps) {
+export function DepartmentStats({
+  departments,
+  showFinance,
+}: DepartmentStatsProps) {
   const totalDepts = departments.length;
   const totalEmployees = departments.reduce((acc, d) => acc + d.employees, 0);
-  const activeEmployees = departments.reduce((acc, d) => acc + d.activeEmployees, 0);
-  const onLeaveEmployees = departments.reduce((acc, d) => acc + d.onLeaveEmployees, 0);
+  const activeEmployees = departments.reduce(
+    (acc, d) => acc + d.activeEmployees,
+    0,
+  );
+  const onLeaveEmployees = departments.reduce(
+    (acc, d) => acc + d.onLeaveEmployees,
+    0,
+  );
 
   // Compute finance stats
-  const overBudgetCount = departments.filter((d) => (d.budgetUsedPct ?? 0) > 90 || d.budgetStatus === "red").length;
-  const avgUtilization = totalDepts > 0 ? Math.round(departments.reduce((acc, d) => acc + (d.budgetUsedPct ?? 0), 0) / totalDepts) : 0;
+  const overBudgetCount = departments.filter(
+    (d) => (d.budgetUsedPct ?? 0) > 90 || d.budgetStatus === "red",
+  ).length;
+  const avgUtilization =
+    totalDepts > 0
+      ? Math.round(
+          departments.reduce((acc, d) => acc + (d.budgetUsedPct ?? 0), 0) /
+            totalDepts,
+        )
+      : 0;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
@@ -137,7 +160,12 @@ export function DepartmentStats({ departments, showFinance }: DepartmentStatsPro
               Operational Efficiency
             </p>
             <p className="text-[13px] text-muted-foreground leading-relaxed">
-              Overall operations are running at <strong className="text-emerald-600">{Math.round((activeEmployees / totalEmployees) * 100)}%</strong> active capacity. HR is tracking leaves and vacancy adjustments for the Q3 pipeline.
+              Overall operations are running at{" "}
+              <strong className="text-emerald-600">
+                {Math.round((activeEmployees / totalEmployees) * 100)}%
+              </strong>{" "}
+              active capacity. HR is tracking leaves and vacancy adjustments for
+              the Q3 pipeline.
             </p>
           </div>
         </>

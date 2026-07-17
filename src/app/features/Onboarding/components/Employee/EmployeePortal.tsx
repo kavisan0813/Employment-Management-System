@@ -20,8 +20,7 @@ type TabKey = "personal" | "documents" | "forms" | "status";
 type AssignedTabKey =
   | "candidate-process"
   | "documents"
-  | "forms"
-  | "policies"
+  | "company-documents"
   | "training"
   | "assigned-tasks";
 
@@ -138,9 +137,17 @@ export function EmployeePortal() {
     nextPhases: any[],
     nextDocs: any[],
     nextProfileChecks?: Record<string, boolean>,
+    nextCompletedPolicies?: string[],
+    nextCompletedTraining?: string[],
+    nextCompletedForms?: string[],
+    nextAcknowledgedDocs?: string[],
   ) => {
     if (!hire) return;
     const finalChecks = nextProfileChecks || taskState;
+    const finalPolicies = nextCompletedPolicies || hire.completedPolicies || [];
+    const finalTraining = nextCompletedTraining || hire.completedTraining || [];
+    const finalForms = nextCompletedForms || hire.completedForms || [];
+    const finalAcknowledged = nextAcknowledgedDocs || hire.acknowledgedDocs || [];
 
     // 1. Candidate profile checklist (4 items)
     const profileCompleted = [
@@ -158,23 +165,29 @@ export function EmployeePortal() {
     const empCompleted = empTasks.filter((t) => t.status === "done").length;
     const empTotal = empTasks.length;
 
-    // 3. Uploaded documents
-    const docCompleted = nextDocs.filter((d) => d.status === "uploaded").length;
+    // 3. Uploaded documents & Company documents acknowledgment
+    const reqDocs = nextDocs.filter((d) => !d.issuedByOrg);
+    const compDocs = nextDocs.filter((d) => d.issuedByOrg);
+
+    const reqCompleted = reqDocs.filter((d) => d.status === "uploaded").length;
+    const compCompleted = compDocs.filter((d) => finalAcknowledged.includes(d.id)).length;
+
+    const docCompleted = reqCompleted + compCompleted;
     const docTotal = nextDocs.length;
 
     // 4. Policies completed
     const policiesList = matchedTemplate?.policies || [];
-    const policiesCompleted = (hire.completedPolicies || []).length;
+    const policiesCompleted = finalPolicies.length;
     const policiesTotal = policiesList.length;
 
     // 5. Training completed
     const trainingList = matchedTemplate?.training || [];
-    const trainingCompleted = (hire.completedTraining || []).length;
+    const trainingCompleted = finalTraining.length;
     const trainingTotal = trainingList.length;
 
     // 6. Forms completed
     const formsList = matchedTemplate?.forms || [];
-    const formsCompleted = (hire.completedForms || []).length;
+    const formsCompleted = finalForms.length;
     const formsTotal = formsList.length;
 
     const totalItems =
@@ -194,11 +207,18 @@ export function EmployeePortal() {
     const nextPercent =
       totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
-    // Save updated queue progress
-    const updatedQueue = queue.map((q) =>
+    // Read the absolute latest queue from local storage to avoid stale mapping!
+    const latestQueue = JSON.parse(
+      localStorage.getItem("viyan_onboarding_queue") || "[]",
+    );
+    const updatedQueue = latestQueue.map((q: any) =>
       q.id === hire.id
         ? {
             ...q,
+            completedPolicies: finalPolicies,
+            completedTraining: finalTraining,
+            completedForms: finalForms,
+            acknowledgedDocs: finalAcknowledged,
             progress: nextPercent,
             status: nextPercent === 100 ? "completed" : "on-track",
           }
@@ -283,24 +303,12 @@ export function EmployeePortal() {
     if (completed.includes(policyId)) return;
 
     const nextCompleted = [...completed, policyId];
-    const updatedQueue = queue.map((q) =>
-      q.id === hire.id ? { ...q, completedPolicies: nextCompleted } : q,
+    updateProgress(phases, documents, undefined, nextCompleted, undefined, undefined);
+    showToast(
+      "Policy Reviewed",
+      "success",
+      "Thank you for confirming your policy review.",
     );
-    setQueue(updatedQueue);
-    localStorage.setItem(
-      "viyan_onboarding_queue",
-      JSON.stringify(updatedQueue),
-    );
-
-    // Force updates triggers
-    setTimeout(() => {
-      updateProgress(phases, documents);
-      showToast(
-        "Policy Reviewed",
-        "success",
-        "Thank you for confirming your policy review.",
-      );
-    }, 100);
   };
 
   const handleTrainingComplete = (courseId: string) => {
@@ -308,24 +316,12 @@ export function EmployeePortal() {
     if (completed.includes(courseId)) return;
 
     const nextCompleted = [...completed, courseId];
-    const updatedQueue = queue.map((q) =>
-      q.id === hire.id ? { ...q, completedTraining: nextCompleted } : q,
+    updateProgress(phases, documents, undefined, undefined, nextCompleted, undefined);
+    showToast(
+      "Training Completed",
+      "success",
+      "Orientation course completed successfully!",
     );
-    setQueue(updatedQueue);
-    localStorage.setItem(
-      "viyan_onboarding_queue",
-      JSON.stringify(updatedQueue),
-    );
-
-    // Force updates triggers
-    setTimeout(() => {
-      updateProgress(phases, documents);
-      showToast(
-        "Training Completed",
-        "success",
-        "Orientation course completed successfully!",
-      );
-    }, 100);
   };
 
   const handleFormSign = (formId: string) => {
@@ -333,20 +329,21 @@ export function EmployeePortal() {
     if (completed.includes(formId)) return;
 
     const nextCompleted = [...completed, formId];
-    const updatedQueue = queue.map((q) =>
-      q.id === hire.id ? { ...q, completedForms: nextCompleted } : q,
-    );
-    setQueue(updatedQueue);
-    localStorage.setItem(
-      "viyan_onboarding_queue",
-      JSON.stringify(updatedQueue),
-    );
+    updateProgress(phases, documents, undefined, undefined, undefined, nextCompleted);
+    showToast("Form Signed", "success", "Form has been signed successfully.");
+  };
 
-    // Force updates triggers
-    setTimeout(() => {
-      updateProgress(phases, documents);
-      showToast("Form Signed", "success", "Form has been signed successfully.");
-    }, 100);
+  const handleDocAcknowledge = (docId: string) => {
+    const completed = hire.acknowledgedDocs || [];
+    if (completed.includes(docId)) return;
+
+    const nextCompleted = [...completed, docId];
+    updateProgress(phases, documents, undefined, undefined, undefined, undefined, nextCompleted);
+    showToast(
+      "Document Acknowledged",
+      "success",
+      "Thank you for reviewing and digitally signing the company document.",
+    );
   };
 
   const submitCandidateProcess = () => {
@@ -626,16 +623,13 @@ export function EmployeePortal() {
             { key: "candidate-process", label: "Candidate Setup" },
             {
               key: "documents",
-              label: `Required Files (${documents.filter((d) => d.status !== "uploaded").length})`,
+              label: `Required Files (${documents.filter((d) => !d.issuedByOrg && d.status !== "uploaded").length})`,
             },
             {
-              key: "forms",
-              label: `Forms (${(matchedTemplate?.forms || []).length - (hire.completedForms || []).length})`,
+              key: "company-documents",
+              label: `Company Documents (${documents.filter((d) => d.issuedByOrg && !(hire.acknowledgedDocs || []).includes(d.id)).length})`,
             },
-            {
-              key: "policies",
-              label: `Policies (${(matchedTemplate?.policies || []).length - (hire.completedPolicies || []).length})`,
-            },
+           
             {
               key: "training",
               label: `Training (${(matchedTemplate?.training || []).length - (hire.completedTraining || []).length})`,
@@ -686,7 +680,7 @@ export function EmployeePortal() {
         )}
 
         {/* SUBTAB FOR FORMS */}
-        {activeAssignedSubTab === "forms" && (
+       {/*  {activeAssignedSubTab === "forms" && (
           <div className="bg-card border border-border rounded-3xl p-6 space-y-6 shadow-sm">
             <div>
               <h4 className="text-sm font-black text-foreground">
@@ -735,7 +729,7 @@ export function EmployeePortal() {
               )}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* SUBTAB 2: REQUIRED FILES */}
         {activeAssignedSubTab === "documents" && (
@@ -749,7 +743,7 @@ export function EmployeePortal() {
               </p>
             </div>
             <div className="divide-y divide-border">
-              {documents.map((doc) => (
+              {documents.filter((d) => !d.issuedByOrg).map((doc) => (
                 <div
                   key={doc.id}
                   className="py-4 flex items-center justify-between flex-wrap gap-4 first:pt-0 last:pb-0"
@@ -776,21 +770,35 @@ export function EmployeePortal() {
                         : "pending"}
                     </span>
                     {doc.status !== "uploaded" ? (
-                      <button
-                        onClick={() => handleAssignedDocUpload(doc.id)}
-                        className="px-4 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all cursor-pointer"
-                      >
-                        Upload file
-                      </button>
+                      doc.issuedByOrg ? (
+                        <span className="text-xs text-amber-500 font-bold">
+                          Awaiting Company Upload
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleAssignedDocUpload(doc.id)}
+                          className="px-4 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all cursor-pointer"
+                        >
+                          Upload file
+                        </button>
+                      )
                     ) : (
-                      <span className="text-xs text-muted-foreground font-bold">
-                        Done ✓
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => showToast("Viewing File", "info", `Opening ${doc.name}...`)}
+                          className="px-3 py-1.5 rounded-lg bg-neutral-100 text-muted-foreground hover:bg-neutral-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-[11px] font-semibold transition-all cursor-pointer"
+                        >
+                          View File
+                        </button>
+                        <span className="text-xs text-muted-foreground font-bold">
+                          Done ✓
+                        </span>
+                      </div>
                     )}
                   </div>
                 </div>
               ))}
-              {documents.length === 0 && (
+              {documents.filter((d) => !d.issuedByOrg).length === 0 && (
                 <p className="text-xs text-muted-foreground italic text-center py-6">
                   No required document uploads configured.
                 </p>
@@ -799,8 +807,76 @@ export function EmployeePortal() {
           </div>
         )}
 
+        {/* SUBTAB: COMPANY DOCUMENTS */}
+        {activeAssignedSubTab === "company-documents" && (
+          <div className="bg-card border border-border rounded-3xl p-6 space-y-6 shadow-sm">
+            <div>
+              <h4 className="text-sm font-black text-foreground">
+                Company Documents & Agreements
+              </h4>
+              <p className="text-xs text-muted-foreground font-semibold mt-0.5">
+                Please view, download, and digitally sign/acknowledge organization-issued documents
+              </p>
+            </div>
+            <div className="divide-y divide-border">
+              {documents.filter((d) => d.issuedByOrg).map((doc) => {
+                const acknowledged = (hire.acknowledgedDocs || []).includes(doc.id);
+                return (
+                  <div
+                    key={doc.id}
+                    className="py-4 flex items-center justify-between flex-wrap gap-4 first:pt-0 last:pb-0"
+                  >
+                    <div>
+                      <strong className="text-xs text-foreground block">
+                        {doc.name}
+                      </strong>
+                      <span className="text-[10px] text-muted-foreground font-semibold uppercase">
+                        Published by: {doc.uploadedBy || "HR Department"} · Date: {doc.date}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                          acknowledged
+                            ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15"
+                            : "bg-muted text-muted-foreground"
+                        }`}
+                      >
+                        {acknowledged ? "complete" : "pending"}
+                      </span>
+                      <button
+                        onClick={() => showToast("Viewing File", "info", `Opening ${doc.name}...`)}
+                        className="px-3 py-1.5 rounded-lg bg-neutral-100 text-muted-foreground hover:bg-neutral-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-[11px] font-semibold transition-all cursor-pointer"
+                      >
+                        View File
+                      </button>
+                      {acknowledged ? (
+                        <span className="text-xs text-[#00B87C] font-bold block">
+                          Complete ✓
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleDocAcknowledge(doc.id)}
+                          className="px-4 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all cursor-pointer"
+                        >
+                          Sign & Acknowledge
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              {documents.filter((d) => d.issuedByOrg).length === 0 && (
+                <p className="text-xs text-muted-foreground italic text-center py-6">
+                  No company-issued documents are available yet.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* SUBTAB 3: POLICIES */}
-        {activeAssignedSubTab === "policies" && (
+        {/* {activeAssignedSubTab === "policies" && (
           <div className="bg-card border border-border rounded-3xl p-6 space-y-6 shadow-sm">
             <div>
               <h4 className="text-sm font-black text-foreground">
@@ -852,7 +928,7 @@ export function EmployeePortal() {
             </div>
           </div>
         )}
-
+ */}
         {/* SUBTAB 4: ORIENTATION/TRAINING */}
         {activeAssignedSubTab === "training" && (
           <div className="bg-card border border-border rounded-3xl p-6 space-y-6 shadow-sm">

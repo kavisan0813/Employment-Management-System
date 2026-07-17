@@ -153,8 +153,8 @@ export function Onboarding() {
                               <select
                                 id="assign-template-select"
                                 className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:border-[#00B87C] transition-all"
-                                defaultValue=""
-                                onChange={(e) => ((window as any)._selected_assign_tpl = e.target.value)}
+                                value={hook.selectedTemplate || ""}
+                                onChange={(e) => hook.setSelectedTemplate(e.target.value)}
                               >
                                 <option value="">Select template...</option>
                                 {matching.length > 0 && (
@@ -185,12 +185,11 @@ export function Onboarding() {
 
                               <button
                                 onClick={() => {
-                                  const tplId = (window as any)._selected_assign_tpl;
-                                  if (!tplId) {
+                                  if (!hook.selectedTemplate) {
                                     showToast("Select Template", "error", "Please choose a template from the list first.");
                                     return;
                                   }
-                                  hook.handleAssignTemplate(hook.selected.id, tplId);
+                                  hook.handleAssignTemplate(hook.selected.id, hook.selectedTemplate);
                                 }}
                                 className="w-full py-3 rounded-xl bg-[#00B87C] text-white text-xs font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-md cursor-pointer"
                               >
@@ -331,6 +330,8 @@ export function Onboarding() {
           departments={hook.departments}
           taskOwners={hook.taskOwners}
           saveTemplate={hook.saveTemplate}
+          handleDuplicateTemplate={hook.handleDuplicateTemplate}
+          handleDeleteTemplate={hook.handleDeleteTemplate}
         />
 
         <EscalationModal

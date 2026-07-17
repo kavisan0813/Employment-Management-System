@@ -32,9 +32,11 @@ export function DeleteDepartmentModal({
         <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 mb-2 text-center">
           Delete Department
         </h3>
-      <p className="text-sm text-muted-foreground mb-6 text-center">
-  You are about to delete <strong>{dept.name}</strong>. Please select another department to transfer all employees assigned to this department before proceeding. This action cannot be undone.
-</p>
+        <p className="text-sm text-muted-foreground mb-6 text-center">
+          You are about to delete <strong>{dept.name}</strong>. Please select
+          another department to transfer all employees assigned to this
+          department before proceeding. This action cannot be undone.
+        </p>
         <div className="flex gap-3">
           <button
             className="w-full py-2.5 rounded-xl text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-neutral-100 dark:bg-zinc-800 hover:bg-neutral-200 transition-colors"

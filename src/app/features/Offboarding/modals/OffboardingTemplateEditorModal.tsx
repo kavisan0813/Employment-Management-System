@@ -33,15 +33,85 @@ const emptyTemplate = (): OffboardingTemplate => ({
   version: 1,
   isDefault: false,
   clearances: [
-    { id: "Manager", dept: "Manager", person: "Reporting Manager", tasks: [{ id: "manager-handover", name: "Approve project handover", owner: "Manager", isMandatory: true }] },
-    { id: "IT", dept: "IT", person: "IT Team Support", tasks: [{ id: "it-access", name: "Revoke access and recover devices", owner: "IT", isMandatory: true }] },
-    { id: "Finance", dept: "Finance", person: "Finance Manager", tasks: [{ id: "finance-ff", name: "Verify final settlement", owner: "Finance", isMandatory: true }] },
-    { id: "HR", dept: "HR", person: "HR Manager", tasks: [{ id: "hr-interview", name: "Complete exit interview", owner: "HR", isMandatory: true }] },
-    { id: "Admin", dept: "Admin", person: "Admin Lead", tasks: [{ id: "admin-card", name: "Confirm access-card return", owner: "Admin", isMandatory: true }] },
+    {
+      id: "Manager",
+      dept: "Manager",
+      person: "Reporting Manager",
+      tasks: [
+        {
+          id: "manager-handover",
+          name: "Approve project handover",
+          owner: "Manager",
+          isMandatory: true,
+        },
+      ],
+    },
+    {
+      id: "IT",
+      dept: "IT",
+      person: "IT Team Support",
+      tasks: [
+        {
+          id: "it-access",
+          name: "Revoke access and recover devices",
+          owner: "IT",
+          isMandatory: true,
+        },
+      ],
+    },
+    {
+      id: "Finance",
+      dept: "Finance",
+      person: "Finance Manager",
+      tasks: [
+        {
+          id: "finance-ff",
+          name: "Verify final settlement",
+          owner: "Finance",
+          isMandatory: true,
+        },
+      ],
+    },
+    {
+      id: "HR",
+      dept: "HR",
+      person: "HR Manager",
+      tasks: [
+        {
+          id: "hr-interview",
+          name: "Complete exit interview",
+          owner: "HR",
+          isMandatory: true,
+        },
+      ],
+    },
+    {
+      id: "Admin",
+      dept: "Admin",
+      person: "Admin Lead",
+      tasks: [
+        {
+          id: "admin-card",
+          name: "Confirm access-card return",
+          owner: "Admin",
+          isMandatory: true,
+        },
+      ],
+    },
   ],
   assets: [
-    { id: "laptop", name: "Company Laptop", category: "Hardware", mandatory: true },
-    { id: "access_card", name: "Office Access Card", category: "Security", mandatory: true },
+    {
+      id: "laptop",
+      name: "Company Laptop",
+      category: "Hardware",
+      mandatory: true,
+    },
+    {
+      id: "access_card",
+      name: "Office Access Card",
+      category: "Security",
+      mandatory: true,
+    },
   ],
   documents: [
     { id: "resignation", name: "Resignation Letter", mandatory: true },
@@ -65,7 +135,14 @@ const emptyTemplate = (): OffboardingTemplate => ({
     "Check loan balance and recovery adjustment",
   ],
   customTasks: [
-    { id: "exit-declaration", name: "Submit exit declaration", owner: "Employee", dueDays: 2, priority: "High", mandatory: true },
+    {
+      id: "exit-declaration",
+      name: "Submit exit declaration",
+      owner: "Employee",
+      dueDays: 2,
+      priority: "High",
+      mandatory: true,
+    },
   ],
 });
 
@@ -78,13 +155,17 @@ export function OffboardingTemplateEditorModal({
   saveTemplate,
 }: OffboardingTemplateEditorModalProps) {
   const [draft, setDraft] = useState<OffboardingTemplate>(emptyTemplate);
-  const [activeTab, setActiveTab] = useState<"info" | "clearances" | "assets" | "process">("info");
+  const [activeTab, setActiveTab] = useState<
+    "info" | "clearances" | "assets" | "process"
+  >("info");
 
   // Input helpers
   const [customTaskName, setCustomTaskName] = useState("");
   const [customTaskOwner, setCustomTaskOwner] = useState("IT Manager");
   const [customTaskDue, setCustomTaskDue] = useState(3);
-  const [customTaskPriority, setCustomTaskPriority] = useState<"High" | "Medium" | "Low">("Medium");
+  const [customTaskPriority, setCustomTaskPriority] = useState<
+    "High" | "Medium" | "Low"
+  >("Medium");
   const [customTaskMandatory, setCustomTaskMandatory] = useState(true);
   const [customTaskApproval, setCustomTaskApproval] = useState(true);
   const [customTaskDesc, setCustomTaskDesc] = useState("");
@@ -107,10 +188,26 @@ export function OffboardingTemplateEditorModal({
         const requiredDepts = ["Manager", "IT", "Finance", "HR", "Admin"];
         const existingClearances = found.clearances || [];
         const filledClearances = requiredDepts.map((deptName) => {
-          const match = existingClearances.find((c) => c.dept === deptName || c.id === deptName);
+          const match = existingClearances.find(
+            (c) => c.dept === deptName || c.id === deptName,
+          );
           if (match) return match;
-          const defaultPerson = deptName === "Manager" ? "Reporting Manager" : deptName === "IT" ? "IT Team Support" : deptName === "Finance" ? "Finance Manager" : deptName === "HR" ? "HR Manager" : "Admin Lead";
-          return { id: deptName, dept: deptName, person: defaultPerson, tasks: [] };
+          const defaultPerson =
+            deptName === "Manager"
+              ? "Reporting Manager"
+              : deptName === "IT"
+                ? "IT Team Support"
+                : deptName === "Finance"
+                  ? "Finance Manager"
+                  : deptName === "HR"
+                    ? "HR Manager"
+                    : "Admin Lead";
+          return {
+            id: deptName,
+            dept: deptName,
+            person: defaultPerson,
+            tasks: [],
+          };
         });
         setDraft({
           ...found,
@@ -146,7 +243,7 @@ export function OffboardingTemplateEditorModal({
                 },
               ],
             }
-          : c
+          : c,
       ),
     }));
     setCustomTaskName("");
@@ -157,7 +254,9 @@ export function OffboardingTemplateEditorModal({
     setDraft((current) => ({
       ...current,
       clearances: (current.clearances || []).map((c) =>
-        c.id === deptId ? { ...c, tasks: c.tasks.filter((t) => t.id !== taskId) } : c
+        c.id === deptId
+          ? { ...c, tasks: c.tasks.filter((t) => t.id !== taskId) }
+          : c,
       ),
     }));
   };
@@ -169,7 +268,12 @@ export function OffboardingTemplateEditorModal({
       ...current,
       assets: [
         ...(current.assets || []),
-        { id: `asset-${Date.now()}`, name: customAssetName.trim(), category: customAssetCategory, mandatory: customAssetMandatory },
+        {
+          id: `asset-${Date.now()}`,
+          name: customAssetName.trim(),
+          category: customAssetCategory,
+          mandatory: customAssetMandatory,
+        },
       ],
     }));
     setCustomAssetName("");
@@ -187,7 +291,14 @@ export function OffboardingTemplateEditorModal({
     if (!customDocName.trim()) return;
     setDraft((current) => ({
       ...current,
-      documents: [...(current.documents || []), { id: `doc-${Date.now()}`, name: customDocName.trim(), mandatory: customDocMandatory }],
+      documents: [
+        ...(current.documents || []),
+        {
+          id: `doc-${Date.now()}`,
+          name: customDocName.trim(),
+          mandatory: customDocMandatory,
+        },
+      ],
     }));
     setCustomDocName("");
   };
@@ -204,7 +315,10 @@ export function OffboardingTemplateEditorModal({
     if (!customQuestion.trim()) return;
     setDraft((current) => ({
       ...current,
-      exitInterviewQuestionnaire: [...(current.exitInterviewQuestionnaire || []), customQuestion.trim()],
+      exitInterviewQuestionnaire: [
+        ...(current.exitInterviewQuestionnaire || []),
+        customQuestion.trim(),
+      ],
     }));
     setCustomQuestion("");
   };
@@ -212,7 +326,9 @@ export function OffboardingTemplateEditorModal({
   const removeQuestion = (idx: number) => {
     setDraft((current) => ({
       ...current,
-      exitInterviewQuestionnaire: (current.exitInterviewQuestionnaire || []).filter((_, i) => i !== idx),
+      exitInterviewQuestionnaire: (
+        current.exitInterviewQuestionnaire || []
+      ).filter((_, i) => i !== idx),
     }));
   };
 
@@ -220,7 +336,10 @@ export function OffboardingTemplateEditorModal({
     if (!customKtItem.trim()) return;
     setDraft((current) => ({
       ...current,
-      knowledgeTransferChecklist: [...(current.knowledgeTransferChecklist || []), customKtItem.trim()],
+      knowledgeTransferChecklist: [
+        ...(current.knowledgeTransferChecklist || []),
+        customKtItem.trim(),
+      ],
     }));
     setCustomKtItem("");
   };
@@ -228,13 +347,19 @@ export function OffboardingTemplateEditorModal({
   const removeKtItem = (idx: number) => {
     setDraft((current) => ({
       ...current,
-      knowledgeTransferChecklist: (current.knowledgeTransferChecklist || []).filter((_, i) => i !== idx),
+      knowledgeTransferChecklist: (
+        current.knowledgeTransferChecklist || []
+      ).filter((_, i) => i !== idx),
     }));
   };
 
   const submit = (status: "draft" | "active") => {
     if (!draft.name.trim() || !draft.department) {
-      showToast("Validation Error", "error", "Please provide a template name and select a department.");
+      showToast(
+        "Validation Error",
+        "error",
+        "Please provide a template name and select a department.",
+      );
       return;
     }
     saveTemplate({
@@ -272,7 +397,8 @@ export function OffboardingTemplateEditorModal({
                     {editingTemplate ? "Edit" : "Create"} Offboarding Template
                   </h2>
                   <p className="text-[11px] font-bold text-muted-foreground">
-                    Define exit clearances, asset returns, exit interviews, and documentation checklists
+                    Define exit clearances, asset returns, exit interviews, and
+                    documentation checklists
                   </p>
                 </div>
               </div>
@@ -288,9 +414,17 @@ export function OffboardingTemplateEditorModal({
             <div className="px-8 border-b border-border bg-muted/5 flex gap-2 shrink-0">
               {[
                 { key: "info", label: "1. Info & Filters", icon: Settings },
-                { key: "clearances", label: "2. Clearances Tasks", icon: ShieldCheck },
+                {
+                  key: "clearances",
+                  label: "2. Clearances Tasks",
+                  icon: ShieldCheck,
+                },
                 { key: "assets", label: "3. Assets & Docs", icon: FileCheck },
-                { key: "process", label: "4. KT & Exit Interview", icon: HelpCircle },
+                {
+                  key: "process",
+                  label: "4. KT & Exit Interview",
+                  icon: HelpCircle,
+                },
               ].map((tab) => (
                 <button
                   key={tab.key}
@@ -309,7 +443,6 @@ export function OffboardingTemplateEditorModal({
 
             {/* Scrollable Form Body */}
             <div className="flex-1 overflow-y-auto p-8 space-y-6">
-              
               {/* TAB 1: INFO */}
               {activeTab === "info" && (
                 <div className="space-y-6">
@@ -320,7 +453,9 @@ export function OffboardingTemplateEditorModal({
                       </label>
                       <input
                         value={draft.name}
-                        onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                        onChange={(e) =>
+                          setDraft({ ...draft, name: e.target.value })
+                        }
                         placeholder="e.g. Engineering Exit template"
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:border-[#00B87C]"
                       />
@@ -344,7 +479,9 @@ export function OffboardingTemplateEditorModal({
                       </label>
                       <select
                         value={draft.department}
-                        onChange={(e) => setDraft({ ...draft, department: e.target.value })}
+                        onChange={(e) =>
+                          setDraft({ ...draft, department: e.target.value })
+                        }
                         className="w-full rounded-xl border border-[#00B87C]/20 bg-background px-4 py-3 text-xs font-bold outline-none"
                       >
                         <option value="">Select department...</option>
@@ -361,7 +498,9 @@ export function OffboardingTemplateEditorModal({
                       </label>
                       <select
                         value={draft.status}
-                        onChange={(e) => setDraft({ ...draft, status: e.target.value as any })}
+                        onChange={(e) =>
+                          setDraft({ ...draft, status: e.target.value as any })
+                        }
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none"
                       >
                         <option value="draft">Draft</option>
@@ -377,7 +516,9 @@ export function OffboardingTemplateEditorModal({
                     </label>
                     <textarea
                       value={draft.description}
-                      onChange={(e) => setDraft({ ...draft, description: e.target.value })}
+                      onChange={(e) =>
+                        setDraft({ ...draft, description: e.target.value })
+                      }
                       placeholder="e.g. Standard offboarding sequence containing KT, hardware collection, and F&F calculations..."
                       rows={3}
                       className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-medium outline-none resize-none"
@@ -389,13 +530,18 @@ export function OffboardingTemplateEditorModal({
                       <input
                         type="checkbox"
                         checked={draft.isDefault || false}
-                        onChange={(e) => setDraft({ ...draft, isDefault: e.target.checked })}
+                        onChange={(e) =>
+                          setDraft({ ...draft, isDefault: e.target.checked })
+                        }
                         className="h-4.5 w-4.5 rounded border-border text-[#00B87C] focus:ring-[#00B87C]"
                       />
                       <div className="space-y-0.5">
-                        <span className="text-xs font-black text-foreground">Set as Default Template</span>
+                        <span className="text-xs font-black text-foreground">
+                          Set as Default Template
+                        </span>
                         <p className="text-[10px] text-muted-foreground font-semibold">
-                          If checked, all exiting employees from this department will use this template workflow by default.
+                          If checked, all exiting employees from this department
+                          will use this template workflow by default.
                         </p>
                       </div>
                     </label>
@@ -407,15 +553,23 @@ export function OffboardingTemplateEditorModal({
               {activeTab === "clearances" && (
                 <div className="space-y-6">
                   <p className="text-xs text-muted-foreground font-semibold leading-relaxed">
-                    Configure offboarding clearance tasks. Tasks will automatically be routed to the assigned department owners before the Last Working Day.
+                    Configure offboarding clearance tasks. Tasks will
+                    automatically be routed to the assigned department owners
+                    before the Last Working Day.
                   </p>
 
                   <div className="space-y-4">
                     {/* Flat Clearance Tasks List */}
                     <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
                       {(() => {
-                        const allClearanceTasks = (draft.clearances || []).flatMap((c) =>
-                          c.tasks.map((t) => ({ ...t, deptId: c.id, deptName: c.dept }))
+                        const allClearanceTasks = (
+                          draft.clearances || []
+                        ).flatMap((c) =>
+                          c.tasks.map((t) => ({
+                            ...t,
+                            deptId: c.id,
+                            deptName: c.dept,
+                          })),
                         );
                         if (allClearanceTasks.length === 0) {
                           return (
@@ -433,14 +587,18 @@ export function OffboardingTemplateEditorModal({
                           >
                             <div className="space-y-1">
                               <div className="flex items-center gap-2">
-                                <strong className="text-xs font-black text-foreground">{task.name}</strong>
-                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${
-                                  task.priority === "High"
-                                    ? "bg-red-50 text-red-500 border-red-500/15"
-                                    : task.priority === "Medium"
-                                    ? "bg-amber-50 text-amber-500 border-amber-500/15"
-                                    : "bg-blue-50 text-blue-500 border-blue-500/15"
-                                }`}>
+                                <strong className="text-xs font-black text-foreground">
+                                  {task.name}
+                                </strong>
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${
+                                    task.priority === "High"
+                                      ? "bg-red-50 text-red-500 border-red-500/15"
+                                      : task.priority === "Medium"
+                                        ? "bg-amber-50 text-amber-500 border-amber-500/15"
+                                        : "bg-blue-50 text-blue-500 border-blue-500/15"
+                                  }`}
+                                >
                                   {task.priority || "Medium"} Priority
                                 </span>
                                 {task.isMandatory && (
@@ -455,15 +613,37 @@ export function OffboardingTemplateEditorModal({
                                 )}
                               </div>
                               {task.description && (
-                                <p className="text-xs text-muted-foreground font-semibold">{task.description}</p>
+                                <p className="text-xs text-muted-foreground font-semibold">
+                                  {task.description}
+                                </p>
                               )}
                               <div className="flex gap-4 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                                <span>Assign To: <span className="text-foreground">{task.owner === "IT" ? "IT Manager" : task.owner === "HR" ? "HR Manager" : task.owner === "Finance" ? "Finance Manager" : task.owner === "Manager" ? "Reporting Manager" : "Admin"}</span></span>
-                                <span>Due: <span className="text-foreground">{task.dueBeforeLWD || 3} Days before LWD</span></span>
+                                <span>
+                                  Assign To:{" "}
+                                  <span className="text-foreground">
+                                    {task.owner === "IT"
+                                      ? "IT Manager"
+                                      : task.owner === "HR"
+                                        ? "HR Manager"
+                                        : task.owner === "Finance"
+                                          ? "Finance Manager"
+                                          : task.owner === "Manager"
+                                            ? "Reporting Manager"
+                                            : "Admin"}
+                                  </span>
+                                </span>
+                                <span>
+                                  Due:{" "}
+                                  <span className="text-foreground">
+                                    {task.dueBeforeLWD || 3} Days before LWD
+                                  </span>
+                                </span>
                               </div>
                             </div>
                             <button
-                              onClick={() => removeClearanceTask(task.deptId, task.id)}
+                              onClick={() =>
+                                removeClearanceTask(task.deptId, task.id)
+                              }
                               className="p-2 hover:bg-red-500/10 text-red-500 rounded-xl transition-all"
                             >
                               <Trash2 size={15} />
@@ -477,7 +657,9 @@ export function OffboardingTemplateEditorModal({
                     <div className="bg-card border border-border p-6 rounded-3xl space-y-4 shadow-sm">
                       <div className="flex items-center gap-2 border-b pb-2 border-border/60">
                         <Plus className="text-[#00B87C]" size={16} />
-                        <h5 className="text-xs font-black uppercase text-foreground tracking-wider">Add Clearance Task</h5>
+                        <h5 className="text-xs font-black uppercase text-foreground tracking-wider">
+                          Add Clearance Task
+                        </h5>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -502,9 +684,13 @@ export function OffboardingTemplateEditorModal({
                             className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-xs font-bold outline-none focus:border-[#00B87C]"
                           >
                             <option value="IT Manager">IT Manager</option>
-                            <option value="Finance Manager">Finance Manager</option>
+                            <option value="Finance Manager">
+                              Finance Manager
+                            </option>
                             <option value="HR Manager">HR Manager</option>
-                            <option value="Reporting Manager">Reporting Manager</option>
+                            <option value="Reporting Manager">
+                              Reporting Manager
+                            </option>
                             <option value="Admin">Admin</option>
                           </select>
                         </div>
@@ -531,7 +717,9 @@ export function OffboardingTemplateEditorModal({
                           <input
                             type="number"
                             value={customTaskDue}
-                            onChange={(e) => setCustomTaskDue(Number(e.target.value))}
+                            onChange={(e) =>
+                              setCustomTaskDue(Number(e.target.value))
+                            }
                             min={0}
                             className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none focus:border-[#00B87C]"
                           />
@@ -542,7 +730,9 @@ export function OffboardingTemplateEditorModal({
                           </label>
                           <select
                             value={customTaskPriority}
-                            onChange={(e) => setCustomTaskPriority(e.target.value as any)}
+                            onChange={(e) =>
+                              setCustomTaskPriority(e.target.value as any)
+                            }
                             className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none focus:border-[#00B87C]"
                           >
                             <option value="Low">Low Priority</option>
@@ -556,19 +746,27 @@ export function OffboardingTemplateEditorModal({
                               <input
                                 type="checkbox"
                                 checked={customTaskMandatory}
-                                onChange={(e) => setCustomTaskMandatory(e.target.checked)}
+                                onChange={(e) =>
+                                  setCustomTaskMandatory(e.target.checked)
+                                }
                                 className="h-4 w-4 rounded border border-border text-[#00B87C] focus:ring-[#00B87C]"
                               />
-                              <span className="text-[10px] font-black text-foreground uppercase tracking-wider">Mandatory</span>
+                              <span className="text-[10px] font-black text-foreground uppercase tracking-wider">
+                                Mandatory
+                              </span>
                             </label>
                             <label className="flex items-center gap-2 cursor-pointer">
                               <input
                                 type="checkbox"
                                 checked={customTaskApproval}
-                                onChange={(e) => setCustomTaskApproval(e.target.checked)}
+                                onChange={(e) =>
+                                  setCustomTaskApproval(e.target.checked)
+                                }
                                 className="h-4 w-4 rounded border border-border text-[#00B87C] focus:ring-[#00B87C]"
                               />
-                              <span className="text-[10px] font-black text-foreground uppercase tracking-wider">Approval Required</span>
+                              <span className="text-[10px] font-black text-foreground uppercase tracking-wider">
+                                Approval Required
+                              </span>
                             </label>
                           </div>
                           <button
@@ -576,9 +774,11 @@ export function OffboardingTemplateEditorModal({
                             onClick={() => {
                               const mapRoleToOwner = (role: string): string => {
                                 if (role === "IT Manager") return "IT";
-                                if (role === "Finance Manager") return "Finance";
+                                if (role === "Finance Manager")
+                                  return "Finance";
                                 if (role === "HR Manager") return "HR";
-                                if (role === "Reporting Manager") return "Manager";
+                                if (role === "Reporting Manager")
+                                  return "Manager";
                                 return "Admin";
                               };
                               addClearanceTask(mapRoleToOwner(customTaskOwner));
@@ -604,11 +804,17 @@ export function OffboardingTemplateEditorModal({
                     </h4>
                     <div className="space-y-2 mb-4">
                       {(draft.assets || []).map((asset) => (
-                        <div key={asset.id} className="flex items-center justify-between p-3.5 bg-muted/20 border rounded-2xl">
+                        <div
+                          key={asset.id}
+                          className="flex items-center justify-between p-3.5 bg-muted/20 border rounded-2xl"
+                        >
                           <div>
-                            <strong className="text-xs text-foreground">{asset.name}</strong>
+                            <strong className="text-xs text-foreground">
+                              {asset.name}
+                            </strong>
                             <p className="text-[10px] text-muted-foreground font-semibold">
-                              Category: {asset.category} · Return: {asset.mandatory ? "Mandatory" : "Optional"}
+                              Category: {asset.category} · Return:{" "}
+                              {asset.mandatory ? "Mandatory" : "Optional"}
                             </p>
                           </div>
                           <button
@@ -633,15 +839,26 @@ export function OffboardingTemplateEditorModal({
                       <div>
                         <select
                           value={customAssetCategory}
-                          onChange={(e) => setCustomAssetCategory(e.target.value)}
+                          onChange={(e) =>
+                            setCustomAssetCategory(e.target.value)
+                          }
                           className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs font-bold outline-none"
                         >
-                          <option value="Hardware">Hardware (Laptop, Monitor)</option>
-                          <option value="Security">Security (Access card, Keys)</option>
-                          <option value="Accounts">Software accounts (Jira, Git)</option>
+                          <option value="Hardware">
+                            Hardware (Laptop, Monitor)
+                          </option>
+                          <option value="Security">
+                            Security (Access card, Keys)
+                          </option>
+                          <option value="Accounts">
+                            Software accounts (Jira, Git)
+                          </option>
                         </select>
                       </div>
-                      <button onClick={addAssetRule} className="bg-[#00B87C] text-white py-2 text-xs font-black uppercase rounded-xl">
+                      <button
+                        onClick={addAssetRule}
+                        className="bg-[#00B87C] text-white py-2 text-xs font-black uppercase rounded-xl"
+                      >
                         Add Asset
                       </button>
                     </div>
@@ -654,13 +871,21 @@ export function OffboardingTemplateEditorModal({
                     </h4>
                     <div className="space-y-2 mb-4">
                       {(draft.documents || []).map((doc) => (
-                        <div key={doc.id} className="flex items-center justify-between p-3 border rounded-xl bg-card">
-                          <span className="text-xs font-bold text-foreground">{doc.name}</span>
+                        <div
+                          key={doc.id}
+                          className="flex items-center justify-between p-3 border rounded-xl bg-card"
+                        >
+                          <span className="text-xs font-bold text-foreground">
+                            {doc.name}
+                          </span>
                           <div className="flex items-center gap-3">
                             <span className="text-[10px] text-muted-foreground font-semibold">
                               {doc.mandatory ? "Mandatory" : "Optional"}
                             </span>
-                            <button onClick={() => removeDocumentRule(doc.id)} className="text-red-500">
+                            <button
+                              onClick={() => removeDocumentRule(doc.id)}
+                              className="text-red-500"
+                            >
                               <X size={14} />
                             </button>
                           </div>
@@ -675,7 +900,10 @@ export function OffboardingTemplateEditorModal({
                         placeholder="Add required exit document (e.g. Settlement Clearance Cert)..."
                         className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none"
                       />
-                      <button onClick={addDocumentRule} className="bg-[#00B87C] text-white px-4 text-xs font-bold uppercase rounded-xl">
+                      <button
+                        onClick={addDocumentRule}
+                        className="bg-[#00B87C] text-white px-4 text-xs font-bold uppercase rounded-xl"
+                      >
                         Add Doc
                       </button>
                     </div>
@@ -692,14 +920,24 @@ export function OffboardingTemplateEditorModal({
                       Knowledge Transfer tasks
                     </h4>
                     <div className="space-y-2 mb-3">
-                      {(draft.knowledgeTransferChecklist || []).map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-2.5 border rounded-xl bg-card">
-                          <span className="text-xs font-bold text-foreground">{item}</span>
-                          <button onClick={() => removeKtItem(idx)} className="text-red-500">
-                            <X size={12} />
-                          </button>
-                        </div>
-                      ))}
+                      {(draft.knowledgeTransferChecklist || []).map(
+                        (item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between p-2.5 border rounded-xl bg-card"
+                          >
+                            <span className="text-xs font-bold text-foreground">
+                              {item}
+                            </span>
+                            <button
+                              onClick={() => removeKtItem(idx)}
+                              className="text-red-500"
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        ),
+                      )}
                     </div>
                     <div className="flex gap-2">
                       <input
@@ -708,7 +946,10 @@ export function OffboardingTemplateEditorModal({
                         placeholder="Add KT tasks (e.g. handover client repository credentials)..."
                         className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none"
                       />
-                      <button onClick={addKtItem} className="bg-[#00B87C] text-white px-3 text-xs font-bold rounded-xl">
+                      <button
+                        onClick={addKtItem}
+                        className="bg-[#00B87C] text-white px-3 text-xs font-bold rounded-xl"
+                      >
                         +
                       </button>
                     </div>
@@ -724,22 +965,39 @@ export function OffboardingTemplateEditorModal({
                         <input
                           type="checkbox"
                           checked={draft.exitInterviewRequired}
-                          onChange={(e) => setDraft({ ...draft, exitInterviewRequired: e.target.checked })}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              exitInterviewRequired: e.target.checked,
+                            })
+                          }
                           className="h-3.5 w-3.5 rounded border-border"
                         />
-                        <span className="text-[10px] font-bold text-foreground">Interview Required</span>
+                        <span className="text-[10px] font-bold text-foreground">
+                          Interview Required
+                        </span>
                       </label>
                     </div>
 
                     <div className="space-y-2 mb-3">
-                      {(draft.exitInterviewQuestionnaire || []).map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-2.5 border rounded-xl bg-card">
-                          <span className="text-xs font-bold text-foreground">{item}</span>
-                          <button onClick={() => removeQuestion(idx)} className="text-red-500">
-                            <X size={12} />
-                          </button>
-                        </div>
-                      ))}
+                      {(draft.exitInterviewQuestionnaire || []).map(
+                        (item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between p-2.5 border rounded-xl bg-card"
+                          >
+                            <span className="text-xs font-bold text-foreground">
+                              {item}
+                            </span>
+                            <button
+                              onClick={() => removeQuestion(idx)}
+                              className="text-red-500"
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        ),
+                      )}
                     </div>
                     <div className="flex gap-2">
                       <input
@@ -748,7 +1006,10 @@ export function OffboardingTemplateEditorModal({
                         placeholder="Add interview feedback question..."
                         className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none"
                       />
-                      <button onClick={addQuestion} className="bg-[#00B87C] text-white px-3 text-xs font-bold rounded-xl">
+                      <button
+                        onClick={addQuestion}
+                        className="bg-[#00B87C] text-white px-3 text-xs font-bold rounded-xl"
+                      >
                         +
                       </button>
                     </div>

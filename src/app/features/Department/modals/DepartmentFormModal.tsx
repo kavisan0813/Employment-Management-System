@@ -134,7 +134,7 @@ export function DepartmentFormModal({
       teams: teams
         .map((t) => ({ name: t.name.trim(), lead: t.lead.trim() }))
         .filter((t) => t.name),
-      changeHistory: [...(dept?.changeHistory || []), ...newChangeRecords]
+      changeHistory: [...(dept?.changeHistory || []), ...newChangeRecords],
     });
     onClose();
   };
