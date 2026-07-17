@@ -15,7 +15,6 @@ export interface Department {
   name: string;
   code: string;
   head: string;
-  status: "Active" | "Inactive";
   employees: number;
   activeEmployees: number;
   onLeaveEmployees: number;
@@ -28,13 +27,6 @@ export interface Department {
   changeHistory?: ChangeRecord[];
 
   // Finance fields
-  budgetAmount: string;
-  budgetUsedPct: number;
-  budgetUsedAmount: string;
-  budgetStatus: "green" | "amber" | "red";
-  nearLimit?: boolean;
 }
 
-export interface DepartmentInput extends Omit<Department, "id" | "employees" | "activeEmployees" | "onLeaveEmployees" | "growth" | "budgetUsedPct" | "budgetUsedAmount" | "budgetStatus"> {
-  budgetAmount: string;
-}
+export interface DepartmentInput extends Omit<Department, "id" | "employees" | "activeEmployees" | "onLeaveEmployees" | "growth"> {}

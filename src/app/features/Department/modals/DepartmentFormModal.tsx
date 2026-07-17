@@ -22,10 +22,8 @@ export function DepartmentFormModal({
     name: dept?.name || "",
     code: dept?.code || "",
     head: dept?.head || "",
-    status: dept?.status || "Active",
     description: dept?.description || "",
     parentDepartment: dept?.parentDepartment || "None",
-    budgetAmount: dept?.budgetAmount || "₹50L",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -111,19 +109,6 @@ export function DepartmentFormModal({
           comment: reason,
         });
       }
-
-      if (dept.budgetAmount !== form.budgetAmount) {
-        newChangeRecords.push({
-          id: Math.random().toString(),
-          changedBy: {
-            name: user?.name || "Admin",
-            role: user?.role || "Admin",
-          },
-          newValue: `Budget: ${form.budgetAmount}`,
-          date: now,
-          comment: reason,
-        });
-      }
     }
 
     onSave({
@@ -131,7 +116,6 @@ export function DepartmentFormModal({
       name: form.name,
       code: form.code.toUpperCase(),
       head: form.head,
-      status: form.status as "Active" | "Inactive",
       employees: dept?.employees || 0,
       activeEmployees: dept?.activeEmployees || 0,
       onLeaveEmployees: dept?.onLeaveEmployees || 0,
@@ -149,11 +133,7 @@ export function DepartmentFormModal({
       teams: teams
         .map((t) => ({ name: t.name.trim(), lead: t.lead.trim() }))
         .filter((t) => t.name),
-      changeHistory: [...(dept?.changeHistory || []), ...newChangeRecords],
-      budgetAmount: form.budgetAmount,
-      budgetUsedPct: dept?.budgetUsedPct || 0,
-      budgetUsedAmount: dept?.budgetUsedAmount || "₹0L",
-      budgetStatus: dept?.budgetStatus || "green",
+      changeHistory: [...(dept?.changeHistory || []), ...newChangeRecords]
     });
     onClose();
   };
@@ -268,40 +248,6 @@ export function DepartmentFormModal({
                 <option value="Sales">Sales</option>
                 <option value="Marketing">Marketing</option>
                 <option value="Operations">Operations</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                ANNUAL BUDGET
-              </label>
-              <input
-                type="text"
-                className="w-full rounded-xl px-4 py-3 text-sm border border-emerald-100 bg-emerald-50/30 text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-semibold"
-                placeholder="e.g. ₹60L"
-                value={form.budgetAmount}
-                onChange={(e) =>
-                  setForm({ ...form, budgetAmount: e.target.value })
-                }
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                STATUS
-              </label>
-              <select
-                className="w-full rounded-xl px-4 py-3 text-sm border border-emerald-100 bg-emerald-50/30 text-foreground outline-none focus:ring-2 focus:ring-[#00B87C]/20 font-semibold"
-                value={form.status}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    status: e.target.value as "Active" | "Inactive",
-                  })
-                }
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
               </select>
             </div>
 
