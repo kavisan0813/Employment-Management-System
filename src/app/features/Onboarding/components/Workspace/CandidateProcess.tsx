@@ -6,8 +6,6 @@ import {
   XCircle,
   FileText,
   FileCheck,
-  ThumbsUp,
-  ThumbsDown,
 } from "lucide-react";
 import { showToast } from "../../../../components/workflow/ToastNotification";
 
@@ -76,25 +74,18 @@ export function CandidateProcess({
     },
   ];
 
-  const templateForms = matchedTemplate?.forms || [];
-  const completedForms = employee?.completedForms || [];
-
   const employeeDocs = docs.filter((d) =>
     d.id.startsWith(`doc-${employeeId}-`),
   );
 
   // HR verification actions
   const handleVerifySection = (
-    section: "personal" | "forms",
+    section: "personal",
     verified: boolean,
   ) => {
     const updatedQueue = queue.map((nh) => {
       if (nh.id !== employeeId) return nh;
-      if (section === "personal") {
-        return { ...nh, personalDetailsVerified: verified };
-      } else {
-        return { ...nh, formsVerified: verified };
-      }
+      return { ...nh, personalDetailsVerified: verified };
     });
     setQueue(updatedQueue);
     localStorage.setItem(
@@ -104,30 +95,12 @@ export function CandidateProcess({
     showToast(
       verified ? "Section Verified" : "Verification Reset",
       "success",
-      `The candidate's ${section === "personal" ? "personal details" : "forms & signatures"} section has been ${verified ? "verified" : "reset"}.`,
+      `The candidate's personal details section has been ${verified ? "verified" : "reset"}.`,
     );
     window.dispatchEvent(new Event("viyan:onboarding-updated"));
   };
 
-  const handleVerifyDocument = (
-    docId: string,
-    status: "verified" | "rejected",
-  ) => {
-    const updatedDocs = docs.map((d) =>
-      d.id === docId ? { ...d, verificationStatus: status } : d,
-    );
-    setDocs(updatedDocs);
-    localStorage.setItem(
-      "viyan_onboarding_documents",
-      JSON.stringify(updatedDocs),
-    );
-    showToast(
-      status === "verified" ? "Document Approved" : "Document Rejected",
-      status === "verified" ? "success" : "error",
-      `Document verification status updated successfully.`,
-    );
-    window.dispatchEvent(new Event("viyan:onboarding-updated"));
-  };
+
 
   // HR/Admin requests the employee to re-upload a document (re-opens it).
   const handleRequestReupload = (docId: string) => {
@@ -155,16 +128,13 @@ export function CandidateProcess({
 
   // Calculate overall candidate completion progress
   const allPersonalDone = personalItems.filter((i) => i.completed).length;
-  const allFormsDone = templateForms.filter((f: any) =>
-    completedForms.includes(f.id),
-  ).length;
   const allDocsUploaded = employeeDocs.filter(
     (d) => d.status === "uploaded",
   ).length;
 
   const totalTasks =
-    personalItems.length + templateForms.length + employeeDocs.length;
-  const completedTasks = allPersonalDone + allFormsDone + allDocsUploaded;
+    personalItems.length + employeeDocs.length;
+  const completedTasks = allPersonalDone + allDocsUploaded;
   const progressPct =
     totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
@@ -254,74 +224,7 @@ export function CandidateProcess({
             </div>
           </div>
 
-          {/* FORMS & SIGNATURES SECTION */}
-          <div className="p-5 bg-card border border-border rounded-2xl shadow-sm space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-border/60">
-              <div>
-                <h5 className="text-[13px] font-black text-foreground uppercase tracking-wider">
-                  Forms & Signatures
-                </h5>
-                <span className="text-[10px] text-muted-foreground font-semibold">
-                  {allFormsDone} / {templateForms.length} Signed
-                </span>
-              </div>
-              <div>
-                {employee?.formsVerified ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#00B87C] border border-[#00B87C]/20 text-[10px] font-black uppercase tracking-wider">
-                    <CheckCircle2 size={12} /> Verified by HR
-                  </span>
-                ) : allFormsDone === templateForms.length &&
-                  templateForms.length > 0 ? (
-                  <button
-                    onClick={() => handleVerifySection("forms", true)}
-                    className="px-3 py-1 rounded-xl bg-[#00B87C] text-white text-[10px] font-black uppercase tracking-wider hover:opacity-90 transition-all cursor-pointer"
-                  >
-                    Approve & Verify
-                  </button>
-                ) : (
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider bg-muted px-2 py-0.5 rounded">
-                    Awaiting Candidate
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="space-y-2">
-              {templateForms.map((form: any) => {
-                const complete = completedForms.includes(form.id);
-                return (
-                  <div
-                    key={form.id}
-                    className={`flex items-center justify-between p-3 rounded-xl border ${
-                      complete
-                        ? "bg-muted/30 border-border"
-                        : "bg-card border-dashed border-border opacity-60"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <FileText size={16} className="text-[#F59E0B]" />
-                      <span className="text-[12px] font-bold text-foreground">
-                        {form.name}
-                      </span>
-                    </div>
-                    {complete ? (
-                      <span className="text-[11px] font-black text-[#00B87C] uppercase tracking-wider">
-                        ✓ Signed
-                      </span>
-                    ) : (
-                      <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                        Pending
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-              {templateForms.length === 0 && (
-                <p className="text-xs text-muted-foreground italic text-center py-2">
-                  No required forms configured.
-                </p>
-              )}
-            </div>
-          </div>
+         
         </div>
 
         {/* DOCUMENTS & UPLOADS SECTION */}
@@ -382,28 +285,7 @@ export function CandidateProcess({
                     )}
 
                     {/* HR Actions */}
-                    {isUploaded && !isVerified && (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() =>
-                            handleVerifyDocument(doc.id, "verified")
-                          }
-                          title="Approve Document"
-                          className="p-1.5 rounded-lg bg-emerald-500/10 text-[#00B87C] hover:bg-emerald-500/20 transition-all cursor-pointer"
-                        >
-                          <ThumbsUp size={13} />
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleVerifyDocument(doc.id, "rejected")
-                          }
-                          title="Reject Document"
-                          className="p-1.5 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all cursor-pointer"
-                        >
-                          <ThumbsDown size={13} />
-                        </button>
-                      </div>
-                    )}
+                  
                     {isRejected && (
                       <button
                         onClick={() => handleRequestReupload(doc.id)}

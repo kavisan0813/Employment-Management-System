@@ -679,57 +679,7 @@ export function EmployeePortal() {
           </div>
         )}
 
-        {/* SUBTAB FOR FORMS */}
-       {/*  {activeAssignedSubTab === "forms" && (
-          <div className="bg-card border border-border rounded-3xl p-6 space-y-6 shadow-sm">
-            <div>
-              <h4 className="text-sm font-black text-foreground">
-                Required Forms & Agreements
-              </h4>
-              <p className="text-xs text-muted-foreground font-semibold mt-0.5">
-                Please review and digitally sign the allocated forms
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(matchedTemplate?.forms || []).map((form: any) => {
-                const complete = (hire.completedForms || []).includes(form.id);
-                return (
-                  <div
-                    key={form.id}
-                    className="p-5 border rounded-2xl bg-muted/10 space-y-4 flex flex-col justify-between"
-                  >
-                    <div>
-                      <FileText className="text-[#F59E0B] mb-2" size={24} />
-                      <strong className="text-xs text-foreground block">
-                        {form.name}
-                      </strong>
-                      <span className="px-2 py-0.5 text-[9px] font-black uppercase bg-muted text-muted-foreground rounded inline-block mt-1">
-                        {form.required ? "Required" : "Optional"}
-                      </span>
-                    </div>
-                    {complete ? (
-                      <span className="text-xs text-emerald-600 font-bold block">
-                        ✓ Signed & Submitted
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => handleFormSign(form.id)}
-                        className="py-2 w-full text-center bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider rounded-xl hover:opacity-90 transition-all cursor-pointer"
-                      >
-                        Sign & Submit
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-              {(matchedTemplate?.forms || []).length === 0 && (
-                <p className="text-xs text-muted-foreground italic text-center py-6 col-span-2">
-                  No required forms or agreements.
-                </p>
-              )}
-            </div>
-          </div>
-        )} */}
+
 
         {/* SUBTAB 2: REQUIRED FILES */}
         {activeAssignedSubTab === "documents" && (
@@ -875,60 +825,7 @@ export function EmployeePortal() {
           </div>
         )}
 
-        {/* SUBTAB 3: POLICIES */}
-        {/* {activeAssignedSubTab === "policies" && (
-          <div className="bg-card border border-border rounded-3xl p-6 space-y-6 shadow-sm">
-            <div>
-              <h4 className="text-sm font-black text-foreground">
-                Company Policies & Frameworks
-              </h4>
-              <p className="text-xs text-muted-foreground font-semibold mt-0.5">
-                Please read, review, and acknowledge each policy document
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(matchedTemplate?.policies || []).map((policy: any) => {
-                const acknowledged = (hire.completedPolicies || []).includes(
-                  policy.id,
-                );
-                return (
-                  <div
-                    key={policy.id}
-                    className="p-5 border rounded-2xl bg-muted/10 space-y-4 flex flex-col justify-between"
-                  >
-                    <div>
-                      <ShieldCheck className="text-[#00B87C] mb-2" size={24} />
-                      <strong className="text-xs text-foreground block">
-                        {policy.name}
-                      </strong>
-                      <p className="text-[11px] text-muted-foreground font-medium mt-1 leading-relaxed">
-                        {policy.description}
-                      </p>
-                    </div>
-                    {acknowledged ? (
-                      <span className="text-xs text-emerald-600 font-bold block">
-                        ✓ Acknowledged
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => handlePolicyAcknowledge(policy.id)}
-                        className="py-2 w-full text-center bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider rounded-xl hover:opacity-90 transition-all cursor-pointer"
-                      >
-                        Acknowledge Policy
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-              {(matchedTemplate?.policies || []).length === 0 && (
-                <p className="text-xs text-muted-foreground italic text-center py-6 col-span-2">
-                  No policy review items assigned.
-                </p>
-              )}
-            </div>
-          </div>
-        )}
- */}
+
         {/* SUBTAB 4: ORIENTATION/TRAINING */}
         {activeAssignedSubTab === "training" && (
           <div className="bg-card border border-border rounded-3xl p-6 space-y-6 shadow-sm">
