@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, Check, Clock, Laptop, FileText, Send, Layers } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  Clock,
+  Laptop,
+  FileText,
+  Send,
+  Layers,
+} from "lucide-react";
 import { usePermissionKey } from "../../../shared/permission-engine/usePermission";
 import { P } from "../../../shared/permission-engine/permissions";
 import { ExitEmployee } from "../types/offboarding.types";
@@ -21,7 +29,11 @@ interface OffboardingDetailProps {
   onSendReminder: () => void;
   onScheduleInterview: () => void;
   onSendToFinance: () => void;
-  onApproveClearance: (dept: string, approvedBy: string, comments: string) => void;
+  onApproveClearance: (
+    dept: string,
+    approvedBy: string,
+    comments: string,
+  ) => void;
 }
 
 const CLEARANCE_CONFIGS: Record<
@@ -101,8 +113,11 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
     Admin: canApproveAdmin,
   };
 
-  const [completedChecks, setCompletedChecks] = useState<Record<string, Record<string, boolean>>>({});
+  const [completedChecks, setCompletedChecks] = useState<
+    Record<string, Record<string, boolean>>
+  >({});
   const [deptComments, setDeptComments] = useState<Record<string, string>>({});
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
 
   const toggleCheck = (dept: string, item: string) => {
     setCompletedChecks((prev) => ({
@@ -200,9 +215,13 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
             <div className="p-8 max-w-xl w-full bg-card border border-border rounded-3xl shadow-lg space-y-6">
               <div className="text-center">
                 <Layers className="mx-auto mb-3 text-[#00B87C]" size={32} />
-                <h3 className="text-base font-black text-foreground">Assign Offboarding Template</h3>
+                <h3 className="text-base font-black text-foreground">
+                  Assign Offboarding Template
+                </h3>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Assign a configured exit template to automatically generate clearances checklist, asset recovery rules, and exit forms for {exit.name}.
+                  Assign a configured exit template to automatically generate
+                  clearances checklist, asset recovery rules, and exit forms for{" "}
+                  {exit.name}.
                 </p>
               </div>
 
@@ -212,10 +231,23 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                     Employee Details
                   </label>
                   <div className="grid grid-cols-2 gap-3 p-4 bg-muted/20 border rounded-2xl text-[12px] font-semibold text-foreground">
-                    <div>Department: <span className="font-bold">{exit.department}</span></div>
-                    <div>Designation: <span className="font-bold">{exit.designation}</span></div>
-                    <div>LWD: <span className="font-bold">{exit.lwd}</span></div>
-                    <div>Notice Period: <span className="font-bold">{exit.noticePeriodDays} Days</span></div>
+                    <div>
+                      Department:{" "}
+                      <span className="font-bold">{exit.department}</span>
+                    </div>
+                    <div>
+                      Designation:{" "}
+                      <span className="font-bold">{exit.designation}</span>
+                    </div>
+                    <div>
+                      LWD: <span className="font-bold">{exit.lwd}</span>
+                    </div>
+                    <div>
+                      Notice Period:{" "}
+                      <span className="font-bold">
+                        {exit.noticePeriodDays} Days
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -224,9 +256,20 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                     Select Active Template
                   </label>
                   {(() => {
-                    const matching = templates.filter(t => t.status === "active" && t.department === exit.department);
-                    const others = templates.filter(t => t.status === "active" && t.department !== exit.department);
-                    const activeTemplates = matching.length > 0 ? matching : templates.filter(t => t.status === "active");
+                    const matching = templates.filter(
+                      (t) =>
+                        t.status === "active" &&
+                        t.department === exit.department,
+                    );
+                    const others = templates.filter(
+                      (t) =>
+                        t.status === "active" &&
+                        t.department !== exit.department,
+                    );
+                    const activeTemplates =
+                      matching.length > 0
+                        ? matching
+                        : templates.filter((t) => t.status === "active");
 
                     return (
                       <div className="space-y-3">
@@ -234,11 +277,13 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                           id="assign-offboarding-template-select"
                           className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:border-[#00B87C] transition-all"
                           defaultValue=""
-                          onChange={(e) => ((window as any)._selected_assign_off_tpl = e.target.value)}
+                          onChange={(e) => setSelectedTemplate(e.target.value)}
                         >
                           <option value="">Select template...</option>
                           {matching.length > 0 && (
-                            <optgroup label={`Matching templates for ${exit.department}`}>
+                            <optgroup
+                              label={`Matching templates for ${exit.department}`}
+                            >
                               {matching.map((t) => (
                                 <option key={t.id} value={t.id}>
                                   {t.name} (v{t.version})
@@ -259,15 +304,20 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
 
                         {activeTemplates.length === 0 && (
                           <p className="text-[11px] text-amber-600 font-bold">
-                            No active offboarding templates found. Please create one in the templates tab first.
+                            No active offboarding templates found. Please create
+                            one in the templates tab first.
                           </p>
                         )}
 
                         <button
                           onClick={() => {
-                            const tplId = (window as any)._selected_assign_off_tpl;
+                            const tplId = selectedTemplate;
                             if (!tplId) {
-                              showToast("Select Template", "error", "Please choose a template from the list first.");
+                              showToast(
+                                "Select Template",
+                                "error",
+                                "Please choose a template from the list first.",
+                              );
                               return;
                             }
                             onAssignTemplate(tplId);
@@ -295,12 +345,13 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                   <div key={item.label} className="flex gap-3">
                     <div className="flex flex-col items-center">
                       <div
-                        className={`w-5 h-5 rounded-full flex items-center justify-center border-2 shrink-0 ${item.status === "done"
+                        className={`w-5 h-5 rounded-full flex items-center justify-center border-2 shrink-0 ${
+                          item.status === "done"
                             ? "bg-[#00B87C] border-[#00B87C]"
                             : item.status === "active"
                               ? "bg-[#CCFBF1] border-[#14B8A6]"
                               : "bg-card border-border"
-                          }`}
+                        }`}
                       >
                         {item.status === "done" ? (
                           <Check size={10} className="text-white" />
@@ -316,12 +367,13 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                     </div>
                     <div className="pb-5">
                       <p
-                        className={`text-[12px] font-bold ${item.status === "done"
+                        className={`text-[12px] font-bold ${
+                          item.status === "done"
                             ? "text-[#00B87C]"
                             : item.status === "active"
                               ? "text-[#14B8A6]"
                               : "text-muted-foreground"
-                          }`}
+                        }`}
                       >
                         {item.label}
                       </p>
@@ -344,28 +396,31 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                 <div className="space-y-4">
                   {exit.clearance.map((c) => {
                     const IconComp = getClearanceIcon(c.icon);
-                    const clearanceChecklist = c.checklist || CLEARANCE_CONFIGS[c.dept]?.checklist || [];
+                    const clearanceChecklist =
+                      c.checklist || CLEARANCE_CONFIGS[c.dept]?.checklist || [];
                     const config = {
                       permission: CLEARANCE_CONFIGS[c.dept]?.permission || "",
                       checklist: clearanceChecklist,
                     };
 
                     const isCleared = c.status === "cleared";
-                    const canApprove = !isCleared &&
+                    const canApprove =
+                      !isCleared &&
                       (canOverrideClearances ||
                         clearanceApprovalByDepartment[c.dept] === true);
 
                     const allChecked = config.checklist.every(
-                      (item) => completedChecks[c.dept]?.[item] === true
+                      (item) => completedChecks[c.dept]?.[item] === true,
                     );
 
                     return (
                       <div
                         key={c.dept}
-                        className={`p-4 rounded-2xl border transition-all ${isCleared
+                        className={`p-4 rounded-2xl border transition-all ${
+                          isCleared
                             ? "border-[#00B87C]/20 bg-[#F0FDF4]/30 dark:bg-emerald-950/5"
                             : "border-border/60 bg-muted/20"
-                          }`}
+                        }`}
                       >
                         {/* Dept Header */}
                         <div className="flex items-center justify-between pb-3 border-b border-border/40 mb-3">
@@ -396,16 +451,18 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                         {/* Checklist */}
                         <div className="space-y-2 mb-3">
                           {config.checklist.map((item) => {
-                            const isChecked = completedChecks[c.dept]?.[item] || false;
+                            const isChecked =
+                              completedChecks[c.dept]?.[item] || false;
                             return (
                               <label
                                 key={item}
-                                className={`flex items-start gap-2.5 text-[11px] font-bold ${isCleared
+                                className={`flex items-start gap-2.5 text-[11px] font-bold ${
+                                  isCleared
                                     ? "text-muted-foreground"
                                     : canApprove
                                       ? "text-foreground cursor-pointer"
                                       : "text-muted-foreground"
-                                  }`}
+                                }`}
                               >
                                 <input
                                   type="checkbox"
@@ -425,7 +482,9 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                           <div className="pt-2 border-t border-border/30 text-[10px] font-bold text-muted-foreground space-y-1">
                             <p>
                               Approved By:{" "}
-                              <span className="text-foreground">{c.approvedBy || c.person}</span>
+                              <span className="text-foreground">
+                                {c.approvedBy || c.person}
+                              </span>
                             </p>
                             <p>
                               Approved On:{" "}
@@ -475,12 +534,21 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
               {/* KT Tasks */}
               {exit.employeeTasks && exit.employeeTasks.length > 0 && (
                 <div>
-                  <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">EMPLOYEE EXIT ACTIONS</h3>
+                  <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">
+                    EMPLOYEE EXIT ACTIONS
+                  </h3>
                   <div className="space-y-2">
                     {exit.employeeTasks.map((task) => (
-                      <div key={task.id} className="flex items-center justify-between p-3 rounded-xl border border-border/50">
-                        <span className="text-[12px] font-bold text-foreground">{task.label}</span>
-                        <span className="text-[11px] font-black text-[#00B87C]">Completed {task.completedAt}</span>
+                      <div
+                        key={task.id}
+                        className="flex items-center justify-between p-3 rounded-xl border border-border/50"
+                      >
+                        <span className="text-[12px] font-bold text-foreground">
+                          {task.label}
+                        </span>
+                        <span className="text-[11px] font-black text-[#00B87C]">
+                          Completed {task.completedAt}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -559,9 +627,17 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                           Pending
                         </span>
                       )}
-                      {d.id && d.source === "employee_exit" && d.verificationStatus === "pending" && canVerifyDocuments && (
-                        <button onClick={() => onVerifyDocument(d.id!, true)} className="ml-2 text-[10px] font-black text-[#00B87C] hover:underline cursor-pointer">Verify</button>
-                      )}
+                      {d.id &&
+                        d.source === "employee_exit" &&
+                        d.verificationStatus === "pending" &&
+                        canVerifyDocuments && (
+                          <button
+                            onClick={() => onVerifyDocument(d.id!, true)}
+                            className="ml-2 text-[10px] font-black text-[#00B87C] hover:underline cursor-pointer"
+                          >
+                            Verify
+                          </button>
+                        )}
                     </div>
                   ))}
                 </div>
@@ -594,7 +670,8 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-bold text-foreground">
-                      Leave Encashment ({Math.round(exit.leaveEncashment / 2333)} days)
+                      Leave Encashment (
+                      {Math.round(exit.leaveEncashment / 2333)} days)
                     </span>
                     <span className="text-[11px] font-black text-foreground">
                       {formatCurrency(exit.leaveEncashment)}
@@ -616,9 +693,9 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                     <span className="text-[12px] font-black text-foreground">
                       {formatCurrency(
                         exit.salary +
-                        exit.gratuity +
-                        exit.leaveEncashment +
-                        exit.reimbursements,
+                          exit.gratuity +
+                          exit.leaveEncashment +
+                          exit.reimbursements,
                       )}
                     </span>
                   </div>
@@ -661,7 +738,8 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                     onClick={onSendToFinance}
                     className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
-                    <Send size={14} className="inline mr-1.5" /> Approve & Process
+                    <Send size={14} className="inline mr-1.5" /> Approve &
+                    Process
                   </button>
                 ) : null}
               </div>
@@ -690,7 +768,8 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                   ) : (
                     <div className="p-3 rounded-xl bg-muted/30">
                       <p className="text-[11px] font-medium text-muted-foreground italic">
-                        "Good experience overall. Recommend better cross-team collaboration tools."
+                        "Good experience overall. Recommend better cross-team
+                        collaboration tools."
                       </p>
                     </div>
                   )}

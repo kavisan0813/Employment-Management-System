@@ -195,7 +195,7 @@ export function EmailTemplatesSection() {
             </tr>
           </thead>
           <tbody>
-            {templates.map((t, idx) => (
+            {templates.map((t) => (
               <tr
                 key={t.name}
                 style={{
@@ -416,8 +416,11 @@ export function EmailTemplatesSection() {
               state: emailBccHr,
               setter: setEmailBccHr,
             },
-          ].map((row, idx) => (
-            <div key={row.label} className="flex justify-between items-center py-2">
+          ].map((row) => (
+            <div
+              key={row.label}
+              className="flex justify-between items-center py-2"
+            >
               <p
                 style={{
                   fontSize: "14px",

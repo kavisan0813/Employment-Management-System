@@ -349,7 +349,7 @@ export function Documents() {
             percent: "70%",
             colorName: "emerald",
           },
-        ].map((kpi, idx) => (
+        ].map((kpi) => (
           <motion.div
             key={kpi.label}
             whileHover={{ y: -5 }}
@@ -828,7 +828,7 @@ export function Documents() {
                   Version History
                 </h4>
                 <div className="space-y-2">
-                  {previewDoc.versions.map((v, i) => (
+                  {previewDoc.versions.map((v) => (
                     <div
                       key={v.version}
                       className="flex items-center justify-between text-xs font-bold bg-white dark:bg-zinc-900/30 p-3 rounded-xl border border-border"

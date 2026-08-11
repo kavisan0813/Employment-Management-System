@@ -136,7 +136,7 @@ export function HelpFAQSection({
             bg: "#FEE2E2",
             color: "#EF4444",
           },
-        ].map((cat, i) => {
+        ].map((cat) => {
           const Icon = cat.icon;
           return (
             <div
@@ -174,7 +174,10 @@ export function HelpFAQSection({
         {filtered.map((faq, i) => {
           const expanded = expandedFaq === i;
           return (
-            <div key={faq.q} className="border-b border-border/50 last:border-b-0">
+            <div
+              key={faq.q}
+              className="border-b border-border/50 last:border-b-0"
+            >
               <button
                 onClick={() => setExpandedFaq(expanded ? null : i)}
                 className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-secondary/50 transition-colors"

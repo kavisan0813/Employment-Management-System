@@ -202,7 +202,6 @@ export function Expenses() {
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
   const [showYearDropdown, setShowYearDropdown] = useState(false);
 
-
   // UI Interaction States
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedDateRange, setSelectedDateRange] = useState("All");
@@ -1055,12 +1054,13 @@ export function Expenses() {
                   {visibleColumns.approval && (
                     <td className="px-4 py-5">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${claim.approvalStatus === "Pending"
-                          ? "bg-amber-500/5 text-amber-600 border-amber-500/10"
-                          : claim.approvalStatus === "Approved"
-                            ? "bg-emerald-500/5 text-emerald-600 border-emerald-500/10"
-                            : "bg-rose-500/5 text-rose-600 border-rose-500/10"
-                          }`}
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
+                          claim.approvalStatus === "Pending"
+                            ? "bg-amber-500/5 text-amber-600 border-amber-500/10"
+                            : claim.approvalStatus === "Approved"
+                              ? "bg-emerald-500/5 text-emerald-600 border-emerald-500/10"
+                              : "bg-rose-500/5 text-rose-600 border-rose-500/10"
+                        }`}
                       >
                         {claim.approvalStatus}
                       </span>
@@ -2357,7 +2357,7 @@ export function Expenses() {
               cat: "Fuel",
               amount: 3500,
             },
-          ].map((item, i) => (
+          ].map((item) => (
             <div
               key={item.id}
               className="p-4 rounded-3xl border border-border bg-muted/20 flex items-center justify-between group hover:bg-[#00B87C]/[0.08] transition-all"
@@ -2473,7 +2473,7 @@ export function Expenses() {
               method: "Corporate Card",
               amount: 12500,
             },
-          ].map((item, i) => (
+          ].map((item) => (
             <div
               key={item.id}
               className="p-5 rounded-[28px] border border-border bg-muted/20 flex items-center justify-between group hover:border-emerald-500/30 transition-all"
@@ -2524,7 +2524,7 @@ export function Expenses() {
               reason:
                 "Missing official GST invoice. Digital receipt not accepted.",
             },
-          ].map((item, i) => (
+          ].map((item) => (
             <div
               key={item.title}
               className="p-6 rounded-[32px] border-2 border-rose-500/10 bg-card shadow-sm space-y-5"
@@ -2644,7 +2644,7 @@ export function Expenses() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {categoryData.map((entry, index) => (
+                  {categoryData.map((entry) => (
                     <Cell key={`cell-${entry.color}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -2910,10 +2910,11 @@ function FilterPill({
       </div>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-5 py-2 rounded-full border transition-all text-[13px] font-bold ${value !== "All"
-          ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-600"
-          : "bg-slate-50 dark:bg-zinc-800 border-slate-100 dark:border-zinc-700 text-slate-700 dark:text-slate-200"
-          }`}
+        className={`flex items-center gap-2 px-5 py-2 rounded-full border transition-all text-[13px] font-bold ${
+          value !== "All"
+            ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-600"
+            : "bg-slate-50 dark:bg-zinc-800 border-slate-100 dark:border-zinc-700 text-slate-700 dark:text-slate-200"
+        }`}
       >
         {value}
         <ChevronDown

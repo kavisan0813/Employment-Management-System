@@ -425,7 +425,10 @@ export function HRDashboard() {
           </div>
           <div className="mt-8 space-y-3">
             {DEPT_DIST.map((dept) => (
-              <div key={dept.name} className="flex items-center justify-between">
+              <div
+                key={dept.name}
+                className="flex items-center justify-between"
+              >
                 <div className="flex items-center gap-2">
                   <div
                     className="w-2.5 h-2.5 rounded-full"
@@ -584,7 +587,7 @@ export function HRDashboard() {
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                     <motion.div
                       initial={{ x: "-100%" }}
-                      animate={{ x: `-${100 - (dept.value)}%` }}
+                      animate={{ x: `-${100 - dept.value}%` }}
                       transition={{ duration: 1, delay: i * 0.1 }}
                       className="h-full rounded-full bg-emerald-500 w-full"
                     />

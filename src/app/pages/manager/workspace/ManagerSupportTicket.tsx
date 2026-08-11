@@ -620,12 +620,12 @@ function KnowledgeBaseTab() {
           Support Categories
         </h3>
         <div className="grid grid-cols-1 gap-3">
-          {FAQ_CATEGORIES.map((cat, idx) => {
+          {FAQ_CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             return (
               <div
                 key={cat.name}
-                className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:border-[#00B87C]/30 hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all flex items-center justify-between cursor-pointer group"
+                className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:border-[#00B87C]/30 hover:-translate-y-[2px] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all flex items-center justify-between cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-emerald-500/5 group-hover:bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/10">
@@ -653,7 +653,7 @@ function KnowledgeBaseTab() {
           Frequently Answered Topics
         </h3>
         <div className="space-y-4">
-          {faqs.map((faq, idx) => (
+          {faqs.map((faq) => (
             <div
               key={faq.q}
               className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-3"
@@ -1010,7 +1010,7 @@ function TicketDetailModal({
                 ATTACHMENTS ({ticket.attachments.length})
               </p>
               <div className="grid grid-cols-1 gap-2">
-                {ticket.attachments.map((file, idx) => (
+                {ticket.attachments.map((file) => (
                   <div
                     key={file.name}
                     className="p-3 bg-secondary/35 border border-border rounded-xl flex items-center justify-between"

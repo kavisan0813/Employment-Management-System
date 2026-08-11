@@ -659,7 +659,7 @@ export function AssetManagement() {
               color: "#6B7280",
               valColor: "#4B5563",
             },
-          ].map((kpi, idx) => (
+          ].map((kpi) => (
             <div
               key={kpi.label}
               onClick={() => {
@@ -1058,7 +1058,7 @@ export function AssetManagement() {
                           ]}
                         />
                         <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                          {deptChartData.map((entry, index) => (
+                          {deptChartData.map((entry) => (
                             <Cell key={entry.name} fill="#8B5CF6" />
                           ))}
                         </Bar>
@@ -1115,7 +1115,7 @@ export function AssetManagement() {
                           formatter={(value) => [`${value} assets`, "Count"]}
                         />
                         <Bar dataKey="value" radius={[0, 8, 8, 0]}>
-                          {statusChartData.map((entry, index) => {
+                          {statusChartData.map((entry) => {
                             const statusColors: Record<string, string> = {
                               Assigned: "#00B87C",
                               "Pending Return": "#F59E0B",
@@ -2596,7 +2596,7 @@ export function AssetManagement() {
                         </p>
                       ) : (
                         (maintenanceLogs[selectedAsset.assetId] || []).map(
-                          (log, index) => (
+                          (log) => (
                             <div
                               key={log.title}
                               className="bg-card border border-border rounded-xl p-4 shadow-sm"
@@ -2675,7 +2675,7 @@ export function AssetManagement() {
                       </p>
                     ) : (
                       (assetDocuments[selectedAsset.assetId] || []).map(
-                        (doc, index) => (
+                        (doc) => (
                           <div
                             key={doc.name}
                             className="bg-card border border-border rounded-xl p-3 flex items-center gap-3 shadow-sm hover:border-[#00B87C]/30 cursor-pointer group transition-colors"

@@ -455,9 +455,7 @@ export default function AddEmployee() {
         (async () => {
           try {
             const { enrollEmployeeInOnboarding, ONB_TEMPLATES_KEY } =
-              await import(
-                "../../Onboarding/hooks/useOnboarding"
-              );
+              await import("../../Onboarding/hooks/useOnboarding");
             const existingTemplates = JSON.parse(
               localStorage.getItem(ONB_TEMPLATES_KEY) || "[]",
             );
@@ -473,9 +471,7 @@ export default function AddEmployee() {
               },
               existingTemplates,
             );
-            window.dispatchEvent(
-              new Event("viyan:onboarding-updated"),
-            );
+            window.dispatchEvent(new Event("viyan:onboarding-updated"));
           } catch (e) {
             console.error("Failed to auto-enroll in onboarding", e);
           }
@@ -501,7 +497,7 @@ export default function AddEmployee() {
 
   // Which scope options make sense to offer — keeps the dropdown short
   // for single-branch orgs instead of always showing all 4 types.
-  const scopeOptionsFor = (assignment: RoleAssignment) => {
+  const scopeOptionsFor = () => {
     const opts: { value: ScopeType; label: string }[] = [
       { value: "organization", label: "Whole organization" },
       { value: "branch", label: "Specific branch" },
@@ -559,12 +555,13 @@ export default function AddEmployee() {
             return (
               <div key={item.s} className="flex flex-col items-center gap-2">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${done
-                    ? "bg-[var(--primary)] border-[var(--primary)] text-white"
-                    : active
-                      ? "bg-white border-[var(--primary)] text-[var(--primary)] shadow-md shadow-emerald-200"
-                      : "bg-white border-slate-200 text-slate-400"
-                    }`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
+                    done
+                      ? "bg-[var(--primary)] border-[var(--primary)] text-white"
+                      : active
+                        ? "bg-white border-[var(--primary)] text-[var(--primary)] shadow-md shadow-emerald-200"
+                        : "bg-white border-slate-200 text-slate-400"
+                  }`}
                 >
                   {done ? <Check size={16} strokeWidth={3} /> : item.s}
                 </div>
@@ -658,12 +655,33 @@ export default function AddEmployee() {
               </div>
               <div>
                 <label className={labelCls}>Password</label>
-                <input type="password" className={inputCls} value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} placeholder="Minimum 8 characters" />
+                <input
+                  type="password"
+                  className={inputCls}
+                  value={form.password}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, password: e.target.value }))
+                  }
+                  placeholder="Minimum 8 characters"
+                />
               </div>
               <div>
                 <label className={labelCls}>Confirm Password</label>
-                <input type="password" className={inputCls} value={form.confirmPassword} onChange={(e) => setForm((f) => ({ ...f, confirmPassword: e.target.value }))} placeholder="Re-enter password" />
-                {form.confirmPassword && form.password !== form.confirmPassword && <p className="text-xs text-rose-500 font-bold mt-1.5">Passwords do not match.</p>}
+                <input
+                  type="password"
+                  className={inputCls}
+                  value={form.confirmPassword}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, confirmPassword: e.target.value }))
+                  }
+                  placeholder="Re-enter password"
+                />
+                {form.confirmPassword &&
+                  form.password !== form.confirmPassword && (
+                    <p className="text-xs text-rose-500 font-bold mt-1.5">
+                      Passwords do not match.
+                    </p>
+                  )}
               </div>
             </div>
 
@@ -721,19 +739,32 @@ export default function AddEmployee() {
                     Read-only permissions configured for {selectedRole.label}.
                   </p>
                   <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {Object.entries(permissionGroups).map(([module, actions]) => (
-                      <div key={module} className="rounded-xl bg-white p-3 border border-slate-100">
-                        <h4 className="text-xs font-bold text-slate-700">{module}</h4>
-                        <ul className="mt-2 space-y-1">
-                          {actions.map((action) => (
-                            <li key={`${module}-${action}`} className="flex items-center gap-2 text-xs text-slate-500">
-                              <Check size={13} className="shrink-0 text-emerald-500" />
-                              {action}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
+                    {Object.entries(permissionGroups).map(
+                      ([module, actions]) => (
+                        <div
+                          key={module}
+                          className="rounded-xl bg-white p-3 border border-slate-100"
+                        >
+                          <h4 className="text-xs font-bold text-slate-700">
+                            {module}
+                          </h4>
+                          <ul className="mt-2 space-y-1">
+                            {actions.map((action) => (
+                              <li
+                                key={`${module}-${action}`}
+                                className="flex items-center gap-2 text-xs text-slate-500"
+                              >
+                                <Check
+                                  size={13}
+                                  className="shrink-0 text-emerald-500"
+                                />
+                                {action}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ),
+                    )}
                   </div>
                 </section>
               )}
@@ -770,7 +801,7 @@ export default function AddEmployee() {
                             )
                           }
                         >
-                          {scopeOptionsFor(assignment).map((o) => (
+                          {scopeOptionsFor().map((o) => (
                             <option key={o.value} value={o.value}>
                               {o.label}
                             </option>
@@ -1235,8 +1266,8 @@ export default function AddEmployee() {
                 <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-xl mb-4 border border-amber-100">
                   <Lock className="text-amber-600" size={14} />
                   <p className="text-[11px] text-amber-800/80 font-bold">
-                    Sensitive information can only be edited by authorized users.
-                    All updates are logged in the Audit Log.
+                    Sensitive information can only be edited by authorized
+                    users. All updates are logged in the Audit Log.
                   </p>
                 </div>
                 <h3 className="font-extrabold text-slate-800 text-lg mb-4">

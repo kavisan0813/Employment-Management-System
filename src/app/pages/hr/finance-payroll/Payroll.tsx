@@ -204,7 +204,7 @@ function DonutChart({
         viewBox={`0 0 ${size} ${size}`}
         style={{ transform: "rotate(-90deg)" }}
       >
-        {segments.map((seg, i) => {
+        {segments.map((seg) => {
           const pct = seg.value / total;
           const dashArray = `${circumference * pct} ${circumference * (1 - pct)}`;
           const dashOffset = -circumference * cumulative;
@@ -589,7 +589,7 @@ function PayslipModal({
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
-                {rows.map((row, index) => (
+                {rows.map((row) => (
                   <tr key={row.earning} className="h-9">
                     <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">
                       {row.earning?.label || ""}
@@ -760,7 +760,7 @@ function AIInsightsPanel({ employees }: { employees: PayrollEmployee[] }) {
         </div>
       </div>
       <div className="space-y-2">
-        {insights.map((ins, i) => (
+        {insights.map((ins) => (
           <div
             key={ins.text}
             className={`flex items-start gap-2.5 p-2.5 rounded-xl bg-${ins.color}-500/5 border border-${ins.color}-500/10`}
@@ -2521,7 +2521,7 @@ export function Payroll() {
               { label: "Review", status: "pending", desc: "Apr 20" },
               { label: "Approval", status: "pending", desc: "Apr 24" },
               { label: "Disbursement", status: "pending", desc: "Apr 28" },
-            ].map((step, i) => (
+            ].map((step) => (
               <div
                 key={step.label}
                 className="flex flex-col items-center gap-2 relative z-10 w-28"

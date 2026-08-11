@@ -56,8 +56,15 @@ const emptyTemplate = (): Template => ({
 });
 
 export function TemplateEditorModal(props: TemplateEditorModalProps) {
-  const { templates, departments, taskOwners, editingTemplate, saveTemplate, handleDuplicateTemplate, handleDeleteTemplate } =
-    props;
+  const {
+    templates,
+    departments,
+    taskOwners,
+    editingTemplate,
+    saveTemplate,
+    handleDuplicateTemplate,
+    handleDeleteTemplate,
+  } = props;
 
   const [draft, setDraft] = useState<Template>(emptyTemplate);
   const [activeTab, setActiveTab] = useState<"info" | "candidate" | "company">(
@@ -66,7 +73,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
 
   // Local helper states for adding custom items dynamically
   const [customDocName, setCustomDocName] = useState("");
-  const [customDocMandatory,] = useState(true);
+  const [customDocMandatory] = useState(true);
   const [customDocSize, setCustomDocSize] = useState(5);
   const [customDocIssuedByOrg, setCustomDocIssuedByOrg] = useState(false);
 
@@ -81,15 +88,26 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
   const [prevTaskOwners, setPrevTaskOwners] = useState(taskOwners);
   if (taskOwners !== prevTaskOwners) {
     setPrevTaskOwners(taskOwners);
-    if (taskOwners && taskOwners.length > 0 && !taskOwners.includes(customTaskOwner)) {
+    if (
+      taskOwners &&
+      taskOwners.length > 0 &&
+      !taskOwners.includes(customTaskOwner)
+    ) {
       setCustomTaskOwner(taskOwners[0]);
     }
   }
 
-  const [prevEditingTemplate, setPrevEditingTemplate] = useState<string | null>(editingTemplate);
-  const [prevShowTemplateEditor, setPrevShowTemplateEditor] = useState<boolean>(props.showTemplateEditor);
+  const [prevEditingTemplate, setPrevEditingTemplate] = useState<string | null>(
+    editingTemplate,
+  );
+  const [prevShowTemplateEditor, setPrevShowTemplateEditor] = useState<boolean>(
+    props.showTemplateEditor,
+  );
 
-  if (editingTemplate !== prevEditingTemplate || props.showTemplateEditor !== prevShowTemplateEditor) {
+  if (
+    editingTemplate !== prevEditingTemplate ||
+    props.showTemplateEditor !== prevShowTemplateEditor
+  ) {
     setPrevEditingTemplate(editingTemplate);
     setPrevShowTemplateEditor(props.showTemplateEditor);
     if (props.showTemplateEditor) {
@@ -125,21 +143,21 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
       sections: (current.sections || []).map((sec) =>
         sec.id === sectionId
           ? {
-            ...sec,
-            tasks: [
-              ...sec.tasks,
-              {
-                id: `task-${Date.now()}`,
-                name: customTaskName.trim(),
-                owner: customTaskOwner,
-                verifiedBy: customTaskVerifier,
-                dueDays: customTaskDue,
-                priority: customTaskPriority as "Low" | "Medium" | "High",
-                mandatory: customTaskMandatory,
-                description: customTaskDesc.trim(),
-              },
-            ],
-          }
+              ...sec,
+              tasks: [
+                ...sec.tasks,
+                {
+                  id: `task-${Date.now()}`,
+                  name: customTaskName.trim(),
+                  owner: customTaskOwner,
+                  verifiedBy: customTaskVerifier,
+                  dueDays: customTaskDue,
+                  priority: customTaskPriority as "Low" | "Medium" | "High",
+                  mandatory: customTaskMandatory,
+                  description: customTaskDesc.trim(),
+                },
+              ],
+            }
           : sec,
       ),
     }));
@@ -291,10 +309,11 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                           </p>
                         </div>
                         <span
-                          className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${template.status === "active"
-                            ? "bg-[#E8F8F0] text-[#00B87C] border-[#00B87C]/20"
-                            : "bg-muted text-muted-foreground border-border"
-                            }`}
+                          className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${
+                            template.status === "active"
+                              ? "bg-[#E8F8F0] text-[#00B87C] border-[#00B87C]/20"
+                              : "bg-muted text-muted-foreground border-border"
+                          }`}
                         >
                           {template.status}
                         </span>
@@ -330,7 +349,11 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                         <button
                           className="text-[11px] font-black uppercase tracking-wider text-red-500 hover:underline"
                           onClick={() => {
-                            if (window.confirm("Are you sure you want to delete this template?")) {
+                            if (
+                              window.confirm(
+                                "Are you sure you want to delete this template?",
+                              )
+                            ) {
                               handleDeleteTemplate(template.id);
                             }
                           }}
@@ -408,10 +431,11 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
-                    className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${activeTab === tab.key
-                      ? "border-[#00B87C] text-[#00B87C]"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                      }`}
+                    className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${
+                      activeTab === tab.key
+                        ? "border-[#00B87C] text-[#00B87C]"
+                        : "border-transparent text-muted-foreground hover:text-foreground"
+                    }`}
                   >
                     <tab.icon size={13} />
                     {tab.label}
@@ -650,7 +674,6 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                         </div>
                       </div>
                     </div>
-
                   </div>
                 )}
 
@@ -692,12 +715,13 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                                     {task.name}
                                   </strong>
                                   <span
-                                    className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${task.priority === "High"
-                                      ? "bg-red-50 text-red-500 border-red-500/15"
-                                      : task.priority === "Medium"
-                                        ? "bg-amber-50 text-amber-500 border-amber-500/15"
-                                        : "bg-blue-50 text-blue-500 border-blue-500/15"
-                                      }`}
+                                    className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${
+                                      task.priority === "High"
+                                        ? "bg-red-50 text-red-500 border-red-500/15"
+                                        : task.priority === "Medium"
+                                          ? "bg-amber-50 text-amber-500 border-amber-500/15"
+                                          : "bg-blue-50 text-blue-500 border-blue-500/15"
+                                    }`}
                                   >
                                     {task.priority} Priority
                                   </span>

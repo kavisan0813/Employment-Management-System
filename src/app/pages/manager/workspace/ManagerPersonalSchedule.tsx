@@ -634,11 +634,14 @@ export function ManagerPersonalSchedule() {
                         </div>
                       </div>
                     </td>
-                    {UPCOMING_SHIFTS.map((shift, idx) => {
+                    {UPCOMING_SHIFTS.map((shift) => {
                       const conf =
                         SHIFT_COLORS[shift.type] || SHIFT_COLORS["Morning"];
                       return (
-                        <td key={shift.type} className="p-2 border-b border-border">
+                        <td
+                          key={shift.type}
+                          className="p-2 border-b border-border"
+                        >
                           <div
                             onClick={() => handleViewDetails(shift)}
                             className={`h-full min-h-[60px] rounded-xl p-2 flex flex-col items-center justify-center gap-1 border-t-4 shadow-sm group cursor-pointer transition-all hover:scale-[1.02] ${conf.bg} ${conf.border}`}
@@ -728,7 +731,7 @@ export function ManagerPersonalSchedule() {
                     13: "Morning",
                     14: "Morning",
                   };
-                  return cells.map((day, i) => {
+                  return cells.map((day) => {
                     if (day === null)
                       return <div key={`e-${day}`} className="min-h-[80px]" />;
                     const isToday = day === 6 && month === 3;
@@ -978,7 +981,7 @@ export function ManagerPersonalSchedule() {
                                 label: "Report Issue",
                                 onClick: () => setShowIssueModal(true),
                               },
-                            ].map((item, i) => (
+                            ].map((item) => (
                               <button
                                 key={item.label}
                                 onClick={(e) => {
@@ -1096,8 +1099,11 @@ export function ManagerPersonalSchedule() {
                 { label: "Location", value: selectedShift.location },
                 { label: "Department", value: selectedShift.department },
                 { label: "Reporting Manager", value: selectedShift.manager },
-              ].map((item, i) => (
-                <div key={item.label} className="flex justify-between items-center py-1">
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="flex justify-between items-center py-1"
+                >
                   <span className="text-[13px] font-bold text-muted-foreground">
                     {item.label}
                   </span>
@@ -1509,8 +1515,11 @@ export function ManagerPersonalSchedule() {
                           : "completed",
                       date: "Final Action",
                     },
-                  ].map((step, i) => (
-                    <div key={step.label} className="relative flex items-center gap-3">
+                  ].map((step) => (
+                    <div
+                      key={step.label}
+                      className="relative flex items-center gap-3"
+                    >
                       <div
                         className={`absolute -left-[23px] w-4 h-4 rounded-full border-2 bg-card z-10 ${step.status === "completed" ? "border-primary bg-primary" : step.status === "active" ? "border-primary" : "border-border"}`}
                       />

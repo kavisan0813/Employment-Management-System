@@ -464,7 +464,7 @@ function ChartTip({ active, payload, label }: Record<string, unknown>) {
         {String(label)}
       </div>
       {(payload as Array<{ name: string; value: number; color?: string }>).map(
-        (p, i) => (
+        (p) => (
           <div key={p.name} style={{ color: p.color || "white" }}>
             {p.name}: <strong>{p.value}</strong>
           </div>
@@ -1796,7 +1796,7 @@ export function ManagerReports() {
                   paddingAngle={3}
                   dataKey="value"
                 >
-                  {meta.leaveDist.map((e, i) => (
+                  {meta.leaveDist.map((e) => (
                     <Cell key={e.color} fill={e.color} />
                   ))}
                 </Pie>
@@ -2041,7 +2041,7 @@ export function ManagerReports() {
                   maxBarSize={28}
                   name="Workload %"
                 >
-                  {TEAM.map((m, i) => (
+                  {TEAM.map((m) => (
                     <Cell
                       key={m.workload}
                       fill={

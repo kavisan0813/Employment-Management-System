@@ -178,7 +178,7 @@ export function LocationsSection() {
             color: "#8B5CF6",
             bg: "rgba(139, 92, 246, 0.1)",
           },
-        ].map((card, idx) => (
+        ].map((card) => (
           <div
             key={card.label}
             className="p-4 rounded-2xl flex items-center justify-between shadow-sm"
@@ -336,7 +336,7 @@ export function LocationsSection() {
             </tr>
           </thead>
           <tbody>
-            {filteredLocs.map((l, idx) => (
+            {filteredLocs.map((l) => (
               <tr
                 key={l.name}
                 style={{
@@ -565,8 +565,11 @@ export function LocationsSection() {
             state: regionHolidays,
             setter: setRegionHolidays,
           },
-        ].map((row, idx) => (
-          <div key={row.label} className="flex justify-between items-center py-2">
+        ].map((row) => (
+          <div
+            key={row.label}
+            className="flex justify-between items-center py-2"
+          >
             <span
               style={{
                 fontSize: "13px",

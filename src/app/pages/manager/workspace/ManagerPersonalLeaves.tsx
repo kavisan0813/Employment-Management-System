@@ -546,7 +546,7 @@ export function ManagerPersonalLeaves() {
                       end: endDate,
                     });
 
-                    return calendarDays.map((calDay, i) => {
+                    return calendarDays.map((calDay) => {
                       formattedDate = format(calDay, dateFormat);
                       const isCurrentMonth = isSameMonth(calDay, monthStart);
                       const isCurrentDay = isToday(calDay);

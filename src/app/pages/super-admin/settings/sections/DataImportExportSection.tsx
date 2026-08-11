@@ -481,7 +481,7 @@ export function DataImportExportSection() {
                 </tr>
               </thead>
               <tbody>
-                {importHistory.map((h, idx) => (
+                {importHistory.map((h) => (
                   <tr
                     key={h.name}
                     className="border-b border-gray-100 hover:bg-[#00B87C]/[0.08] transition-all text-[13px]"

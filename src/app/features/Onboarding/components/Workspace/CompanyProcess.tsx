@@ -1,4 +1,13 @@
-import { Check, Send, AlertTriangle, LockKeyhole, Upload, FileText, Eye, Trash2 } from "lucide-react";
+import {
+  Check,
+  Send,
+  AlertTriangle,
+  LockKeyhole,
+  Upload,
+  FileText,
+  Eye,
+  Trash2,
+} from "lucide-react";
 import type { NewHire, OnboardingPhase } from "../../types/onboarding.types";
 import { useAuth } from "../../../../context/AuthContext";
 import { showToast } from "../../../../components/workflow/ToastNotification";
@@ -48,27 +57,44 @@ export function CompanyProcess({
     return rolesForOwner(owner).includes(role || "");
   };
 
-  const handleAttachDocumentToTask = (phaseId: string, taskId: string, docName: string) => {
+  const handleAttachDocumentToTask = (
+    phaseId: string,
+    taskId: string,
+    docName: string,
+  ) => {
     try {
-      const allPhases = JSON.parse(localStorage.getItem("viyan_onboarding_phases:v1") || "{}");
+      const allPhases = JSON.parse(
+        localStorage.getItem("viyan_onboarding_phases:v1") || "{}",
+      );
       const hirePhases = allPhases[employee.id] || [];
-      const updatedPhases = hirePhases.map((phase: any) => {
+      const updatedPhases = hirePhases.map((phase: OnboardingPhase) => {
         if (phase.id !== phaseId) return phase;
         return {
           ...phase,
-          tasks: phase.tasks.map((t: any) =>
+          tasks: phase.tasks.map((t: OnboardingPhase["tasks"][number]) =>
             t.id === taskId
-              ? { ...t, documentName: docName, documentUrl: `/documents/${docName}` }
-              : t
+              ? {
+                  ...t,
+                  documentName: docName,
+                  documentUrl: `/documents/${docName}`,
+                }
+              : t,
           ),
         };
       });
       allPhases[employee.id] = updatedPhases;
-      localStorage.setItem("viyan_onboarding_phases:v1", JSON.stringify(allPhases));
+      localStorage.setItem(
+        "viyan_onboarding_phases:v1",
+        JSON.stringify(allPhases),
+      );
 
-      const allDocs = JSON.parse(localStorage.getItem("viyan_onboarding_documents:v1") || "[]");
+      const allDocs = JSON.parse(
+        localStorage.getItem("viyan_onboarding_documents:v1") || "[]",
+      );
       const docId = `doc-${employee.id}-task-${taskId}`;
-      const existingIdx = allDocs.findIndex((d: any) => d.id === docId);
+      const existingIdx = allDocs.findIndex(
+        (d: { id: string }) => d.id === docId,
+      );
 
       const docRecord = {
         id: docId,
@@ -83,7 +109,11 @@ export function CompanyProcess({
         visibleToEmployee: true,
         issuedByOrg: true,
         uploadedBy: user?.role || "HR Team",
-        date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+        date: new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }),
       };
 
       if (existingIdx !== -1) {
@@ -91,40 +121,61 @@ export function CompanyProcess({
       } else {
         allDocs.push(docRecord);
       }
-      localStorage.setItem("viyan_onboarding_documents:v1", JSON.stringify(allDocs));
+      localStorage.setItem(
+        "viyan_onboarding_documents:v1",
+        JSON.stringify(allDocs),
+      );
 
       window.dispatchEvent(new Event("viyan:onboarding-updated"));
       window.dispatchEvent(new Event("storage"));
 
-      showToast("Document Attached", "success", `"${docName}" attached to the task and made available to the employee.`);
+      showToast(
+        "Document Attached",
+        "success",
+        `"${docName}" attached to the task and made available to the employee.`,
+      );
     } catch (e) {
       console.error(e);
-      showToast("Failed to attach document", "error", "Storage operation failed.");
+      showToast(
+        "Failed to attach document",
+        "error",
+        "Storage operation failed.",
+      );
     }
   };
 
   const handleRemoveDocumentFromTask = (phaseId: string, taskId: string) => {
     try {
-      const allPhases = JSON.parse(localStorage.getItem("viyan_onboarding_phases:v1") || "{}");
+      const allPhases = JSON.parse(
+        localStorage.getItem("viyan_onboarding_phases:v1") || "{}",
+      );
       const hirePhases = allPhases[employee.id] || [];
-      const updatedPhases = hirePhases.map((phase: any) => {
+      const updatedPhases = hirePhases.map((phase: OnboardingPhase) => {
         if (phase.id !== phaseId) return phase;
         return {
           ...phase,
-          tasks: phase.tasks.map((t: any) =>
+          tasks: phase.tasks.map((t: OnboardingPhase["tasks"][number]) =>
             t.id === taskId
               ? { ...t, documentName: undefined, documentUrl: undefined }
-              : t
+              : t,
           ),
         };
       });
       allPhases[employee.id] = updatedPhases;
-      localStorage.setItem("viyan_onboarding_phases:v1", JSON.stringify(allPhases));
+      localStorage.setItem(
+        "viyan_onboarding_phases:v1",
+        JSON.stringify(allPhases),
+      );
 
-      const allDocs = JSON.parse(localStorage.getItem("viyan_onboarding_documents:v1") || "[]");
+      const allDocs = JSON.parse(
+        localStorage.getItem("viyan_onboarding_documents:v1") || "[]",
+      );
       const docId = `doc-${employee.id}-task-${taskId}`;
-      const updatedDocs = allDocs.filter((d: any) => d.id !== docId);
-      localStorage.setItem("viyan_onboarding_documents:v1", JSON.stringify(updatedDocs));
+      const updatedDocs = allDocs.filter((d: { id: string }) => d.id !== docId);
+      localStorage.setItem(
+        "viyan_onboarding_documents:v1",
+        JSON.stringify(updatedDocs),
+      );
 
       window.dispatchEvent(new Event("viyan:onboarding-updated"));
       window.dispatchEvent(new Event("storage"));
@@ -132,18 +183,34 @@ export function CompanyProcess({
       showToast("Document Removed", "success", "Attached document removed.");
     } catch (e) {
       console.error(e);
-      showToast("Failed to remove document", "error", "Storage operation failed.");
+      showToast(
+        "Failed to remove document",
+        "error",
+        "Storage operation failed.",
+      );
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, phaseId: string, taskId: string, defaultName: string) => {
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    phaseId: string,
+    taskId: string,
+    defaultName: string,
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
     handleAttachDocumentToTask(phaseId, taskId, file.name || defaultName);
   };
 
   const allTasks = phases.flatMap((phase) =>
-    phase.tasks.map((task) => ({ ...task, phaseId: phase.id } as any)),
+    phase.tasks.map(
+      (task) =>
+        ({ ...task, phaseId: phase.id }) as OnboardingPhase["tasks"][number] & {
+          phaseId: string;
+          documentName?: string;
+          documentUrl?: string;
+        },
+    ),
   );
 
   const canReview = employee.candidateProcessSubmitted === true;
@@ -214,7 +281,10 @@ export function CompanyProcess({
               </div>
               <div className="space-y-2.5">
                 {tasks.map((task) => (
-                  <div key={task.id} className="space-y-1.5 py-2 px-3 rounded-xl hover:bg-muted/40 transition-all">
+                  <div
+                    key={task.id}
+                    className="space-y-1.5 py-2 px-3 rounded-xl hover:bg-muted/40 transition-all"
+                  >
                     <div className="flex items-start sm:items-center justify-between gap-3">
                       <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
                         <input
@@ -260,7 +330,9 @@ export function CompanyProcess({
                       {task.status !== "done" &&
                         (editable ? (
                           <button
-                            onClick={() => handleMarkDone(task.phaseId, task.id)}
+                            onClick={() =>
+                              handleMarkDone(task.phaseId, task.id)
+                            }
                             className="px-2.5 py-1 rounded-lg bg-[#00B87C]/10 text-[#00B87C] border border-[#00B87C]/20 text-[9px] font-black uppercase tracking-wider flex items-center gap-1"
                           >
                             <Check size={10} /> Complete
@@ -292,9 +364,17 @@ export function CompanyProcess({
                       {task.documentName ? (
                         <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-[#00B87C]/10 border border-[#00B87C]/20 rounded-lg text-[10px] font-bold text-[#00B87C] uppercase tracking-wider animate-in fade-in zoom-in-95 duration-200">
                           <FileText size={12} className="text-[#00B87C]" />
-                          <span className="truncate max-w-[180px]">{task.documentName}</span>
+                          <span className="truncate max-w-[180px]">
+                            {task.documentName}
+                          </span>
                           <button
-                            onClick={() => showToast("Viewing File", "info", `Opening ${task.documentName}...`)}
+                            onClick={() =>
+                              showToast(
+                                "Viewing File",
+                                "info",
+                                `Opening ${task.documentName}...`,
+                              )
+                            }
                             className="hover:text-foreground/80 p-0.5 ml-1 transition-all cursor-pointer"
                             title="View Attached File"
                           >
@@ -302,7 +382,12 @@ export function CompanyProcess({
                           </button>
                           {editable && (
                             <button
-                              onClick={() => handleRemoveDocumentFromTask(task.phaseId, task.id)}
+                              onClick={() =>
+                                handleRemoveDocumentFromTask(
+                                  task.phaseId,
+                                  task.id,
+                                )
+                              }
                               className="text-red-500 hover:text-red-700 p-0.5 transition-all cursor-pointer"
                               title="Remove Attachment"
                             >
@@ -317,7 +402,14 @@ export function CompanyProcess({
                               type="file"
                               id={`file-upload-${task.id}`}
                               className="hidden"
-                              onChange={(e) => handleFileChange(e, task.phaseId, task.id, task.task)}
+                              onChange={(e) =>
+                                handleFileChange(
+                                  e,
+                                  task.phaseId,
+                                  task.id,
+                                  task.task,
+                                )
+                              }
                             />
                             <label
                               htmlFor={`file-upload-${task.id}`}

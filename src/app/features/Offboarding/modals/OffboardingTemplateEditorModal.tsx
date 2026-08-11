@@ -171,18 +171,24 @@ export function OffboardingTemplateEditorModal({
 
   const [customAssetName, setCustomAssetName] = useState("");
   const [customAssetCategory, setCustomAssetCategory] = useState("Hardware");
-  const [customAssetMandatory,] = useState(true);
+  const [customAssetMandatory] = useState(true);
 
   const [customDocName, setCustomDocName] = useState("");
-  const [customDocMandatory,] = useState(true);
+  const [customDocMandatory] = useState(true);
 
   const [customQuestion, setCustomQuestion] = useState("");
   const [customKtItem, setCustomKtItem] = useState("");
 
-  const [prevEditingTemplate, setPrevEditingTemplate] = useState<string | null>(editingTemplate);
-  const [prevShowTemplateEditor, setPrevShowTemplateEditor] = useState<boolean>(showTemplateEditor);
+  const [prevEditingTemplate, setPrevEditingTemplate] = useState<string | null>(
+    editingTemplate,
+  );
+  const [prevShowTemplateEditor, setPrevShowTemplateEditor] =
+    useState<boolean>(showTemplateEditor);
 
-  if (editingTemplate !== prevEditingTemplate || showTemplateEditor !== prevShowTemplateEditor) {
+  if (
+    editingTemplate !== prevEditingTemplate ||
+    showTemplateEditor !== prevShowTemplateEditor
+  ) {
     setPrevEditingTemplate(editingTemplate);
     setPrevShowTemplateEditor(showTemplateEditor);
     if (showTemplateEditor) {
@@ -232,21 +238,21 @@ export function OffboardingTemplateEditorModal({
       clearances: (current.clearances || []).map((c) =>
         c.id === deptId
           ? {
-            ...c,
-            tasks: [
-              ...c.tasks,
-              {
-                id: `task-${Date.now()}`,
-                name: customTaskName.trim(),
-                owner: deptId,
-                isMandatory: customTaskMandatory,
-                description: customTaskDesc.trim(),
-                dueBeforeLWD: customTaskDue,
-                priority: customTaskPriority,
-                requiresApproval: customTaskApproval,
-              },
-            ],
-          }
+              ...c,
+              tasks: [
+                ...c.tasks,
+                {
+                  id: `task-${Date.now()}`,
+                  name: customTaskName.trim(),
+                  owner: deptId,
+                  isMandatory: customTaskMandatory,
+                  description: customTaskDesc.trim(),
+                  dueBeforeLWD: customTaskDue,
+                  priority: customTaskPriority,
+                  requiresApproval: customTaskApproval,
+                },
+              ],
+            }
           : c,
       ),
     }));
@@ -432,11 +438,16 @@ export function OffboardingTemplateEditorModal({
               ].map((tab) => (
                 <button
                   key={tab.key}
-                  onClick={() => setActiveTab(tab.key as any)}
-                  className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${activeTab === tab.key
-                    ? "border-[#00B87C] text-[#00B87C]"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                  onClick={() =>
+                    setActiveTab(
+                      tab.key as "info" | "clearances" | "assets" | "process",
+                    )
+                  }
+                  className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${
+                    activeTab === tab.key
+                      ? "border-[#00B87C] text-[#00B87C]"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
                 >
                   <tab.icon size={13} />
                   {tab.label}
@@ -502,7 +513,14 @@ export function OffboardingTemplateEditorModal({
                       <select
                         value={draft.status}
                         onChange={(e) =>
-                          setDraft({ ...draft, status: e.target.value as any })
+                          setDraft({
+                            ...draft,
+                            status: e.target.value as
+                              | "draft"
+                              | "active"
+                              | "inactive"
+                              | "archived",
+                          })
                         }
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none"
                       >
@@ -594,12 +612,13 @@ export function OffboardingTemplateEditorModal({
                                   {task.name}
                                 </strong>
                                 <span
-                                  className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${task.priority === "High"
-                                    ? "bg-red-50 text-red-500 border-red-500/15"
-                                    : task.priority === "Medium"
-                                      ? "bg-amber-50 text-amber-500 border-amber-500/15"
-                                      : "bg-blue-50 text-blue-500 border-blue-500/15"
-                                    }`}
+                                  className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${
+                                    task.priority === "High"
+                                      ? "bg-red-50 text-red-500 border-red-500/15"
+                                      : task.priority === "Medium"
+                                        ? "bg-amber-50 text-amber-500 border-amber-500/15"
+                                        : "bg-blue-50 text-blue-500 border-blue-500/15"
+                                  }`}
                                 >
                                   {task.priority || "Medium"} Priority
                                 </span>
@@ -733,7 +752,9 @@ export function OffboardingTemplateEditorModal({
                           <select
                             value={customTaskPriority}
                             onChange={(e) =>
-                              setCustomTaskPriority(e.target.value as any)
+                              setCustomTaskPriority(
+                                e.target.value as "High" | "Medium" | "Low",
+                              )
                             }
                             className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none focus:border-[#00B87C]"
                           >

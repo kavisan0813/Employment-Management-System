@@ -161,7 +161,7 @@ export function ExpenseSupport() {
               Recent Tickets
             </h3>
             <div className="space-y-6">
-              {tickets.map((t, i) => (
+              {tickets.map((t) => (
                 <div
                   key={t.id}
                   className="flex flex-col gap-3 p-5 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-colors cursor-pointer group"

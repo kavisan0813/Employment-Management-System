@@ -1612,7 +1612,7 @@ function DataDownloads({ onModal }: { onModal: (m: string | null) => void }) {
 
       <Label>DOWNLOAD MY DATA</Label>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {cards.map((card, i) => {
+        {cards.map((card) => {
           const Icon = card.icon;
           return (
             <div
@@ -1841,7 +1841,7 @@ function HelpFAQ({ navigate }: { navigate: (p: string) => void }) {
             bg: "#FEE2E2",
             color: "#EF4444",
           },
-        ].map((cat, i) => {
+        ].map((cat) => {
           const Icon = cat.icon;
           return (
             <div
@@ -2015,7 +2015,7 @@ function ContactSupport({
             phone: "+91 98765 00000",
             emergency: true,
           },
-        ].map((card, i) => {
+        ].map((card) => {
           const Icon = card.icon;
           return (
             <div
@@ -2117,7 +2117,7 @@ function ContactSupport({
             role: "Finance Officer",
             email: "ananya@viyanhr.com",
           },
-        ].map((contact, i) => (
+        ].map((contact) => (
           <div
             key={contact.name}
             className="flex items-center justify-between px-6 py-4 border-b border-border/50 last:border-b-0 hover:bg-[#00B87C]/[0.08] transition-colors"
@@ -2161,7 +2161,7 @@ function ContactSupport({
               hours: "Monday–Saturday, 8:00 AM – 8:00 PM IST",
             },
             { label: "Emergency", hours: "24/7" },
-          ].map((item, i) => (
+          ].map((item) => (
             <div key={item.label} className="flex items-center justify-between">
               <span className="text-[14px] font-bold text-muted-foreground">
                 {item.label}

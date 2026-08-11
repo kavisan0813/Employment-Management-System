@@ -785,8 +785,11 @@ export function UserProfile() {
                   </h3>
                 </div>
                 <div className="flex flex-col gap-6 relative pl-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-border">
-                  {activityLog.map((log, i) => (
-                    <div key={log.type} className="flex items-start gap-4 relative">
+                  {activityLog.map((log) => (
+                    <div
+                      key={log.type}
+                      className="flex items-start gap-4 relative"
+                    >
                       <div
                         className="w-4.5 h-4.5 rounded-full border-4 border-card flex items-center justify-center absolute -left-[23px] top-1"
                         style={{

@@ -1,16 +1,10 @@
 import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function ApprovalWorkflowsSection() {
-  const {
-    extraConfig,
-    setActiveModal,
-    showToast,
-    updateExtraConfig,
-  } = useSettingsContext();
+  const { extraConfig, setActiveModal, showToast, updateExtraConfig } =
+    useSettingsContext();
 
   const workflows = [
     {
@@ -135,7 +129,7 @@ export function ApprovalWorkflowsSection() {
               </tr>
             </thead>
             <tbody>
-              {workflows.map((w, idx) => (
+              {workflows.map((w) => (
                 <tr
                   key={w.name}
                   className="border-b border-gray-100 hover:bg-[#00B87C]/[0.08] transition-all text-[13px]"
@@ -144,9 +138,7 @@ export function ApprovalWorkflowsSection() {
                     <span className="block font-bold text-gray-800 dark:text-gray-200">
                       {w.name}
                     </span>
-                    <span className="text-[11px] text-[#94A3B8]">
-                      {w.desc}
-                    </span>
+                    <span className="text-[11px] text-[#94A3B8]">{w.desc}</span>
                   </td>
                   <td className="py-3 px-4">
                     <span
@@ -405,10 +397,7 @@ export function ApprovalWorkflowsSection() {
                     type="text"
                     value={extraConfig.workflowReminderTime}
                     onChange={(e) =>
-                      updateExtraConfig(
-                        "workflowReminderTime",
-                        e.target.value,
-                      )
+                      updateExtraConfig("workflowReminderTime", e.target.value)
                     }
                     className="mt-2 rounded-xl px-3 py-2 text-sm border w-full md:w-64 bg-white dark:bg-neutral-800"
                     style={{

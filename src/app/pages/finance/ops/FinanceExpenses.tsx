@@ -310,10 +310,11 @@ export function FinanceExpenses() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as typeof activeTab)}
-                className={`px-8 py-4 text-[14px] font-semibold tracking-wider uppercase transition-all relative ${isActive
+                className={`px-8 py-4 text-[14px] font-semibold tracking-wider uppercase transition-all relative ${
+                  isActive
                     ? "text-[#00B87C]"
                     : "text-muted-foreground hover:text-foreground"
-                  }`}
+                }`}
               >
                 {tab} {count && `(${count})`}
                 {isActive && (
@@ -467,7 +468,7 @@ export function FinanceExpenses() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#F9FAFB] dark:bg-white/5 dark:bg-muted/10 border-b border-border">
+              <tr className="bg-[#F9FAFB] dark:bg-white/5 border-b border-border">
                 <th className="px-6 py-4 w-12">
                   <Checkbox
                     checked={
@@ -510,10 +511,11 @@ export function FinanceExpenses() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className={`group hover:bg-muted/50 dark:hover:bg-accent/50 transition-all cursor-pointer h-[64px] border-b border-border/50 last:border-0 ${selectedRows.includes(exp.id)
+                  className={`group hover:bg-muted/50 dark:hover:bg-accent/50 transition-all cursor-pointer h-[64px] border-b border-border/50 last:border-0 ${
+                    selectedRows.includes(exp.id)
                       ? "bg-[#F0FDF4] dark:bg-emerald-500/5"
                       : ""
-                    }`}
+                  }`}
                   onClick={() => setViewingExpense(exp)}
                 >
                   <td
@@ -589,10 +591,11 @@ export function FinanceExpenses() {
                               );
                               showToast(`Expense ${exp.id} Approved!`);
                             }}
-                            className={`p-1.5 rounded-lg border transition-all ${exp.receiptStatus === "Missing"
+                            className={`p-1.5 rounded-lg border transition-all ${
+                              exp.receiptStatus === "Missing"
                                 ? "bg-muted border-border text-muted-foreground cursor-not-allowed opacity-50"
                                 : "bg-[#00B87C] border-[#00B87C] text-white hover:bg-emerald-600 shadow-sm"
-                              }`}
+                            }`}
                             title={
                               exp.receiptStatus === "Missing"
                                 ? "Receipt required for approval"
@@ -674,12 +677,13 @@ export function FinanceExpenses() {
 
               {/* Status Banner */}
               <div
-                className={`px-6 py-2 flex items-center gap-2 ${viewingExpense.status === "Approved"
+                className={`px-6 py-2 flex items-center gap-2 ${
+                  viewingExpense.status === "Approved"
                     ? "bg-[#DCFCE7] text-[#166534]"
                     : viewingExpense.status === "Pending"
                       ? "bg-[#FEF3C7] text-[#92400E]"
                       : "bg-[#FEE2E2] text-[#991B1B]"
-                  }`}
+                }`}
               >
                 {viewingExpense.status === "Approved" ? (
                   <CheckCircle2 size={14} />
@@ -1210,7 +1214,7 @@ function FilterSelect({
   onChange?: (val: string) => void;
 }) {
   const [internalValue, setInternalValue] = useState<string | null>(null);
-  const value = externalValue ?? (internalValue ?? label);
+  const value = externalValue ?? internalValue ?? label;
   const handleChange = externalOnChange ?? setInternalValue;
 
   return (
@@ -1262,10 +1266,11 @@ function CategoryChip({ category }: { category: ExpenseClaim["category"] }) {
 function ReceiptStatus({ status }: { status: ExpenseClaim["receiptStatus"] }) {
   return (
     <span
-      className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wider border flex items-center gap-1 w-fit ${status === "Attached"
+      className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wider border flex items-center gap-1 w-fit ${
+        status === "Attached"
           ? "bg-[#F0FDF4] text-[#00B87C] border-[#00B87C]/20"
           : "bg-[#FEF2F2] text-[#EF4444] border-[#EF4444]/20"
-        }`}
+      }`}
     >
       {status === "Attached" ? (
         <Check size={10} strokeWidth={4} />
@@ -1307,10 +1312,11 @@ function Checkbox({
   return (
     <button
       onClick={onChange}
-      className={`w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center ${checked
+      className={`w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center ${
+        checked
           ? "bg-[#00B87C] border-[#00B87C]"
           : "bg-card border-border hover:border-[#00B87C]/50"
-        }`}
+      }`}
     >
       {checked && <Check size={14} strokeWidth={4} className="text-white" />}
     </button>
@@ -1354,14 +1360,15 @@ function TimelineStep({
     <div className="flex gap-4 relative group">
       <div className="flex flex-col items-center gap-1.5">
         <div
-          className={`w-3.5 h-3.5 rounded-full border-2 z-10 ${status === "success"
+          className={`w-3.5 h-3.5 rounded-full border-2 z-10 ${
+            status === "success"
               ? "bg-[#00B87C] border-[#00B87C]"
               : status === "active"
                 ? "bg-card border-[#00B87C] animate-pulse shadow-[0_0_8px_rgba(0,184,124,0.4)]"
                 : status === "error"
                   ? "bg-rose-500 border-rose-500"
                   : "bg-card border-border"
-            }`}
+          }`}
         />
         <div
           className={`w-[1px] flex-1 bg-border group-last:hidden ${status === "success" ? "bg-[#00B87C]/30" : ""}`}
@@ -1369,14 +1376,15 @@ function TimelineStep({
       </div>
       <div className="pb-4">
         <p
-          className={`text-[12px] font-bold uppercase tracking-widest leading-none ${status === "success"
+          className={`text-[12px] font-bold uppercase tracking-widest leading-none ${
+            status === "success"
               ? "text-[#00B87C]"
               : status === "active"
                 ? "text-[#00B87C]"
                 : status === "error"
                   ? "text-rose-500"
                   : "text-muted-foreground"
-            }`}
+          }`}
         >
           {label}
         </p>

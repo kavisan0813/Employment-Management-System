@@ -180,7 +180,9 @@ const exitTypeChip = (type: ExitType) => {
 
 /* ─── Main Component ─── */
 export function ManagerExitTasks() {
-  const canSignManagerClearance = usePermissionKey(P.OFFBOARDING_CLEARANCE_MANAGER);
+  const canSignManagerClearance = usePermissionKey(
+    P.OFFBOARDING_CLEARANCE_MANAGER,
+  );
   const [showKTModal, setShowKTModal] = useState<string | null>(null);
   const [showSignOff, setShowSignOff] = useState<string | null>(null);
   const [showWriteModal, setShowWriteModal] = useState<string | null>(null);
@@ -398,7 +400,8 @@ export function ManagerExitTasks() {
                               </button>
                             )}
 
-                          {task.status !== "done" && canSignManagerClearance &&
+                          {task.status !== "done" &&
+                            canSignManagerClearance &&
                             task.actionType === "signoff" && (
                               <button
                                 onClick={() => setShowSignOff(member.id)}
@@ -633,7 +636,7 @@ function KTModal({
           </button>
         </div>
         <div className="px-6 py-5 space-y-4 max-h-[55vh] overflow-y-auto">
-          {sections.map((section, i) => (
+          {sections.map((section) => (
             <div key={section.key}>
               <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
                 {section.label}

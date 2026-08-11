@@ -687,12 +687,15 @@ export function EmployeeSchedule() {
                         </div>
                       </div>
                     </td>
-                    {weekDates.map((d, idx) => {
+                    {weekDates.map((d) => {
                       const shift = getShiftForDate(d);
                       const conf =
                         SHIFT_COLORS[shift.type] || SHIFT_COLORS["Morning"];
                       return (
-                        <td key={d} className="p-2 border-b border-border">
+                        <td
+                          key={d.getTime()}
+                          className="p-2 border-b border-border"
+                        >
                           <div
                             onClick={() => handleViewDetails(shift)}
                             className={`h-full min-h-[60px] rounded-xl p-2 flex flex-col items-center justify-center gap-1 border-t-4 shadow-sm group cursor-pointer transition-all hover:scale-[1.02] ${conf.bg} ${conf.border}`}
@@ -925,7 +928,10 @@ export function EmployeeSchedule() {
                     </div>
                     <div className="space-y-3">
                       {timelineItems.map((item, i) => (
-                        <div key={item.label} className="flex items-start gap-4">
+                        <div
+                          key={item.label}
+                          className="flex items-start gap-4"
+                        >
                           <span className="w-[80px] text-[11px] font-black text-muted-foreground pt-1 shrink-0">
                             {item.time}
                           </span>
@@ -1197,8 +1203,11 @@ export function EmployeeSchedule() {
                 { label: "Location", value: selectedShift.location },
                 { label: "Department", value: selectedShift.department },
                 { label: "Reporting Manager", value: selectedShift.manager },
-              ].map((item, i) => (
-                <div key={item.label} className="flex justify-between items-center py-1">
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="flex justify-between items-center py-1"
+                >
                   <span className="text-[13px] font-bold text-muted-foreground">
                     {item.label}
                   </span>
@@ -1610,8 +1619,11 @@ export function EmployeeSchedule() {
                           : "completed",
                       date: "Final Action",
                     },
-                  ].map((step, i) => (
-                    <div key={step.label} className="relative flex items-center gap-3">
+                  ].map((step) => (
+                    <div
+                      key={step.label}
+                      className="relative flex items-center gap-3"
+                    >
                       <div
                         className={`absolute -left-[23px] w-4 h-4 rounded-full border-2 bg-card z-10 ${step.status === "completed" ? "border-primary bg-primary" : step.status === "active" ? "border-primary" : "border-border"}`}
                       />

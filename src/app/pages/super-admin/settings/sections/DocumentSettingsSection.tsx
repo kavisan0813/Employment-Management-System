@@ -236,7 +236,7 @@ export function DocumentSettingsSection() {
               </tr>
             </thead>
             <tbody>
-              {categories.map((c, idx) => (
+              {categories.map((c) => (
                 <tr
                   key={c.name}
                   className="border-b border-gray-100 hover:bg-[#00B87C]/[0.08] transition-all text-[13px]"

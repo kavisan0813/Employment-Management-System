@@ -38,4 +38,4 @@ export interface Department {
 export type DepartmentInput = Omit<
   Department,
   "id" | "employees" | "activeEmployees" | "onLeaveEmployees" | "growth"
->
+>;

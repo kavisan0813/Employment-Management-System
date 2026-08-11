@@ -857,7 +857,7 @@ function AnnouncementDetailModal({
                 Attachments ({announcement.attachments.length})
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {announcement.attachments.map((file, idx) => (
+                {announcement.attachments.map((file) => (
                   <div
                     key={file.name}
                     className="p-3 bg-secondary/35 border border-border rounded-xl flex items-center justify-between gap-4"

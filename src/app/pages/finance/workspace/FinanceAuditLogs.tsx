@@ -324,7 +324,7 @@ function FilterSelect({
         <option value={label}>{label}</option>
         {options
           .filter((opt) => opt !== label)
-          .map((opt, i) => (
+          .map((opt) => (
             <option key={opt} value={opt}>
               {opt}
             </option>
@@ -656,7 +656,7 @@ export function FinanceAuditLogs() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#F9FAFB] dark:bg-white/5 dark:bg-muted/10 border-b border-border">
+              <tr className="bg-[#F9FAFB] dark:bg-white/5 border-b border-border">
                 <th className="px-5 py-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
                   TIMESTAMP
                 </th>
@@ -873,7 +873,7 @@ export function FinanceAuditLogs() {
                       label: "Record Affected",
                       value: selectedLog.record.split(" —")[0],
                     },
-                  ].map((f, i) => (
+                  ].map((f) => (
                     <div key={f.label}>
                       <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
                         {f.label}

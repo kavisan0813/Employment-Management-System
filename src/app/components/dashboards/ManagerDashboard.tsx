@@ -551,7 +551,10 @@ export function ManagerDashboard() {
             </div>
             <div className="w-full mt-8 space-y-3">
               {TEAM_COMPOSITION.map((item) => (
-                <div key={item.name} className="flex items-center justify-between">
+                <div
+                  key={item.name}
+                  className="flex items-center justify-between"
+                >
                   <div className="flex items-center gap-2">
                     <div
                       className="w-2.5 h-2.5 rounded-full"

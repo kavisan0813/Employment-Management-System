@@ -400,7 +400,7 @@ export function FinanceIncrement() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#F9FAFB] dark:bg-white/5 dark:bg-muted/10 border-b border-border">
+              <tr className="bg-[#F9FAFB] dark:bg-white/5 border-b border-border">
                 <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
                   EMPLOYEE
                 </th>
@@ -473,12 +473,13 @@ export function FinanceIncrement() {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-1 rounded-lg text-[11px] font-black ${emp.attendancePct >= 95
+                      className={`px-2 py-1 rounded-lg text-[11px] font-black ${
+                        emp.attendancePct >= 95
                           ? "bg-emerald-500/10 text-emerald-600"
                           : emp.attendancePct >= 90
                             ? "bg-blue-500/10 text-blue-600"
                             : "bg-rose-500/10 text-rose-600"
-                        }`}
+                      }`}
                     >
                       {emp.attendancePct}%
                     </span>
@@ -1047,7 +1048,7 @@ function FilterSelect({
   onChange?: (val: string) => void;
 }) {
   const [internalValue, setInternalValue] = useState<string | null>(null);
-  const value = externalValue ?? (internalValue ?? label);
+  const value = externalValue ?? internalValue ?? label;
   const onChange = externalOnChange ?? setInternalValue;
 
   return (
@@ -1058,7 +1059,7 @@ function FilterSelect({
         className="appearance-none flex items-center gap-2.5 px-5 pr-12 py-2.5 bg-muted/20 border border-border rounded-xl text-[13px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer"
       >
         <option value={label}>{label}</option>
-        {options.map((opt, i) => (
+        {options.map((opt) => (
           <option key={opt} value={opt}>
             {opt}
           </option>

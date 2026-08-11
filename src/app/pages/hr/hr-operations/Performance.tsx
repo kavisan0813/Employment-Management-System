@@ -795,7 +795,7 @@ export function Performance() {
 
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {stats.map((s, i) => (
+        {stats.map((s) => (
           <div
             key={s.label}
             className="bg-card p-5 rounded-2xl border border-border shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all"
@@ -1434,7 +1434,7 @@ export function Performance() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {distributionData.map((entry, index) => (
+                  {distributionData.map((entry) => (
                     <Cell key={`cell-${entry.color}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -1442,7 +1442,7 @@ export function Performance() {
             </ResponsiveContainer>
           </div>
           <div className="flex flex-wrap justify-center gap-4 mt-2">
-            {distributionData.map((d, i) => (
+            {distributionData.map((d) => (
               <div key={d.name} className="flex items-center gap-1.5">
                 <div
                   className="w-2 h-2 rounded-full"

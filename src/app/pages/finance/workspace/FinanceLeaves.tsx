@@ -599,7 +599,7 @@ export function FinanceLeaves() {
                       end: endDate,
                     });
 
-                    return calendarDays.map((calDay, i) => {
+                    return calendarDays.map((calDay) => {
                       const formattedDate = format(calDay, "d");
                       const isCurrentMonth = isSameMonth(calDay, monthStart);
                       const isCurrentDay = isToday(calDay);

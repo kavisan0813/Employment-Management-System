@@ -581,7 +581,7 @@ function DetailDrawer({
                 },
                 { label: "Leave Days", value: emp.leaveDays, color: "#D97706" },
                 { label: "Late Marks", value: emp.lateMarks, color: "#DC2626" },
-              ].map((s, i) => (
+              ].map((s) => (
                 <div
                   key={s.label}
                   style={{
@@ -663,7 +663,7 @@ function DetailDrawer({
                   value: `${emp.managerRating}/5`,
                   color: "#D97706",
                 },
-              ].map((s, i) => (
+              ].map((s) => (
                 <div
                   key={s.label}
                   style={{
@@ -1847,7 +1847,7 @@ export function IncrementAppraisal() {
             sub: "annual increment",
             link: "/payroll",
           },
-        ].map((card, i) => (
+        ].map((card) => (
           <div
             key={card.label}
             onClick={() => card.link && navigate(card.link)}
@@ -2642,7 +2642,7 @@ export function IncrementAppraisal() {
                 }}
               />
               <Scatter data={scatterData} fill="var(--primary)">
-                {scatterData.map((entry, index) => (
+                {scatterData.map((entry) => (
                   <Cell
                     key={`cell-${entry.increment}`}
                     fill={
@@ -2808,7 +2808,7 @@ export function IncrementAppraisal() {
               bg: "rgba(239,68,68,0.08)",
               msg: "Not eligible or 5% if att. ok",
             },
-          ].map((r, i) => (
+          ].map((r) => (
             <div
               key={r.color}
               style={{

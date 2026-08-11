@@ -265,7 +265,7 @@ export function FinanceDepartments() {
             bg: "rgba(139,92,246,0.1)",
             onClick: () => navigate("/payroll"),
           },
-        ].map((kpi, i) => (
+        ].map((kpi) => (
           <div
             key={kpi.label}
             onClick={kpi.onClick}
@@ -690,7 +690,7 @@ export function FinanceDepartments() {
                       pct: 4,
                       color: "#F59E0B",
                     },
-                  ].map((cat, idx) => (
+                  ].map((cat) => (
                     <div key={cat.label} className="flex flex-col gap-1.5">
                       <div className="flex items-center justify-between text-[13px] font-bold">
                         <span className="text-foreground">{cat.label}</span>
@@ -726,7 +726,7 @@ export function FinanceDepartments() {
                     { title: "Sr. Engineers", count: 120 },
                     { title: "Engineers", count: 480 },
                     { title: "Junior / Associate", count: 217 },
-                  ].map((role, idx) => (
+                  ].map((role) => (
                     <li
                       key={role.title}
                       className="flex items-center justify-between text-[13px] font-bold p-3 bg-card border border-border rounded-xl"

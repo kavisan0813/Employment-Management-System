@@ -181,7 +181,7 @@ export function PerformanceSettingsSection() {
               state: perfHrFinalizationDeadline,
               setter: setPerfHrFinalizationDeadline,
             },
-          ].map((f, idx) => (
+          ].map((f) => (
             <div key={f.label}>
               <label
                 style={{
@@ -260,7 +260,7 @@ export function PerformanceSettingsSection() {
               color: "#6B7280",
               bg: "rgba(107, 114, 128, 0.1)",
             },
-          ].map((chip, idx) => (
+          ].map((chip) => (
             <span
               key={chip.label}
               style={{
@@ -338,8 +338,11 @@ export function PerformanceSettingsSection() {
             state: perfClientFeedback,
             setter: setPerfClientFeedback,
           },
-        ].map((row, idx) => (
-          <div key={row.label} className="flex justify-between items-center py-2">
+        ].map((row) => (
+          <div
+            key={row.label}
+            className="flex justify-between items-center py-2"
+          >
             <div>
               <p
                 style={{
@@ -458,8 +461,11 @@ export function PerformanceSettingsSection() {
             state: perfOkrSupport,
             setter: setPerfOkrSupport,
           },
-        ].map((row, idx) => (
-          <div key={row.label} className="flex justify-between items-center py-2">
+        ].map((row) => (
+          <div
+            key={row.label}
+            className="flex justify-between items-center py-2"
+          >
             <div>
               <p
                 style={{

@@ -611,7 +611,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
           </div>
 
           <div className="space-y-4">
-            {otDeptData.map((d, i) => (
+            {otDeptData.map((d) => (
               <div key={d.name} className="group cursor-pointer">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[13px] font-medium text-[#0F3047] w-[130px]">
@@ -777,7 +777,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   "Est. Pay",
                   "Status",
                   "Actions",
-                ].map((h, i) => (
+                ].map((h) => (
                   <th
                     key={h}
                     className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider"
@@ -792,7 +792,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
               className="divide-y"
               style={{ borderColor: "var(--border)" }}
             >
-              {filteredEmployees.map((e, i) => (
+              {filteredEmployees.map((e) => (
                 <tr
                   key={e.name}
                   className="hover:bg-[var(--secondary)] transition-colors h-[64px]"
@@ -1011,7 +1011,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                     paddingAngle={4}
                     dataKey="value"
                   >
-                    {otShiftData.map((entry, index) => (
+                    {otShiftData.map((entry) => (
                       <Cell key={`cell-${entry.color}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -1034,7 +1034,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             </div>
 
             <div className="flex-1 space-y-2">
-              {otShiftData.map((s, i) => (
+              {otShiftData.map((s) => (
                 <div
                   key={s.name}
                   className="flex items-center justify-between p-2 rounded-xl hover:bg-[#F0FFF8] transition-colors"
@@ -1097,7 +1097,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
           </p>
 
           <div className="space-y-4">
-            {otCostForecast.map((c, i) => (
+            {otCostForecast.map((c) => (
               <div key={c.week}>
                 <div className="flex justify-between text-[12px] mb-1.5">
                   <span style={{ color: "#6B7280", fontWeight: 600 }}>
@@ -1411,10 +1411,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                   dataKey="value"
                 >
                   {swapReasonData.map(
-                    (
-                      entry: { color: string; name: string; value: number },
-                      index: number,
-                    ) => (
+                    (entry: { color: string; name: string; value: number }) => (
                       <Cell key={`cell-${entry.name}`} fill={entry.color} />
                     ),
                   )}
@@ -1556,7 +1553,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                   "Submitted",
                   "Status",
                   "Actions",
-                ].map((h, i) => (
+                ].map((h) => (
                   <th
                     key={h}
                     className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider"
@@ -1572,22 +1569,19 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
               style={{ borderColor: "var(--border)" }}
             >
               {filtered.map(
-                (
-                  req: {
-                    id: string;
-                    from: string;
-                    fromDept: string;
-                    to: string;
-                    origin: string;
-                    requested: string;
-                    originDate: string;
-                    requestedDate: string;
-                    reason: string;
-                    submitted: string;
-                    status: string;
-                  },
-                  i: number,
-                ) => (
+                (req: {
+                  id: string;
+                  from: string;
+                  fromDept: string;
+                  to: string;
+                  origin: string;
+                  requested: string;
+                  originDate: string;
+                  requestedDate: string;
+                  reason: string;
+                  submitted: string;
+                  status: string;
+                }) => (
                   <tr
                     key={req.id}
                     className="hover:bg-[rgba(5,150,105,0.02)] transition-colors"
@@ -2646,7 +2640,7 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
               {filtered.length}
             </span>
             <div className="flex gap-1">
-              {getPageNumbers().map((p, i) => (
+              {getPageNumbers().map((p) => (
                 <button
                   key={p}
                   className="w-8 h-8 rounded-lg text-xs font-semibold transition-colors"
@@ -3321,7 +3315,7 @@ function AttendanceReport({ onBack }: { onBack: () => void }) {
               Low
             </span>
             <div className="flex gap-0.5">
-              {[0.3, 0.5, 0.7, 0.85, 1].map((o, i) => (
+              {[0.3, 0.5, 0.7, 0.85, 1].map((o) => (
                 <div
                   key={o}
                   className="w-5 h-3 rounded"
@@ -4738,7 +4732,7 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
               Flight Risk Summary
             </h4>
             <div className="space-y-3">
-              {flightRisks.map((r, i) => (
+              {flightRisks.map((r) => (
                 <div
                   key={r.name}
                   className="flex items-center justify-between p-2.5 rounded-xl bg-background border border-border/50"
@@ -4836,7 +4830,7 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
               className="divide-y"
               style={{ borderColor: "var(--border)" }}
             >
-              {exitedEmployees.map((emp, i) => (
+              {exitedEmployees.map((emp) => (
                 <tr
                   key={emp.name}
                   className="hover:bg-[var(--secondary)] transition-colors"
@@ -5047,17 +5041,17 @@ export function Reports() {
 
   const pipelineStages = isManager
     ? [
-      { stage: "Applied", count: 42, pct: 100, color: "#9CA3AF" },
-      { stage: "Interviewed", count: 18, pct: 42.8, color: "#34D399" },
-      { stage: "Offered", count: 4, pct: 9.5, color: "#00B87C" },
-      { stage: "Joined", count: 3, pct: 7.1, color: "#059669" },
-    ]
+        { stage: "Applied", count: 42, pct: 100, color: "#9CA3AF" },
+        { stage: "Interviewed", count: 18, pct: 42.8, color: "#34D399" },
+        { stage: "Offered", count: 4, pct: 9.5, color: "#00B87C" },
+        { stage: "Joined", count: 3, pct: 7.1, color: "#059669" },
+      ]
     : [
-      { stage: "Applied", count: 145, pct: 100, color: "#9CA3AF" },
-      { stage: "Interviewed", count: 58, pct: 40, color: "#34D399" },
-      { stage: "Offered", count: 12, pct: 8.2, color: "#00B87C" },
-      { stage: "Joined", count: 8, pct: 5.5, color: "#059669" },
-    ];
+        { stage: "Applied", count: 145, pct: 100, color: "#9CA3AF" },
+        { stage: "Interviewed", count: 58, pct: 40, color: "#34D399" },
+        { stage: "Offered", count: 12, pct: 8.2, color: "#00B87C" },
+        { stage: "Joined", count: 8, pct: 5.5, color: "#059669" },
+      ];
 
   useEffect(() => {
     if (location.state?.activeReport) {
@@ -5535,8 +5529,8 @@ export function Reports() {
     const list = rawKpis();
     return user?.role === "HR Manager"
       ? list.filter(
-        (k) => k.label !== "Payroll Cost" && k.label !== "Budget Utilization",
-      )
+          (k) => k.label !== "Payroll Cost" && k.label !== "Budget Utilization",
+        )
       : list;
   };
 
@@ -5740,8 +5734,8 @@ export function Reports() {
                       color: "var(--foreground)",
                     }}
                     onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      "var(--secondary)")
+                      (e.currentTarget.style.backgroundColor =
+                        "var(--secondary)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -5812,8 +5806,8 @@ export function Reports() {
                       color: "var(--foreground)",
                     }}
                     onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      "var(--secondary)")
+                      (e.currentTarget.style.backgroundColor =
+                        "var(--secondary)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -5875,8 +5869,8 @@ export function Reports() {
                       color: "var(--foreground)",
                     }}
                     onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      "var(--secondary)")
+                      (e.currentTarget.style.backgroundColor =
+                        "var(--secondary)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -5923,120 +5917,120 @@ export function Reports() {
       >
         {isLoading
           ? Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              style={{
-                width: "100%",
-                height: "116px",
-                backgroundColor: "#F3F4F6",
-                borderRadius: "16px",
-                animation: "pulse 1.5s infinite ease-in-out",
-              }}
-            ></div>
-          ))
-          : getKpis().map((card, i) => (
-            <div
-              key={card.label}
-              onClick={() => {
-                if (card.label === "Total Employees") navigate("/employees");
-                else if (card.label === "New Hires") navigate("/recruitment");
-                else if (card.label === "Attrition")
-                  setShowAttritionModal(true);
-                else if (card.label === "Avg Attendance")
-                  navigate("/attendance");
-                else if (card.label === "Payroll Cost") navigate("/payroll");
-                else if (card.label === "Open Positions")
-                  navigate("/recruitment");
-                else if (card.label === "Budget Utilization")
-                  setActiveReport("Payroll Summary");
-                else if (card.label === "Active Overtime")
-                  setActiveReport("Overtime Monitoring");
-              }}
-              style={{
-                backgroundColor: "var(--card)",
-                borderRadius: "16px",
-                padding: "20px",
-                border: "1px solid var(--border)",
-                display: "flex",
-                flexDirection: "column",
-                position: "relative",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
-                cursor: "pointer",
-                transition: "transform 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-4px)";
-                e.currentTarget.style.boxShadow =
-                  "0 10px 15px -3px rgba(0,0,0,0.1)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow =
-                  "0 1px 3px rgba(0,0,0,0.02)";
-              }}
-            >
               <div
+                key={i}
                 style={{
+                  width: "100%",
+                  height: "116px",
+                  backgroundColor: "#F3F4F6",
+                  borderRadius: "16px",
+                  animation: "pulse 1.5s infinite ease-in-out",
+                }}
+              ></div>
+            ))
+          : getKpis().map((card) => (
+              <div
+                key={card.label}
+                onClick={() => {
+                  if (card.label === "Total Employees") navigate("/employees");
+                  else if (card.label === "New Hires") navigate("/recruitment");
+                  else if (card.label === "Attrition")
+                    setShowAttritionModal(true);
+                  else if (card.label === "Avg Attendance")
+                    navigate("/attendance");
+                  else if (card.label === "Payroll Cost") navigate("/payroll");
+                  else if (card.label === "Open Positions")
+                    navigate("/recruitment");
+                  else if (card.label === "Budget Utilization")
+                    setActiveReport("Payroll Summary");
+                  else if (card.label === "Active Overtime")
+                    setActiveReport("Overtime Monitoring");
+                }}
+                style={{
+                  backgroundColor: "var(--card)",
+                  borderRadius: "16px",
+                  padding: "20px",
+                  border: "1px solid var(--border)",
                   display: "flex",
-                  alignItems: "flex-start",
-                  justifyContent: "space-between",
-                  marginBottom: "12px",
+                  flexDirection: "column",
+                  position: "relative",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                  cursor: "pointer",
+                  transition: "transform 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 10px 15px -3px rgba(0,0,0,0.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow =
+                    "0 1px 3px rgba(0,0,0,0.02)";
                 }}
               >
                 <div
                   style={{
-                    width: "36px",
-                    height: "36px",
-                    borderRadius: "10px",
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: card.bg,
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                    marginBottom: "12px",
                   }}
                 >
-                  <card.icon size={18} color={card.color} />
+                  <div
+                    style={{
+                      width: "36px",
+                      height: "36px",
+                      borderRadius: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: card.bg,
+                    }}
+                  >
+                    <card.icon size={18} color={card.color} />
+                  </div>
+                  <span
+                    style={{
+                      padding: "2px 8px",
+                      borderRadius: "9999px",
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      backgroundColor:
+                        card.color === "#EF4444"
+                          ? "rgba(239,68,68,0.1)"
+                          : "rgba(16,185,129,0.1)",
+                      color: card.color === "#EF4444" ? "#EF4444" : "#059669",
+                    }}
+                  >
+                    {card.trend}
+                  </span>
                 </div>
-                <span
+                <p
                   style={{
-                    padding: "2px 8px",
-                    borderRadius: "9999px",
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    backgroundColor:
-                      card.color === "#EF4444"
-                        ? "rgba(239,68,68,0.1)"
-                        : "rgba(16,185,129,0.1)",
-                    color: card.color === "#EF4444" ? "#EF4444" : "#059669",
+                    fontSize: "26px",
+                    fontWeight: 900,
+                    color: "var(--foreground)",
+                    margin: "0 0 4px 0",
+                    letterSpacing: "-0.5px",
                   }}
                 >
-                  {card.trend}
-                </span>
+                  {card.value}
+                </p>
+                <p
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: "var(--muted-foreground)",
+                    margin: 0,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  {card.label}
+                </p>
               </div>
-              <p
-                style={{
-                  fontSize: "26px",
-                  fontWeight: 900,
-                  color: "var(--foreground)",
-                  margin: "0 0 4px 0",
-                  letterSpacing: "-0.5px",
-                }}
-              >
-                {card.value}
-              </p>
-              <p
-                style={{
-                  fontSize: "12px",
-                  fontWeight: 700,
-                  color: "var(--muted-foreground)",
-                  margin: 0,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px",
-                }}
-              >
-                {card.label}
-              </p>
-            </div>
-          ))}
+            ))}
       </div>
 
       {/* CHARTS ROW 1 */}
@@ -7049,7 +7043,7 @@ export function Reports() {
                     count: 2,
                     delay: "15m",
                   },
-                ].map((emp, idx) => (
+                ].map((emp) => (
                   <tr
                     key={emp.name}
                     style={{
@@ -7160,7 +7154,7 @@ export function Reports() {
                     { dept: "Design", att: "91%", perf: "4.0", prod: "88%" },
                     { dept: "Marketing", att: "87%", perf: "3.5", prod: "82%" },
                     { dept: "Sales", att: "89%", perf: "3.7", prod: "85%" },
-                  ].map((row, i) => (
+                  ].map((row) => (
                     <tr
                       key={row.dept}
                       style={{
@@ -7356,7 +7350,7 @@ export function Reports() {
                 r.title.toLowerCase().includes(reportSearch.toLowerCase()),
               )
               .slice(0, showAllReports ? reports.length : 6)
-              .map((report, i) => (
+              .map((report) => (
                 <div
                   key={report.title}
                   style={{
@@ -8189,8 +8183,8 @@ export function Reports() {
                     textAlign: "left",
                   }}
                   onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor =
-                    "rgba(0, 184, 124, 0.1)")
+                    (e.currentTarget.style.backgroundColor =
+                      "rgba(0, 184, 124, 0.1)")
                   }
                   onMouseLeave={(e) =>
                     (e.currentTarget.style.backgroundColor = "var(--secondary)")
@@ -8485,7 +8479,7 @@ export function Reports() {
                       metric: "88%",
                       status: "Review",
                     },
-                  ].map((row, idx) => (
+                  ].map((row) => (
                     <tr
                       key={row.date}
                       style={{

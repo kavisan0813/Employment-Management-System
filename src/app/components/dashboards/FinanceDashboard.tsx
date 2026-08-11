@@ -871,12 +871,13 @@ export function FinanceDashboard() {
                   className="flex flex-col items-center gap-3 relative z-10 group"
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${step.status === "Done"
-                      ? "bg-[#00B87C] border-[#00B87C] text-white"
-                      : step.status === "Active"
-                        ? "bg-card border-[#3B82F6] text-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-pulse"
-                        : "bg-card border-border text-muted-foreground"
-                      } group-hover:scale-110`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
+                      step.status === "Done"
+                        ? "bg-[#00B87C] border-[#00B87C] text-white"
+                        : step.status === "Active"
+                          ? "bg-card border-[#3B82F6] text-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-pulse"
+                          : "bg-card border-border text-muted-foreground"
+                    } group-hover:scale-110`}
                   >
                     {step.status === "Done" ? (
                       <Check size={16} strokeWidth={3} />
@@ -887,12 +888,13 @@ export function FinanceDashboard() {
                     )}
                   </div>
                   <span
-                    className={`text-[10px] font-black uppercase tracking-widest text-center max-w-[70px] ${step.status === "Done"
-                      ? "text-[#00B87C]"
-                      : step.status === "Active"
-                        ? "text-[#3B82F6]"
-                        : "text-muted-foreground"
-                      }`}
+                    className={`text-[10px] font-black uppercase tracking-widest text-center max-w-[70px] ${
+                      step.status === "Done"
+                        ? "text-[#00B87C]"
+                        : step.status === "Active"
+                          ? "text-[#3B82F6]"
+                          : "text-muted-foreground"
+                    }`}
                   >
                     {step.label}
                   </span>
@@ -1082,12 +1084,13 @@ export function FinanceDashboard() {
                     <div className="absolute left-[21px] top-10 w-[2px] h-8 bg-border group-hover:bg-primary/20 transition-colors" />
                   )}
                   <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center z-10 shrink-0 border-4 border-card ${item.status === "Done"
-                      ? "bg-[#00B87C]"
-                      : item.status === "Active"
-                        ? "bg-[#3B82F6] shadow-[0_0_10px_rgba(59,130,246,0.3)]"
-                        : "bg-secondary border-border"
-                      }`}
+                    className={`w-7 h-7 rounded-full flex items-center justify-center z-10 shrink-0 border-4 border-card ${
+                      item.status === "Done"
+                        ? "bg-[#00B87C]"
+                        : item.status === "Active"
+                          ? "bg-[#3B82F6] shadow-[0_0_10px_rgba(59,130,246,0.3)]"
+                          : "bg-secondary border-border"
+                    }`}
                   >
                     {item.status === "Done" && (
                       <Check size={12} className="text-white" />
@@ -1134,7 +1137,9 @@ export function FinanceDashboard() {
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                     <motion.div
                       initial={{ x: "-100%" }}
-                      animate={{ x: `-${100 - ((item.value / item.total) * 100)}%` }}
+                      animate={{
+                        x: `-${100 - (item.value / item.total) * 100}%`,
+                      }}
                       transition={{ duration: 1, delay: i * 0.1 }}
                       className="h-full rounded-full w-full"
                       style={{ backgroundColor: item.color }}
@@ -1417,12 +1422,13 @@ export function FinanceDashboard() {
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex items-center gap-2">
                 <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black transition-all ${payrollStep > s
-                    ? "bg-[#00B87C] text-white"
-                    : payrollStep === s
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black transition-all ${
+                    payrollStep > s
                       ? "bg-[#00B87C] text-white"
-                      : "bg-secondary text-muted-foreground"
-                    }`}
+                      : payrollStep === s
+                        ? "bg-[#00B87C] text-white"
+                        : "bg-secondary text-muted-foreground"
+                  }`}
                 >
                   {payrollStep > s ? <Check size={12} /> : s}
                 </div>
@@ -2428,7 +2434,7 @@ export function FinanceDashboard() {
                       <div className="h-3 w-full bg-secondary rounded-full overflow-hidden">
                         <motion.div
                           className="h-full bg-[#EF4444] rounded-full w-full"
-                          animate={{ x: `-${100 - (form16Progress)}%` }}
+                          animate={{ x: `-${100 - form16Progress}%` }}
                           transition={{ duration: 0.2 }}
                         />
                       </div>

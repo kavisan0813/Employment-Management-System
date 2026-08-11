@@ -95,7 +95,7 @@ export function ApiSettingsSection() {
       {/* Policy Block 1: ACTIVE API KEYS */}
       <SectionTitle title="Active API Keys" />
       <div className="space-y-3 mb-6">
-        {keys.map((k, idx) => (
+        {keys.map((k) => (
           <div
             key={k.value}
             className="p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4"
@@ -206,8 +206,11 @@ export function ApiSettingsSection() {
             setter: setApiWebhook,
           },
           { label: "Log All API Requests", state: apiLog, setter: setApiLog },
-        ].map((row, idx) => (
-          <div key={row.label} className="flex justify-between items-center py-2">
+        ].map((row) => (
+          <div
+            key={row.label}
+            className="flex justify-between items-center py-2"
+          >
             <p
               style={{
                 fontSize: "14px",

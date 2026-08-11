@@ -716,7 +716,7 @@ export function ManagerSettings() {
                       <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                         My Limit
                       </th>
-                      <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider font-bold">
+                      <th className="px-6 py-4 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                         Above Limit Action
                       </th>
                     </tr>
@@ -748,7 +748,7 @@ export function ManagerSettings() {
                         limit: "₹3,000",
                         action: "Escalate to Finance",
                       },
-                    ].map((row, idx) => (
+                    ].map((row) => (
                       <tr
                         key={row.cat}
                         className="hover:bg-secondary/20 transition-colors"

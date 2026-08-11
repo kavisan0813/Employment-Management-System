@@ -40,8 +40,12 @@ export function PunchCard() {
     return () => clearInterval(interval);
   }, [derivedState, todayRecord?.punchIn]);
 
-  const inTimeStr = todayRecord?.punchIn ? formatTime12Hour(todayRecord.punchIn) : "-";
-  const outTimeStr = todayRecord?.punchOut ? formatTime12Hour(todayRecord.punchOut) : "-";
+  const inTimeStr = todayRecord?.punchIn
+    ? formatTime12Hour(todayRecord.punchIn)
+    : "-";
+  const outTimeStr = todayRecord?.punchOut
+    ? formatTime12Hour(todayRecord.punchOut)
+    : "-";
 
   return (
     <div className="bg-card rounded-2xl p-7 border border-border shadow-sm">
@@ -87,12 +91,16 @@ export function PunchCard() {
                 ✓ Shift Completed
               </p>
               <p className="text-[13px] font-semibold text-muted-foreground">
-                In: <span className="text-foreground font-bold">{inTimeStr}</span> | Out:{" "}
+                In:{" "}
+                <span className="text-foreground font-bold">{inTimeStr}</span> |
+                Out:{" "}
                 <span className="text-foreground font-bold">{outTimeStr}</span>
               </p>
               <p className="text-[13px] font-semibold text-muted-foreground">
                 Total worked:{" "}
-                <span className="text-primary font-black">{todayRecord?.hours || "-"}</span>
+                <span className="text-primary font-black">
+                  {todayRecord?.hours || "-"}
+                </span>
               </p>
             </div>
           ) : (
@@ -116,12 +124,13 @@ export function PunchCard() {
                 {todayRecord.logs.map((log) => (
                   <div key={log.type} className="flex items-center gap-3">
                     <div
-                      className={`w-2 h-2 rounded-full ${log.type === "in" || log.type === "break_end"
+                      className={`w-2 h-2 rounded-full ${
+                        log.type === "in" || log.type === "break_end"
                           ? "bg-emerald-500"
                           : log.type === "break_start"
                             ? "bg-amber-500"
                             : "bg-rose-500"
-                        }`}
+                      }`}
                     />
                     <span className="text-[12px] font-bold text-foreground w-[65px]">
                       {log.time}

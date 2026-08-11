@@ -236,7 +236,7 @@ export function ManageAccountBulkImport() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white text-slate-700">
-                    {parsedEmployees.map((emp, i) => (
+                    {parsedEmployees.map((emp) => (
                       <tr key={emp.name} className="hover:bg-slate-50/50">
                         <td className="p-3.5 font-extrabold text-slate-800">
                           {emp.name}

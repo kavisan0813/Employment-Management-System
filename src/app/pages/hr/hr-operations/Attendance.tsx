@@ -197,7 +197,10 @@ const initialRecords: AttendanceRecord[] = (() => {
     });
   });
 
-  localStorage.setItem("viyan_attendance_records:v1", JSON.stringify(generated));
+  localStorage.setItem(
+    "viyan_attendance_records:v1",
+    JSON.stringify(generated),
+  );
   return generated;
 })();
 
@@ -304,7 +307,6 @@ export function Attendance() {
 }
 
 function AdminAttendance() {
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [view, setView] = useState<"table" | "calendar">("table");
@@ -471,7 +473,10 @@ function AdminAttendance() {
 
     const updated = [newRecord, ...records];
     setRecords(updated);
-    localStorage.setItem("viyan_attendance_records:v1", JSON.stringify(updated));
+    localStorage.setItem(
+      "viyan_attendance_records:v1",
+      JSON.stringify(updated),
+    );
 
     setShowAddModal(false);
     setToastMessage("Attendance record added successfully");
@@ -542,7 +547,10 @@ function AdminAttendance() {
     if (!deleteConfirm) return;
     const updated = records.filter((rec) => rec.id !== deleteConfirm);
     setRecords(updated);
-    localStorage.setItem("viyan_attendance_records:v1", JSON.stringify(updated));
+    localStorage.setItem(
+      "viyan_attendance_records:v1",
+      JSON.stringify(updated),
+    );
     setDeleteConfirm(null);
     setToastMessage("Attendance record deleted successfully");
     setShowSuccessToast(true);
@@ -1761,10 +1769,10 @@ function AdminAttendance() {
             trend: metrics.lateTrend + "%",
             trendUp: false,
           },
-        ].map((card, i) => (
+        ].map((card) => (
           <div
             key={card.label}
-            className="group p-4 rounded-2xl border bg-card shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:-translate-y-0.5"
+            className="group p-4 rounded-2xl border bg-card shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
             style={{ borderColor: "var(--border)" }}
           >
             <div className="flex items-start justify-between">
@@ -2436,7 +2444,7 @@ function AdminAttendance() {
                 },
                 { label: "Absence %", value: "3.6%", color: "#EF4444" },
                 { label: "Late Mark", value: "12", color: "#F59E0B" },
-              ].map((stat, i) => (
+              ].map((stat) => (
                 <div
                   key={stat.label}
                   className="p-3 rounded-xl bg-neutral-50 dark:bg-zinc-800/30 border"
@@ -2464,7 +2472,7 @@ function AdminAttendance() {
                   { label: "Punctuality", value: 88, color: "bg-emerald-500" },
                   { label: "Consistency", value: 94, color: "bg-emerald-500" },
                   { label: "Balance", value: 72, color: "bg-emerald-500" },
-                ].map((bar, i) => (
+                ].map((bar) => (
                   <div key={bar.label} className="space-y-1">
                     <div className="flex justify-between text-[11px] font-bold">
                       <span style={{ color: "var(--foreground)" }}>
@@ -2510,7 +2518,7 @@ function AdminAttendance() {
                     paddingAngle={5}
                     dataKey="value"
                   >
-                    {statusDistribution.map((entry, index) => (
+                    {statusDistribution.map((entry) => (
                       <Cell key={`cell-${entry.color}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -2530,8 +2538,11 @@ function AdminAttendance() {
             </div>
 
             <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-4">
-              {statusDistribution.map((item, i) => (
-                <div key={item.name} className="flex items-center justify-between">
+              {statusDistribution.map((item) => (
+                <div
+                  key={item.name}
+                  className="flex items-center justify-between"
+                >
                   <div className="flex items-center gap-1.5">
                     <div
                       className="w-2 h-2 rounded-full"

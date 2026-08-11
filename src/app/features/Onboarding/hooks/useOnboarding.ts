@@ -239,7 +239,10 @@ export function useOnboarding() {
 
   /* ─── Data ─── */
   const [phasesData, setPhasesData] = useState(() =>
-    readStore<Record<string, OnboardingPhase[]>>("viyan_onboarding_phases:v1", {}),
+    readStore<Record<string, OnboardingPhase[]>>(
+      "viyan_onboarding_phases:v1",
+      {},
+    ),
   );
   // The queue has no seed data: an employee account + joining date must create it.
   const [newHires, setNewHires] = useState<NewHire[]>(() =>
@@ -253,7 +256,10 @@ export function useOnboarding() {
     localStorage.setItem("viyan_onboarding_queue:v1", JSON.stringify(newHires));
   }, [newHires]);
   useEffect(() => {
-    localStorage.setItem("viyan_onboarding_phases:v1", JSON.stringify(phasesData));
+    localStorage.setItem(
+      "viyan_onboarding_phases:v1",
+      JSON.stringify(phasesData),
+    );
   }, [phasesData]);
   useEffect(() => {
     localStorage.setItem(
@@ -288,7 +294,9 @@ export function useOnboarding() {
           {},
         ),
       );
-      setDocuments(readStore<DocumentItem[]>("viyan_onboarding_documents:v1", []));
+      setDocuments(
+        readStore<DocumentItem[]>("viyan_onboarding_documents:v1", []),
+      );
       setTemplates(
         readStore<Template[]>(
           "viyan_onboarding_templates:v1",
@@ -522,7 +530,8 @@ export function useOnboarding() {
         localStorage.getItem("viyan_registered_users:v1") || "[]",
       );
       const match = users.find(
-        (u: any) => u.name.toLowerCase() === formEmployee.toLowerCase(),
+        (u: { name: string; email?: string }) =>
+          u.name.toLowerCase() === formEmployee.toLowerCase(),
       );
       return (
         match?.email ||
@@ -576,7 +585,10 @@ export function useOnboarding() {
       JSON.stringify(updatedPhasesData),
     );
 
-    const allDocs = readStore<DocumentItem[]>("viyan_onboarding_documents:v1", []);
+    const allDocs = readStore<DocumentItem[]>(
+      "viyan_onboarding_documents:v1",
+      [],
+    );
     const mergedDocs = [...allDocs, ...generatedDocs];
     setDocuments(mergedDocs);
     localStorage.setItem(
@@ -718,7 +730,10 @@ export function useOnboarding() {
     );
 
     // Append to viyan_onboarding_documents list
-    const allDocs = readStore<DocumentItem[]>("viyan_onboarding_documents:v1", []);
+    const allDocs = readStore<DocumentItem[]>(
+      "viyan_onboarding_documents:v1",
+      [],
+    );
     const mergedDocs = [...allDocs, ...generatedDocs];
     setDocuments(mergedDocs);
     localStorage.setItem(
@@ -743,7 +758,8 @@ export function useOnboarding() {
                   localStorage.getItem("viyan_registered_users:v1") || "[]",
                 );
                 const match = users.find(
-                  (u: any) => u.name.toLowerCase() === nh.name.toLowerCase(),
+                  (u: { name: string; email?: string }) =>
+                    u.name.toLowerCase() === nh.name.toLowerCase(),
                 );
                 return (
                   match?.email ||
