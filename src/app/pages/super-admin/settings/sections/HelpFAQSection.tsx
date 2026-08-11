@@ -140,7 +140,7 @@ export function HelpFAQSection({
           const Icon = cat.icon;
           return (
             <div
-              key={i}
+              key={cat.label}
               className="bg-card rounded-2xl border border-border shadow-sm p-5 cursor-pointer hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
             >
               <div className="flex items-center gap-3 mb-3">
@@ -174,7 +174,7 @@ export function HelpFAQSection({
         {filtered.map((faq, i) => {
           const expanded = expandedFaq === i;
           return (
-            <div key={i} className="border-b border-border/50 last:border-b-0">
+            <div key={faq.q} className="border-b border-border/50 last:border-b-0">
               <button
                 onClick={() => setExpandedFaq(expanded ? null : i)}
                 className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-secondary/50 transition-colors"

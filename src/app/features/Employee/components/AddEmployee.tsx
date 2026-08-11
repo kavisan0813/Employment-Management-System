@@ -35,7 +35,7 @@ export type RoleAssignment = {
   scopeId: string; // empty string when scope === "organization"
 };
 
-export const VALIDATION = {
+const VALIDATION = {
   employeeId: /^EMP\d{3,}$/,
   email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   mobile: /^\+91[6-9]\d{9}$/,
@@ -163,7 +163,11 @@ export default function AddEmployee() {
     emergencyContactName: "",
     emergencyContactNumber: "",
 
-    probationEndDate: "",
+    probationEndDate: ((): string => {
+      const d = new Date();
+      d.setDate(d.getDate() + 90);
+      return d.toISOString().split("T")[0];
+    })(),
     notes: "",
 
     sendInvite: true,
@@ -222,20 +226,6 @@ export default function AddEmployee() {
     return () => clearTimeout(t);
   }, [form]);
 
-  // Sync first/last name removed
-
-  // Auto probation date
-  useEffect(() => {
-    if (form.dateOfJoining) {
-      const d = new Date(form.dateOfJoining);
-      d.setDate(d.getDate() + 90);
-      setForm((f) => ({
-        ...f,
-        probationEndDate: d.toISOString().split("T")[0],
-      }));
-    }
-  }, [form.dateOfJoining]);
-
   // ─── Role assignment helpers ───
 
   const handleRoleIdsChange = (ids: string[]) => {
@@ -283,7 +273,7 @@ export default function AddEmployee() {
     ) &&
     !((): boolean => {
       try {
-        const saved = localStorage.getItem("viyan_registered_users");
+        const saved = localStorage.getItem("viyan_registered_users:v1");
         if (saved)
           return JSON.parse(saved).some(
             (u: { email: string }) =>
@@ -427,7 +417,7 @@ export default function AddEmployee() {
 
       try {
         const savedUsers =
-          localStorage.getItem("viyan_registered_users") || "[]";
+          localStorage.getItem("viyan_registered_users:v1") || "[]";
         const usersList = JSON.parse(savedUsers);
         const newPlatformUser = {
           id: `user-${Date.now()}`,
@@ -454,7 +444,7 @@ export default function AddEmployee() {
           organizationId: "org-1",
         };
         localStorage.setItem(
-          "viyan_registered_users",
+          "viyan_registered_users:v1",
           JSON.stringify([newPlatformUser, ...usersList]),
         );
 
@@ -569,13 +559,12 @@ export default function AddEmployee() {
             return (
               <div key={item.s} className="flex flex-col items-center gap-2">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
-                    done
-                      ? "bg-[var(--primary)] border-[var(--primary)] text-white"
-                      : active
-                        ? "bg-white border-[var(--primary)] text-[var(--primary)] shadow-md shadow-emerald-200"
-                        : "bg-white border-slate-200 text-slate-400"
-                  }`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${done
+                    ? "bg-[var(--primary)] border-[var(--primary)] text-white"
+                    : active
+                      ? "bg-white border-[var(--primary)] text-[var(--primary)] shadow-md shadow-emerald-200"
+                      : "bg-white border-slate-200 text-slate-400"
+                    }`}
                 >
                   {done ? <Check size={16} strokeWidth={3} /> : item.s}
                 </div>
@@ -1076,12 +1065,20 @@ export default function AddEmployee() {
                       type="date"
                       className={inputCls}
                       value={form.dateOfJoining}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        let probationEndDate = "";
+                        if (val) {
+                          const d = new Date(val);
+                          d.setDate(d.getDate() + 90);
+                          probationEndDate = d.toISOString().split("T")[0];
+                        }
                         setForm((f) => ({
                           ...f,
-                          dateOfJoining: e.target.value,
-                        }))
-                      }
+                          dateOfJoining: val,
+                          probationEndDate,
+                        }));
+                      }}
                     />
                   </div>
                   {/* Total Experience */}

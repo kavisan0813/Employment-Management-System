@@ -729,10 +729,10 @@ export function ManagerTeamOnboarding() {
               <AnimatePresence>
                 {showCompletedTasks && (
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden"
+                    initial={{ scaleY: 0, opacity: 0 }}
+                    animate={{ scaleY: 1, opacity: 1 }}
+                    exit={{ scaleY: 0, opacity: 0 }}
+                    className="overflow-hidden origin-top"
                   >
                     <div className="space-y-2 mt-3">
                       {COMPLETED_TASKS.map((task) => (
@@ -777,7 +777,7 @@ export function ManagerTeamOnboarding() {
               <div className="absolute top-[11px] left-3 right-3 h-[2px] bg-border z-0" />
               {ONBOARDING_PHASES.map((phase, i) => (
                 <div
-                  key={i}
+                  key={phase.label}
                   className="flex flex-col items-center gap-2 relative z-10"
                 >
                   <div
@@ -789,13 +789,12 @@ export function ManagerTeamOnboarding() {
                           block: "center",
                         });
                     }}
-                    className={`w-[22px] h-[22px] rounded-full flex items-center justify-center border-2 transition-all duration-500 text-[11px] font-bold cursor-pointer ${
-                      phase.status === "Done"
+                    className={`w-[22px] h-[22px] rounded-full flex items-center justify-center border-2 transition-all duration-500 text-[11px] font-bold cursor-pointer ${phase.status === "Done"
                         ? "bg-[#00B87C] border-[#00B87C] text-white"
                         : phase.status === "In Progress"
                           ? "bg-card border-cyan-500 text-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.3)]"
                           : "bg-card border-border text-muted-foreground"
-                    }`}
+                      }`}
                   >
                     {phase.status === "Done" ? (
                       <Check size={11} strokeWidth={3} />
@@ -806,13 +805,12 @@ export function ManagerTeamOnboarding() {
                     )}
                   </div>
                   <span
-                    className={`text-[9px] font-bold text-center max-w-[60px] leading-tight ${
-                      phase.status === "Done"
+                    className={`text-[9px] font-bold text-center max-w-[60px] leading-tight ${phase.status === "Done"
                         ? "text-[#00B87C]"
                         : phase.status === "In Progress"
                           ? "text-cyan-500"
                           : "text-muted-foreground"
-                    } uppercase tracking-wider`}
+                      } uppercase tracking-wider`}
                   >
                     {phase.label}
                   </span>
@@ -825,41 +823,38 @@ export function ManagerTeamOnboarding() {
               {ONBOARDING_PHASES.filter((p) => p.label !== "Complete").map(
                 (phase, i) => (
                   <div
-                    key={i}
+                    key={phase.label}
                     id={`mgr-phase-${i}`}
                     className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-secondary/30 border border-border/50"
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-2 h-2 rounded-full ${
-                          phase.status === "Done"
+                        className={`w-2 h-2 rounded-full ${phase.status === "Done"
                             ? "bg-[#00B87C]"
                             : phase.status === "In Progress"
                               ? "bg-cyan-500"
                               : "bg-muted-foreground/30"
-                        }`}
+                          }`}
                       />
                       <span
-                        className={`text-[12px] font-bold ${
-                          phase.status === "Done"
+                        className={`text-[12px] font-bold ${phase.status === "Done"
                             ? "text-[#00B87C]"
                             : phase.status === "In Progress"
                               ? "text-cyan-500"
                               : "text-muted-foreground"
-                        }`}
+                          }`}
                       >
                         {phase.label}
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
                       <span
-                        className={`text-[11px] font-bold ${
-                          phase.status === "Done"
+                        className={`text-[11px] font-bold ${phase.status === "Done"
                             ? "text-[#00B87C]"
                             : phase.status === "In Progress"
                               ? "text-amber-500"
                               : "text-muted-foreground/60"
-                        }`}
+                          }`}
                       >
                         {phase.tasks}
                       </span>
@@ -1126,13 +1121,12 @@ export function ManagerTeamOnboarding() {
                 <div className="space-y-1 max-h-[200px] overflow-y-auto custom-scrollbar mb-4">
                   {filteredTeam.map((member, i) => (
                     <button
-                      key={i}
+                      key={member.name}
                       onClick={() => setSelectedBuddy(member.name)}
-                      className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left ${
-                        selectedBuddy === member.name
+                      className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left ${selectedBuddy === member.name
                           ? "bg-emerald-500/10 border border-[#00B87C]/30"
                           : "hover:bg-secondary border border-transparent"
-                      }`}
+                        }`}
                     >
                       <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-[11px] font-bold text-amber-500 shrink-0">
                         {member.initials}
@@ -1339,48 +1333,44 @@ export function ManagerTeamOnboarding() {
                 {ONBOARDING_PHASES.filter((p) => p.label !== "Complete").map(
                   (phase, i) => (
                     <div
-                      key={i}
+                      key={phase.label}
                       className="rounded-2xl border border-border overflow-hidden"
                     >
                       <div
-                        className={`px-4 py-3 border-b border-border flex items-center justify-between ${
-                          phase.status === "Done"
+                        className={`px-4 py-3 border-b border-border flex items-center justify-between ${phase.status === "Done"
                             ? "bg-emerald-500/5"
                             : phase.status === "In Progress"
                               ? "bg-cyan-500/5"
                               : "bg-secondary/30"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-2">
                           <div
-                            className={`w-2 h-2 rounded-full ${
-                              phase.status === "Done"
+                            className={`w-2 h-2 rounded-full ${phase.status === "Done"
                                 ? "bg-[#00B87C]"
                                 : phase.status === "In Progress"
                                   ? "bg-cyan-500"
                                   : "bg-muted-foreground/30"
-                            }`}
+                              }`}
                           />
                           <span
-                            className={`text-[13px] font-bold ${
-                              phase.status === "Done"
+                            className={`text-[13px] font-bold ${phase.status === "Done"
                                 ? "text-[#00B87C]"
                                 : phase.status === "In Progress"
                                   ? "text-cyan-500"
                                   : "text-muted-foreground"
-                            }`}
+                              }`}
                           >
                             {phase.label}
                           </span>
                         </div>
                         <span
-                          className={`text-[11px] font-bold ${
-                            phase.status === "Done"
+                          className={`text-[11px] font-bold ${phase.status === "Done"
                               ? "text-[#00B87C]"
                               : phase.status === "In Progress"
                                 ? "text-amber-500"
                                 : "text-muted-foreground/60"
-                          }`}
+                            }`}
                         >
                           {phase.tasks} tasks
                         </span>
@@ -1393,11 +1383,10 @@ export function ManagerTeamOnboarding() {
                               className="flex items-center gap-2.5 py-1.5"
                             >
                               <div
-                                className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                                  j < phase.tasksDone
+                                className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${j < phase.tasksDone
                                     ? "bg-[#00B87C] border-[#00B87C]"
                                     : "border-border"
-                                }`}
+                                  }`}
                               >
                                 {j < phase.tasksDone && (
                                   <Check

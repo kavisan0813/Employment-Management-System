@@ -71,7 +71,7 @@ export function Templates({
                       { icon: Trash2, label: "Delete", action: () => handleDeleteTemplate(tpl.id) },
                     ].map((item, i) => (
                       <button
-                        key={i}
+                        key={item.label}
                         onClick={item.action}
                         className="w-full text-left px-4 py-2.5 text-[12px] font-bold text-foreground hover:bg-muted flex items-center gap-2 transition-all"
                       >

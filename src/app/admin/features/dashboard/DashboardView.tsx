@@ -48,10 +48,12 @@ export default function DashboardView() {
   const [isARR, setIsARR] = useState(false);
   const [minsAgo, setMinsAgo] = useState(0);
 
+  const calculatedAt = summary?.current?.calculated_at;
+
   // Update "mins ago" counter based on cached timestamp
   useEffect(() => {
-    if (!summary?.current?.calculated_at) return;
-    const calcDate = new Date(summary.current.calculated_at).getTime();
+    if (!calculatedAt) return;
+    const calcDate = new Date(calculatedAt).getTime();
 
     const updateTime = () => {
       setMinsAgo(Math.floor((Date.now() - calcDate) / 60000));
@@ -60,7 +62,7 @@ export default function DashboardView() {
     updateTime();
     const timer = setInterval(updateTime, 60000);
     return () => clearInterval(timer);
-  }, [summary?.current?.calculated_at]);
+  }, [calculatedAt]);
 
   const handleRefresh = async () => {
     await refreshAll();
@@ -460,7 +462,7 @@ export default function DashboardView() {
                   >
                     {pieData.map((entry, index) => (
                       <Cell
-                        key={`cell-${index}`}
+                        key={`cell-${entry.name}`}
                         fill={PIE_COLORS[entry.name as keyof typeof PIE_COLORS]}
                         className="hover:opacity-80 transition-opacity outline-none"
                       />

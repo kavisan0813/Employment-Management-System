@@ -30,8 +30,8 @@ export function RequestDetails({
     P.OFFBOARDING_CLEARANCE_MANAGER,
   );
   const [comments, setComments] = useState("");
-  const [lwd, setLwd] = useState(request.lwd);
-  const [notice, setNotice] = useState(request.noticePeriod);
+  const [lwd, setLwd] = useState(() => request.lwd);
+  const [notice, setNotice] = useState(() => request.noticePeriod);
   // The manager stage is intentionally restricted to the assigned manager.
   const isAssignedManager =
     canManageTeamClearance && user?.name === request.manager;

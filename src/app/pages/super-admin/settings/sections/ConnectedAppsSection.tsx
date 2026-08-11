@@ -125,7 +125,7 @@ export function ConnectedAppsSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         {connected.map((app, idx) => (
           <div
-            key={idx}
+            key={app.name}
             className="p-4 rounded-xl flex flex-col justify-between transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
             style={{
               backgroundColor: "var(--card)",
@@ -234,7 +234,7 @@ export function ConnectedAppsSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {available.map((app, idx) => (
           <div
-            key={idx}
+            key={app.name}
             className="p-4 rounded-xl flex flex-col justify-between transition-all hover:shadow-sm"
             style={{
               backgroundColor: "var(--card)",

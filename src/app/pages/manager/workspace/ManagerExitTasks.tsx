@@ -634,7 +634,7 @@ function KTModal({
         </div>
         <div className="px-6 py-5 space-y-4 max-h-[55vh] overflow-y-auto">
           {sections.map((section, i) => (
-            <div key={i}>
+            <div key={section.key}>
               <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5 block">
                 {section.label}
               </label>

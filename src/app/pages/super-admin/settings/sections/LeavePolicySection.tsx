@@ -421,7 +421,7 @@ export function LeavePolicySection() {
               { role: "HR Manager", label: "Level 2 (within 2 days)" },
               { role: "Auto-Approved", label: "Complete" },
             ].map((step, idx) => (
-              <React.Fragment key={idx}>
+              <React.Fragment key={step.label}>
                 <div
                   className="flex flex-col items-center text-center p-4 rounded-xl flex-1 bg-white dark:bg-neutral-800 border border-[#E5E7EB]"
                   style={{ minWidth: "160px" }}

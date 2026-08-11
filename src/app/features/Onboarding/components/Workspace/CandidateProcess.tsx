@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import {
-  Check,
   Circle,
   CheckCircle2,
-  XCircle,
-  FileText,
-  FileCheck,
 } from "lucide-react";
 import { showToast } from "../../../../components/workflow/ToastNotification";
 
@@ -20,25 +16,25 @@ export function CandidateProcess({
   employeeName,
 }: CandidateProcessProps) {
   const [queue, setQueue] = useState<any[]>(() =>
-    JSON.parse(localStorage.getItem("viyan_onboarding_queue") || "[]"),
+    JSON.parse(localStorage.getItem("viyan_onboarding_queue:v1") || "[]"),
   );
   const [docs, setDocs] = useState<any[]>(() =>
-    JSON.parse(localStorage.getItem("viyan_onboarding_documents") || "[]"),
+    JSON.parse(localStorage.getItem("viyan_onboarding_documents:v1") || "[]"),
   );
   const [templates, setTemplates] = useState<any[]>(() =>
-    JSON.parse(localStorage.getItem("viyan_onboarding_templates") || "[]"),
+    JSON.parse(localStorage.getItem("viyan_onboarding_templates:v1") || "[]"),
   );
 
   useEffect(() => {
     const sync = () => {
       setQueue(
-        JSON.parse(localStorage.getItem("viyan_onboarding_queue") || "[]"),
+        JSON.parse(localStorage.getItem("viyan_onboarding_queue:v1") || "[]"),
       );
       setDocs(
-        JSON.parse(localStorage.getItem("viyan_onboarding_documents") || "[]"),
+        JSON.parse(localStorage.getItem("viyan_onboarding_documents:v1") || "[]"),
       );
       setTemplates(
-        JSON.parse(localStorage.getItem("viyan_onboarding_templates") || "[]"),
+        JSON.parse(localStorage.getItem("viyan_onboarding_templates:v1") || "[]"),
       );
     };
     window.addEventListener("viyan:onboarding-updated", sync);
@@ -59,7 +55,7 @@ export function CandidateProcess({
     employee?.email ||
     `${employeeName.toLowerCase().replace(/\s+/g, ".")}@viyanhr.com`;
   const profileData = JSON.parse(
-    localStorage.getItem(`viyan_candidate_profile_${resolvedEmail}`) || "{}",
+    localStorage.getItem(`viyan_candidate_profile_${resolvedEmail}:v1`) || "{}",
   );
   const taskState = profileData.taskState || {};
 
@@ -89,7 +85,7 @@ export function CandidateProcess({
     });
     setQueue(updatedQueue);
     localStorage.setItem(
-      "viyan_onboarding_queue",
+      "viyan_onboarding_queue:v1",
       JSON.stringify(updatedQueue),
     );
     showToast(
@@ -107,15 +103,15 @@ export function CandidateProcess({
     const updatedDocs = docs.map((d) =>
       d.id === docId
         ? {
-            ...d,
-            status: "pending" as const,
-            verificationStatus: undefined,
-          }
+          ...d,
+          status: "pending" as const,
+          verificationStatus: undefined,
+        }
         : d,
     );
     setDocs(updatedDocs);
     localStorage.setItem(
-      "viyan_onboarding_documents",
+      "viyan_onboarding_documents:v1",
       JSON.stringify(updatedDocs),
     );
     showToast(
@@ -205,11 +201,10 @@ export function CandidateProcess({
               {personalItems.map((item) => (
                 <div
                   key={item.id}
-                  className={`flex items-center justify-between p-3 rounded-xl border ${
-                    item.completed
-                      ? "bg-muted/30 border-border"
-                      : "bg-card border-border border-dashed opacity-60"
-                  }`}
+                  className={`flex items-center justify-between p-3 rounded-xl border ${item.completed
+                    ? "bg-muted/30 border-border"
+                    : "bg-card border-border border-dashed opacity-60"
+                    }`}
                 >
                   <span className="text-[12px] font-bold text-foreground">
                     {item.label}
@@ -224,7 +219,7 @@ export function CandidateProcess({
             </div>
           </div>
 
-         
+
         </div>
 
         {/* DOCUMENTS & UPLOADS SECTION */}
@@ -285,7 +280,7 @@ export function CandidateProcess({
                     )}
 
                     {/* HR Actions */}
-                  
+
                     {isRejected && (
                       <button
                         onClick={() => handleRequestReupload(doc.id)}

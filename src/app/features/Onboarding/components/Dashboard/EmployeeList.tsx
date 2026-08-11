@@ -16,7 +16,7 @@ interface EmployeeListProps {
 }
 
 export function EmployeeList({
-  filteredList, selectedId, setSelectedId,
+  filteredList, setSelectedId,
   searchQuery, setSearchQuery, filterPill, setFilterPill,
 }: EmployeeListProps) {
   return (

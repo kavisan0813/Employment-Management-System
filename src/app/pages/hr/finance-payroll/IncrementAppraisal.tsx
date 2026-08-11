@@ -270,7 +270,7 @@ function WorkflowTimeline({ step }: { step: number }) {
         const color = done ? "#059669" : active ? "#F59E0B" : "var(--border)";
         return (
           <div
-            key={i}
+            key={label}
             style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}
           >
             <div
@@ -583,7 +583,7 @@ function DetailDrawer({
                 { label: "Late Marks", value: emp.lateMarks, color: "#DC2626" },
               ].map((s, i) => (
                 <div
-                  key={i}
+                  key={s.label}
                   style={{
                     backgroundColor: "var(--secondary)",
                     borderRadius: "12px",
@@ -665,7 +665,7 @@ function DetailDrawer({
                 },
               ].map((s, i) => (
                 <div
-                  key={i}
+                  key={s.label}
                   style={{
                     backgroundColor: "var(--secondary)",
                     borderRadius: "12px",
@@ -1261,6 +1261,132 @@ function Toast({
 }
 
 // ─── Main Page ────────────────────────────────────────────
+function ColHeader({ label, col, sortCol, sortDir, onSort }: { label: string; col: string; sortCol: string; sortDir: string; onSort: (col: string) => void }) {
+  return (
+    <span
+      onClick={() => onSort(col)}
+      style={{
+        cursor: "pointer",
+        userSelect: "none",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "3px",
+        fontSize: "10px",
+        fontWeight: 700,
+        letterSpacing: "0.5px",
+        textTransform: "uppercase",
+        opacity: 0.8,
+        color: sortCol === col ? "var(--primary)" : "var(--foreground)",
+      }}
+    >
+      {label}
+      {sortCol === col ? (sortDir === "desc" ? " ↓" : " ↑") : ""}
+    </span>
+  );
+}
+function DropBtn({
+  label,
+  open,
+  onClick,
+}: {
+  label: string;
+  open: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "6px",
+        padding: "7px 12px",
+        borderRadius: "10px",
+        backgroundColor: "var(--card)",
+        border: `1px solid ${open ? "var(--primary)" : "var(--border)"}`,
+        color: "var(--foreground)",
+        fontSize: "13px",
+        fontWeight: 600,
+        cursor: "pointer",
+        whiteSpace: "nowrap",
+        boxShadow: open
+          ? "0 0 0 3px rgba(16,185,129,0.1)"
+          : "0 1px 4px rgba(0,0,0,0.06)",
+      }}
+    >
+      {label}{" "}
+      <ChevronDown
+        size={13}
+        color="var(--muted-foreground)"
+        style={{
+          transform: open ? "rotate(180deg)" : "none",
+          transition: "transform 0.2s",
+        }}
+      />
+    </button>
+  );
+}
+function DropMenu({
+  items,
+  selected,
+  onSelect,
+  open,
+}: {
+  items: string[];
+  selected: string;
+  onSelect: (v: string) => void;
+  open: boolean;
+}) {
+  if (!open) return null;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: "calc(100% + 6px)",
+        left: 0,
+        backgroundColor: "var(--card)",
+        border: "1px solid var(--border)",
+        borderRadius: "12px",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+        minWidth: "180px",
+        zIndex: 150,
+        overflow: "hidden",
+      }}
+    >
+      {items.map((item) => (
+        <button
+          key={item}
+          onClick={() => onSelect(item)}
+          style={{
+            width: "100%",
+            padding: "9px 14px",
+            textAlign: "left",
+            fontSize: "13px",
+            fontWeight: item === selected ? 700 : 400,
+            color: item === selected ? "var(--primary)" : "var(--foreground)",
+            backgroundColor:
+              item === selected ? "var(--secondary)" : "transparent",
+            border: "none",
+            cursor: "pointer",
+            display: "block",
+          }}
+          onMouseEnter={(e) => {
+            if (item !== selected)
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                "var(--secondary)";
+          }}
+          onMouseLeave={(e) => {
+            if (item !== selected)
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                "transparent";
+          }}
+        >
+          {item}
+        </button>
+      ))}
+    </div>
+  );
+}
 export function IncrementAppraisal() {
   const navigate = useNavigate();
   const [selectedYear, setSelectedYear] = useState("2025–2026");
@@ -1446,134 +1572,8 @@ export function IncrementAppraisal() {
     navigate("/payroll");
   }
 
-  function ColHeader({ label, col }: { label: string; col: string }) {
-    return (
-      <span
-        onClick={() => handleSort(col)}
-        style={{
-          cursor: "pointer",
-          userSelect: "none",
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "3px",
-          fontSize: "10px",
-          fontWeight: 700,
-          letterSpacing: "0.5px",
-          textTransform: "uppercase",
-          opacity: 0.8,
-          color: sortCol === col ? "var(--primary)" : "var(--foreground)",
-        }}
-      >
-        {label}
-        {sortCol === col ? (sortDir === "desc" ? " ↓" : " ↑") : ""}
-      </span>
-    );
-  }
 
-  function DropBtn({
-    label,
-    open,
-    onClick,
-  }: {
-    label: string;
-    open: boolean;
-    onClick: () => void;
-  }) {
-    return (
-      <button
-        onClick={onClick}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          padding: "7px 12px",
-          borderRadius: "10px",
-          backgroundColor: "var(--card)",
-          border: `1px solid ${open ? "var(--primary)" : "var(--border)"}`,
-          color: "var(--foreground)",
-          fontSize: "13px",
-          fontWeight: 600,
-          cursor: "pointer",
-          whiteSpace: "nowrap",
-          boxShadow: open
-            ? "0 0 0 3px rgba(16,185,129,0.1)"
-            : "0 1px 4px rgba(0,0,0,0.06)",
-        }}
-      >
-        {label}{" "}
-        <ChevronDown
-          size={13}
-          color="var(--muted-foreground)"
-          style={{
-            transform: open ? "rotate(180deg)" : "none",
-            transition: "transform 0.2s",
-          }}
-        />
-      </button>
-    );
-  }
 
-  function DropMenu({
-    items,
-    selected,
-    onSelect,
-    open,
-  }: {
-    items: string[];
-    selected: string;
-    onSelect: (v: string) => void;
-    open: boolean;
-  }) {
-    if (!open) return null;
-    return (
-      <div
-        style={{
-          position: "absolute",
-          top: "calc(100% + 6px)",
-          left: 0,
-          backgroundColor: "var(--card)",
-          border: "1px solid var(--border)",
-          borderRadius: "12px",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
-          minWidth: "180px",
-          zIndex: 150,
-          overflow: "hidden",
-        }}
-      >
-        {items.map((item) => (
-          <button
-            key={item}
-            onClick={() => onSelect(item)}
-            style={{
-              width: "100%",
-              padding: "9px 14px",
-              textAlign: "left",
-              fontSize: "13px",
-              fontWeight: item === selected ? 700 : 400,
-              color: item === selected ? "var(--primary)" : "var(--foreground)",
-              backgroundColor:
-                item === selected ? "var(--secondary)" : "transparent",
-              border: "none",
-              cursor: "pointer",
-              display: "block",
-            }}
-            onMouseEnter={(e) => {
-              if (item !== selected)
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                  "var(--secondary)";
-            }}
-            onMouseLeave={(e) => {
-              if (item !== selected)
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                  "transparent";
-            }}
-          >
-            {item}
-          </button>
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">
@@ -1849,7 +1849,7 @@ export function IncrementAppraisal() {
           },
         ].map((card, i) => (
           <div
-            key={i}
+            key={card.label}
             onClick={() => card.link && navigate(card.link)}
             style={{
               backgroundColor: "var(--card)",
@@ -2181,7 +2181,7 @@ export function IncrementAppraisal() {
             { label: "Status", col: "status" },
             { label: "Action", col: "" },
           ].map(({ label, col }) => (
-            <ColHeader key={label} label={label} col={col} />
+            <ColHeader key={label} label={label} col={col} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
           ))}
         </div>
 
@@ -2644,7 +2644,7 @@ export function IncrementAppraisal() {
               <Scatter data={scatterData} fill="var(--primary)">
                 {scatterData.map((entry, index) => (
                   <Cell
-                    key={`cell-${index}`}
+                    key={`cell-${entry.increment}`}
                     fill={
                       entry.increment >= 12
                         ? "#059669"
@@ -2810,7 +2810,7 @@ export function IncrementAppraisal() {
             },
           ].map((r, i) => (
             <div
-              key={i}
+              key={r.color}
               style={{
                 backgroundColor: r.bg,
                 borderRadius: "14px",

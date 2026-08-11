@@ -290,7 +290,7 @@ export function HRDashboard() {
           },
         ].map((kpi, i) => (
           <motion.div
-            key={i}
+            key={kpi.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
@@ -407,7 +407,7 @@ export function HRDashboard() {
                   dataKey="value"
                 >
                   {DEPT_DIST.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${entry.color}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip
@@ -425,7 +425,7 @@ export function HRDashboard() {
           </div>
           <div className="mt-8 space-y-3">
             {DEPT_DIST.map((dept, i) => (
-              <div key={i} className="flex items-center justify-between">
+              <div key={dept.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div
                     className="w-2.5 h-2.5 rounded-full"
@@ -527,7 +527,7 @@ export function HRDashboard() {
             <div className="p-4 space-y-4">
               {RECENT_HIRES.map((hire, i) => (
                 <div
-                  key={i}
+                  key={hire.name}
                   onClick={() => navigate("/onboarding")}
                   className="flex items-center gap-4 p-3 rounded-2xl hover:bg-secondary/50 transition-colors border border-transparent hover:border-border cursor-pointer group"
                 >
@@ -576,17 +576,17 @@ export function HRDashboard() {
             </h3>
             <div className="space-y-6">
               {DEPT_ATTENDANCE.map((dept, i) => (
-                <div key={i} className="space-y-2">
+                <div key={dept.name} className="space-y-2">
                   <div className="flex justify-between text-[12px] font-bold text-foreground">
                     <span>{dept.name}</span>
                     <span>{dept.value}%</span>
                   </div>
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                     <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${dept.value}%` }}
+                      initial={{ x: "-100%" }}
+                      animate={{ x: `-${100 - (dept.value)}%` }}
                       transition={{ duration: 1, delay: i * 0.1 }}
-                      className="h-full rounded-full bg-emerald-500"
+                      className="h-full rounded-full bg-emerald-500 w-full"
                     />
                   </div>
                 </div>

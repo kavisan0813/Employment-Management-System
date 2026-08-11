@@ -641,11 +641,10 @@ export function FinanceOnboarding() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`relative pb-3 text-[13px] font-semibold uppercase tracking-wider transition-all ${
-                activeTab === tab
+              className={`relative pb-3 text-[13px] font-semibold uppercase tracking-wider transition-all ${activeTab === tab
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               {tab}
               {activeTab === tab && (
@@ -679,11 +678,10 @@ export function FinanceOnboarding() {
               >
                 {/* Employee Header */}
                 <div
-                  className={`p-5 border-l-[3px] ${
-                    hire.urgency === "red"
+                  className={`p-5 border-l-[3px] ${hire.urgency === "red"
                       ? "border-l-red-500"
                       : "border-l-amber-500"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-[14px] font-black text-[#00B87C] shrink-0">
@@ -720,15 +718,14 @@ export function FinanceOnboarding() {
                       onClick={() => openTaskModal(task, hire)}
                     >
                       <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                          task.status === "done"
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${task.status === "done"
                             ? "bg-[#00B87C] border-[#00B87C]"
                             : task.status === "overdue"
                               ? "border-red-400"
                               : task.status === "waiting"
                                 ? "border-gray-300"
                                 : "border-amber-400"
-                        }`}
+                          }`}
                       >
                         {task.status === "done" ? (
                           <Check
@@ -745,15 +742,14 @@ export function FinanceOnboarding() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span
-                            className={`text-[13px] font-bold ${
-                              task.status === "done"
+                            className={`text-[13px] font-bold ${task.status === "done"
                                 ? "text-[#00B87C] line-through"
                                 : task.status === "overdue"
                                   ? "text-red-500"
                                   : task.status === "waiting"
                                     ? "text-gray-400"
                                     : "text-foreground"
-                            }`}
+                              }`}
                           >
                             {task.label}
                           </span>
@@ -890,10 +886,10 @@ export function FinanceOnboarding() {
                       <AnimatePresence>
                         {expanded && (
                           <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden"
+                            initial={{ scaleY: 0, opacity: 0 }}
+                            animate={{ scaleY: 1, opacity: 1 }}
+                            exit={{ scaleY: 0, opacity: 0 }}
+                            className="overflow-hidden origin-top"
                           >
                             <div className="space-y-1 mt-2">
                               {doneList.map((task) => (
@@ -941,7 +937,7 @@ export function FinanceOnboarding() {
               <tbody className="divide-y divide-border/50">
                 {ALL_HIRES_TABLE.map((row, i) => (
                   <tr
-                    key={i}
+                    key={row.emp}
                     className="text-[12px] hover:bg-secondary/30 transition-all cursor-pointer"
                     onClick={() => {
                       const hire = NEW_HIRES.find((h) => h.name === row.emp);
@@ -961,56 +957,52 @@ export function FinanceOnboarding() {
                     </td>
                     <td className="py-3 pr-4">
                       <span
-                        className={`text-[11px] font-semibold uppercase tracking-wider ${
-                          row.bank === "✓ Done"
+                        className={`text-[11px] font-semibold uppercase tracking-wider ${row.bank === "✓ Done"
                             ? "text-[#00B87C]"
                             : row.bank === "Pending"
                               ? "text-amber-500"
                               : "text-gray-400"
-                        }`}
+                          }`}
                       >
                         {row.bank}
                       </span>
                     </td>
                     <td className="py-3 pr-4">
                       <span
-                        className={`text-[11px] font-semibold uppercase tracking-wider ${
-                          row.pf === "✓ Done"
+                        className={`text-[11px] font-semibold uppercase tracking-wider ${row.pf === "✓ Done"
                             ? "text-[#00B87C]"
                             : row.pf === "Pending"
                               ? "text-amber-500"
                               : "text-gray-400"
-                        }`}
+                          }`}
                       >
                         {row.pf}
                       </span>
                     </td>
                     <td className="py-3 pr-4">
                       <span
-                        className={`text-[11px] font-semibold uppercase tracking-wider ${
-                          row.tax === "✓ Done"
+                        className={`text-[11px] font-semibold uppercase tracking-wider ${row.tax === "✓ Done"
                             ? "text-[#00B87C]"
                             : row.tax === "⚠ Overdue"
                               ? "text-red-500"
                               : row.tax === "Pending"
                                 ? "text-amber-500"
                                 : "text-gray-400"
-                        }`}
+                          }`}
                       >
                         {row.tax}
                       </span>
                     </td>
                     <td className="py-3 text-right flex items-center justify-end gap-3">
                       <span
-                        className={`text-[11px] font-semibold uppercase tracking-wider ${
-                          row.payroll === "✓ Done"
+                        className={`text-[11px] font-semibold uppercase tracking-wider ${row.payroll === "✓ Done"
                             ? "text-[#00B87C]"
                             : row.payroll === "⚠ Overdue"
                               ? "text-red-500"
                               : row.payroll === "Pending"
                                 ? "text-amber-500"
                                 : "text-gray-400"
-                        }`}
+                          }`}
                       >
                         {row.payroll}
                       </span>

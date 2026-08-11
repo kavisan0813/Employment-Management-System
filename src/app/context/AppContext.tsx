@@ -250,7 +250,7 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [employeesList, setEmployeesList] = useState<Employee[]>(() => {
     // Look up in localStorage or load initialEmployees
-    const saved = localStorage.getItem("viyan_employees");
+    const saved = localStorage.getItem("viyan_employees:v1");
     let list: Employee[] = [];
     if (saved) {
       try {
@@ -338,7 +338,7 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
 
   const saveEmployees = (list: Employee[]) => {
     setEmployeesList(list);
-    localStorage.setItem("viyan_employees", JSON.stringify(list));
+    localStorage.setItem("viyan_employees:v1", JSON.stringify(list));
   };
 
   const addOnboardingEntries = (
@@ -353,10 +353,10 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
   ) => {
     try {
       const onboardingQueue = JSON.parse(
-        localStorage.getItem("viyan_onboarding_queue") || "[]",
+        localStorage.getItem("viyan_onboarding_queue:v1") || "[]",
       );
       const onboardingPhases = JSON.parse(
-        localStorage.getItem("viyan_onboarding_phases") || "{}",
+        localStorage.getItem("viyan_onboarding_phases:v1") || "{}",
       );
       const nowStr = new Date().toLocaleDateString("en-US", {
         month: "short",
@@ -432,11 +432,11 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
       });
 
       localStorage.setItem(
-        "viyan_onboarding_queue",
+        "viyan_onboarding_queue:v1",
         JSON.stringify([...newEntries, ...onboardingQueue]),
       );
       localStorage.setItem(
-        "viyan_onboarding_phases",
+        "viyan_onboarding_phases:v1",
         JSON.stringify(onboardingPhases),
       );
 

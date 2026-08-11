@@ -35,20 +35,21 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     {},
   );
 
+  const activeGroupLabel = groups.find((group) =>
+    group.items?.some((item) => isActive(item.path) && !item.disabled),
+  )?.label;
+
   useEffect(() => {
-    const activeGroup = groups.find((group) =>
-      group.items?.some((item) => isActive(item.path) && !item.disabled),
-    );
-    if (activeGroup) {
+    if (activeGroupLabel) {
       setExpandedGroups((prev) => {
-        if (prev[activeGroup.label]) return prev;
+        if (prev[activeGroupLabel]) return prev;
         return {
           ...prev,
-          [activeGroup.label]: true,
+          [activeGroupLabel]: true,
         };
       });
     }
-  }, [location.pathname, permissions]);
+  }, [activeGroupLabel]);
 
   const toggleGroup = (groupLabel: string) => {
     if (collapsed) {
@@ -172,8 +173,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             const isGroupActive = group.path
               ? isActive(group.path)
               : group.items?.some(
-                  (item) => !item.disabled && isActive(item.path),
-                ) || false;
+                (item) => !item.disabled && isActive(item.path),
+              ) || false;
 
             return (
               <div key={group.label} className="px-2">

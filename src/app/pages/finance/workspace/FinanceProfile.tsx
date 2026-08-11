@@ -120,7 +120,7 @@ export function FinanceProfile() {
       login(updatedUser);
 
       try {
-        const registeredRaw = localStorage.getItem("viyan_registered_users");
+        const registeredRaw = localStorage.getItem("viyan_registered_users:v1");
         if (registeredRaw) {
           const users: AuthUser[] = JSON.parse(registeredRaw);
           const updatedUsers = users.map((u: AuthUser) => {
@@ -135,7 +135,7 @@ export function FinanceProfile() {
             return u;
           });
           localStorage.setItem(
-            "viyan_registered_users",
+            "viyan_registered_users:v1",
             JSON.stringify(updatedUsers),
           );
         }
@@ -279,11 +279,10 @@ export function FinanceProfile() {
               </button>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border transition-all shadow-sm font-black text-[12px] uppercase tracking-widest bg-transparent ${
-                  isEditing
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border transition-all shadow-sm font-black text-[12px] uppercase tracking-widest bg-transparent ${isEditing
                     ? "bg-[#00B87C] border-[#00B87C] text-white hover:bg-[#009966]"
                     : "border-border text-foreground hover:bg-muted/50"
-                }`}
+                  }`}
               >
                 <Edit3 size={16} />
                 {isEditing ? "Editing..." : "Edit Profile"}
@@ -399,11 +398,10 @@ export function FinanceProfile() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab as ProfileTab)}
-              className={`px-8 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap bg-transparent border-0 ${
-                isActive
+              className={`px-8 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap bg-transparent border-0 ${isActive
                   ? "text-[#00B87C]"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               {tab}
               {isActive && (
@@ -697,7 +695,7 @@ function PersonalInfoTab({
           <div className="flex flex-wrap gap-2.5 mt-6">
             {skills.map((skill, index) => (
               <SkillChip
-                key={index}
+                key={skill}
                 label={skill}
                 color={index % 2 === 0 ? "green" : "blue"}
               />
@@ -946,14 +944,7 @@ function EditField({
   disabled?: boolean;
   onChange?: (val: string) => void;
 }) {
-  const [localValue, setLocalValue] = useState(value);
-
-  useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalValue(e.target.value);
     onChange?.(e.target.value);
   };
 
@@ -975,7 +966,7 @@ function EditField({
         )}
         <input
           type={type}
-          value={localValue}
+          value={value}
           onChange={handleChange}
           disabled={disabled}
           className="w-full bg-transparent border-none outline-none text-[13px] text-foreground font-bold disabled:cursor-not-allowed"
@@ -1001,12 +992,6 @@ function SelectField({
   disabled?: boolean;
   onChange?: (val: string) => void;
 }) {
-  const [localValue, setLocalValue] = useState(value);
-
-  useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
-
   return (
     <div className="space-y-2">
       <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider ml-1">
@@ -1019,9 +1004,8 @@ function SelectField({
         }}
       >
         <select
-          value={localValue}
+          value={value}
           onChange={(e) => {
-            setLocalValue(e.target.value);
             onChange?.(e.target.value);
           }}
           disabled={disabled}
@@ -1137,7 +1121,8 @@ function ToggleField({
   desc: string;
   active?: boolean;
 }) {
-  const [isOn, setIsOn] = useState(!!active);
+  const [isOn, setIsOn] = useState<boolean | null>(null);
+  const activeState = isOn ?? !!active;
   return (
     <div className="flex items-center justify-between py-4 border-b border-border last:border-0">
       <div>
@@ -1145,11 +1130,11 @@ function ToggleField({
         <p className="text-[12px] font-medium text-muted-foreground">{desc}</p>
       </div>
       <button
-        onClick={() => setIsOn(!isOn)}
-        className={`w-12 h-6 rounded-full relative transition-all duration-300 ${isOn ? "bg-[#00B87C]" : "bg-muted-foreground/20"}`}
+        onClick={() => setIsOn(!activeState)}
+        className={`w-12 h-6 rounded-full relative transition-all duration-300 ${activeState ? "bg-[#00B87C]" : "bg-muted-foreground/20"}`}
       >
         <div
-          className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-300 ${isOn ? "left-7" : "left-1"}`}
+          className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-300 ${activeState ? "left-7" : "left-1"}`}
         />
       </button>
     </div>

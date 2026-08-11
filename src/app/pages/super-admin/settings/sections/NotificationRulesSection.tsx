@@ -200,7 +200,7 @@ export function NotificationRulesSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         {cards.map((c, idx) => (
           <div
-            key={idx}
+            key={c.title}
             className="p-4 rounded-xl flex flex-col justify-between"
             style={{
               backgroundColor: "var(--input-background)",
@@ -400,7 +400,7 @@ export function NotificationRulesSection() {
               setter: setNotifyQuiet,
             },
           ].map((row, idx) => (
-            <div key={idx} className="flex justify-between items-center py-2">
+            <div key={row.label} className="flex justify-between items-center py-2">
               <p
                 style={{
                   fontSize: "14px",

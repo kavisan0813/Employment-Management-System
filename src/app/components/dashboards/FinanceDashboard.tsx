@@ -461,21 +461,28 @@ export function FinanceDashboard() {
     }, 2000);
   };
 
+  useEffect(() => {
+    if (!form16Generating) return;
+    const interval = setInterval(() => {
+      setForm16Progress((p) => {
+        const next = Math.min(p + 10, 100);
+        return next;
+      });
+    }, 200);
+    return () => clearInterval(interval);
+  }, [form16Generating]);
+
+  useEffect(() => {
+    if (form16Progress >= 100 && form16Generating) {
+      setForm16Generating(false);
+      setForm16Done(true);
+    }
+  }, [form16Progress, form16Generating]);
+
   // Form 16 generate
   const handleForm16Generate = () => {
     setForm16Generating(true);
     setForm16Progress(0);
-    const interval = setInterval(() => {
-      setForm16Progress((p) => {
-        if (p >= 100) {
-          clearInterval(interval);
-          setForm16Generating(false);
-          setForm16Done(true);
-          return 100;
-        }
-        return p + 10;
-      });
-    }, 200);
   };
 
   const openStepModal = (label: string, status: string) => {
@@ -542,7 +549,7 @@ export function FinanceDashboard() {
             },
           ].map((item, i) => (
             <button
-              key={i}
+              key={item.text}
               onClick={item.action}
               className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:opacity-80 transition-opacity shrink-0"
               style={{
@@ -662,7 +669,7 @@ export function FinanceDashboard() {
           },
         ].map((kpi, i) => (
           <motion.div
-            key={i}
+            key={kpi.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
@@ -781,7 +788,7 @@ export function FinanceDashboard() {
                 >
                   {COMPONENT_BREAKDOWN.map((entry, index) => (
                     <Cell
-                      key={`cell-${index}`}
+                      key={`cell-${entry.color}`}
                       fill={entry.color}
                       strokeWidth={0}
                       opacity={
@@ -808,7 +815,7 @@ export function FinanceDashboard() {
           <div className="mt-4 space-y-3">
             {COMPONENT_BREAKDOWN.map((item, i) => (
               <div
-                key={i}
+                key={item.name}
                 className="flex items-center justify-between cursor-pointer rounded-lg px-2 py-1 transition-colors hover:bg-muted/30"
                 onMouseEnter={() => setActiveSegment(i)}
                 onMouseLeave={() => setActiveSegment(null)}
@@ -859,18 +866,17 @@ export function FinanceDashboard() {
                 { label: "Disbursement", status: "Pending" },
               ].map((step, i) => (
                 <button
-                  key={i}
+                  key={step.label}
                   onClick={() => openStepModal(step.label, step.status)}
                   className="flex flex-col items-center gap-3 relative z-10 group"
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
-                      step.status === "Done"
-                        ? "bg-[#00B87C] border-[#00B87C] text-white"
-                        : step.status === "Active"
-                          ? "bg-card border-[#3B82F6] text-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-pulse"
-                          : "bg-card border-border text-muted-foreground"
-                    } group-hover:scale-110`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${step.status === "Done"
+                      ? "bg-[#00B87C] border-[#00B87C] text-white"
+                      : step.status === "Active"
+                        ? "bg-card border-[#3B82F6] text-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-pulse"
+                        : "bg-card border-border text-muted-foreground"
+                      } group-hover:scale-110`}
                   >
                     {step.status === "Done" ? (
                       <Check size={16} strokeWidth={3} />
@@ -881,13 +887,12 @@ export function FinanceDashboard() {
                     )}
                   </div>
                   <span
-                    className={`text-[10px] font-black uppercase tracking-widest text-center max-w-[70px] ${
-                      step.status === "Done"
-                        ? "text-[#00B87C]"
-                        : step.status === "Active"
-                          ? "text-[#3B82F6]"
-                          : "text-muted-foreground"
-                    }`}
+                    className={`text-[10px] font-black uppercase tracking-widest text-center max-w-[70px] ${step.status === "Done"
+                      ? "text-[#00B87C]"
+                      : step.status === "Active"
+                        ? "text-[#3B82F6]"
+                        : "text-muted-foreground"
+                      }`}
                   >
                     {step.label}
                   </span>
@@ -1060,7 +1065,7 @@ export function FinanceDashboard() {
             <div className="space-y-6">
               {DEADLINES.map((item, i) => (
                 <button
-                  key={i}
+                  key={item.title}
                   onClick={() => {
                     if (item.title === "PF Payment Done")
                       openModal("deadlinePF");
@@ -1077,13 +1082,12 @@ export function FinanceDashboard() {
                     <div className="absolute left-[21px] top-10 w-[2px] h-8 bg-border group-hover:bg-primary/20 transition-colors" />
                   )}
                   <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center z-10 shrink-0 border-4 border-card ${
-                      item.status === "Done"
-                        ? "bg-[#00B87C]"
-                        : item.status === "Active"
-                          ? "bg-[#3B82F6] shadow-[0_0_10px_rgba(59,130,246,0.3)]"
-                          : "bg-secondary border-border"
-                    }`}
+                    className={`w-7 h-7 rounded-full flex items-center justify-center z-10 shrink-0 border-4 border-card ${item.status === "Done"
+                      ? "bg-[#00B87C]"
+                      : item.status === "Active"
+                        ? "bg-[#3B82F6] shadow-[0_0_10px_rgba(59,130,246,0.3)]"
+                        : "bg-secondary border-border"
+                      }`}
                   >
                     {item.status === "Done" && (
                       <Check size={12} className="text-white" />
@@ -1117,7 +1121,7 @@ export function FinanceDashboard() {
             <div className="space-y-5">
               {SALARY_DIST.map((item, i) => (
                 <button
-                  key={i}
+                  key={item.label}
                   onClick={() => navigate("/employees")}
                   className="w-full space-y-2 text-left hover:opacity-80 transition-opacity"
                 >
@@ -1129,10 +1133,10 @@ export function FinanceDashboard() {
                   </div>
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                     <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(item.value / item.total) * 100}%` }}
+                      initial={{ x: "-100%" }}
+                      animate={{ x: `-${100 - ((item.value / item.total) * 100)}%` }}
                       transition={{ duration: 1, delay: i * 0.1 }}
-                      className="h-full rounded-full"
+                      className="h-full rounded-full w-full"
                       style={{ backgroundColor: item.color }}
                     />
                   </div>
@@ -1200,7 +1204,7 @@ export function FinanceDashboard() {
                 },
               ].map((action, i) => (
                 <button
-                  key={i}
+                  key={action.label}
                   onClick={action.action}
                   className="flex flex-col items-center gap-2.5 p-4 rounded-2xl border border-border bg-card hover:bg-secondary hover:border-primary/20 transition-all group"
                 >
@@ -1413,13 +1417,12 @@ export function FinanceDashboard() {
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex items-center gap-2">
                 <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black transition-all ${
-                    payrollStep > s
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black transition-all ${payrollStep > s
+                    ? "bg-[#00B87C] text-white"
+                    : payrollStep === s
                       ? "bg-[#00B87C] text-white"
-                      : payrollStep === s
-                        ? "bg-[#00B87C] text-white"
-                        : "bg-secondary text-muted-foreground"
-                  }`}
+                      : "bg-secondary text-muted-foreground"
+                    }`}
                 >
                   {payrollStep > s ? <Check size={12} /> : s}
                 </div>
@@ -1477,7 +1480,7 @@ export function FinanceDashboard() {
                   { label: "Increment data updated", ok: true },
                 ].map((c, i) => (
                   <div
-                    key={i}
+                    key={c.label}
                     className={`flex items-center gap-3 p-3 rounded-xl border ${c.ok ? "border-emerald-100 bg-emerald-50/50 dark:bg-emerald-500/5" : c.warn ? "border-amber-100 bg-amber-50/50" : "border-border"}`}
                   >
                     {c.ok ? (
@@ -1537,7 +1540,7 @@ export function FinanceDashboard() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {PAYROLL_DEPT_SUMMARY.map((r, i) => (
-                      <tr key={i} className="hover:bg-muted/20">
+                      <tr key={r.dept} className="hover:bg-muted/20">
                         <td className="px-4 py-3 text-[12px] font-bold text-foreground">
                           {r.dept}
                         </td>
@@ -1920,7 +1923,7 @@ export function FinanceDashboard() {
               </thead>
               <tbody className="divide-y divide-border">
                 {YTD_MONTHLY.map((r, i) => (
-                  <tr key={i} className="hover:bg-muted/20">
+                  <tr key={r.month} className="hover:bg-muted/20">
                     <td className="px-4 py-3 text-[12px] font-bold text-foreground">
                       {r.month}
                     </td>
@@ -2041,7 +2044,7 @@ export function FinanceDashboard() {
                     cert: "Form 16A",
                   },
                 ].map((r, i) => (
-                  <tr key={i} className="hover:bg-muted/20">
+                  <tr key={r.name} className="hover:bg-muted/20">
                     <td className="px-4 py-3 text-[12px] font-bold text-foreground">
                       {r.name}
                     </td>
@@ -2163,7 +2166,7 @@ export function FinanceDashboard() {
                     total: "₹14,000",
                   },
                 ].map((r, i) => (
-                  <tr key={i} className="hover:bg-muted/20">
+                  <tr key={r.name} className="hover:bg-muted/20">
                     <td className="px-4 py-3 text-[12px] font-bold text-foreground">
                       {r.name}
                     </td>
@@ -2424,8 +2427,8 @@ export function FinanceDashboard() {
                     <div className="space-y-3">
                       <div className="h-3 w-full bg-secondary rounded-full overflow-hidden">
                         <motion.div
-                          className="h-full bg-[#EF4444] rounded-full"
-                          animate={{ width: `${form16Progress}%` }}
+                          className="h-full bg-[#EF4444] rounded-full w-full"
+                          animate={{ x: `-${100 - (form16Progress)}%` }}
                           transition={{ duration: 0.2 }}
                         />
                       </div>

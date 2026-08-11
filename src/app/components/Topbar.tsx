@@ -419,7 +419,7 @@ export function Topbar({
                       ]
                   ).map((n, i) => (
                     <div
-                      key={i}
+                      key={n.text}
                       className="px-4 py-3 flex items-start gap-3 transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800 cursor-pointer"
                       style={{ borderBottom: "1px solid var(--border)" }}
                       onClick={() => setShowNotifications(false)}
@@ -718,7 +718,7 @@ export function Topbar({
                   },
                 ].map((n, i) => (
                   <div
-                    key={i}
+                    key={n.text}
                     className="flex gap-4 p-5 rounded-2xl transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800"
                     style={{
                       border: "1px solid var(--border)",

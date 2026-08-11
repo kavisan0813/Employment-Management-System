@@ -18,7 +18,14 @@ import { OffboardingTemplateEditorModal } from "./modals/OffboardingTemplateEdit
 
 export function OffboardingPage() {
   const [activeTab, setActiveTab] = useState<TabType>("Active");
-  const [requestsCount, setRequestsCount] = useState(0);
+  const [requestsCount, setRequestsCount] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("viyan_resignation_requests:v1") || "[]");
+      return stored.filter((r: any) => r.status?.startsWith("pending")).length;
+    } catch {
+      return 0;
+    }
+  });
   const [showInitiateModal, setShowInitiateModal] = useState(false);
   const [showDetail, setShowDetail] = useState<string | null>(null);
   const [showReminder, setShowReminder] = useState<string | null>(null);

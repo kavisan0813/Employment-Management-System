@@ -457,11 +457,11 @@ export function ManagerTeamPerformance() {
       prev.map((emp) =>
         emp.id === reviewingEmp.id
           ? {
-              ...emp,
-              status: isSubmit ? "Completed" : "In Progress",
-              managerRating: avg !== "0.0" ? `${avg} you` : emp.managerRating,
-              finalScore: isSubmit ? finalScoreStr : emp.finalScore,
-            }
+            ...emp,
+            status: isSubmit ? "Completed" : "In Progress",
+            managerRating: avg !== "0.0" ? `${avg} you` : emp.managerRating,
+            finalScore: isSubmit ? finalScoreStr : emp.finalScore,
+          }
           : emp,
       ),
     );
@@ -746,6 +746,7 @@ export function ManagerTeamPerformance() {
                     <div className="flex items-center gap-3">
                       <img
                         src={row.avatar}
+                        alt={`${row.name}'s avatar`}
                         className="w-9 h-9 rounded-full border border-border"
                       />
                       <div>
@@ -879,6 +880,7 @@ export function ManagerTeamPerformance() {
               <div className="flex items-center gap-4 bg-secondary/50 p-4 rounded-xl border border-border/50">
                 <img
                   src={reviewingEmp.avatar}
+                  alt={`${reviewingEmp.name}'s avatar`}
                   className="w-12 h-12 rounded-full border-2 border-background shadow-sm"
                 />
                 <div>
@@ -1001,11 +1003,10 @@ export function ManagerTeamPerformance() {
                                 [goal.id]: status,
                               }))
                             }
-                            className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${
-                              goalStatus[goal.id] === status
-                                ? "bg-primary text-white border-primary shadow-sm"
-                                : "bg-secondary text-muted-foreground border-border hover:bg-neutral-200 dark:hover:bg-zinc-800"
-                            }`}
+                            className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${goalStatus[goal.id] === status
+                              ? "bg-primary text-white border-primary shadow-sm"
+                              : "bg-secondary text-muted-foreground border-border hover:bg-neutral-200 dark:hover:bg-zinc-800"
+                              }`}
                           >
                             {status}
                           </button>
@@ -1268,6 +1269,7 @@ export function ManagerTeamPerformance() {
                   <div className="flex items-center gap-4 bg-secondary/50 p-4 rounded-xl border border-border/50">
                     <img
                       src={viewingEmp.avatar}
+                      alt={`${viewingEmp.name}'s avatar`}
                       className="w-12 h-12 rounded-full border-2 border-background shadow-sm"
                     />
                     <div>
@@ -1357,11 +1359,10 @@ export function ManagerTeamPerformance() {
                                   {[1, 2, 3, 4, 5].map((num) => (
                                     <span
                                       key={num}
-                                      className={`w-6 h-6 flex items-center justify-center rounded text-[10px] font-bold border ${
-                                        num === score
-                                          ? getRatingColor(num, true)
-                                          : "bg-secondary text-muted-foreground border-transparent"
-                                      }`}
+                                      className={`w-6 h-6 flex items-center justify-center rounded text-[10px] font-bold border ${num === score
+                                        ? getRatingColor(num, true)
+                                        : "bg-secondary text-muted-foreground border-transparent"
+                                        }`}
                                     >
                                       {num}
                                     </span>
@@ -1408,13 +1409,12 @@ export function ManagerTeamPerformance() {
                                 {goal.text}
                               </p>
                               <span
-                                className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
-                                  gInfo.status === "Met"
-                                    ? "bg-emerald-500/10 text-emerald-500 border-emerald-200"
-                                    : gInfo.status === "Partially Met"
-                                      ? "bg-amber-500/10 text-amber-500 border-amber-200"
-                                      : "bg-rose-500/10 text-rose-500 border-rose-200"
-                                }`}
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${gInfo.status === "Met"
+                                  ? "bg-emerald-500/10 text-emerald-500 border-emerald-200"
+                                  : gInfo.status === "Partially Met"
+                                    ? "bg-amber-500/10 text-amber-500 border-amber-200"
+                                    : "bg-rose-500/10 text-rose-500 border-rose-200"
+                                  }`}
                               >
                                 {gInfo.status}
                               </span>
@@ -1460,11 +1460,10 @@ export function ManagerTeamPerformance() {
                           Promotion Recommendation
                         </span>
                         <span
-                          className={`px-3 py-1 text-xs font-bold rounded-lg ${
-                            reviewDetails.promoRecommended
-                              ? "bg-indigo-500 text-white"
-                              : "bg-slate-200 dark:bg-zinc-700 text-foreground"
-                          }`}
+                          className={`px-3 py-1 text-xs font-bold rounded-lg ${reviewDetails.promoRecommended
+                            ? "bg-indigo-500 text-white"
+                            : "bg-slate-200 dark:bg-zinc-700 text-foreground"
+                            }`}
                         >
                           {reviewDetails.promoRecommended
                             ? "Recommended"

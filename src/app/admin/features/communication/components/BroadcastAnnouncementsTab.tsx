@@ -16,6 +16,7 @@ import {
   MonitorSmartphone,
   TestTube,
 } from "lucide-react";
+import DOMPurify from "dompurify";
 import { communicationService } from "../services/communication.service";
 import {
   Announcement,
@@ -578,18 +579,18 @@ export function BroadcastAnnouncementsTab({
                   {(targetType === "plan_based" ||
                     targetType === "specific_orgs" ||
                     targetType === "role_based") && (
-                    <input
-                      type="text"
-                      value={targetCriteria}
-                      onChange={(e) => setTargetCriteria(e.target.value)}
-                      placeholder={
-                        targetType === "plan_based"
-                          ? "e.g. enterprise,pro"
-                          : "e.g. org_id_1,org_id_2"
-                      }
-                      className="mt-3 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none"
-                    />
-                  )}
+                      <input
+                        type="text"
+                        value={targetCriteria}
+                        onChange={(e) => setTargetCriteria(e.target.value)}
+                        placeholder={
+                          targetType === "plan_based"
+                            ? "e.g. enterprise,pro"
+                            : "e.g. org_id_1,org_id_2"
+                        }
+                        className="mt-3 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none"
+                      />
+                    )}
                 </div>
 
                 <div>
@@ -705,21 +706,23 @@ export function BroadcastAnnouncementsTab({
                 </div>
                 <div
                   className="p-4 prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: body }}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(body),
+                  }}
                 />
-              </div>
 
-              {channels.includes("sms") && (
-                <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-600 border-b border-gray-200">
-                    SMS Preview (Text Only)
+                {channels.includes("sms") && (
+                  <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
+                    <div className="bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-600 border-b border-gray-200">
+                      SMS Preview (Text Only)
+                    </div>
+                    <div className="p-4 font-mono text-sm text-gray-700 whitespace-pre-wrap">
+                      [{urgency === "high" ? "URGENT" : "NOTICE"}] {title}
+                      {"\n\n"}(HTML tags stripped for SMS)
+                    </div>
                   </div>
-                  <div className="p-4 font-mono text-sm text-gray-700 whitespace-pre-wrap">
-                    [{urgency === "high" ? "URGENT" : "NOTICE"}] {title}
-                    {"\n\n"}(HTML tags stripped for SMS)
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
             <div className="p-5 border-t border-gray-200 bg-gray-50 flex justify-between rounded-b-xl">
               <button

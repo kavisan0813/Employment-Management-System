@@ -308,8 +308,9 @@ function FilterSelect({
   value?: string;
   onChange?: (val: string) => void;
 }) {
-  const [internalValue, setInternalValue] = useState(label);
-  const value = externalValue !== undefined ? externalValue : internalValue;
+  const [internalValue, setInternalValue] = useState<string | null>(null);
+  const value =
+    externalValue !== undefined ? externalValue : (internalValue ?? label);
   const onChange =
     externalOnChange !== undefined ? externalOnChange : setInternalValue;
 
@@ -324,7 +325,7 @@ function FilterSelect({
         {options
           .filter((opt) => opt !== label)
           .map((opt, i) => (
-            <option key={i} value={opt}>
+            <option key={opt} value={opt}>
               {opt}
             </option>
           ))}
@@ -873,7 +874,7 @@ export function FinanceAuditLogs() {
                       value: selectedLog.record.split(" —")[0],
                     },
                   ].map((f, i) => (
-                    <div key={i}>
+                    <div key={f.label}>
                       <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
                         {f.label}
                       </p>

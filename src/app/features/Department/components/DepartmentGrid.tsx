@@ -1,11 +1,8 @@
-import { useState } from "react";
 import {
   Building2,
   Plus,
   TrendingUp,
-  MoreVertical as MoreIcon,
   User,
-  AlertTriangle,
 } from "lucide-react";
 import { Department } from "../types/department.types";
 
@@ -24,11 +21,8 @@ interface DepartmentGridProps {
 export function DepartmentGrid({
   departments,
   canManage,
-  canDelete,
   showFinance,
   onViewClick,
-  onEditClick,
-  onDeleteClick,
   onAssignHeadClick,
   onAddClick,
 }: DepartmentGridProps) {

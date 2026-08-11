@@ -455,7 +455,7 @@ export function ManagerLeaveApprovals() {
                     {/* Policy Checks Row */}
                     <div className="flex flex-wrap items-center gap-3 mb-6">
                       {req.checks.map((check, idx) => (
-                        <div key={idx} className="flex items-center gap-1.5">
+                        <div key={check.text} className="flex items-center gap-1.5">
                           {check.type === "success" && (
                             <CheckCircle2
                               size={14}

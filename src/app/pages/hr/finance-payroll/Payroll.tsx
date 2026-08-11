@@ -117,15 +117,14 @@ function ToastContainer({
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-2xl shadow-2xl border backdrop-blur-xl min-w-[300px] animate-in slide-in-from-right-4 duration-300 ${
-            t.type === "success"
-              ? "bg-emerald-950/90 border-emerald-500/30 text-emerald-100"
-              : t.type === "error"
-                ? "bg-red-950/90 border-red-500/30 text-red-100"
-                : t.type === "warning"
-                  ? "bg-amber-950/90 border-amber-500/30 text-amber-100"
-                  : "bg-sky-950/90 border-sky-500/30 text-sky-100"
-          }`}
+          className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-2xl shadow-2xl border backdrop-blur-xl min-w-[300px] animate-in slide-in-from-right-4 duration-300 ${t.type === "success"
+            ? "bg-emerald-950/90 border-emerald-500/30 text-emerald-100"
+            : t.type === "error"
+              ? "bg-red-950/90 border-red-500/30 text-red-100"
+              : t.type === "warning"
+                ? "bg-amber-950/90 border-amber-500/30 text-amber-100"
+                : "bg-sky-950/90 border-sky-500/30 text-sky-100"
+            }`}
         >
           {t.type === "success" && (
             <CheckCircle2
@@ -212,7 +211,7 @@ function DonutChart({
           cumulative += pct;
           return (
             <circle
-              key={i}
+              key={seg.label}
               cx={cx}
               cy={cy}
               r={radius}
@@ -272,11 +271,10 @@ function TransferProgressBar({
       </div>
       <div className="w-full h-1 bg-muted/50 rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all duration-1000 ${
-            status === "On Hold"
-              ? "bg-amber-500"
-              : "bg-gradient-to-r from-emerald-500 to-cyan-500"
-          }`}
+          className={`h-full rounded-full transition-all duration-1000 ${status === "On Hold"
+            ? "bg-amber-500"
+            : "bg-gradient-to-r from-emerald-500 to-cyan-500"
+            }`}
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -412,21 +410,21 @@ function PayslipModal({
     );
     const body = encodeURIComponent(
       `Dear ${employee.name},\n\n` +
-        `Please find below the summary of your payslip for the pay period ${month} ${year}.\n\n` +
-        `Employee Details:\n` +
-        `------------------------------------------\n` +
-        `Employee ID: ${employee.id}\n` +
-        `Designation: ${employee.designation}\n` +
-        `Department: ${employee.department}\n\n` +
-        `Salary Breakdown:\n` +
-        `------------------------------------------\n` +
-        `Gross Earnings: ₹${employee.gross.toLocaleString()}\n` +
-        `Total Deductions: ₹${employee.deductions.toLocaleString()}\n` +
-        `Net Pay Disbursed: ₹${employee.net.toLocaleString()}\n\n` +
-        `Your payslip is also available for download in the viyanHR portal.\n\n` +
-        `Best regards,\n` +
-        `Finance Department\n` +
-        `viyanHR Inc.`,
+      `Please find below the summary of your payslip for the pay period ${month} ${year}.\n\n` +
+      `Employee Details:\n` +
+      `------------------------------------------\n` +
+      `Employee ID: ${employee.id}\n` +
+      `Designation: ${employee.designation}\n` +
+      `Department: ${employee.department}\n\n` +
+      `Salary Breakdown:\n` +
+      `------------------------------------------\n` +
+      `Gross Earnings: ₹${employee.gross.toLocaleString()}\n` +
+      `Total Deductions: ₹${employee.deductions.toLocaleString()}\n` +
+      `Net Pay Disbursed: ₹${employee.net.toLocaleString()}\n\n` +
+      `Your payslip is also available for download in the viyanHR portal.\n\n` +
+      `Best regards,\n` +
+      `Finance Department\n` +
+      `viyanHR Inc.`,
     );
     window.location.href = `mailto:${empEmail}?subject=${subject}&body=${body}`;
   };
@@ -592,7 +590,7 @@ function PayslipModal({
               </thead>
               <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
                 {rows.map((row, index) => (
-                  <tr key={index} className="h-9">
+                  <tr key={row.earning} className="h-9">
                     <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">
                       {row.earning?.label || ""}
                     </td>
@@ -764,7 +762,7 @@ function AIInsightsPanel({ employees }: { employees: PayrollEmployee[] }) {
       <div className="space-y-2">
         {insights.map((ins, i) => (
           <div
-            key={i}
+            key={ins.text}
             className={`flex items-start gap-2.5 p-2.5 rounded-xl bg-${ins.color}-500/5 border border-${ins.color}-500/10`}
           >
             <div
@@ -805,25 +803,30 @@ function RunPayrollModal({
   const totalNet = pendingEmps.reduce((s, e) => s + e.net, 0);
 
   useEffect(() => {
-    if (step !== "processing") return;
+    if (step !== "processing") {
+      return;
+    }
+
     let i = 0;
     const names = pendingEmps.map((e) => e.name);
+
     const interval = setInterval(() => {
+      if (i >= names.length) {
+        clearInterval(interval);
+        setStep("success");
+        onComplete();
+        return;
+      }
+
       i++;
       setProgress(
         Math.min(100, Math.round((i / Math.max(names.length, 1)) * 100)),
       );
       setCurrentEmp(names[Math.min(i - 1, names.length - 1)] || "");
-      if (i >= names.length) {
-        clearInterval(interval);
-        setTimeout(() => {
-          setStep("success");
-          onComplete();
-        }, 600);
-      }
     }, 500);
+
     return () => clearInterval(interval);
-  }, [step]);
+  }, [step, pendingEmps, onComplete]);
 
   return (
     <div
@@ -1253,11 +1256,18 @@ function StatCard({
 }
 
 /* ─── Main Payroll Component ─────────────── */
+const SortIcon = ({ field, sortField, sortDir }: { field: string; sortField: string; sortDir: string }) =>
+  sortField === field ? (
+    sortDir === "asc" ? (
+      <ChevronUp size={10} className="text-emerald-500" />
+    ) : (
+      <ChevronDown size={10} className="text-emerald-500" />
+    )
+  ) : (
+    <ChevronDown size={10} className="opacity-30" />
+  );
 export function Payroll() {
   const { user } = useAuth();
-
-  /* ── Guard: Employee role sees their own payslips ── */
-  if (user?.role === "Employee") return <EmployeePayslips />;
 
   /* ── Leave impact helper ── */
   const getLeaveImpact = useCallback((empId: string, empName: string) => {
@@ -1275,7 +1285,6 @@ export function Payroll() {
   const [selectedYear, setSelectedYear] = useState("2026");
   const [employeesData, setEmployeesData] = useState<PayrollEmployee[]>([]);
   const [draftBonuses, setDraftBonuses] = useState<Record<string, number>>({});
-
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
   const [showYearDropdown, setShowYearDropdown] = useState(false);
   const [statusFilter, setStatusFilter] = useState<
@@ -1388,7 +1397,7 @@ export function Payroll() {
       });
       setEmployeesData(mapped);
     }
-  }, [selectedMonth, selectedYear, draftBonuses]);
+  }, [selectedMonth, selectedYear, draftBonuses, structures, activeEmployees, payrollEmployees]);
 
   /* ── Close dropdowns on outside click ── */
   useEffect(() => {
@@ -1605,16 +1614,9 @@ export function Payroll() {
   };
 
   /* ── Sort icon helper ── */
-  const SortIcon = ({ field }: { field: typeof sortField }) =>
-    sortField === field ? (
-      sortDir === "asc" ? (
-        <ChevronUp size={10} className="text-emerald-500" />
-      ) : (
-        <ChevronDown size={10} className="text-emerald-500" />
-      )
-    ) : (
-      <ChevronDown size={10} className="opacity-30" />
-    );
+
+  /* ── Guard: Employee role sees their own payslips ── */
+  if (user?.role === "Employee") return <EmployeePayslips />;
 
   /* ─────────────────────────── JSX ─────────────────────────── */
   return (
@@ -1838,11 +1840,10 @@ export function Payroll() {
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`flex-1 md:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                  statusFilter === s
-                    ? "bg-card text-emerald-500 shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`flex-1 md:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${statusFilter === s
+                  ? "bg-card text-emerald-500 shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 {s}
               </button>
@@ -2045,7 +2046,7 @@ export function Payroll() {
                     onClick={() => handleSort("gross")}
                   >
                     <span className="flex items-center justify-end gap-1">
-                      Base Salary <SortIcon field="gross" />
+                      Base Salary <SortIcon field="gross" sortField={sortField} sortDir={sortDir} />
                     </span>
                   </th>
                   <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right">
@@ -2056,7 +2057,7 @@ export function Payroll() {
                     onClick={() => handleSort("deductions")}
                   >
                     <span className="flex items-center justify-end gap-1">
-                      Deductions <SortIcon field="deductions" />
+                      Deductions <SortIcon field="deductions" sortField={sortField} sortDir={sortDir} />
                     </span>
                   </th>
                   <th
@@ -2064,7 +2065,7 @@ export function Payroll() {
                     onClick={() => handleSort("net")}
                   >
                     <span className="flex items-center justify-end gap-1">
-                      Net Pay <SortIcon field="net" />
+                      Net Pay <SortIcon field="net" sortField={sortField} sortDir={sortDir} />
                     </span>
                   </th>
                   <th className="px-5 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
@@ -2130,13 +2131,12 @@ export function Payroll() {
                               className="w-10 h-10 rounded-xl object-cover border border-border"
                             />
                             <div
-                              className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-card ${
-                                emp.status === "Paid"
-                                  ? "bg-emerald-500"
-                                  : emp.status === "On Hold"
-                                    ? "bg-amber-500"
-                                    : "bg-slate-400"
-                              }`}
+                              className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-card ${emp.status === "Paid"
+                                ? "bg-emerald-500"
+                                : emp.status === "On Hold"
+                                  ? "bg-amber-500"
+                                  : "bg-slate-400"
+                                }`}
                             />
                           </div>
                           <div>
@@ -2222,13 +2222,12 @@ export function Payroll() {
                       {/* Status Badge */}
                       <td className="px-5 py-4">
                         <div
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                            emp.status === "Paid"
-                              ? "bg-emerald-500/10 text-emerald-600"
-                              : emp.status === "On Hold"
-                                ? "bg-amber-500/10 text-amber-600"
-                                : "bg-slate-500/10 text-slate-600"
-                          }`}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${emp.status === "Paid"
+                            ? "bg-emerald-500/10 text-emerald-600"
+                            : emp.status === "On Hold"
+                              ? "bg-amber-500/10 text-amber-600"
+                              : "bg-slate-500/10 text-slate-600"
+                            }`}
                         >
                           {emp.status === "Paid" ? (
                             <BadgeCheck size={11} />
@@ -2316,21 +2315,21 @@ export function Payroll() {
                                     );
                                     const body = encodeURIComponent(
                                       `Dear ${emp.name},\n\n` +
-                                        `Please find below the summary of your payslip for the pay period ${selectedMonth} ${selectedYear}.\n\n` +
-                                        `Employee Details:\n` +
-                                        `------------------------------------------\n` +
-                                        `Employee ID: ${emp.id}\n` +
-                                        `Designation: ${emp.designation}\n` +
-                                        `Department: ${emp.department}\n\n` +
-                                        `Salary Breakdown:\n` +
-                                        `------------------------------------------\n` +
-                                        `Gross Earnings: ₹${emp.gross.toLocaleString()}\n` +
-                                        `Total Deductions: ₹${emp.deductions.toLocaleString()}\n` +
-                                        `Net Pay Disbursed: ₹${emp.net.toLocaleString()}\n\n` +
-                                        `Your payslip is also available for download in the viyanHR portal.\n\n` +
-                                        `Best regards,\n` +
-                                        `Finance Department\n` +
-                                        `viyanHR Inc.`,
+                                      `Please find below the summary of your payslip for the pay period ${selectedMonth} ${selectedYear}.\n\n` +
+                                      `Employee Details:\n` +
+                                      `------------------------------------------\n` +
+                                      `Employee ID: ${emp.id}\n` +
+                                      `Designation: ${emp.designation}\n` +
+                                      `Department: ${emp.department}\n\n` +
+                                      `Salary Breakdown:\n` +
+                                      `------------------------------------------\n` +
+                                      `Gross Earnings: ₹${emp.gross.toLocaleString()}\n` +
+                                      `Total Deductions: ₹${emp.deductions.toLocaleString()}\n` +
+                                      `Net Pay Disbursed: ₹${emp.net.toLocaleString()}\n\n` +
+                                      `Your payslip is also available for download in the viyanHR portal.\n\n` +
+                                      `Best regards,\n` +
+                                      `Finance Department\n` +
+                                      `viyanHR Inc.`,
                                     );
                                     window.location.href = `mailto:${empEmail}?subject=${subject}&body=${body}`;
                                     addToast({
@@ -2354,10 +2353,10 @@ export function Payroll() {
                                             prev.map((e) =>
                                               e.id === emp.id
                                                 ? {
-                                                    ...e,
-                                                    status: "Paid" as const,
-                                                    transferProgress: 100,
-                                                  }
+                                                  ...e,
+                                                  status: "Paid" as const,
+                                                  transferProgress: 100,
+                                                }
                                                 : e,
                                             ),
                                           );
@@ -2380,9 +2379,9 @@ export function Payroll() {
                                             prev.map((e) =>
                                               e.id === emp.id
                                                 ? {
-                                                    ...e,
-                                                    status: "On Hold" as const,
-                                                  }
+                                                  ...e,
+                                                  status: "On Hold" as const,
+                                                }
                                                 : e,
                                             ),
                                           );
@@ -2471,11 +2470,10 @@ export function Payroll() {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
-                        currentPage === page
-                          ? "bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/25"
-                          : "text-muted-foreground hover:bg-muted"
-                      }`}
+                      className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${currentPage === page
+                        ? "bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/25"
+                        : "text-muted-foreground hover:bg-muted"
+                        }`}
                     >
                       {page}
                     </button>
@@ -2525,17 +2523,16 @@ export function Payroll() {
               { label: "Disbursement", status: "pending", desc: "Apr 28" },
             ].map((step, i) => (
               <div
-                key={i}
+                key={step.label}
                 className="flex flex-col items-center gap-2 relative z-10 w-28"
               >
                 <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 transition-all ${
-                    step.status === "completed"
-                      ? "bg-emerald-500 border-emerald-500 shadow-lg shadow-emerald-500/30"
-                      : step.status === "active"
-                        ? "bg-card border-emerald-500 ring-4 ring-emerald-500/20"
-                        : "bg-card border-border"
-                  }`}
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 transition-all ${step.status === "completed"
+                    ? "bg-emerald-500 border-emerald-500 shadow-lg shadow-emerald-500/30"
+                    : step.status === "active"
+                      ? "bg-card border-emerald-500 ring-4 ring-emerald-500/20"
+                      : "bg-card border-border"
+                    }`}
                 >
                   {step.status === "completed" ? (
                     <CheckCircle2 size={16} className="text-white" />
@@ -2550,13 +2547,12 @@ export function Payroll() {
                 </div>
                 <div className="text-center">
                   <span
-                    className={`text-[11px] font-bold ${
-                      step.status === "completed"
-                        ? "text-emerald-600"
-                        : step.status === "active"
-                          ? "text-foreground"
-                          : "text-muted-foreground"
-                    }`}
+                    className={`text-[11px] font-bold ${step.status === "completed"
+                      ? "text-emerald-600"
+                      : step.status === "active"
+                        ? "text-foreground"
+                        : "text-muted-foreground"
+                      }`}
                   >
                     {step.label}
                   </span>
@@ -2620,18 +2616,18 @@ export function Payroll() {
               payslips,
             );
 
-            if (res.success) {
+            if ("error" in res) {
+              addToast({
+                type: "error",
+                title: "Submission Failed",
+                message: res.error,
+              });
+            } else {
               setDraftBonuses({});
               addToast({
                 type: "success",
                 title: "Payroll Submitted",
                 message: `Payroll for ${selectedMonth} ${selectedYear} has been submitted to Finance.`,
-              });
-            } else {
-              addToast({
-                type: "error",
-                title: "Submission Failed",
-                message: res.error,
               });
             }
             setShowRunModal(false);

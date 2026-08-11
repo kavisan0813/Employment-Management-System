@@ -192,11 +192,6 @@ export function Expenses() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // If user is an employee, show the Self-Service Portal
-  if (user?.role === "Employee") {
-    return <EmployeeExpenses />;
-  }
-
   const [claims] = useState<ExpenseClaim[]>(initialClaims);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
@@ -206,6 +201,7 @@ export function Expenses() {
   const [selectedYear, setSelectedYear] = useState("2026");
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
   const [showYearDropdown, setShowYearDropdown] = useState(false);
+
 
   // UI Interaction States
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -512,6 +508,11 @@ export function Expenses() {
     return filteredClaims.reduce((sum, c) => sum + c.amount, 0);
   }, [filteredClaims]);
 
+  // If user is an employee, show the Self-Service Portal
+  if (user?.role === "Employee") {
+    return <EmployeeExpenses />;
+  }
+
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 font-inter">
       {/* ── Page Header ── */}
@@ -692,7 +693,7 @@ export function Expenses() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         {kpis.map((stat, i) => (
           <motion.div
-            key={i}
+            key={stat.label}
             whileHover={{ y: -5 }}
             className="relative group bg-card border border-border rounded-3xl p-6 overflow-hidden hover:shadow-xl hover:shadow-[#00B87C]/5 transition-all duration-300 cursor-pointer"
           >
@@ -1054,13 +1055,12 @@ export function Expenses() {
                   {visibleColumns.approval && (
                     <td className="px-4 py-5">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
-                          claim.approvalStatus === "Pending"
-                            ? "bg-amber-500/5 text-amber-600 border-amber-500/10"
-                            : claim.approvalStatus === "Approved"
-                              ? "bg-emerald-500/5 text-emerald-600 border-emerald-500/10"
-                              : "bg-rose-500/5 text-rose-600 border-rose-500/10"
-                        }`}
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${claim.approvalStatus === "Pending"
+                          ? "bg-amber-500/5 text-amber-600 border-amber-500/10"
+                          : claim.approvalStatus === "Approved"
+                            ? "bg-emerald-500/5 text-emerald-600 border-emerald-500/10"
+                            : "bg-rose-500/5 text-rose-600 border-rose-500/10"
+                          }`}
                       >
                         {claim.approvalStatus}
                       </span>
@@ -2359,7 +2359,7 @@ export function Expenses() {
             },
           ].map((item, i) => (
             <div
-              key={i}
+              key={item.id}
               className="p-4 rounded-3xl border border-border bg-muted/20 flex items-center justify-between group hover:bg-[#00B87C]/[0.08] transition-all"
             >
               <div className="flex items-center gap-4">
@@ -2406,9 +2406,9 @@ export function Expenses() {
         title="Manager Review Queue"
       >
         <div className="space-y-6">
-          {[1, 2].map((_, i) => (
+          {[1, 2].map((item) => (
             <div
-              key={i}
+              key={item}
               className="p-6 rounded-[32px] border border-border bg-card shadow-sm space-y-4"
             >
               <div className="flex items-center justify-between">
@@ -2475,7 +2475,7 @@ export function Expenses() {
             },
           ].map((item, i) => (
             <div
-              key={i}
+              key={item.id}
               className="p-5 rounded-[28px] border border-border bg-muted/20 flex items-center justify-between group hover:border-emerald-500/30 transition-all"
             >
               <div className="flex items-center gap-4">
@@ -2526,7 +2526,7 @@ export function Expenses() {
             },
           ].map((item, i) => (
             <div
-              key={i}
+              key={item.title}
               className="p-6 rounded-[32px] border-2 border-rose-500/10 bg-card shadow-sm space-y-5"
             >
               <div className="flex items-center justify-between">
@@ -2645,7 +2645,7 @@ export function Expenses() {
                   dataKey="value"
                 >
                   {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${entry.color}`} fill={entry.color} />
                   ))}
                 </Pie>
               </PieChart>
@@ -2682,196 +2682,196 @@ export function Expenses() {
       </div>
     </div>
   );
+}
 
-  function ExportItem({
-    icon,
-    label,
-    onClick,
-  }: {
-    icon: React.ReactNode;
-    label: string;
-    onClick: () => void;
-  }) {
-    return (
-      <button
-        onClick={onClick}
-        className="w-full px-4 py-2.5 flex items-center gap-3 text-xs font-bold text-foreground hover:bg-emerald-500/10 hover:text-emerald-600 transition-colors"
-      >
-        {icon} {label}
-      </button>
-    );
-  }
+function ExportItem({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full px-4 py-2.5 flex items-center gap-3 text-xs font-bold text-foreground hover:bg-emerald-500/10 hover:text-emerald-600 transition-colors"
+    >
+      {icon} {label}
+    </button>
+  );
+}
 
-  function ActionItem({
-    icon,
-    label,
-    onClick,
-    danger,
-  }: {
-    icon: React.ReactNode;
-    label: string;
-    onClick: () => void;
-    danger?: boolean;
-  }) {
-    return (
-      <button
-        onClick={onClick}
-        className={`w-full px-4 py-2.5 flex items-center gap-3 text-xs font-bold transition-colors ${danger ? "text-rose-600 hover:bg-rose-500/10" : "text-foreground hover:bg-emerald-500/10 hover:text-emerald-600"}`}
-      >
-        {icon} {label}
-      </button>
-    );
-  }
+function ActionItem({
+  icon,
+  label,
+  onClick,
+  danger,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  danger?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full px-4 py-2.5 flex items-center gap-3 text-xs font-bold transition-colors ${danger ? "text-rose-600 hover:bg-rose-500/10" : "text-foreground hover:bg-emerald-500/10 hover:text-emerald-600"}`}
+    >
+      {icon} {label}
+    </button>
+  );
+}
 
-  function WorkflowBlock({
-    title,
-    status,
-    desc,
-    completed,
-    active,
-  }: {
-    title: string;
-    status: string;
-    desc: string;
-    completed?: boolean;
-    active?: boolean;
-  }) {
-    return (
-      <div className="flex gap-4 relative">
-        <div className="flex flex-col items-center">
-          <div
-            className={`w-4 h-4 rounded-full border-2 ${completed ? "bg-emerald-500 border-emerald-500" : active ? "bg-white border-emerald-500 ring-4 ring-emerald-500/20" : "bg-white border-slate-300"}`}
-          />
-          <div className="w-0.5 h-full bg-slate-100 dark:bg-white/5 mt-1" />
-        </div>
-        <div className="-mt-1 pb-4">
-          <div className="flex items-center gap-2 mb-1">
-            <p
-              className={`text-sm font-black ${completed || active ? "text-foreground" : "text-muted-foreground"}`}
-            >
-              {title}
-            </p>
-            <span
-              className={`px-2 py-0.5 rounded text-[8px] font-semibold uppercase tracking-wider ${completed ? "bg-emerald-500/10 text-emerald-600" : active ? "bg-amber-500/10 text-amber-600" : "bg-muted text-muted-foreground"}`}
-            >
-              {status}
-            </span>
-          </div>
-          <p className="text-xs font-medium text-muted-foreground leading-relaxed">
-            {desc}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  function WorkflowModal({
-    isOpen,
-    onClose,
-    title,
-    children,
-  }: {
-    isOpen: boolean;
-    onClose: () => void;
-    title: string;
-    children: React.ReactNode;
-  }) {
-    return (
-      <AnimatePresence>
-        {isOpen && (
-          <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={onClose}
-              className="absolute inset-0 bg-black/40"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-xl bg-card border border-border rounded-[40px] shadow-2xl flex flex-col max-h-[85vh] overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="px-8 py-6 border-b border-border flex items-center justify-between bg-emerald-500/[0.02]">
-                <h3 className="text-xl font-black text-foreground">{title}</h3>
-                <button
-                  onClick={onClose}
-                  className="p-2.5 rounded-2xl bg-muted text-foreground hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                {children}
-              </div>
-              <div className="p-6 border-t border-border bg-muted/20">
-                <button
-                  onClick={onClose}
-                  className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-black text-sm shadow-xl shadow-emerald-500/20 active:scale-95 transition-all"
-                >
-                  Close Window
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-    );
-  }
-
-  function StatusChip({
-    dotColor,
-    label,
-    onClick,
-  }: {
-    dotColor: string;
-    label: string;
-    onClick: () => void;
-  }) {
-    return (
-      <button
-        onClick={onClick}
-        className="flex items-center gap-3 px-5 py-2.5 rounded-full border border-border bg-white dark:bg-zinc-900 hover:border-emerald-500/40 hover:shadow-lg hover:-translate-y-0.5 transition-all group"
-      >
+function WorkflowBlock({
+  title,
+  status,
+  desc,
+  completed,
+  active,
+}: {
+  title: string;
+  status: string;
+  desc: string;
+  completed?: boolean;
+  active?: boolean;
+}) {
+  return (
+    <div className="flex gap-4 relative">
+      <div className="flex flex-col items-center">
         <div
-          className={`w-2.5 h-2.5 rounded-full ${dotColor} shadow-sm group-hover:scale-125 transition-transform`}
+          className={`w-4 h-4 rounded-full border-2 ${completed ? "bg-emerald-500 border-emerald-500" : active ? "bg-white border-emerald-500 ring-4 ring-emerald-500/20" : "bg-white border-slate-300"}`}
         />
-        <span className="text-[11px] font-black text-foreground uppercase tracking-widest">
-          {label}
-        </span>
-      </button>
-    );
-  }
-
-  function DetailItem({
-    label,
-    val,
-    icon,
-    isStatus,
-  }: {
-    label: string;
-    val: string;
-    icon?: string;
-    isStatus?: boolean;
-  }) {
-    return (
-      <div className="space-y-1">
-        <label className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-          {label}
-        </label>
-        <div className="flex items-center gap-2">
-          {icon && <span className="text-base">{icon}</span>}
-          <p
-            className={`text-sm font-black ${isStatus ? (val === "Approved" ? "text-emerald-600" : val === "Pending" ? "text-amber-600" : "text-rose-600") : "text-slate-900 dark:text-white"}`}
-          >
-            {val}
-          </p>
-        </div>
+        <div className="w-0.5 h-full bg-slate-100 dark:bg-white/5 mt-1" />
       </div>
-    );
-  }
+      <div className="-mt-1 pb-4">
+        <div className="flex items-center gap-2 mb-1">
+          <p
+            className={`text-sm font-black ${completed || active ? "text-foreground" : "text-muted-foreground"}`}
+          >
+            {title}
+          </p>
+          <span
+            className={`px-2 py-0.5 rounded text-[8px] font-semibold uppercase tracking-wider ${completed ? "bg-emerald-500/10 text-emerald-600" : active ? "bg-amber-500/10 text-amber-600" : "bg-muted text-muted-foreground"}`}
+          >
+            {status}
+          </span>
+        </div>
+        <p className="text-xs font-medium text-muted-foreground leading-relaxed">
+          {desc}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function WorkflowModal({
+  isOpen,
+  onClose,
+  title,
+  children,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/40"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="relative w-full max-w-xl bg-card border border-border rounded-[40px] shadow-2xl flex flex-col max-h-[85vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-8 py-6 border-b border-border flex items-center justify-between bg-emerald-500/[0.02]">
+              <h3 className="text-xl font-black text-foreground">{title}</h3>
+              <button
+                onClick={onClose}
+                className="p-2.5 rounded-2xl bg-muted text-foreground hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+              {children}
+            </div>
+            <div className="p-6 border-t border-border bg-muted/20">
+              <button
+                onClick={onClose}
+                className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-black text-sm shadow-xl shadow-emerald-500/20 active:scale-95 transition-all"
+              >
+                Close Window
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function StatusChip({
+  dotColor,
+  label,
+  onClick,
+}: {
+  dotColor: string;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-3 px-5 py-2.5 rounded-full border border-border bg-white dark:bg-zinc-900 hover:border-emerald-500/40 hover:shadow-lg hover:-translate-y-0.5 transition-all group"
+    >
+      <div
+        className={`w-2.5 h-2.5 rounded-full ${dotColor} shadow-sm group-hover:scale-125 transition-transform`}
+      />
+      <span className="text-[11px] font-black text-foreground uppercase tracking-widest">
+        {label}
+      </span>
+    </button>
+  );
+}
+
+function DetailItem({
+  label,
+  val,
+  icon,
+  isStatus,
+}: {
+  label: string;
+  val: string;
+  icon?: string;
+  isStatus?: boolean;
+}) {
+  return (
+    <div className="space-y-1">
+      <label className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+        {label}
+      </label>
+      <div className="flex items-center gap-2">
+        {icon && <span className="text-base">{icon}</span>}
+        <p
+          className={`text-sm font-black ${isStatus ? (val === "Approved" ? "text-emerald-600" : val === "Pending" ? "text-amber-600" : "text-rose-600") : "text-slate-900 dark:text-white"}`}
+        >
+          {val}
+        </p>
+      </div>
+    </div>
+  );
 }
 
 function FilterPill({
@@ -2910,11 +2910,10 @@ function FilterPill({
       </div>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-5 py-2 rounded-full border transition-all text-[13px] font-bold ${
-          value !== "All"
-            ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-600"
-            : "bg-slate-50 dark:bg-zinc-800 border-slate-100 dark:border-zinc-700 text-slate-700 dark:text-slate-200"
-        }`}
+        className={`flex items-center gap-2 px-5 py-2 rounded-full border transition-all text-[13px] font-bold ${value !== "All"
+          ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-600"
+          : "bg-slate-50 dark:bg-zinc-800 border-slate-100 dark:border-zinc-700 text-slate-700 dark:text-slate-200"
+          }`}
       >
         {value}
         <ChevronDown

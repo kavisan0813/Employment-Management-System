@@ -161,7 +161,7 @@ export function DepartmentsSection() {
           },
         ].map((card, idx) => (
           <div
-            key={idx}
+            key={card.label}
             className="p-4 rounded-2xl flex items-center justify-between shadow-sm"
             style={{
               backgroundColor: "var(--card)",
@@ -301,7 +301,7 @@ export function DepartmentsSection() {
           <tbody>
             {filteredDepts.map((d: DepartmentRecord, idx: number) => (
               <tr
-                key={idx}
+                key={d.id}
                 style={{
                   borderBottom: "1px solid var(--border)",
                   height: "56px",
@@ -504,7 +504,7 @@ export function DepartmentsSection() {
             setter: setBudgetTracking,
           },
         ].map((row, idx) => (
-          <div key={idx} className="flex justify-between items-center py-2">
+          <div key={row.label} className="flex justify-between items-center py-2">
             <span
               style={{
                 fontSize: "13px",

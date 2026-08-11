@@ -155,7 +155,7 @@ export default function EmployeeRegularizationHistory() {
           },
         ].map((card, i) => (
           <div
-            key={i}
+            key={card.label}
             className="p-6 rounded-2xl border border-border bg-card shadow-sm flex flex-col items-center justify-center text-center group hover:border-primary transition-colors"
           >
             <p

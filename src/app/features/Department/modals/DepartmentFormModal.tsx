@@ -314,7 +314,7 @@ export function DepartmentFormModal({
                     </tr>
                   ) : (
                     teams.map((team, index) => (
-                      <tr key={index} className="bg-white dark:bg-card">
+                      <tr key={team.name} className="bg-white dark:bg-card">
                         <td className="px-6 py-3 relative">
                           <input
                             type="text"

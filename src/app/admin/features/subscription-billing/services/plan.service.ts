@@ -58,7 +58,7 @@ const SEED_PLANS: Plan[] = [
 
 function getPlansStore(): Plan[] {
   try {
-    const item = localStorage.getItem("ems_billing_plans");
+    const item = localStorage.getItem("ems_billing_plans:v1");
     return item ? JSON.parse(item) : SEED_PLANS;
   } catch {
     return SEED_PLANS;
@@ -66,7 +66,7 @@ function getPlansStore(): Plan[] {
 }
 
 function savePlansStore(plans: Plan[]) {
-  localStorage.setItem("ems_billing_plans", JSON.stringify(plans));
+  localStorage.setItem("ems_billing_plans:v1", JSON.stringify(plans));
 }
 
 export const PlanService = {

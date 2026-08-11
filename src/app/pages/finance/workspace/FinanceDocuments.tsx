@@ -255,7 +255,7 @@ export function FinanceDocuments() {
             <div className="divide-y divide-border">
               {category.files.map((file, i) => (
                 <div
-                  key={i}
+                  key={file.name}
                   className="px-6 py-3 flex items-center justify-between hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all h-[48px] group"
                 >
                   <div className="flex items-center gap-3">
@@ -522,7 +522,7 @@ function UploadModal({
                   className="w-full px-4 py-3 rounded-2xl bg-muted/30 border border-border focus:border-[#00B87C] outline-none text-sm font-bold text-foreground"
                 >
                   {currentCategory?.files.map((f, index) => (
-                    <option key={index} value={f.name}>
+                    <option key={f.name} value={f.name}>
                       {f.name}
                     </option>
                   ))}

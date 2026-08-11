@@ -267,11 +267,10 @@ export function ManagerExpenseApprovals() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-5 py-3 text-sm font-bold transition-all relative whitespace-nowrap ${
-              activeTab === tab
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-t-lg"
-            }`}
+            className={`px-5 py-3 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === tab
+              ? "text-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-t-lg"
+              }`}
           >
             {tab} ({tabCounts[tab]})
             {activeTab === tab && (
@@ -323,6 +322,7 @@ export function ManagerExpenseApprovals() {
                       <div className="flex items-center gap-3">
                         <img
                           src={row.avatar}
+                          alt={`${row.empName}'s avatar`}
                           className="w-9 h-9 rounded-full border border-border"
                         />
                         <div>
@@ -363,13 +363,12 @@ export function ManagerExpenseApprovals() {
                     </td>
                     <td className="px-6 py-2">
                       <span
-                        className={`text-[11px] font-bold px-2 py-1 rounded-md border w-max ${
-                          row.status === "Approved"
-                            ? "text-emerald-600 bg-emerald-50 border-emerald-100"
-                            : row.status === "Rejected"
-                              ? "text-red-600 bg-red-50 border-red-100"
-                              : "text-amber-600 bg-amber-50 border-amber-100"
-                        }`}
+                        className={`text-[11px] font-bold px-2 py-1 rounded-md border w-max ${row.status === "Approved"
+                          ? "text-emerald-600 bg-emerald-50 border-emerald-100"
+                          : row.status === "Rejected"
+                            ? "text-red-600 bg-red-50 border-red-100"
+                            : "text-amber-600 bg-amber-50 border-amber-100"
+                          }`}
                       >
                         {row.status === "Approved"
                           ? "Approved → Finance"
@@ -395,11 +394,10 @@ export function ManagerExpenseApprovals() {
                                 ? "Receipt required for approval"
                                 : ""
                             }
-                            className={`px-3 py-1.5 text-xs font-bold rounded-lg shadow-sm transition-all ${
-                              row.receiptStatus === "Missing"
-                                ? "bg-secondary text-muted-foreground border border-border cursor-not-allowed opacity-50"
-                                : "bg-[#00B87C] text-white hover:bg-[#00a36d] active:scale-95"
-                            }`}
+                            className={`px-3 py-1.5 text-xs font-bold rounded-lg shadow-sm transition-all ${row.receiptStatus === "Missing"
+                              ? "bg-secondary text-muted-foreground border border-border cursor-not-allowed opacity-50"
+                              : "bg-[#00B87C] text-white hover:bg-[#00a36d] active:scale-95"
+                              }`}
                           >
                             Approve
                           </button>

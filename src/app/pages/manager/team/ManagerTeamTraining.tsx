@@ -284,11 +284,10 @@ export function ManagerTeamTraining() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-5 py-3 text-sm font-bold transition-all relative whitespace-nowrap ${
-                activeTab === tab
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-t-lg"
-              }`}
+              className={`px-5 py-3 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === tab
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-t-lg"
+                }`}
             >
               {tab}
               {activeTab === tab && (
@@ -334,6 +333,7 @@ export function ManagerTeamTraining() {
                       <div className="flex items-center gap-3">
                         <img
                           src={row.avatar}
+                          alt={`${row.name}'s avatar`}
                           className="w-9 h-9 rounded-full border border-border"
                         />
                         <div>
@@ -408,11 +408,10 @@ export function ManagerTeamTraining() {
                 <button
                   key={cat}
                   onClick={() => setCatalogFilter(cat)}
-                  className={`px-4 py-1.5 text-xs font-bold rounded-xl border transition-all ${
-                    catalogFilter === cat
-                      ? "bg-primary text-white border-primary shadow-sm"
-                      : "bg-background text-foreground border-border hover:bg-secondary"
-                  }`}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-xl border transition-all ${catalogFilter === cat
+                    ? "bg-primary text-white border-primary shadow-sm"
+                    : "bg-background text-foreground border-border hover:bg-secondary"
+                    }`}
                 >
                   {cat}
                 </button>
@@ -656,11 +655,10 @@ export function ManagerTeamTraining() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => toggleAssignee("all")}
-                    className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${
-                      selectedAssignees.length === MOCK_MY_TEAM.length
-                        ? "bg-primary text-white border-primary"
-                        : "bg-secondary text-muted-foreground border-border hover:bg-neutral-200 dark:hover:bg-zinc-800"
-                    }`}
+                    className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${selectedAssignees.length === MOCK_MY_TEAM.length
+                      ? "bg-primary text-white border-primary"
+                      : "bg-secondary text-muted-foreground border-border hover:bg-neutral-200 dark:hover:bg-zinc-800"
+                      }`}
                   >
                     All Team
                   </button>
@@ -668,11 +666,10 @@ export function ManagerTeamTraining() {
                     <button
                       key={emp.id}
                       onClick={() => toggleAssignee(emp.id)}
-                      className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${
-                        selectedAssignees.includes(emp.id)
-                          ? "bg-primary text-white border-primary"
-                          : "bg-background text-foreground border-border hover:bg-secondary"
-                      }`}
+                      className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${selectedAssignees.includes(emp.id)
+                        ? "bg-primary text-white border-primary"
+                        : "bg-background text-foreground border-border hover:bg-secondary"
+                        }`}
                     >
                       {emp.name}
                     </button>

@@ -64,13 +64,31 @@ const INITIAL_EXPORTS: ReportExport[] = [
   },
 ];
 
+function getStore<T>(key: string, defaultVal: T): T {
+  try {
+    const item = localStorage.getItem(`ems_${key}:v1`);
+    return item ? JSON.parse(item) : defaultVal;
+  } catch (e) {
+    console.warn(`Error reading localStorage key ${key}`, e);
+    return defaultVal;
+  }
+}
+
+function saveStore<T>(key: string, val: T) {
+  try {
+    localStorage.setItem(`ems_${key}:v1`, JSON.stringify(val));
+  } catch (e) {
+    console.error(`Error writing localStorage key ${key}`, e);
+  }
+}
+
 export const reportsService = {
   loadData(): ReportsState {
-    const templates = this.getStore<ReportTemplate[]>(
+    const templates = getStore<ReportTemplate[]>(
       "reports_templates",
       INITIAL_TEMPLATES,
     );
-    const exports = this.getStore<ReportExport[]>(
+    const exports = getStore<ReportExport[]>(
       "reports_exports",
       INITIAL_EXPORTS,
     );
@@ -78,27 +96,12 @@ export const reportsService = {
   },
 
   saveData(state: ReportsState) {
-    this.saveStore("reports_templates", state.templates);
-    this.saveStore("reports_exports", state.exports);
+    saveStore("reports_templates", state.templates);
+    saveStore("reports_exports", state.exports);
   },
 
-  getStore<T>(key: string, defaultVal: T): T {
-    try {
-      const item = localStorage.getItem(`ems_${key}`);
-      return item ? JSON.parse(item) : defaultVal;
-    } catch (e) {
-      console.warn(`Error reading localStorage key ${key}`, e);
-      return defaultVal;
-    }
-  },
-
-  saveStore<T>(key: string, val: T) {
-    try {
-      localStorage.setItem(`ems_${key}`, JSON.stringify(val));
-    } catch (e) {
-      console.error(`Error writing localStorage key ${key}`, e);
-    }
-  },
+  getStore,
+  saveStore,
 
   createExport(
     state: ReportsState,

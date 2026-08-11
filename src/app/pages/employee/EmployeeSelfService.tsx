@@ -468,7 +468,7 @@ export function EmployeeSelfService() {
             <div className="grid grid-cols-2 gap-3">
               {QUICK_ACTIONS.map((action, i) => (
                 <button
-                  key={i}
+                  key={action.id}
                   onClick={() => handleQuickAction(action.route)}
                   onMouseEnter={() => setHoveredAction(i)}
                   onMouseLeave={() => setHoveredAction(null)}
@@ -518,7 +518,7 @@ export function EmployeeSelfService() {
             <div className="space-y-4">
               {ANNOUNCEMENTS.map((ann, i) => (
                 <div
-                  key={i}
+                  key={ann.title}
                   className={`pl-3 border-l-[3px] py-1 ${
                     ann.priority === "green"
                       ? "border-primary"

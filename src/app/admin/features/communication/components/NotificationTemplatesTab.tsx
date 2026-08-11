@@ -11,6 +11,7 @@ import {
   Globe,
   Code,
 } from "lucide-react";
+import DOMPurify from "dompurify";
 import { communicationService } from "../services/communication.service";
 import {
   TemplateCategory,
@@ -27,7 +28,9 @@ export function NotificationTemplatesTab({
   ) => void;
 }) {
   const [category, setCategory] = useState<TemplateCategory>("welcome");
-  const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
+    null,
+  );
 
   const { data: templates, mutate: mutateTemplates } = useSWR(
     ["templates", category],
@@ -35,14 +38,8 @@ export function NotificationTemplatesTab({
   );
 
   const activeTemplate =
-    templates?.find((t) => t.template_id === activeTemplateId) ||
+    templates?.find((t) => t.template_id === selectedTemplateId) ||
     templates?.[0];
-
-  useEffect(() => {
-    if (templates && templates.length > 0 && !activeTemplateId) {
-      setActiveTemplateId(templates[0].template_id);
-    }
-  }, [templates, activeTemplateId]);
 
   const [subjectLine, setSubjectLine] = useState("");
   const [bodyHtml, setBodyHtml] = useState("");
@@ -168,9 +165,9 @@ export function NotificationTemplatesTab({
 
   const validation = activeTemplate
     ? communicationService.validateTemplateVariables(
-        bodyHtml,
-        activeTemplate.available_variables,
-      )
+      bodyHtml,
+      activeTemplate.available_variables,
+    )
     : { valid: true, invalidVars: [] };
 
   return (
@@ -186,7 +183,7 @@ export function NotificationTemplatesTab({
               key={cat.id}
               onClick={() => {
                 setCategory(cat.id);
-                setActiveTemplateId(null);
+                setSelectedTemplateId(null);
               }}
               className={`w-full text-left px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${category === cat.id ? "bg-indigo-50 text-indigo-700" : "text-gray-600 hover:bg-gray-100"}`}
             >
@@ -317,9 +314,10 @@ export function NotificationTemplatesTab({
                 <div
                   className="p-4 flex-1 bg-white overflow-y-auto prose prose-sm max-w-none"
                   dangerouslySetInnerHTML={{
-                    __html:
+                    __html: DOMPurify.sanitize(
                       bodyHtml ||
                       '<p class="text-gray-400 italic">Empty body...</p>',
+                    ),
                   }}
                 />
               </div>

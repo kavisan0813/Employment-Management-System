@@ -260,9 +260,9 @@ export function FinanceGoals() {
         </div>
         <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
           <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${overallProgress}%` }}
-            className="h-full bg-[#00B87C] rounded-full"
+            initial={{ x: "-100%" }}
+            animate={{ x: `-${100 - (overallProgress)}%` }}
+            className="h-full bg-[#00B87C] rounded-full w-full"
           />
         </div>
       </div>
@@ -283,11 +283,10 @@ export function FinanceGoals() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-4 text-[12px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${
-                activeTab === tab
+              className={`pb-4 text-[12px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${activeTab === tab
                   ? "text-[#00B87C]"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               {tab}
               {activeTab === tab && (
@@ -465,9 +464,9 @@ const GoalItem = forwardRef<
       <div className="space-y-2">
         <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
           <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${goal.progress}%` }}
-            className="h-full bg-[#00B87C] rounded-full"
+            initial={{ x: "-100%" }}
+            animate={{ x: `-${100 - (goal.progress)}%` }}
+            className="h-full bg-[#00B87C] rounded-full w-full"
           />
         </div>
         <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-widest">
@@ -644,11 +643,10 @@ function AddGoalModal({ isOpen, onClose, onSubmit }: AddGoalModalProps) {
                     key={cat}
                     type="button"
                     onClick={() => setCategory(cat)}
-                    className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-widest transition-all ${
-                      category === cat
+                    className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-widest transition-all ${category === cat
                         ? "bg-[#00B87C] text-white border-[#00B87C]"
                         : "border-border text-foreground hover:border-[#00B87C]"
-                    }`}
+                      }`}
                   >
                     {cat}
                   </button>
@@ -666,15 +664,14 @@ function AddGoalModal({ isOpen, onClose, onSubmit }: AddGoalModalProps) {
                     key={p}
                     type="button"
                     onClick={() => setPriority(p)}
-                    className={`flex-1 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-widest transition-all ${
-                      priority === p
+                    className={`flex-1 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-widest transition-all ${priority === p
                         ? p === "High"
                           ? "bg-rose-500 text-white border-rose-500"
                           : p === "Medium"
                             ? "bg-amber-500 text-white border-amber-500"
                             : "bg-blue-500 text-white border-blue-500"
                         : `border-border hover:border-[#00B87C] ${p === "High" ? "text-rose-600" : p === "Medium" ? "text-amber-600" : "text-blue-600"}`
-                    }`}
+                      }`}
                   >
                     {p}
                   </button>

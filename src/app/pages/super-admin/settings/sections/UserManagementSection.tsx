@@ -218,7 +218,7 @@ export function UserManagementSection() {
               const statusStyle = getStatusStyles(u.status);
               return (
                 <tr
-                  key={idx}
+                  key={u.id}
                   style={{
                     borderBottom: "1px solid var(--border)",
                     height: "56px",
@@ -517,7 +517,7 @@ export function UserManagementSection() {
         }}
       >
         {pendingInvites.map((p, idx) => (
-          <div key={idx} className="flex justify-between items-center py-2">
+          <div key={p.email} className="flex justify-between items-center py-2">
             <div className="flex items-center gap-4">
               <span
                 style={{

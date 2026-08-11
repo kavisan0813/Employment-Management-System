@@ -343,15 +343,14 @@ function SummaryCard({
         </h3>
         {chip && (
           <span
-            className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${
-              chipColor === "green"
+            className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${chipColor === "green"
                 ? "bg-emerald-500/10 text-primary border-primary/20"
                 : chipColor === "amber"
                   ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
                   : chipColor === "purple"
                     ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
                     : "bg-sky-500/10 text-sky-600 border-sky-500/20"
-            }`}
+              }`}
           >
             {chip}
           </span>
@@ -383,7 +382,7 @@ function SectionHeader({ title, count }: { title: string; count?: string }) {
           {title}
         </h3>
       </div>
-      {count && (
+      {Boolean(count) && (
         <span className="text-[11px] font-bold text-muted-foreground/60">
           {count}
         </span>
@@ -695,11 +694,10 @@ export function ManagerPersonalExpenses() {
                       tab as "All" | "Pending" | "Approved" | "Rejected",
                     )
                   }
-                  className={`py-4 text-[13px] font-black relative transition-all ${
-                    activeTab === tab
+                  className={`py-4 text-[13px] font-black relative transition-all ${activeTab === tab
                       ? "text-primary"
                       : "text-muted-foreground hover:text-foreground"
-                  }`}
+                    }`}
                 >
                   {tab}
                   {activeTab === tab && (
@@ -973,13 +971,12 @@ export function ManagerPersonalExpenses() {
                     />
                   )}
                   <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 z-10 border ${
-                      step.status === "completed"
+                    className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 z-10 border ${step.status === "completed"
                         ? "bg-primary text-white border-primary"
                         : step.status === "active"
                           ? "border-sky-500 bg-sky-500/10 animate-pulse"
                           : "border-border bg-secondary"
-                    }`}
+                      }`}
                   >
                     {step.status === "completed" && <CheckCircle2 size={12} />}
                   </div>
@@ -1053,11 +1050,10 @@ export function ManagerPersonalExpenses() {
                       <button
                         key={cat}
                         onClick={() => setNewExpenseCat(cat)}
-                        className={`px-4 py-2 rounded-xl text-[11px] font-black whitespace-nowrap transition-all border ${
-                          newExpenseCat === cat
+                        className={`px-4 py-2 rounded-xl text-[11px] font-black whitespace-nowrap transition-all border ${newExpenseCat === cat
                             ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
                             : "bg-card border-border text-foreground hover:border-primary/50"
-                        }`}
+                          }`}
                       >
                         {cat}
                       </button>

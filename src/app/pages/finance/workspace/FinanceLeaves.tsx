@@ -612,7 +612,7 @@ export function FinanceLeaves() {
                       if (!isCurrentMonth) {
                         return (
                           <div
-                            key={i}
+                            key={calDay.toISOString()}
                             className="min-h-[80px] p-2 rounded-xl border border-border/50 bg-muted/10 flex flex-col"
                           >
                             <span className="text-muted-foreground/40 text-[12px] font-bold">
@@ -647,7 +647,7 @@ export function FinanceLeaves() {
 
                       return (
                         <div
-                          key={i}
+                          key={calDay.toISOString()}
                           className={`min-h-[80px] p-2 rounded-xl border transition-colors flex flex-col ${bgClass}`}
                         >
                           <span

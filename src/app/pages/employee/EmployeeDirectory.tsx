@@ -520,49 +520,47 @@ export function EmployeeDirectory() {
     setSearch("");
   };
 
-  const applyFilters = (list: Colleague[]) => {
-    return list.filter((c) => {
-      const matchesSearch =
-        search === "" ||
-        c.name.toLowerCase().includes(search.toLowerCase()) ||
-        c.id.toLowerCase().includes(search.toLowerCase()) ||
-        c.department.toLowerCase().includes(search.toLowerCase()) ||
-        c.designation.toLowerCase().includes(search.toLowerCase()) ||
-        c.email.toLowerCase().includes(search.toLowerCase());
+  const { filteredTeam, filteredAll } = useMemo(() => {
+    const applyFiltersLocal = (list: Colleague[]) => {
+      return list.filter((c) => {
+        const matchesSearch =
+          search === "" ||
+          c.name.toLowerCase().includes(search.toLowerCase()) ||
+          c.id.toLowerCase().includes(search.toLowerCase()) ||
+          c.department.toLowerCase().includes(search.toLowerCase()) ||
+          c.designation.toLowerCase().includes(search.toLowerCase()) ||
+          c.email.toLowerCase().includes(search.toLowerCase());
 
-      const matchesDept =
-        filters.department === "All Departments" ||
-        c.department === filters.department;
-      const matchesRole =
-        filters.role === "All Roles" || c.role === filters.role;
-      const matchesLocation =
-        filters.location === "All Locations" ||
-        c.location.includes(filters.location);
-      const matchesStatus =
-        filters.status === "All Status" || c.status === filters.status;
-      const matchesAvail =
-        filters.availability === "All Availability" ||
-        c.availability === filters.availability;
+        const matchesDept =
+          filters.department === "All Departments" ||
+          c.department === filters.department;
+        const matchesRole =
+          filters.role === "All Roles" || c.role === filters.role;
+        const matchesLocation =
+          filters.location === "All Locations" ||
+          c.location.includes(filters.location);
+        const matchesStatus =
+          filters.status === "All Status" || c.status === filters.status;
+        const matchesAvail =
+          filters.availability === "All Availability" ||
+          c.availability === filters.availability;
 
-      return (
-        matchesSearch &&
-        matchesDept &&
-        matchesRole &&
-        matchesLocation &&
-        matchesStatus &&
-        matchesAvail
-      );
-    });
-  };
+        return (
+          matchesSearch &&
+          matchesDept &&
+          matchesRole &&
+          matchesLocation &&
+          matchesStatus &&
+          matchesAvail
+        );
+      });
+    };
 
-  const filteredTeam = useMemo(
-    () => applyFilters(TEAM_COLLEAGUES),
-    [search, filters],
-  );
-  const filteredAll = useMemo(
-    () => applyFilters(ALL_OTHER_COLLEAGUES),
-    [search, filters],
-  );
+    return {
+      filteredTeam: applyFiltersLocal(TEAM_COLLEAGUES),
+      filteredAll: applyFiltersLocal(ALL_OTHER_COLLEAGUES),
+    };
+  }, [search, filters]);
 
   const hasActiveFilters =
     search !== "" ||

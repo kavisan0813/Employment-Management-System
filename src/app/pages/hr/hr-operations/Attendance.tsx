@@ -169,7 +169,7 @@ const calculateHours = (
 
 // Initialize records from localStorage or initial mock data mapping
 const initialRecords: AttendanceRecord[] = (() => {
-  const local = localStorage.getItem("viyan_attendance_records");
+  const local = localStorage.getItem("viyan_attendance_records:v1");
   if (local) {
     try {
       return JSON.parse(local);
@@ -197,7 +197,7 @@ const initialRecords: AttendanceRecord[] = (() => {
     });
   });
 
-  localStorage.setItem("viyan_attendance_records", JSON.stringify(generated));
+  localStorage.setItem("viyan_attendance_records:v1", JSON.stringify(generated));
   return generated;
 })();
 
@@ -295,11 +295,18 @@ function StatusBadge({ status }: { status: string }) {
 
 export function Attendance() {
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   if (user?.role === "Employee") {
     return <EmployeeAttendance />;
   }
+
+  return <AdminAttendance />;
+}
+
+function AdminAttendance() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   const [view, setView] = useState<"table" | "calendar">("table");
   const [selectedDept, setSelectedDept] = useState("All Departments");
   const [selectedEmpId, setSelectedEmpId] = useState("All Employees");
@@ -464,7 +471,7 @@ export function Attendance() {
 
     const updated = [newRecord, ...records];
     setRecords(updated);
-    localStorage.setItem("viyan_attendance_records", JSON.stringify(updated));
+    localStorage.setItem("viyan_attendance_records:v1", JSON.stringify(updated));
 
     setShowAddModal(false);
     setToastMessage("Attendance record added successfully");
@@ -521,7 +528,7 @@ export function Attendance() {
 
     setRecords(updatedRecords);
     localStorage.setItem(
-      "viyan_attendance_records",
+      "viyan_attendance_records:v1",
       JSON.stringify(updatedRecords),
     );
 
@@ -535,7 +542,7 @@ export function Attendance() {
     if (!deleteConfirm) return;
     const updated = records.filter((rec) => rec.id !== deleteConfirm);
     setRecords(updated);
-    localStorage.setItem("viyan_attendance_records", JSON.stringify(updated));
+    localStorage.setItem("viyan_attendance_records:v1", JSON.stringify(updated));
     setDeleteConfirm(null);
     setToastMessage("Attendance record deleted successfully");
     setShowSuccessToast(true);
@@ -1756,7 +1763,7 @@ export function Attendance() {
           },
         ].map((card, i) => (
           <div
-            key={i}
+            key={card.label}
             className="group p-4 rounded-2xl border bg-card shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:-translate-y-0.5"
             style={{ borderColor: "var(--border)" }}
           >
@@ -2431,7 +2438,7 @@ export function Attendance() {
                 { label: "Late Mark", value: "12", color: "#F59E0B" },
               ].map((stat, i) => (
                 <div
-                  key={i}
+                  key={stat.label}
                   className="p-3 rounded-xl bg-neutral-50 dark:bg-zinc-800/30 border"
                   style={{ borderColor: "var(--border)" }}
                 >
@@ -2458,7 +2465,7 @@ export function Attendance() {
                   { label: "Consistency", value: 94, color: "bg-emerald-500" },
                   { label: "Balance", value: 72, color: "bg-emerald-500" },
                 ].map((bar, i) => (
-                  <div key={i} className="space-y-1">
+                  <div key={bar.label} className="space-y-1">
                     <div className="flex justify-between text-[11px] font-bold">
                       <span style={{ color: "var(--foreground)" }}>
                         {bar.label}
@@ -2504,7 +2511,7 @@ export function Attendance() {
                     dataKey="value"
                   >
                     {statusDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell key={`cell-${entry.color}`} fill={entry.color} />
                     ))}
                   </Pie>
                 </PieChart>
@@ -2524,7 +2531,7 @@ export function Attendance() {
 
             <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-4">
               {statusDistribution.map((item, i) => (
-                <div key={i} className="flex items-center justify-between">
+                <div key={item.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <div
                       className="w-2 h-2 rounded-full"

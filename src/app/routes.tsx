@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, Navigate, useNavigate } from "react-router";
+import { createBrowserRouter, Navigate, useNavigate, useRouteError } from "react-router";
 import { Layout } from "./components/Layout";
 import { Login } from "./pages/shared/Login";
 import { Signup } from "./pages/shared/Signup";
@@ -1013,13 +1013,30 @@ function RootRedirect() {
   );
 }
 
+function RootErrorBoundary() {
+  const error = useRouteError() as any;
+  return (
+    <div className="flex h-screen w-full flex-col items-center justify-center p-4 text-center">
+      <h1 className="text-2xl font-bold">Something went wrong</h1>
+      <p className="mt-2 text-gray-500">{error?.message || "An unexpected error occurred"}</p>
+      <button
+        onClick={() => window.location.reload()}
+        className="mt-6 rounded-md bg-[#00B87C] px-4 py-2 text-white hover:bg-[#00B87C]/90 transition-colors"
+      >
+        Reload Page
+      </button>
+    </div>
+  );
+}
+
 // ── Router Definition ─────────────────────────────────────────
 export const router = createBrowserRouter([
-  { path: "/login", Component: Login },
-  { path: "/signup", Component: Signup },
-  { path: "/signup-success", Component: AuthSuccess },
+  { path: "/login", Component: Login, ErrorBoundary: RootErrorBoundary },
+  { path: "/signup", Component: Signup, ErrorBoundary: RootErrorBoundary },
+  { path: "/signup-success", Component: AuthSuccess, ErrorBoundary: RootErrorBoundary },
   {
     path: "/platform-admin",
+    ErrorBoundary: RootErrorBoundary,
     element: (
       <Protected>
         <Suspense fallback={<PageLoader />}>
@@ -1094,6 +1111,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
+    ErrorBoundary: RootErrorBoundary,
     element: (
       <AuthGuard>
         <Layout />

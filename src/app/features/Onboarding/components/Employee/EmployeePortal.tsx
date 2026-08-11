@@ -3,13 +3,8 @@ import {
   Sprout,
   Calendar,
   Clock,
-  CheckCircle2,
-  FileText,
-  Check,
-  ShieldCheck,
   Video,
   BookOpen,
-  Layers,
 } from "lucide-react";
 import { useAuth } from "../../../../context/AuthContext";
 import { Progress } from "./Progress";
@@ -33,7 +28,7 @@ export function EmployeePortal() {
   // Track onboarding queue state reactively
   const [queue, setQueue] = useState<any[]>(() => {
     try {
-      return JSON.parse(localStorage.getItem("viyan_onboarding_queue") || "[]");
+      return JSON.parse(localStorage.getItem("viyan_onboarding_queue:v1") || "[]");
     } catch {
       return [];
     }
@@ -64,8 +59,8 @@ export function EmployeePortal() {
       return {
         ...empty,
         ...JSON.parse(
-          localStorage.getItem(`viyan_candidate_profile_${user?.email}`) ||
-            "{}",
+          localStorage.getItem(`viyan_candidate_profile_${user?.email}:v1`) ||
+          "{}",
         ).taskState,
       };
     } catch {
@@ -86,7 +81,7 @@ export function EmployeePortal() {
     const syncData = () => {
       try {
         const nextQueue = JSON.parse(
-          localStorage.getItem("viyan_onboarding_queue") || "[]",
+          localStorage.getItem("viyan_onboarding_queue:v1") || "[]",
         );
         setQueue(nextQueue);
 
@@ -95,12 +90,12 @@ export function EmployeePortal() {
         );
         if (currentHire) {
           const allPhases = JSON.parse(
-            localStorage.getItem("viyan_onboarding_phases") || "{}",
+            localStorage.getItem("viyan_onboarding_phases:v1") || "{}",
           );
           setPhases(allPhases[currentHire.id] || []);
 
           const allDocs = JSON.parse(
-            localStorage.getItem("viyan_onboarding_documents") || "[]",
+            localStorage.getItem("viyan_onboarding_documents:v1") || "[]",
           );
           setDocuments(
             allDocs.filter((d: any) =>
@@ -110,7 +105,7 @@ export function EmployeePortal() {
 
           setTemplates(
             JSON.parse(
-              localStorage.getItem("viyan_onboarding_templates") || "[]",
+              localStorage.getItem("viyan_onboarding_templates:v1") || "[]",
             ),
           );
         }
@@ -209,24 +204,24 @@ export function EmployeePortal() {
 
     // Read the absolute latest queue from local storage to avoid stale mapping!
     const latestQueue = JSON.parse(
-      localStorage.getItem("viyan_onboarding_queue") || "[]",
+      localStorage.getItem("viyan_onboarding_queue:v1") || "[]",
     );
     const updatedQueue = latestQueue.map((q: any) =>
       q.id === hire.id
         ? {
-            ...q,
-            completedPolicies: finalPolicies,
-            completedTraining: finalTraining,
-            completedForms: finalForms,
-            acknowledgedDocs: finalAcknowledged,
-            progress: nextPercent,
-            status: nextPercent === 100 ? "completed" : "on-track",
-          }
+          ...q,
+          completedPolicies: finalPolicies,
+          completedTraining: finalTraining,
+          completedForms: finalForms,
+          acknowledgedDocs: finalAcknowledged,
+          progress: nextPercent,
+          status: nextPercent === 100 ? "completed" : "on-track",
+        }
         : q,
     );
     setQueue(updatedQueue);
     localStorage.setItem(
-      "viyan_onboarding_queue",
+      "viyan_onboarding_queue:v1",
       JSON.stringify(updatedQueue),
     );
     window.dispatchEvent(new Event("viyan:onboarding-updated"));
@@ -237,7 +232,7 @@ export function EmployeePortal() {
     setTaskState(nextState);
     if (user?.email) {
       localStorage.setItem(
-        `viyan_candidate_profile_${user.email}`,
+        `viyan_candidate_profile_${user.email}:v1`,
         JSON.stringify({
           taskState: nextState,
           updatedAt: new Date().toISOString(),
@@ -262,10 +257,10 @@ export function EmployeePortal() {
     setPhases(nextPhases);
 
     const allPhases = JSON.parse(
-      localStorage.getItem("viyan_onboarding_phases") || "{}",
+      localStorage.getItem("viyan_onboarding_phases:v1") || "{}",
     );
     allPhases[hire.id] = nextPhases;
-    localStorage.setItem("viyan_onboarding_phases", JSON.stringify(allPhases));
+    localStorage.setItem("viyan_onboarding_phases:v1", JSON.stringify(allPhases));
 
     updateProgress(nextPhases, documents);
   };
@@ -279,14 +274,14 @@ export function EmployeePortal() {
     setDocuments(nextDocs);
 
     const allDocs = JSON.parse(
-      localStorage.getItem("viyan_onboarding_documents") || "[]",
+      localStorage.getItem("viyan_onboarding_documents:v1") || "[]",
     );
     const updatedAllDocs = allDocs.map((d: any) => {
       const match = nextDocs.find((nd) => nd.id === d.id);
       return match ? match : d;
     });
     localStorage.setItem(
-      "viyan_onboarding_documents",
+      "viyan_onboarding_documents:v1",
       JSON.stringify(updatedAllDocs),
     );
 
@@ -295,19 +290,6 @@ export function EmployeePortal() {
       "Document Uploaded",
       "success",
       "Your file is uploaded and is waiting for HR verification.",
-    );
-  };
-
-  const handlePolicyAcknowledge = (policyId: string) => {
-    const completed = hire.completedPolicies || [];
-    if (completed.includes(policyId)) return;
-
-    const nextCompleted = [...completed, policyId];
-    updateProgress(phases, documents, undefined, nextCompleted, undefined, undefined);
-    showToast(
-      "Policy Reviewed",
-      "success",
-      "Thank you for confirming your policy review.",
     );
   };
 
@@ -322,15 +304,6 @@ export function EmployeePortal() {
       "success",
       "Orientation course completed successfully!",
     );
-  };
-
-  const handleFormSign = (formId: string) => {
-    const completed = hire.completedForms || [];
-    if (completed.includes(formId)) return;
-
-    const nextCompleted = [...completed, formId];
-    updateProgress(phases, documents, undefined, undefined, undefined, nextCompleted);
-    showToast("Form Signed", "success", "Form has been signed successfully.");
   };
 
   const handleDocAcknowledge = (docId: string) => {
@@ -349,14 +322,14 @@ export function EmployeePortal() {
   const submitCandidateProcess = () => {
     if (!user?.email) return;
     const accounts = JSON.parse(
-      localStorage.getItem("viyan_registered_users") || "[]",
+      localStorage.getItem("viyan_registered_users:v1") || "[]",
     );
     const account = accounts.find(
       (item: { email: string }) => item.email === user.email,
     );
 
     localStorage.setItem(
-      "viyan_registered_users",
+      "viyan_registered_users:v1",
       JSON.stringify(
         accounts.map((item: { email: string }) =>
           item.email === user.email
@@ -367,14 +340,14 @@ export function EmployeePortal() {
     );
 
     const nextQueue = JSON.parse(
-      localStorage.getItem("viyan_onboarding_queue") || "[]",
+      localStorage.getItem("viyan_onboarding_queue:v1") || "[]",
     );
     if (
       !nextQueue.some((item: { email?: string }) => item.email === user.email)
     ) {
       const name = user.name;
       localStorage.setItem(
-        "viyan_onboarding_queue",
+        "viyan_onboarding_queue:v1",
         JSON.stringify([
           {
             id: `onb-${Date.now()}`,
@@ -401,7 +374,7 @@ export function EmployeePortal() {
       );
     } else {
       localStorage.setItem(
-        "viyan_onboarding_queue",
+        "viyan_onboarding_queue:v1",
         JSON.stringify(
           nextQueue.map((item: { email?: string }) =>
             item.email === user.email
@@ -494,11 +467,10 @@ export function EmployeePortal() {
             <button
               key={tab.key}
               onClick={() => setActiveSubTab(tab.key)}
-              className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${
-                activeSubTab === tab.key
-                  ? "border-[#00B87C] text-[#00B87C]"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
+              className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${activeSubTab === tab.key
+                ? "border-[#00B87C] text-[#00B87C]"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
             >
               {tab.label}
             </button>
@@ -629,7 +601,7 @@ export function EmployeePortal() {
               key: "company-documents",
               label: `Company Documents (${documents.filter((d) => d.issuedByOrg && !(hire.acknowledgedDocs || []).includes(d.id)).length})`,
             },
-           
+
             {
               key: "training",
               label: `Training (${(matchedTemplate?.training || []).length - (hire.completedTraining || []).length})`,
@@ -643,11 +615,10 @@ export function EmployeePortal() {
           <button
             key={tab.key}
             onClick={() => setActiveAssignedSubTab(tab.key)}
-            className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${
-              activeAssignedSubTab === tab.key
-                ? "border-[#00B87C] text-[#00B87C]"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
+            className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${activeAssignedSubTab === tab.key
+              ? "border-[#00B87C] text-[#00B87C]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
           >
             {tab.label}
           </button>
@@ -709,11 +680,10 @@ export function EmployeePortal() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span
-                      className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                        doc.status === "uploaded"
-                          ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15"
-                          : "bg-muted text-muted-foreground"
-                      }`}
+                      className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${doc.status === "uploaded"
+                        ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15"
+                        : "bg-muted text-muted-foreground"
+                        }`}
                     >
                       {doc.status === "uploaded"
                         ? `${doc.verificationStatus || "uploaded"}`
@@ -786,11 +756,10 @@ export function EmployeePortal() {
                     </div>
                     <div className="flex items-center gap-3">
                       <span
-                        className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                          acknowledged
-                            ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15"
-                            : "bg-muted text-muted-foreground"
-                        }`}
+                        className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${acknowledged
+                          ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15"
+                          : "bg-muted text-muted-foreground"
+                          }`}
                       >
                         {acknowledged ? "complete" : "pending"}
                       </span>

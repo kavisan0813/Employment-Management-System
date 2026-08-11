@@ -273,10 +273,10 @@ export function Signup() {
             .slice(0, 2) || "JD",
       };
 
-      const regListRaw = localStorage.getItem("viyan_registered_users");
+      const regListRaw = localStorage.getItem("viyan_registered_users:v1");
       const regList = regListRaw ? JSON.parse(regListRaw) : [];
       regList.push(registeredUser);
-      localStorage.setItem("viyan_registered_users", JSON.stringify(regList));
+      localStorage.setItem("viyan_registered_users:v1", JSON.stringify(regList));
 
       // Auto-login the user into current context
       login({

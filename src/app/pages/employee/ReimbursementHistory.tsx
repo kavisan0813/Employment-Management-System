@@ -159,7 +159,7 @@ export function ReimbursementHistory() {
             <tbody className="divide-y divide-slate-50">
               {history.map((item, i) => (
                 <tr
-                  key={i}
+                  key={item.id}
                   className="group hover:bg-[#00B87C]/[0.08]/50 transition-colors"
                 >
                   <td className="px-8 py-5">

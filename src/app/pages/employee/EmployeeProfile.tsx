@@ -104,6 +104,96 @@ const docs = [
   { name: "Last Appraisal.pdf", date: "15 Apr 2025" },
 ];
 
+function QuickInfoItem({
+  icon,
+  label,
+  value,
+  href,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string | undefined;
+  href?: string;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0 bg-secondary text-primary">
+        {icon}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          {label}
+        </p>
+        {href ? (
+          <a
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[13px] font-bold truncate block hover:underline text-foreground"
+          >
+            {value}
+          </a>
+        ) : (
+          <p className="text-[13px] font-bold truncate text-foreground">
+            {value}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function OrgBox({
+  name,
+  title,
+  avatar,
+  highlighted,
+  onSelect,
+}: {
+  name: string;
+  title: string;
+  avatar?: string;
+  highlighted?: boolean;
+  onSelect?: () => void;
+}) {
+  return (
+    <div
+      className={`flex items-center gap-3 p-3 rounded-xl min-w-[200px] shrink-0 transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] cursor-pointer border ${highlighted ? "bg-secondary border-primary" : "bg-background border-border"}`}
+      onClick={() => (highlighted ? null : onSelect?.())}
+    >
+      <img
+        src={
+          avatar ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
+        }
+        className={`w-10 h-10 rounded-full object-cover border-2 ${highlighted ? "border-primary" : "border-border"}`}
+        alt={name}
+      />
+      <div className="min-w-0">
+        <p
+          className={`text-sm font-bold truncate ${highlighted ? "text-primary" : "text-foreground"}`}
+        >
+          {name}
+        </p>
+        <p className="text-xs font-medium truncate text-muted-foreground">
+          {title}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function InfoField({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[12px] font-semibold uppercase tracking-wider mb-1 text-muted-foreground">
+        {label}
+      </p>
+      <p className="text-[15px] font-bold text-foreground">{value}</p>
+    </div>
+  );
+}
+
 export function EmployeeProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -161,7 +251,7 @@ export function EmployeeProfile() {
       hasPermissionKey(P.EMPLOYEES_FULL) ||
       hasPermissionKey(P.PAYROLL_FULL) ||
       scope === "organization";
-      
+
     if (hasOrgAccess) return tabs;
 
     // Department/Team managers see limited tabs (no Payroll or Documents)
@@ -350,88 +440,6 @@ NexHR Management
     return () => navigate("/");
   };
 
-  const QuickInfoItem = ({
-    icon,
-    label,
-    value,
-    href,
-  }: {
-    icon: React.ReactNode;
-    label: string;
-    value: string | undefined;
-    href?: string;
-  }) => (
-    <div className="flex items-center gap-3">
-      <div className="flex items-center justify-center w-8 h-8 rounded-lg shrink-0 bg-secondary text-primary">
-        {icon}
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          {label}
-        </p>
-        {href ? (
-          <a
-            href={href}
-            target="_blank"
-            rel="noreferrer"
-            className="text-[13px] font-bold truncate block hover:underline text-foreground"
-          >
-            {value}
-          </a>
-        ) : (
-          <p className="text-[13px] font-bold truncate text-foreground">
-            {value}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-
-  const OrgBox = ({
-    name,
-    title,
-    avatar,
-    highlighted,
-  }: {
-    name: string;
-    title: string;
-    avatar?: string;
-    highlighted?: boolean;
-  }) => (
-    <div
-      className={`flex items-center gap-3 p-3 rounded-xl min-w-[200px] shrink-0 transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] cursor-pointer border ${highlighted ? "bg-secondary border-primary" : "bg-background border-border"}`}
-      onClick={() => (highlighted ? null : navigate(`/employees`))}
-    >
-      <img
-        src={
-          avatar ||
-          `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
-        }
-        className={`w-10 h-10 rounded-full object-cover border-2 ${highlighted ? "border-primary" : "border-border"}`}
-        alt={name}
-      />
-      <div className="min-w-0">
-        <p
-          className={`text-sm font-bold truncate ${highlighted ? "text-primary" : "text-foreground"}`}
-        >
-          {name}
-        </p>
-        <p className="text-xs font-medium truncate text-muted-foreground">
-          {title}
-        </p>
-      </div>
-    </div>
-  );
-
-  const InfoField = ({ label, value }: { label: string; value: string }) => (
-    <div>
-      <p className="text-[12px] font-semibold uppercase tracking-wider mb-1 text-muted-foreground">
-        {label}
-      </p>
-      <p className="text-[15px] font-bold text-foreground">{value}</p>
-    </div>
-  );
-
   return (
     <div className="max-w-[1400px] animate-in fade-in duration-700">
       {/* Back button */}
@@ -565,7 +573,7 @@ NexHR Management
                     className="p-2.5 rounded-xl transition-colors hover:scale-105 bg-secondary text-primary"
                     title="Schedule Meet"
                     onClick={() =>
-                      window.open("https://calendar.google.com", "_blank")
+                      window.open("https://calendar.google.com", "_blank", "noopener,noreferrer")
                     }
                   >
                     <CalendarIcon size={18} />
@@ -768,6 +776,7 @@ NexHR Management
                       name="Sarah Jenkins"
                       title="CEO"
                       avatar="https://i.pravatar.cc/150?u=sarah"
+                      onSelect={() => navigate("/employees")}
                     />
                     <ChevronRight
                       size={20}
@@ -777,6 +786,7 @@ NexHR Management
                       name="David Chen"
                       title="VP Engineering"
                       avatar="https://i.pravatar.cc/150?u=david"
+                      onSelect={() => navigate("/employees")}
                     />
                     <ChevronRight
                       size={20}
@@ -786,6 +796,7 @@ NexHR Management
                       name={employee.manager || "Engineering Manager"}
                       title="Manager"
                       avatar={`https://i.pravatar.cc/150?u=${employee.manager}`}
+                      onSelect={() => navigate("/employees")}
                     />
                     <ChevronRight
                       size={20}
@@ -900,7 +911,7 @@ NexHR Management
                   <div className="space-y-4">
                     {(employee.promotions || []).map((promo, idx) => (
                       <div
-                        key={idx}
+                        key={promo.newDesignation}
                         className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-border bg-background gap-4"
                       >
                         <div>
@@ -937,7 +948,7 @@ NexHR Management
                   <div className="space-y-4">
                     {(employee.transfers || []).map((tr, idx) => (
                       <div
-                        key={idx}
+                        key={tr.type}
                         className="flex items-center justify-between p-4 rounded-xl border border-border bg-background"
                       >
                         <div>
@@ -950,13 +961,12 @@ NexHR Management
                           </p>
                         </div>
                         <span
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                            tr.status === "Approved"
-                              ? "bg-primary/10 text-primary border border-primary/20"
-                              : tr.status === "Rejected"
-                                ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
-                                : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                          }`}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold ${tr.status === "Approved"
+                            ? "bg-primary/10 text-primary border border-primary/20"
+                            : tr.status === "Rejected"
+                              ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                              : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                            }`}
                         >
                           {tr.status}
                         </span>
@@ -1005,7 +1015,7 @@ NexHR Management
                 <div className="space-y-4">
                   {docs.map((doc, i) => (
                     <div
-                      key={i}
+                      key={doc.name}
                       className="flex items-center justify-between p-4 rounded-xl transition-all hover:shadow-sm bg-background border border-border"
                     >
                       <div className="flex items-center gap-4">
@@ -1250,7 +1260,7 @@ NexHR Management
                     },
                   ].map((t, i) => (
                     <div
-                      key={i}
+                      key={t.id}
                       className="flex items-center justify-between p-4 rounded-xl border border-border bg-background"
                     >
                       <div>
@@ -1286,7 +1296,7 @@ NexHR Management
                 <div className="space-y-4">
                   {(employee.assets || []).map((ast, i) => (
                     <div
-                      key={i}
+                      key={ast.id}
                       className="flex items-center justify-between p-4 rounded-xl border border-border bg-background"
                     >
                       <div className="flex items-center gap-4">
@@ -1403,7 +1413,7 @@ NexHR Management
               <div className="absolute left-[27px] top-4 bottom-4 w-[2px] z-0 rounded-full bg-border"></div>
               {activities.map((act, i) => (
                 <div
-                  key={i}
+                  key={act.title}
                   className="flex items-start gap-4 relative z-10 group cursor-pointer"
                   onClick={getActivityRoute(act.title)}
                 >
@@ -1469,7 +1479,7 @@ NexHR Management
             <div className="space-y-3">
               {docs.map((doc, i) => (
                 <div
-                  key={i}
+                  key={doc.name}
                   className="flex items-center justify-between p-3 rounded-xl transition-colors hover:bg-primary/10 bg-background border border-border"
                 >
                   <div className="flex items-center gap-3">

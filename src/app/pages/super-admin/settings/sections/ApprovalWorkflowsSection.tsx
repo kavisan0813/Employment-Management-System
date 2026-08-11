@@ -137,7 +137,7 @@ export function ApprovalWorkflowsSection() {
             <tbody>
               {workflows.map((w, idx) => (
                 <tr
-                  key={idx}
+                  key={w.name}
                   className="border-b border-gray-100 hover:bg-[#00B87C]/[0.08] transition-all text-[13px]"
                 >
                   <td className="py-3 px-4">

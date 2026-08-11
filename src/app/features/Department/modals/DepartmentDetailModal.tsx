@@ -1,10 +1,10 @@
+import React, { useEffect, useState } from "react";
 import {
   X,
   Building2,
   Users,
   CheckCircle2,
   Calendar,
-  User,
   Network,
   AlignLeft,
   Clock,
@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Rocket,
   UserPlus,
+  ChevronRight
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { Department } from "../types/department.types";
@@ -39,6 +40,22 @@ export function DepartmentDetailModal({
   canDelete,
 }: DepartmentDetailModalProps) {
   const navigate = useNavigate();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleClose = () => {
+    setMounted(false);
+    setTimeout(onClose, 250);
+  };
+
+  const drawerClass = mounted
+    ? "translate-x-0 opacity-100 scale-100"
+    : "translate-x-[40px] opacity-0 scale-[0.98]";
+
+  const bgClass = mounted ? "opacity-100" : "opacity-0";
 
   const getTeamsForDepartment = (deptName: string) => {
     const defaultTeams = [
@@ -47,416 +64,296 @@ export function DepartmentDetailModal({
         lead: "Alex Johnson",
         count: 45,
         icon: Network,
-        color: "text-blue-500",
-        bg: "bg-blue-50",
       },
       {
         name: `${deptName} Strategy`,
         lead: "Sam Smith",
         count: 20,
         icon: TrendingUp,
-        color: "text-purple-500",
-        bg: "bg-purple-50",
       },
       {
         name: `${deptName} Support`,
         lead: "Chris Lee",
         count: 85,
         icon: Users,
-        color: "text-green-500",
-        bg: "bg-green-50",
       },
     ];
 
     switch (deptName.toLowerCase()) {
       case "engineering":
         return [
-          {
-            name: "Frontend Team",
-            lead: "Priya Sharma",
-            count: 120,
-            icon: Users,
-            color: "text-blue-500",
-            bg: "bg-blue-50",
-          },
-          {
-            name: "Backend Team",
-            lead: "Rahul Verma",
-            count: 180,
-            icon: Database,
-            color: "text-orange-500",
-            bg: "bg-orange-50",
-          },
-          {
-            name: "QA Team",
-            lead: "Arjun Patel",
-            count: 95,
-            icon: ShieldCheck,
-            color: "text-purple-500",
-            bg: "bg-purple-50",
-          },
-          {
-            name: "DevOps Team",
-            lead: "Karthik Raj",
-            count: 60,
-            icon: Rocket,
-            color: "text-blue-600",
-            bg: "bg-blue-100",
-          },
+          { name: "Frontend Team", lead: "Priya Sharma", count: 120, icon: Users },
+          { name: "Backend Team", lead: "Rahul Verma", count: 180, icon: Database },
+          { name: "QA Team", lead: "Arjun Patel", count: 95, icon: ShieldCheck },
+          { name: "DevOps Team", lead: "Karthik Raj", count: 60, icon: Rocket },
         ];
       case "sales":
         return [
-          {
-            name: "Inbound Sales",
-            lead: "John Doe",
-            count: 50,
-            icon: Network,
-            color: "text-green-500",
-            bg: "bg-green-50",
-          },
-          {
-            name: "Outbound Sales",
-            lead: "Jane Smith",
-            count: 70,
-            icon: Rocket,
-            color: "text-orange-500",
-            bg: "bg-orange-50",
-          },
+          { name: "Inbound Sales", lead: "John Doe", count: 50, icon: Network },
+          { name: "Outbound Sales", lead: "Jane Smith", count: 70, icon: Rocket },
         ];
       case "marketing":
         return [
-          {
-            name: "SEO & Content",
-            lead: "Alice Wonderland",
-            count: 25,
-            icon: Users,
-            color: "text-cyan-500",
-            bg: "bg-cyan-50",
-          },
-          {
-            name: "Performance Marketing",
-            lead: "Bob Builder",
-            count: 35,
-            icon: TrendingUp,
-            color: "text-rose-500",
-            bg: "bg-rose-50",
-          },
+          { name: "SEO & Content", lead: "Alice Wonderland", count: 25, icon: Users },
+          { name: "Performance Marketing", lead: "Bob Builder", count: 35, icon: TrendingUp },
         ];
       case "hr":
       case "human resources":
         return [
-          {
-            name: "Talent Acquisition",
-            lead: "Sarah Connor",
-            count: 15,
-            icon: UserPlus,
-            color: "text-emerald-500",
-            bg: "bg-emerald-50",
-          },
+          { name: "Talent Acquisition", lead: "Sarah Connor", count: 15, icon: UserPlus },
         ];
       default:
         return defaultTeams;
     }
   };
 
-  const teams =
-    dept.teams && dept.teams.length > 0
-      ? dept.teams.map((t: { name: string; lead: string }) => ({
-          name: t.name || "Unknown",
-          lead: t.lead || "TBD",
-          count: 0,
-          icon: Users,
-          color: "text-[#00B87C]",
-          bg: "bg-[#00B87C]/10",
-        }))
-      : getTeamsForDepartment(dept.name);
+  const teams = dept.teams && dept.teams.length > 0
+    ? dept.teams.map((t: { name: string; lead: string }) => ({
+      name: t.name || "Unknown",
+      lead: t.lead || "TBD",
+      count: 0,
+      icon: Users,
+    }))
+    : getTeamsForDepartment(dept.name);
+
+  const budgetUsedRaw = dept.budgetUsedAmount || "$350,000";
 
   return (
     <div
-      className="fixed inset-0 z-[2000] flex justify-end p-0 bg-black/40 backdrop-blur-[2px] transition-opacity"
-      onClick={onClose}
+      className={`fixed inset-0 z-[2000] flex justify-end p-0 bg-[rgba(0,0,0,0.35)] backdrop-blur-[8px] transition-opacity duration-250 ease-out ${bgClass}`}
+      onClick={handleClose}
     >
       <div
-        className="w-full sm:w-[750px] h-full max-h-screen bg-white dark:bg-zinc-950 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 overflow-hidden"
+        className={`w-full sm:w-[520px] md:w-[620px] max-w-[92vw] h-full bg-[#F8FAFC] dark:bg-[#021B17] rounded-none sm:rounded-l-[24px] shadow-2xl flex flex-col transition-all duration-250 ease-out overflow-hidden border-l border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] ${drawerClass}`}
         style={{ fontFamily: "'Inter', sans-serif" }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-8 py-5 border-b border-gray-100 dark:border-zinc-800 flex-shrink-0 bg-white dark:bg-zinc-900">
+        {/* HEADER */}
+        <div className="flex items-start justify-between p-[24px] border-b border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] flex-shrink-0 bg-[#F8FAFC] dark:bg-[#021B17] sticky top-0 z-20">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-[#10B981]/10 text-[#10B981]">
+            <div className="w-14 h-14 rounded-[18px] flex items-center justify-center bg-[#FFFFFF] dark:bg-[#082A24] text-[#00B87C] dark:text-[#00C48C] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] shadow-sm">
               <Building2 size={28} />
             </div>
             <div>
-              <h3 className="text-[32px] font-bold text-gray-900 dark:text-zinc-100 leading-tight flex items-center gap-3">
+              <h3 className="text-[36px] font-[700] text-[#111827] dark:text-[#FFFFFF] leading-tight flex items-center gap-3">
                 {dept.name}
-                <span className="text-[14px] font-bold text-gray-500 bg-gray-100 dark:bg-zinc-800 px-3 py-1 rounded-full uppercase tracking-wider">
+                <span className="text-[13px] font-[600] text-[#6B7280] dark:text-[#9DB7AF] bg-[#FFFFFF] dark:bg-[#082A24] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] px-3 py-1 rounded-full uppercase tracking-wider">
                   {dept.code}
                 </span>
               </h3>
-              <p className="text-[16px] font-medium text-gray-500 dark:text-zinc-400 mt-1">
+              <p className="text-[16px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mt-1">
                 Department Intelligence Summary
               </p>
             </div>
           </div>
           <button
-            onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-400 transition-colors"
+            onClick={handleClose}
+            className="p-2 rounded-full hover:bg-[#F3F4F6] dark:hover:bg-[#12392F] text-[#6B7280] dark:text-[#9DB7AF] hover:text-[#111827] dark:hover:text-[#FFFFFF] transition-colors border border-transparent dark:hover:border-[rgba(255,255,255,0.06)]"
           >
             <X size={24} />
           </button>
         </div>
 
-        {/* Body */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 bg-white dark:bg-zinc-900 space-y-6">
+        {/* BODY */}
+        <div className="flex-1 overflow-y-auto p-[24px] space-y-[20px] bg-[#F8FAFC] dark:bg-[#021B17] custom-scrollbar">
+
           {/* SECTION 1: KPI Cards */}
-          <div className="grid grid-cols-3 gap-6">
-            <div className="p-6 rounded-[16px] border border-gray-100 dark:border-zinc-800 bg-[#10B981]/5 shadow-[0_4px_20px_-4px_rgba(16,185,129,0.1)] hover:-translate-y-1 transition-transform cursor-default relative overflow-hidden group">
-              <div className="flex flex-col gap-2 relative z-10">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#10B981]/20 flex items-center justify-center text-[#10B981]">
-                    <Users size={16} />
-                  </div>
-                  <span className="text-[14px] font-bold text-gray-600 dark:text-zinc-400 uppercase tracking-widest">
-                    Staff
-                  </span>
-                </div>
-                <div className="text-[36px] font-extrabold text-gray-900 dark:text-zinc-100 mt-2">
-                  {dept.employees}
-                </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center gap-2">
+                <Users size={16} className="text-[#00B87C] dark:text-[#00C48C]" />
+                <span className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF]">STAFF</span>
+              </div>
+              <div className="text-[36px] font-[700] text-[#111827] dark:text-[#FFFFFF] leading-none">
+                {dept.employees}
               </div>
             </div>
-            <div className="p-6 rounded-[16px] border border-gray-100 dark:border-zinc-800 bg-[#10B981]/5 shadow-[0_4px_20px_-4px_rgba(16,185,129,0.1)] hover:-translate-y-1 transition-transform cursor-default relative overflow-hidden">
-              <div className="flex flex-col gap-2 relative z-10">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#10B981]/20 flex items-center justify-center text-[#10B981]">
-                    <CheckCircle2 size={16} />
-                  </div>
-                  <span className="text-[14px] font-bold text-gray-600 dark:text-zinc-400 uppercase tracking-widest">
-                    Active
-                  </span>
-                </div>
-                <div className="text-[36px] font-extrabold text-[#10B981] mt-2">
-                  {dept.activeEmployees}
-                </div>
+
+            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#00B87C]/5 dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 size={16} className="text-[#00B87C] dark:text-[#00C48C]" />
+                <span className="text-[13px] font-[500] text-[#00B87C] dark:text-[#9DB7AF]">ACTIVE</span>
+              </div>
+              <div className="text-[36px] font-[700] text-[#00B87C] dark:text-[#00C48C] leading-none">
+                {dept.activeEmployees}
               </div>
             </div>
-            <div className="p-6 rounded-[16px] border border-gray-100 dark:border-zinc-800 bg-[#EF4444]/5 shadow-[0_4px_20px_-4px_rgba(239,68,68,0.1)] hover:-translate-y-1 transition-transform cursor-default relative overflow-hidden">
-              <div className="flex flex-col gap-2 relative z-10">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#EF4444]/10 flex items-center justify-center text-[#EF4444]">
-                    <Calendar size={16} />
-                  </div>
-                  <span className="text-[14px] font-bold text-gray-600 dark:text-zinc-400 uppercase tracking-widest">
-                    On Leave
-                  </span>
-                </div>
-                <div className="text-[36px] font-extrabold text-[#EF4444] mt-2">
-                  {dept.onLeaveEmployees}
-                </div>
+
+            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#EF4444]/5 dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+              <div className="flex items-center gap-2">
+                <Calendar size={16} className="text-[#EF4444]" />
+                <span className="text-[13px] font-[500] text-[#EF4444] dark:text-[#9DB7AF]">ON LEAVE</span>
+              </div>
+              <div className="text-[36px] font-[700] text-[#EF4444] leading-none">
+                {dept.onLeaveEmployees}
               </div>
             </div>
           </div>
-
-          <hr className="border-gray-100 dark:border-zinc-800" />
 
           {/* SECTION 2: Department Information */}
-          <div className="grid grid-cols-2 gap-12">
-            <div className="space-y-6">
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-zinc-800 flex items-center justify-center text-blue-500 flex-shrink-0">
-                  <User size={20} />
-                </div>
-                <div>
-                  <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-1">
-                    Department Head
-                  </p>
-                  <p className="text-[16px] font-bold text-gray-900 dark:text-zinc-100">
-                    {dept.head}
-                  </p>
+          <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+            <h4 className="text-[15px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF] mb-5 tracking-wider">Department Information</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
+              <div>
+                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Department Head</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#00B87C]/10 dark:bg-[#00C48C]/20 flex items-center justify-center text-[#00B87C] dark:text-[#00C48C] text-[14px] font-[700]">
+                    {dept.head?.charAt(0) || "U"}
+                  </div>
+                  <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.head}</p>
                 </div>
               </div>
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center text-slate-500 flex-shrink-0">
-                  <Network size={20} />
-                </div>
-                <div>
-                  <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-1">
-                    Parent Department
-                  </p>
-                  <p className="text-[16px] font-bold text-gray-900 dark:text-zinc-100">
-                    {dept.parentDepartment || "None"}
-                  </p>
+              <div>
+                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Parent Department</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                    <Network size={16} />
+                  </div>
+                  <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.parentDepartment || "None"}</p>
                 </div>
               </div>
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-zinc-800 flex items-center justify-center text-indigo-500 flex-shrink-0">
-                  <AlignLeft size={20} />
-                </div>
-                <div>
-                  <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-1">
-                    Description
-                  </p>
-                  <p className="text-[14px] font-medium text-gray-700 dark:text-zinc-300 leading-relaxed">
-                    {dept.description ||
-                      "Core organizational workspace boundary."}
-                  </p>
+              <div>
+                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Created Date</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                    <Calendar size={16} />
+                  </div>
+                  <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.createdDate || "N/A"}</p>
                 </div>
               </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-zinc-800 flex items-center justify-center text-purple-500 flex-shrink-0">
-                  <Calendar size={20} />
-                </div>
-                <div>
-                  <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-1">
-                    Created Date
-                  </p>
-                  <p className="text-[16px] font-bold text-gray-900 dark:text-zinc-100">
-                    {dept.createdDate || "N/A"}
-                  </p>
+              <div>
+                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Last Updated</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                    <Clock size={16} />
+                  </div>
+                  <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.lastUpdated || "N/A"}</p>
                 </div>
               </div>
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-full bg-orange-50 dark:bg-zinc-800 flex items-center justify-center text-orange-500 flex-shrink-0">
-                  <Clock size={20} />
-                </div>
-                <div>
-                  <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-1">
-                    Last Updated
-                  </p>
-                  <p className="text-[16px] font-bold text-gray-900 dark:text-zinc-100">
-                    {dept.lastUpdated || "N/A"}
+              <div className="sm:col-span-2 mt-2">
+                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-2">Description</p>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-slate-500/10 flex items-center justify-center text-slate-600 dark:text-slate-400 flex-shrink-0 mt-0.5">
+                    <AlignLeft size={16} />
+                  </div>
+                  <p className="text-[14px] text-[#111827] dark:text-[#FFFFFF] leading-relaxed">
+                    {dept.description || "Core technology development and infrastructure scaling."}
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* SECTION 3: Finance Breakdown (if authorized) */}
+          {/* SECTION 3: Budget Summary */}
           {showFinance && (
-            <>
-              <hr className="border-gray-100 dark:border-zinc-800" />
-              <div>
-                <h4 className="text-[18px] font-bold text-gray-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
-                  Budget Used
-                </h4>
-                <div className="bg-slate-50 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl p-5 flex flex-col justify-center items-center text-center">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                    Amount Utilized
-                  </p>
-                  <p className="text-[24px] font-black text-slate-900 dark:text-zinc-100">
-                    {dept.budgetUsedAmount}
-                  </p>
+            <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+              <h4 className="text-[15px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF]">Budget Used</h4>
+
+              <div className="mb-5">
+                <div className="flex justify-between items-end mb-3">
+                  <div>
+                    <p className="text-[28px] font-[700] text-[#111827] dark:text-[#FFFFFF] leading-none">{budgetUsedRaw}</p>
+                  </div>
                 </div>
               </div>
-            </>
+
+            </div>
           )}
 
-          <hr className="border-gray-100 dark:border-zinc-800" />
-
-          {/* SECTION 4: Teams list */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-[18px] font-bold text-gray-900 dark:text-zinc-100 flex items-center gap-2">
-                Teams
-                <span className="bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-400 px-2 py-0.5 rounded-full text-xs">
-                  ({teams.length})
+          {/* SECTION 6: Team Distribution */}
+          <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-700">
+            <div className="flex items-center justify-between mb-5">
+              <h4 className="text-[15px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF] flex items-center gap-2 tracking-wider">
+                Team Distribution
+                <span className="bg-[#F3F4F6] dark:bg-[#021B17] text-[#6B7280] dark:text-[#9DB7AF] px-2 py-0.5 rounded-full text-[12px] font-[600] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)]">
+                  {teams.length}
                 </span>
               </h4>
             </div>
 
-            <div className="space-y-3 pb-8">
+            <div className="grid grid-cols-1 gap-3">
               {teams.map((team, idx) => (
                 <div
-                  key={idx}
+                  key={team.name}
                   onClick={() => {
-                    onClose();
-                    navigate(
-                      `/employees?department=${encodeURIComponent(dept.name)}&team=${encodeURIComponent(team.name)}`,
-                    );
+                    handleClose();
+                    navigate(`/employees?department=${encodeURIComponent(dept.name)}&team=${encodeURIComponent(team.name)}`);
                   }}
-                  className="flex items-center justify-between p-4 rounded-[16px] border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-[#10B981]/30 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 transition-all cursor-pointer group"
+                  className="flex items-center justify-between p-4 rounded-[16px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#F8FAFC] dark:bg-[#021B17] hover:border-[#00B87C]/30 hover:shadow-sm hover:-translate-y-0.5 transition-all cursor-pointer group"
                 >
                   <div className="flex items-center gap-4 flex-1">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-[#10B981]/10 text-[#10B981]">
-                      <Users size={20} />
+                    <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#FFFFFF] dark:bg-[#082A24] text-[#00B87C] dark:text-[#00C48C] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] group-hover:scale-105 transition-transform shadow-sm">
+                      <team.icon size={20} />
                     </div>
                     <div>
-                      <p className="text-[16px] font-bold text-gray-900 dark:text-zinc-100 group-hover:text-[#10B981] transition-colors">
+                      <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF] group-hover:text-[#00B87C] dark:group-hover:text-[#00C48C] transition-colors">
                         {team.name}
                       </p>
-                      <p className="text-[14px] text-gray-500 dark:text-zinc-400 font-medium mt-0.5">
-                        Lead:{" "}
-                        <span className="text-gray-700 dark:text-zinc-300 font-bold">
-                          {team.lead}
-                        </span>
+                      <p className="text-[14px] text-[#6B7280] dark:text-[#9DB7AF] font-[500] mt-0.5">
+                        Lead: <span className="text-[#111827] dark:text-[#FFFFFF] font-[600]">{team.lead}</span>
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-8">
+                  <div className="flex items-center gap-6">
                     {team.count > 0 && (
                       <div className="text-right">
-                        <p className="text-[16px] font-bold text-gray-900 dark:text-zinc-100">
+                        <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF]">
                           {team.count}
                         </p>
-                        <p className="text-[12px] font-medium text-gray-500 uppercase tracking-wider">
-                          Employees
+                        <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] uppercase tracking-wider">
+                          Staff
                         </p>
                       </div>
                     )}
-                    <span className="text-xs font-bold text-emerald-600 hover:underline">
-                      View Roster →
-                    </span>
+                    <ChevronRight size={20} className="text-[#6B7280] dark:text-[#9DB7AF] group-hover:text-[#00B87C] dark:group-hover:text-[#00C48C] group-hover:translate-x-1 transition-all" />
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Bottom spacing to ensure scroll doesn't get cut off by footer completely */}
+          <div className="h-4"></div>
         </div>
 
-        {/* Footer */}
-        <div className="px-8 py-4 border-t border-gray-100 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900 flex justify-end flex-shrink-0 gap-3">
+        {/* FOOTER */}
+        <div className="p-[24px] border-t border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#082A24] flex justify-end gap-3 flex-shrink-0 z-20 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)]">
+          {canDelete && (
+            <button
+              onClick={() => {
+                handleClose();
+                onDelete(dept);
+              }}
+              className="px-5 py-2.5 rounded-[12px] text-[14px] font-[600] text-[#EF4444] bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-transparent hover:border-[#EF4444]/30 transition-all"
+            >
+              Delete
+            </button>
+          )}
           {canEdit && (
             <>
               <button
                 onClick={() => {
-                  onClose();
+                  handleClose();
                   onToggleStatus(dept);
                 }}
-                className={`px-4 py-2.5 rounded-[12px] text-[14px] font-bold transition-colors shadow-sm ${
-                  dept.status === "Active"
-                    ? "text-amber-700 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/20 dark:text-amber-400 dark:hover:bg-amber-950/30"
-                    : "text-emerald-700 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:hover:bg-emerald-950/30"
-                }`}
+                className={`px-5 py-2.5 rounded-[12px] text-[14px] font-[600] transition-all border ${dept.status === "Active"
+                  ? "text-[#F5A623] bg-[#F5A623]/10 border-[#F5A623]/20 hover:bg-[#F5A623]/20"
+                  : "text-[#00B87C] dark:text-[#00C48C] bg-[#00B87C]/10 dark:bg-[#00C48C]/10 border-[#00B87C]/20 dark:border-[#00C48C]/20 hover:bg-[#00B87C]/20 dark:hover:bg-[#00C48C]/20"
+                  }`}
               >
                 {dept.status === "Active" ? "Deactivate" : "Activate"}
               </button>
               <button
                 onClick={() => {
-                  onClose();
+                  handleClose();
                   onEdit(dept);
                 }}
-                className="px-4 py-2.5 rounded-[12px] text-[14px] font-bold text-white bg-[#00B87C] hover:bg-[#00a36d] transition-colors shadow-sm"
+                className="px-6 py-2.5 rounded-[12px] text-[14px] font-[600] text-[#FFFFFF] dark:text-[#021B17] bg-[#00B87C] dark:bg-[#00C48C] hover:bg-[#00a36d] dark:hover:bg-[#00b37f] shadow-[0_4px_14px_rgba(0,184,124,0.3)] dark:shadow-[0_4px_14px_rgba(0,196,140,0.3)] transition-all"
               >
                 Edit Department
               </button>
             </>
-          )}
-
-          {canDelete && (
-            <button
-              onClick={() => {
-                onClose();
-                onDelete(dept);
-              }}
-              className="px-4 py-2.5 rounded-[12px] text-[14px] font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 dark:text-rose-400 dark:hover:bg-rose-950/30 transition-colors shadow-sm"
-            >
-              Delete
-            </button>
           )}
         </div>
       </div>

@@ -69,7 +69,7 @@ export function ManageAccountBulkImport() {
     bulkImportEmployees(parsedEmployees as EmployeeInput[]);
 
     try {
-      const savedUsers = localStorage.getItem("viyan_registered_users") || "[]";
+      const savedUsers = localStorage.getItem("viyan_registered_users:v1") || "[]";
       const usersList = JSON.parse(savedUsers);
 
       const newPlatformUsers = parsedEmployees.map((emp) => {
@@ -98,7 +98,7 @@ export function ManageAccountBulkImport() {
       });
 
       localStorage.setItem(
-        "viyan_registered_users",
+        "viyan_registered_users:v1",
         JSON.stringify([...newPlatformUsers, ...usersList]),
       );
     } catch (err) {
@@ -237,7 +237,7 @@ export function ManageAccountBulkImport() {
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white text-slate-700">
                     {parsedEmployees.map((emp, i) => (
-                      <tr key={i} className="hover:bg-slate-50/50">
+                      <tr key={emp.name} className="hover:bg-slate-50/50">
                         <td className="p-3.5 font-extrabold text-slate-800">
                           {emp.name}
                         </td>

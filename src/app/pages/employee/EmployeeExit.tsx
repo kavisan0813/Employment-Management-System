@@ -12,9 +12,7 @@ import {
   Pen,
   ShieldCheck,
   User,
-  ArrowRight,
   Send,
-  Building,
   CheckSquare,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -520,7 +518,7 @@ function StatusTracker({
             </div>
             <div className="p-6">
               <div className="relative border-l-2 border-border ml-3 space-y-8">
-                {timeline.map((event, idx) => (
+                {timeline.map((event) => (
                   <div key={event.id} className="relative pl-6">
                     <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-background border-2 border-[#00B87C] flex items-center justify-center">
                       <div className="w-1.5 h-1.5 bg-[#00B87C] rounded-full" />
@@ -570,7 +568,7 @@ export function EmployeeExit() {
   const [tasks, setTasks] = useState<ExitTask[]>(() => {
     try {
       return JSON.parse(
-        localStorage.getItem("viyan_employee_exit_tasks") || "",
+        localStorage.getItem("viyan_employee_exit_tasks:v1") || "",
       ) as ExitTask[];
     } catch {
       return EXIT_TASKS;
@@ -583,12 +581,12 @@ export function EmployeeExit() {
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [assignedExit, setAssignedExit] = useState<ExitEmployee | null>(null);
   const [uploadTaskId, setUploadTaskId] = useState<string | null>(null);
-  const [uploadDocumentName, setUploadDocumentName] = useState(
+  const [, setUploadDocumentName] = useState(
     "Clearance_Doc_1.pdf",
   );
 
   useEffect(() => {
-    localStorage.setItem("viyan_employee_exit_tasks", JSON.stringify(tasks));
+    localStorage.setItem("viyan_employee_exit_tasks:v1", JSON.stringify(tasks));
   }, [tasks]);
 
   useEffect(() => {
@@ -635,7 +633,7 @@ export function EmployeeExit() {
 
   useEffect(() => {
     const checkRequest = () => {
-      const saved = localStorage.getItem("viyan_resignation_requests");
+      const saved = localStorage.getItem("viyan_resignation_requests:v1");
       if (saved) {
         try {
           const requests = JSON.parse(saved);
@@ -741,7 +739,7 @@ export function EmployeeExit() {
     setWorkflowStatus("pending_manager");
     setTimelineEvents(timeline);
 
-    const saved = localStorage.getItem("viyan_resignation_requests");
+    const saved = localStorage.getItem("viyan_resignation_requests:v1");
     let requests = [];
     if (saved) {
       try {
@@ -778,7 +776,7 @@ export function EmployeeExit() {
       requests.push(newRequest);
     }
     localStorage.setItem(
-      "viyan_resignation_requests",
+      "viyan_resignation_requests:v1",
       JSON.stringify(requests),
     );
   };
@@ -788,7 +786,7 @@ export function EmployeeExit() {
       <div className="w-full px-4 md:px-8 py-6 pb-20">
         <ResignationForm
           onSubmit={handleResignationSubmit}
-          onCancel={() => {}}
+          onCancel={() => { }}
         />
       </div>
     );
@@ -1130,7 +1128,7 @@ export function EmployeeExit() {
                     </p>
                     {uploadedFiles.map((f, i) => (
                       <div
-                        key={i}
+                        key={f}
                         className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#F0FDF4] border border-[#00B87C]/20 text-[12px] font-bold text-[#00B87C]"
                       >
                         <FileText size={14} /> {f}

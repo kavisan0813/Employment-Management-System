@@ -423,21 +423,19 @@ export function ManagerTeamDirectory() {
           <div className="flex items-center p-1 bg-card border border-border rounded-xl shadow-sm">
             <button
               onClick={() => setView("grid")}
-              className={`p-2 rounded-lg transition-all ${
-                view === "grid"
+              className={`p-2 rounded-lg transition-all ${view === "grid"
                   ? "bg-emerald-500/10 text-[#00B87C]"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               <LayoutGrid size={18} />
             </button>
             <button
               onClick={() => setView("list")}
-              className={`p-2 rounded-lg transition-all ${
-                view === "list"
+              className={`p-2 rounded-lg transition-all ${view === "list"
                   ? "bg-emerald-500/10 text-[#00B87C]"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               <List size={18} />
             </button>
@@ -741,11 +739,10 @@ function ColleagueCard({
   return (
     <div
       onClick={onSelect}
-      className={`bg-card p-6 rounded-[28px] border transition-all hover:shadow-xl hover:-translate-y-1.5 cursor-pointer group flex flex-col items-center text-center h-full relative overflow-hidden ${
-        colleague.isDirectReport
+      className={`bg-card p-6 rounded-[28px] border transition-all hover:shadow-xl hover:-translate-y-1.5 cursor-pointer group flex flex-col items-center text-center h-full relative overflow-hidden ${colleague.isDirectReport
           ? "border-[#00B87C]/30 shadow-emerald-500/[0.02]"
           : "border-border"
-      }`}
+        }`}
     >
       {colleague.isDirectReport && (
         <div className="absolute top-0 left-0 bg-emerald-500 text-white text-[8px] font-bold uppercase tracking-wider px-3 py-1 rounded-br-xl border-r border-b border-emerald-500/30">
@@ -767,15 +764,14 @@ function ColleagueCard({
           )}
         </div>
         <div
-          className={`absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full border-2 border-card ${
-            colleague.availability === "Available"
+          className={`absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full border-2 border-card ${colleague.availability === "Available"
               ? "bg-emerald-500"
               : colleague.availability === "Busy"
                 ? "bg-red-500"
                 : colleague.availability === "In Meeting"
                   ? "bg-amber-500"
                   : "bg-slate-400"
-          }`}
+            }`}
         />
       </div>
 
@@ -886,15 +882,14 @@ function ColleagueTable({
                         )}
                       </div>
                       <div
-                        className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-card ${
-                          c.availability === "Available"
+                        className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-card ${c.availability === "Available"
                             ? "bg-emerald-500"
                             : c.availability === "Busy"
                               ? "bg-red-500"
                               : c.availability === "In Meeting"
                                 ? "bg-amber-500"
                                 : "bg-slate-400"
-                        }`}
+                          }`}
                       />
                     </div>
                     <div>
@@ -1023,15 +1018,14 @@ function ColleagueSlidePanel({
               )}
             </div>
             <div
-              className={`absolute bottom-0 right-0 w-6 h-6 rounded-full border-4 border-card ${
-                colleague.availability === "Available"
+              className={`absolute bottom-0 right-0 w-6 h-6 rounded-full border-4 border-card ${colleague.availability === "Available"
                   ? "bg-emerald-500"
                   : colleague.availability === "Busy"
                     ? "bg-red-500"
                     : colleague.availability === "In Meeting"
                       ? "bg-amber-500"
                       : "bg-slate-400"
-              }`}
+                }`}
             />
           </div>
 
@@ -1171,21 +1165,20 @@ function ColleagueSlidePanel({
                     </p>
                   </div>
                 </div>
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
+                <button
+                  type="button"
+                  onClick={() => {
                     showToast(
                       "Redirecting",
                       "info",
                       "Opening LinkedIn Profile...",
                     );
                   }}
-                  className="p-2 hover:bg-blue-500 hover:text-white rounded-lg text-muted-foreground transition-all border border-border/30 shadow-sm"
+                  className="p-2 hover:bg-blue-500 hover:text-white rounded-lg text-muted-foreground transition-all border border-border/30 shadow-sm cursor-pointer"
                   title="Open Link"
                 >
                   <ExternalLink size={13} />
-                </a>
+                </button>
               </div>
             </div>
           </div>

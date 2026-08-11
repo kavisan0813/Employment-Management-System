@@ -129,7 +129,7 @@ export function SecuritySettingsSection() {
             setter: setSecSsoOnly,
           },
         ].map((row, idx) => (
-          <div key={idx} className="flex justify-between items-center py-2">
+          <div key={row.label} className="flex justify-between items-center py-2">
             <div>
               <p
                 style={{
@@ -225,7 +225,7 @@ export function SecuritySettingsSection() {
             },
           ].map((f, idx) => (
             <label
-              key={idx}
+              key={f.label}
               className="flex items-center gap-3 cursor-pointer select-none"
             >
               <div
@@ -432,7 +432,7 @@ export function SecuritySettingsSection() {
             setter: setSecAlertSuspicious,
           },
         ].map((row, idx) => (
-          <div key={idx} className="flex justify-between items-center py-2">
+          <div key={row.label} className="flex justify-between items-center py-2">
             <div>
               <p
                 style={{

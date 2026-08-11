@@ -473,13 +473,12 @@ export function FinanceIncrement() {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-1 rounded-lg text-[11px] font-black ${
-                        emp.attendancePct >= 95
+                      className={`px-2 py-1 rounded-lg text-[11px] font-black ${emp.attendancePct >= 95
                           ? "bg-emerald-500/10 text-emerald-600"
                           : emp.attendancePct >= 90
                             ? "bg-blue-500/10 text-blue-600"
                             : "bg-rose-500/10 text-rose-600"
-                      }`}
+                        }`}
                     >
                       {emp.attendancePct}%
                     </span>
@@ -960,10 +959,10 @@ export function FinanceIncrement() {
                     </p>
                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                       <motion.div
-                        initial={{ width: "0%" }}
-                        animate={{ width: "100%" }}
+                        initial={{ x: "-100%" }}
+                        animate={{ x: "0%" }}
                         transition={{ duration: 1.5, ease: "linear" }}
-                        className="h-full bg-[#00B87C] rounded-full"
+                        className="h-full bg-[#00B87C] rounded-full w-full"
                       />
                     </div>
                   </div>
@@ -1047,8 +1046,8 @@ function FilterSelect({
   value?: string;
   onChange?: (val: string) => void;
 }) {
-  const [internalValue, setInternalValue] = useState(label);
-  const value = externalValue ?? internalValue;
+  const [internalValue, setInternalValue] = useState<string | null>(null);
+  const value = externalValue ?? (internalValue ?? label);
   const onChange = externalOnChange ?? setInternalValue;
 
   return (
@@ -1060,7 +1059,7 @@ function FilterSelect({
       >
         <option value={label}>{label}</option>
         {options.map((opt, i) => (
-          <option key={i} value={opt}>
+          <option key={opt} value={opt}>
             {opt}
           </option>
         ))}

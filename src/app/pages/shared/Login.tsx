@@ -13,12 +13,8 @@ import {
   User,
 } from "lucide-react";
 import type { LucideProps } from "lucide-react";
-import {
-  useAuth,
-  UserRole,
-  ROLE_HOME_ROUTE,
-  ROLE_CONFIG,
-} from "../../context/AuthContext";
+import { useAuth, UserRole } from "../../context/AuthContext";
+import { ROLE_HOME_ROUTE, ROLE_CONFIG } from "../../context/auth.config";
 import { db } from "../../admin/mockData";
 
 // ─── Demo account map (role → credentials) ──────────────────
@@ -123,7 +119,7 @@ export function Login() {
 
     // 2. Check registered users list in localStorage
     try {
-      const registered = localStorage.getItem("viyan_registered_users");
+      const registered = localStorage.getItem("viyan_registered_users:v1");
       if (registered) {
         const users = JSON.parse(registered);
         const match = users.find(
@@ -158,7 +154,7 @@ export function Login() {
       const role: UserRole = detectRole(email);
       let registeredAccount: RegisteredUser | undefined;
       try {
-        registeredAccount = (JSON.parse(localStorage.getItem("viyan_registered_users") || "[]") as RegisteredUser[])
+        registeredAccount = (JSON.parse(localStorage.getItem("viyan_registered_users:v1") || "[]") as RegisteredUser[])
           .find((account) => account.email.toLowerCase() === email.toLowerCase());
         if (registeredAccount?.password && registeredAccount.password !== password) {
           setIsLoading(false);
@@ -185,7 +181,7 @@ export function Login() {
       // Check registered users list for name/initials if not found in db
       if (!accountName) {
         try {
-          const registered = localStorage.getItem("viyan_registered_users");
+          const registered = localStorage.getItem("viyan_registered_users:v1");
           if (registered) {
             const users = JSON.parse(registered);
             const match = users.find(
@@ -216,11 +212,11 @@ export function Login() {
       if (!accountInitials) {
         accountInitials =
           accountName
-              .split(" ")
-              .map((n: string) => n[0])
-              .join("")
-              .toUpperCase()
-              .slice(0, 2) || "JD";
+            .split(" ")
+            .map((n: string) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2) || "JD";
       }
 
       login({
@@ -235,9 +231,9 @@ export function Login() {
         role === "Employee" && registeredAccount?.candidateStatus !== "Completed"
           ? "/onboarding"
           :
-        role === "Platform Admin"
-          ? "/platform-admin/dashboard"
-          : ROLE_HOME_ROUTE[role] || "/employee/dashboard";
+          role === "Platform Admin"
+            ? "/platform-admin/dashboard"
+            : ROLE_HOME_ROUTE[role] || "/employee/dashboard";
       navigate(route, { replace: true });
       setIsLoading(false);
     }, 600);
@@ -392,13 +388,12 @@ export function Login() {
               </span>
             </button>
             <div className="text-center pt-2">
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
+              <button
+                type="button"
+                onClick={() => {
                   setIsForgotPassword(false);
                 }}
-                className="hover:underline transition-all"
+                className="hover:underline transition-all cursor-pointer bg-transparent border-0 p-0"
                 style={{
                   fontSize: "13px",
                   fontWeight: 800,
@@ -406,7 +401,7 @@ export function Login() {
                 }}
               >
                 Back to Login
-              </a>
+              </button>
             </div>
           </form>
         ) : (
@@ -500,13 +495,12 @@ export function Login() {
                   Remember me
                 </span>
               </label>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
+              <button
+                type="button"
+                onClick={() => {
                   setIsForgotPassword(true);
                 }}
-                className="hover:underline transition-all"
+                className="hover:underline transition-all cursor-pointer bg-transparent border-0 p-0"
                 style={{
                   fontSize: "13px",
                   fontWeight: 800,
@@ -514,7 +508,7 @@ export function Login() {
                 }}
               >
                 Forgot Password?
-              </a>
+              </button>
             </div>
 
             {/* Submit */}
@@ -568,9 +562,8 @@ export function Login() {
                     type="button"
                     onClick={() => handleDemoLogin(role)}
                     disabled={isLoading}
-                    className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group ${
-                      isLast ? "col-span-2 justify-center" : ""
-                    }`}
+                    className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group ${isLast ? "col-span-2 justify-center" : ""
+                      }`}
                     style={{
                       borderColor: config.color + "30",
                       backgroundColor: config.bg,

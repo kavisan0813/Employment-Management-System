@@ -357,6 +357,22 @@ export interface SalaryComponent {
   taxable: boolean;
 }
 
+export const SectionTitle = ({ title }: { title: string }) => (
+  <div className="flex items-center gap-2 mt-6 mb-4">
+    <div className="w-1 h-4 bg-[#00B87C] rounded-full" />
+    <span
+      style={{
+        fontSize: "11px",
+        fontWeight: 600,
+        color: "#9CA3AF",
+        letterSpacing: "0.05em",
+        textTransform: "uppercase",
+      }}
+    >
+      {title}
+    </span>
+  </div>
+);
 export function useSettingsProviderValue(defaultTab: string = "company") {
   const [searchParams] = useSearchParams();
   const [activeSubTab, setActiveSubTab] = useState(
@@ -472,10 +488,10 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
       const updatedList = rolesList.map((r) =>
         r.id === selectedRoleForEdit.id
           ? {
-              ...r,
-              name: roleForm.name,
-              modified: new Date().toISOString().split("T")[0],
-            }
+            ...r,
+            name: roleForm.name,
+            modified: new Date().toISOString().split("T")[0],
+          }
           : r,
       );
       setRolesList(updatedList);
@@ -1635,22 +1651,6 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     "192.168.1.0/24\n10.0.0.0/8",
   );
 
-  const SectionTitle = ({ title }: { title: string }) => (
-    <div className="flex items-center gap-2 mt-6 mb-4">
-      <div className="w-1 h-4 bg-[#00B87C] rounded-full" />
-      <span
-        style={{
-          fontSize: "11px",
-          fontWeight: 600,
-          color: "#9CA3AF",
-          letterSpacing: "0.05em",
-          textTransform: "uppercase",
-        }}
-      >
-        {title}
-      </span>
-    </div>
-  );
 
   const toggleCell = (modId: string, roleId: string) => {
     setPermissions((prev) => {
@@ -2150,7 +2150,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
 
 export type SettingsContextType = ReturnType<typeof useSettingsProviderValue>;
 
-export const SettingsContext = createContext<SettingsContextType | null>(null);
+const SettingsContext = createContext<SettingsContextType | null>(null);
 
 export function useSettingsContext() {
   const ctx = useContext(SettingsContext);

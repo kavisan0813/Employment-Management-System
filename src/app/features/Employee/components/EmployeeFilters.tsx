@@ -29,43 +29,16 @@ interface EmployeeFiltersProps {
   searchInputRef: React.RefObject<HTMLInputElement>;
 }
 
-export default function EmployeeFilters({
-  search,
-  setSearch,
-  selectedDept,
-  setSelectedDept,
-  selectedTeam,
-  setSelectedTeam,
-  selectedDesignation,
-  setSelectedDesignation,
-  selectedLocation,
-  setSelectedLocation,
-  selectedStatus,
-  setSelectedStatus,
-  selectedTypes,
-  toggleType,
-  showTypeDropdown,
-  setShowTypeDropdown,
-  view,
-  setView,
-  activeChips,
-  clearFilters,
-  departments,
-  uniqueTeams,
-  uniqueDesignations,
-  uniqueLocations,
-  uniqueTypes,
-  searchInputRef,
-}: EmployeeFiltersProps) {
-  const FilterChip = ({
-    value,
-    options,
-    onChange,
-  }: {
-    value: string;
-    options: string[];
-    onChange: (v: string) => void;
-  }) => (
+function FilterChip({
+  value,
+  options,
+  onChange,
+}: {
+  value: string;
+  options: string[];
+  onChange: (v: string) => void;
+}) {
+  return (
     <div className="relative group shrink-0">
       <select
         value={value}
@@ -100,6 +73,36 @@ export default function EmployeeFilters({
       />
     </div>
   );
+}
+
+export default function EmployeeFilters({
+  search,
+  setSearch,
+  selectedDept,
+  setSelectedDept,
+  selectedTeam,
+  setSelectedTeam,
+  selectedDesignation,
+  setSelectedDesignation,
+  selectedLocation,
+  setSelectedLocation,
+  selectedStatus,
+  setSelectedStatus,
+  selectedTypes,
+  toggleType,
+  showTypeDropdown,
+  setShowTypeDropdown,
+  view,
+  setView,
+  activeChips,
+  clearFilters,
+  departments,
+  uniqueTeams,
+  uniqueDesignations,
+  uniqueLocations,
+  uniqueTypes,
+  searchInputRef,
+}: EmployeeFiltersProps) {
 
   return (
     <div
@@ -327,12 +330,12 @@ export default function EmployeeFilters({
                         className="flex items-center gap-3 px-4 py-2 cursor-pointer transition-colors"
                         style={{ color: "var(--foreground)" }}
                         onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            "var(--background)")
+                        (e.currentTarget.style.backgroundColor =
+                          "var(--background)")
                         }
                         onMouseLeave={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            "transparent")
+                        (e.currentTarget.style.backgroundColor =
+                          "transparent")
                         }
                       >
                         <input
@@ -375,17 +378,17 @@ export default function EmployeeFilters({
                   style={{
                     backgroundColor:
                       selectedStatus === s ||
-                      (s === "All" && selectedStatus === "All Status")
+                        (s === "All" && selectedStatus === "All Status")
                         ? "var(--card)"
                         : "transparent",
                     color:
                       selectedStatus === s ||
-                      (s === "All" && selectedStatus === "All Status")
+                        (s === "All" && selectedStatus === "All Status")
                         ? "var(--foreground)"
                         : "var(--muted-foreground)",
                     boxShadow:
                       selectedStatus === s ||
-                      (s === "All" && selectedStatus === "All Status")
+                        (s === "All" && selectedStatus === "All Status")
                         ? "0 2px 4px rgba(0,0,0,0.05)"
                         : "none",
                   }}

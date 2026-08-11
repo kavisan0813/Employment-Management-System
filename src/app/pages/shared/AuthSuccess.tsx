@@ -11,7 +11,8 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useAuth, ROLE_HOME_ROUTE, UserRole } from "../../context/AuthContext";
+import { useAuth, UserRole } from "../../context/AuthContext";
+import { ROLE_HOME_ROUTE } from "../../context/auth.config";
 
 export function AuthSuccess() {
   const location = useLocation();

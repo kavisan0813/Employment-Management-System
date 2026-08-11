@@ -18,7 +18,7 @@ export function useDepartments() {
 
   const saveDepartments = (list: Department[]) => {
     setDepartmentsList(list);
-    localStorage.setItem("viyan_departments", JSON.stringify(list));
+    localStorage.setItem("viyan_departments:v1", JSON.stringify(list));
   };
 
   const addDepartment = (deptInput: DepartmentInput) => {

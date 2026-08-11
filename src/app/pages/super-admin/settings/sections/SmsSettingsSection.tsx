@@ -304,7 +304,7 @@ export function SmsSettingsSection() {
             setter: setSmsTriggerPerf,
           },
         ].map((row, idx) => (
-          <div key={idx} className="flex justify-between items-center py-2">
+          <div key={row.label} className="flex justify-between items-center py-2">
             <div>
               <p
                 style={{

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import { AlertTriangle, CheckCircle2, Send, Clock, X, Plus } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Send, Clock, X } from "lucide-react";
 import type { NewHire, OnboardingPhase } from "../types/onboarding.types";
 import { showToast } from "../../../components/workflow/ToastNotification";
 

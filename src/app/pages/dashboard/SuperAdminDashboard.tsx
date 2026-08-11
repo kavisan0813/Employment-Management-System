@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import {
   Users,
@@ -388,56 +388,68 @@ export function SuperAdminDashboard() {
     setIsPostAnnouncementOpen(false);
   };
 
-  // Action: Backup Data (Simulated loading)
-  const triggerBackup = () => {
-    setSystemTaskType("Backup");
-    setProgressPercent(0);
+  useEffect(() => {
+    if (systemTaskType !== "Backup") return;
     const interval = setInterval(() => {
       setProgressPercent((prev) => {
         if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setSystemTaskType(null);
-            const newLog = {
-              type: "Settings",
-              text: "Full database backup completed successfully",
-              user: "System",
-              time: "Just now",
-              color: "#64748B",
-            };
-            setAuditLogList((prevLog) => [newLog, ...prevLog]);
-          }, 300);
           return 100;
         }
         return prev + 10;
       });
     }, 150);
+    return () => clearInterval(interval);
+  }, [systemTaskType]);
+
+  useEffect(() => {
+    if (systemTaskType !== "Scan") return;
+    const interval = setInterval(() => {
+      setProgressPercent((prev) => {
+        if (prev >= 100) {
+          return 100;
+        }
+        return prev + 20;
+      });
+    }, 200);
+    return () => clearInterval(interval);
+  }, [systemTaskType]);
+
+  useEffect(() => {
+    if (progressPercent < 100 || !systemTaskType) return;
+    const currentTask = systemTaskType;
+    const timeout = setTimeout(() => {
+      setSystemTaskType(null);
+      const newLog =
+        currentTask === "Backup"
+          ? {
+            type: "Settings",
+            text: "Full database backup completed successfully",
+            user: "System",
+            time: "Just now",
+            color: "#64748B",
+          }
+          : {
+            type: "Settings",
+            text: "Vulnerability security scan completed - 0 threats found",
+            user: "Security",
+            time: "Just now",
+            color: "#EF4444",
+          };
+      setAuditLogList((prevLog) => [newLog, ...prevLog]);
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [progressPercent, systemTaskType]);
+
+  // Action: Backup Data (Simulated loading)
+  const triggerBackup = () => {
+    setSystemTaskType("Backup");
+    setProgressPercent(0);
   };
 
   // Action: Security Scan (Simulated loading)
   const triggerSecurityScan = () => {
     setSystemTaskType("Scan");
     setProgressPercent(0);
-    const interval = setInterval(() => {
-      setProgressPercent((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setSystemTaskType(null);
-            const newLog = {
-              type: "Settings",
-              text: "Vulnerability security scan completed - 0 threats found",
-              user: "Security",
-              time: "Just now",
-              color: "#EF4444",
-            };
-            setAuditLogList((prevLog) => [newLog, ...prevLog]);
-          }, 300);
-          return 100;
-        }
-        return prev + 20;
-      });
-    }, 200);
   };
 
   return (
@@ -553,7 +565,7 @@ export function SuperAdminDashboard() {
           },
         ].map((kpi, i) => (
           <motion.div
-            key={i}
+            key={kpi.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
@@ -588,11 +600,10 @@ export function SuperAdminDashboard() {
                 <button
                   key={f}
                   onClick={() => setHeadcountPeriod(f)}
-                  className={`px-3 py-1 rounded-full text-[11px] font-black tracking-widest transition-all cursor-pointer ${
-                    f === headcountPeriod
-                      ? "bg-primary text-white shadow-sm shadow-[#00B87C]/20"
-                      : "bg-secondary text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`px-3 py-1 rounded-full text-[11px] font-black tracking-widest transition-all cursor-pointer ${f === headcountPeriod
+                    ? "bg-primary text-white shadow-sm shadow-[#00B87C]/20"
+                    : "bg-secondary text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   {f}
                 </button>
@@ -693,7 +704,7 @@ export function SuperAdminDashboard() {
                   dataKey="value"
                 >
                   {INITIAL_DEPT_DATA.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${entry.color}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -702,7 +713,7 @@ export function SuperAdminDashboard() {
           </div>
           <div className="mt-6 grid grid-cols-2 gap-2">
             {INITIAL_DEPT_DATA.map((dept, i) => (
-              <div key={i} className="flex items-center gap-2">
+              <div key={dept.name} className="flex items-center gap-2">
                 <div
                   className="w-2 h-2 rounded-full"
                   style={{ backgroundColor: dept.color }}
@@ -734,7 +745,7 @@ export function SuperAdminDashboard() {
               ) : (
                 pendingActionsList.map((action, i) => (
                   <div
-                    key={i}
+                    key={action.title}
                     onClick={() => setActivePendingAction(action)}
                     className="p-4 flex items-center justify-between hover:bg-secondary/50 transition-colors group cursor-pointer"
                   >
@@ -788,7 +799,7 @@ export function SuperAdminDashboard() {
           </div>
           <div className="p-6 space-y-6 max-h-[380px] overflow-y-auto custom-scrollbar">
             {auditLogList.map((log, i) => (
-              <div key={i} className="flex gap-4 relative">
+              <div key={log.text} className="flex gap-4 relative">
                 {i !== auditLogList.length - 1 && (
                   <div className="absolute left-[5px] top-4 w-[1px] h-full bg-border" />
                 )}
@@ -827,17 +838,17 @@ export function SuperAdminDashboard() {
           </div>
           <div className="space-y-6 flex-1">
             {INITIAL_MODULE_USAGE.map((mod, i) => (
-              <div key={i} className="space-y-2">
+              <div key={mod.label} className="space-y-2">
                 <div className="flex justify-between text-[12px] font-bold text-foreground">
                   <span>{mod.label}</span>
                   <span>{mod.value}%</span>
                 </div>
                 <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                   <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${mod.value}%` }}
+                    initial={{ x: "-100%" }}
+                    animate={{ x: `-${100 - (mod.value)}%` }}
                     transition={{ duration: 1, delay: i * 0.1 }}
-                    className="h-full rounded-full"
+                    className="h-full rounded-full w-full"
                     style={{ backgroundColor: mod.color }}
                   />
                 </div>
@@ -874,7 +885,7 @@ export function SuperAdminDashboard() {
               <tbody className="divide-y divide-border">
                 {roleDistList.map((role, i) => (
                   <tr
-                    key={i}
+                    key={role.status}
                     className="hover:bg-secondary/30 transition-colors"
                   >
                     <td className="py-4">
@@ -966,7 +977,7 @@ export function SuperAdminDashboard() {
               },
             ].map((action, i) => (
               <button
-                key={i}
+                key={action.label}
                 onClick={action.action}
                 className="flex flex-col items-center gap-3 p-4 rounded-2xl border border-border bg-card hover:bg-secondary transition-all group cursor-pointer"
               >

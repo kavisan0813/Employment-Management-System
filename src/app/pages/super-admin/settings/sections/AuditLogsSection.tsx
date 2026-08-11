@@ -170,7 +170,7 @@ export function AuditLogsSection() {
       >
         {logs.map((l, idx) => (
           <div
-            key={idx}
+            key={l.text}
             className="flex justify-between items-center py-3 px-4"
             style={{
               borderBottom:

@@ -1069,7 +1069,7 @@ export function EmployeePerformance() {
                     <Bar dataKey="completed" radius={[0, 4, 4, 0]} barSize={20}>
                       {GOAL_COMPLETION_DATA.map((entry, index) => (
                         <Cell
-                          key={`cell-${index}`}
+                          key={entry.name}
                           fill={index % 2 === 0 ? "#10b981" : "#8b5cf6"}
                         />
                       ))}

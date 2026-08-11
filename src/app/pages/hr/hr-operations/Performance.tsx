@@ -125,7 +125,7 @@ const reviewHistory: ReviewHistory[] = [
 ];
 
 const loadPerformanceReviews = (): ReviewHistory[] => {
-  const local = localStorage.getItem("viyan_performance_reviews");
+  const local = localStorage.getItem("viyan_performance_reviews:v1");
   if (local) {
     try {
       return JSON.parse(local);
@@ -134,7 +134,7 @@ const loadPerformanceReviews = (): ReviewHistory[] => {
     }
   }
   localStorage.setItem(
-    "viyan_performance_reviews",
+    "viyan_performance_reviews:v1",
     JSON.stringify(reviewHistory),
   );
   return reviewHistory;
@@ -604,7 +604,7 @@ export function Performance() {
       const updated = history.filter((r) => r.id !== deleteTarget.id);
       setHistory(updated);
       localStorage.setItem(
-        "viyan_performance_reviews",
+        "viyan_performance_reviews:v1",
         JSON.stringify(updated),
       );
       toast.success("Review deleted successfully");
@@ -667,7 +667,7 @@ export function Performance() {
       });
       setHistory(updated);
       localStorage.setItem(
-        "viyan_performance_reviews",
+        "viyan_performance_reviews:v1",
         JSON.stringify(updated),
       );
       toast.success("Review updated successfully");
@@ -688,7 +688,7 @@ export function Performance() {
       const updated = [newReview, ...history];
       setHistory(updated);
       localStorage.setItem(
-        "viyan_performance_reviews",
+        "viyan_performance_reviews:v1",
         JSON.stringify(updated),
       );
       toast.success("New review submitted successfully");
@@ -797,7 +797,7 @@ export function Performance() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {stats.map((s, i) => (
           <div
-            key={i}
+            key={s.label}
             className="bg-card p-5 rounded-2xl border border-border shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all"
           >
             <div className="flex items-center justify-between mb-4">
@@ -1395,7 +1395,7 @@ export function Performance() {
                 <Bar dataKey="employees" radius={[0, 10, 10, 0]} barSize={20}>
                   {departments.slice(0, 5).map((entry, index) => (
                     <Cell
-                      key={`cell-${index}`}
+                      key={`cell-${entry.color}`}
                       fill={
                         ["#10B981", "#14B8A6", "#0D9488", "#0891B2", "#0284C7"][
                           index % 5
@@ -1435,7 +1435,7 @@ export function Performance() {
                   dataKey="value"
                 >
                   {distributionData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${entry.color}`} fill={entry.color} />
                   ))}
                 </Pie>
               </PieChart>
@@ -1443,7 +1443,7 @@ export function Performance() {
           </div>
           <div className="flex flex-wrap justify-center gap-4 mt-2">
             {distributionData.map((d, i) => (
-              <div key={i} className="flex items-center gap-1.5">
+              <div key={d.name} className="flex items-center gap-1.5">
                 <div
                   className="w-2 h-2 rounded-full"
                   style={{ backgroundColor: d.color }}

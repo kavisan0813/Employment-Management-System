@@ -31,6 +31,36 @@ import { DocumentPreviewContent } from "./EmployeeDocuments";
 
 const TABS = ["Personal Info", "Onboarding", "Documents", "Assets", "Expenses"];
 
+function ToggleItem({
+  label,
+  value,
+  onToggle,
+}: {
+  label: string;
+  value: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-between py-3.5 group">
+      <span className="text-[15px] font-bold text-foreground/90 group-hover:text-primary transition-colors">
+        {label}
+      </span>
+      <button
+        onClick={onToggle}
+        className={`w-11 h-6 rounded-full transition-all relative border-2 ${value
+          ? "bg-primary/10 border-primary"
+          : "bg-secondary/50 border-border"
+          }`}
+      >
+        <div
+          className={`absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full transition-all ${value ? "right-1 bg-primary" : "left-1 bg-muted-foreground/40"
+            }`}
+        />
+      </button>
+    </div>
+  );
+}
+
 export function EmployeeSelfProfile() {
   const { user, login } = useAuth();
   const [activeTab, setActiveTab] = useState("Personal Info");
@@ -106,7 +136,7 @@ export function EmployeeSelfProfile() {
       login(updatedUser);
 
       try {
-        const registeredRaw = localStorage.getItem("viyan_registered_users");
+        const registeredRaw = localStorage.getItem("viyan_registered_users:v1");
         if (registeredRaw) {
           const users = JSON.parse(registeredRaw);
           interface RegisteredUser {
@@ -131,7 +161,7 @@ export function EmployeeSelfProfile() {
             return u;
           });
           localStorage.setItem(
-            "viyan_registered_users",
+            "viyan_registered_users:v1",
             JSON.stringify(updatedUsers),
           );
         }
@@ -367,11 +397,10 @@ export function EmployeeSelfProfile() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-8 py-3 rounded-[14px] text-[14px] transition-all whitespace-nowrap flex items-center gap-2 ${
-              activeTab === tab
-                ? "bg-secondary text-primary font-black shadow-sm"
-                : "text-muted-foreground font-bold hover:text-foreground hover:bg-background"
-            }`}
+            className={`px-8 py-3 rounded-[14px] text-[14px] transition-all whitespace-nowrap flex items-center gap-2 ${activeTab === tab
+              ? "bg-secondary text-primary font-black shadow-sm"
+              : "text-muted-foreground font-bold hover:text-foreground hover:bg-background"
+              }`}
           >
             {tab}
           </button>
@@ -506,16 +535,9 @@ function InputField({
   isTextarea = false,
   onChange,
 }: InputFieldProps) {
-  const [localValue, setLocalValue] = useState(value);
-
-  useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setLocalValue(e.target.value);
     onChange?.(e.target.value);
   };
 
@@ -527,7 +549,7 @@ function InputField({
       {isTextarea ? (
         <textarea
           disabled={disabled}
-          value={localValue}
+          value={value}
           onChange={handleChange}
           placeholder={placeholder}
           className="w-full bg-background border border-border rounded-xl px-4 py-3 text-[13px] font-bold text-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all min-h-[120px] disabled:opacity-70 disabled:cursor-not-allowed custom-scrollbar resize-none"
@@ -542,7 +564,7 @@ function InputField({
           <input
             type={type}
             disabled={disabled}
-            value={localValue}
+            value={value}
             onChange={handleChange}
             placeholder={placeholder}
             className="w-full bg-transparent border-none outline-none text-[13px] text-foreground font-bold disabled:cursor-not-allowed"
@@ -571,14 +593,7 @@ function DropdownField({
   disabled,
   onChange,
 }: DropdownFieldProps) {
-  const [localValue, setLocalValue] = useState(value);
-
-  useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
-
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLocalValue(e.target.value);
     onChange?.(e.target.value);
   };
 
@@ -595,7 +610,7 @@ function DropdownField({
       >
         <select
           disabled={disabled}
-          value={localValue}
+          value={value}
           onChange={handleChange}
           className="w-full bg-transparent border-none outline-none text-[13px] text-foreground font-bold appearance-none disabled:cursor-not-allowed cursor-pointer"
           style={{
@@ -872,33 +887,33 @@ function DocumentsTab() {
     }
   };
 
+  useEffect(() => {
+    if (!isUploading) return;
+    const interval = setInterval(() => {
+      setUploadProgress((prev) => Math.min(prev + 25, 100));
+    }, 200);
+    return () => clearInterval(interval);
+  }, [isUploading]);
+
+  useEffect(() => {
+    if (uploadProgress >= 100 && isUploading) {
+      setIsUploading(false);
+      setReplacingDoc(null);
+      setFileToUpload(null);
+      showToast(
+        "Replacement Successful",
+        "success",
+        `${replacingDoc} replacement file uploaded and queued for HR review.`,
+      );
+    }
+  }, [uploadProgress, isUploading, replacingDoc]);
+
   const handleReplaceSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!fileToUpload) return;
 
     setIsUploading(true);
     setUploadProgress(0);
-
-    // Simulate progress
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setIsUploading(false);
-            setReplacingDoc(null);
-            setFileToUpload(null);
-            showToast(
-              "Replacement Successful",
-              "success",
-              `${replacingDoc} replacement file uploaded and queued for HR review.`,
-            );
-          }, 400);
-          return 100;
-        }
-        return prev + 25;
-      });
-    }, 200);
   };
 
   return (
@@ -914,13 +929,12 @@ function DocumentsTab() {
                 <FileText size={22} style={{ color: doc.color }} />
               </div>
               <span
-                className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
-                  doc.status === "Verified"
-                    ? "bg-primary/10 text-primary border-primary/20"
-                    : doc.status === "Pending"
-                      ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
-                      : "bg-blue-500/10 text-blue-600 border-blue-500/20"
-                }`}
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${doc.status === "Verified"
+                  ? "bg-primary/10 text-primary border-primary/20"
+                  : doc.status === "Pending"
+                    ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                    : "bg-blue-500/10 text-blue-600 border-blue-500/20"
+                  }`}
               >
                 {doc.status}
               </span>
@@ -1219,35 +1233,7 @@ export function SettingsTab() {
     setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const ToggleItem = ({
-    label,
-    value,
-    onToggle,
-  }: {
-    label: string;
-    value: boolean;
-    onToggle: () => void;
-  }) => (
-    <div className="flex items-center justify-between py-3.5 group">
-      <span className="text-[15px] font-bold text-foreground/90 group-hover:text-primary transition-colors">
-        {label}
-      </span>
-      <button
-        onClick={onToggle}
-        className={`w-11 h-6 rounded-full transition-all relative border-2 ${
-          value
-            ? "bg-primary/10 border-primary"
-            : "bg-secondary/50 border-border"
-        }`}
-      >
-        <div
-          className={`absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full transition-all ${
-            value ? "right-1 bg-primary" : "left-1 bg-muted-foreground/40"
-          }`}
-        />
-      </button>
-    </div>
-  );
+
 
   return (
     <>

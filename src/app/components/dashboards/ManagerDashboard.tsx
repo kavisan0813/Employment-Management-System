@@ -411,7 +411,7 @@ export function ManagerDashboard() {
           },
         ].map((kpi, i) => (
           <motion.div
-            key={i}
+            key={kpi.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
@@ -533,7 +533,7 @@ export function ManagerDashboard() {
                   >
                     {TEAM_COMPOSITION.map((entry, index) => (
                       <Cell
-                        key={`cell-${index}`}
+                        key={`cell-${entry.color}`}
                         fill={entry.color}
                         strokeWidth={0}
                       />
@@ -551,7 +551,7 @@ export function ManagerDashboard() {
             </div>
             <div className="w-full mt-8 space-y-3">
               {TEAM_COMPOSITION.map((item, i) => (
-                <div key={i} className="flex items-center justify-between">
+                <div key={item.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div
                       className="w-2.5 h-2.5 rounded-full"
@@ -607,7 +607,7 @@ export function ManagerDashboard() {
               <tbody className="divide-y divide-border">
                 {TEAM_MEMBERS.map((emp, i) => (
                   <tr
-                    key={i}
+                    key={emp.name}
                     onClick={() => setSelectedEmployee(emp)}
                     className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] cursor-pointer"
                   >
@@ -712,7 +712,7 @@ export function ManagerDashboard() {
               },
             ].map((action, i) => (
               <button
-                key={i}
+                key={action.label}
                 onClick={() => handleAction(action.label)}
                 className="flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border border-border bg-card hover:bg-secondary hover:border-[#00B87C]/30 transition-all group"
               >
@@ -755,7 +755,7 @@ export function ManagerDashboard() {
                 .filter((a) => a.badge === "Leave")
                 .map((item, i) => (
                   <div
-                    key={i}
+                    key={item.name}
                     className="flex items-center justify-between p-4 rounded-2xl border border-border bg-secondary/10"
                   >
                     <div className="flex items-center gap-3">
@@ -966,7 +966,7 @@ export function ManagerDashboard() {
             <div className="p-4 space-y-4 flex-1">
               {pendingApprovals.map((item, i) => (
                 <div
-                  key={i}
+                  key={item.name}
                   className="p-4 rounded-2xl border border-border bg-secondary/20 hover:bg-secondary/40 transition-all group"
                 >
                   <div className="flex items-center gap-4 mb-4">

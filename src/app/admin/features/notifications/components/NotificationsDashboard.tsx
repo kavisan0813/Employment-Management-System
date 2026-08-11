@@ -174,7 +174,7 @@ export function NotificationsDashboard({
           },
         ].map((kpi, idx) => (
           <div
-            key={idx}
+            key={kpi.label}
             onClick={() =>
               setActiveTab(kpi.tab as Parameters<typeof setActiveTab>[0])
             }
@@ -307,7 +307,7 @@ export function NotificationsDashboard({
                 { l: "Email SMTP Relay", v: "98.2%" },
                 { l: "SMS Gateway", v: "94.7%" },
               ].map((ch, i) => (
-                <div key={i} className="space-y-1">
+                <div key={ch.l} className="space-y-1">
                   <div className="flex justify-between">
                     <span>{ch.l}</span>
                     <span className="font-medium text-emerald-600">{ch.v}</span>

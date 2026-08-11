@@ -74,7 +74,7 @@ export function ConnectedDevicesSection({
         const Icon = s.icon;
         return (
           <div
-            key={i}
+            key={s.name}
             className="bg-card rounded-2xl border border-border shadow-sm p-6 mb-4 flex items-start justify-between"
           >
             <div className="flex items-center gap-4">

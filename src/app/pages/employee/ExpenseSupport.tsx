@@ -163,7 +163,7 @@ export function ExpenseSupport() {
             <div className="space-y-6">
               {tickets.map((t, i) => (
                 <div
-                  key={i}
+                  key={t.id}
                   className="flex flex-col gap-3 p-5 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-colors cursor-pointer group"
                 >
                   <div className="flex items-center justify-between">

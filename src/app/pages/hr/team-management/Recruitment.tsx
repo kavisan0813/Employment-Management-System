@@ -722,7 +722,7 @@ function MessageModal({
       timestamp: string;
     }>
   >(() => {
-    const saved = localStorage.getItem("viyan_recruitment_messages");
+    const saved = localStorage.getItem("viyan_recruitment_messages:v1");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -755,7 +755,7 @@ function MessageModal({
     };
 
     // Save message
-    const saved = localStorage.getItem("viyan_recruitment_messages");
+    const saved = localStorage.getItem("viyan_recruitment_messages:v1");
     let messagesMap: Record<
       string,
       Array<{
@@ -774,7 +774,7 @@ function MessageModal({
     const currentList = [...messages, newMsg];
     messagesMap[candidate.id] = currentList;
     localStorage.setItem(
-      "viyan_recruitment_messages",
+      "viyan_recruitment_messages:v1",
       JSON.stringify(messagesMap),
     );
     setMessages(currentList);
@@ -820,7 +820,7 @@ function MessageModal({
       const updatedList = [...currentList, reply];
       messagesMap[candidate.id] = updatedList;
       localStorage.setItem(
-        "viyan_recruitment_messages",
+        "viyan_recruitment_messages:v1",
         JSON.stringify(messagesMap),
       );
       setMessages(updatedList);
@@ -920,7 +920,7 @@ function MessageModal({
             <div className="space-y-4">
               {messages.map((m, i) => (
                 <div
-                  key={i}
+                  key={m.text}
                   className={`flex flex-col ${m.sender === "recruiter" ? "items-end" : "items-start"}`}
                 >
                   <div
@@ -1363,24 +1363,23 @@ function AddCandidateModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
   useEscapeKey(onClose);
 
-  useEffect(() => {
+  const [prevInitialFile, setPrevInitialFile] = useState<File | null>(initialFile || null);
+  if (initialFile !== prevInitialFile) {
+    setPrevInitialFile(initialFile || null);
     if (initialFile) {
-      handleResumeUpload(initialFile);
+      setIsParsing(true);
+      setParseProgress(0);
+      setParseSuccess(false);
     }
-  }, [initialFile]);
+  }
 
-  const handleResumeUpload = (file: File) => {
-    if (!file) return;
-    setIsParsing(true);
-    setParseProgress(0);
-    setParseSuccess(false);
-
+  useEffect(() => {
+    if (!isParsing) return;
     let currentProgress = 0;
     const interval = setInterval(() => {
       currentProgress += 10;
       setParseProgress(currentProgress);
       if (currentProgress >= 100) {
-        clearInterval(interval);
         setIsParsing(false);
         setParseSuccess(true);
         const randomCand =
@@ -1395,6 +1394,14 @@ function AddCandidateModal({
         setErrors({});
       }
     }, 150);
+    return () => clearInterval(interval);
+  }, [isParsing]);
+
+  const handleResumeUpload = (file: File) => {
+    if (!file) return;
+    setIsParsing(true);
+    setParseProgress(0);
+    setParseSuccess(false);
   };
 
   const handleAdd = () => {
@@ -1992,16 +1999,16 @@ function PostJobModal({
                   >
                     {k === "department"
                       ? [
-                          "Engineering",
-                          "Design",
-                          "Marketing",
-                          "Sales",
-                          "HR",
-                          "Finance",
-                        ].map((d) => <option key={d}>{d}</option>)
+                        "Engineering",
+                        "Design",
+                        "Marketing",
+                        "Sales",
+                        "HR",
+                        "Finance",
+                      ].map((d) => <option key={d}>{d}</option>)
                       : ["Remote", "On-site", "Hybrid"].map((l) => (
-                          <option key={l}>{l}</option>
-                        ))}
+                        <option key={l}>{l}</option>
+                      ))}
                   </select>
                   <ChevronDown
                     size={13}
@@ -2227,7 +2234,7 @@ function CandidateCard({
         <div className="flex -space-x-2">
           {(candidate.interviewerAvatars || []).slice(0, 3).map((av, i) => (
             <div
-              key={i}
+              key={av}
               className="w-6 h-6 rounded-full border-2 bg-slate-100 overflow-hidden"
               style={{ borderColor: "var(--card)" }}
             >
@@ -2647,20 +2654,19 @@ Signature of \${candidate.name}          Date
             >
               {(stage === "Offer"
                 ? ([
-                    "Overview",
-                    "Interviews",
-                    "Activity",
-                    "Offer Letter",
-                  ] as const)
+                  "Overview",
+                  "Interviews",
+                  "Activity",
+                  "Offer Letter",
+                ] as const)
                 : (["Overview", "Interviews", "Activity"] as const)
               ).map((t) => (
                 <button
                   key={t}
                   disabled={isEditing}
                   onClick={() => setActiveTab(t)}
-                  className={`pb-3 text-xs font-black uppercase tracking-widest transition-all relative ${
-                    activeTab === t ? "text-emerald-600" : "text-slate-400"
-                  } ${isEditing ? "opacity-30 cursor-not-allowed" : ""}`}
+                  className={`pb-3 text-xs font-black uppercase tracking-widest transition-all relative ${activeTab === t ? "text-emerald-600" : "text-slate-400"
+                    } ${isEditing ? "opacity-30 cursor-not-allowed" : ""}`}
                   style={{
                     color:
                       activeTab === t
@@ -2860,7 +2866,7 @@ Signature of \${candidate.name}          Date
                       },
                     ].map((item, i) => (
                       <div
-                        key={i}
+                        key={item.icon}
                         className="flex items-center gap-3 text-sm font-bold p-3 rounded-xl border transition-colors hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800"
                         style={{
                           color: "var(--foreground)",
@@ -3122,21 +3128,20 @@ Bachelor of Science in Computer Science (Mock Education)
                   },
                   ...(stage !== "Applied"
                     ? [
-                        {
-                          title: `📧 Automated Notification Sent`,
-                          desc: `Email sent to ${candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com: ${
-                            stage === "Screening"
-                              ? "Screening quiz & background questionnaire link."
-                              : stage === "Round 1" || stage === "Round 2"
-                                ? `${stage} slot booking details and coordinator details.`
-                                : stage === "Offer"
-                                  ? "Offer letter contract with digital signature link."
-                                  : "Onboarding portal link & welcome credentials."
+                      {
+                        title: `📧 Automated Notification Sent`,
+                        desc: `Email sent to ${candidate.name.toLowerCase().replace(/\s+/g, ".")}@example.com: ${stage === "Screening"
+                          ? "Screening quiz & background questionnaire link."
+                          : stage === "Round 1" || stage === "Round 2"
+                            ? `${stage} slot booking details and coordinator details.`
+                            : stage === "Offer"
+                              ? "Offer letter contract with digital signature link."
+                              : "Onboarding portal link & welcome credentials."
                           }`,
-                          date: "Today",
-                          color: "bg-purple-500",
-                        },
-                      ]
+                        date: "Today",
+                        color: "bg-purple-500",
+                      },
+                    ]
                     : []),
                   ...scheduledInterviews.map((iv) => ({
                     title: `${iv.type} Scheduled`,
@@ -3145,7 +3150,7 @@ Bachelor of Science in Computer Science (Mock Education)
                     color: "bg-amber-500",
                   })),
                 ].map((act, idx) => (
-                  <div key={idx} className="relative flex gap-4">
+                  <div key={act.title} className="relative flex gap-4">
                     <div
                       className={`absolute -left-[21px] w-3.5 h-3.5 rounded-full ${act.color} border-2 border-white dark:border-slate-900 z-10`}
                     />
@@ -3361,13 +3366,13 @@ Bachelor of Science in Computer Science (Mock Education)
                           <span className="text-foreground font-bold">
                             {offerJoiningDate
                               ? new Date(offerJoiningDate).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                  },
-                                )
+                                "en-US",
+                                {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                },
+                              )
                               : "To Be Decided"}
                           </span>
 
@@ -3687,13 +3692,12 @@ function CandidatesView({
               </td>
               <td className="px-8 py-4">
                 <span
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase ${
-                    c.source === "LinkedIn"
-                      ? "bg-blue-50 text-blue-600"
-                      : c.source === "Indeed"
-                        ? "bg-indigo-50 text-indigo-600"
-                        : "bg-purple-50 text-purple-600"
-                  }`}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase ${c.source === "LinkedIn"
+                    ? "bg-blue-50 text-blue-600"
+                    : c.source === "Indeed"
+                      ? "bg-indigo-50 text-indigo-600"
+                      : "bg-purple-50 text-purple-600"
+                    }`}
                 >
                   {c.source}
                 </span>
@@ -4019,11 +4023,10 @@ function InterviewsView({
               return (
                 <div
                   key={i}
-                  className={`relative h-10 rounded-xl flex items-center justify-center text-xs font-bold transition-all cursor-pointer group ${
-                    isToday
-                      ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900"
-                      : "hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800"
-                  }`}
+                  className={`relative h-10 rounded-xl flex items-center justify-center text-xs font-bold transition-all cursor-pointer group ${isToday
+                    ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900"
+                    : "hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800"
+                    }`}
                   style={{
                     color: isToday ? "white" : "var(--foreground)",
                     border:
@@ -4106,7 +4109,7 @@ function InterviewsView({
                 "Prepare structured questions",
               ].map((tip, i) => (
                 <li
-                  key={i}
+                  key={tip}
                   className="flex items-center gap-2 text-[11px] font-bold"
                 >
                   <CheckCircle2 size={12} className="text-emerald-500" />
@@ -4455,7 +4458,7 @@ function AnalyticsView({ pipeline }: { pipeline: Record<Stage, Candidate[]> }) {
           </h3>
           <div className="flex items-end gap-3 h-40">
             {[18, 24, 21, 19, 15, 22, 18].map((v, i) => (
-              <div key={i} className="flex-1 group relative">
+              <div key={v} className="flex-1 group relative">
                 <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[11px] font-semibold px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100 whitespace-nowrap">
                   {v} days
                 </div>
@@ -4492,20 +4495,19 @@ function AnalyticsView({ pipeline }: { pipeline: Record<Stage, Candidate[]> }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {activities.map((act, i) => (
               <div
-                key={i}
+                key={act.name}
                 className="p-4 rounded-2xl border flex items-center gap-4 transition-all hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800/50"
                 style={{ borderColor: "var(--border)" }}
               >
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm ${
-                    act.type === "Hired"
-                      ? "bg-emerald-500"
-                      : act.type === "Offer"
-                        ? "bg-purple-500"
-                        : act.type === "Interview"
-                          ? "bg-amber-500"
-                          : "bg-blue-500"
-                  }`}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm ${act.type === "Hired"
+                    ? "bg-emerald-500"
+                    : act.type === "Offer"
+                      ? "bg-purple-500"
+                      : act.type === "Interview"
+                        ? "bg-amber-500"
+                        : "bg-blue-500"
+                    }`}
                 >
                   {act.type === "Hired" ? (
                     <CheckCircle2 size={18} />
@@ -4948,7 +4950,7 @@ function InfoBar({
   return (
     <div className="flex items-center gap-6 mb-8 px-1">
       {stats.map((s, i) => (
-        <div key={i} className="flex items-center gap-2">
+        <div key={s.label} className="flex items-center gap-2">
           <div
             className="w-1.5 h-1.5 rounded-full"
             style={{ backgroundColor: s.color }}
@@ -5015,7 +5017,7 @@ function KpiCards({
     <div className="grid grid-cols-4 gap-6 mb-8">
       {cards.map((c, i) => (
         <div
-          key={i}
+          key={c.label}
           className="p-6 rounded-2xl shadow-sm border flex items-center gap-4 transition-all"
           style={{
             backgroundColor: "var(--card)",
@@ -5086,9 +5088,8 @@ function RecruitmentTabs({
         <button
           key={t}
           onClick={() => onChange(t)}
-          className={`pb-4 text-sm font-bold transition-all relative ${
-            active === t ? "text-emerald-600" : ""
-          }`}
+          className={`pb-4 text-sm font-bold transition-all relative ${active === t ? "text-emerald-600" : ""
+            }`}
           style={{
             color: active === t ? "var(--primary)" : "var(--muted-foreground)",
           }}
@@ -5351,7 +5352,7 @@ export function Recruitment() {
 
   // Local persistent states
   const [pipeline, setPipeline] = useState<Record<Stage, Candidate[]>>(() => {
-    const saved = localStorage.getItem("viyan_recruitment_pipeline");
+    const saved = localStorage.getItem("viyan_recruitment_pipeline:v1");
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -5367,7 +5368,7 @@ export function Recruitment() {
   });
 
   const [jobs, setJobs] = useState<JobPosting[]>(() => {
-    const saved = localStorage.getItem("viyan_recruitment_jobs");
+    const saved = localStorage.getItem("viyan_recruitment_jobs:v1");
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -5379,7 +5380,7 @@ export function Recruitment() {
   });
 
   const [interviews, setInterviews] = useState<ScheduledInterview[]>(() => {
-    const saved = localStorage.getItem("viyan_recruitment_interviews");
+    const saved = localStorage.getItem("viyan_recruitment_interviews:v1");
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -5394,20 +5395,20 @@ export function Recruitment() {
   const updatePipeline = (newPipeline: Record<Stage, Candidate[]>) => {
     setPipeline(newPipeline);
     localStorage.setItem(
-      "viyan_recruitment_pipeline",
+      "viyan_recruitment_pipeline:v1",
       JSON.stringify(newPipeline),
     );
   };
 
   const updateJobs = (newJobs: JobPosting[]) => {
     setJobs(newJobs);
-    localStorage.setItem("viyan_recruitment_jobs", JSON.stringify(newJobs));
+    localStorage.setItem("viyan_recruitment_jobs:v1", JSON.stringify(newJobs));
   };
 
   const updateInterviews = (newInterviews: ScheduledInterview[]) => {
     setInterviews(newInterviews);
     localStorage.setItem(
-      "viyan_recruitment_interviews",
+      "viyan_recruitment_interviews:v1",
       JSON.stringify(newInterviews),
     );
   };
@@ -5570,17 +5571,17 @@ export function Recruitment() {
       const updatedJobs = jobs.map((j) =>
         j.id === jobForm.id
           ? {
-              ...j,
-              title: jobForm.title,
-              department: jobForm.department,
-              location: jobForm.location,
-              type: jobForm.type,
-              experience: jobForm.experience,
-              salary: jobForm.salary,
-              description: jobForm.description,
-              jobId: jobForm.jobId,
-              vacancies: Number(jobForm.vacancies) || 1,
-            }
+            ...j,
+            title: jobForm.title,
+            department: jobForm.department,
+            location: jobForm.location,
+            type: jobForm.type,
+            experience: jobForm.experience,
+            salary: jobForm.salary,
+            description: jobForm.description,
+            jobId: jobForm.jobId,
+            vacancies: Number(jobForm.vacancies) || 1,
+          }
           : j,
       );
       updateJobs(updatedJobs);

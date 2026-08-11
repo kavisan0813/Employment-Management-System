@@ -1,4 +1,4 @@
-import { MoreVertical, Edit3, Copy, Trash2, FileText } from "lucide-react";
+import { MoreVertical, Edit3, Copy, Trash2 } from "lucide-react";
 import { motion } from "motion/react";
 import type { OffboardingTemplate } from "../../types/offboarding.types";
 
@@ -102,7 +102,7 @@ export function OffboardingTemplates({
                           },
                         ].map((item, i) => (
                           <button
-                            key={i}
+                            key={item.label}
                             onClick={item.action}
                             className="w-full text-left px-4 py-2.5 text-[12px] font-bold text-foreground hover:bg-muted flex items-center gap-2 transition-all"
                           >

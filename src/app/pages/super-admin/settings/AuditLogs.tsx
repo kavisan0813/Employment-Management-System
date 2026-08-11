@@ -1102,7 +1102,7 @@ export function AuditLogs() {
                       value: selectedLog.record.split(" —")[0],
                     },
                   ].map((f, i) => (
-                    <div key={i}>
+                    <div key={f.label}>
                       <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
                         {f.label}
                       </p>

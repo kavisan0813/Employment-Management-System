@@ -267,7 +267,7 @@ export function FinanceDepartments() {
           },
         ].map((kpi, i) => (
           <div
-            key={i}
+            key={kpi.label}
             onClick={kpi.onClick}
             className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all cursor-pointer group flex flex-col justify-between"
           >
@@ -691,7 +691,7 @@ export function FinanceDepartments() {
                       color: "#F59E0B",
                     },
                   ].map((cat, idx) => (
-                    <div key={idx} className="flex flex-col gap-1.5">
+                    <div key={cat.label} className="flex flex-col gap-1.5">
                       <div className="flex items-center justify-between text-[13px] font-bold">
                         <span className="text-foreground">{cat.label}</span>
                         <span className="text-muted-foreground">
@@ -728,7 +728,7 @@ export function FinanceDepartments() {
                     { title: "Junior / Associate", count: 217 },
                   ].map((role, idx) => (
                     <li
-                      key={idx}
+                      key={role.title}
                       className="flex items-center justify-between text-[13px] font-bold p-3 bg-card border border-border rounded-xl"
                     >
                       <span className="text-foreground">{role.title}</span>

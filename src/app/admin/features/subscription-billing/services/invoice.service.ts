@@ -125,7 +125,7 @@ const SEED_INVOICES: Invoice[] = [
 
 function getStore(): Invoice[] {
   try {
-    const item = localStorage.getItem("ems_billing_invoices");
+    const item = localStorage.getItem("ems_billing_invoices:v1");
     return item ? JSON.parse(item) : SEED_INVOICES;
   } catch {
     return SEED_INVOICES;
@@ -133,7 +133,7 @@ function getStore(): Invoice[] {
 }
 
 function saveStore(invoices: Invoice[]) {
-  localStorage.setItem("ems_billing_invoices", JSON.stringify(invoices));
+  localStorage.setItem("ems_billing_invoices:v1", JSON.stringify(invoices));
 }
 
 export const InvoiceService = {

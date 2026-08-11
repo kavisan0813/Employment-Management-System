@@ -859,7 +859,7 @@ function AnnouncementDetailModal({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {announcement.attachments.map((file, idx) => (
                   <div
-                    key={idx}
+                    key={file.name}
                     className="p-3 bg-secondary/35 border border-border rounded-xl flex items-center justify-between gap-4"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">

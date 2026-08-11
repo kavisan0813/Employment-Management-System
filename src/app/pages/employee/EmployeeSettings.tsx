@@ -1420,7 +1420,7 @@ function ConnectedDevices({
         const Icon = s.icon;
         return (
           <div
-            key={i}
+            key={s.name}
             className="bg-card rounded-2xl border border-border shadow-sm p-6 mb-4 flex items-start justify-between"
           >
             <div className="flex items-center gap-4">
@@ -1616,7 +1616,7 @@ function DataDownloads({ onModal }: { onModal: (m: string | null) => void }) {
           const Icon = card.icon;
           return (
             <div
-              key={i}
+              key={card.title}
               className="bg-card rounded-2xl border border-border shadow-sm p-6"
             >
               <div className="flex items-start gap-4 mb-4">
@@ -1845,7 +1845,7 @@ function HelpFAQ({ navigate }: { navigate: (p: string) => void }) {
           const Icon = cat.icon;
           return (
             <div
-              key={i}
+              key={cat.label}
               className="bg-card rounded-2xl border border-border shadow-sm p-5 cursor-pointer hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
             >
               <div className="flex items-center gap-3 mb-3">
@@ -1879,7 +1879,7 @@ function HelpFAQ({ navigate }: { navigate: (p: string) => void }) {
         {filtered.map((faq, i) => {
           const expanded = expandedFaq === i;
           return (
-            <div key={i} className="border-b border-border/50 last:border-b-0">
+            <div key={faq.q} className="border-b border-border/50 last:border-b-0">
               <button
                 onClick={() => setExpandedFaq(expanded ? null : i)}
                 className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-secondary/50 transition-colors"
@@ -2019,7 +2019,7 @@ function ContactSupport({
           const Icon = card.icon;
           return (
             <div
-              key={i}
+              key={card.title}
               className="bg-card rounded-2xl border border-border shadow-sm p-6"
             >
               <div
@@ -2119,7 +2119,7 @@ function ContactSupport({
           },
         ].map((contact, i) => (
           <div
-            key={i}
+            key={contact.name}
             className="flex items-center justify-between px-6 py-4 border-b border-border/50 last:border-b-0 hover:bg-[#00B87C]/[0.08] transition-colors"
           >
             <div className="flex items-center gap-4">
@@ -2162,7 +2162,7 @@ function ContactSupport({
             },
             { label: "Emergency", hours: "24/7" },
           ].map((item, i) => (
-            <div key={i} className="flex items-center justify-between">
+            <div key={item.label} className="flex items-center justify-between">
               <span className="text-[14px] font-bold text-muted-foreground">
                 {item.label}
               </span>

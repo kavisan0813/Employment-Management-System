@@ -280,11 +280,10 @@ export function FinanceCustomBuilder({
   ) => (
     <div
       onClick={!isAdded ? onAdd : undefined}
-      className={`group flex items-center justify-between p-3 rounded-xl border transition-all ${
-        isAdded
-          ? `bg-${colorClass}-500/10 border-${colorClass}-500/30 text-foreground cursor-default`
-          : "bg-card border-border hover:border-primary/50 cursor-pointer"
-      }`}
+      className={`group flex items-center justify-between p-3 rounded-xl border transition-all ${isAdded
+        ? `bg-${colorClass}-500/10 border-${colorClass}-500/30 text-foreground cursor-default`
+        : "bg-card border-border hover:border-primary/50 cursor-pointer"
+        }`}
     >
       <span className="text-[13px] font-bold text-foreground">{name}</span>
       {isAdded ? (
@@ -510,8 +509,8 @@ export function FinanceCustomBuilder({
 
         {/* Preview Tabs */}
         {!isGenerated &&
-        selectedDims.length === 0 &&
-        selectedMeas.length === 0 ? (
+          selectedDims.length === 0 &&
+          selectedMeas.length === 0 ? (
           <div className="flex-1 flex items-center justify-center p-12 bg-muted/5">
             <div className="text-center space-y-4">
               <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto opacity-50">
@@ -550,11 +549,10 @@ export function FinanceCustomBuilder({
                   <button
                     key={tab}
                     onClick={() => setPreviewMode(tab)}
-                    className={`py-4 text-[13px] font-black uppercase tracking-widest relative ${
-                      previewMode === tab
-                        ? "text-primary"
-                        : "text-muted-foreground hover:text-foreground"
-                    } transition-colors`}
+                    className={`py-4 text-[13px] font-black uppercase tracking-widest relative ${previewMode === tab
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                      } transition-colors`}
                   >
                     {tab} Preview
                     {previewMode === tab && (
@@ -609,7 +607,7 @@ export function FinanceCustomBuilder({
                       <tbody>
                         {mockData.map((row, i) => (
                           <tr
-                            key={i}
+                            key={row.id}
                             className="border-b border-border/50 hover:bg-muted/20 transition-colors group"
                           >
                             <td className="py-3 px-4 text-[13px] font-bold text-foreground">
@@ -846,7 +844,7 @@ export function FinanceCustomBuilder({
                         >
                           {mockData.map((entry, index) => (
                             <Cell
-                              key={`cell-${index}`}
+                              key={`cell-${entry[groupBy]}`}
                               fill={CHART_COLORS[index % CHART_COLORS.length]}
                             />
                           ))}

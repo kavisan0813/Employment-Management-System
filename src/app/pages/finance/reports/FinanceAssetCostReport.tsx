@@ -467,6 +467,30 @@ const getStatusBadge = (status: string) => {
   }
 };
 
+function SortIcon({
+  field,
+  sortField,
+  sortDir,
+}: {
+  field: string;
+  sortField: string;
+  sortDir: "asc" | "desc";
+}) {
+  return (
+    <span className="inline-flex flex-col items-center leading-none ml-1 -mt-0.5">
+      <ChevronDown
+        size={8}
+        className={`-mb-0.5 ${sortField === field && sortDir === "asc" ? "text-[#00B87C]" : "text-muted-foreground/40"}`}
+        style={{ transform: "scaleY(-1)" }}
+      />
+      <ChevronDown
+        size={8}
+        className={`${sortField === field && sortDir === "desc" ? "text-[#00B87C]" : "text-muted-foreground/40"}`}
+      />
+    </span>
+  );
+}
+
 export function FinanceAssetCostReport() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -537,19 +561,6 @@ export function FinanceAssetCostReport() {
       return sortDir === "asc" ? cmp : -cmp;
     });
 
-  const SortIcon = ({ field }: { field: string }) => (
-    <span className="inline-flex flex-col items-center leading-none ml-1 -mt-0.5">
-      <ChevronDown
-        size={8}
-        className={`-mb-0.5 ${sortField === field && sortDir === "asc" ? "text-[#00B87C]" : "text-muted-foreground/40"}`}
-        style={{ transform: "scaleY(-1)" }}
-      />
-      <ChevronDown
-        size={8}
-        className={`${sortField === field && sortDir === "desc" ? "text-[#00B87C]" : "text-muted-foreground/40"}`}
-      />
-    </span>
-  );
 
   const selectedCategoryData = selectedCategory
     ? ASSET_COST_BY_CATEGORY.find((c) => c.id === selectedCategory)
@@ -984,11 +995,10 @@ export function FinanceAssetCostReport() {
                       setSelectedFY(fy);
                       setShowFYDropdown(false);
                     }}
-                    className={`w-full text-left px-4 py-3 text-[12px] font-bold transition-all hover:bg-muted flex items-center gap-2 ${
-                      selectedFY === fy
-                        ? "text-[#8B5CF6] dark:text-purple-400 bg-[#EDE9FE]/30 dark:bg-purple-500/10"
-                        : "text-foreground"
-                    }`}
+                    className={`w-full text-left px-4 py-3 text-[12px] font-bold transition-all hover:bg-muted flex items-center gap-2 ${selectedFY === fy
+                      ? "text-[#8B5CF6] dark:text-purple-400 bg-[#EDE9FE]/30 dark:bg-purple-500/10"
+                      : "text-foreground"
+                      }`}
                   >
                     <Calendar
                       size={14}
@@ -1036,11 +1046,10 @@ export function FinanceAssetCostReport() {
                       setSelectedCatFilter(cat);
                       setShowCatDropdown(false);
                     }}
-                    className={`w-full text-left px-4 py-3 text-[12px] font-bold transition-all hover:bg-muted flex items-center gap-2 ${
-                      selectedCatFilter === cat
-                        ? "text-[#8B5CF6] dark:text-purple-400 bg-[#EDE9FE]/30 dark:bg-purple-500/10"
-                        : "text-foreground"
-                    }`}
+                    className={`w-full text-left px-4 py-3 text-[12px] font-bold transition-all hover:bg-muted flex items-center gap-2 ${selectedCatFilter === cat
+                      ? "text-[#8B5CF6] dark:text-purple-400 bg-[#EDE9FE]/30 dark:bg-purple-500/10"
+                      : "text-foreground"
+                      }`}
                   >
                     <Package
                       size={14}
@@ -1125,7 +1134,7 @@ export function FinanceAssetCostReport() {
                   onClick={() => handleSort("category")}
                 >
                   <div className="flex items-center">
-                    Category <SortIcon field="category" />
+                    Category <SortIcon field="category" sortField={sortField} sortDir={sortDir} />
                   </div>
                 </th>
                 <th
@@ -1133,7 +1142,7 @@ export function FinanceAssetCostReport() {
                   onClick={() => handleSort("count")}
                 >
                   <div className="flex items-center justify-end">
-                    Count <SortIcon field="count" />
+                    Count <SortIcon field="count" sortField={sortField} sortDir={sortDir} />
                   </div>
                 </th>
                 <th
@@ -1141,7 +1150,7 @@ export function FinanceAssetCostReport() {
                   onClick={() => handleSort("totalValue")}
                 >
                   <div className="flex items-center justify-end">
-                    Total Value <SortIcon field="totalValue" />
+                    Total Value <SortIcon field="totalValue" sortField={sortField} sortDir={sortDir} />
                   </div>
                 </th>
                 <th
@@ -1149,7 +1158,7 @@ export function FinanceAssetCostReport() {
                   onClick={() => handleSort("annualDepreciation")}
                 >
                   <div className="flex items-center justify-end">
-                    Annual Depreciation <SortIcon field="annualDepreciation" />
+                    Annual Depreciation <SortIcon field="annualDepreciation" sortField={sortField} sortDir={sortDir} />
                   </div>
                 </th>
                 <th
@@ -1157,7 +1166,7 @@ export function FinanceAssetCostReport() {
                   onClick={() => handleSort("bookValue")}
                 >
                   <div className="flex items-center justify-end">
-                    Book Value <SortIcon field="bookValue" />
+                    Book Value <SortIcon field="bookValue" sortField={sortField} sortDir={sortDir} />
                   </div>
                 </th>
                 <th
@@ -1165,7 +1174,7 @@ export function FinanceAssetCostReport() {
                   onClick={() => handleSort("status")}
                 >
                   <div className="flex items-center justify-center">
-                    Status <SortIcon field="status" />
+                    Status <SortIcon field="status" sortField={sortField} sortDir={sortDir} />
                   </div>
                 </th>
                 <th className="px-6 py-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest text-center">
@@ -1445,10 +1454,10 @@ export function FinanceAssetCostReport() {
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-3 bg-secondary rounded-full overflow-hidden">
                           <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${totalPct}%` }}
+                            initial={{ x: "-100%" }}
+                            animate={{ x: `-${100 - (totalPct)}%` }}
                             transition={{ duration: 0.8, delay: 0.1 }}
-                            className="h-full bg-[#00B87C] rounded-full group-hover:opacity-80 transition-opacity"
+                            className="h-full bg-[#00B87C] rounded-full group-hover:opacity-80 transition-opacity w-full"
                           />
                         </div>
                         <span className="text-[11px] font-semibold text-foreground w-16 text-right">
@@ -1458,10 +1467,10 @@ export function FinanceAssetCostReport() {
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
                           <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${depPct}%` }}
+                            initial={{ x: "-100%" }}
+                            animate={{ x: `-${100 - (depPct)}%` }}
                             transition={{ duration: 0.8, delay: 0.2 }}
-                            className="h-full bg-[#8B5CF6] rounded-full group-hover:opacity-80 transition-opacity"
+                            className="h-full bg-[#8B5CF6] rounded-full group-hover:opacity-80 transition-opacity w-full"
                           />
                         </div>
                         <span className="text-[11px] font-bold text-muted-foreground w-16 text-right">
@@ -1629,7 +1638,7 @@ export function FinanceAssetCostReport() {
                   <div className="px-8 py-6 space-y-4">
                     {modal.data.map((item, idx) => (
                       <motion.div
-                        key={idx}
+                        key={item.label}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.2, delay: idx * 0.05 }}
@@ -1768,7 +1777,7 @@ export function FinanceAssetCostReport() {
                 <div className="space-y-3">
                   {selectedDetails.items.map((item, idx) => (
                     <div
-                      key={idx}
+                      key={item.name}
                       onClick={() => {
                         setSelectedCategory(null);
                         navigate("/asset-management");
@@ -1914,12 +1923,12 @@ export function FinanceAssetCostReport() {
                   <div className="flex items-center gap-4">
                     <div className="flex-1 h-3 bg-secondary rounded-full overflow-hidden">
                       <motion.div
-                        initial={{ width: 0 }}
+                        initial={{ x: "-100%" }}
                         animate={{
-                          width: `${Math.min((selectedDeptData.totalAssets / selectedDeptData.headCount) * 10, 100)}%`,
+                          x: `${-100 + Math.min((selectedDeptData.totalAssets / selectedDeptData.headCount) * 10, 100)}%`,
                         }}
                         transition={{ duration: 0.8 }}
-                        className="h-full rounded-full"
+                        className="h-full rounded-full w-full"
                         style={{
                           backgroundColor:
                             DEPT_ASSET_DIST_DATA.find(

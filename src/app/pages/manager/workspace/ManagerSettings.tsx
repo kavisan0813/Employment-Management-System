@@ -750,7 +750,7 @@ export function ManagerSettings() {
                       },
                     ].map((row, idx) => (
                       <tr
-                        key={idx}
+                        key={row.cat}
                         className="hover:bg-secondary/20 transition-colors"
                       >
                         <td className="px-6 py-4 font-bold">{row.cat}</td>

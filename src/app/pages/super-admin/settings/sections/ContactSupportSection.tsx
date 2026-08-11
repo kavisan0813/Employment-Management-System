@@ -59,7 +59,7 @@ export function ContactSupportSection({
           const Icon = card.icon;
           return (
             <div
-              key={i}
+              key={card.title}
               className="bg-card rounded-2xl border border-border shadow-sm p-6"
             >
               <div
@@ -159,7 +159,7 @@ export function ContactSupportSection({
           },
         ].map((contact, i) => (
           <div
-            key={i}
+            key={contact.name}
             className="flex items-center justify-between px-6 py-4 border-b border-border/50 last:border-b-0 hover:bg-[#00B87C]/[0.08] transition-colors"
           >
             <div className="flex items-center gap-4">
@@ -202,7 +202,7 @@ export function ContactSupportSection({
             },
             { label: "Emergency", hours: "24/7" },
           ].map((item, i) => (
-            <div key={i} className="flex items-center justify-between">
+            <div key={item.label} className="flex items-center justify-between">
               <span className="text-[14px] font-bold text-muted-foreground">
                 {item.label}
               </span>

@@ -361,7 +361,7 @@ export function ManagerPersonalDashboard() {
             <div className="grid grid-cols-2 gap-3">
               {QUICK_ACTIONS.map((action, i) => (
                 <button
-                  key={i}
+                  key={action.label}
                   onClick={() => handleQuickAction(action.route)}
                   onMouseEnter={() => setHoveredAction(i)}
                   onMouseLeave={() => setHoveredAction(null)}
@@ -405,7 +405,7 @@ export function ManagerPersonalDashboard() {
             <div className="space-y-4">
               {ANNOUNCEMENTS.map((ann, i) => (
                 <div
-                  key={i}
+                  key={ann.title}
                   className={`pl-3 border-l-[3px] py-1 ${ann.priority === "green" ? "border-primary" : ann.priority === "amber" ? "border-amber-500" : "border-rose-500"}`}
                 >
                   <h4 className="text-[13px] font-bold text-foreground hover:text-amber-500 cursor-pointer transition-colors leading-tight mb-1">

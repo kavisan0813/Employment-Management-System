@@ -289,7 +289,7 @@ const INITIAL_STATE: NotificationState = {
   },
 };
 
-const STORAGE_KEY = "platform_superadmin_notifications";
+const STORAGE_KEY = "platform_superadmin_notifications:v1";
 
 export const notificationsService = {
   loadData(): NotificationState {

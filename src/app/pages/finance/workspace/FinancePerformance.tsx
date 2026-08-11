@@ -216,11 +216,10 @@ export function FinancePerformance() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-4 text-[12px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${
-              activeTab === tab
-                ? "text-[#00B87C]"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
+            className={`pb-4 text-[12px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${activeTab === tab
+              ? "text-[#00B87C]"
+              : "text-muted-foreground hover:text-foreground"
+              }`}
           >
             {tab}
             {activeTab === tab && (
@@ -578,10 +577,9 @@ function GoalRow({
           </div>
           <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
             <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              className={`h-full ${isComplete ? "bg-[#00B87C]" : "bg-[#00B87C]"}`}
-            />
+              initial={{ x: "-100%" }}
+              animate={{ x: `-${100 - (progress)}%` }}
+              className={`h-full w-full ${isComplete ? "bg-[#00B87C]" : "bg-[#00B87C]"}`} />
           </div>
         </div>
         <div className="flex items-center gap-3 min-w-[120px] justify-end">
@@ -611,11 +609,10 @@ function RatingSection({ label }: { label: string }) {
           <button
             key={num}
             onClick={() => setRating(num)}
-            className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg transition-all ${
-              rating === num
-                ? "bg-[#00B87C] text-white shadow-lg shadow-[#00B87C]/20 scale-110"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
-            }`}
+            className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg transition-all ${rating === num
+              ? "bg-[#00B87C] text-white shadow-lg shadow-[#00B87C]/20 scale-110"
+              : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
           >
             {num}
           </button>

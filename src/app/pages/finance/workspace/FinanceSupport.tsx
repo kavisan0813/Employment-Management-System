@@ -792,7 +792,7 @@ function TicketDetailsModal({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {ticket.attachments.map((att, idx) => (
                   <div
-                    key={idx}
+                    key={att.name}
                     className="flex items-center gap-2 p-3 bg-secondary/30 border border-border rounded-xl"
                   >
                     <Paperclip

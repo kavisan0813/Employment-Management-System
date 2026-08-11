@@ -453,7 +453,7 @@ export function FinancePersonalDashboard() {
             <div className="divide-y divide-[var(--border)]">
               {pendingActions.map((action, idx) => (
                 <div
-                  key={idx}
+                  key={action.title}
                   onClick={action.onClick}
                   className="flex items-center gap-3 px-5 py-3.5 cursor-pointer transition-all group"
                   style={{ minHeight: 52 }}

@@ -218,8 +218,8 @@ export function ManagerPersonalGoals() {
         const avgProgress =
           totalGoals > 0
             ? Math.round(
-                goals.reduce((acc, g) => acc + g.progress, 0) / totalGoals,
-              )
+              goals.reduce((acc, g) => acc + g.progress, 0) / totalGoals,
+            )
             : 0;
         return (
           <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
@@ -236,9 +236,9 @@ export function ManagerPersonalGoals() {
             </div>
             <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
               <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${avgProgress}%` }}
-                className="h-full bg-[#00B87C] rounded-full"
+                initial={{ x: "-100%" }}
+                animate={{ x: `-${100 - (avgProgress)}%` }}
+                className="h-full bg-[#00B87C] rounded-full w-full"
               />
             </div>
           </div>
@@ -261,11 +261,10 @@ export function ManagerPersonalGoals() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-4 text-[12px] font-bold uppercase tracking-wider transition-all relative whitespace-nowrap ${
-                activeTab === tab
-                  ? "text-[#00B87C]"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`pb-4 text-[12px] font-bold uppercase tracking-wider transition-all relative whitespace-nowrap ${activeTab === tab
+                ? "text-[#00B87C]"
+                : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               {tab}
               {activeTab === tab && (
@@ -332,6 +331,7 @@ export function ManagerPersonalGoals() {
 
       {/* CHECK-IN GOAL MODAL */}
       <CheckInGoalModal
+        key={selectedGoalForCheckIn ? selectedGoalForCheckIn.id : "empty"}
         goal={selectedGoalForCheckIn}
         isOpen={selectedGoalForCheckIn !== null}
         onClose={() => setSelectedGoalForCheckIn(null)}
@@ -340,11 +340,11 @@ export function ManagerPersonalGoals() {
             prev.map((g) =>
               g.id === selectedGoalForCheckIn?.id
                 ? {
-                    ...g,
-                    progress,
-                    status,
-                    lastUpdated: "Today",
-                  }
+                  ...g,
+                  progress,
+                  status,
+                  lastUpdated: "Today",
+                }
                 : g,
             ),
           );
@@ -398,11 +398,10 @@ export function ManagerPersonalGoals() {
                     Priority
                   </span>
                   <span
-                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${
-                      selectedGoalForDetails.priority === "High"
-                        ? "bg-rose-500/10 text-rose-500 border-rose-200"
-                        : "bg-amber-500/10 text-amber-500 border-amber-200"
-                    }`}
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${selectedGoalForDetails.priority === "High"
+                      ? "bg-rose-500/10 text-rose-500 border-rose-200"
+                      : "bg-amber-500/10 text-amber-500 border-amber-200"
+                      }`}
                   >
                     {selectedGoalForDetails.priority}
                   </span>
@@ -599,9 +598,9 @@ const GoalItem = forwardRef<HTMLDivElement, GoalItemProps>(
         <div className="space-y-2">
           <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
             <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${goal.progress}%` }}
-              className="h-full bg-[#00B87C] rounded-full"
+              initial={{ x: "-100%" }}
+              animate={{ x: `-${100 - (goal.progress)}%` }}
+              className="h-full bg-[#00B87C] rounded-full w-full"
             />
           </div>
           <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider">
@@ -675,23 +674,30 @@ function AddGoalModal({
   const [kr, setKr] = useState("");
   const [description, setDescription] = useState("");
 
-  useEffect(() => {
-    if (editingGoal) {
-      setTitle(editingGoal.title);
-      setCategory(editingGoal.category);
-      setPriority(editingGoal.priority);
-      setDeadline(editingGoal.deadline);
-      setKr(editingGoal.kr);
-      setDescription("");
-    } else {
-      setTitle("");
-      setCategory("Technical");
-      setPriority("Medium");
-      setDeadline("");
-      setKr("");
-      setDescription("");
+  const [prevEditingGoal, setPrevEditingGoal] = useState<Goal | null>(editingGoal);
+  const [prevIsOpen, setPrevIsOpen] = useState<boolean>(isOpen);
+
+  if (editingGoal !== prevEditingGoal || isOpen !== prevIsOpen) {
+    setPrevEditingGoal(editingGoal);
+    setPrevIsOpen(isOpen);
+    if (isOpen) {
+      if (editingGoal) {
+        setTitle(editingGoal.title);
+        setCategory(editingGoal.category);
+        setPriority(editingGoal.priority);
+        setDeadline(editingGoal.deadline);
+        setKr(editingGoal.kr);
+        setDescription("");
+      } else {
+        setTitle("");
+        setCategory("Technical");
+        setPriority("Medium");
+        setDeadline("");
+        setKr("");
+        setDescription("");
+      }
     }
-  }, [editingGoal, isOpen]);
+  }
 
   if (!isOpen) return null;
 
@@ -769,11 +775,10 @@ function AddGoalModal({
                       key={cat}
                       type="button"
                       onClick={() => setCategory(cat as Category)}
-                      className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-wider transition-all ${
-                        isActive
-                          ? "bg-[#00B87C] text-white border-[#00B87C]"
-                          : "border-border hover:border-[#00B87C] text-foreground bg-transparent"
-                      }`}
+                      className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-wider transition-all ${isActive
+                        ? "bg-[#00B87C] text-white border-[#00B87C]"
+                        : "border-border hover:border-[#00B87C] text-foreground bg-transparent"
+                        }`}
                     >
                       {cat}
                     </button>
@@ -887,17 +892,9 @@ function CheckInGoalModal({
   onClose: () => void;
   onSave: (progress: number, status: GoalStatus) => void;
 }) {
-  const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState<GoalStatus>("In Progress");
+  const [progress, setProgress] = useState(goal ? goal.progress : 0);
+  const [status, setStatus] = useState<GoalStatus>(goal ? goal.status : "In Progress");
   const [checkInComment, setCheckInComment] = useState("");
-
-  useEffect(() => {
-    if (goal) {
-      setProgress(goal.progress);
-      setStatus(goal.status);
-      setCheckInComment("");
-    }
-  }, [goal, isOpen]);
 
   if (!isOpen || !goal) return null;
 

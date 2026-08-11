@@ -110,7 +110,11 @@ export function ManageAccountAddUser() {
     emergencyContactName: "",
     emergencyContactNumber: "",
 
-    probationEndDate: "",
+    probationEndDate: ((): string => {
+      const d = new Date();
+      d.setDate(d.getDate() + 90);
+      return d.toISOString().split("T")[0];
+    })(),
     notes: "",
 
     sendInvite: true,
@@ -159,30 +163,6 @@ export function ManageAccountAddUser() {
     return () => clearTimeout(t);
   }, [form]);
 
-  // Sync first/last name from full name
-  useEffect(() => {
-    if (form.fullName) {
-      const parts = form.fullName.trim().split(" ");
-      setForm((f) => ({
-        ...f,
-        firstName: f.firstName || parts[0] || "",
-        lastName: f.lastName || parts.slice(1).join(" ") || "",
-      }));
-    }
-  }, [form.fullName]);
-
-  // Auto probation date
-  useEffect(() => {
-    if (form.dateOfJoining) {
-      const d = new Date(form.dateOfJoining);
-      d.setDate(d.getDate() + 90);
-      setForm((f) => ({
-        ...f,
-        probationEndDate: d.toISOString().split("T")[0],
-      }));
-    }
-  }, [form.dateOfJoining]);
-
   // ─── Validation ───
   const isIdUnique = !employeesList.some(
     (e) => e.id.toLowerCase() === form.employeeId.toLowerCase().trim(),
@@ -193,7 +173,7 @@ export function ManageAccountAddUser() {
     ) &&
     !((): boolean => {
       try {
-        const saved = localStorage.getItem("viyan_registered_users");
+        const saved = localStorage.getItem("viyan_registered_users:v1");
         if (saved)
           return JSON.parse(saved).some(
             (u: { email: string }) =>
@@ -287,7 +267,7 @@ export function ManageAccountAddUser() {
     addEmployee(newEmp);
 
     try {
-      const savedUsers = localStorage.getItem("viyan_registered_users") || "[]";
+      const savedUsers = localStorage.getItem("viyan_registered_users:v1") || "[]";
       const usersList = JSON.parse(savedUsers);
       const newPlatformUser = {
         id: `user-${Date.now()}`,
@@ -307,7 +287,7 @@ export function ManageAccountAddUser() {
         organizationId: "org-1",
       };
       localStorage.setItem(
-        "viyan_registered_users",
+        "viyan_registered_users:v1",
         JSON.stringify([newPlatformUser, ...usersList]),
       );
     } catch (err) {
@@ -364,13 +344,12 @@ export function ManageAccountAddUser() {
             return (
               <div key={item.s} className="flex flex-col items-center gap-2">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
-                    done
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${done
                       ? "bg-[var(--primary)] border-[var(--primary)] text-white"
                       : active
                         ? "bg-white border-[var(--primary)] text-[var(--primary)] shadow-md shadow-emerald-200"
                         : "bg-white border-slate-200 text-slate-400"
-                  }`}
+                    }`}
                 >
                   {done ? <Check size={16} strokeWidth={3} /> : item.s}
                 </div>
@@ -401,18 +380,16 @@ export function ManageAccountAddUser() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
               <div
                 onClick={() => setForm((f) => ({ ...f, entryType: "single" }))}
-                className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 flex flex-col items-start ${
-                  form.entryType === "single"
+                className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 flex flex-col items-start ${form.entryType === "single"
                     ? "border-[var(--primary)] bg-emerald-50/20"
                     : "border-slate-200 hover:border-slate-300"
-                }`}
+                  }`}
               >
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-                    form.entryType === "single"
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${form.entryType === "single"
                       ? "bg-emerald-100 text-[var(--primary)]"
                       : "bg-slate-100 text-slate-500"
-                  }`}
+                    }`}
                 >
                   <User size={24} />
                 </div>
@@ -491,9 +468,16 @@ export function ManageAccountAddUser() {
                   placeholder="e.g. John Doe"
                   className={inputCls}
                   value={form.fullName}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, fullName: e.target.value }))
-                  }
+                  onChange={(e) => {
+                    const fullName = e.target.value;
+                    const parts = fullName.trim().split(" ");
+                    setForm((f) => ({
+                      ...f,
+                      fullName,
+                      firstName: f.firstName || parts[0] || "",
+                      lastName: f.lastName || parts.slice(1).join(" ") || "",
+                    }));
+                  }}
                 />
               </div>
               <div>
@@ -611,11 +595,10 @@ export function ManageAccountAddUser() {
                   <button
                     key={tabItem.id}
                     onClick={() => setActiveTab(tabItem.id)}
-                    className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between shrink-0 md:shrink ${
-                      isActive
+                    className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between shrink-0 md:shrink ${isActive
                         ? "bg-white text-[var(--primary)] shadow-md shadow-slate-100 border border-slate-100"
                         : "text-slate-500 hover:bg-slate-100/50"
-                    }`}
+                      }`}
                   >
                     <span>{tabItem.label}</span>
                     {hasErr && (
@@ -922,12 +905,20 @@ export function ManageAccountAddUser() {
                           type="date"
                           className={inputCls}
                           value={form.dateOfJoining}
-                          onChange={(e) =>
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            let probationEndDate = "";
+                            if (val) {
+                              const d = new Date(val);
+                              d.setDate(d.getDate() + 90);
+                              probationEndDate = d.toISOString().split("T")[0];
+                            }
                             setForm((f) => ({
                               ...f,
-                              dateOfJoining: e.target.value,
-                            }))
-                          }
+                              dateOfJoining: val,
+                              probationEndDate,
+                            }));
+                          }}
                         />
                       </div>
                       {/* Current Experience */}

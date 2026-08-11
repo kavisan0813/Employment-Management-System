@@ -1,5 +1,5 @@
 import { Employee } from "../types/employee.types";
-import { HighlightText } from "../utils/employee.utils";
+import { HighlightText } from "./HighlightText";
 import { statusConfig, deptColors } from "../utils/employee.utils";
 
 interface EmployeeTeamProps {

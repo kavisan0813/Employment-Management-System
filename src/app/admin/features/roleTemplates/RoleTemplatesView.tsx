@@ -131,7 +131,7 @@ export default function RoleTemplatesView() {
                 <div className="divide-y divide-gray-100">
                   {role.permissions.map((perm, idx) => (
                     <div
-                      key={idx}
+                      key={perm.module}
                       className="py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                     >
                       <span className="text-sm font-bold text-gray-800 flex items-center gap-1.5">

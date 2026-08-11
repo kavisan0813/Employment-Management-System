@@ -60,6 +60,15 @@ interface ShiftTemplate {
   weeklySchedule: { [key: string]: string };
 }
 
+const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const getDateString = (date: Date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
 export const ShiftSchedule: React.FC = () => {
   const [selectedDept, setSelectedDept] = useState("All Departments");
   const [showExportModal, setShowExportModal] = useState(false);
@@ -213,20 +222,11 @@ export const ShiftSchedule: React.FC = () => {
   const swapListRef = React.useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
   // Modal State Variables
   const [modalEmployeeName, setModalEmployeeName] = useState("");
   const [modalShiftType, setModalShiftType] = useState("Morning");
   const [modalDate, setModalDate] = useState("2026-04-06");
   const [modalNotes, setModalNotes] = useState("");
-
-  const getDateString = (date: Date) => {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, "0");
-    const d = String(date.getDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  };
 
   const dates = useMemo(() => {
     return days.map((_, i) => {
@@ -868,15 +868,14 @@ export const ShiftSchedule: React.FC = () => {
                     >
                       {shift ? (
                         <div
-                          className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group ${
-                            shift.type === "Morning"
+                          className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group ${shift.type === "Morning"
                               ? "bg-secondary text-primary border-l-4 border-l-primary"
                               : shift.type === "Evening"
                                 ? "bg-[rgba(245,158,11,0.1)] text-[#F59E0B] border-l-4 border-l-[#F59E0B]"
                                 : shift.type === "Night"
                                   ? "bg-violet-50 text-violet-700 border-l-4 border-l-violet-500"
                                   : "bg-blue-50 text-blue-700 border-l-4 border-l-blue-500"
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center justify-between mb-0.5">
                             <span className="text-[11px] font-semibold uppercase tracking-tight">
@@ -1655,7 +1654,7 @@ export const ShiftSchedule: React.FC = () => {
                       (e) =>
                         tmpl.department === "All Departments" ||
                         e.department.toLowerCase() ===
-                          tmpl.department.toLowerCase(),
+                        tmpl.department.toLowerCase(),
                     )
                     .map((e) => e.id);
                   setSelectedEmps(emps);
@@ -1752,7 +1751,7 @@ export const ShiftSchedule: React.FC = () => {
                               (emp) =>
                                 e.target.value === "All Departments" ||
                                 emp.department.toLowerCase() ===
-                                  e.target.value.toLowerCase(),
+                                e.target.value.toLowerCase(),
                             )
                             .map((emp) => emp.id);
                           setSelectedEmps(emps);
@@ -1786,7 +1785,7 @@ export const ShiftSchedule: React.FC = () => {
                                 (emp) =>
                                   applyDept === "All Departments" ||
                                   emp.department.toLowerCase() ===
-                                    applyDept.toLowerCase(),
+                                  applyDept.toLowerCase(),
                               )
                               .map((emp) => emp.id);
                             setSelectedEmps(
@@ -1797,12 +1796,12 @@ export const ShiftSchedule: React.FC = () => {
                           }}
                         >
                           {selectedEmps.length ===
-                          globalEmployees.filter(
-                            (emp) =>
-                              applyDept === "All Departments" ||
-                              emp.department.toLowerCase() ===
+                            globalEmployees.filter(
+                              (emp) =>
+                                applyDept === "All Departments" ||
+                                emp.department.toLowerCase() ===
                                 applyDept.toLowerCase(),
-                          ).length
+                            ).length
                             ? "Deselect All"
                             : "Select All"}
                         </button>
@@ -1813,7 +1812,7 @@ export const ShiftSchedule: React.FC = () => {
                             (emp) =>
                               applyDept === "All Departments" ||
                               emp.department.toLowerCase() ===
-                                applyDept.toLowerCase(),
+                              applyDept.toLowerCase(),
                           )
                           .map((emp) => (
                             <label
@@ -2074,10 +2073,10 @@ export const ShiftSchedule: React.FC = () => {
                       prev.map((t) =>
                         t.id === advancedApplyTemplate.id
                           ? {
-                              ...t,
-                              employeesCount: selectedEmps.length,
-                              lastApplied: "Apr 27",
-                            }
+                            ...t,
+                            employeesCount: selectedEmps.length,
+                            lastApplied: "Apr 27",
+                          }
                           : t,
                       ),
                     );

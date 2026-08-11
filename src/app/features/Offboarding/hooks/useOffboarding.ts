@@ -1,13 +1,24 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { showToast } from "../../../components/workflow/ToastNotification";
-import { ExitEmployee, ExitType, OffboardingTemplate } from "../types/offboarding.types";
-import { createOffboardingRecord, getExitDocuments, OFFBOARDING_EXITS_KEY, OFFBOARDING_UPDATED_EVENT, persistOffboardingRecord, verifyExitDocument } from "../services/offboardingWorkflow";
+import {
+  ExitEmployee,
+  ExitType,
+  OffboardingTemplate,
+} from "../types/offboarding.types";
+import {
+  getExitDocuments,
+  OFFBOARDING_EXITS_KEY,
+  OFFBOARDING_UPDATED_EVENT,
+  verifyExitDocument,
+} from "../services/offboardingWorkflow";
 import { OFFBOARDING_MOCK_TEMPLATES } from "../constants/mockTemplates";
 
 const withSharedDocuments = (exit: ExitEmployee): ExitEmployee => {
   const employeeDocuments = getExitDocuments(exit.name);
-  const generatedDocuments = exit.documents.filter((document) => document.source !== "employee_exit");
+  const generatedDocuments = exit.documents.filter(
+    (document) => document.source !== "employee_exit",
+  );
   return { ...exit, documents: [...employeeDocuments, ...generatedDocuments] };
 };
 
@@ -27,7 +38,9 @@ export function useOffboarding() {
 
   const [templates, setTemplates] = useState<OffboardingTemplate[]>(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem("viyan_offboarding_templates") || "[]") as OffboardingTemplate[];
+      const saved = JSON.parse(
+        localStorage.getItem("viyan_offboarding_templates") || "[]",
+      ) as OffboardingTemplate[];
       return saved.length ? saved : OFFBOARDING_MOCK_TEMPLATES;
     } catch {
       return [];
@@ -46,11 +59,19 @@ export function useOffboarding() {
     const refresh = () => {
       const saved = localStorage.getItem(OFFBOARDING_EXITS_KEY);
       if (saved) {
-        try { setExits(JSON.parse(saved).map(withSharedDocuments)); } catch { /* keep last valid state */ }
+        try {
+          setExits(JSON.parse(saved).map(withSharedDocuments));
+        } catch {
+          /* keep last valid state */
+        }
       }
       try {
-        const savedTemplates = JSON.parse(localStorage.getItem("viyan_offboarding_templates") || "[]") as OffboardingTemplate[];
-        setTemplates(savedTemplates.length ? savedTemplates : OFFBOARDING_MOCK_TEMPLATES);
+        const savedTemplates = JSON.parse(
+          localStorage.getItem("viyan_offboarding_templates") || "[]",
+        ) as OffboardingTemplate[];
+        setTemplates(
+          savedTemplates.length ? savedTemplates : OFFBOARDING_MOCK_TEMPLATES,
+        );
       } catch {
         // ignore
       }
@@ -104,54 +125,72 @@ export function useOffboarding() {
     );
   };
 
-  const handleSignOff = (exitId: string, dept: string, approvedBy: string, comments: string) => {
+  const handleSignOff = (
+    exitId: string,
+    dept: string,
+    approvedBy: string,
+    comments: string,
+  ) => {
     const now = new Date();
-    const approvedDate = now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-    const approvedTime = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-    const timelineDate = now.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const approvedDate = now.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+    const approvedTime = now.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+    const timelineDate = now.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
 
     const updatedExits = exits.map((e) => {
-        if (e.id !== exitId) return e;
-        const clearance = e.clearance.map((c) =>
-          c.dept === dept
-            ? { ...c, status: "cleared" as const, approvedBy, approvedDate, approvedTime, comments }
-            : c,
-        );
+      if (e.id !== exitId) return e;
+      const clearance = e.clearance.map((c) =>
+        c.dept === dept
+          ? {
+              ...c,
+              status: "cleared" as const,
+              approvedBy,
+              approvedDate,
+              approvedTime,
+              comments,
+            }
+          : c,
+      );
 
-        const clearedCount = clearance.filter(
-          (c) => c.status === "cleared",
-        ).length;
-        const clearanceWeight = (clearedCount / clearance.length) * 50;
+      const clearedCount = clearance.filter(
+        (c) => c.status === "cleared",
+      ).length;
+      const clearanceWeight = (clearedCount / clearance.length) * 50;
 
-        const returnedAssets = e.assets.filter(
-          (a) => a.status === "returned",
-        ).length;
-        const assetsWeight =
-          e.assets.length > 0 ? (returnedAssets / e.assets.length) * 25 : 25;
+      const returnedAssets = e.assets.filter(
+        (a) => a.status === "returned",
+      ).length;
+      const assetsWeight =
+        e.assets.length > 0 ? (returnedAssets / e.assets.length) * 25 : 25;
 
-        const uploadedDocs = e.documents.filter(
-          (d) => d.status === "uploaded",
-        ).length;
-        const docsWeight =
-          e.documents.length > 0
-            ? (uploadedDocs / e.documents.length) * 25
-            : 25;
+      const uploadedDocs = e.documents.filter(
+        (d) => d.status === "uploaded",
+      ).length;
+      const docsWeight =
+        e.documents.length > 0 ? (uploadedDocs / e.documents.length) * 25 : 25;
 
-        const progress = Math.round(
-          clearanceWeight + assetsWeight + docsWeight,
-        );
+      const progress = Math.round(clearanceWeight + assetsWeight + docsWeight);
 
-        const timeline = [
-          ...e.timeline,
-          {
-            label: `${dept} Clearance Signed Off`,
-            date: timelineDate,
-            status: "done" as const,
-          },
-        ];
+      const timeline = [
+        ...e.timeline,
+        {
+          label: `${dept} Clearance Signed Off`,
+          date: timelineDate,
+          status: "done" as const,
+        },
+      ];
 
-        return { ...e, clearance, progress, timeline };
-      });
+      return { ...e, clearance, progress, timeline };
+    });
     // Persist before notifying other workspaces so their refresh reads the
     // approved clearance, not the previous localStorage snapshot.
     localStorage.setItem(OFFBOARDING_EXITS_KEY, JSON.stringify(updatedExits));
@@ -162,7 +201,11 @@ export function useOffboarding() {
 
   const handleVerifyDocument = (documentId: string, approved: boolean) => {
     verifyExitDocument(documentId, approved);
-    showToast("Document Verification", "success", approved ? "Document verified." : "Document rejected.");
+    showToast(
+      "Document Verification",
+      "success",
+      approved ? "Document verified." : "Document rejected.",
+    );
   };
 
   const handleGenerateDoc = (exitId: string, docName: string) => {
@@ -390,7 +433,11 @@ export function useOffboarding() {
       }),
       noticePeriodDays: noticeDays,
       timeline: [
-        { label: "Resignation Letter Received", date: resignationData.resignationDate, status: "done" },
+        {
+          label: "Resignation Letter Received",
+          date: resignationData.resignationDate,
+          status: "done",
+        },
         { label: "Resignation Accepted", date: "Today", status: "done" },
         { label: "Notice Period Started", date: "Today", status: "active" },
         { label: "Clearances In Progress", date: "Pending", status: "pending" },
@@ -462,13 +509,20 @@ export function useOffboarding() {
   const handleAssignTemplate = (exitId: string, templateId: string) => {
     const tpl = templates.find((t) => t.id === templateId);
     if (!tpl) {
-      showToast("Template not found", "error", "The selected offboarding template could not be loaded.");
+      showToast(
+        "Template not found",
+        "error",
+        "The selected offboarding template could not be loaded.",
+      );
       return;
     }
     const emp = exits.find((e) => e.id === exitId);
     if (!emp) return;
 
-    const clearanceStyle: Record<string, { icon: string; color: string; bgColor: string }> = {
+    const clearanceStyle: Record<
+      string,
+      { icon: string; color: string; bgColor: string }
+    > = {
       Manager: { icon: "User", color: "#00B87C", bgColor: "#DCFCE7" },
       IT: { icon: "Laptop", color: "#0EA5E9", bgColor: "#E0F2FE" },
       Finance: { icon: "Briefcase", color: "#F59E0B", bgColor: "#FEF3C7" },
@@ -490,7 +544,7 @@ export function useOffboarding() {
       name: a.name,
       status: "pending" as const,
       detail: `Pending return (${a.category})`,
-      owner: a.category === "Accounts" ? "IT" as const : "Admin" as const,
+      owner: a.category === "Accounts" ? ("IT" as const) : ("Admin" as const),
     }));
 
     const generatedDocs = (tpl.documents || []).map((d) => ({
@@ -501,13 +555,17 @@ export function useOffboarding() {
 
     const generatedEmployeeTasks = [
       ...(tpl.knowledgeTransferChecklist || []).map((kt, idx) => ({
-      id: `kt-${idx}`,
-      label: kt,
-      status: "pending" as const,
+        id: `kt-${idx}`,
+        label: kt,
+        status: "pending" as const,
       })),
       ...(tpl.customTasks || [])
         .filter((task) => task.owner.toLowerCase() === "employee")
-        .map((task) => ({ id: `custom-${task.id}`, label: task.name, status: "pending" as const })),
+        .map((task) => ({
+          id: `custom-${task.id}`,
+          label: task.name,
+          status: "pending" as const,
+        })),
       ...(tpl.documents || []).map((document) => ({
         id: `document-${document.id}`,
         label: `Upload ${document.name}`,
@@ -516,48 +574,61 @@ export function useOffboarding() {
     ];
 
     const updatedExits = exits.map((item) =>
-        item.id === exitId
-          ? {
-              ...item,
-              assignedTemplateId: templateId,
-              assignedTemplateVersion: tpl.version,
-              clearance: generatedClearances,
-              assets: generatedAssets,
-              documents: generatedDocs,
-              employeeTasks: generatedEmployeeTasks,
-            }
-          : item
-      );
+      item.id === exitId
+        ? {
+            ...item,
+            assignedTemplateId: templateId,
+            assignedTemplateVersion: tpl.version,
+            clearance: generatedClearances,
+            assets: generatedAssets,
+            documents: generatedDocs,
+            employeeTasks: generatedEmployeeTasks,
+          }
+        : item,
+    );
     // Persist before notifying. Otherwise consumers refresh against the old
     // snapshot and only see the confirmation toast, not the assignment.
     localStorage.setItem(OFFBOARDING_EXITS_KEY, JSON.stringify(updatedExits));
     setExits(updatedExits);
 
-    showToast("Template Assigned", "success", `Successfully assigned ${tpl.name} exit template.`);
+    showToast(
+      "Template Assigned",
+      "success",
+      `Successfully assigned ${tpl.name} exit template.`,
+    );
     window.dispatchEvent(new Event(OFFBOARDING_UPDATED_EVENT));
   };
 
   const saveTemplate = (tpl: OffboardingTemplate) => {
-    setTemplates((prev) => {
-      const existing = prev.find((t) => t.id === tpl.id);
-      const next = existing
-        ? prev.map((t) => t.id === tpl.id ? { ...tpl, version: t.version + 1 } : t)
-        : [...prev, { ...tpl, id: tpl.id || `exit-template-${Date.now()}`, version: 1 }];
-      localStorage.setItem("viyan_offboarding_templates", JSON.stringify(next));
-      return next;
-    });
+    const existing = templates.find((t) => t.id === tpl.id);
+    const next = existing
+      ? templates.map((t) =>
+          t.id === tpl.id ? { ...tpl, version: t.version + 1 } : t,
+        )
+      : [
+          ...templates,
+          { ...tpl, id: tpl.id || `exit-template-${Date.now()}`, version: 1 },
+        ];
+    setTemplates(next);
+    localStorage.setItem("viyan_offboarding_templates:v1", JSON.stringify(next));
     window.dispatchEvent(new Event("viyan:offboarding-updated"));
-    showToast("Template Saved", "success", "The offboarding template is ready for assignment.");
+    showToast(
+      "Template Saved",
+      "success",
+      "The offboarding template is ready for assignment.",
+    );
   };
 
   const deleteTemplate = (id: string) => {
-    setTemplates((prev) => {
-      const next = prev.filter((t) => t.id !== id);
-      localStorage.setItem("viyan_offboarding_templates", JSON.stringify(next));
-      return next;
-    });
+    const next = templates.filter((t) => t.id !== id);
+    setTemplates(next);
+    localStorage.setItem("viyan_offboarding_templates:v1", JSON.stringify(next));
     window.dispatchEvent(new Event("viyan:offboarding-updated"));
-    showToast("Template Deleted", "success", "The offboarding template has been deleted.");
+    showToast(
+      "Template Deleted",
+      "success",
+      "The offboarding template has been deleted.",
+    );
   };
 
   const handleDuplicateTemplate = (id: string) => {
@@ -568,15 +639,17 @@ export function useOffboarding() {
         id: `exit-template-${Date.now()}`,
         name: `${source.name} (Copy)`,
         status: "draft",
-        version: 1
+        version: 1,
       };
-      setTemplates((prev) => {
-        const next = [...prev, duplicated];
-        localStorage.setItem("viyan_offboarding_templates", JSON.stringify(next));
-        return next;
-      });
+      const next = [...templates, duplicated];
+      setTemplates(next);
+      localStorage.setItem("viyan_offboarding_templates:v1", JSON.stringify(next));
       window.dispatchEvent(new Event("viyan:offboarding-updated"));
-      showToast("Template Duplicated", "success", "Template duplicated as a draft.");
+      showToast(
+        "Template Duplicated",
+        "success",
+        "Template duplicated as a draft.",
+      );
     }
   };
 
@@ -596,10 +669,15 @@ export function useOffboarding() {
     handleInitiateExit,
     addApprovedExit,
     templates,
-    showTemplateEditor, setShowTemplateEditor,
-    editingTemplate, setEditingTemplate,
-    showTemplateMenu, setShowTemplateMenu,
-    saveTemplate, deleteTemplate, handleDuplicateTemplate,
+    showTemplateEditor,
+    setShowTemplateEditor,
+    editingTemplate,
+    setEditingTemplate,
+    showTemplateMenu,
+    setShowTemplateMenu,
+    saveTemplate,
+    deleteTemplate,
+    handleDuplicateTemplate,
     handleAssignTemplate,
   };
 }

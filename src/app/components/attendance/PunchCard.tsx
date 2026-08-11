@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useAttendance, formatTime12Hour } from "../../context/AttendanceContext";
+import { useAttendance } from "../../context/AttendanceContext";
+import { formatTime12Hour } from "../../context/attendance.utils";
 
 export function PunchCard() {
   const {
@@ -24,12 +25,12 @@ export function PunchCard() {
       const start = new Date(todayRecord.punchIn!).getTime();
       const now = Date.now();
       const elapsedMs = now - start;
-      
+
       const elapsedSecs = Math.floor(elapsedMs / 1000);
       const hrs = Math.floor(elapsedSecs / 3600);
       const mins = Math.floor((elapsedSecs % 3600) / 60);
       const secs = elapsedSecs % 60;
-      
+
       setTickerTime(`${hrs}h ${mins}m ${secs}s`);
     };
 
@@ -113,15 +114,14 @@ export function PunchCard() {
               </p>
               <div className="space-y-3">
                 {todayRecord.logs.map((log, idx) => (
-                  <div key={idx} className="flex items-center gap-3">
+                  <div key={log.type} className="flex items-center gap-3">
                     <div
-                      className={`w-2 h-2 rounded-full ${
-                        log.type === "in" || log.type === "break_end"
+                      className={`w-2 h-2 rounded-full ${log.type === "in" || log.type === "break_end"
                           ? "bg-emerald-500"
                           : log.type === "break_start"
-                          ? "bg-amber-500"
-                          : "bg-rose-500"
-                      }`}
+                            ? "bg-amber-500"
+                            : "bg-rose-500"
+                        }`}
                     />
                     <span className="text-[12px] font-bold text-foreground w-[65px]">
                       {log.time}

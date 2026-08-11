@@ -8,7 +8,7 @@ export function RecentActivityCard() {
       </div>
       <div className="flex flex-col gap-3">
         {RECENT_ACTIVITY.map((a, i) => (
-          <div key={i} className="flex items-center gap-2.5">
+          <div key={a.label} className="flex items-center gap-2.5">
             <span
               className="h-[7px] w-[7px] flex-shrink-0 rounded-full"
               style={{ backgroundColor: a.colorVar }}

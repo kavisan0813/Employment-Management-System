@@ -314,7 +314,7 @@ function CategoryCard({
       <div className="divide-y divide-border">
         {cat.items.map((doc, i) => (
           <div
-            key={i}
+            key={doc.name}
             className="px-5 py-3.5 flex items-center gap-4 group hover:bg-[#00B87C]/[0.08] transition-colors"
           >
             <div className="w-9 h-9 rounded-lg bg-secondary border border-border flex items-center justify-center flex-shrink-0">

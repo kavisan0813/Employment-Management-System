@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   X,
   Plus,
   Trash2,
   Settings,
-  Layers,
   Sparkles,
   ShieldCheck,
   FileCheck,
@@ -172,15 +171,20 @@ export function OffboardingTemplateEditorModal({
 
   const [customAssetName, setCustomAssetName] = useState("");
   const [customAssetCategory, setCustomAssetCategory] = useState("Hardware");
-  const [customAssetMandatory, setCustomAssetMandatory] = useState(true);
+  const [customAssetMandatory,] = useState(true);
 
   const [customDocName, setCustomDocName] = useState("");
-  const [customDocMandatory, setCustomDocMandatory] = useState(true);
+  const [customDocMandatory,] = useState(true);
 
   const [customQuestion, setCustomQuestion] = useState("");
   const [customKtItem, setCustomKtItem] = useState("");
 
-  useEffect(() => {
+  const [prevEditingTemplate, setPrevEditingTemplate] = useState<string | null>(editingTemplate);
+  const [prevShowTemplateEditor, setPrevShowTemplateEditor] = useState<boolean>(showTemplateEditor);
+
+  if (editingTemplate !== prevEditingTemplate || showTemplateEditor !== prevShowTemplateEditor) {
+    setPrevEditingTemplate(editingTemplate);
+    setPrevShowTemplateEditor(showTemplateEditor);
     if (showTemplateEditor) {
       const found = templates.find((tpl) => tpl.id === editingTemplate);
       if (found) {
@@ -218,7 +222,7 @@ export function OffboardingTemplateEditorModal({
       }
       setActiveTab("info");
     }
-  }, [editingTemplate, templates, showTemplateEditor]);
+  }
 
   // Clearance task helpers
   const addClearanceTask = (deptId: string) => {
@@ -228,21 +232,21 @@ export function OffboardingTemplateEditorModal({
       clearances: (current.clearances || []).map((c) =>
         c.id === deptId
           ? {
-              ...c,
-              tasks: [
-                ...c.tasks,
-                {
-                  id: `task-${Date.now()}`,
-                  name: customTaskName.trim(),
-                  owner: deptId,
-                  isMandatory: customTaskMandatory,
-                  description: customTaskDesc.trim(),
-                  dueBeforeLWD: customTaskDue,
-                  priority: customTaskPriority,
-                  requiresApproval: customTaskApproval,
-                },
-              ],
-            }
+            ...c,
+            tasks: [
+              ...c.tasks,
+              {
+                id: `task-${Date.now()}`,
+                name: customTaskName.trim(),
+                owner: deptId,
+                isMandatory: customTaskMandatory,
+                description: customTaskDesc.trim(),
+                dueBeforeLWD: customTaskDue,
+                priority: customTaskPriority,
+                requiresApproval: customTaskApproval,
+              },
+            ],
+          }
           : c,
       ),
     }));
@@ -429,11 +433,10 @@ export function OffboardingTemplateEditorModal({
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key as any)}
-                  className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${
-                    activeTab === tab.key
-                      ? "border-[#00B87C] text-[#00B87C]"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${activeTab === tab.key
+                    ? "border-[#00B87C] text-[#00B87C]"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   <tab.icon size={13} />
                   {tab.label}
@@ -591,13 +594,12 @@ export function OffboardingTemplateEditorModal({
                                   {task.name}
                                 </strong>
                                 <span
-                                  className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${
-                                    task.priority === "High"
-                                      ? "bg-red-50 text-red-500 border-red-500/15"
-                                      : task.priority === "Medium"
-                                        ? "bg-amber-50 text-amber-500 border-amber-500/15"
-                                        : "bg-blue-50 text-blue-500 border-blue-500/15"
-                                  }`}
+                                  className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${task.priority === "High"
+                                    ? "bg-red-50 text-red-500 border-red-500/15"
+                                    : task.priority === "Medium"
+                                      ? "bg-amber-50 text-amber-500 border-amber-500/15"
+                                      : "bg-blue-50 text-blue-500 border-blue-500/15"
+                                    }`}
                                 >
                                   {task.priority || "Medium"} Priority
                                 </span>
@@ -923,7 +925,7 @@ export function OffboardingTemplateEditorModal({
                       {(draft.knowledgeTransferChecklist || []).map(
                         (item, idx) => (
                           <div
-                            key={idx}
+                            key={item}
                             className="flex items-center justify-between p-2.5 border rounded-xl bg-card"
                           >
                             <span className="text-xs font-bold text-foreground">
@@ -983,7 +985,7 @@ export function OffboardingTemplateEditorModal({
                       {(draft.exitInterviewQuestionnaire || []).map(
                         (item, idx) => (
                           <div
-                            key={idx}
+                            key={item}
                             className="flex items-center justify-between p-2.5 border rounded-xl bg-card"
                           >
                             <span className="text-xs font-bold text-foreground">

@@ -240,7 +240,7 @@ export function ManagerProfile() {
       login(updatedUser);
 
       try {
-        const registeredRaw = localStorage.getItem("viyan_registered_users");
+        const registeredRaw = localStorage.getItem("viyan_registered_users:v1");
         if (registeredRaw) {
           const users = JSON.parse(registeredRaw);
           const updatedUsers = users.map((u: PlatformUser) => {
@@ -255,7 +255,7 @@ export function ManagerProfile() {
             return u;
           });
           localStorage.setItem(
-            "viyan_registered_users",
+            "viyan_registered_users:v1",
             JSON.stringify(updatedUsers),
           );
         }
@@ -1051,7 +1051,7 @@ export function ManagerProfile() {
                 <div className="space-y-8 mt-4">
                   {contacts.map((contact, index) => (
                     <div
-                      key={index}
+                      key={contact.name}
                       className="p-5 md:p-6 rounded-2xl border border-border/80 bg-muted/10 relative"
                     >
                       <div className="flex items-center gap-2 mb-6">

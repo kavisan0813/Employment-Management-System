@@ -218,7 +218,7 @@ export function HolidayCalendarSection() {
           },
         ].map((card, idx) => (
           <div
-            key={idx}
+            key={card.label}
             className="p-4 rounded-2xl flex items-center justify-between shadow-sm"
             style={{
               backgroundColor: "var(--card)",
@@ -438,7 +438,7 @@ export function HolidayCalendarSection() {
             <tbody>
               {filteredHols.map((h: HolidayRecord, idx: number) => (
                 <tr
-                  key={idx}
+                  key={h.id}
                   style={{
                     borderBottom: "1px solid var(--border)",
                     height: "56px",
@@ -622,7 +622,7 @@ export function HolidayCalendarSection() {
           >
             {filteredHols.map((h: HolidayRecord, i: number) => (
               <div
-                key={i}
+                key={h.id}
                 onClick={() => {
                   setSelectedHoliday(h);
                   setActiveModal("view_holiday");
@@ -675,7 +675,7 @@ export function HolidayCalendarSection() {
             setter: setHolRegionSpecific,
           },
         ].map((row, idx) => (
-          <div key={idx} className="flex justify-between items-center py-2">
+          <div key={row.label} className="flex justify-between items-center py-2">
             <span
               style={{
                 fontSize: "13px",

@@ -80,7 +80,7 @@ export function OrganizationReportsView() {
             <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto">
               <path d={linePath} fill="none" stroke="#4f46e5" strokeWidth={2.5} strokeLinecap="round" />
               {points.map((p, i) => (
-                <g key={i}>
+                <g key={p.label}>
                   <circle cx={p.x} cy={p.y} r={4} fill="#4f46e5" />
                   <text x={p.x} y={height - 2} textAnchor="middle" fill="#64748b" fontSize={10} className="font-medium">{p.label}</text>
                 </g>

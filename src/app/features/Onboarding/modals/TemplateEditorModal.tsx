@@ -1,14 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   FileText,
   Plus,
   X,
-  Edit3,
-  Copy,
   Trash2,
-  Check,
-  Info,
   ChevronRight,
   Settings,
   FileCheck,
@@ -70,7 +66,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
 
   // Local helper states for adding custom items dynamically
   const [customDocName, setCustomDocName] = useState("");
-  const [customDocMandatory, setCustomDocMandatory] = useState(true);
+  const [customDocMandatory,] = useState(true);
   const [customDocSize, setCustomDocSize] = useState(5);
   const [customDocIssuedByOrg, setCustomDocIssuedByOrg] = useState(false);
 
@@ -82,19 +78,20 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
   const [customTaskMandatory, setCustomTaskMandatory] = useState(true);
   const [customTaskDesc, setCustomTaskDesc] = useState("");
 
-  const [customFormName, setCustomFormName] = useState("");
-  const [customTrainingName, setCustomTrainingName] = useState("");
-  const [customPolicyName, setCustomPolicyName] = useState("");
-
-  useEffect(() => {
-    if (taskOwners && taskOwners.length > 0) {
-      setCustomTaskOwner((prev) =>
-        taskOwners.includes(prev) ? prev : taskOwners[0],
-      );
+  const [prevTaskOwners, setPrevTaskOwners] = useState(taskOwners);
+  if (taskOwners !== prevTaskOwners) {
+    setPrevTaskOwners(taskOwners);
+    if (taskOwners && taskOwners.length > 0 && !taskOwners.includes(customTaskOwner)) {
+      setCustomTaskOwner(taskOwners[0]);
     }
-  }, [taskOwners]);
+  }
 
-  useEffect(() => {
+  const [prevEditingTemplate, setPrevEditingTemplate] = useState<string | null>(editingTemplate);
+  const [prevShowTemplateEditor, setPrevShowTemplateEditor] = useState<boolean>(props.showTemplateEditor);
+
+  if (editingTemplate !== prevEditingTemplate || props.showTemplateEditor !== prevShowTemplateEditor) {
+    setPrevEditingTemplate(editingTemplate);
+    setPrevShowTemplateEditor(props.showTemplateEditor);
     if (props.showTemplateEditor) {
       const found = templates.find((tpl) => tpl.id === editingTemplate);
       if (found) {
@@ -115,7 +112,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
       }
       setActiveTab("info");
     }
-  }, [editingTemplate, templates, props.showTemplateEditor]);
+  }
 
   // Section/Phase task additions
   const addCompanyTask = (sectionId: string) => {
@@ -128,21 +125,21 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
       sections: (current.sections || []).map((sec) =>
         sec.id === sectionId
           ? {
-              ...sec,
-              tasks: [
-                ...sec.tasks,
-                {
-                  id: `task-${Date.now()}`,
-                  name: customTaskName.trim(),
-                  owner: customTaskOwner,
-                  verifiedBy: customTaskVerifier,
-                  dueDays: customTaskDue,
-                  priority: customTaskPriority as "Low" | "Medium" | "High",
-                  mandatory: customTaskMandatory,
-                  description: customTaskDesc.trim(),
-                },
-              ],
-            }
+            ...sec,
+            tasks: [
+              ...sec.tasks,
+              {
+                id: `task-${Date.now()}`,
+                name: customTaskName.trim(),
+                owner: customTaskOwner,
+                verifiedBy: customTaskVerifier,
+                dueDays: customTaskDue,
+                priority: customTaskPriority as "Low" | "Medium" | "High",
+                mandatory: customTaskMandatory,
+                description: customTaskDesc.trim(),
+              },
+            ],
+          }
           : sec,
       ),
     }));
@@ -187,87 +184,6 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
     setDraft((current) => ({
       ...current,
       documents: (current.documents || []).filter((d) => d.id !== id),
-    }));
-  };
-
-  // Forms management
-  const addFormRule = () => {
-    if (!customFormName.trim()) return;
-    setDraft((current) => ({
-      ...current,
-      forms: [
-        ...(current.forms || []),
-        {
-          id: `form-${Date.now()}`,
-          name: customFormName.trim(),
-          required: true,
-        },
-      ],
-    }));
-    setCustomFormName("");
-  };
-
-  const toggleFormRequired = (id: string) => {
-    setDraft((current) => ({
-      ...current,
-      forms: (current.forms || []).map((f) =>
-        f.id === id ? { ...f, required: !f.required } : f,
-      ),
-    }));
-  };
-
-  const removeFormRule = (id: string) => {
-    setDraft((current) => ({
-      ...current,
-      forms: (current.forms || []).filter((f) => f.id !== id),
-    }));
-  };
-
-  // Training management
-  const addTrainingRule = () => {
-    if (!customTrainingName.trim()) return;
-    setDraft((current) => ({
-      ...current,
-      training: [
-        ...(current.training || []),
-        {
-          id: `train-${Date.now()}`,
-          name: customTrainingName.trim(),
-          required: true,
-        },
-      ],
-    }));
-    setCustomTrainingName("");
-  };
-
-  const removeTrainingRule = (id: string) => {
-    setDraft((current) => ({
-      ...current,
-      training: (current.training || []).filter((t) => t.id !== id),
-    }));
-  };
-
-  // Policies management
-  const addPolicyRule = () => {
-    if (!customPolicyName.trim()) return;
-    setDraft((current) => ({
-      ...current,
-      policies: [
-        ...(current.policies || []),
-        {
-          id: `policy-${Date.now()}`,
-          name: customPolicyName.trim(),
-          required: true,
-        },
-      ],
-    }));
-    setCustomPolicyName("");
-  };
-
-  const removePolicyRule = (id: string) => {
-    setDraft((current) => ({
-      ...current,
-      policies: (current.policies || []).filter((p) => p.id !== id),
     }));
   };
 
@@ -375,11 +291,10 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                           </p>
                         </div>
                         <span
-                          className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${
-                            template.status === "active"
-                              ? "bg-[#E8F8F0] text-[#00B87C] border-[#00B87C]/20"
-                              : "bg-muted text-muted-foreground border-border"
-                          }`}
+                          className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${template.status === "active"
+                            ? "bg-[#E8F8F0] text-[#00B87C] border-[#00B87C]/20"
+                            : "bg-muted text-muted-foreground border-border"
+                            }`}
                         >
                           {template.status}
                         </span>
@@ -493,11 +408,10 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
-                    className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${
-                      activeTab === tab.key
-                        ? "border-[#00B87C] text-[#00B87C]"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${activeTab === tab.key
+                      ? "border-[#00B87C] text-[#00B87C]"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     <tab.icon size={13} />
                     {tab.label}
@@ -660,7 +574,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                       <div className="space-y-2 mb-4">
                         {(draft.documents || []).map((doc, idx) => (
                           <div
-                            key={doc.id || idx}
+                            key={doc.id || doc.name}
                             className="flex items-center justify-between p-3.5 bg-muted/20 border rounded-2xl"
                           >
                             <div>
@@ -778,13 +692,12 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                                     {task.name}
                                   </strong>
                                   <span
-                                    className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${
-                                      task.priority === "High"
-                                        ? "bg-red-50 text-red-500 border-red-500/15"
-                                        : task.priority === "Medium"
-                                          ? "bg-amber-50 text-amber-500 border-amber-500/15"
-                                          : "bg-blue-50 text-blue-500 border-blue-500/15"
-                                    }`}
+                                    className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${task.priority === "High"
+                                      ? "bg-red-50 text-red-500 border-red-500/15"
+                                      : task.priority === "Medium"
+                                        ? "bg-amber-50 text-amber-500 border-amber-500/15"
+                                        : "bg-blue-50 text-blue-500 border-blue-500/15"
+                                      }`}
                                   >
                                     {task.priority} Priority
                                   </span>

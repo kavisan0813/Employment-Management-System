@@ -624,7 +624,7 @@ function KnowledgeBaseTab() {
             const Icon = cat.icon;
             return (
               <div
-                key={idx}
+                key={cat.name}
                 className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:border-[#00B87C]/30 hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all flex items-center justify-between cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
@@ -655,7 +655,7 @@ function KnowledgeBaseTab() {
         <div className="space-y-4">
           {faqs.map((faq, idx) => (
             <div
-              key={idx}
+              key={faq.q}
               className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-3"
             >
               <h4 className="text-[15px] font-bold text-foreground flex items-center gap-2">
@@ -1012,7 +1012,7 @@ function TicketDetailModal({
               <div className="grid grid-cols-1 gap-2">
                 {ticket.attachments.map((file, idx) => (
                   <div
-                    key={idx}
+                    key={file.name}
                     className="p-3 bg-secondary/35 border border-border rounded-xl flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2 min-w-0">

@@ -58,7 +58,7 @@ export const DEFAULT_CONFIG: SystemConfig = {
   },
 };
 
-const STORAGE_KEY = "platform_system_configuration";
+const STORAGE_KEY = "platform_system_configuration:v1";
 
 export const platformSettingsService = {
   loadSettings(): SystemConfig {

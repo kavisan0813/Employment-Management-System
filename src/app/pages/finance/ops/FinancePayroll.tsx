@@ -422,7 +422,7 @@ export function FinancePayroll() {
 
             return (
               <div
-                key={i}
+                key={step.name}
                 className="flex flex-col items-center gap-3 relative z-10 cursor-pointer group"
                 onClick={() =>
                   setGenericModalTitle(`Stepper Phase: ${step.label}`)

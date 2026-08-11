@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, Check, Clock, Laptop, FileText, Send, MessageSquare, CheckCircle2, User, HelpCircle, Layers } from "lucide-react";
+import { ArrowLeft, Check, Clock, Laptop, FileText, Send, Layers } from "lucide-react";
 import { usePermissionKey } from "../../../shared/permission-engine/usePermission";
 import { P } from "../../../shared/permission-engine/permissions";
 import { ExitEmployee } from "../types/offboarding.types";
 import { progressColor } from "../utils/progress";
 import { formatCurrency } from "../utils/currency";
-import { exitTypeChip, clearanceChip, getClearanceIcon } from "../utils/chips";
+import { exitTypeChip, getClearanceIcon } from "../utils/chips";
 import type { OffboardingTemplate } from "../types/offboarding.types";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { useAuth } from "../../../context/AuthContext";
@@ -85,7 +85,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
   const canVerifyDocuments = usePermissionKey(P.OFFBOARDING_DOCUMENTS_VERIFY);
   const canManageFinance = usePermissionKey(P.OFFBOARDING_FINANCE_MANAGE);
   const canManageOffboarding = usePermissionKey(P.OFFBOARDING_MANAGE);
-  
+
   const canOverrideClearances = usePermissionKey(P.OFFBOARDING_FULL);
   const canApproveManager = usePermissionKey(P.OFFBOARDING_CLEARANCE_MANAGER);
   const canApproveIT = usePermissionKey(P.OFFBOARDING_CLEARANCE_IT);
@@ -292,16 +292,15 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
               </h3>
               <div className="space-y-0">
                 {exit.timeline.map((item, i) => (
-                  <div key={i} className="flex gap-3">
+                  <div key={item.label} className="flex gap-3">
                     <div className="flex flex-col items-center">
                       <div
-                        className={`w-5 h-5 rounded-full flex items-center justify-center border-2 shrink-0 ${
-                          item.status === "done"
+                        className={`w-5 h-5 rounded-full flex items-center justify-center border-2 shrink-0 ${item.status === "done"
                             ? "bg-[#00B87C] border-[#00B87C]"
                             : item.status === "active"
                               ? "bg-[#CCFBF1] border-[#14B8A6]"
                               : "bg-card border-border"
-                        }`}
+                          }`}
                       >
                         {item.status === "done" ? (
                           <Check size={10} className="text-white" />
@@ -317,13 +316,12 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                     </div>
                     <div className="pb-5">
                       <p
-                        className={`text-[12px] font-bold ${
-                          item.status === "done"
+                        className={`text-[12px] font-bold ${item.status === "done"
                             ? "text-[#00B87C]"
                             : item.status === "active"
                               ? "text-[#14B8A6]"
                               : "text-muted-foreground"
-                        }`}
+                          }`}
                       >
                         {item.label}
                       </p>
@@ -351,7 +349,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                       permission: CLEARANCE_CONFIGS[c.dept]?.permission || "",
                       checklist: clearanceChecklist,
                     };
-                    
+
                     const isCleared = c.status === "cleared";
                     const canApprove = !isCleared &&
                       (canOverrideClearances ||
@@ -363,12 +361,11 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
 
                     return (
                       <div
-                        key={i}
-                        className={`p-4 rounded-2xl border transition-all ${
-                          isCleared
+                        key={c.dept}
+                        className={`p-4 rounded-2xl border transition-all ${isCleared
                             ? "border-[#00B87C]/20 bg-[#F0FDF4]/30 dark:bg-emerald-950/5"
                             : "border-border/60 bg-muted/20"
-                        }`}
+                          }`}
                       >
                         {/* Dept Header */}
                         <div className="flex items-center justify-between pb-3 border-b border-border/40 mb-3">
@@ -402,14 +399,13 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                             const isChecked = completedChecks[c.dept]?.[item] || false;
                             return (
                               <label
-                                key={idx}
-                                className={`flex items-start gap-2.5 text-[11px] font-bold ${
-                                  isCleared
+                                key={item}
+                                className={`flex items-start gap-2.5 text-[11px] font-bold ${isCleared
                                     ? "text-muted-foreground"
                                     : canApprove
-                                    ? "text-foreground cursor-pointer"
-                                    : "text-muted-foreground"
-                                }`}
+                                      ? "text-foreground cursor-pointer"
+                                      : "text-muted-foreground"
+                                  }`}
                               >
                                 <input
                                   type="checkbox"
@@ -499,7 +495,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                 <div className="space-y-2">
                   {exit.assets.map((a, i) => (
                     <div
-                      key={i}
+                      key={a.name}
                       className="flex items-center justify-between p-3 rounded-xl border border-border/50"
                     >
                       <div className="flex items-center gap-3">
@@ -538,7 +534,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                 <div className="space-y-2">
                   {exit.documents.map((d, i) => (
                     <div
-                      key={i}
+                      key={d.id}
                       className="flex items-center justify-between p-3 rounded-xl border border-border/50"
                     >
                       <div className="flex items-center gap-3">
@@ -620,9 +616,9 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                     <span className="text-[12px] font-black text-foreground">
                       {formatCurrency(
                         exit.salary +
-                          exit.gratuity +
-                          exit.leaveEncashment +
-                          exit.reimbursements,
+                        exit.gratuity +
+                        exit.leaveEncashment +
+                        exit.reimbursements,
                       )}
                     </span>
                   </div>

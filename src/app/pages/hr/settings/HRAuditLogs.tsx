@@ -997,7 +997,7 @@ export function HRAuditLogs() {
             {getPageNumbers().map((p, i) =>
               p === "..." ? (
                 <span
-                  key={`ellipsis-${i}`}
+                  key={`ellipsis-${p}`}
                   className="text-[12px] font-bold text-muted-foreground px-1"
                 >
                   ...
@@ -1086,7 +1086,7 @@ export function HRAuditLogs() {
                       value: selectedLog.record.split(" —")[0],
                     },
                   ].map((f, i) => (
-                    <div key={i}>
+                    <div key={f.label}>
                       <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
                         {f.label}
                       </p>

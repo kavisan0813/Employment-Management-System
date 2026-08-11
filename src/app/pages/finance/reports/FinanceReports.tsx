@@ -498,10 +498,10 @@ export function FinanceReports() {
                     </p>
                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                       <motion.div
-                        initial={{ width: "0%" }}
-                        animate={{ width: "100%" }}
+                        initial={{ x: "-100%" }}
+                        animate={{ x: "0%" }}
                         transition={{ duration: 1.5, ease: "linear" }}
-                        className="h-full bg-[#00B87C] rounded-full"
+                        className="h-full bg-[#00B87C] rounded-full w-full"
                       />
                     </div>
                   </div>
@@ -688,7 +688,7 @@ function DashboardsTab() {
                   dataKey="value"
                 >
                   {DEPT_DIST_DATA.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${entry.color}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip
@@ -712,7 +712,7 @@ function DashboardsTab() {
           </div>
           <div className="mt-6 space-y-3">
             {DEPT_DIST_DATA.map((item, i) => (
-              <div key={i} className="flex items-center justify-between">
+              <div key={item.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div
                     className="w-2.5 h-2.5 rounded-full"
@@ -987,7 +987,7 @@ function ReportCatalogTab({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {currentReports.map((report, i) => (
           <ReportCard
-            key={i}
+            key={report.name}
             {...report}
             setActiveModal={setActiveModal}
             setSelectedReport={setSelectedReport}
@@ -1092,7 +1092,7 @@ function AssetReportsTab({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {assetReports.map((report, i) => (
           <motion.div
-            key={i}
+            key={report.name}
             whileHover={{ y: -4 }}
             className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all flex flex-col h-full group"
           >
@@ -1362,7 +1362,7 @@ function FilterSelect({
         className={`appearance-none flex items-center gap-2.5 ${Icon ? "pl-10" : "pl-4"} pr-10 py-2 bg-card border border-border rounded-xl text-[12px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer`}
       >
         {options.map((opt, i) => (
-          <option key={i} value={opt}>
+          <option key={opt} value={opt}>
             {opt}
           </option>
         ))}
@@ -1603,14 +1603,14 @@ function KPIModal({ type, onClose }: { type: string; onClose: () => void }) {
             </span>
           </div>
           <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3].map((item) => (
               <div
-                key={i}
+                key={item}
                 className="bg-card rounded-xl border border-border p-4 flex items-center justify-between"
               >
                 <div className="flex flex-col">
                   <span className="text-[13px] font-bold text-foreground">
-                    Detail Item {i}
+                    Detail Item {item}
                   </span>
                   <span className="text-[11px] text-muted-foreground">
                     Additional subtext
@@ -1753,16 +1753,16 @@ function ViewReportModal({
                   </tr>
                 </thead>
                 <tbody>
-                  {[1, 2, 3, 4, 5].map((i) => (
+                  {[1, 2, 3, 4, 5].map((item) => (
                     <tr
-                      key={i}
+                      key={item}
                       className="border-b border-border/50 hover:bg-muted/20 transition-colors"
                     >
                       <td className="p-4 text-[12px] font-bold text-muted-foreground">
-                        #{1000 + i}
+                        #{1000 + item}
                       </td>
                       <td className="p-4 text-[13px] font-bold text-foreground">
-                        Transaction Entry {i}
+                        Transaction Entry {item}
                       </td>
                       <td className="p-4 text-[13px] font-black text-foreground">
                         ₹{(Math.random() * 5).toFixed(2)}L

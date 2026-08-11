@@ -238,7 +238,7 @@ export function DocumentSettingsSection() {
             <tbody>
               {categories.map((c, idx) => (
                 <tr
-                  key={idx}
+                  key={c.name}
                   className="border-b border-gray-100 hover:bg-[#00B87C]/[0.08] transition-all text-[13px]"
                 >
                   <td className="py-3 px-4 font-bold text-gray-800 dark:text-gray-200">

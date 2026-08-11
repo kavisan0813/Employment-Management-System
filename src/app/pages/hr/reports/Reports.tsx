@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import DOMPurify from "dompurify";
 import { useLocation, useNavigate } from "react-router";
 import { useAuth } from "../../../context/AuthContext";
 import {
@@ -611,7 +612,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
 
           <div className="space-y-4">
             {otDeptData.map((d, i) => (
-              <div key={i} className="group cursor-pointer">
+              <div key={d.name} className="group cursor-pointer">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[13px] font-medium text-[#0F3047] w-[130px]">
                     {d.name}
@@ -778,7 +779,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   "Actions",
                 ].map((h, i) => (
                   <th
-                    key={i}
+                    key={h}
                     className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider"
                     style={{ color: "var(--foreground)", opacity: 0.8 }}
                   >
@@ -793,7 +794,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             >
               {filteredEmployees.map((e, i) => (
                 <tr
-                  key={i}
+                  key={e.name}
                   className="hover:bg-[var(--secondary)] transition-colors h-[64px]"
                 >
                   <td className="px-6 py-2">
@@ -1011,7 +1012,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                     dataKey="value"
                   >
                     {otShiftData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell key={`cell-${entry.color}`} fill={entry.color} />
                     ))}
                   </Pie>
                 </PieChart>
@@ -1035,7 +1036,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             <div className="flex-1 space-y-2">
               {otShiftData.map((s, i) => (
                 <div
-                  key={i}
+                  key={s.name}
                   className="flex items-center justify-between p-2 rounded-xl hover:bg-[#F0FFF8] transition-colors"
                 >
                   <div className="flex items-center gap-3">
@@ -1097,7 +1098,7 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
 
           <div className="space-y-4">
             {otCostForecast.map((c, i) => (
-              <div key={i}>
+              <div key={c.week}>
                 <div className="flex justify-between text-[12px] mb-1.5">
                   <span style={{ color: "#6B7280", fontWeight: 600 }}>
                     {c.week}
@@ -1414,7 +1415,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                       entry: { color: string; name: string; value: number },
                       index: number,
                     ) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell key={`cell-${entry.name}`} fill={entry.color} />
                     ),
                   )}
                 </Pie>
@@ -1557,7 +1558,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                   "Actions",
                 ].map((h, i) => (
                   <th
-                    key={i}
+                    key={h}
                     className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider"
                     style={{ color: "var(--muted-foreground)" }}
                   >
@@ -1588,7 +1589,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                   i: number,
                 ) => (
                   <tr
-                    key={i}
+                    key={req.id}
                     className="hover:bg-[rgba(5,150,105,0.02)] transition-colors"
                   >
                     <td
@@ -1818,7 +1819,7 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                   i: number,
                 ) => (
                   <div
-                    key={i}
+                    key={r.id}
                     className="flex items-center justify-between p-2 rounded-xl"
                     style={{ backgroundColor: "var(--background)" }}
                   >
@@ -2647,7 +2648,7 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
             <div className="flex gap-1">
               {getPageNumbers().map((p, i) => (
                 <button
-                  key={i}
+                  key={p}
                   className="w-8 h-8 rounded-lg text-xs font-semibold transition-colors"
                   style={{
                     backgroundColor:
@@ -2698,7 +2699,7 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
                 dataKey="value"
               >
                 {hcDeptBreakdown.map((_, i) => (
-                  <Cell key={i} fill={EMERALD_SHADES[i]} />
+                  <Cell key={_.name} fill={EMERALD_SHADES[i]} />
                 ))}
               </Pie>
               <Tooltip
@@ -2982,7 +2983,7 @@ function PayrollSummary({ onBack }: { onBack: () => void }) {
                 dataKey="value"
               >
                 {deductionBreakdown.map((_, i) => (
-                  <Cell key={i} fill={EMERALD_SHADES[i]} />
+                  <Cell key={_.name} fill={EMERALD_SHADES[i]} />
                 ))}
               </Pie>
               <Tooltip
@@ -3065,7 +3066,7 @@ function PayrollSummary({ onBack }: { onBack: () => void }) {
           <tbody>
             {payrollEmployees.map((emp, i) => (
               <tr
-                key={i}
+                key={emp.name}
                 style={{
                   borderBottom: "1px solid var(--border)",
                   backgroundColor:
@@ -3322,7 +3323,7 @@ function AttendanceReport({ onBack }: { onBack: () => void }) {
             <div className="flex gap-0.5">
               {[0.3, 0.5, 0.7, 0.85, 1].map((o, i) => (
                 <div
-                  key={i}
+                  key={o}
                   className="w-5 h-3 rounded"
                   style={{ backgroundColor: `rgba(5, 150, 105, ${o})` }}
                 />
@@ -3425,7 +3426,7 @@ function AttendanceReport({ onBack }: { onBack: () => void }) {
           <tbody>
             {attendanceData.map((emp, i) => (
               <tr
-                key={i}
+                key={emp.name}
                 style={{
                   borderBottom: "1px solid var(--border)",
                   backgroundColor:
@@ -3723,7 +3724,7 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
           <div className="space-y-4">
             {topPerformers.map((p, i) => (
               <div
-                key={i}
+                key={p.name}
                 className="flex items-center gap-3 p-3 rounded-xl transition-all hover:bg-[#00B87C]/[0.08]"
                 style={{
                   backgroundColor: i === 0 ? "var(--secondary)" : "transparent",
@@ -3866,7 +3867,7 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
           <tbody>
             {perfEmployees.map((emp, i) => (
               <tr
-                key={i}
+                key={emp.name}
                 style={{
                   borderBottom: "1px solid var(--border)",
                   backgroundColor:
@@ -4200,7 +4201,7 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
                   dataKey="value"
                 >
                   {sourceBreakdown.map((_, i) => (
-                    <Cell key={i} fill={EMERALD_SHADES[i]} />
+                    <Cell key={_.name} fill={EMERALD_SHADES[i]} />
                   ))}
                 </Pie>
                 <Tooltip
@@ -4302,7 +4303,7 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
           <tbody>
             {recruitCandidates.map((c, i) => (
               <tr
-                key={i}
+                key={c.name}
                 style={{
                   borderBottom: "1px solid var(--border)",
                   backgroundColor:
@@ -4687,7 +4688,7 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
                     dataKey="value"
                   >
                     {exitReasons.map((_, i) => (
-                      <Cell key={i} fill={EMERALD_SHADES[i]} />
+                      <Cell key={_.name} fill={EMERALD_SHADES[i]} />
                     ))}
                   </Pie>
                   <Tooltip
@@ -4739,7 +4740,7 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
             <div className="space-y-3">
               {flightRisks.map((r, i) => (
                 <div
-                  key={i}
+                  key={r.name}
                   className="flex items-center justify-between p-2.5 rounded-xl bg-background border border-border/50"
                 >
                   <div>
@@ -4837,7 +4838,7 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
             >
               {exitedEmployees.map((emp, i) => (
                 <tr
-                  key={i}
+                  key={emp.name}
                   className="hover:bg-[var(--secondary)] transition-colors"
                 >
                   <td className="px-6 py-4 font-bold text-foreground">
@@ -5046,17 +5047,17 @@ export function Reports() {
 
   const pipelineStages = isManager
     ? [
-        { stage: "Applied", count: 42, pct: 100, color: "#9CA3AF" },
-        { stage: "Interviewed", count: 18, pct: 42.8, color: "#34D399" },
-        { stage: "Offered", count: 4, pct: 9.5, color: "#00B87C" },
-        { stage: "Joined", count: 3, pct: 7.1, color: "#059669" },
-      ]
+      { stage: "Applied", count: 42, pct: 100, color: "#9CA3AF" },
+      { stage: "Interviewed", count: 18, pct: 42.8, color: "#34D399" },
+      { stage: "Offered", count: 4, pct: 9.5, color: "#00B87C" },
+      { stage: "Joined", count: 3, pct: 7.1, color: "#059669" },
+    ]
     : [
-        { stage: "Applied", count: 145, pct: 100, color: "#9CA3AF" },
-        { stage: "Interviewed", count: 58, pct: 40, color: "#34D399" },
-        { stage: "Offered", count: 12, pct: 8.2, color: "#00B87C" },
-        { stage: "Joined", count: 8, pct: 5.5, color: "#059669" },
-      ];
+      { stage: "Applied", count: 145, pct: 100, color: "#9CA3AF" },
+      { stage: "Interviewed", count: 58, pct: 40, color: "#34D399" },
+      { stage: "Offered", count: 12, pct: 8.2, color: "#00B87C" },
+      { stage: "Joined", count: 8, pct: 5.5, color: "#059669" },
+    ];
 
   useEffect(() => {
     if (location.state?.activeReport) {
@@ -5149,7 +5150,9 @@ export function Reports() {
 
     const printWindow = window.open("", "", "width=900,height=650");
     if (printWindow) {
-      printWindow.document.write(`
+      printWindow.document.write(
+        DOMPurify.sanitize(
+          `
         <html>
           <head>
             <title>Custom Report - Employment Management System</title>
@@ -5173,7 +5176,13 @@ export function Reports() {
             </table>
           </body>
         </html>
-      `);
+      `,
+          {
+            ADD_TAGS: ["html", "head", "body", "style", "title"],
+            ADD_ATTR: ["style", "class"],
+          },
+        ),
+      );
       printWindow.document.close();
       printWindow.focus();
       setTimeout(() => {
@@ -5526,8 +5535,8 @@ export function Reports() {
     const list = rawKpis();
     return user?.role === "HR Manager"
       ? list.filter(
-          (k) => k.label !== "Payroll Cost" && k.label !== "Budget Utilization",
-        )
+        (k) => k.label !== "Payroll Cost" && k.label !== "Budget Utilization",
+      )
       : list;
   };
 
@@ -5731,8 +5740,8 @@ export function Reports() {
                       color: "var(--foreground)",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        "var(--secondary)")
+                    (e.currentTarget.style.backgroundColor =
+                      "var(--secondary)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -5803,8 +5812,8 @@ export function Reports() {
                       color: "var(--foreground)",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        "var(--secondary)")
+                    (e.currentTarget.style.backgroundColor =
+                      "var(--secondary)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -5866,8 +5875,8 @@ export function Reports() {
                       color: "var(--foreground)",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        "var(--secondary)")
+                    (e.currentTarget.style.backgroundColor =
+                      "var(--secondary)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -5914,120 +5923,120 @@ export function Reports() {
       >
         {isLoading
           ? Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  width: "100%",
-                  height: "116px",
-                  backgroundColor: "#F3F4F6",
-                  borderRadius: "16px",
-                  animation: "pulse 1.5s infinite ease-in-out",
-                }}
-              ></div>
-            ))
+            <div
+              key={i}
+              style={{
+                width: "100%",
+                height: "116px",
+                backgroundColor: "#F3F4F6",
+                borderRadius: "16px",
+                animation: "pulse 1.5s infinite ease-in-out",
+              }}
+            ></div>
+          ))
           : getKpis().map((card, i) => (
+            <div
+              key={card.label}
+              onClick={() => {
+                if (card.label === "Total Employees") navigate("/employees");
+                else if (card.label === "New Hires") navigate("/recruitment");
+                else if (card.label === "Attrition")
+                  setShowAttritionModal(true);
+                else if (card.label === "Avg Attendance")
+                  navigate("/attendance");
+                else if (card.label === "Payroll Cost") navigate("/payroll");
+                else if (card.label === "Open Positions")
+                  navigate("/recruitment");
+                else if (card.label === "Budget Utilization")
+                  setActiveReport("Payroll Summary");
+                else if (card.label === "Active Overtime")
+                  setActiveReport("Overtime Monitoring");
+              }}
+              style={{
+                backgroundColor: "var(--card)",
+                borderRadius: "16px",
+                padding: "20px",
+                border: "1px solid var(--border)",
+                display: "flex",
+                flexDirection: "column",
+                position: "relative",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                cursor: "pointer",
+                transition: "transform 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-4px)";
+                e.currentTarget.style.boxShadow =
+                  "0 10px 15px -3px rgba(0,0,0,0.1)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow =
+                  "0 1px 3px rgba(0,0,0,0.02)";
+              }}
+            >
               <div
-                key={i}
-                onClick={() => {
-                  if (card.label === "Total Employees") navigate("/employees");
-                  else if (card.label === "New Hires") navigate("/recruitment");
-                  else if (card.label === "Attrition")
-                    setShowAttritionModal(true);
-                  else if (card.label === "Avg Attendance")
-                    navigate("/attendance");
-                  else if (card.label === "Payroll Cost") navigate("/payroll");
-                  else if (card.label === "Open Positions")
-                    navigate("/recruitment");
-                  else if (card.label === "Budget Utilization")
-                    setActiveReport("Payroll Summary");
-                  else if (card.label === "Active Overtime")
-                    setActiveReport("Overtime Monitoring");
-                }}
                 style={{
-                  backgroundColor: "var(--card)",
-                  borderRadius: "16px",
-                  padding: "20px",
-                  border: "1px solid var(--border)",
                   display: "flex",
-                  flexDirection: "column",
-                  position: "relative",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
-                  cursor: "pointer",
-                  transition: "transform 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 10px 15px -3px rgba(0,0,0,0.1)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow =
-                    "0 1px 3px rgba(0,0,0,0.02)";
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                  marginBottom: "12px",
                 }}
               >
                 <div
                   style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "10px",
                     display: "flex",
-                    alignItems: "flex-start",
-                    justifyContent: "space-between",
-                    marginBottom: "12px",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: card.bg,
                   }}
                 >
-                  <div
-                    style={{
-                      width: "36px",
-                      height: "36px",
-                      borderRadius: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: card.bg,
-                    }}
-                  >
-                    <card.icon size={18} color={card.color} />
-                  </div>
-                  <span
-                    style={{
-                      padding: "2px 8px",
-                      borderRadius: "9999px",
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      backgroundColor:
-                        card.color === "#EF4444"
-                          ? "rgba(239,68,68,0.1)"
-                          : "rgba(16,185,129,0.1)",
-                      color: card.color === "#EF4444" ? "#EF4444" : "#059669",
-                    }}
-                  >
-                    {card.trend}
-                  </span>
+                  <card.icon size={18} color={card.color} />
                 </div>
-                <p
+                <span
                   style={{
-                    fontSize: "26px",
-                    fontWeight: 900,
-                    color: "var(--foreground)",
-                    margin: "0 0 4px 0",
-                    letterSpacing: "-0.5px",
-                  }}
-                >
-                  {card.value}
-                </p>
-                <p
-                  style={{
-                    fontSize: "12px",
+                    padding: "2px 8px",
+                    borderRadius: "9999px",
+                    fontSize: "11px",
                     fontWeight: 700,
-                    color: "var(--muted-foreground)",
-                    margin: 0,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
+                    backgroundColor:
+                      card.color === "#EF4444"
+                        ? "rgba(239,68,68,0.1)"
+                        : "rgba(16,185,129,0.1)",
+                    color: card.color === "#EF4444" ? "#EF4444" : "#059669",
                   }}
                 >
-                  {card.label}
-                </p>
+                  {card.trend}
+                </span>
               </div>
-            ))}
+              <p
+                style={{
+                  fontSize: "26px",
+                  fontWeight: 900,
+                  color: "var(--foreground)",
+                  margin: "0 0 4px 0",
+                  letterSpacing: "-0.5px",
+                }}
+              >
+                {card.value}
+              </p>
+              <p
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  color: "var(--muted-foreground)",
+                  margin: 0,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                {card.label}
+              </p>
+            </div>
+          ))}
       </div>
 
       {/* CHARTS ROW 1 */}
@@ -6659,7 +6668,7 @@ export function Reports() {
             ) : (
               landingFunnelData.map((f, i) => (
                 <div
-                  key={i}
+                  key={f.stage}
                   style={{ display: "flex", alignItems: "center", gap: "12px" }}
                 >
                   <span
@@ -7042,7 +7051,7 @@ export function Reports() {
                   },
                 ].map((emp, idx) => (
                   <tr
-                    key={idx}
+                    key={emp.name}
                     style={{
                       borderBottom: "1px solid #F9FAFB",
                       color: "#374151",
@@ -7153,7 +7162,7 @@ export function Reports() {
                     { dept: "Sales", att: "89%", perf: "3.7", prod: "85%" },
                   ].map((row, i) => (
                     <tr
-                      key={i}
+                      key={row.dept}
                       style={{
                         borderBottom: "1px solid var(--border)",
                         color: "var(--foreground)",
@@ -7349,7 +7358,7 @@ export function Reports() {
               .slice(0, showAllReports ? reports.length : 6)
               .map((report, i) => (
                 <div
-                  key={i}
+                  key={report.title}
                   style={{
                     backgroundColor: "var(--card)",
                     borderRadius: "12px",
@@ -7996,7 +8005,7 @@ export function Reports() {
                             <>
                               {paginated.map((row, idx) => (
                                 <tr
-                                  key={idx}
+                                  key={row.id || idx}
                                   style={{
                                     borderBottom: "1px solid var(--border)",
                                   }}
@@ -8180,8 +8189,8 @@ export function Reports() {
                     textAlign: "left",
                   }}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      "rgba(0, 184, 124, 0.1)")
+                  (e.currentTarget.style.backgroundColor =
+                    "rgba(0, 184, 124, 0.1)")
                   }
                   onMouseLeave={(e) =>
                     (e.currentTarget.style.backgroundColor = "var(--secondary)")
@@ -8478,7 +8487,7 @@ export function Reports() {
                     },
                   ].map((row, idx) => (
                     <tr
-                      key={idx}
+                      key={row.date}
                       style={{
                         borderBottom: "1px solid var(--border)",
                         color: "var(--foreground)",

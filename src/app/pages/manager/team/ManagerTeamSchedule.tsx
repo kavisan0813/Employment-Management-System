@@ -498,11 +498,10 @@ export function ManagerTeamSchedule() {
           </button>
           <button
             onClick={() => setActiveBrush(activeBrush ? null : "Morning")}
-            className={`px-4 py-2.5 text-sm font-bold rounded-xl border transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800 active:scale-95 flex items-center gap-2 ${
-              activeBrush
-                ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
-                : ""
-            }`}
+            className={`px-4 py-2.5 text-sm font-bold rounded-xl border transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800 active:scale-95 flex items-center gap-2 ${activeBrush
+              ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
+              : ""
+              }`}
             style={
               activeBrush
                 ? {}
@@ -623,11 +622,10 @@ export function ManagerTeamSchedule() {
             {["Week", "Month", "Day"].map((v) => (
               <button
                 key={v}
-                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${
-                  view === v
-                    ? "bg-primary text-white shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${view === v
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
                 onClick={() => setView(v as "Week" | "Month" | "Day")}
               >
                 {v}
@@ -767,11 +765,10 @@ export function ManagerTeamSchedule() {
                 onClick={() =>
                   setActiveBrush(activeBrush === type.type ? null : type.type)
                 }
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all hover:bg-secondary select-none ${
-                  activeBrush === type.type
-                    ? "bg-[#E8F5E9] dark:bg-emerald-900/20 border border-[#00B87C]/20"
-                    : ""
-                }`}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all hover:bg-secondary select-none ${activeBrush === type.type
+                  ? "bg-[#E8F5E9] dark:bg-emerald-900/20 border border-[#00B87C]/20"
+                  : ""
+                  }`}
               >
                 <div
                   className={`w-7 h-7 rounded-full ${type.color} flex items-center justify-center text-white text-[9px] font-bold shadow-sm`}
@@ -955,6 +952,7 @@ export function ManagerTeamSchedule() {
                   <div className="flex items-center gap-3">
                     <img
                       src={emp.avatar}
+                      alt={`${emp.name}'s avatar`}
                       className="w-8 h-8 rounded-full border"
                     />
                     <div>
@@ -1022,6 +1020,7 @@ export function ManagerTeamSchedule() {
                   <div className="flex items-center gap-3">
                     <img
                       src={emp.avatar}
+                      alt={`${emp.name}'s avatar`}
                       className="w-8 h-8 rounded-full border"
                     />
                     <div>
@@ -1551,6 +1550,7 @@ function EmployeeCell({
       <div className="relative flex-shrink-0">
         <img
           src={avatar}
+          alt={`${name}'s avatar`}
           className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-800 shadow-sm"
         />
         <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full"></div>

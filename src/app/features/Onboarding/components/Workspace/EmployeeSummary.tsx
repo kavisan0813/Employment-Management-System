@@ -53,10 +53,10 @@ export function EmployeeSummary({ selected, onClose }: EmployeeSummaryProps) {
       <div className="px-6 py-3 border-b border-border flex items-center gap-4">
         <div className="flex-1 h-[6px] bg-muted/50 rounded-full overflow-hidden">
           <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${selected.progress}%` }}
+            initial={{ x: "-100%" }}
+            animate={{ x: `-${100 - (selected.progress)}%` }}
             transition={{ duration: 0.8 }}
-            className="h-full rounded-full"
+            className="h-full rounded-full w-full"
             style={{ backgroundColor: selected.progressColor }}
           />
         </div>

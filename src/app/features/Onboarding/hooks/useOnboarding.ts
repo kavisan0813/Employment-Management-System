@@ -13,13 +13,12 @@ import { showToast } from "../../../components/workflow/ToastNotification";
 import { ROLE_TEMPLATES } from "../../../shared/permission-engine/roles";
 import { INITIAL_DEPARTMENTS } from "../../Department/constants/department.constants";
 import { DEFAULT_ONBOARDING_TEMPLATES } from "../constants/defaultOnboardingTemplate";
-import { ONBOARDING_MOCK_TEMPLATES } from "../constants/mockTemplates";
 
 /* ─── Storage keys (shared with the employee-creation flow) ─── */
-export const ONB_QUEUE_KEY = "viyan_onboarding_queue";
-export const ONB_PHASES_KEY = "viyan_onboarding_phases";
-export const ONB_DOCS_KEY = "viyan_onboarding_documents";
-export const ONB_TEMPLATES_KEY = "viyan_onboarding_templates";
+export const ONB_QUEUE_KEY = "viyan_onboarding_queue:v1";
+export const ONB_PHASES_KEY = "viyan_onboarding_phases:v1";
+export const ONB_DOCS_KEY = "viyan_onboarding_documents:v1";
+export const ONB_TEMPLATES_KEY = "viyan_onboarding_templates:v1";
 export const ONB_UPDATED_EVENT = "viyan:onboarding-updated";
 
 /**
@@ -225,7 +224,7 @@ export function useOnboarding() {
      and is the single source for the dashboard, assignment flow and portals. */
   const [templates, setTemplates] = useState<Template[]>(() =>
     readStore<Template[]>(
-      "viyan_onboarding_templates",
+      "viyan_onboarding_templates:v1",
       DEFAULT_ONBOARDING_TEMPLATES,
     ),
   );
@@ -240,31 +239,31 @@ export function useOnboarding() {
 
   /* ─── Data ─── */
   const [phasesData, setPhasesData] = useState(() =>
-    readStore<Record<string, OnboardingPhase[]>>("viyan_onboarding_phases", {}),
+    readStore<Record<string, OnboardingPhase[]>>("viyan_onboarding_phases:v1", {}),
   );
   // The queue has no seed data: an employee account + joining date must create it.
   const [newHires, setNewHires] = useState<NewHire[]>(() =>
-    readStore<NewHire[]>("viyan_onboarding_queue", []),
+    readStore<NewHire[]>("viyan_onboarding_queue:v1", []),
   );
   const [documents, setDocuments] = useState<DocumentItem[]>(() =>
-    readStore<DocumentItem[]>("viyan_onboarding_documents", []),
+    readStore<DocumentItem[]>("viyan_onboarding_documents:v1", []),
   );
 
   useEffect(() => {
-    localStorage.setItem("viyan_onboarding_queue", JSON.stringify(newHires));
+    localStorage.setItem("viyan_onboarding_queue:v1", JSON.stringify(newHires));
   }, [newHires]);
   useEffect(() => {
-    localStorage.setItem("viyan_onboarding_phases", JSON.stringify(phasesData));
+    localStorage.setItem("viyan_onboarding_phases:v1", JSON.stringify(phasesData));
   }, [phasesData]);
   useEffect(() => {
     localStorage.setItem(
-      "viyan_onboarding_documents",
+      "viyan_onboarding_documents:v1",
       JSON.stringify(documents),
     );
   }, [documents]);
   useEffect(() => {
     localStorage.setItem(
-      "viyan_onboarding_templates",
+      "viyan_onboarding_templates:v1",
       JSON.stringify(templates),
     );
   }, [templates]);
@@ -274,25 +273,25 @@ export function useOnboarding() {
         event instanceof StorageEvent &&
         event.key &&
         ![
-          "viyan_onboarding_queue",
-          "viyan_onboarding_phases",
-          "viyan_onboarding_documents",
-          "viyan_onboarding_templates",
+          "viyan_onboarding_queue:v1",
+          "viyan_onboarding_phases:v1",
+          "viyan_onboarding_documents:v1",
+          "viyan_onboarding_templates:v1",
           "viyan_departments",
         ].includes(event.key)
       )
         return;
-      setNewHires(readStore<NewHire[]>("viyan_onboarding_queue", []));
+      setNewHires(readStore<NewHire[]>("viyan_onboarding_queue:v1", []));
       setPhasesData(
         readStore<Record<string, OnboardingPhase[]>>(
-          "viyan_onboarding_phases",
+          "viyan_onboarding_phases:v1",
           {},
         ),
       );
-      setDocuments(readStore<DocumentItem[]>("viyan_onboarding_documents", []));
+      setDocuments(readStore<DocumentItem[]>("viyan_onboarding_documents:v1", []));
       setTemplates(
         readStore<Template[]>(
-          "viyan_onboarding_templates",
+          "viyan_onboarding_templates:v1",
           DEFAULT_ONBOARDING_TEMPLATES,
         ),
       );
@@ -371,7 +370,7 @@ export function useOnboarding() {
         : nh,
     );
     setNewHires(next);
-    localStorage.setItem("viyan_onboarding_queue", JSON.stringify(next));
+    localStorage.setItem("viyan_onboarding_queue:v1", JSON.stringify(next));
   };
 
   /* ─── Handlers ─── */
@@ -438,7 +437,7 @@ export function useOnboarding() {
       recalcProgress(selectedId, hirePhases);
     }
     setPhasesData(updated);
-    localStorage.setItem("viyan_onboarding_phases", JSON.stringify(updated));
+    localStorage.setItem("viyan_onboarding_phases:v1", JSON.stringify(updated));
     window.dispatchEvent(new Event("viyan:onboarding-updated"));
   };
 
@@ -520,7 +519,7 @@ export function useOnboarding() {
     const newId = `nh${Date.now()}`;
     const resolvedEmail = (() => {
       const users = JSON.parse(
-        localStorage.getItem("viyan_registered_users") || "[]",
+        localStorage.getItem("viyan_registered_users:v1") || "[]",
       );
       const match = users.find(
         (u: any) => u.name.toLowerCase() === formEmployee.toLowerCase(),
@@ -573,22 +572,22 @@ export function useOnboarding() {
     >;
     setPhasesData(updatedPhasesData);
     localStorage.setItem(
-      "viyan_onboarding_phases",
+      "viyan_onboarding_phases:v1",
       JSON.stringify(updatedPhasesData),
     );
 
-    const allDocs = readStore<DocumentItem[]>("viyan_onboarding_documents", []);
+    const allDocs = readStore<DocumentItem[]>("viyan_onboarding_documents:v1", []);
     const mergedDocs = [...allDocs, ...generatedDocs];
     setDocuments(mergedDocs);
     localStorage.setItem(
-      "viyan_onboarding_documents",
+      "viyan_onboarding_documents:v1",
       JSON.stringify(mergedDocs),
     );
 
     const updatedQueue = [newHire, ...newHires];
     setNewHires(updatedQueue);
     localStorage.setItem(
-      "viyan_onboarding_queue",
+      "viyan_onboarding_queue:v1",
       JSON.stringify(updatedQueue),
     );
 
@@ -714,16 +713,16 @@ export function useOnboarding() {
     const updatedPhases = { ...phasesData, [employeeId]: generatedPhases };
     setPhasesData(updatedPhases);
     localStorage.setItem(
-      "viyan_onboarding_phases",
+      "viyan_onboarding_phases:v1",
       JSON.stringify(updatedPhases),
     );
 
     // Append to viyan_onboarding_documents list
-    const allDocs = readStore<DocumentItem[]>("viyan_onboarding_documents", []);
+    const allDocs = readStore<DocumentItem[]>("viyan_onboarding_documents:v1", []);
     const mergedDocs = [...allDocs, ...generatedDocs];
     setDocuments(mergedDocs);
     localStorage.setItem(
-      "viyan_onboarding_documents",
+      "viyan_onboarding_documents:v1",
       JSON.stringify(mergedDocs),
     );
 
@@ -741,7 +740,7 @@ export function useOnboarding() {
               nh.email ||
               (() => {
                 const users = JSON.parse(
-                  localStorage.getItem("viyan_registered_users") || "[]",
+                  localStorage.getItem("viyan_registered_users:v1") || "[]",
                 );
                 const match = users.find(
                   (u: any) => u.name.toLowerCase() === nh.name.toLowerCase(),
@@ -756,7 +755,7 @@ export function useOnboarding() {
     );
     setNewHires(updatedQueue);
     localStorage.setItem(
-      "viyan_onboarding_queue",
+      "viyan_onboarding_queue:v1",
       JSON.stringify(updatedQueue),
     );
 

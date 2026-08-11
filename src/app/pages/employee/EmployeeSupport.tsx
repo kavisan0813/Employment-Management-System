@@ -524,7 +524,7 @@ function MyTicketsTab({
               <tbody className="divide-y divide-border">
                 {tickets.map((row, i) => (
                   <tr
-                    key={i}
+                    key={row.id}
                     className="hover:bg-secondary/50 transition-colors group cursor-pointer"
                     onClick={() => onViewTicket(row)}
                   >
@@ -1094,7 +1094,7 @@ function TicketDetailModal({
               <div className="flex flex-wrap gap-3">
                 {ticket.attachments.map((att, i) => (
                   <div
-                    key={i}
+                    key={att.name}
                     onClick={() => setPreviewAttachment(att)}
                     className="flex items-center gap-3 p-3 bg-secondary/30 rounded-xl border border-border cursor-pointer hover:border-primary/40 transition-colors"
                   >
@@ -1729,7 +1729,7 @@ function KnowledgeBaseTab() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {FAQ_CATEGORIES.map((category, i) => (
           <div
-            key={i}
+            key={category.name}
             onClick={() => setSelectedCategory(category)}
             className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:border-primary transition-all cursor-pointer hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] flex flex-col items-start"
           >
@@ -1800,7 +1800,7 @@ function KnowledgeBaseTab() {
               <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-slate-50 dark:bg-card space-y-3">
                 {DUMMY_ARTICLES.map((article, idx) => (
                   <div
-                    key={idx}
+                    key={article}
                     onClick={() => {
                       showToast(
                         "Opening Article",

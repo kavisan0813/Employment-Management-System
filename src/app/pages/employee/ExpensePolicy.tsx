@@ -101,7 +101,7 @@ export function ExpensePolicy() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
         {policies.map((p, i) => (
           <div
-            key={i}
+            key={p.category}
             className="bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group"
           >
             <div
@@ -150,7 +150,7 @@ export function ExpensePolicy() {
             <tbody className="divide-y divide-slate-50">
               {policies.map((p, i) => (
                 <tr
-                  key={i}
+                  key={p.category}
                   className="group hover:bg-[#00B87C]/[0.08]/50 transition-colors"
                 >
                   <td className="px-8 py-5 flex items-center gap-3">

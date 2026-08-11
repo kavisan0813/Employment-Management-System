@@ -1,6 +1,6 @@
 import { Mail, Phone, Linkedin, MapPin } from "lucide-react";
 import { Employee } from "../types/employee.types";
-import { HighlightText } from "../utils/employee.utils";
+import { HighlightText } from "./HighlightText";
 import { statusConfig, deptColors } from "../utils/employee.utils";
 
 interface EmployeeGridProps {

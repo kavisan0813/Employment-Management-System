@@ -46,10 +46,6 @@ export function Layout() {
   });
   const location = useLocation();
 
-  if (!sessionStorage.getItem("isLoggedIn")) {
-    return <Navigate to="/login" replace />;
-  }
-
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add("dark");
@@ -59,6 +55,10 @@ export function Layout() {
       localStorage.setItem("theme", "light");
     }
   }, [isDark]);
+
+  if (!sessionStorage.getItem("isLoggedIn")) {
+    return <Navigate to="/login" replace />;
+  }
 
   // Determine page title from path, without role checks
   const fullPath = location.pathname;

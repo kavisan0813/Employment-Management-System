@@ -114,7 +114,7 @@ export function DataDownloadsSection({
           const Icon = card.icon;
           return (
             <div
-              key={i}
+              key={card.title}
               className="bg-card rounded-2xl border border-border shadow-sm p-6"
             >
               <div className="flex items-start gap-4 mb-4">

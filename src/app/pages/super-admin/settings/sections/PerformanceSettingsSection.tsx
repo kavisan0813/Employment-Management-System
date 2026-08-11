@@ -182,7 +182,7 @@ export function PerformanceSettingsSection() {
               setter: setPerfHrFinalizationDeadline,
             },
           ].map((f, idx) => (
-            <div key={idx}>
+            <div key={f.label}>
               <label
                 style={{
                   display: "block",
@@ -262,7 +262,7 @@ export function PerformanceSettingsSection() {
             },
           ].map((chip, idx) => (
             <span
-              key={idx}
+              key={chip.label}
               style={{
                 backgroundColor: chip.bg,
                 color: chip.color,
@@ -339,7 +339,7 @@ export function PerformanceSettingsSection() {
             setter: setPerfClientFeedback,
           },
         ].map((row, idx) => (
-          <div key={idx} className="flex justify-between items-center py-2">
+          <div key={row.label} className="flex justify-between items-center py-2">
             <div>
               <p
                 style={{
@@ -459,7 +459,7 @@ export function PerformanceSettingsSection() {
             setter: setPerfOkrSupport,
           },
         ].map((row, idx) => (
-          <div key={idx} className="flex justify-between items-center py-2">
+          <div key={row.label} className="flex justify-between items-center py-2">
             <div>
               <p
                 style={{

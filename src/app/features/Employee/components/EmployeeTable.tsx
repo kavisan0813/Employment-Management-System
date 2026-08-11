@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { MoreVertical, ChevronDown, ChevronUp } from "lucide-react";
 import { Employee } from "../types/employee.types";
+import { HighlightText } from "./HighlightText";
 import {
-  HighlightText,
   statusConfig,
   deptColors,
 } from "../utils/employee.utils";
@@ -154,6 +154,7 @@ export default function EmployeeTable({
             <div className="flex items-center gap-3 pr-2">
               <img
                 src={emp.avatar || ""}
+                alt={`${emp.name}'s avatar`}
                 className="w-9 h-9 rounded-full object-cover border"
                 style={{ borderColor: "var(--border)" }}
                 onError={(e) => {
@@ -328,8 +329,8 @@ export default function EmployeeTable({
                       border: "none",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        "var(--background)")
+                    (e.currentTarget.style.backgroundColor =
+                      "var(--background)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -347,8 +348,8 @@ export default function EmployeeTable({
                         border: "none",
                       }}
                       onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor =
-                          "var(--background)")
+                      (e.currentTarget.style.backgroundColor =
+                        "var(--background)")
                       }
                       onMouseLeave={(e) =>
                         (e.currentTarget.style.backgroundColor = "transparent")
@@ -369,8 +370,8 @@ export default function EmployeeTable({
                       border: "none",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        "var(--background)")
+                    (e.currentTarget.style.backgroundColor =
+                      "var(--background)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")

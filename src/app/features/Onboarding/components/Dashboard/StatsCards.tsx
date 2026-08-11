@@ -22,7 +22,7 @@ export function StatsCards({ activeCount, completedCount, overdueTasks, pendingD
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
       {cards.map((card, i) => (
         <motion.div
-          key={i}
+          key={card.label}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: i * 0.05 }}

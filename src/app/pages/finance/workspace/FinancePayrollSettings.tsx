@@ -681,11 +681,10 @@ export function FinancePayrollSettings() {
                                 !payCycle.lockAfterProcessing,
                             })
                           }
-                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${
-                            payCycle.lockAfterProcessing
-                              ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
-                              : "bg-muted border border-border"
-                          }`}
+                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${payCycle.lockAfterProcessing
+                            ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
+                            : "bg-muted border border-border"
+                            }`}
                         >
                           <div
                             className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${payCycle.lockAfterProcessing ? "translate-x-6" : "translate-x-0"}`}
@@ -867,11 +866,10 @@ export function FinancePayrollSettings() {
                                 </td>
                                 <td className="px-6 py-4 text-xs">
                                   <span
-                                    className={`px-2 py-0.5 rounded-md font-bold uppercase tracking-wider border ${
-                                      comp.type === "Earnings"
-                                        ? "bg-emerald-500/10 border-emerald-500/20 text-[#00C781]"
-                                        : "bg-purple-500/10 border-purple-500/20 text-purple-400"
-                                    }`}
+                                    className={`px-2 py-0.5 rounded-md font-bold uppercase tracking-wider border ${comp.type === "Earnings"
+                                      ? "bg-emerald-500/10 border-emerald-500/20 text-[#00C781]"
+                                      : "bg-purple-500/10 border-purple-500/20 text-purple-400"
+                                      }`}
                                   >
                                     {comp.type}
                                   </span>
@@ -893,12 +891,12 @@ export function FinancePayrollSettings() {
                                         prev.map((c) =>
                                           c.id === comp.id
                                             ? {
-                                                ...c,
-                                                status:
-                                                  c.status === "Enabled"
-                                                    ? "Disabled"
-                                                    : "Enabled",
-                                              }
+                                              ...c,
+                                              status:
+                                                c.status === "Enabled"
+                                                  ? "Disabled"
+                                                  : "Enabled",
+                                            }
                                             : c,
                                         ),
                                       );
@@ -906,11 +904,10 @@ export function FinancePayrollSettings() {
                                         `${comp.name} ${comp.status === "Enabled" ? "Disabled" : "Enabled"} successfully`,
                                       );
                                     }}
-                                    className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                                      comp.status === "Enabled"
-                                        ? "bg-emerald-500/10 text-[#00C781]"
-                                        : "bg-red-500/10 text-red-400"
-                                    }`}
+                                    className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${comp.status === "Enabled"
+                                      ? "bg-emerald-500/10 text-[#00C781]"
+                                      : "bg-red-500/10 text-red-400"
+                                      }`}
                                   >
                                     {comp.status}
                                   </button>
@@ -1244,11 +1241,10 @@ export function FinancePayrollSettings() {
                               epsApplicable: !pfConfig.epsApplicable,
                             })
                           }
-                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${
-                            pfConfig.epsApplicable
-                              ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
-                              : "bg-muted border border-border"
-                          }`}
+                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${pfConfig.epsApplicable
+                            ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
+                            : "bg-muted border border-border"
+                            }`}
                         >
                           <div
                             className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${pfConfig.epsApplicable ? "translate-x-6" : "translate-x-0"}`}
@@ -1515,7 +1511,7 @@ export function FinancePayrollSettings() {
                               </td>
                               <td className="px-6 py-4 text-xs text-muted-foreground">
                                 {rule.minSalary === 0 &&
-                                rule.maxSalary === 99999999
+                                  rule.maxSalary === 99999999
                                   ? "Any Gross Salary"
                                   : `₹${rule.minSalary.toLocaleString()} - ${rule.maxSalary > 90000000 ? "Above" : `₹${rule.maxSalary.toLocaleString()}`}`}
                               </td>
@@ -1647,11 +1643,10 @@ export function FinancePayrollSettings() {
                               enabled: !esiConfig.enabled,
                             })
                           }
-                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${
-                            esiConfig.enabled
-                              ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
-                              : "bg-muted border border-border"
-                          }`}
+                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${esiConfig.enabled
+                            ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
+                            : "bg-muted border border-border"
+                            }`}
                         >
                           <div
                             className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${esiConfig.enabled ? "translate-x-6" : "translate-x-0"}`}
@@ -1739,11 +1734,10 @@ export function FinancePayrollSettings() {
                                 enabled: !gratuityConfig.enabled,
                               })
                             }
-                            className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${
-                              gratuityConfig.enabled
-                                ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
-                                : "bg-muted border border-border"
-                            }`}
+                            className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${gratuityConfig.enabled
+                              ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
+                              : "bg-muted border border-border"
+                              }`}
                           >
                             <div
                               className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${gratuityConfig.enabled ? "translate-x-6" : "translate-x-0"}`}
@@ -1840,13 +1834,12 @@ export function FinancePayrollSettings() {
                               </td>
                               <td className="px-6 py-4 text-center">
                                 <span
-                                  className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
-                                    cal.status === "Processed"
-                                      ? "bg-emerald-500/10 border-emerald-500/20 text-[#00C781]"
-                                      : cal.status === "Scheduled"
-                                        ? "bg-blue-500/10 border-blue-500/20 text-blue-400"
-                                        : "bg-amber-500/10 border-amber-500/20 text-amber-400"
-                                  }`}
+                                  className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${cal.status === "Processed"
+                                    ? "bg-emerald-500/10 border-emerald-500/20 text-[#00C781]"
+                                    : cal.status === "Scheduled"
+                                      ? "bg-blue-500/10 border-blue-500/20 text-blue-400"
+                                      : "bg-amber-500/10 border-amber-500/20 text-amber-400"
+                                    }`}
                                 >
                                   {cal.status}
                                 </span>
@@ -1934,11 +1927,10 @@ export function FinancePayrollSettings() {
                               </td>
                               <td className="px-6 py-4 text-center">
                                 <span
-                                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                                    b.status === "Connected"
-                                      ? "bg-emerald-500/10 text-[#00C781]"
-                                      : "bg-white/5 text-muted-foreground"
-                                  }`}
+                                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${b.status === "Connected"
+                                    ? "bg-emerald-500/10 text-[#00C781]"
+                                    : "bg-white/5 text-muted-foreground"
+                                    }`}
                                 >
                                   {b.status}
                                 </span>
@@ -1956,10 +1948,10 @@ export function FinancePayrollSettings() {
                                             prev.map((bank) =>
                                               bank.id === b.id
                                                 ? {
-                                                    ...bank,
-                                                    lastSync:
-                                                      new Date().toLocaleString(),
-                                                  }
+                                                  ...bank,
+                                                  lastSync:
+                                                    new Date().toLocaleString(),
+                                                }
                                                 : bank,
                                             ),
                                           );
@@ -1981,10 +1973,10 @@ export function FinancePayrollSettings() {
                                             prev.map((bank) =>
                                               bank.id === b.id
                                                 ? {
-                                                    ...bank,
-                                                    status: "Disconnected",
-                                                    lastSync: "N/A",
-                                                  }
+                                                  ...bank,
+                                                  status: "Disconnected",
+                                                  lastSync: "N/A",
+                                                }
                                                 : bank,
                                             ),
                                           );
@@ -2005,11 +1997,11 @@ export function FinancePayrollSettings() {
                                           prev.map((bank) =>
                                             bank.id === b.id
                                               ? {
-                                                  ...bank,
-                                                  status: "Connected",
-                                                  lastSync:
-                                                    new Date().toLocaleString(),
-                                                }
+                                                ...bank,
+                                                status: "Connected",
+                                                lastSync:
+                                                  new Date().toLocaleString(),
+                                              }
                                               : bank,
                                           ),
                                         );
@@ -2273,13 +2265,12 @@ export function FinancePayrollSettings() {
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className={`px-5 py-3 rounded-xl shadow-lg border text-sm font-bold text-white min-w-[280px] pointer-events-auto flex items-center justify-between ${
-              t.type === "error"
-                ? "bg-red-500/20 border-red-500/30 text-red-300"
-                : t.type === "info"
-                  ? "bg-blue-500/20 border-blue-500/30 text-blue-300"
-                  : "bg-emerald-500/20 border-emerald-500/30 text-emerald-300"
-            }`}
+            className={`px-5 py-3 rounded-xl shadow-lg border text-sm font-bold text-white min-w-[280px] pointer-events-auto flex items-center justify-between ${t.type === "error"
+              ? "bg-red-500/20 border-red-500/30 text-red-300"
+              : t.type === "info"
+                ? "bg-blue-500/20 border-blue-500/30 text-blue-300"
+                : "bg-emerald-500/20 border-emerald-500/30 text-emerald-300"
+              }`}
           >
             <span>{t.message}</span>
             <button
@@ -2323,11 +2314,10 @@ function NavSection({
           <button
             key={item.id}
             onClick={() => onSelect(item.id)}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-[13px] font-bold transition-all relative ${
-              isActive
-                ? "bg-emerald-500/10 text-[#00C781]"
-                : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
-            }`}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-[13px] font-bold transition-all relative ${isActive
+              ? "bg-emerald-500/10 text-[#00C781]"
+              : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+              }`}
           >
             {item.label}
             {isActive && (
@@ -2414,9 +2404,8 @@ function SalaryComponentForm({
         </div>
         <button
           onClick={() => setTaxable(!taxable)}
-          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${
-            taxable ? "bg-[#00B87C]" : "bg-muted border border-border"
-          }`}
+          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${taxable ? "bg-[#00B87C]" : "bg-muted border border-border"
+            }`}
         >
           <div
             className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${taxable ? "translate-x-6" : "translate-x-0"}`}
@@ -3389,11 +3378,10 @@ export function SalaryStructuresSection({
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => onConfigure(emp)}
-                        className={`px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 ml-auto ${
-                          isConfigured
-                            ? "border border-border text-muted-foreground hover:text-foreground hover:bg-white/5"
-                            : "bg-[#00B87C] text-white hover:opacity-90 shadow-md shadow-[#00B87C]/10"
-                        }`}
+                        className={`px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 ml-auto ${isConfigured
+                          ? "border border-border text-muted-foreground hover:text-foreground hover:bg-white/5"
+                          : "bg-[#00B87C] text-white hover:opacity-90 shadow-md shadow-[#00B87C]/10"
+                          }`}
                       >
                         <Edit2 size={12} />
                         {isConfigured ? "Edit" : "Configure"}
@@ -3595,7 +3583,7 @@ export function SalaryStructureModal({
       onSaveSuccess();
       onClose();
     } else {
-      toast.error(res.error);
+      toast.error("error" in res ? res.error : "An error occurred");
     }
   };
 
@@ -3769,9 +3757,8 @@ export function SalaryStructureModal({
                     ESI Contribution:
                   </span>
                   <span
-                    className={`text-xs font-black uppercase ${
-                      esiApplicable ? "text-[#00C781]" : "text-muted-foreground"
-                    }`}
+                    className={`text-xs font-black uppercase ${esiApplicable ? "text-[#00C781]" : "text-muted-foreground"
+                      }`}
                   >
                     {esiApplicable ? "Applicable" : "Not Applicable"}
                   </span>

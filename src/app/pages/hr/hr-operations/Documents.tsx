@@ -351,7 +351,7 @@ export function Documents() {
           },
         ].map((kpi, idx) => (
           <motion.div
-            key={idx}
+            key={kpi.label}
             whileHover={{ y: -5 }}
             className="relative group bg-card border border-border p-5 rounded-3xl shadow-sm flex flex-col justify-between overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-[#00B87C]/5 transition-all duration-300"
           >
@@ -830,7 +830,7 @@ export function Documents() {
                 <div className="space-y-2">
                   {previewDoc.versions.map((v, i) => (
                     <div
-                      key={i}
+                      key={v.version}
                       className="flex items-center justify-between text-xs font-bold bg-white dark:bg-zinc-900/30 p-3 rounded-xl border border-border"
                     >
                       <div className="flex items-center gap-2">

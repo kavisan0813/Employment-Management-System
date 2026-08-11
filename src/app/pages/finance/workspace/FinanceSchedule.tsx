@@ -627,7 +627,7 @@ export function FinanceSchedule() {
                       const conf =
                         SHIFT_COLORS[shift.type] || SHIFT_COLORS["Morning"];
                       return (
-                        <td key={idx} className="p-2 border-b border-border">
+                        <td key={shift.type} className="p-2 border-b border-border">
                           <div
                             onClick={() => handleViewDetails(shift)}
                             className={`h-full min-h-[60px] rounded-xl p-2 flex flex-col items-center justify-center gap-1 border-t-4 shadow-sm group cursor-pointer transition-all hover:scale-[1.02] ${conf.bg} ${conf.border}`}
@@ -719,7 +719,7 @@ export function FinanceSchedule() {
                   };
                   return cells.map((day, i) => {
                     if (day === null)
-                      return <div key={`e-${i}`} className="min-h-[80px]" />;
+                      return <div key={`e-${day}`} className="min-h-[80px]" />;
                     const isToday = day === 6 && month === 3;
                     const shiftType = shiftPattern[day];
                     const conf = shiftType ? SHIFT_COLORS[shiftType] : null;
@@ -826,7 +826,7 @@ export function FinanceSchedule() {
                     },
                     { time: "04:00 PM", label: "Clock-out", type: "end" },
                   ].map((item, i) => (
-                    <div key={i} className="flex items-start gap-4">
+                    <div key={item.label} className="flex items-start gap-4">
                       <span className="w-[80px] text-[11px] font-black text-muted-foreground pt-1 shrink-0">
                         {item.time}
                       </span>
@@ -969,7 +969,7 @@ export function FinanceSchedule() {
                               },
                             ].map((item, i) => (
                               <button
-                                key={i}
+                                key={item.label}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   item.onClick();
@@ -1086,7 +1086,7 @@ export function FinanceSchedule() {
                 { label: "Department", value: selectedShift.department },
                 { label: "Reporting Manager", value: selectedShift.manager },
               ].map((item, i) => (
-                <div key={i} className="flex justify-between items-center py-1">
+                <div key={item.label} className="flex justify-between items-center py-1">
                   <span className="text-[13px] font-bold text-muted-foreground">
                     {item.label}
                   </span>
@@ -1499,7 +1499,7 @@ export function FinanceSchedule() {
                       date: "Final Action",
                     },
                   ].map((step, i) => (
-                    <div key={i} className="relative flex items-center gap-3">
+                    <div key={step.label} className="relative flex items-center gap-3">
                       <div
                         className={`absolute -left-[23px] w-4 h-4 rounded-full border-2 bg-card z-10 ${step.status === "completed" ? "border-primary bg-primary" : step.status === "active" ? "border-primary" : "border-border"}`}
                       />

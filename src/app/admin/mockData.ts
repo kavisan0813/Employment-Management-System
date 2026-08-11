@@ -39,7 +39,7 @@ import {
 // Helper to load or initialize from localStorage
 function getStore<T>(key: string, defaultVal: T): T {
   try {
-    const item = localStorage.getItem(`ems_${key}`);
+    const item = localStorage.getItem(`ems_${key}:v1`);
     return item ? JSON.parse(item) : defaultVal;
   } catch (e) {
     console.warn(`Error reading localStorage key ${key}`, e);
@@ -49,7 +49,7 @@ function getStore<T>(key: string, defaultVal: T): T {
 
 function saveStore<T>(key: string, val: T) {
   try {
-    localStorage.setItem(`ems_${key}`, JSON.stringify(val));
+    localStorage.setItem(`ems_${key}:v1`, JSON.stringify(val));
   } catch (e) {
     console.error(`Error writing localStorage key ${key}`, e);
   }

@@ -152,7 +152,7 @@ const INITIAL_STATE: PayrollState = {
   salaryStructures: SEED_SALARY_STRUCTURES,
 };
 
-const STORAGE_KEY = "viyan_payroll_engine";
+const STORAGE_KEY = "viyan_payroll_engine:v1";
 
 /* ═══════════════════════════════════════════════════════════════════
  * SERVICE OBJECT

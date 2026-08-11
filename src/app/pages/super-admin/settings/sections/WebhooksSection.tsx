@@ -124,7 +124,7 @@ export function WebhooksSection() {
       <div className="space-y-3 mb-8">
         {rows.map((r, idx) => (
           <div
-            key={idx}
+            key={r.status}
             className="p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4"
             style={{
               backgroundColor: "var(--input-background)",
@@ -243,7 +243,7 @@ export function WebhooksSection() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
         {availableEvents.map((ev, idx) => (
           <div
-            key={idx}
+            key={ev}
             className="p-2 rounded-xl border text-center text-[13px] font-medium transition-all cursor-pointer select-none"
             style={{
               backgroundColor: "var(--card)",
@@ -291,7 +291,7 @@ export function WebhooksSection() {
             setter: setWebhookLogs,
           },
         ].map((row, idx) => (
-          <div key={idx} className="flex justify-between items-center py-2">
+          <div key={row.label} className="flex justify-between items-center py-2">
             <p
               style={{
                 fontSize: "14px",

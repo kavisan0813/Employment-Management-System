@@ -1,4 +1,4 @@
-import { Check, Send, AlertTriangle, LockKeyhole, Upload, FileText, Eye, Trash2, Paperclip } from "lucide-react";
+import { Check, Send, AlertTriangle, LockKeyhole, Upload, FileText, Eye, Trash2 } from "lucide-react";
 import type { NewHire, OnboardingPhase } from "../../types/onboarding.types";
 import { useAuth } from "../../../../context/AuthContext";
 import { showToast } from "../../../../components/workflow/ToastNotification";
@@ -50,7 +50,7 @@ export function CompanyProcess({
 
   const handleAttachDocumentToTask = (phaseId: string, taskId: string, docName: string) => {
     try {
-      const allPhases = JSON.parse(localStorage.getItem("viyan_onboarding_phases") || "{}");
+      const allPhases = JSON.parse(localStorage.getItem("viyan_onboarding_phases:v1") || "{}");
       const hirePhases = allPhases[employee.id] || [];
       const updatedPhases = hirePhases.map((phase: any) => {
         if (phase.id !== phaseId) return phase;
@@ -64,12 +64,12 @@ export function CompanyProcess({
         };
       });
       allPhases[employee.id] = updatedPhases;
-      localStorage.setItem("viyan_onboarding_phases", JSON.stringify(allPhases));
+      localStorage.setItem("viyan_onboarding_phases:v1", JSON.stringify(allPhases));
 
-      const allDocs = JSON.parse(localStorage.getItem("viyan_onboarding_documents") || "[]");
+      const allDocs = JSON.parse(localStorage.getItem("viyan_onboarding_documents:v1") || "[]");
       const docId = `doc-${employee.id}-task-${taskId}`;
       const existingIdx = allDocs.findIndex((d: any) => d.id === docId);
-      
+
       const docRecord = {
         id: docId,
         employeeId: employee.id,
@@ -91,7 +91,7 @@ export function CompanyProcess({
       } else {
         allDocs.push(docRecord);
       }
-      localStorage.setItem("viyan_onboarding_documents", JSON.stringify(allDocs));
+      localStorage.setItem("viyan_onboarding_documents:v1", JSON.stringify(allDocs));
 
       window.dispatchEvent(new Event("viyan:onboarding-updated"));
       window.dispatchEvent(new Event("storage"));
@@ -105,7 +105,7 @@ export function CompanyProcess({
 
   const handleRemoveDocumentFromTask = (phaseId: string, taskId: string) => {
     try {
-      const allPhases = JSON.parse(localStorage.getItem("viyan_onboarding_phases") || "{}");
+      const allPhases = JSON.parse(localStorage.getItem("viyan_onboarding_phases:v1") || "{}");
       const hirePhases = allPhases[employee.id] || [];
       const updatedPhases = hirePhases.map((phase: any) => {
         if (phase.id !== phaseId) return phase;
@@ -119,12 +119,12 @@ export function CompanyProcess({
         };
       });
       allPhases[employee.id] = updatedPhases;
-      localStorage.setItem("viyan_onboarding_phases", JSON.stringify(allPhases));
+      localStorage.setItem("viyan_onboarding_phases:v1", JSON.stringify(allPhases));
 
-      const allDocs = JSON.parse(localStorage.getItem("viyan_onboarding_documents") || "[]");
+      const allDocs = JSON.parse(localStorage.getItem("viyan_onboarding_documents:v1") || "[]");
       const docId = `doc-${employee.id}-task-${taskId}`;
       const updatedDocs = allDocs.filter((d: any) => d.id !== docId);
-      localStorage.setItem("viyan_onboarding_documents", JSON.stringify(updatedDocs));
+      localStorage.setItem("viyan_onboarding_documents:v1", JSON.stringify(updatedDocs));
 
       window.dispatchEvent(new Event("viyan:onboarding-updated"));
       window.dispatchEvent(new Event("storage"));

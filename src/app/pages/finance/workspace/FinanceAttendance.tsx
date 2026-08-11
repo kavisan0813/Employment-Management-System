@@ -3,10 +3,8 @@ import { ChevronLeft, ChevronRight, Plus, Calendar, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { PunchCard } from "../../../components/attendance/PunchCard";
-import {
-  useAttendance,
-  formatTime12Hour,
-} from "../../../context/AttendanceContext";
+import { useAttendance } from "../../../context/AttendanceContext";
+import { formatTime12Hour } from "../../../context/attendance.utils";
 
 const ATTENDANCE_LOGS = [
   { date: "01 Apr 2026", in: "08:52 AM", out: "06:05 PM", status: "Present" },
@@ -108,7 +106,7 @@ export function FinanceAttendance() {
 
       return { date: dateStr, in: "-", out: "-", status: "-" };
     };
-  }, [selectedMonth, selectedYear]);
+  }, [selectedMonth, selectedYear, mergedLogs]);
 
   const selectedDayLog = useMemo(() => {
     if (selectedDay === null) return null;
@@ -261,7 +259,7 @@ export function FinanceAttendance() {
             <div className="grid grid-cols-7 gap-3">
               {calendarDays.map((day, i) => {
                 if (day === null)
-                  return <div key={`empty-${i}`} className="aspect-square" />;
+                  return <div key={`empty-${day}`} className="aspect-square" />;
 
                 const log = getLogForDay(day);
                 const isToday = day === 6;
@@ -357,21 +355,20 @@ export function FinanceAttendance() {
                     </div>
                   </div>
                   <span
-                    className={`text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${
-                      selectedDayLog.status === "Present" ||
+                    className={`text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${selectedDayLog.status === "Present" ||
                       selectedDayLog.status === "WFH" ||
                       selectedDayLog.status === "On-site"
-                        ? "bg-[#DCFCE7] text-[#00B87C] border border-[#00B87C]/20"
-                        : selectedDayLog.status === "Late"
-                          ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                          : selectedDayLog.status === "Leave"
-                            ? "bg-[#FEF3C7] text-[#F59E0B] border border-[#F59E0B]/20"
-                            : selectedDayLog.status === "Weekend"
-                              ? "bg-secondary text-muted-foreground border border-border"
-                              : selectedDayLog.status === "Absent"
-                                ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
-                                : "bg-secondary text-muted-foreground/40 border border-border"
-                    }`}
+                      ? "bg-[#DCFCE7] text-[#00B87C] border border-[#00B87C]/20"
+                      : selectedDayLog.status === "Late"
+                        ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                        : selectedDayLog.status === "Leave"
+                          ? "bg-[#FEF3C7] text-[#F59E0B] border border-[#F59E0B]/20"
+                          : selectedDayLog.status === "Weekend"
+                            ? "bg-secondary text-muted-foreground border border-border"
+                            : selectedDayLog.status === "Absent"
+                              ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                              : "bg-secondary text-muted-foreground/40 border border-border"
+                      }`}
                   >
                     {selectedDayLog.status === "-"
                       ? "No Record"
@@ -402,9 +399,9 @@ export function FinanceAttendance() {
                     </p>
                     <p className="text-[13px] font-black text-[#00B87C]">
                       {selectedDayLog.status === "Present" ||
-                      selectedDayLog.status === "Late" ||
-                      selectedDayLog.status === "WFH" ||
-                      selectedDayLog.status === "On-site"
+                        selectedDayLog.status === "Late" ||
+                        selectedDayLog.status === "WFH" ||
+                        selectedDayLog.status === "On-site"
                         ? "9h 00m"
                         : "-"}
                     </p>
@@ -414,30 +411,30 @@ export function FinanceAttendance() {
                 {(selectedDayLog.status === "Absent" ||
                   selectedDayLog.status === "Late" ||
                   selectedDayLog.status === "-") && (
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/10">
-                    <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400">
-                      {selectedDayLog.status === "Absent" ||
-                      selectedDayLog.status === "-"
-                        ? "Missed logging this day? Submit a regularization request."
-                        : "Late punch-in? Correct details with manager approval."}
-                    </span>
-                    <button
-                      onClick={() => {
-                        const dayPadded = String(selectedDay).padStart(2, "0");
-                        const monthPadded = String(selectedMonth + 1).padStart(
-                          2,
-                          "0",
-                        );
-                        const dateStr = `${selectedYear}-${monthPadded}-${dayPadded}`;
-                        setRegDate(dateStr);
-                        setIsRegModalOpen(true);
-                      }}
-                      className="whitespace-nowrap px-4 py-1.5 bg-[#00B87C] text-white rounded-lg text-[11px] font-black uppercase tracking-wider hover:bg-[#009966] active:scale-95 transition-all shadow-md shadow-emerald-500/20"
-                    >
-                      Regularize
-                    </button>
-                  </div>
-                )}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/10">
+                      <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400">
+                        {selectedDayLog.status === "Absent" ||
+                          selectedDayLog.status === "-"
+                          ? "Missed logging this day? Submit a regularization request."
+                          : "Late punch-in? Correct details with manager approval."}
+                      </span>
+                      <button
+                        onClick={() => {
+                          const dayPadded = String(selectedDay).padStart(2, "0");
+                          const monthPadded = String(selectedMonth + 1).padStart(
+                            2,
+                            "0",
+                          );
+                          const dateStr = `${selectedYear}-${monthPadded}-${dayPadded}`;
+                          setRegDate(dateStr);
+                          setIsRegModalOpen(true);
+                        }}
+                        className="whitespace-nowrap px-4 py-1.5 bg-[#00B87C] text-white rounded-lg text-[11px] font-black uppercase tracking-wider hover:bg-[#009966] active:scale-95 transition-all shadow-md shadow-emerald-500/20"
+                      >
+                        Regularize
+                      </button>
+                    </div>
+                  )}
               </div>
             )}
 
@@ -464,13 +461,12 @@ export function FinanceAttendance() {
                   const isSelectedRow = selectedDay === logDay;
                   return (
                     <tr
-                      key={i}
+                      key={log.date}
                       onClick={() => setSelectedDay(logDay)}
-                      className={`h-14 hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all cursor-pointer ${
-                        isSelectedRow
-                          ? "bg-[#00B87C]/5 border-l-[3px] border-l-[#00B87C]"
-                          : ""
-                      }`}
+                      className={`h-14 hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all cursor-pointer ${isSelectedRow
+                        ? "bg-[#00B87C]/5 border-l-[3px] border-l-[#00B87C]"
+                        : ""
+                        }`}
                     >
                       <td className="px-6 text-[13px] font-black text-foreground">
                         {log.date}
@@ -483,15 +479,14 @@ export function FinanceAttendance() {
                       </td>
                       <td className="px-6">
                         <span
-                          className={`text-[12px] font-black ${
-                            log.status === "Present"
-                              ? "text-[#00B87C]"
-                              : log.status === "Leave"
-                                ? "text-[#F59E0B]"
-                                : log.status === "Absent"
-                                  ? "text-[#EF4444]"
-                                  : "text-muted-foreground"
-                          }`}
+                          className={`text-[12px] font-black ${log.status === "Present"
+                            ? "text-[#00B87C]"
+                            : log.status === "Leave"
+                              ? "text-[#F59E0B]"
+                              : log.status === "Absent"
+                                ? "text-[#EF4444]"
+                                : "text-muted-foreground"
+                            }`}
                         >
                           {log.status}
                         </span>
@@ -529,7 +524,7 @@ export function FinanceAttendance() {
               <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
                 {regRequests.map((req, index) => (
                   <div
-                    key={index}
+                    key={req.date}
                     className="p-4 rounded-2xl border border-border bg-muted/20 flex flex-col gap-1.5"
                   >
                     <div className="flex justify-between items-center">

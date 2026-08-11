@@ -100,7 +100,7 @@ const SEED_PAYMENTS: Payment[] = [
 
 function getStore(): Payment[] {
   try {
-    const item = localStorage.getItem("ems_billing_payments");
+    const item = localStorage.getItem("ems_billing_payments:v1");
     return item ? JSON.parse(item) : SEED_PAYMENTS;
   } catch {
     return SEED_PAYMENTS;
@@ -108,7 +108,7 @@ function getStore(): Payment[] {
 }
 
 function saveStore(payments: Payment[]) {
-  localStorage.setItem("ems_billing_payments", JSON.stringify(payments));
+  localStorage.setItem("ems_billing_payments:v1", JSON.stringify(payments));
 }
 
 export const PaymentService = {

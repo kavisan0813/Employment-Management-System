@@ -171,7 +171,7 @@ export function InvoiceDrawer({
               <tbody>
                 {invoice.lineItems.map((item, idx) => (
                   <tr
-                    key={idx}
+                    key={item.description}
                     className="border-b border-gray-100 last:border-0"
                   >
                     <td className="px-3 py-2 text-gray-700">

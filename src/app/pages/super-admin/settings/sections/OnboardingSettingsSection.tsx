@@ -259,7 +259,7 @@ export function OnboardingSettingsSection() {
             },
           ].map((t, idx) => (
             <div
-              key={idx}
+              key={t.name}
               className="flex items-center justify-between gap-4 h-[40px] text-[13px] py-1"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">

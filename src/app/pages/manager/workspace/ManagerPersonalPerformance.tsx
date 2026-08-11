@@ -644,9 +644,9 @@ function GoalRow({
           </div>
           <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
             <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              className="h-full bg-[#00B87C] rounded-full"
+              initial={{ x: "-100%" }}
+              animate={{ x: `-${100 - (progress)}%` }}
+              className="h-full bg-[#00B87C] rounded-full w-full"
             />
           </div>
         </div>

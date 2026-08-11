@@ -323,7 +323,7 @@ export const InitiateExitModal: React.FC<InitiateExitModalProps> = ({
                 { label: "All Department Heads", defaultChecked: false },
               ].map((item, i) => (
                 <label
-                  key={i}
+                  key={item.label}
                   className="flex items-center gap-3 cursor-pointer"
                 >
                   <input

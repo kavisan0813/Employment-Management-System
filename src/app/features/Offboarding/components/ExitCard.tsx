@@ -116,7 +116,7 @@ export const ExitCard: React.FC<ExitCardProps> = ({
                 !step.done && (idx === 0 || arr[idx - 1].done);
               return (
                 <div
-                  key={idx}
+                  key={step.label}
                   className="flex items-center flex-1 last:flex-none"
                 >
                   <div className="flex flex-col items-center">
@@ -167,7 +167,7 @@ export const ExitCard: React.FC<ExitCardProps> = ({
       <div className="flex flex-wrap items-center gap-3 mb-4 px-1">
         {exit.clearance.map((c, i) => (
           <div
-            key={i}
+            key={c.dept}
             className="flex items-center gap-1.5 text-[11px] font-semibold"
           >
             <span className="text-muted-foreground">{c.dept}</span>
