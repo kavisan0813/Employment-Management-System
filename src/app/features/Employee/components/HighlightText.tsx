@@ -12,7 +12,7 @@ export function HighlightText({ text, search }: HighlightTextProps) {
   const parts = text.split(regex);
   return (
     <>
-      {parts.map((part, i) =>
+      {parts.map((part) =>
         regex.test(part) ? (
           <mark
             key={part}

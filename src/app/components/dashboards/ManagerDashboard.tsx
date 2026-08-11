@@ -531,7 +531,7 @@ export function ManagerDashboard() {
                     paddingAngle={5}
                     dataKey="value"
                   >
-                    {TEAM_COMPOSITION.map((entry, index) => (
+                    {TEAM_COMPOSITION.map((entry) => (
                       <Cell
                         key={`cell-${entry.color}`}
                         fill={entry.color}
@@ -550,7 +550,7 @@ export function ManagerDashboard() {
               </div>
             </div>
             <div className="w-full mt-8 space-y-3">
-              {TEAM_COMPOSITION.map((item, i) => (
+              {TEAM_COMPOSITION.map((item) => (
                 <div key={item.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div
@@ -605,7 +605,7 @@ export function ManagerDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {TEAM_MEMBERS.map((emp, i) => (
+                {TEAM_MEMBERS.map((emp) => (
                   <tr
                     key={emp.name}
                     onClick={() => setSelectedEmployee(emp)}
@@ -710,7 +710,7 @@ export function ManagerDashboard() {
                 color: "#0EA5E9",
                 bg: "#E0F2FE",
               },
-            ].map((action, i) => (
+            ].map((action) => (
               <button
                 key={action.label}
                 onClick={() => handleAction(action.label)}
@@ -753,7 +753,7 @@ export function ManagerDashboard() {
             <div className="p-6 space-y-4">
               {pendingApprovals
                 .filter((a) => a.badge === "Leave")
-                .map((item, i) => (
+                .map((item) => (
                   <div
                     key={item.name}
                     className="flex items-center justify-between p-4 rounded-2xl border border-border bg-secondary/10"
@@ -964,7 +964,7 @@ export function ManagerDashboard() {
               </button>
             </div>
             <div className="p-4 space-y-4 flex-1">
-              {pendingApprovals.map((item, i) => (
+              {pendingApprovals.map((item) => (
                 <div
                   key={item.name}
                   className="p-4 rounded-2xl border border-border bg-secondary/20 hover:bg-secondary/40 transition-all group"

@@ -179,7 +179,7 @@ export function WorkSchedulesSection() {
             color: "#8B5CF6",
             bg: "rgba(139, 92, 246, 0.1)",
           },
-        ].map((card, idx) => (
+        ].map((card) => (
           <div
             key={card.label}
             className="p-4 rounded-2xl flex items-center justify-between shadow-sm"
@@ -342,7 +342,7 @@ export function WorkSchedulesSection() {
             </tr>
           </thead>
           <tbody>
-            {filteredScheds.map((s: WorkScheduleRecord, idx: number) => (
+            {filteredScheds.map((s: WorkScheduleRecord) => (
               <tr
                 key={s.id}
                 style={{
@@ -605,7 +605,7 @@ export function WorkSchedulesSection() {
               state: wsAbsentThreshold,
               setter: setWsAbsentThreshold,
             },
-          ].map((f, idx) => (
+          ].map((f) => (
             <div key={f.label}>
               <label
                 style={{
@@ -659,8 +659,11 @@ export function WorkSchedulesSection() {
             state: wsCompOff,
             setter: setWsCompOff,
           },
-        ].map((row, idx) => (
-          <div key={row.label} className="flex justify-between items-center py-2">
+        ].map((row) => (
+          <div
+            key={row.label}
+            className="flex justify-between items-center py-2"
+          >
             <span
               style={{
                 fontSize: "13px",

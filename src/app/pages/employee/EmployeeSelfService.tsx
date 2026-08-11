@@ -235,7 +235,7 @@ export function EmployeeSelfService() {
           </p>
         </div>
         <div className="flex items-center gap-4 relative z-10">
-          <div className="flex flex-col items-end hidden sm:flex">
+          <div className="flex-col items-end hidden sm:flex">
             <div className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-semibold uppercase tracking-wider border border-primary/20">
               {user?.role === "HR Manager"
                 ? "HR Department"

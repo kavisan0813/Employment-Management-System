@@ -165,7 +165,7 @@ export const ExitCard: React.FC<ExitCardProps> = ({
 
       {/* CLEARANCE STATUS ROW */}
       <div className="flex flex-wrap items-center gap-3 mb-4 px-1">
-        {exit.clearance.map((c, i) => (
+        {exit.clearance.map((c) => (
           <div
             key={c.dept}
             className="flex items-center gap-1.5 text-[11px] font-semibold"

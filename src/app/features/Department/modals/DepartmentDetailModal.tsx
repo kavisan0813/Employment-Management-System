@@ -159,7 +159,7 @@ export function DepartmentDetailModal({
 
           {/* SECTION 1: KPI Cards */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-center gap-2">
                 <Users size={16} className="text-[#00B87C] dark:text-[#00C48C]" />
                 <span className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF]">STAFF</span>
@@ -169,7 +169,7 @@ export function DepartmentDetailModal({
               </div>
             </div>
 
-            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#00B87C]/5 dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#00B87C]/5 dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={16} className="text-[#00B87C] dark:text-[#00C48C]" />
                 <span className="text-[13px] font-[500] text-[#00B87C] dark:text-[#9DB7AF]">ACTIVE</span>
@@ -179,7 +179,7 @@ export function DepartmentDetailModal({
               </div>
             </div>
 
-            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#EF4444]/5 dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#EF4444]/5 dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
               <div className="flex items-center gap-2">
                 <Calendar size={16} className="text-[#EF4444]" />
                 <span className="text-[13px] font-[500] text-[#EF4444] dark:text-[#9DB7AF]">ON LEAVE</span>
@@ -191,7 +191,7 @@ export function DepartmentDetailModal({
           </div>
 
           {/* SECTION 2: Department Information */}
-          <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+          <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
             <h4 className="text-[15px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF] mb-5 tracking-wider">Department Information</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
               <div>
@@ -246,7 +246,7 @@ export function DepartmentDetailModal({
 
           {/* SECTION 3: Budget Summary */}
           {showFinance && (
-            <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+            <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
               <h4 className="text-[15px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF]">Budget Used</h4>
 
               <div className="mb-5">
@@ -261,7 +261,7 @@ export function DepartmentDetailModal({
           )}
 
           {/* SECTION 6: Team Distribution */}
-          <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all duration-250 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-700">
+          <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-4 duration-500 delay-700">
             <div className="flex items-center justify-between mb-5">
               <h4 className="text-[15px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF] flex items-center gap-2 tracking-wider">
                 Team Distribution
@@ -272,7 +272,7 @@ export function DepartmentDetailModal({
             </div>
 
             <div className="grid grid-cols-1 gap-3">
-              {teams.map((team, idx) => (
+              {teams.map((team) => (
                 <div
                   key={team.name}
                   onClick={() => {

@@ -137,7 +137,7 @@ export function ImportEmployeeModal({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border bg-background text-foreground">
-                    {parsedEmployees.map((emp, i) => (
+                    {parsedEmployees.map((emp) => (
                       <tr key={emp.name}>
                         <td className="p-3 font-bold">{emp.name}</td>
                         <td className="p-3">{emp.department}</td>

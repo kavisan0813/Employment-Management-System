@@ -417,7 +417,7 @@ export function Topbar({
                           color: "#8B5CF6",
                         },
                       ]
-                  ).map((n, i) => (
+                  ).map((n) => (
                     <div
                       key={n.text}
                       className="px-4 py-3 flex items-start gap-3 transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800 cursor-pointer"
@@ -716,7 +716,7 @@ export function Topbar({
                     type: "Info",
                     date: "April 3, 2026",
                   },
-                ].map((n, i) => (
+                ].map((n) => (
                   <div
                     key={n.text}
                     className="flex gap-4 p-5 rounded-2xl transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800"

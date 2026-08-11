@@ -693,7 +693,7 @@ function DetailDrawer({
               className="relative pl-4 border-l-2 space-y-6"
               style={{ borderColor: "var(--border)" }}
             >
-              {request.history.map((hist, i) => (
+              {request.history.map((hist) => (
                 <div key={hist.date} className="relative">
                   <div
                     className="absolute -left-[21px] w-4 h-4 rounded-full border-2"
@@ -876,18 +876,20 @@ export function LeaveManagement() {
                     font-size: 11px;
                     font-weight: 700;
                     text-transform: uppercase;
-                    background-color: ${r.status === "Approved"
-                ? "#dcfce7"
-                : r.status === "Rejected"
-                  ? "#ffeeeb"
-                  : "#fef3c7"
-              };
-                    color: ${r.status === "Approved"
-                ? "#15803d"
-                : r.status === "Rejected"
-                  ? "#b91c1c"
-                  : "#b45309"
-              };
+                    background-color: ${
+                      r.status === "Approved"
+                        ? "#dcfce7"
+                        : r.status === "Rejected"
+                          ? "#ffeeeb"
+                          : "#fef3c7"
+                    };
+                    color: ${
+                      r.status === "Approved"
+                        ? "#15803d"
+                        : r.status === "Rejected"
+                          ? "#b91c1c"
+                          : "#b45309"
+                    };
                   ">${r.status}</span>
                 </td>
               </tr>`,
@@ -1886,7 +1888,7 @@ export function LeaveManagement() {
                 />
               </div>
               <div className="h-32 flex items-end gap-2 mt-4 px-2">
-                {[80, 85, 75, 90, 95, 88, 85].map((val, i) => (
+                {[80, 85, 75, 90, 95, 88, 85].map((val) => (
                   <div
                     key={val}
                     className="flex-1 rounded-t-sm flex flex-col justify-end"
@@ -2039,7 +2041,7 @@ export function LeaveManagement() {
             </div>
 
             <div className="grid grid-cols-7 gap-1 text-center mb-2">
-              {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
+              {["S", "M", "T", "W", "T", "F", "S"].map((d) => (
                 <div
                   key={d}
                   className="text-[11px] font-bold uppercase"
@@ -2068,7 +2070,7 @@ export function LeaveManagement() {
                 return (
                   <>
                     {Array.from({ length: startOffset }).map((_, i) => (
-                      <div key={`empty-${d}`} />
+                      <div key={`empty-${i}`} />
                     ))}
                     {Array.from({ length: daysInMonth }).map((_, i) => {
                       const day = i + 1;
@@ -2296,7 +2298,7 @@ export function LeaveManagement() {
                     <div className="w-9 h-5 rounded-full relative bg-neutral-200 dark:bg-zinc-700">
                       <div className="absolute top-1 left-1 w-3 h-3 rounded-full bg-white transition-transform" />
                     </div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-foreground">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-foreground">
                       Enabled
                     </span>
                   </label>
@@ -2531,9 +2533,9 @@ export function LeaveManagement() {
                       exportFormat === "CSV"
                         ? {}
                         : {
-                          borderColor: "var(--border)",
-                          color: "var(--foreground)",
-                        }
+                            borderColor: "var(--border)",
+                            color: "var(--foreground)",
+                          }
                     }
                   >
                     CSV
@@ -2545,9 +2547,9 @@ export function LeaveManagement() {
                       exportFormat === "Excel"
                         ? {}
                         : {
-                          borderColor: "var(--border)",
-                          color: "var(--foreground)",
-                        }
+                            borderColor: "var(--border)",
+                            color: "var(--foreground)",
+                          }
                     }
                   >
                     Excel
@@ -2559,9 +2561,9 @@ export function LeaveManagement() {
                       exportFormat === "PDF"
                         ? {}
                         : {
-                          borderColor: "var(--border)",
-                          color: "var(--foreground)",
-                        }
+                            borderColor: "var(--border)",
+                            color: "var(--foreground)",
+                          }
                     }
                   >
                     PDF

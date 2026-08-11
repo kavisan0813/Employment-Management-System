@@ -35,37 +35,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     {},
   );
 
-  const activeGroupLabel = groups.find((group) =>
-    group.items?.some((item) => isActive(item.path) && !item.disabled),
-  )?.label;
-
-  useEffect(() => {
-    if (activeGroupLabel) {
-      setExpandedGroups((prev) => {
-        if (prev[activeGroupLabel]) return prev;
-        return {
-          ...prev,
-          [activeGroupLabel]: true,
-        };
-      });
-    }
-  }, [activeGroupLabel]);
-
-  const toggleGroup = (groupLabel: string) => {
-    if (collapsed) {
-      onToggle(); // expand sidebar
-      setExpandedGroups((prev) => ({
-        ...prev,
-        [groupLabel]: true,
-      }));
-    } else {
-      setExpandedGroups((prev) => ({
-        ...prev,
-        [groupLabel]: !prev[groupLabel],
-      }));
-    }
-  };
-
   const isActive = (path: string) => {
     const currentPath = location.pathname;
 
@@ -104,6 +73,37 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       (path !== "/" && currentPath.startsWith(path + "/")) ||
       currentPath.startsWith(path)
     );
+  };
+
+  const activeGroupLabel = groups.find((group) =>
+    group.items?.some((item) => isActive(item.path) && !item.disabled),
+  )?.label;
+
+  useEffect(() => {
+    if (activeGroupLabel) {
+      setExpandedGroups((prev) => {
+        if (prev[activeGroupLabel]) return prev;
+        return {
+          ...prev,
+          [activeGroupLabel]: true,
+        };
+      });
+    }
+  }, [activeGroupLabel]);
+
+  const toggleGroup = (groupLabel: string) => {
+    if (collapsed) {
+      onToggle(); // expand sidebar
+      setExpandedGroups((prev) => ({
+        ...prev,
+        [groupLabel]: true,
+      }));
+    } else {
+      setExpandedGroups((prev) => ({
+        ...prev,
+        [groupLabel]: !prev[groupLabel],
+      }));
+    }
   };
 
   const handleLogout = () => {
@@ -173,8 +173,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             const isGroupActive = group.path
               ? isActive(group.path)
               : group.items?.some(
-                (item) => !item.disabled && isActive(item.path),
-              ) || false;
+                  (item) => !item.disabled && isActive(item.path),
+                ) || false;
 
             return (
               <div key={group.label} className="px-2">

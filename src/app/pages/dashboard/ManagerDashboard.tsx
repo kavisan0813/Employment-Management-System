@@ -162,7 +162,7 @@ export function ManagerPersonalDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-4 relative z-10">
-          <div className="flex flex-col items-end hidden sm:flex">
+          <div className="flex flex-col items-end sm:flex">
             <div className="px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-[11px] font-bold uppercase tracking-wider border border-amber-500/20">
               Engineering Manager
             </div>
@@ -403,7 +403,7 @@ export function ManagerPersonalDashboard() {
               </span>
             </div>
             <div className="space-y-4">
-              {ANNOUNCEMENTS.map((ann, i) => (
+              {ANNOUNCEMENTS.map((ann) => (
                 <div
                   key={ann.title}
                   className={`pl-3 border-l-[3px] py-1 ${ann.priority === "green" ? "border-primary" : ann.priority === "amber" ? "border-amber-500" : "border-rose-500"}`}

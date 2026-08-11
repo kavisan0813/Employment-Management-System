@@ -129,7 +129,7 @@ export default function RoleTemplatesView() {
                 </h4>
 
                 <div className="divide-y divide-gray-100">
-                  {role.permissions.map((perm, idx) => (
+                  {role.permissions.map((perm) => (
                     <div
                       key={perm.module}
                       className="py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"

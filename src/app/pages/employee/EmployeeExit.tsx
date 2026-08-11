@@ -1126,7 +1126,7 @@ export function EmployeeExit() {
                     <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                       Uploaded Files
                     </p>
-                    {uploadedFiles.map((f, i) => (
+                    {uploadedFiles.map((f) => (
                       <div
                         key={f}
                         className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#F0FDF4] border border-[#00B87C]/20 text-[12px] font-bold text-[#00B87C]"

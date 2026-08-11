@@ -569,7 +569,7 @@ export function FinancePayroll() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#F9FAFB] dark:bg-white/5 dark:bg-muted/10 border-b border-border">
+              <tr className="bg-[#F9FAFB] dark:bg-white/5 border-b border-border">
                 <th className="px-6 py-4 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
                   EMPLOYEE
                 </th>

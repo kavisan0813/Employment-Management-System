@@ -213,7 +213,7 @@ export function UserManagementSection() {
             </tr>
           </thead>
           <tbody>
-            {usersList.map((u: UserManagementRecord, idx: number) => {
+            {usersList.map((u: UserManagementRecord) => {
               const roleStyle = getRoleStyles(u.role);
               const statusStyle = getStatusStyles(u.status);
               return (
@@ -516,7 +516,7 @@ export function UserManagementSection() {
           borderLeft: "4px solid #00B87C",
         }}
       >
-        {pendingInvites.map((p, idx) => (
+        {pendingInvites.map((p) => (
           <div key={p.email} className="flex justify-between items-center py-2">
             <div className="flex items-center gap-4">
               <span

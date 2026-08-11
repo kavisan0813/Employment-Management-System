@@ -35,7 +35,7 @@ export interface Department {
   nearLimit?: boolean;
 }
 
-export interface DepartmentInput extends Omit<
+export type DepartmentInput = Omit<
   Department,
   "id" | "employees" | "activeEmployees" | "onLeaveEmployees" | "growth"
-> {}
+>

@@ -321,7 +321,7 @@ export const InitiateExitModal: React.FC<InitiateExitModalProps> = ({
                   defaultChecked: true,
                 },
                 { label: "All Department Heads", defaultChecked: false },
-              ].map((item, i) => (
+              ].map((item) => (
                 <label
                   key={item.label}
                   className="flex items-center gap-3 cursor-pointer"

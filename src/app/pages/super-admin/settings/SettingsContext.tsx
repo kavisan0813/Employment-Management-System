@@ -290,6 +290,7 @@ export interface LocationRecord {
 }
 
 export interface WorkScheduleRecord {
+  id: Key;
   name: string;
   code: string;
   type: "General" | "Shift" | "Flexible" | "Rotational" | "Part Time";
@@ -338,6 +339,7 @@ export interface LeaveTypeRecord {
 }
 
 export interface UserManagementRecord {
+  id: Key;
   name: string;
   email: string;
   initials: string;

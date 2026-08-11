@@ -41,7 +41,7 @@ export function SubscriptionExpiryView({ expiryAlerts, onSendReminder }: Props) 
             { d: "7 DAYS", t: "Urgent Warning", bg: "bg-orange-50/50" },
             { d: "1 DAY", t: "Final Notice", bg: "bg-rose-50/50" },
             { d: "0 DAYS", t: "Access Freeze", bg: "bg-rose-100" }
-          ].map((item, i) => (
+          ].map((item) => (
             <div key={item.bg} className={`${item.bg} border border-black/5 p-3 rounded-xl shadow-inner`}>
               <div className="text-[10px] text-gray-400 mb-1 font-medium">{item.d} BEFORE</div>
               {item.t}

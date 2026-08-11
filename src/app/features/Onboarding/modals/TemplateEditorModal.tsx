@@ -572,7 +572,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                         Required Documents Checklist
                       </h4>
                       <div className="space-y-2 mb-4">
-                        {(draft.documents || []).map((doc, idx) => (
+                        {(draft.documents || []).map((doc) => (
                           <div
                             key={doc.id || doc.name}
                             className="flex items-center justify-between p-3.5 bg-muted/20 border rounded-2xl"

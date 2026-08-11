@@ -460,7 +460,7 @@ export default function DashboardView() {
                     onClick={() => handleNavigateToOrgs()}
                     className="cursor-pointer outline-none"
                   >
-                    {pieData.map((entry, index) => (
+                    {pieData.map((entry) => (
                       <Cell
                         key={`cell-${entry.name}`}
                         fill={PIE_COLORS[entry.name as keyof typeof PIE_COLORS]}

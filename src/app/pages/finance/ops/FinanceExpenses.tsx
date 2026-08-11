@@ -1223,7 +1223,7 @@ function FilterSelect({
         <option value={label}>{label}</option>
         {options
           .filter((opt) => opt !== label)
-          .map((opt, i) => (
+          .map((opt) => (
             <option key={opt} value={opt}>
               {opt}
             </option>

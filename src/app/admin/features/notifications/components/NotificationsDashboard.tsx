@@ -172,7 +172,7 @@ export function NotificationsDashboard({
             tab: "expiry",
             color: "orange",
           },
-        ].map((kpi, idx) => (
+        ].map((kpi) => (
           <div
             key={kpi.label}
             onClick={() =>
@@ -306,7 +306,7 @@ export function NotificationsDashboard({
                 { l: "In-App Center", v: "99.9%" },
                 { l: "Email SMTP Relay", v: "98.2%" },
                 { l: "SMS Gateway", v: "94.7%" },
-              ].map((ch, i) => (
+              ].map((ch) => (
                 <div key={ch.l} className="space-y-1">
                   <div className="flex justify-between">
                     <span>{ch.l}</span>

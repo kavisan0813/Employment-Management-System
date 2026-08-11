@@ -406,7 +406,7 @@ export function HRDashboard() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {DEPT_DIST.map((entry, index) => (
+                  {DEPT_DIST.map((entry) => (
                     <Cell key={`cell-${entry.color}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -424,7 +424,7 @@ export function HRDashboard() {
             </ResponsiveContainer>
           </div>
           <div className="mt-8 space-y-3">
-            {DEPT_DIST.map((dept, i) => (
+            {DEPT_DIST.map((dept) => (
               <div key={dept.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div
@@ -525,7 +525,7 @@ export function HRDashboard() {
               </h3>
             </div>
             <div className="p-4 space-y-4">
-              {RECENT_HIRES.map((hire, i) => (
+              {RECENT_HIRES.map((hire) => (
                 <div
                   key={hire.name}
                   onClick={() => navigate("/onboarding")}

@@ -448,7 +448,7 @@ function PayslipModal({
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
-                {rows.map((row, index) => (
+                {rows.map((row) => (
                   <tr key={row.earning} className="h-9">
                     <td className="px-4 py-2 border-r border-neutral-200 dark:border-neutral-800 text-muted-foreground">
                       {row.earning?.label || ""}

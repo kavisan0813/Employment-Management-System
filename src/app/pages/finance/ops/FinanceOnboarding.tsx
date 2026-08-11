@@ -527,7 +527,7 @@ export function FinanceOnboarding() {
                       "Downloading Full Onboarding Report",
                     );
                   }}
-                  className="w-full text-left px-4 py-3 text-[13px] font-bold text-foreground hover:bg-secondary transition-colors text-[#00B87C]"
+                  className="w-full text-left px-4 py-3 text-[13px] font-bold text-foreground hover:bg-secondary transition-colors"
                 >
                   Full Onboarding Report
                 </button>

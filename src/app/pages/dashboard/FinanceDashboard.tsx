@@ -319,7 +319,7 @@ export function FinancePersonalDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-4 relative z-10">
-          <div className="flex flex-col items-end hidden sm:flex">
+          <div className="flex flex-col items-end sm:flex">
             <div className="px-3 py-1 rounded-full bg-[#0EA5E9]/10 text-[#0EA5E9] text-[11px] font-bold uppercase tracking-wider border border-[#0EA5E9]/20">
               Finance
             </div>
@@ -451,7 +451,7 @@ export function FinancePersonalDashboard() {
               </span>
             </div>
             <div className="divide-y divide-[var(--border)]">
-              {pendingActions.map((action, idx) => (
+              {pendingActions.map((action) => (
                 <div
                   key={action.title}
                   onClick={action.onClick}

@@ -79,7 +79,7 @@ export function OrganizationReportsView() {
           <div className="bg-gray-50/50 p-2 rounded-lg border border-gray-100">
             <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto">
               <path d={linePath} fill="none" stroke="#4f46e5" strokeWidth={2.5} strokeLinecap="round" />
-              {points.map((p, i) => (
+              {points.map((p) => (
                 <g key={p.label}>
                   <circle cx={p.x} cy={p.y} r={4} fill="#4f46e5" />
                   <text x={p.x} y={height - 2} textAnchor="middle" fill="#64748b" fontSize={10} className="font-medium">{p.label}</text>

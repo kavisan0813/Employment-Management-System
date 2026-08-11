@@ -169,7 +169,7 @@ export function InvoiceDrawer({
                 </tr>
               </thead>
               <tbody>
-                {invoice.lineItems.map((item, idx) => (
+                {invoice.lineItems.map((item) => (
                   <tr
                     key={item.description}
                     className="border-b border-gray-100 last:border-0"

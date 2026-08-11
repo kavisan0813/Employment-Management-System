@@ -122,7 +122,7 @@ export function WebhooksSection() {
       {/* Section: ACTIVE WEBHOOKS */}
       <SectionTitle title="Active Webhooks" />
       <div className="space-y-3 mb-8">
-        {rows.map((r, idx) => (
+        {rows.map((r) => (
           <div
             key={r.status}
             className="p-4 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4"
@@ -241,7 +241,7 @@ export function WebhooksSection() {
       {/* Section: AVAILABLE EVENTS */}
       <SectionTitle title="Available Events" />
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
-        {availableEvents.map((ev, idx) => (
+        {availableEvents.map((ev) => (
           <div
             key={ev}
             className="p-2 rounded-xl border text-center text-[13px] font-medium transition-all cursor-pointer select-none"
@@ -290,7 +290,7 @@ export function WebhooksSection() {
             state: webhookLogs,
             setter: setWebhookLogs,
           },
-        ].map((row, idx) => (
+        ].map((row) => (
           <div key={row.label} className="flex justify-between items-center py-2">
             <p
               style={{

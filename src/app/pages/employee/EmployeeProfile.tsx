@@ -909,7 +909,7 @@ NexHR Management
                     Promotion History
                   </h3>
                   <div className="space-y-4">
-                    {(employee.promotions || []).map((promo, idx) => (
+                    {(employee.promotions || []).map((promo) => (
                       <div
                         key={promo.newDesignation}
                         className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-border bg-background gap-4"
@@ -946,7 +946,7 @@ NexHR Management
                     Internal Transfers History
                   </h3>
                   <div className="space-y-4">
-                    {(employee.transfers || []).map((tr, idx) => (
+                    {(employee.transfers || []).map((tr) => (
                       <div
                         key={tr.type}
                         className="flex items-center justify-between p-4 rounded-xl border border-border bg-background"
@@ -1258,7 +1258,7 @@ NexHR Management
                       status: "Ongoing",
                       type: "Internal",
                     },
-                  ].map((t, i) => (
+                  ].map((t) => (
                     <div
                       key={t.id}
                       className="flex items-center justify-between p-4 rounded-xl border border-border bg-background"
@@ -1294,7 +1294,7 @@ NexHR Management
                   </button>
                 </div>
                 <div className="space-y-4">
-                  {(employee.assets || []).map((ast, i) => (
+                  {(employee.assets || []).map((ast) => (
                     <div
                       key={ast.id}
                       className="flex items-center justify-between p-4 rounded-xl border border-border bg-background"
@@ -1411,7 +1411,7 @@ NexHR Management
             </h3>
             <div className="relative pl-3 space-y-7">
               <div className="absolute left-[27px] top-4 bottom-4 w-[2px] z-0 rounded-full bg-border"></div>
-              {activities.map((act, i) => (
+              {activities.map((act) => (
                 <div
                   key={act.title}
                   className="flex items-start gap-4 relative z-10 group cursor-pointer"

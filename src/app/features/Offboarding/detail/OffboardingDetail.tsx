@@ -342,7 +342,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                   DEPARTMENT CLEARANCES
                 </h3>
                 <div className="space-y-4">
-                  {exit.clearance.map((c, i) => {
+                  {exit.clearance.map((c) => {
                     const IconComp = getClearanceIcon(c.icon);
                     const clearanceChecklist = c.checklist || CLEARANCE_CONFIGS[c.dept]?.checklist || [];
                     const config = {
@@ -395,7 +395,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
 
                         {/* Checklist */}
                         <div className="space-y-2 mb-3">
-                          {config.checklist.map((item, idx) => {
+                          {config.checklist.map((item) => {
                             const isChecked = completedChecks[c.dept]?.[item] || false;
                             return (
                               <label
@@ -493,7 +493,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                   ASSET RECOVERY CHECKLIST
                 </h3>
                 <div className="space-y-2">
-                  {exit.assets.map((a, i) => (
+                  {exit.assets.map((a) => (
                     <div
                       key={a.name}
                       className="flex items-center justify-between p-3 rounded-xl border border-border/50"
@@ -532,7 +532,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                   DOCUMENT CHECKLIST
                 </h3>
                 <div className="space-y-2">
-                  {exit.documents.map((d, i) => (
+                  {exit.documents.map((d) => (
                     <div
                       key={d.id}
                       className="flex items-center justify-between p-3 rounded-xl border border-border/50"

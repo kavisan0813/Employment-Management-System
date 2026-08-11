@@ -69,7 +69,7 @@ export function Templates({
                       { icon: Edit3, label: "Edit", action: () => { setEditingTemplate(tpl.id); setShowTemplateEditor(true); setShowTemplateMenu(null); } },
                       { icon: Copy, label: "Duplicate", action: () => handleDuplicateTemplate(tpl.id) },
                       { icon: Trash2, label: "Delete", action: () => handleDeleteTemplate(tpl.id) },
-                    ].map((item, i) => (
+                    ].map((item) => (
                       <button
                         key={item.label}
                         onClick={item.action}

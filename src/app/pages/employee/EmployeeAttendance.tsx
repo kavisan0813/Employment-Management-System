@@ -721,7 +721,7 @@ export function EmployeeAttendance() {
             color: "#F59E0B",
             bg: "bg-card",
           },
-        ].map((card, i) => (
+        ].map((card) => (
           <div
             key={card.label}
             className={`p-6 rounded-2xl border border-border shadow-sm flex flex-col items-center justify-center text-center group hover:border-primary transition-colors ${card.bg}`}
@@ -872,7 +872,7 @@ export function EmployeeAttendance() {
                 color: "text-muted-foreground",
               },
               { label: "Punctuality", value: "96%", color: "text-primary" },
-            ].map((stat, i) => (
+            ].map((stat) => (
               <div
                 key={stat.label}
                 className="bg-card p-5 rounded-2xl border border-border shadow-sm text-center group hover:border-primary transition-colors"
@@ -1028,7 +1028,7 @@ export function EmployeeAttendance() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {mergedLogs.map((log, i) => {
+                  {mergedLogs.map((log) => {
                     const logDay = parseInt(log.date.split(" ")[0]);
                     const isSelectedRow = selectedDay === logDay;
                     return (
@@ -1093,7 +1093,7 @@ export function EmployeeAttendance() {
 
             <div className="space-y-4">
               {requests.length > 0 ? (
-                requests.map((req, i) => (
+                requests.map((req) => (
                   <div
                     key={req.date}
                     onClick={() => setSelectedRequest(req)}

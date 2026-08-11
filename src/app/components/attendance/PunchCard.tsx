@@ -113,7 +113,7 @@ export function PunchCard() {
                 Today's Activity Timeline
               </p>
               <div className="space-y-3">
-                {todayRecord.logs.map((log, idx) => (
+                {todayRecord.logs.map((log) => (
                   <div key={log.type} className="flex items-center gap-3">
                     <div
                       className={`w-2 h-2 rounded-full ${log.type === "in" || log.type === "break_end"

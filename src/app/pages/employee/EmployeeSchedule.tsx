@@ -742,7 +742,7 @@ export function EmployeeSchedule() {
                   const cells = [];
                   for (let i = 0; i < firstDay; i++) cells.push(null);
                   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-                  return cells.map((day, i) => {
+                  return cells.map((day) => {
                     if (day === null)
                       return <div key={`e-${day}`} className="min-h-[80px]" />;
                     const targetDate = new Date(year, month, day);
@@ -1079,7 +1079,7 @@ export function EmployeeSchedule() {
                                 label: "Report Issue",
                                 onClick: () => setShowIssueModal(true),
                               },
-                            ].map((item, i) => (
+                            ].map((item) => (
                               <button
                                 key={item.label}
                                 onClick={(e) => {

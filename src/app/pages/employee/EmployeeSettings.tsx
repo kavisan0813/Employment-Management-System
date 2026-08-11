@@ -1416,7 +1416,7 @@ function ConnectedDevices({
           meta: "Chrome 123 · Windows 11",
           location: "Mumbai, India · Mar 28, 2026, 2:30 PM",
         },
-      ].map((s, i) => {
+      ].map((s) => {
         const Icon = s.icon;
         return (
           <div

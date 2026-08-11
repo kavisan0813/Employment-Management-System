@@ -100,7 +100,7 @@ export function OffboardingTemplates({
                             label: "Delete",
                             action: () => handleDeleteTemplate(tpl.id),
                           },
-                        ].map((item, i) => (
+                        ].map((item) => (
                           <button
                             key={item.label}
                             onClick={item.action}

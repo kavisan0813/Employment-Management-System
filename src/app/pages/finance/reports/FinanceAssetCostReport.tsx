@@ -855,7 +855,7 @@ export function FinanceAssetCostReport() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0 }}
           onClick={() => setActiveKPIModal("totalValue")}
-          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:border-purple-300 hover:-translate-y-0.5 transition-all cursor-pointer"
+          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:-translate-y-0.5 transition-all cursor-pointer"
         >
           <div className="flex items-center justify-between mb-3">
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[1.5px]">
@@ -884,7 +884,7 @@ export function FinanceAssetCostReport() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
           onClick={() => setActiveKPIModal("depreciation")}
-          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:border-rose-300 hover:-translate-y-0.5 transition-all cursor-pointer"
+          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:-translate-y-0.5 transition-all cursor-pointer"
         >
           <div className="flex items-center justify-between mb-3">
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[1.5px]">
@@ -916,7 +916,7 @@ export function FinanceAssetCostReport() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
           onClick={() => setActiveKPIModal("maintenance")}
-          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:border-amber-300 hover:-translate-y-0.5 transition-all cursor-pointer"
+          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:border-amber-300 transition-all cursor-pointer"
         >
           <div className="flex items-center justify-between mb-3">
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[1.5px]">
@@ -945,7 +945,7 @@ export function FinanceAssetCostReport() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
           onClick={() => setActiveKPIModal("replacement")}
-          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:border-orange-300 hover:-translate-y-0.5 transition-all cursor-pointer"
+          className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all cursor-pointer"
         >
           <div className="flex items-center justify-between mb-3">
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[1.5px]">

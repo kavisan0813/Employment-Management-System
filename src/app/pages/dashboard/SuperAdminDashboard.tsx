@@ -703,7 +703,7 @@ export function SuperAdminDashboard() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {INITIAL_DEPT_DATA.map((entry, index) => (
+                  {INITIAL_DEPT_DATA.map((entry) => (
                     <Cell key={`cell-${entry.color}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -712,7 +712,7 @@ export function SuperAdminDashboard() {
             </ResponsiveContainer>
           </div>
           <div className="mt-6 grid grid-cols-2 gap-2">
-            {INITIAL_DEPT_DATA.map((dept, i) => (
+            {INITIAL_DEPT_DATA.map((dept) => (
               <div key={dept.name} className="flex items-center gap-2">
                 <div
                   className="w-2 h-2 rounded-full"

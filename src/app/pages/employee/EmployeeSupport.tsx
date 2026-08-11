@@ -1092,7 +1092,7 @@ function TicketDetailModal({
                 Attachments
               </p>
               <div className="flex flex-wrap gap-3">
-                {ticket.attachments.map((att, i) => (
+                {ticket.attachments.map((att) => (
                   <div
                     key={att.name}
                     onClick={() => setPreviewAttachment(att)}
@@ -1731,7 +1731,7 @@ function KnowledgeBaseTab() {
           <div
             key={category.name}
             onClick={() => setSelectedCategory(category)}
-            className="bg-card p-6 rounded-2xl border border-border shadow-sm group hover:border-primary transition-all cursor-pointer hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] flex flex-col items-start"
+            className="bg-card p-6 rounded-2xl border border-border shadow-sm group transition-all cursor-pointer hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] flex flex-col items-start"
           >
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 mb-5 group-hover:scale-110 transition-transform">
               <category.icon size={22} />
@@ -1809,7 +1809,7 @@ function KnowledgeBaseTab() {
                       );
                       setSelectedCategory(null);
                     }}
-                    className="bg-white dark:bg-secondary/30 p-5 rounded-2xl border border-border flex items-center justify-between cursor-pointer hover:border-primary/40 group transition-all shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
+                    className="bg-white dark:bg-secondary/30 p-5 rounded-2xl border border-border flex items-center justify-between cursor-pointer hover:border-primary/40 group transition-all shadow-sm hover:-translate-y-[2px] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
                   >
                     <div className="flex flex-col gap-1.5">
                       <p className="text-[14px] font-bold text-slate-800 dark:text-foreground group-hover:text-primary transition-colors">

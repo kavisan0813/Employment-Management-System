@@ -547,7 +547,7 @@ export function FinanceDashboard() {
               text: "PF payment due: April 20",
               action: () => openModal("pfInfo"),
             },
-          ].map((item, i) => (
+          ].map((item) => (
             <button
               key={item.text}
               onClick={item.action}
@@ -864,7 +864,7 @@ export function FinanceDashboard() {
                 { label: "Calculation", status: "Active" },
                 { label: "Approval", status: "Pending" },
                 { label: "Disbursement", status: "Pending" },
-              ].map((step, i) => (
+              ].map((step) => (
                 <button
                   key={step.label}
                   onClick={() => openStepModal(step.label, step.status)}
@@ -1202,7 +1202,7 @@ export function FinanceDashboard() {
                     openModal("form16");
                   },
                 },
-              ].map((action, i) => (
+              ].map((action) => (
                 <button
                   key={action.label}
                   onClick={action.action}
@@ -1478,7 +1478,7 @@ export function FinanceDashboard() {
                     warn: pendingCount > 0,
                   },
                   { label: "Increment data updated", ok: true },
-                ].map((c, i) => (
+                ].map((c) => (
                   <div
                     key={c.label}
                     className={`flex items-center gap-3 p-3 rounded-xl border ${c.ok ? "border-emerald-100 bg-emerald-50/50 dark:bg-emerald-500/5" : c.warn ? "border-amber-100 bg-amber-50/50" : "border-border"}`}
@@ -1539,7 +1539,7 @@ export function FinanceDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {PAYROLL_DEPT_SUMMARY.map((r, i) => (
+                    {PAYROLL_DEPT_SUMMARY.map((r) => (
                       <tr key={r.dept} className="hover:bg-muted/20">
                         <td className="px-4 py-3 text-[12px] font-bold text-foreground">
                           {r.dept}
@@ -1922,7 +1922,7 @@ export function FinanceDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {YTD_MONTHLY.map((r, i) => (
+                {YTD_MONTHLY.map((r) => (
                   <tr key={r.month} className="hover:bg-muted/20">
                     <td className="px-4 py-3 text-[12px] font-bold text-foreground">
                       {r.month}
@@ -2043,7 +2043,7 @@ export function FinanceDashboard() {
                     tds: "₹12,800",
                     cert: "Form 16A",
                   },
-                ].map((r, i) => (
+                ].map((r) => (
                   <tr key={r.name} className="hover:bg-muted/20">
                     <td className="px-4 py-3 text-[12px] font-bold text-foreground">
                       {r.name}
@@ -2165,7 +2165,7 @@ export function FinanceDashboard() {
                     er: "₹7,000",
                     total: "₹14,000",
                   },
-                ].map((r, i) => (
+                ].map((r) => (
                   <tr key={r.name} className="hover:bg-muted/20">
                     <td className="px-4 py-3 text-[12px] font-bold text-foreground">
                       {r.name}
