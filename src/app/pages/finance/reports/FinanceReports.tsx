@@ -687,7 +687,7 @@ function DashboardsTab() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {DEPT_DIST_DATA.map((entry, index) => (
+                  {DEPT_DIST_DATA.map((entry) => (
                     <Cell key={`cell-${entry.color}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -711,7 +711,7 @@ function DashboardsTab() {
             </div>
           </div>
           <div className="mt-6 space-y-3">
-            {DEPT_DIST_DATA.map((item, i) => (
+            {DEPT_DIST_DATA.map((item) => (
               <div key={item.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div
@@ -985,7 +985,7 @@ function ReportCatalogTab({
         {section}
       </h4>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {currentReports.map((report, i) => (
+        {currentReports.map((report) => (
           <ReportCard
             key={report.name}
             {...report}
@@ -1361,7 +1361,7 @@ function FilterSelect({
         onChange={onChange}
         className={`appearance-none flex items-center gap-2.5 ${Icon ? "pl-10" : "pl-4"} pr-10 py-2 bg-card border border-border rounded-xl text-[12px] font-bold text-foreground hover:border-[#00B87C]/50 transition-all shadow-sm outline-none cursor-pointer`}
       >
-        {options.map((opt, i) => (
+        {options.map((opt) => (
           <option key={opt} value={opt}>
             {opt}
           </option>
