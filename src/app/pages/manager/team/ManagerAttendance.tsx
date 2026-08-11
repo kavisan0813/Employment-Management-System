@@ -329,10 +329,11 @@ export function ManagerAttendance() {
                         setRegularizeFilter(opt.value);
                         setShowRegularizeDropdown(false);
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors ${regularizeFilter === opt.value
-                        ? "bg-[#00B87C]/10 text-[#00B87C]"
-                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                        }`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors ${
+                        regularizeFilter === opt.value
+                          ? "bg-[#00B87C]/10 text-[#00B87C]"
+                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      }`}
                     >
                       {opt.label}
                     </button>
@@ -371,10 +372,11 @@ export function ManagerAttendance() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-3 text-[13px] font-bold transition-colors relative ${activeTab === tab
-              ? "text-[#00B87C]"
-              : "text-muted-foreground hover:text-foreground"
-              }`}
+            className={`pb-3 text-[13px] font-bold transition-colors relative ${
+              activeTab === tab
+                ? "text-[#00B87C]"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
           >
             {tab}
             {activeTab === tab && (
@@ -812,10 +814,11 @@ export function ManagerAttendance() {
                       tooltip ||
                       (isWeekend ? "Weekend" : date > 15 ? "Upcoming" : "")
                     }
-                    className={`h-14 rounded-xl flex flex-col items-center justify-center transition-all select-none ${canClick
-                      ? "cursor-pointer hover:scale-105 hover:shadow-md"
-                      : "cursor-default"
-                      } ${selectedDay === date ? "ring-2 ring-[#00B87C] ring-offset-1" : ""}`}
+                    className={`h-14 rounded-xl flex flex-col items-center justify-center transition-all select-none ${
+                      canClick
+                        ? "cursor-pointer hover:scale-105 hover:shadow-md"
+                        : "cursor-default"
+                    } ${selectedDay === date ? "ring-2 ring-[#00B87C] ring-offset-1" : ""}`}
                     style={{
                       background: bg,
                       color: textCol,
@@ -965,7 +968,7 @@ export function ManagerAttendance() {
                       {Math.round(
                         (selectedData.filter((s) => s === 0 || s === 1).length /
                           12) *
-                        100,
+                          100,
                       )}
                       % Attendance Rate
                     </span>
@@ -1047,7 +1050,11 @@ export function ManagerAttendance() {
             {TEAM_ATTENDANCE_DATA.map((emp, i) => (
               <div key={emp.id} className="flex items-center gap-2">
                 <div className="w-32 shrink-0 flex items-center gap-2">
-                  <img src={emp.avatar} alt={`${emp.name}'s avatar`} className="w-5 h-5 rounded-full" />
+                  <img
+                    src={emp.avatar}
+                    alt={`${emp.name}'s avatar`}
+                    className="w-5 h-5 rounded-full"
+                  />
                   <span className="text-[11px] font-semibold text-muted-foreground truncate">
                     {emp.name}
                   </span>
@@ -1370,18 +1377,15 @@ export function ManagerAttendance() {
                 </h4>
                 <div className="space-y-2">
                   {selectedEmployee.name === "Priya Sharma" &&
-                    getPunchStateForEmail("emp@viyanhr.com")?.logs &&
-                    getPunchStateForEmail("emp@viyanhr.com")!.logs!.length > 0 ? (
+                  getPunchStateForEmail("emp@viyanhr.com")?.logs &&
+                  getPunchStateForEmail("emp@viyanhr.com")!.logs!.length > 0 ? (
                     getPunchStateForEmail("emp@viyanhr.com")!.logs!.map(
-                      (
-                        log: {
-                          time: React.ReactNode;
-                          action: React.ReactNode;
-                        },
-                        idx: number,
-                      ) => (
+                      (log: {
+                        time: React.ReactNode;
+                        action: React.ReactNode;
+                      }) => (
                         <div
-                          key={idx}
+                          key={String(log.time)}
                           className="flex justify-between items-center text-xs py-1"
                         >
                           <span className="text-muted-foreground">

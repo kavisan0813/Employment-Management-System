@@ -150,165 +150,163 @@ export function LeavePolicySection() {
             </tr>
           </thead>
           <tbody>
-            {leaveTypesList.map(
-              (l: LeaveTypeRecord, idx: React.Key | null | undefined) => (
-                <tr
-                  key={idx}
+            {leaveTypesList.map((l: LeaveTypeRecord) => (
+              <tr
+                key={l.code}
+                style={{
+                  borderBottom: "1px solid #F3F4F6",
+                  height: "56px",
+                }}
+                className="hover:bg-[#00B87C]/[0.08] transition-all"
+              >
+                <td
                   style={{
-                    borderBottom: "1px solid #F3F4F6",
-                    height: "56px",
+                    padding: "12px 16px",
+                    fontSize: "14px",
+                    fontWeight: 700,
+                    color: "var(--foreground)",
                   }}
-                  className="hover:bg-[#00B87C]/[0.08] transition-all"
                 >
-                  <td
+                  {l.name}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 16px",
+                    fontSize: "13px",
+                    color: "var(--foreground)",
+                  }}
+                >
+                  {l.code}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 16px",
+                    fontSize: "13px",
+                    color: "var(--foreground)",
+                  }}
+                >
+                  {l.days} Days
+                </td>
+                <td style={{ padding: "12px 16px" }}>
+                  <span
                     style={{
-                      padding: "12px 16px",
-                      fontSize: "14px",
-                      fontWeight: 700,
-                      color: "var(--foreground)",
+                      backgroundColor:
+                        l.type === "Paid"
+                          ? "rgba(0, 184, 124, 0.1)"
+                          : "rgba(239, 68, 68, 0.1)",
+                      color: l.type === "Paid" ? "#00B87C" : "#EF4444",
+                      padding: "4px 10px",
+                      borderRadius: "9999px",
+                      fontSize: "11px",
+                      fontWeight: 600,
                     }}
                   >
-                    {l.name}
-                  </td>
-                  <td
+                    {l.type}
+                  </span>
+                </td>
+                <td
+                  style={{
+                    padding: "12px 16px",
+                    fontSize: "13px",
+                    color: "var(--foreground)",
+                  }}
+                >
+                  {l.carryForward ? `Yes (Max ${l.maxCarryForward}d)` : "No"}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 16px",
+                    fontSize: "13px",
+                    color: "var(--foreground)",
+                  }}
+                >
+                  {l.approvalRequired ? "Required" : "Auto"}
+                </td>
+                <td
+                  style={{
+                    padding: "12px 16px",
+                    fontSize: "13px",
+                    color: "var(--foreground)",
+                  }}
+                >
+                  {l.attachmentRequired ? "Mandatory" : "Optional"}
+                </td>
+                <td style={{ padding: "12px 16px" }}>
+                  <span
                     style={{
-                      padding: "12px 16px",
-                      fontSize: "13px",
-                      color: "var(--foreground)",
+                      backgroundColor:
+                        l.status === "Active"
+                          ? "rgba(0, 184, 124, 0.1)"
+                          : "rgba(107, 114, 128, 0.1)",
+                      color: l.status === "Active" ? "#00B87C" : "#6B7280",
+                      padding: "4px 10px",
+                      borderRadius: "9999px",
+                      fontSize: "11px",
+                      fontWeight: 600,
                     }}
                   >
-                    {l.code}
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: "13px",
-                      color: "var(--foreground)",
-                    }}
-                  >
-                    {l.days} Days
-                  </td>
-                  <td style={{ padding: "12px 16px" }}>
-                    <span
+                    {l.status}
+                  </span>
+                </td>
+                <td style={{ padding: "12px 16px" }}>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        setSelectedLeaveType(l);
+                        setLeaveTypeForm({
+                          name: l.name,
+                          code: l.code,
+                          days: l.days,
+                          type: l.type,
+                          carryForward: l.carryForward,
+                          maxCarryForward: l.maxCarryForward,
+                          encashment: l.encashment,
+                          approvalRequired: l.approvalRequired,
+                          attachmentRequired: l.attachmentRequired,
+                          minNoticePeriod: l.minNoticePeriod,
+                          maxConsecutiveLeave: l.maxConsecutiveLeave,
+                          dept: l.dept,
+                          location: l.location,
+                          status: l.status,
+                          description: l.description,
+                        });
+                        setActiveModal("edit_leave_type");
+                      }}
                       style={{
-                        backgroundColor:
-                          l.type === "Paid"
-                            ? "rgba(0, 184, 124, 0.1)"
-                            : "rgba(239, 68, 68, 0.1)",
-                        color: l.type === "Paid" ? "#00B87C" : "#EF4444",
+                        backgroundColor: "transparent",
+                        border: "1px solid #00B87C",
+                        borderRadius: "8px",
                         padding: "4px 10px",
-                        borderRadius: "9999px",
-                        fontSize: "11px",
+                        fontSize: "12px",
                         fontWeight: 600,
+                        color: "#00B87C",
+                        cursor: "pointer",
                       }}
                     >
-                      {l.type}
-                    </span>
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: "13px",
-                      color: "var(--foreground)",
-                    }}
-                  >
-                    {l.carryForward ? `Yes (Max ${l.maxCarryForward}d)` : "No"}
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: "13px",
-                      color: "var(--foreground)",
-                    }}
-                  >
-                    {l.approvalRequired ? "Required" : "Auto"}
-                  </td>
-                  <td
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: "13px",
-                      color: "var(--foreground)",
-                    }}
-                  >
-                    {l.attachmentRequired ? "Mandatory" : "Optional"}
-                  </td>
-                  <td style={{ padding: "12px 16px" }}>
-                    <span
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedLeaveType(l);
+                        setActiveModal("delete_leave_type");
+                      }}
                       style={{
-                        backgroundColor:
-                          l.status === "Active"
-                            ? "rgba(0, 184, 124, 0.1)"
-                            : "rgba(107, 114, 128, 0.1)",
-                        color: l.status === "Active" ? "#00B87C" : "#6B7280",
+                        backgroundColor: "transparent",
+                        border: "1px solid #EF4444",
+                        borderRadius: "8px",
                         padding: "4px 10px",
-                        borderRadius: "9999px",
-                        fontSize: "11px",
+                        fontSize: "12px",
                         fontWeight: 600,
+                        color: "#EF4444",
+                        cursor: "pointer",
                       }}
                     >
-                      {l.status}
-                    </span>
-                  </td>
-                  <td style={{ padding: "12px 16px" }}>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedLeaveType(l);
-                          setLeaveTypeForm({
-                            name: l.name,
-                            code: l.code,
-                            days: l.days,
-                            type: l.type,
-                            carryForward: l.carryForward,
-                            maxCarryForward: l.maxCarryForward,
-                            encashment: l.encashment,
-                            approvalRequired: l.approvalRequired,
-                            attachmentRequired: l.attachmentRequired,
-                            minNoticePeriod: l.minNoticePeriod,
-                            maxConsecutiveLeave: l.maxConsecutiveLeave,
-                            dept: l.dept,
-                            location: l.location,
-                            status: l.status,
-                            description: l.description,
-                          });
-                          setActiveModal("edit_leave_type");
-                        }}
-                        style={{
-                          backgroundColor: "transparent",
-                          border: "1px solid #00B87C",
-                          borderRadius: "8px",
-                          padding: "4px 10px",
-                          fontSize: "12px",
-                          fontWeight: 600,
-                          color: "#00B87C",
-                          cursor: "pointer",
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedLeaveType(l);
-                          setActiveModal("delete_leave_type");
-                        }}
-                        style={{
-                          backgroundColor: "transparent",
-                          border: "1px solid #EF4444",
-                          borderRadius: "8px",
-                          padding: "4px 10px",
-                          fontSize: "12px",
-                          fontWeight: 600,
-                          color: "#EF4444",
-                          cursor: "pointer",
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ),
-            )}
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -600,15 +598,13 @@ export function LeavePolicySection() {
           className="text-xs space-y-1"
           style={{ color: "var(--foreground)" }}
         >
-          {leaveTypesList.map(
-            (l: LeaveTypeRecord) => (
-              <div key={l.code}>
-                • {l.name} ({l.code}):{" "}
-                <span className="font-bold">{l.days} Days</span> per year |
-                Carryforward: {l.carryForward ? "Yes" : "No"}
-              </div>
-            ),
-          )}
+          {leaveTypesList.map((l: LeaveTypeRecord) => (
+            <div key={l.code}>
+              • {l.name} ({l.code}):{" "}
+              <span className="font-bold">{l.days} Days</span> per year |
+              Carryforward: {l.carryForward ? "Yes" : "No"}
+            </div>
+          ))}
         </div>
       </div>
 

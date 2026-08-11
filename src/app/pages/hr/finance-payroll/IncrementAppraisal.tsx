@@ -1261,7 +1261,19 @@ function Toast({
 }
 
 // ─── Main Page ────────────────────────────────────────────
-function ColHeader({ label, col, sortCol, sortDir, onSort }: { label: string; col: string; sortCol: string; sortDir: string; onSort: (col: string) => void }) {
+function ColHeader({
+  label,
+  col,
+  sortCol,
+  sortDir,
+  onSort,
+}: {
+  label: string;
+  col: string;
+  sortCol: string;
+  sortDir: string;
+  onSort: (col: string) => void;
+}) {
   return (
     <span
       onClick={() => onSort(col)}
@@ -1571,9 +1583,6 @@ export function IncrementAppraisal() {
     });
     navigate("/payroll");
   }
-
-
-
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">
@@ -2181,7 +2190,14 @@ export function IncrementAppraisal() {
             { label: "Status", col: "status" },
             { label: "Action", col: "" },
           ].map(({ label, col }) => (
-            <ColHeader key={label} label={label} col={col} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ColHeader
+              key={label}
+              label={label}
+              col={col}
+              sortCol={sortCol}
+              sortDir={sortDir}
+              onSort={handleSort}
+            />
           ))}
         </div>
 
@@ -2726,9 +2742,9 @@ export function IncrementAppraisal() {
                 radius={[6, 6, 0, 0]}
                 maxBarSize={32}
               >
-                {deptIncrementData.map((_, i) => (
+                {deptIncrementData.map((data, i) => (
                   <Cell
-                    key={`bar-${i}`}
+                    key={data.dept}
                     fill={i % 2 === 0 ? "#10B981" : "#14B8A6"}
                   />
                 ))}

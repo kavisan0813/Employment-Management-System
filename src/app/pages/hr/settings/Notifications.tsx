@@ -255,10 +255,6 @@ export function Notifications() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  if (user?.role === "Finance") {
-    return <FinanceNotificationsView />;
-  }
-
   const [activeFilter, setActiveFilter] = useState<
     "All" | "Unread" | "Approvals" | "Mentions" | "System"
   >("All");
@@ -521,6 +517,10 @@ export function Notifications() {
         };
     }
   };
+
+  if (user?.role === "Finance") {
+    return <FinanceNotificationsView />;
+  }
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">

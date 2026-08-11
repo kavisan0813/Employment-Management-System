@@ -7997,9 +7997,9 @@ export function Reports() {
 
                           return (
                             <>
-                              {paginated.map((row, idx) => (
+                              {paginated.map((row) => (
                                 <tr
-                                  key={row.id || idx}
+                                  key={row.id}
                                   style={{
                                     borderBottom: "1px solid var(--border)",
                                   }}

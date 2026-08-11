@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -128,43 +128,49 @@ export function ManagerTeamSchedule() {
     Record<string, Record<string, ShiftDetails | null>>
   >({});
 
-  const getShiftForDate = (empName: string, dateStr: string) => {
-    // Check user edits first
-    if (shiftsByDate[empName] && shiftsByDate[empName][dateStr] !== undefined) {
-      return shiftsByDate[empName][dateStr];
-    }
+  const getShiftForDate = useCallback(
+    (empName: string, dateStr: string) => {
+      // Check user edits first
+      if (
+        shiftsByDate[empName] &&
+        shiftsByDate[empName][dateStr] !== undefined
+      ) {
+        return shiftsByDate[empName][dateStr];
+      }
 
-    // Default mock data mapping for baseline week starting Apr 6, 2026
-    const baseDate = new Date(2026, 3, 6);
-    const dateObj = new Date(dateStr);
+      // Default mock data mapping for baseline week starting Apr 6, 2026
+      const baseDate = new Date(2026, 3, 6);
+      const dateObj = new Date(dateStr);
 
-    // Check if it lies in the baseline week (Apr 6, 2026 to Apr 12, 2026)
-    const diffTime = dateObj.getTime() - baseDate.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      // Check if it lies in the baseline week (Apr 6, 2026 to Apr 12, 2026)
+      const diffTime = dateObj.getTime() - baseDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    const emp = INITIAL_SCHEDULE.find((e) => e.name === empName);
-    if (emp && diffDays >= 0 && diffDays < 7) {
-      return emp.shifts[diffDays];
-    }
+      const emp = INITIAL_SCHEDULE.find((e) => e.name === empName);
+      if (emp && diffDays >= 0 && diffDays < 7) {
+        return emp.shifts[diffDays];
+      }
 
-    // Deterministic mixed hash for other weeks
-    const seed = `${empName}_${dateStr}`;
-    let hash = 0;
-    for (let i = 0; i < seed.length; i++) {
-      hash = (hash * 33) ^ seed.charCodeAt(i);
-    }
-    hash = Math.imul(hash ^ (hash >>> 16), 2246822507);
-    hash = Math.imul(hash ^ (hash >>> 13), 3266489909);
-    hash = hash ^ (hash >>> 16);
-    const rand = Math.abs(hash % 1000) / 1000;
+      // Deterministic mixed hash for other weeks
+      const seed = `${empName}_${dateStr}`;
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        hash = (hash * 33) ^ seed.charCodeAt(i);
+      }
+      hash = Math.imul(hash ^ (hash >>> 16), 2246822507);
+      hash = Math.imul(hash ^ (hash >>> 13), 3266489909);
+      hash = hash ^ (hash >>> 16);
+      const rand = Math.abs(hash % 1000) / 1000;
 
-    if (rand > 0.45) {
-      const types = ["Morning", "Evening", "Night", "Full Day"];
-      const type = types[Math.floor(rand * 4)];
-      return BRUSH_SHIFTS[type];
-    }
-    return null; // Off Day
-  };
+      if (rand > 0.45) {
+        const types = ["Morning", "Evening", "Night", "Full Day"];
+        const type = types[Math.floor(rand * 4)];
+        return BRUSH_SHIFTS[type];
+      }
+      return null; // Off Day
+    },
+    [shiftsByDate],
+  );
 
   const currentWeekScheduleData = useMemo(() => {
     return INITIAL_SCHEDULE.map((emp) => {
@@ -184,7 +190,7 @@ export function ManagerTeamSchedule() {
         shifts: shiftsArray,
       };
     });
-  }, [weekStartDate, shiftsByDate]);
+  }, [weekStartDate, getShiftForDate]);
   const [isPainting, setIsPainting] = useState(false);
 
   // Shift Swap Requests State
@@ -498,10 +504,11 @@ export function ManagerTeamSchedule() {
           </button>
           <button
             onClick={() => setActiveBrush(activeBrush ? null : "Morning")}
-            className={`px-4 py-2.5 text-sm font-bold rounded-xl border transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800 active:scale-95 flex items-center gap-2 ${activeBrush
-              ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
-              : ""
-              }`}
+            className={`px-4 py-2.5 text-sm font-bold rounded-xl border transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800 active:scale-95 flex items-center gap-2 ${
+              activeBrush
+                ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
+                : ""
+            }`}
             style={
               activeBrush
                 ? {}
@@ -622,10 +629,11 @@ export function ManagerTeamSchedule() {
             {["Week", "Month", "Day"].map((v) => (
               <button
                 key={v}
-                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${view === v
-                  ? "bg-primary text-white shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-                  }`}
+                className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                  view === v
+                    ? "bg-primary text-white shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
                 onClick={() => setView(v as "Week" | "Month" | "Day")}
               >
                 {v}
@@ -765,10 +773,11 @@ export function ManagerTeamSchedule() {
                 onClick={() =>
                   setActiveBrush(activeBrush === type.type ? null : type.type)
                 }
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all hover:bg-secondary select-none ${activeBrush === type.type
-                  ? "bg-[#E8F5E9] dark:bg-emerald-900/20 border border-[#00B87C]/20"
-                  : ""
-                  }`}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all hover:bg-secondary select-none ${
+                  activeBrush === type.type
+                    ? "bg-[#E8F5E9] dark:bg-emerald-900/20 border border-[#00B87C]/20"
+                    : ""
+                }`}
               >
                 <div
                   className={`w-7 h-7 rounded-full ${type.color} flex items-center justify-center text-white text-[9px] font-bold shadow-sm`}
@@ -797,7 +806,7 @@ export function ManagerTeamSchedule() {
 
       {/* VIEW RENDERERS */}
       {view === "Week" && (
-        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8 bg-white dark:bg-zinc-900">
+        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm mb-8 dark:bg-zinc-900">
           <div className="grid grid-cols-[240px_repeat(7,1fr)] bg-secondary/50 border-b border-border">
             <div className="px-4 py-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center">
               Employee
@@ -931,7 +940,7 @@ export function ManagerTeamSchedule() {
       )}
 
       {view === "Day" && (
-        <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-6 mb-8 bg-white dark:bg-zinc-900">
+        <div className="border border-border rounded-2xl shadow-sm overflow-hidden p-6 mb-8 bg-white dark:bg-zinc-900">
           <h3 className="text-sm font-bold text-foreground mb-4">
             Shifts for{" "}
             {weekStartDate.toLocaleDateString("en-US", {
@@ -983,7 +992,7 @@ export function ManagerTeamSchedule() {
       )}
 
       {view === "Month" && (
-        <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden p-6 mb-8 bg-white dark:bg-zinc-900">
+        <div className="border border-border rounded-2xl shadow-sm overflow-hidden p-6 mb-8 bg-white dark:bg-zinc-900">
           <h3 className="text-sm font-bold text-foreground mb-4">
             Monthly Shift Coverage Summary
           </h3>
@@ -1273,7 +1282,7 @@ export function ManagerTeamSchedule() {
                 <select
                   value={newShiftType}
                   onChange={(e) => setNewShiftType(e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none text-foreground bg-white dark:bg-zinc-900"
+                  className="w-full h-11 px-4 rounded-xl border text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none text-foreground bg-white dark:bg-zinc-900"
                   style={{
                     borderColor: "var(--border)",
                   }}
@@ -1289,7 +1298,7 @@ export function ManagerTeamSchedule() {
                   Department
                 </label>
                 <select
-                  className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none text-foreground bg-white dark:bg-zinc-900"
+                  className="w-full h-11 px-4 rounded-xl border text-[13px] font-bold outline-none focus:border-[#00B87C] transition-colors appearance-none text-foreground bg-white dark:bg-zinc-900"
                   style={{
                     borderColor: "var(--border)",
                   }}

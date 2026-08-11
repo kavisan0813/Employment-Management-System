@@ -2867,9 +2867,9 @@ Signature of \${candidate.name}          Date
                         icon: <Briefcase size={14} />,
                         val: `linkedin.com/in/${candidate.name.toLowerCase().replace(/\s+/g, "")}`,
                       },
-                    ].map((item, index) => (
+                    ].map((item) => (
                       <div
-                        key={index}
+                        key={item.val}
                         className="flex items-center gap-3 text-sm font-bold p-3 rounded-xl border transition-colors hover:bg-[#00B87C]/[0.08] dark:hover:bg-slate-800"
                         style={{
                           color: "var(--foreground)",

@@ -207,10 +207,6 @@ function InputField({
 export function UserProfile() {
   const { user, login } = useAuth();
 
-  if (user?.role === "Employee") {
-    return <EmployeeSelfProfile />;
-  }
-
   const [activeTab, setActiveTab] = useState("Personal Info");
   const [activeSettingsSection, setActiveSettingsSection] = useState("company");
   const [isEditing, setIsEditing] = useState(false);
@@ -367,6 +363,10 @@ export function UserProfile() {
 
   const avatarInitials = user?.initials || "RP";
   const fullName = `${firstName} ${lastName}`;
+
+  if (user?.role === "Employee") {
+    return <EmployeeSelfProfile />;
+  }
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20 text-foreground">

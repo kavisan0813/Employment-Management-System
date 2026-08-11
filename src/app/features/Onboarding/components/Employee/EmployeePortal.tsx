@@ -419,7 +419,7 @@ export function EmployeePortal() {
       );
     }
     localStorage.setItem(
-      "viyan_candidate_activity_logs",
+      "viyan_candidate_activity_logs:v1",
       JSON.stringify([
         {
           action: "Candidate process completed",
@@ -427,7 +427,7 @@ export function EmployeePortal() {
           at: new Date().toISOString(),
         },
         ...JSON.parse(
-          localStorage.getItem("viyan_candidate_activity_logs") || "[]",
+          localStorage.getItem("viyan_candidate_activity_logs:v1") || "[]",
         ),
       ]),
     );

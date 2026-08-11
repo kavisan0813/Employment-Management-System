@@ -30,6 +30,42 @@ type SettingsTab =
   | "Change Password"
   | "Appearance";
 
+// ─── Custom UI Toggle Component ───────────────────────────────────────
+const ToggleRow = ({
+  label,
+  description,
+  checked,
+  onChange,
+}: {
+  label: string;
+  description: string;
+  checked: boolean;
+  onChange: (val: boolean) => void;
+}) => (
+  <div className="flex items-start justify-between py-4 border-b border-border last:border-0 gap-8">
+    <div className="flex-1">
+      <p className="text-[13px] font-bold text-foreground leading-tight">
+        {label}
+      </p>
+      <p className="text-[11px] font-bold text-muted-foreground mt-1 max-w-[500px]">
+        {description}
+      </p>
+    </div>
+    <button
+      onClick={() => onChange(!checked)}
+      className={`w-12 h-6 rounded-full p-0.5 transition-colors focus:outline-none flex-shrink-0 relative ${
+        checked ? "bg-[#00B87C]" : "bg-secondary border border-border"
+      }`}
+    >
+      <div
+        className={`w-5 h-5 rounded-full bg-white shadow-sm transform transition-transform duration-200 ${
+          checked ? "translate-x-6" : "translate-x-0"
+        }`}
+      />
+    </button>
+  </div>
+);
+
 export function ManagerSettings() {
   const [activeTab, setActiveTab] = useState<SettingsTab>("Team Preferences");
 
@@ -204,42 +240,6 @@ export function ManagerSettings() {
     }
     showToast("Reset Complete", "info", `Restored defaults for ${activeTab}.`);
   };
-
-  // ─── Custom UI Toggle Component ───────────────────────────────────────
-  const ToggleRow = ({
-    label,
-    description,
-    checked,
-    onChange,
-  }: {
-    label: string;
-    description: string;
-    checked: boolean;
-    onChange: (val: boolean) => void;
-  }) => (
-    <div className="flex items-start justify-between py-4 border-b border-border last:border-0 gap-8">
-      <div className="flex-1">
-        <p className="text-[13px] font-bold text-foreground leading-tight">
-          {label}
-        </p>
-        <p className="text-[11px] font-bold text-muted-foreground mt-1 max-w-[500px]">
-          {description}
-        </p>
-      </div>
-      <button
-        onClick={() => onChange(!checked)}
-        className={`w-12 h-6 rounded-full p-0.5 transition-colors focus:outline-none flex-shrink-0 relative ${
-          checked ? "bg-[#00B87C]" : "bg-secondary border border-border"
-        }`}
-      >
-        <div
-          className={`w-5 h-5 rounded-full bg-white shadow-sm transform transition-transform duration-200 ${
-            checked ? "translate-x-6" : "translate-x-0"
-          }`}
-        />
-      </button>
-    </div>
-  );
 
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-28 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent">
